@@ -1,0 +1,29 @@
+package org.noear.socketd;
+
+/**
+ * 监听器
+ *
+ * @author noear
+ * @since 2.0
+ */
+public interface Listener {
+    /**
+     * 打开时
+     */
+    void onOpen(Session session);
+
+    /**
+     * 收到消息时
+     */
+    void onMessage(Session session, Message message);
+
+    /**
+     * 关闭时
+     */
+    void onClose(Session session);
+
+    /**
+     * 出错时
+     */
+    void onError(Session session, Throwable error);
+}

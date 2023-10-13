@@ -1,2 +1,3 @@
 # socketd
-socketd
+
+Simple message protocol

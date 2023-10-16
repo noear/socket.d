@@ -20,12 +20,13 @@ public class Test {
     public static void main(String[] args) throws Exception {
         BioBroker broker = new BioBroker();
 
+        //server
         BioServerConfig serverConfig = new BioServerConfig();
-
         Server server = broker.createServer(serverConfig);
         server.binding(new ProcessorDefault(new ServerListener()));
         server.start();
 
+        //client
         BioClientConfig clientConfig = new BioClientConfig();
         Session session = broker.createClient(clientConfig)
                 .url("smp:ws://192.169.0.3/path?u=a&p=2")

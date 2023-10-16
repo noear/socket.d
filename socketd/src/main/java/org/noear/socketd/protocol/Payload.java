@@ -58,6 +58,7 @@ public class Payload {
         if (headerMap == null) {
             headerMap = new LinkedHashMap<>();
 
+            //此处要优化
             for (String kvStr : header.split("&")) {
                 String[] kv = kvStr.split("=");
                 headerMap.put(kv[0], kv[1]);

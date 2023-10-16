@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * @author noear 2023/10/14 created
  */
-public interface ChannelExchanger<T>{
+public interface Exchanger<T>{
 
     void write(T source, Frame frame) throws IOException;
     Frame read(T source) throws IOException;

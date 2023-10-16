@@ -1,6 +1,6 @@
 package org.noear.socketd.broker.bio.client;
 
-import org.noear.socketd.broker.bio.BioChannelExchanger;
+import org.noear.socketd.broker.bio.BioExchanger;
 import org.noear.socketd.client.ClientBase;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.client.Client;
@@ -28,11 +28,11 @@ public class BioClient extends ClientBase implements Client {
     private Thread clientThread;
 
     private Processor processor;
-    private ChannelExchanger<Socket> exchanger;
+    private Exchanger<Socket> exchanger;
 
     public BioClient(BioClientConfig clientConfig) {
         this.clientConfig = clientConfig;
-        this.exchanger = new BioChannelExchanger();
+        this.exchanger = new BioExchanger();
     }
 
     @Override

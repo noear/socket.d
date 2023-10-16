@@ -13,12 +13,12 @@ import java.util.Map;
  */
 public class ChannelDefault<S extends Closeable> implements Channel {
     private S source;
-    private ChannelExchanger<S> exchanger;
+    private Exchanger<S> exchanger;
     private Map<String, Object> attachments;
     private Handshaker handshaker;
     private Session session;
 
-    public ChannelDefault(S source, ChannelExchanger<S> exchanger) {
+    public ChannelDefault(S source, Exchanger<S> exchanger) {
         this.source = source;
         this.exchanger = exchanger;
         this.attachments = new HashMap<>();

@@ -1,8 +1,8 @@
 package org.noear.socketd.broker.bio.server;
 
-import org.noear.socketd.broker.bio.BioChannelExchanger;
+import org.noear.socketd.broker.bio.BioExchanger;
 import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.ChannelExchanger;
+import org.noear.socketd.protocol.Exchanger;
 import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.Processor;
 import org.noear.socketd.protocol.impl.ChannelDefault;
@@ -29,11 +29,11 @@ public class BioServer implements Server {
     private ExecutorService serverExecutor;
 
     private Processor processor;
-    private ChannelExchanger<Socket> exchanger;
+    private Exchanger<Socket> exchanger;
 
     public BioServer(BioServerConfig config) {
         this.serverConfig = config;
-        this.exchanger = new BioChannelExchanger();
+        this.exchanger = new BioExchanger();
     }
 
     @Override

@@ -59,7 +59,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
             buffer.put(headerB);
             buffer.putChar('\n');
 
-            //content
+            //body
             buffer.put(frame.getPayload().getBody());
 
             buffer.flip();
@@ -104,7 +104,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
                 return null;
             }
 
-            //2.解码 content
+            //2.解码 body
             int len = len0 - buffer.position();
             byte[] body = new byte[len];
             if (len > 0) {

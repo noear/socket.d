@@ -11,7 +11,7 @@
         <relativePath>../socketd-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>socketd-core</artifactId>
+    <artifactId>socketd</artifactId>
     <packaging>jar</packaging>
 
     <properties>

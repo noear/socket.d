@@ -8,6 +8,7 @@ import org.noear.socketd.Session;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author noear 2023/10/13 created
@@ -34,6 +35,21 @@ public class BioClientSession implements Session, Listener {
 
     @Override
     public <T> void setAttachment(String key, T value) {
+
+    }
+
+    @Override
+    public void send(Message message) {
+
+    }
+
+    @Override
+    public Message sendAndRequest(Message message) {
+        return null;
+    }
+
+    @Override
+    public void sendAndSubscribe(Message message, Consumer<Message> subscriber) {
 
     }
 

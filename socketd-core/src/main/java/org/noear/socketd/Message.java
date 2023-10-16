@@ -10,15 +10,11 @@ import java.util.Map;
  */
 public interface Message {
     /**
-     * 是否为请求
+     * 消息Key
      * */
-    boolean isRequest();
+    String getKey();
     /**
-     * 消息Id
-     * */
-    String getGuid();
-    /**
-     * 头信息
+     * 消息Header
      * */
     Map<String,String> getHeaders();
     /**

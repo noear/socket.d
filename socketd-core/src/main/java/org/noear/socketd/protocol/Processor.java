@@ -12,12 +12,13 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public abstract class Processor implements Listener {
-    public void onConnect(Channel channel){
-        channel.sendHandshaked();
+public class Processor implements Listener {
+    private Listener listener;
+    public Processor(Listener listener){
+        this.listener = listener;
     }
 
-    public void onRead(Channel channel, Frame frame) throws IOException{
+    public void onReceive(Channel channel, Frame frame) throws IOException{
         switch (frame.getFlag()) {
             case Connect:{
                 //if server
@@ -46,21 +47,21 @@ public abstract class Processor implements Listener {
 
     @Override
     public void onOpen(Session session) {
-
+        listener.onOpen(session);
     }
 
     @Override
-    public void onMessage(Session session, Message message) {
-
+    public void onMessage(Session session, Message message) throws IOException{
+        listener.onMessage(session, message);
     }
 
     @Override
     public void onClose(Session session) {
-
+        listener.onClose(session);
     }
 
     @Override
     public void onError(Session session, Throwable error) {
-
+        listener.onError(session, error);
     }
 }

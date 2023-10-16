@@ -1,5 +1,7 @@
 package org.noear.socketd;
 
+import java.io.IOException;
+
 /**
  * 监听器
  *
@@ -15,7 +17,7 @@ public interface Listener {
     /**
      * 收到消息时
      */
-    void onMessage(Session session, Message message);
+    void onMessage(Session session, Message message) throws IOException;
 
     /**
      * 关闭时

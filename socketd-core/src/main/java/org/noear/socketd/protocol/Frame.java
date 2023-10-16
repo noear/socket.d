@@ -1,21 +1,31 @@
 package org.noear.socketd.protocol;
 
-import org.noear.socketd.Message;
-
 /**
  * 帧
  *
  * @author noear
  * @since 2.0
  */
-public interface Frame {
+public class Frame {
+    private Flag flag;
+    private Payload payload;
+
+    public Frame(Flag flag, Payload payload) {
+        this.flag = flag;
+        this.payload = payload;
+    }
+
     /**
      * 标志
      * */
-    Flag getFlag();
+    public Flag getFlag(){
+        return flag;
+    }
 
     /**
      * 消息
      * */
-    Message getMessage();
+    public Payload getPayload() {
+        return payload;
+    }
 }

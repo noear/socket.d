@@ -8,7 +8,7 @@ import org.noear.socketd.client.Connector;
  */
 public class BioClient implements Client {
     @Override
-    public Connector create(String url) {
-        return new BioConnector();
+    public Connector create(String url, boolean autoReconnect) {
+        return null;
     }
 }

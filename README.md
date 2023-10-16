@@ -1,6 +1,6 @@
 # socketd
 
-Simple message protocol:
+Simple message protocol
 
 ```
 [len:int][flag:int][key:str][\n][routeDescriptor:str][\n][header:str][\n][body:byte..]

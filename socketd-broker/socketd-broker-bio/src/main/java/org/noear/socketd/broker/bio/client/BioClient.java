@@ -44,7 +44,13 @@ public class BioClient extends ClientBase implements Client {
     @Override
     public Session open() throws IOException, TimeoutException {
         SocketAddress socketAddress = new InetSocketAddress(uri.getHost(), uri.getPort());
-        Socket socket = new Socket();
+        Socket socket;
+
+        if (sslContext == null) {
+            socket = new Socket();
+        } else {
+            socket = sslContext.getSocketFactory().createSocket();
+        }
 
         if (clientConfig.getReadTimeout() > 0) {
             socket.setSoTimeout(clientConfig.getReadTimeout());

@@ -1,14 +1,13 @@
 package labs;
 
 import org.noear.socketd.broker.bio.BioBroker;
-import org.noear.socketd.broker.bio.client.BioClientConfig;
-import org.noear.socketd.client.Client;
+import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.protocol.Payload;
 import org.noear.socketd.protocol.Session;
-import org.noear.socketd.broker.bio.server.BioServerConfig;
 import org.noear.socketd.protocol.impl.ProcessorDefault;
 import org.noear.socketd.server.Server;
+import org.noear.socketd.server.ServerConfig;
 
 import java.io.IOException;
 
@@ -21,13 +20,13 @@ public class Test {
         BioBroker broker = new BioBroker();
 
         //server
-        BioServerConfig serverConfig = new BioServerConfig();
+        ServerConfig serverConfig = new ServerConfig();
         Server server = broker.createServer(serverConfig);
         server.binding(new ProcessorDefault(new ServerListener()));
         server.start();
 
         //client
-        BioClientConfig clientConfig = new BioClientConfig();
+        ClientConfig clientConfig = new ClientConfig();
         Session session = broker.createClient(clientConfig)
                 .url("smp:ws://192.169.0.3/path?u=a&p=2")
                 .listen(null) //如果要监听，加一下

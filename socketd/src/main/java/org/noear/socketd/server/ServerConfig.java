@@ -12,6 +12,8 @@ public class ServerConfig {
     protected int coreThreads;
     protected int maxThreads;
     protected int idleTimeout;
+    protected int readTimeout;
+    protected int writeTimeout;
 
     public ServerConfig() {
         host = "";
@@ -19,6 +21,8 @@ public class ServerConfig {
         coreThreads = Runtime.getRuntime().availableProcessors() * 2;
         maxThreads = coreThreads * 8;
         idleTimeout = 3000;
+        readTimeout = 3000;
+        writeTimeout = 3000;
     }
 
 
@@ -40,5 +44,13 @@ public class ServerConfig {
 
     public int getIdleTimeout() {
         return idleTimeout;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public int getWriteTimeout() {
+        return writeTimeout;
     }
 }

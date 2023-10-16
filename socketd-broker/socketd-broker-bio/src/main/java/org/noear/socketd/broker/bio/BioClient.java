@@ -1,7 +1,7 @@
-package org.noear.socketd.broker.bio.client;
+package org.noear.socketd.broker.bio;
 
-import org.noear.socketd.broker.bio.BioExchanger;
 import org.noear.socketd.client.ClientBase;
+import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.client.Client;
 import org.noear.socketd.protocol.impl.ChannelDefault;
@@ -24,13 +24,13 @@ import java.util.concurrent.TimeoutException;
 public class BioClient extends ClientBase implements Client {
     private static final Logger log = LoggerFactory.getLogger(BioClient.class);
 
-    private BioClientConfig clientConfig;
+    private ClientConfig clientConfig;
     private Thread clientThread;
 
     private Processor processor;
     private Exchanger<Socket> exchanger;
 
-    public BioClient(BioClientConfig clientConfig) {
+    public BioClient(ClientConfig clientConfig) {
         this.clientConfig = clientConfig;
         this.exchanger = new BioExchanger();
     }

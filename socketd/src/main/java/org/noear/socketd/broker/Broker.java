@@ -11,12 +11,12 @@ import org.noear.socketd.server.ServerConfig;
  * @author noear
  * @since 2.0
  */
-public interface Broker<S extends ServerConfig, C extends ClientConfig> {
+public interface Broker {
     static Broker getInstance() {
         return null;
     }
 
-    Server createServer(S config);
+    Server createServer(ServerConfig config);
 
-    Client createClient(C config);
+    Client createClient(ClientConfig config);
 }

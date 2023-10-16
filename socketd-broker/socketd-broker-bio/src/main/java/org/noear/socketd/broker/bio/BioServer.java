@@ -1,12 +1,12 @@
-package org.noear.socketd.broker.bio.server;
+package org.noear.socketd.broker.bio;
 
-import org.noear.socketd.broker.bio.BioExchanger;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Exchanger;
 import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.Processor;
 import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.noear.socketd.server.Server;
+import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +24,14 @@ public class BioServer implements Server {
     private static final Logger log = LoggerFactory.getLogger(BioServer.class);
 
     private ServerSocket server;
-    private BioServerConfig serverConfig;
+    private ServerConfig serverConfig;
     private Thread serverThread;
     private ExecutorService serverExecutor;
 
     private Processor processor;
     private Exchanger<Socket> exchanger;
 
-    public BioServer(BioServerConfig config) {
+    public BioServer(ServerConfig config) {
         this.serverConfig = config;
         this.exchanger = new BioExchanger();
     }

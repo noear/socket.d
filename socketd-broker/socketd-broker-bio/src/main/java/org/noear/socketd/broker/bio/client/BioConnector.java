@@ -1,6 +1,7 @@
 package org.noear.socketd.broker.bio.client;
 
 import org.noear.socketd.broker.bio.BioChannelExchanger;
+import org.noear.socketd.client.ConnectorBase;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.client.Connector;
 import org.noear.socketd.protocol.impl.ChannelDefault;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
  * @author noear
  * @since 2.0
  */
-public class BioConnector implements Connector {
+public class BioConnector extends ConnectorBase implements Connector {
     private static final Logger log = LoggerFactory.getLogger(BioClient.class);
 
     private BioClientConfig clientConfig;
@@ -30,43 +30,16 @@ public class BioConnector implements Connector {
     private Processor processor;
     private ChannelExchanger<Socket> exchanger;
 
-    private Listener listener;
-    private String uriStr;
-    private URI uri;
-
-    public BioConnector(String uriStr, BioClientConfig clientConfig) {
-        this.uriStr = uriStr;
-        this.uri = URI.create(uriStr);
+    public BioConnector(String url, BioClientConfig clientConfig) {
+        super(url);
         this.clientConfig = clientConfig;
-
         this.exchanger = new BioChannelExchanger();
     }
 
     @Override
-    public URI uri() {
-        return uri;
-    }
-
-    @Override
-    public boolean autoReconnect() {
-        return false;
-    }
-
-    @Override
-    public Connector heartbeat(HeartbeatHandler handler) {
-        return null;
-    }
-
-    @Override
-    public Connector autoReconnect(boolean enable) {
-        return null;
-    }
-
-    @Override
     public Connector listen(Listener listener) {
-        this.listener = listener;
         this.processor = new ProcessorDefault(this.listener);
-        return this;
+        return super.listen(listener);
     }
 
     @Override
@@ -74,8 +47,8 @@ public class BioConnector implements Connector {
         SocketAddress socketAddress = new InetSocketAddress(uri.getHost(), uri.getPort());
         Socket socket = new Socket();
 
-        if (clientConfig.getSocketTimeout() > 0) {
-            socket.setSoTimeout(clientConfig.getSocketTimeout());
+        if (clientConfig.getReadTimeout() > 0) {
+            socket.setSoTimeout(clientConfig.getReadTimeout());
         }
 
         if (clientConfig.getConnectTimeout() > 0) {
@@ -98,7 +71,7 @@ public class BioConnector implements Connector {
 
             clientThread.start();
 
-            channel.sendConnect(uriStr);
+            channel.sendConnect(url);
         } catch (Throwable e) {
             log.debug("{}", e);
             close(socket);

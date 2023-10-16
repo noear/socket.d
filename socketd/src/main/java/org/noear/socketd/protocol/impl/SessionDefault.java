@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
- * @author noear 2023/10/16 created
+ * @author noear
+ * @since 2.0
  */
 public class SessionDefault implements Session {
     private Channel channel;
@@ -23,6 +24,11 @@ public class SessionDefault implements Session {
     @Override
     public <T> void setAttachment(String key, T value) {
         channel.setAttachment(key, value);
+    }
+
+    @Override
+    public void sendPing() throws IOException {
+        channel.sendPing();
     }
 
     @Override

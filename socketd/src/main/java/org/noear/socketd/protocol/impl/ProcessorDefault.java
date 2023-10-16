@@ -41,7 +41,6 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     case Pong: {
-                        channel.sendPing();
                         break;
                     }
                     case Close: {

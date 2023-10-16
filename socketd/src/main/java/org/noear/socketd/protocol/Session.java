@@ -26,6 +26,11 @@ public interface Session {
     <T> void setAttachment(String key, T value);
 
     /**
+     * 发送 Ping
+     * */
+    void sendPing() throws IOException;
+
+    /**
      * 发送
      */
     void send(Payload message) throws IOException;

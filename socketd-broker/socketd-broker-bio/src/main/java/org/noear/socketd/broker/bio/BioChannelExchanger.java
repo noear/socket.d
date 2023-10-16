@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.bio.server;
+package org.noear.socketd.broker.bio;
 
 import org.noear.socketd.protocol.ChannelExchanger;
 import org.noear.socketd.protocol.CodecByteBuffer;
@@ -11,7 +11,8 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 /**
- * @author noear 2023/10/14 created
+ * @author noear
+ * @since 2.0
  */
 public class BioChannelExchanger implements ChannelExchanger<Socket> {
     CodecByteBuffer codec = new CodecByteBuffer();
@@ -75,10 +76,5 @@ public class BioChannelExchanger implements ChannelExchanger<Socket> {
             value += (bytes[i] & 0xFF) << shift;
         }
         return value;
-    }
-
-    @Override
-    public void close() throws IOException {
-
     }
 }

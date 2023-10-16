@@ -1,20 +1,23 @@
 package labs;
 
 import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.Message;
+import org.noear.socketd.protocol.Payload;
 import org.noear.socketd.protocol.Session;
+
+import java.io.IOException;
 
 /**
  * @author noear 2023/10/12 created
  */
 public class ServerListener implements Listener {
+
     @Override
     public void onOpen(Session session) {
 
     }
 
     @Override
-    public void onMessage(Session session, Message message) {
+    public void onMessage(Session session, Payload payload) throws IOException {
 
     }
 

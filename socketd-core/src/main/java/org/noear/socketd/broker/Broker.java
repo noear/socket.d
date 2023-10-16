@@ -1,6 +1,7 @@
 package org.noear.socketd.broker;
 
 import org.noear.socketd.client.Client;
+import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
@@ -10,11 +11,12 @@ import org.noear.socketd.server.ServerConfig;
  * @author noear
  * @since 2.0
  */
-public interface Broker<T extends ServerConfig> {
+public interface Broker<S extends ServerConfig, C extends ClientConfig> {
     static Broker getInstance() {
         return null;
     }
 
-    Server createServer(T config);
-    Client createClient();
+    Server createServer(S config);
+
+    Client createClient(C config);
 }

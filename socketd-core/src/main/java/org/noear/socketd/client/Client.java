@@ -1,5 +1,7 @@
 package org.noear.socketd.client;
 
+import java.io.IOException;
+
 /**
  * 客户端
  *
@@ -7,15 +9,9 @@ package org.noear.socketd.client;
  * @since 2.0
  */
 public interface Client {
-    /**
-     * 创建连接器
-     */
-    Connector create(String url, boolean autoReconnect);
 
     /**
      * 创建连接器
      */
-    default Connector create(String url) {
-        return create(url, true);
-    }
+    Connector create(String url) throws IOException;
 }

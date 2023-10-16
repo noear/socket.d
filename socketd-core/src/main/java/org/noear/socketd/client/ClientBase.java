@@ -10,7 +10,7 @@ import java.net.URI;
  * @author noear
  * @since 2.0
  */
-public abstract class ConnectorBase implements Connector {
+public abstract class ClientBase implements Client {
     protected String url;
     protected URI uri;
     protected boolean autoReconnect;
@@ -18,14 +18,17 @@ public abstract class ConnectorBase implements Connector {
     protected SSLContext sslContext;
     protected HeartbeatHandler heartbeatHandler;
 
-    public ConnectorBase(String uri) {
-        this.url = url;
-        this.uri = URI.create(uri);
-    }
 
     @Override
     public URI uri() {
         return uri;
+    }
+
+    @Override
+    public Client url(String url) {
+        this.url = url;
+        this.uri = URI.create(url);
+        return this;
     }
 
     @Override
@@ -34,25 +37,25 @@ public abstract class ConnectorBase implements Connector {
     }
 
     @Override
-    public Connector autoReconnect(boolean enable) {
+    public Client autoReconnect(boolean enable) {
         this.autoReconnect = enable;
         return this;
     }
 
     @Override
-    public Connector ssl(SSLContext sslContext) {
+    public Client ssl(SSLContext sslContext) {
         this.sslContext = sslContext;
         return this;
     }
 
     @Override
-    public Connector heartbeat(HeartbeatHandler handler) {
+    public Client heartbeat(HeartbeatHandler handler) {
         this.heartbeatHandler = handler;
         return this;
     }
 
     @Override
-    public Connector listen(Listener listener) {
+    public Client listen(Listener listener) {
         this.listener = listener;
         return this;
     }

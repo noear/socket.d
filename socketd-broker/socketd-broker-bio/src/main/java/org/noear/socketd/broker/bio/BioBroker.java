@@ -10,7 +10,8 @@ import org.noear.socketd.client.Client;
 import org.noear.socketd.server.Server;
 
 /**
- * @author noear 2023/10/13 created
+ * @author noear
+ * @since 2.0
  */
 public class BioBroker implements Broker<BioServerConfig, BioClientConfig> {
 

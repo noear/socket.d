@@ -1,6 +1,5 @@
 package org.noear.socketd.protocol;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -32,13 +31,13 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
         } else {
             //key
             byte[] keyB = frame.getPayload().getKey().getBytes(charset);
-            //resourceDescriptor
-            byte[] resourceDescriptorB = frame.getPayload().getResourceDescriptor().getBytes(charset);
+            //routeDescriptor
+            byte[] routeDescriptorB = frame.getPayload().getRouteDescriptor().getBytes(charset);
             //header
-            byte[] headerB = frame.getPayload().getHeaders().getBytes(charset);
+            byte[] headerB = frame.getPayload().getHeader().getBytes(charset);
 
-            //length (flag + key + resourceDescriptor + body + int.bytes + \n*3)
-            int len = keyB.length + resourceDescriptorB.length + headerB.length + frame.getPayload().getBody().length + 2 * 3 + 4 + 4;
+            //length (flag + key + routeDescriptor + body + int.bytes + \n*3)
+            int len = keyB.length + routeDescriptorB.length + headerB.length + frame.getPayload().getBody().length + 2 * 3 + 4 + 4;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -52,8 +51,8 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
             buffer.put(keyB);
             buffer.putChar('\n');
 
-            //resourceDescriptor
-            buffer.put(resourceDescriptorB);
+            //routeDescriptor
+            buffer.put(routeDescriptorB);
             buffer.putChar('\n');
             //header
             buffer.put(headerB);
@@ -83,7 +82,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
             return new Frame(Flag.Of(flag), null);
         } else {
 
-            //1.解码key and resourceDescriptor
+            //1.解码key and routeDescriptor
             ByteBuffer sb = ByteBuffer.allocate(Math.min(4096, buffer.limit()));
 
             //key
@@ -92,9 +91,9 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
                 return null;
             }
 
-            //resourceDescriptor
-            String resourceDescriptor = decodeString(buffer, sb, 512);
-            if (resourceDescriptor == null) {
+            //routeDescriptor
+            String routeDescriptor = decodeString(buffer, sb, 512);
+            if (routeDescriptor == null) {
                 return null;
             }
 
@@ -111,7 +110,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
                 buffer.get(body, 0, len);
             }
 
-            Payload payload = new Payload(key, resourceDescriptor, headers, body);
+            Payload payload = new Payload(key, routeDescriptor, headers, body);
             return new Frame(Flag.Of(flag), payload);
         }
     }

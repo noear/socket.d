@@ -13,7 +13,7 @@ public class Handshaker {
     private final String version;
 
     public Handshaker(Payload payload) {
-        this.uri = payload.getResourceDescriptor();
+        this.uri = payload.getRouteDescriptor();
         this.headers = payload.getHeaderMap();
         this.protocols = headers.get(Constants.HEARDER_SOCKETD_PROTOCOLS);
         this.version = headers.get(Constants.HEARDER_SOCKETD_VERSION);

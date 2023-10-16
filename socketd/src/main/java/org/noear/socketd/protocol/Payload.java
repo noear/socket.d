@@ -9,22 +9,22 @@ import java.util.Map;
  */
 public class Payload {
     private String key;
-    private String resourceDescriptor;
-    private String headers;
+    private String routeDescriptor;
+    private String header;
     private byte[] body;
 
-    public Payload(String headers) {
-        this("", "", headers, new byte[]{});
+    public Payload(String header) {
+        this("", "", header, new byte[]{});
     }
 
-    public Payload(String resourceDescriptor, String headers) {
-        this("", resourceDescriptor, headers, new byte[]{});
+    public Payload(String routeDescriptor, String header) {
+        this("", routeDescriptor, header, new byte[]{});
     }
 
-    public Payload(String key, String resourceDescriptor, String headers, byte[] body) {
+    public Payload(String key, String routeDescriptor, String header, byte[] body) {
         this.key = key;
-        this.resourceDescriptor = resourceDescriptor;
-        this.headers = headers;
+        this.routeDescriptor = routeDescriptor;
+        this.header = header;
         this.body = body;
     }
 
@@ -36,29 +36,29 @@ public class Payload {
     }
 
     /**
-     * resourceDescriptor
+     * routeDescriptor
      */
-    public String getResourceDescriptor() {
-        return resourceDescriptor;
+    public String getRouteDescriptor() {
+        return routeDescriptor;
     }
 
     /**
      * Header
      */
-    public String getHeaders() {
-        return headers;
+    public String getHeader() {
+        return header;
     }
 
     Map<String,String> headerMap;
     public Map<String,String> getHeaderMap() {
-        if (headers == null) {
+        if (header == null) {
             return null;
         }
 
         if (headerMap == null) {
             headerMap = new LinkedHashMap<>();
 
-            for (String kvStr : headers.split("&")) {
+            for (String kvStr : header.split("&")) {
                 String[] kv = kvStr.split("=");
                 headerMap.put(kv[0], kv[1]);
             }

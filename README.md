@@ -3,7 +3,7 @@
 Simple message protocol:
 
 ```
-[len:int][flag:int][key:str][\n][resourceDescriptor:str][\n][header:str][\n][body:byte..]
+[len:int][flag:int][key:str][\n][routeDescriptor:str][\n][header:str][\n][body:byte..]
 ```
 
 uri example:

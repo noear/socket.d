@@ -1,6 +1,6 @@
 package org.noear.socketd.client;
 
-import org.noear.socketd.Session;
+import org.noear.socketd.protocol.Session;
 
 /**
  * 会话工厂

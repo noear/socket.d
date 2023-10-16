@@ -12,10 +12,11 @@ public enum Flag {
     Connack(11),//握手：确认(c<-s)，响应服务端握手信息
     Ping(20), //心跳:ping(c<->s)
     Pong(21), //心跳:pong(c<->s)
-    Message(30), //消息(c<->s)
-    Request(31), //请求(c<->s)
-    Subscribe(32),
-    Reply(39),
+    Close(30),
+    Message(40), //消息(c<->s)
+    Request(41), //请求(c<->s)
+    Subscribe(42),
+    Reply(49),
     ;
     int code;
 
@@ -33,10 +34,11 @@ public enum Flag {
             case 11: return Connack;
             case 20: return Ping;
             case 21: return Pong;
-            case 30: return Message;
-            case 31: return Request;
-            case 32: return Subscribe;
-            case 39: return Reply;
+            case 30: return Close;
+            case 40: return Message;
+            case 41: return Request;
+            case 42: return Subscribe;
+            case 49: return Reply;
             default: return Unknown;
         }
     }

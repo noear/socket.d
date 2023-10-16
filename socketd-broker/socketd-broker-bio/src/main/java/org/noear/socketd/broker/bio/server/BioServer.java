@@ -1,7 +1,10 @@
 package org.noear.socketd.broker.bio.server;
 
+import org.noear.socketd.protocol.Channel;
+import org.noear.socketd.protocol.ChannelExchanger;
 import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.Processor;
+import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.noear.socketd.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @author noear 2023/10/13 created
+ * @author noear
+ * @since 2.0
  */
 public class BioServer implements Server {
     private static final Logger log = LoggerFactory.getLogger(BioServer.class);
@@ -23,9 +27,11 @@ public class BioServer implements Server {
     private ExecutorService serverExecutor;
 
     private Processor processor;
+    private ChannelExchanger<Socket> exchanger;
 
-    public BioServer(BioServerConfig config){
+    public BioServer(BioServerConfig config) {
         this.serverConfig = config;
+        this.exchanger = new BioChannelExchanger();
     }
 
     @Override
@@ -53,7 +59,7 @@ public class BioServer implements Server {
                     Socket socket = server.accept();
 
                     try {
-                        BioChannel channel = new BioChannel(socket);
+                        Channel channel = new ChannelDefault<>(socket, exchanger);
 
                         serverExecutor.submit(() -> {
                             receive(channel, socket);
@@ -71,7 +77,7 @@ public class BioServer implements Server {
         serverThread.start();
     }
 
-    private void receive(BioChannel channel, Socket socket) {
+    private void receive(Channel channel, Socket socket) {
         while (true) {
             try {
                 if (socket.isClosed()) {

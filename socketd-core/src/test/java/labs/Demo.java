@@ -1,6 +1,6 @@
 package labs;
 
-import org.noear.socketd.Session;
+import org.noear.socketd.protocol.Session;
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.client.Client;
 import org.noear.socketd.server.Server;

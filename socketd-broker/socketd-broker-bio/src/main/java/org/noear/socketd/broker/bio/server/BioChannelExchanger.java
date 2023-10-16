@@ -76,4 +76,9 @@ public class BioChannelExchanger implements ChannelExchanger<Socket> {
         }
         return value;
     }
+
+    @Override
+    public void close() throws IOException {
+
+    }
 }

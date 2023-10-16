@@ -1,5 +1,6 @@
-package org.noear.socketd;
+package org.noear.socketd.protocol;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
@@ -27,15 +28,20 @@ public interface Session {
     /**
      * 发送
      */
-    void send(Message message);
+    void send(Payload message) throws IOException;
 
     /**
      * 发送并请求
      */
-    Message sendAndRequest(Message message);
+    Payload sendAndRequest(Payload message) throws IOException;
 
     /**
      * 发送并订阅
      */
-    void sendAndSubscribe(Message message, Consumer<Message> subscriber);
+    void sendAndSubscribe(Payload message, Consumer<Payload> subscriber) throws IOException;
+
+    /**
+     * 答复
+     * */
+    void reply(Payload from, Payload message) throws IOException;
 }

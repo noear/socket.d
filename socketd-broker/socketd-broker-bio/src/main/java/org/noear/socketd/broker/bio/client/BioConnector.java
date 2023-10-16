@@ -1,7 +1,7 @@
 package org.noear.socketd.broker.bio.client;
 
-import org.noear.socketd.Listener;
-import org.noear.socketd.Session;
+import org.noear.socketd.protocol.Listener;
+import org.noear.socketd.protocol.Session;
 import org.noear.socketd.client.Connector;
 
 import java.io.IOException;

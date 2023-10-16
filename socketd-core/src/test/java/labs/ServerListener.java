@@ -1,8 +1,8 @@
 package labs;
 
-import org.noear.socketd.Listener;
+import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.Message;
-import org.noear.socketd.Session;
+import org.noear.socketd.protocol.Session;
 
 /**
  * @author noear 2023/10/12 created

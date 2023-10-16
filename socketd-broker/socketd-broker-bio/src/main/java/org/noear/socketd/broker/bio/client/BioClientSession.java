@@ -1,9 +1,9 @@
 package org.noear.socketd.broker.bio.client;
 
 import com.sun.xml.internal.ws.api.message.Attachment;
-import org.noear.socketd.Listener;
+import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.Message;
-import org.noear.socketd.Session;
+import org.noear.socketd.protocol.Session;
 
 import java.net.Socket;
 import java.util.HashMap;

@@ -100,20 +100,20 @@ public class BioConnector implements ClientConnector {
         while (true) {
             try {
                 if (socket.isClosed()) {
-                    client.processor.onClose(channel.getSession());
+                    client.processor().onClose(channel.getSession());
                     break;
                 }
 
                 Frame frame = client.exchanger.read(socket);
                 if (frame != null) {
-                    client.processor.onReceive(channel, frame);
+                    client.processor().onReceive(channel, frame);
 
                     if (frame.getFlag() == Flag.Connack) {
                         future.complete(channel);
                     }
                 }
             } catch (Throwable ex) {
-                client.processor.onError(channel.getSession(), ex);
+                client.processor().onError(channel.getSession(), ex);
             }
         }
     }

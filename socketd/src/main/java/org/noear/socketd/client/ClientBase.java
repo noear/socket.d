@@ -60,4 +60,8 @@ public abstract class ClientBase implements Client {
         processor.setListener(listener);
         return this;
     }
+
+    public Processor processor(){
+        return processor;
+    }
 }

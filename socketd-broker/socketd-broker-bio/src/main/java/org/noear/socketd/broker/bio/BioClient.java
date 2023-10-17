@@ -99,7 +99,7 @@ public class BioClient extends ClientBase implements Client {
                     break;
                 }
 
-                Frame frame = channel.receive();
+                Frame frame = exchanger.read(socket);
                 if (frame != null) {
                     processor.onReceive(channel, frame);
 

@@ -17,12 +17,12 @@ public class SessionDefault implements Session {
     }
 
     @Override
-    public <T> T getAttachment(String key) {
+    public <T> T getAttachment(Class<T> key) {
         return (T) channel.getAttachment(key);
     }
 
     @Override
-    public <T> void setAttachment(String key, T value) {
+    public <T> void setAttachment(Class<T> key, T value) {
         channel.setAttachment(key, value);
     }
 

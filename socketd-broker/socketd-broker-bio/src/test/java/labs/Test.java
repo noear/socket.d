@@ -5,7 +5,6 @@ import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.protocol.Payload;
 import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.impl.ProcessorDefault;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
@@ -22,7 +21,7 @@ public class Test {
         //server
         ServerConfig serverConfig = new ServerConfig();
         Server server = broker.createServer(serverConfig);
-        server.binding(new ProcessorDefault(new ServerListener()));
+        server.listen(new ServerListener());
         server.start();
 
         //client

@@ -1,5 +1,6 @@
 package org.noear.socketd.server;
 
+import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.protocol.Processor;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.io.IOException;
  * @since 2.0
  */
 public interface Server {
-    void binding(Processor processor);
+    void listen(Listener listener);
 
     void start() throws IOException;
 

@@ -17,7 +17,7 @@ public class Demo {
 
         ServerConfig serverConfig = null;
         Server server = broker.createServer(serverConfig);
-        server.binding(new ProcessorDefault(new ServerListener()));
+        server.listen(new ServerListener());
         server.start();
 
         ClientConfig clientConfig = null;

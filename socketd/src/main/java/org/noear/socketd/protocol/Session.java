@@ -15,7 +15,7 @@ public interface Session {
      *
      * @param key 关键字
      */
-    <T> T getAttachment(String key);
+    <T> T getAttachment(Class<T> key);
 
     /**
      * 设置附件
@@ -23,7 +23,7 @@ public interface Session {
      * @param key   关键字
      * @param value 值
      */
-    <T> void setAttachment(String key, T value);
+    <T> void setAttachment(Class<T> key, T value);
 
     /**
      * 发送 Ping

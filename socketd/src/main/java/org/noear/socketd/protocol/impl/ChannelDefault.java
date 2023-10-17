@@ -14,7 +14,7 @@ import java.util.Map;
 public class ChannelDefault<S extends Closeable> implements Channel {
     private S source;
     private Exchanger<S> exchanger;
-    private Map<String, Object> attachments;
+    private Map<Class<?>, Object> attachments;
     private Handshaker handshaker;
     private Session session;
 
@@ -26,12 +26,12 @@ public class ChannelDefault<S extends Closeable> implements Channel {
 
 
     @Override
-    public <T> T getAttachment(String key) {
+    public <T> T getAttachment(Class<T> key) {
         return (T) attachments.get(key);
     }
 
     @Override
-    public <T> void setAttachment(String key, T value) {
+    public <T> void setAttachment(Class<T> key, T value) {
         attachments.put(key, value);
     }
 
@@ -63,11 +63,6 @@ public class ChannelDefault<S extends Closeable> implements Channel {
     @Override
     public void send(Frame frame) throws IOException {
         exchanger.write(source, frame);
-    }
-
-    @Override
-    public Frame receive() throws IOException {
-        return exchanger.read(source);
     }
 
     @Override

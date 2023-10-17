@@ -1,10 +1,8 @@
 package org.noear.socketd.broker.bio;
 
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Exchanger;
-import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.Processor;
+import org.noear.socketd.protocol.*;
 import org.noear.socketd.protocol.impl.ChannelDefault;
+import org.noear.socketd.protocol.impl.ProcessorDefault;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
@@ -36,9 +34,10 @@ public class BioServer implements Server {
         this.exchanger = new BioExchanger();
     }
 
+
     @Override
-    public void binding(Processor processor) {
-        this.processor = processor;
+    public void listen(Listener listener) {
+        this.processor = new ProcessorDefault(listener);
     }
 
     @Override
@@ -87,7 +86,7 @@ public class BioServer implements Server {
                     break;
                 }
 
-                Frame frame = channel.receive();
+                Frame frame = exchanger.read(socket);
                 if (frame != null) {
                     processor.onReceive(channel, frame);
                 }

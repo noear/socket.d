@@ -9,11 +9,15 @@ package org.noear.socketd.server;
 public class ServerConfig {
     protected String host;
     protected int port;
+
     protected int coreThreads;
     protected int maxThreads;
     protected int idleTimeout;
+
     protected int readTimeout;
+    protected int readBufferSize;
     protected int writeTimeout;
+    protected int writeBufferSize;
 
     public ServerConfig() {
         host = "";
@@ -50,7 +54,15 @@ public class ServerConfig {
         return readTimeout;
     }
 
+    public int getReadBufferSize() {
+        return readBufferSize;
+    }
+
     public int getWriteTimeout() {
         return writeTimeout;
+    }
+
+    public int getWriteBufferSize() {
+        return writeBufferSize;
     }
 }

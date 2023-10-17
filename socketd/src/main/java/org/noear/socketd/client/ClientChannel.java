@@ -10,10 +10,10 @@ import java.net.SocketException;
  * @since 2.0
  */
 public class ClientChannel extends ChannelBase implements Channel {
-    private Connector connector;
+    private ClientConnector connector;
     private Channel real;
 
-    public ClientChannel(Channel real, Connector connector) {
+    public ClientChannel(Channel real, ClientConnector connector) {
         this.real = real;
         this.connector = connector;
     }

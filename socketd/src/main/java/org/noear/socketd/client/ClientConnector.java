@@ -11,7 +11,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public interface Connector extends Closeable {
+public interface ClientConnector extends Closeable {
     boolean autoReconnect();
     Channel connect() throws IOException;
 }

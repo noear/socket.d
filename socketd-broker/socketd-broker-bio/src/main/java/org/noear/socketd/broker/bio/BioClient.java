@@ -2,16 +2,10 @@ package org.noear.socketd.broker.bio;
 
 import org.noear.socketd.client.*;
 import org.noear.socketd.protocol.*;
-import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.noear.socketd.protocol.impl.ProcessorDefault;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -38,7 +32,7 @@ public class BioClient extends ClientBase implements Client {
 
     @Override
     public Session open() throws IOException, TimeoutException {
-        Connector connector = new BioConnector(this);
+        ClientConnector connector = new BioConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);
     }

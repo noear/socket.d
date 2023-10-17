@@ -1,6 +1,6 @@
 package org.noear.socketd.broker.bio;
 
-import org.noear.socketd.client.Connector;
+import org.noear.socketd.client.ClientConnector;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author noear
  * @since 2.0
  */
-public class BioConnector implements Connector {
+public class BioConnector implements ClientConnector {
     private static final Logger log = LoggerFactory.getLogger(BioClient.class);
 
     private BioClient client;

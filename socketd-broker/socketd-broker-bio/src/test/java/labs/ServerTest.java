@@ -1,8 +1,14 @@
 package labs;
 
 import org.noear.socketd.broker.bio.BioBroker;
+import org.noear.socketd.protocol.Payload;
+import org.noear.socketd.protocol.Session;
+import org.noear.socketd.protocol.impl.ListenerDefault;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.utils.Utils;
+
+import java.io.IOException;
 
 
 /**
@@ -16,6 +22,15 @@ public class ServerTest {
         //server
         ServerConfig serverConfig = new ServerConfig();
         Server server = broker.createServer(serverConfig);
+        server.listen(new ServerListener());
         server.start();
+    }
+
+    public static class ServerListener extends ListenerDefault{
+        @Override
+        public void onMessage(Session session, Payload payload) throws IOException {
+            super.onMessage(session,payload);
+            session.send(new Payload(Utils.guid(), "temp", ""));
+        }
     }
 }

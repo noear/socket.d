@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2.0
  */
 public class BioConnector implements ClientConnector {
-    private static final Logger log = LoggerFactory.getLogger(BioClient.class);
+    private static final Logger log = LoggerFactory.getLogger(BioConnector.class);
 
     private BioClient client;
     private Socket socket;

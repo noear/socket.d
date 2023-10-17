@@ -1,6 +1,8 @@
 package org.noear.socketd.protocol.impl;
 
 import org.noear.socketd.protocol.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -11,6 +13,8 @@ import java.io.IOException;
  * @since 2.0
  */
 public class ProcessorDefault implements Processor {
+    private static Logger log = LoggerFactory.getLogger(ProcessorDefault.class);
+
     private Listener listener = new ListenerDefault();
 
 
@@ -22,6 +26,10 @@ public class ProcessorDefault implements Processor {
     }
 
     public void onReceive(Channel channel, Frame frame) throws IOException {
+        if(log.isTraceEnabled()){
+            log.trace("{}", frame.getFlag());
+        }
+
         if (frame.getFlag() == Flag.Connect) {
             //if server
             Payload payload = frame.getPayload();
@@ -31,6 +39,9 @@ public class ProcessorDefault implements Processor {
             onOpen(channel.getSession());
         } else if (frame.getFlag() == Flag.Connack) {
             //if client
+            Payload payload = frame.getPayload();
+            channel.setHandshaker(new Handshaker(payload));
+
             onOpen(channel.getSession());
         } else {
             if (channel.getHandshaker() == null) {

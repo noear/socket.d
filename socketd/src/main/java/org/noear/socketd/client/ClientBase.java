@@ -47,7 +47,10 @@ public abstract class ClientBase implements Client {
 
     @Override
     public Client heartbeatHandler(HeartbeatHandler handler) {
-        this.heartbeatHandler = handler;
+        if (handler != null) {
+            this.heartbeatHandler = handler;
+        }
+
         return this;
     }
 

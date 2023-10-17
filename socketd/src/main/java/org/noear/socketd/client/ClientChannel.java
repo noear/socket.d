@@ -29,9 +29,11 @@ public class ClientChannel extends ChannelBase implements Channel {
             heartbeatHandler = new HeartbeatHandlerDefault();
         }
 
-        scheduledFuture = RunUtils.delayAndRepeat(() -> {
-            heartbeatHandle();
-        }, connector.getHeartbeatInterval());
+        if (connector.autoReconnect() && scheduledFuture == null) {
+            scheduledFuture = RunUtils.delayAndRepeat(() -> {
+                heartbeatHandle();
+            }, connector.getHeartbeatInterval());
+        }
     }
 
     /**

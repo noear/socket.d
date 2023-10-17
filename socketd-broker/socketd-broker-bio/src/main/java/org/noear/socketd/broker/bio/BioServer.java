@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -85,8 +86,13 @@ public class BioServer extends ServerBase implements Server {
                 if (frame != null) {
                     processor.onReceive(channel, frame);
                 }
-            } catch (Throwable ex) {
-                processor.onError(channel.getSession(), ex);
+            } catch (SocketException e) {
+                processor.onError(channel.getSession(), e);
+                processor.onClose(channel.getSession());
+                close(socket);
+                break;
+            } catch (Throwable e) {
+                processor.onError(channel.getSession(), e);
             }
         }
     }

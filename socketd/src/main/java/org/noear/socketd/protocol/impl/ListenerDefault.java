@@ -41,7 +41,7 @@ public class ListenerDefault implements Listener {
     @Override
     public void onError(Session session, Throwable error) {
         if (log.isTraceEnabled()) {
-            log.trace("Session onError: {}", session.getSessionId());
+            log.trace("Session onError: {}", session.getSessionId(), error);
         }
     }
 }

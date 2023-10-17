@@ -2,11 +2,9 @@ package labs;
 
 import org.noear.socketd.broker.bio.BioBroker;
 import org.noear.socketd.client.ClientConfig;
-import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.protocol.Payload;
 import org.noear.socketd.protocol.Session;
-import org.noear.socketd.server.Server;
-import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.protocol.impl.ListenerDefault;
 import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
@@ -22,13 +20,22 @@ public class ClientTest {
         //client
         ClientConfig clientConfig = new ClientConfig();
         Session session = broker.createClient(clientConfig)
-                .url("emp:ws://localhost:6329/path?u=a&p=2")
-                .listen(null) //如果要监听，加一下
+                .url("tcp://localhost:6329/path?u=a&p=2")
+                .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .autoReconnect(true) //自动重链
                 .open();
         session.send(new Payload(Utils.guid(), "/user/created", "", "hi".getBytes()));
+
+        while (true){
+            Thread.sleep(1000);
+            session.send(new Payload(Utils.guid(), "/user/updated", "", "hi".getBytes()));
+        }
         //Payload response = session.sendAndRequest(null);
         //session.sendAndSubscribe(null, null);
+    }
+
+    public static class ClientListener extends ListenerDefault {
+
     }
 }

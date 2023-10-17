@@ -51,10 +51,10 @@ public class BioConnector implements ClientConnector {
         SocketAddress socketAddress = new InetSocketAddress(client.uri().getHost(), client.uri().getPort());
 
 
-        if (client.sslContext() == null) {
+        if (client.clientConfig.getSslContext() == null) {
             socket = new Socket();
         } else {
-            socket = client.sslContext().getSocketFactory().createSocket();
+            socket = client.clientConfig.getSslContext().getSocketFactory().createSocket();
         }
 
         if (client.clientConfig.getReadTimeout() > 0) {

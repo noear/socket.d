@@ -17,7 +17,6 @@ public abstract class ClientBase implements Client {
     protected URI uri;
     protected boolean autoReconnect;
     protected Listener listener;
-    protected SSLContext sslContext;
     protected HeartbeatHandler heartbeatHandler;
 
     public URI uri(){
@@ -43,16 +42,6 @@ public abstract class ClientBase implements Client {
 
     public boolean autoReconnect(){
         return autoReconnect;
-    }
-
-    @Override
-    public Client sslContext(SSLContext sslContext) {
-        this.sslContext = sslContext;
-        return this;
-    }
-
-    public SSLContext sslContext(){
-        return sslContext;
     }
 
     @Override

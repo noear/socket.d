@@ -1,5 +1,7 @@
 package org.noear.socketd.client;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * 客记端配置（单位：毫秒）
  *
@@ -8,6 +10,7 @@ package org.noear.socketd.client;
  */
 public class ClientConfig {
     protected int connectTimeout;
+    protected SSLContext sslContext;
 
     protected int  heartbeatInterval;
 
@@ -25,6 +28,10 @@ public class ClientConfig {
 
     public int getConnectTimeout() {
         return connectTimeout;
+    }
+
+    public SSLContext getSslContext() {
+        return sslContext;
     }
 
     public int getHeartbeatInterval() {

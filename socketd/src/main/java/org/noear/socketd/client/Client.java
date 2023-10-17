@@ -4,7 +4,6 @@ import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.protocol.Session;
 
-import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -24,11 +23,6 @@ public interface Client {
      * 自动重链
      */
     Client autoReconnect(boolean enable);
-
-    /**
-     * ssl
-     */
-    Client sslContext(SSLContext sslContext);
 
     /**
      * 心跳

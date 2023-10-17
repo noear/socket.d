@@ -1,5 +1,7 @@
 package org.noear.socketd.server;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * 服务端属性（单位：毫秒）
  *
@@ -9,6 +11,8 @@ package org.noear.socketd.server;
 public class ServerConfig {
     protected String host;
     protected int port;
+
+    protected SSLContext sslContext;
 
     protected int coreThreads;
     protected int maxThreads;
@@ -36,6 +40,10 @@ public class ServerConfig {
 
     public String getHost() {
         return host;
+    }
+
+    public SSLContext getSslContext() {
+        return sslContext;
     }
 
     public int getCoreThreads() {

@@ -19,8 +19,8 @@ public class Payload {
         this("", "", header, new byte[]{});
     }
 
-    public Payload(String routeDescriptor, String header) {
-        this("", routeDescriptor, header, new byte[]{});
+    public Payload(String key, String routeDescriptor, String header) {
+        this(key, routeDescriptor, header, new byte[]{});
     }
 
     public Payload(String key, String routeDescriptor, String header, byte[] body) {
@@ -51,8 +51,9 @@ public class Payload {
         return header;
     }
 
-    Map<String,String> headerMap;
-    public Map<String,String> getHeaderMap() {
+    Map<String, String> headerMap;
+
+    public Map<String, String> getHeaderMap() {
         if (header == null) {
             return null;
         }
@@ -75,5 +76,14 @@ public class Payload {
      */
     public byte[] getBody() {
         return body;
+    }
+
+    @Override
+    public String toString() {
+        return "Payload{" +
+                "key='" + key + '\'' +
+                ", routeDescriptor='" + routeDescriptor + '\'' +
+                ", header='" + header + '\'' +
+                '}';
     }
 }

@@ -10,7 +10,12 @@ import java.io.IOException;
  */
 public interface Processor extends Listener {
     /**
+     * 设置监听
+     */
+    void setListener(Listener listener);
+
+    /**
      * 接收时
-     * */
+     */
     void onReceive(Channel channel, Frame frame) throws IOException;
 }

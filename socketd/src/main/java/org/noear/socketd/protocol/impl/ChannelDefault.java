@@ -24,11 +24,17 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         this.outputTarget = outputTarget;
     }
 
+    /**
+     * 发送
+     */
     @Override
     public void send(Frame frame) throws IOException {
         outputTarget.write(source, frame);
     }
 
+    /**
+     * 获取会话
+     */
     @Override
     public Session getSession() {
         if (session == null) {
@@ -38,6 +44,9 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         return session;
     }
 
+    /**
+     * 关闭
+     */
     @Override
     public void close() throws IOException {
         sourceCloseable.close();

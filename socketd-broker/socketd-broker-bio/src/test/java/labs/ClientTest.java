@@ -14,21 +14,15 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class Test {
+public class ClientTest {
     public static void main(String[] args) throws Exception {
         BioBroker broker = new BioBroker();
-
-        //server
-        ServerConfig serverConfig = new ServerConfig();
-        Server server = broker.createServer(serverConfig);
-        server.listen(new ServerListener());
-        server.start();
 
         //client
         ClientConfig clientConfig = new ClientConfig();
         Session session = broker.createClient(clientConfig)
                 .url("emp:ws://192.169.0.3/path?u=a&p=2")
-                .listen(null) //如果要监听，加一下
+                .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .autoReconnect(true) //自动重链
                 .open();
@@ -37,7 +31,7 @@ public class Test {
         session.sendAndSubscribe(null, null);
     }
 
-    public static class ServerListener implements Listener {
+    public static class ClientListener implements Listener {
 
         @Override
         public void onOpen(Session session) {

@@ -6,6 +6,7 @@ import org.noear.socketd.utils.RunUtils;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * 客户端通道
@@ -17,6 +18,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     private ClientConnector connector;
     private Channel real;
     private HeartbeatHandler heartbeatHandler;
+    private ScheduledFuture<?> scheduledFuture;
 
     public ClientChannel(Channel real, ClientConnector connector) {
         this.real = real;
@@ -27,7 +29,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             heartbeatHandler = new HeartbeatHandlerDefault();
         }
 
-        RunUtils.delayAndRepeat(() -> {
+        scheduledFuture = RunUtils.delayAndRepeat(() -> {
             heartbeatHandle();
         }, connector.getHeartbeatInterval());
     }
@@ -69,7 +71,9 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     @Override
     public void close() throws IOException {
-        real.close();
+        RunUtils.runAnTry(() -> scheduledFuture.cancel(true));
+        RunUtils.runAnTry(() -> connector.close());
+        RunUtils.runAnTry(() -> real.close());
     }
 
     /**
@@ -94,7 +98,6 @@ public class ClientChannel extends ChannelBase implements Channel {
             }
         }
     }
-
 
 
     /**

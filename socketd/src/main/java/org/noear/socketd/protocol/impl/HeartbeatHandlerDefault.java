@@ -4,13 +4,15 @@ import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.Session;
 
 /**
- * 心跳默认处理
+ * 默认心跳处理
  *
  * @author noear
  * @since 2.0
  */
 public class HeartbeatHandlerDefault implements HeartbeatHandler {
-
+    /**
+     * 心跳处理
+     * */
     @Override
     public void heartbeatHandle(Session session) {
         try {

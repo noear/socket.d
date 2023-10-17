@@ -26,8 +26,13 @@ public interface Session {
     <T> void setAttachment(Class<T> key, T value);
 
     /**
+     * 获取会话Id
+     */
+    String getSessionId();
+
+    /**
      * 发送 Ping
-     * */
+     */
     void sendPing() throws IOException;
 
     /**
@@ -47,6 +52,6 @@ public interface Session {
 
     /**
      * 答复
-     * */
+     */
     void reply(Payload from, Payload message) throws IOException;
 }

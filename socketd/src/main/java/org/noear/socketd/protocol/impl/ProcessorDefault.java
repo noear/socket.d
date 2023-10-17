@@ -11,10 +11,14 @@ import java.io.IOException;
  * @since 2.0
  */
 public class ProcessorDefault implements Processor {
-    private Listener listener;
+    private Listener listener = new ListenerDefault();
 
-    public ProcessorDefault(Listener listener) {
-        this.listener = listener;
+
+    @Override
+    public void setListener(Listener listener) {
+        if (listener != null) {
+            this.listener = listener;
+        }
     }
 
     public void onReceive(Channel channel, Frame frame) throws IOException {

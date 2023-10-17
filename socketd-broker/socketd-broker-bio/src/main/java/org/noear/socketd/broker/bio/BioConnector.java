@@ -37,7 +37,7 @@ public class BioConnector implements ClientConnector {
     }
 
     @Override
-    public int getHeartbeatInterval() {
+    public long getHeartbeatInterval() {
         return client.clientConfig.getHeartbeatInterval();
     }
 
@@ -58,11 +58,11 @@ public class BioConnector implements ClientConnector {
         }
 
         if (client.clientConfig.getReadTimeout() > 0) {
-            socket.setSoTimeout(client.clientConfig.getReadTimeout());
+            socket.setSoTimeout((int) client.clientConfig.getReadTimeout());
         }
 
         if (client.clientConfig.getConnectTimeout() > 0) {
-            socket.connect(socketAddress, client.clientConfig.getConnectTimeout());
+            socket.connect(socketAddress, (int) client.clientConfig.getConnectTimeout());
         } else {
             socket.connect(socketAddress);
         }
@@ -126,6 +126,7 @@ public class BioConnector implements ClientConnector {
         }
 
         try {
+            socketThread.interrupt();
             socket.close();
         } catch (Throwable e) {
             log.debug("{}", e);

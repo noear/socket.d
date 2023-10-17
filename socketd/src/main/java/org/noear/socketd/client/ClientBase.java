@@ -2,8 +2,9 @@ package org.noear.socketd.client;
 
 import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.Listener;
+import org.noear.socketd.protocol.Processor;
+import org.noear.socketd.protocol.impl.ProcessorDefault;
 
-import javax.net.ssl.SSLContext;
 import java.net.URI;
 
 /**
@@ -16,14 +17,14 @@ public abstract class ClientBase implements Client {
     protected String url;
     protected URI uri;
     protected boolean autoReconnect;
-    protected Listener listener;
+    protected Processor processor = new ProcessorDefault();
     protected HeartbeatHandler heartbeatHandler;
 
-    public URI uri(){
+    public URI uri() {
         return uri;
     }
 
-    public String url(){
+    public String url() {
         return url;
     }
 
@@ -40,7 +41,7 @@ public abstract class ClientBase implements Client {
         return this;
     }
 
-    public boolean autoReconnect(){
+    public boolean autoReconnect() {
         return autoReconnect;
     }
 
@@ -50,17 +51,13 @@ public abstract class ClientBase implements Client {
         return this;
     }
 
-    public HeartbeatHandler heartbeatHandler(){
+    public HeartbeatHandler heartbeatHandler() {
         return heartbeatHandler;
     }
 
     @Override
     public Client listen(Listener listener) {
-        this.listener = listener;
+        processor.setListener(listener);
         return this;
-    }
-
-    public Listener listener(){
-        return listener;
     }
 }

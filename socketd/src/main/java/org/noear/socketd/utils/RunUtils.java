@@ -61,6 +61,14 @@ public class RunUtils {
         }
     }
 
+    public static void runAnTry(RunnableEx task){
+        try {
+            task.run();
+        } catch (Throwable e) {
+            //略...
+        }
+    }
+
 
     /**
      * 异步执行

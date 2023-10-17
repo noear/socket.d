@@ -1,7 +1,5 @@
 package org.noear.socketd.protocol;
 
-import org.noear.socketd.protocol.impl.FrameFactory;
-
 import java.io.IOException;
 
 /**
@@ -28,21 +26,21 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public void sendConnect(String uri) throws IOException {
-        send(FrameFactory.connectFrame(uri));
+        send(Frames.connectFrame(uri));
     }
 
     @Override
     public void sendConnack() throws IOException {
-        send(FrameFactory.connackFrame());
+        send(Frames.connackFrame());
     }
 
     @Override
     public void sendPing() throws IOException {
-        send(FrameFactory.pingFrame());
+        send(Frames.pingFrame());
     }
 
     @Override
     public void sendPong() throws IOException {
-        send(FrameFactory.pongFrame());
+        send(Frames.pongFrame());
     }
 }

@@ -1,5 +1,7 @@
 package org.noear.socketd.protocol;
 
+import org.noear.socketd.utils.Utils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,5 +37,16 @@ public abstract class SessionBase implements Session {
             attachments = new HashMap<>();
         }
         attachments.put(key, value);
+    }
+
+    private String sessionId;
+
+    @Override
+    public String getSessionId() {
+        if (sessionId == null) {
+            sessionId = Utils.guid();
+        }
+
+        return sessionId;
     }
 }

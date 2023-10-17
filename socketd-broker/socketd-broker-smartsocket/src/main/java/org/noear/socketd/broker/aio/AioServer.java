@@ -2,10 +2,8 @@ package org.noear.socketd.broker.aio;
 
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.protocol.Processor;
-import org.noear.socketd.protocol.impl.ProcessorDefault;
 import org.noear.socketd.server.Server;
+import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,22 +18,16 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class AioServer implements Server, MessageProcessor<Frame> {
+public class AioServer extends ServerBase implements Server, MessageProcessor<Frame> {
     private static final Logger log = LoggerFactory.getLogger(AioServer.class);
 
     private AioQuickServer server;
     private ServerConfig serverConfig;
-    private Processor processor;
     private AioExchanger exchanger;
 
     public AioServer(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
         this.exchanger = new AioExchanger();
-    }
-
-    @Override
-    public void listen(Listener listener) {
-        processor = new ProcessorDefault(listener);
     }
 
     @Override

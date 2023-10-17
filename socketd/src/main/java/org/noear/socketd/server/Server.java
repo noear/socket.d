@@ -13,6 +13,10 @@ import java.io.IOException;
  */
 public interface Server {
     /**
+     * 处理
+     * */
+    void process(Processor processor);
+    /**
      * 监听
      */
     void listen(Listener listener);

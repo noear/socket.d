@@ -1,18 +1,15 @@
-package org.noear.socketd.protocol.impl;
+package org.noear.socketd.protocol;
 
-import org.noear.socketd.protocol.Constants;
-import org.noear.socketd.protocol.Flag;
-import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.Payload;
+import org.noear.socketd.utils.Utils;
 
 /**
  * 帧工厂
  * @author noear
  * @since 2.0
  * */
-public class FrameFactory {
+public class Frames {
     public static final Frame connectFrame(String uri) {
-        return new Frame(Flag.Connect, new Payload(uri, Constants.HEARDER_CONNECT));
+        return new Frame(Flag.Connect, new Payload(Utils.guid(), uri, Constants.HEARDER_CONNECT));
     }
 
     public static final Frame connackFrame() {

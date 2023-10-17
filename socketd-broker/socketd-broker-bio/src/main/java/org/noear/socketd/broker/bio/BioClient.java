@@ -28,7 +28,7 @@ public class BioClient extends ClientBase implements Client {
     private Thread clientThread;
 
     private Processor processor;
-    private Exchanger<Socket> exchanger;
+    private BioExchanger exchanger;
 
     public BioClient(ClientConfig clientConfig) {
         this.clientConfig = clientConfig;

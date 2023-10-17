@@ -27,7 +27,7 @@ public class BioServer implements Server {
     private ExecutorService serverExecutor;
 
     private Processor processor;
-    private Exchanger<Socket> exchanger;
+    private BioExchanger exchanger;
 
     public BioServer(ServerConfig config) {
         this.serverConfig = config;

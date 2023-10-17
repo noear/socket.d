@@ -13,14 +13,14 @@ import java.util.Map;
  */
 public class ChannelDefault<S extends Closeable> implements Channel {
     private S source;
-    private Exchanger<S> exchanger;
+    private OutputTarget<S> outputTarget;
     private Map<Class<?>, Object> attachments;
     private Handshaker handshaker;
     private Session session;
 
-    public ChannelDefault(S source, Exchanger<S> exchanger) {
+    public ChannelDefault(S source, OutputTarget<S> outputTarget) {
         this.source = source;
-        this.exchanger = exchanger;
+        this.outputTarget = outputTarget;
         this.attachments = new HashMap<>();
     }
 
@@ -62,7 +62,7 @@ public class ChannelDefault<S extends Closeable> implements Channel {
 
     @Override
     public void send(Frame frame) throws IOException {
-        exchanger.write(source, frame);
+        outputTarget.write(source, frame);
     }
 
     @Override

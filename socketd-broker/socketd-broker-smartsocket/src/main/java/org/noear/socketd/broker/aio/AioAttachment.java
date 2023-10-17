@@ -1,6 +1,7 @@
 package org.noear.socketd.broker.aio;
 
-import org.noear.socketd.protocol.Session;
+import org.noear.socketd.broker.aio.util.FixedLengthFrameDecoder;
+import org.noear.socketd.protocol.Channel;
 import org.smartboot.socket.transport.AioSession;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class AioAttachment extends HashMap<Class<?>,Object> {
         return tmp;
     }
 
-    public static Session getSession(AioSession aioSession) {
+    public static Channel getChannel(AioSession aioSession, AioExchanger exchanger){
         return null;
     }
 

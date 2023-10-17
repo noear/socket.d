@@ -1,6 +1,6 @@
 package org.noear.socketd.broker.bio;
 
-import org.noear.socketd.protocol.Exchanger;
+import org.noear.socketd.protocol.OutputTarget;
 import org.noear.socketd.protocol.CodecByteBuffer;
 import org.noear.socketd.protocol.Frame;
 
@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class BioExchanger implements Exchanger<Socket> {
+public class BioExchanger implements OutputTarget<Socket> {
     CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override
@@ -24,7 +24,6 @@ public class BioExchanger implements Exchanger<Socket> {
        output.flush();
     }
 
-    @Override
     public Frame read(Socket source) throws IOException {
         InputStream input = source.getInputStream();
         if (input == null) {

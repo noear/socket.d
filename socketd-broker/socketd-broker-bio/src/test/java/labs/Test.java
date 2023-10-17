@@ -33,7 +33,7 @@ public class Test {
                 .autoReconnect(true) //自动重链
                 .open();
         session.send(null);
-        session.sendAndRequest(null);
+        Payload response = session.sendAndRequest(null);
         session.sendAndSubscribe(null, null);
     }
 

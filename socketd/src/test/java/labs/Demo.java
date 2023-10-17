@@ -1,6 +1,7 @@
 package labs;
 
 import org.noear.socketd.client.ClientConfig;
+import org.noear.socketd.protocol.Payload;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.client.Client;
@@ -28,7 +29,7 @@ public class Demo {
                 .autoReconnect(true) //自动重链
                 .open();
         session.send(null);
-        session.sendAndRequest(null);
+        Payload response = session.sendAndRequest(null);
         session.sendAndSubscribe(null, null);
     }
 }

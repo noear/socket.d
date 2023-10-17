@@ -18,7 +18,8 @@ public class AioExchanger implements OutputTarget<AioSession>, Protocol<Frame> {
     CodecByteBuffer codec = new CodecByteBuffer();
     @Override
     public void write(AioSession source, Frame frame) throws IOException {
-
+        ByteBuffer buf = codec.encode(frame);
+        source.writeBuffer().writeAndFlush(buf.array());
     }
 
     @Override

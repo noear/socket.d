@@ -60,7 +60,7 @@ public class BioServer implements Server {
                     Socket socket = server.accept();
 
                     try {
-                        Channel channel = new ChannelDefault<>(socket, exchanger);
+                        Channel channel = new ChannelDefault<>(socket, socket::close, exchanger);
 
                         serverExecutor.submit(() -> {
                             receive(channel, socket);

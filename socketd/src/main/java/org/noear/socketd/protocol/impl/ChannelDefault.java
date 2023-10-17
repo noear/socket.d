@@ -11,15 +11,17 @@ import java.util.Map;
  * @author noear
  * @since 2.0
  */
-public class ChannelDefault<S extends Closeable> implements Channel {
+public class ChannelDefault<S> implements Channel {
     private S source;
+    private Closeable sourceCloseable;
     private OutputTarget<S> outputTarget;
     private Map<Class<?>, Object> attachments;
     private Handshaker handshaker;
     private Session session;
 
-    public ChannelDefault(S source, OutputTarget<S> outputTarget) {
+    public ChannelDefault(S source, Closeable sourceCloseable, OutputTarget<S> outputTarget) {
         this.source = source;
+        this.sourceCloseable = sourceCloseable;
         this.outputTarget = outputTarget;
         this.attachments = new HashMap<>();
     }
@@ -81,6 +83,6 @@ public class ChannelDefault<S extends Closeable> implements Channel {
 
     @Override
     public void close() throws IOException {
-        source.close();
+        sourceCloseable.close();
     }
 }

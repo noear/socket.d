@@ -64,7 +64,7 @@ public class BioClient extends ClientBase implements Client {
 
         CompletableFuture<Session> future = new CompletableFuture<>();
         try {
-            Channel channel = new ChannelDefault<>(socket, exchanger);
+            Channel channel = new ChannelDefault<>(socket, socket::close, exchanger);
 
             clientThread = new Thread(() -> {
                 try {

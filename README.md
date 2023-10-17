@@ -6,6 +6,10 @@
 [len:int][flag:int][key:str][\n][routeDescriptor:str][\n][header:str][\n][body:byte..]
 ```
 
+适用场景：
+
+简单消息协议。可用于消息通讯、RPC、IM、MQ，及一些长链接的场景
+
 链接示例:
 
 * smp:tcp://19.10.2.3:9812/path?a=1&b=1

@@ -3,6 +3,8 @@ package org.noear.socketd.protocol;
 import java.util.Map;
 
 /**
+ * 握手信息
+ *
  * @author noear
  * @since 2.0
  */
@@ -20,13 +22,19 @@ public class Handshaker {
     }
 
     /**
+     * 地址
+     *
      * @return tcp://192.168.0.1/path?user=1&path=2
      */
     public String getUri() {
         return uri;
     }
 
-    //::[http,ws] ; [tcp,sd]; [tcp,http,ws,sd]
+    /**
+     * 协议
+     *
+     * @return [http,ws] ; [tcp,sd]; [tcp,http,ws,sd]
+     * */
     public String[] getProtocols() {
         if (protocols == null) {
             return null;
@@ -35,6 +43,9 @@ public class Handshaker {
         }
     }
 
+    /**
+     * 版本
+     * */
     public String getVersion() {
         return version;
     }

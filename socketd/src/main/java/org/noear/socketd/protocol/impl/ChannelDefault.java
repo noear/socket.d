@@ -6,6 +6,8 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
+ * 通道默认实现
+ *
  * @author noear
  * @since 2.0
  */

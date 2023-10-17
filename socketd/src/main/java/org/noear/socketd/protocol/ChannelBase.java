@@ -5,7 +5,10 @@ import org.noear.socketd.protocol.impl.FrameFactory;
 import java.io.IOException;
 
 /**
- * @author noear 2023/10/17 created
+ * 通道基类
+ *
+ * @author noear
+ * @since 2.0
  */
 public abstract class ChannelBase implements Channel {
 

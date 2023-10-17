@@ -1,7 +1,10 @@
 package org.noear.socketd.protocol;
 
 /**
- * @author noear 2023/10/14 created
+ * 常量
+ *
+ * @author noear
+ * @since 2.0
  */
 public class Constants {
     public static final String HEARDER_SOCKETD_VERSION = "SocketD-Version";

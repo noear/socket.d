@@ -5,7 +5,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author noear 2023/10/14 created
+ * 编解码器（基于 ByteBuffer 编解）
+ *
+ * @author noear
+ * @since 2.0
  */
 public class CodecByteBuffer implements Codec<ByteBuffer>{
 

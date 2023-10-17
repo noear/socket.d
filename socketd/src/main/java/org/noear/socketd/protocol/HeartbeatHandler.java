@@ -1,7 +1,5 @@
 package org.noear.socketd.protocol;
 
-import java.io.IOException;
-
 /**
  * 心跳处理
  *
@@ -9,5 +7,5 @@ import java.io.IOException;
  * @since 2.0
  */
 public interface HeartbeatHandler {
-    void handle(Session session) throws IOException;
+    void heartbeatHandle(Session session);
 }

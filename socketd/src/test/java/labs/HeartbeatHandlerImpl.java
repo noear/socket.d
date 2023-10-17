@@ -9,8 +9,9 @@ import java.io.IOException;
  * @author noear 2023/10/16 created
  */
 public class HeartbeatHandlerImpl implements HeartbeatHandler {
+
     @Override
-    public void handle(Session session) throws IOException {
+    public void heartbeatHandle(Session session) {
 
     }
 }

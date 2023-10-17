@@ -1,7 +1,7 @@
 package org.noear.socketd.server;
 
 /**
- * 服务端属性
+ * 服务端属性（单位：毫秒）
  *
  * @author noear
  * @since 2.0

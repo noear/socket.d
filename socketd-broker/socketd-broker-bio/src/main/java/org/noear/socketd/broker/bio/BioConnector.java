@@ -4,6 +4,7 @@ import org.noear.socketd.client.ClientConnector;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
+import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,16 @@ public class BioConnector implements ClientConnector {
 
     public BioConnector(BioClient client) {
         this.client = client;
+    }
+
+    @Override
+    public HeartbeatHandler heartbeatHandler() {
+        return client.heartbeatHandler();
+    }
+
+    @Override
+    public int getHeartbeatInterval() {
+        return client.clientConfig.getHeartbeatInterval();
     }
 
     @Override

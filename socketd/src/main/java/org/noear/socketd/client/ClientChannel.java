@@ -1,6 +1,8 @@
 package org.noear.socketd.client;
 
 import org.noear.socketd.protocol.*;
+import org.noear.socketd.protocol.impl.HeartbeatHandlerDefault;
+import org.noear.socketd.utils.RunUtils;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -11,13 +13,23 @@ import java.net.SocketException;
  * @author noear
  * @since 2.0
  */
-public class ClientChannel extends ChannelBase implements Channel {
+public class ClientChannel extends ChannelBase implements Channel, HeartbeatHandler {
     private ClientConnector connector;
     private Channel real;
+    private HeartbeatHandler heartbeatHandler;
 
     public ClientChannel(Channel real, ClientConnector connector) {
         this.real = real;
         this.connector = connector;
+        this.heartbeatHandler = connector.heartbeatHandler();
+
+        if (heartbeatHandler == null) {
+            heartbeatHandler = new HeartbeatHandlerDefault();
+        }
+
+        RunUtils.delayAndRepeat(() -> {
+            heartbeatHandle(null);
+        }, connector.getHeartbeatInterval());
     }
 
     /**
@@ -63,5 +75,26 @@ public class ClientChannel extends ChannelBase implements Channel {
     @Override
     public void close() throws IOException {
         real.close();
+    }
+
+    @Override
+    public void heartbeatHandle(Session session) {
+        synchronized (this) {
+            try {
+                prepareSend();
+
+                heartbeatHandle(getSession());
+            } catch (SocketException e) {
+                if (connector.autoReconnect()) {
+                    real = null;
+                }
+
+                throw new RuntimeException(e);
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

@@ -1,13 +1,15 @@
 package org.noear.socketd.client;
 
 /**
- * 客记端配置
+ * 客记端配置（单位：毫秒）
  *
  * @author noear
  * @since 2.0
  */
 public class ClientConfig {
-    private int connectTimeout;
+    protected int connectTimeout;
+
+    protected int  heartbeatInterval;
 
     protected int readTimeout;
     protected int readBufferSize;
@@ -16,12 +18,17 @@ public class ClientConfig {
 
     public ClientConfig() {
         connectTimeout = 3000;
+        heartbeatInterval = 20 * 1000;
         readTimeout = 3000;
         writeTimeout = 3000;
     }
 
     public int getConnectTimeout() {
         return connectTimeout;
+    }
+
+    public int getHeartbeatInterval() {
+        return heartbeatInterval;
     }
 
     public int getReadTimeout() {
@@ -39,4 +46,6 @@ public class ClientConfig {
     public int getWriteBufferSize() {
         return writeBufferSize;
     }
+
+
 }

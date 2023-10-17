@@ -6,7 +6,7 @@ import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.Payload;
 
 /**
- *
+ * 帧工厂
  * @author noear
  * @since 2.0
  * */

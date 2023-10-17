@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.SocketException;
 
 /**
+ * 客户端通道
+ *
  * @author noear
  * @since 2.0
  */

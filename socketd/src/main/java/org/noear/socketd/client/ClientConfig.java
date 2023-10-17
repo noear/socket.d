@@ -1,12 +1,18 @@
 package org.noear.socketd.client;
 
 /**
- * @author noear 2023/10/17 created
+ * 客记端配置
+ *
+ * @author noear
+ * @since 2.0
  */
 public class ClientConfig {
     private int connectTimeout;
-    private int readTimeout;
-    private int writeTimeout;
+
+    protected int readTimeout;
+    protected int readBufferSize;
+    protected int writeTimeout;
+    protected int writeBufferSize;
 
     public ClientConfig() {
         connectTimeout = 3000;
@@ -22,7 +28,15 @@ public class ClientConfig {
         return readTimeout;
     }
 
+    public int getReadBufferSize() {
+        return readBufferSize;
+    }
+
     public int getWriteTimeout() {
         return writeTimeout;
+    }
+
+    public int getWriteBufferSize() {
+        return writeBufferSize;
     }
 }

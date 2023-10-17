@@ -11,18 +11,37 @@ import java.io.IOException;
  */
 public interface Channel extends Closeable {
     void setHandshaker(Handshaker handshaker);
+
     /**
      * 获取握手信息
      */
     Handshaker getHandshaker();
 
 
+    /**
+     * 发送连接（握手）
+     */
     void sendConnect(String uri) throws IOException;
-    void sendConnack() throws IOException;
-    void sendPing() throws IOException;
-    void sendPong() throws IOException;
-    void send(Frame frame) throws IOException;
 
+    /**
+     * 发送连接确认（握手）
+     */
+    void sendConnack() throws IOException;
+
+    /**
+     * 发送 Ping（心跳）
+     */
+    void sendPing() throws IOException;
+
+    /**
+     * 发送 Pong（心跳）
+     */
+    void sendPong() throws IOException;
+
+    /**
+     * 发送
+     */
+    void send(Frame frame) throws IOException;
 
     /**
      * 获取会话

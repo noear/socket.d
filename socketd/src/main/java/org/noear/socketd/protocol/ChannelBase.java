@@ -13,6 +13,7 @@ import java.io.IOException;
 public abstract class ChannelBase implements Channel {
 
     private Handshaker handshaker;
+    //
     @Override
     public void setHandshaker(Handshaker handshaker) {
         this.handshaker = handshaker;

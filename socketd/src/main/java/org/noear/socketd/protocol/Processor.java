@@ -9,5 +9,8 @@ import java.io.IOException;
  * @since 2.0
  */
 public interface Processor extends Listener {
+    /**
+     * 接收时
+     * */
     void onReceive(Channel channel, Frame frame) throws IOException;
 }

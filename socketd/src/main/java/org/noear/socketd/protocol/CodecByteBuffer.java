@@ -10,15 +10,18 @@ import java.nio.charset.StandardCharsets;
  * @author noear
  * @since 2.0
  */
-public class CodecByteBuffer implements Codec<ByteBuffer>{
+public class CodecByteBuffer implements Codec<ByteBuffer> {
 
     private Charset charset = StandardCharsets.UTF_8;
 
+    /**
+     * 编码
+     */
     @Override
     public ByteBuffer encode(Frame frame) {
         if (frame.getPayload() == null) {
             //length (flag + int.bytes)
-            int len =  4 + 4;
+            int len = 4 + 4;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -70,6 +73,9 @@ public class CodecByteBuffer implements Codec<ByteBuffer>{
         }
     }
 
+    /**
+     * 解码
+     */
     @Override
     public Frame decode(ByteBuffer buffer) {
         int len0 = buffer.getInt();

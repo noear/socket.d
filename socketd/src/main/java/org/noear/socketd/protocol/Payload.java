@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * 负载
+ *
  * @author noear
  * @since 2.0
  */

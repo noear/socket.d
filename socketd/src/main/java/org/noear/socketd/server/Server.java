@@ -12,9 +12,18 @@ import java.io.IOException;
  * @since 2.0
  */
 public interface Server {
+    /**
+     * 监听
+     */
     void listen(Listener listener);
 
+    /**
+     * 启动
+     */
     void start() throws IOException;
 
+    /**
+     * 停止
+     */
     void stop() throws IOException;
 }

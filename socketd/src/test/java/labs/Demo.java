@@ -11,7 +11,7 @@ import org.noear.socketd.server.ServerConfig;
  * @author noear 2023/10/12 created
  */
 public class Demo {
-    public void demo() throws Throwable {
+    public void main(String[] args) throws Throwable {
         Broker broker = Broker.getInstance();
 
         ServerConfig serverConfig = null;

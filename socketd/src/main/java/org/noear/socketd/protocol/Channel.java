@@ -10,9 +10,12 @@ import java.io.IOException;
  * @since 2.0
  */
 public interface Channel extends Closeable {
-    <T> T getAttachment(Class<T> key);
-    <T> void setAttachment(Class<T> key, T value);
     void setHandshaker(Handshaker handshaker);
+    /**
+     * 获取握手信息
+     */
+    Handshaker getHandshaker();
+
 
     void sendConnect(String uri) throws IOException;
     void sendConnack() throws IOException;
@@ -20,10 +23,6 @@ public interface Channel extends Closeable {
     void sendPong() throws IOException;
     void send(Frame frame) throws IOException;
 
-    /**
-     * 获取握手信息
-     */
-    Handshaker getHandshaker();
 
     /**
      * 获取会话

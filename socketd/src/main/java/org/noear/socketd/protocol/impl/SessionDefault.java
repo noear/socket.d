@@ -6,24 +6,16 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
+ * 服务端会话
+ *
  * @author noear
  * @since 2.0
  */
-public class SessionDefault implements Session {
+public class SessionDefault extends SessionBase implements Session {
     private Channel channel;
 
     public SessionDefault(Channel channel) {
         this.channel = channel;
-    }
-
-    @Override
-    public <T> T getAttachment(Class<T> key) {
-        return (T) channel.getAttachment(key);
-    }
-
-    @Override
-    public <T> void setAttachment(Class<T> key, T value) {
-        channel.setAttachment(key, value);
     }
 
     @Override

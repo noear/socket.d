@@ -18,10 +18,12 @@ public abstract class ClientBase implements Client {
     protected SSLContext sslContext;
     protected HeartbeatHandler heartbeatHandler;
 
-
-    @Override
-    public URI uri() {
+    public URI uri(){
         return uri;
+    }
+
+    public String url(){
+        return url;
     }
 
     @Override
@@ -32,31 +34,42 @@ public abstract class ClientBase implements Client {
     }
 
     @Override
-    public boolean autoReconnect() {
-        return autoReconnect;
-    }
-
-    @Override
     public Client autoReconnect(boolean enable) {
         this.autoReconnect = enable;
         return this;
     }
 
+    public boolean autoReconnect(){
+        return autoReconnect;
+    }
+
     @Override
-    public Client ssl(SSLContext sslContext) {
+    public Client sslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
         return this;
     }
 
+    public SSLContext sslContext(){
+        return sslContext;
+    }
+
     @Override
-    public Client heartbeat(HeartbeatHandler handler) {
+    public Client heartbeatHandler(HeartbeatHandler handler) {
         this.heartbeatHandler = handler;
         return this;
+    }
+
+    public HeartbeatHandler heartbeatHandler(){
+        return heartbeatHandler;
     }
 
     @Override
     public Client listen(Listener listener) {
         this.listener = listener;
         return this;
+    }
+
+    public Listener listener(){
+        return listener;
     }
 }

@@ -1,13 +1,10 @@
 package org.noear.socketd.broker.bio;
 
-import org.noear.socketd.client.ClientBase;
-import org.noear.socketd.client.ClientConfig;
+import org.noear.socketd.client.*;
 import org.noear.socketd.protocol.*;
-import org.noear.socketd.client.Client;
 import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.noear.socketd.protocol.impl.ProcessorDefault;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.noear.socketd.protocol.impl.SessionDefault;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,13 +19,11 @@ import java.util.concurrent.TimeoutException;
  * @since 2.0
  */
 public class BioClient extends ClientBase implements Client {
-    private static final Logger log = LoggerFactory.getLogger(BioClient.class);
 
-    private ClientConfig clientConfig;
-    private Thread clientThread;
+    protected ClientConfig clientConfig;
 
-    private Processor processor;
-    private BioExchanger exchanger;
+    protected Processor processor;
+    protected BioExchanger exchanger;
 
     public BioClient(ClientConfig clientConfig) {
         this.clientConfig = clientConfig;
@@ -43,82 +38,8 @@ public class BioClient extends ClientBase implements Client {
 
     @Override
     public Session open() throws IOException, TimeoutException {
-        SocketAddress socketAddress = new InetSocketAddress(uri.getHost(), uri.getPort());
-        Socket socket;
-
-        if (sslContext == null) {
-            socket = new Socket();
-        } else {
-            socket = sslContext.getSocketFactory().createSocket();
-        }
-
-        if (clientConfig.getReadTimeout() > 0) {
-            socket.setSoTimeout(clientConfig.getReadTimeout());
-        }
-
-        if (clientConfig.getConnectTimeout() > 0) {
-            socket.connect(socketAddress, clientConfig.getConnectTimeout());
-        } else {
-            socket.connect(socketAddress);
-        }
-
-        CompletableFuture<Session> future = new CompletableFuture<>();
-        try {
-            Channel channel = new ChannelDefault<>(socket, socket::close, exchanger);
-
-            clientThread = new Thread(() -> {
-                try {
-                    receive(channel, socket, future);
-                } catch (Throwable e) {
-                    throw new IllegalStateException(e);
-                }
-            });
-
-            clientThread.start();
-
-            channel.sendConnect(url);
-        } catch (Throwable e) {
-            log.debug("{}", e);
-            close(socket);
-        }
-
-        try {
-            return future.get(clientConfig.getConnectTimeout(), TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private void receive(Channel channel, Socket socket, CompletableFuture<Session> future) {
-        while (true) {
-            try {
-                if (socket.isClosed()) {
-                    processor.onClose(channel.getSession());
-                    break;
-                }
-
-                Frame frame = exchanger.read(socket);
-                if (frame != null) {
-                    processor.onReceive(channel, frame);
-
-                    if (frame.getFlag() == Flag.Connack) {
-                        future.complete(channel.getSession());
-                    }
-                }
-            } catch (Throwable ex) {
-                processor.onError(channel.getSession(), ex);
-            }
-        }
-    }
-
-
-    private void close(Socket socket) {
-        try {
-            socket.close();
-        } catch (Throwable e) {
-            log.debug("{}", e);
-        }
+        Connector connector = new BioConnector(this);
+        Channel channel = new ClientChannel(connector.connect(), connector);
+        return new SessionDefault(channel);
     }
 }

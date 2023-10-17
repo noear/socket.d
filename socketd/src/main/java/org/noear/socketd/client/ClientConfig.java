@@ -9,14 +9,15 @@ import javax.net.ssl.SSLContext;
  * @since 2.0
  */
 public class ClientConfig {
-    protected int connectTimeout;
     protected SSLContext sslContext;
 
-    protected int  heartbeatInterval;
+    protected long heartbeatInterval;
 
-    protected int readTimeout;
+    protected long connectTimeout;
+    protected long readTimeout;
+    protected long writeTimeout;
+
     protected int readBufferSize;
-    protected int writeTimeout;
     protected int writeBufferSize;
 
     public ClientConfig() {
@@ -26,33 +27,50 @@ public class ClientConfig {
         writeTimeout = 3000;
     }
 
-    public int getConnectTimeout() {
-        return connectTimeout;
-    }
 
     public SSLContext getSslContext() {
         return sslContext;
     }
 
-    public int getHeartbeatInterval() {
+    /**
+     * 心跳间隔
+     */
+    public long getHeartbeatInterval() {
         return heartbeatInterval;
     }
 
-    public int getReadTimeout() {
+    /**
+     * 连接超时
+     */
+    public long getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * 读超时
+     */
+    public long getReadTimeout() {
         return readTimeout;
     }
 
+    /**
+     * 写超时
+     */
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    /**
+     * 读缓冲大小
+     */
     public int getReadBufferSize() {
         return readBufferSize;
     }
 
-    public int getWriteTimeout() {
-        return writeTimeout;
-    }
-
+    /**
+     * 写缓冲大小
+     */
     public int getWriteBufferSize() {
         return writeBufferSize;
     }
-
-
 }

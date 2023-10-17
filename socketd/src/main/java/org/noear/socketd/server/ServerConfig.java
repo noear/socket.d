@@ -16,28 +16,40 @@ public class ServerConfig {
 
     protected int coreThreads;
     protected int maxThreads;
-    protected int idleTimeout;
 
-    protected int readTimeout;
+    protected long idleTimeout;
+    protected long readTimeout;
+    protected long writeTimeout;
+
     protected int readBufferSize;
-    protected int writeTimeout;
     protected int writeBufferSize;
 
     public ServerConfig() {
         host = "";
         port = 6329;
+
         coreThreads = Runtime.getRuntime().availableProcessors() * 2;
         maxThreads = coreThreads * 8;
         idleTimeout = 3000;
+
         readTimeout = 3000;
         writeTimeout = 3000;
+
+        readBufferSize = 512;
+        writeBufferSize = 512;
     }
 
 
+    /**
+     * 端口
+     */
     public int getPort() {
         return port;
     }
 
+    /**
+     * 主题
+     */
     public String getHost() {
         return host;
     }
@@ -46,30 +58,51 @@ public class ServerConfig {
         return sslContext;
     }
 
+    /**
+     * 核心线程数
+     */
     public int getCoreThreads() {
         return coreThreads;
     }
 
+    /**
+     * 最大线程数
+     */
     public int getMaxThreads() {
         return maxThreads;
     }
 
-    public int getIdleTimeout() {
+    /**
+     * 空闲超时
+     */
+    public long getIdleTimeout() {
         return idleTimeout;
     }
 
-    public int getReadTimeout() {
+    /**
+     * 读超时
+     */
+    public long getReadTimeout() {
         return readTimeout;
     }
 
+    /**
+     * 写超时
+     */
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    /**
+     * 读缓冲大小
+     */
     public int getReadBufferSize() {
         return readBufferSize;
     }
 
-    public int getWriteTimeout() {
-        return writeTimeout;
-    }
-
+    /**
+     * 写缓冲大小
+     */
     public int getWriteBufferSize() {
         return writeBufferSize;
     }

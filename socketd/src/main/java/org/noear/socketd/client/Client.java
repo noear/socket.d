@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- * 客户端
+ * 客户端（用于构建配置）
  *
  * @author noear
  * @since 2.0
@@ -19,20 +19,27 @@ public interface Client {
      * 连接地址
      */
     Client url(String url);
+
     /**
      * 自动重链
-     * */
+     */
     Client autoReconnect(boolean enable);
 
+    /**
+     * ssl
+     */
     Client sslContext(SSLContext sslContext);
+
     /**
      * 心跳
-     * */
+     */
     Client heartbeatHandler(HeartbeatHandler handler);
+
     /**
      * 监听
      */
     Client listen(Listener listener);
+
     /**
      * 打开
      */

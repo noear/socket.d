@@ -7,6 +7,8 @@ import javax.net.ssl.SSLContext;
 import java.net.URI;
 
 /**
+ * 客户端基类
+ *
  * @author noear
  * @since 2.0
  */

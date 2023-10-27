@@ -21,7 +21,7 @@
 
         <slf4j.version>2.0.9</slf4j.version>
         <solon.version>2.5.10</solon.version>
-        <smartsocket.version>1.5.32</smartsocket.version>
+        <smartsocket.version>1.5.36</smartsocket.version>
     </properties>
 
     <modules>

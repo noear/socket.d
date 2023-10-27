@@ -40,12 +40,12 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 发送
      */
     @Override
-    public void send(Frame frame) throws IOException {
+    public void send(Frame frame, Acceptor acceptor) throws IOException {
         synchronized (this) {
             try {
                 prepareSend();
 
-                real.send(frame);
+                real.send(frame, acceptor);
             } catch (SocketException e) {
                 if (connector.autoReconnect()) {
                     real = null;
@@ -58,6 +58,11 @@ public class ClientChannel extends ChannelBase implements Channel {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public void retrieve(Frame frame) throws IOException {
+        real.retrieve(frame);
     }
 
     /**

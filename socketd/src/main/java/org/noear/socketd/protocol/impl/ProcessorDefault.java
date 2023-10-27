@@ -26,7 +26,7 @@ public class ProcessorDefault implements Processor {
     }
 
     public void onReceive(Channel channel, Frame frame) throws IOException {
-        if(log.isTraceEnabled()){
+        if (log.isTraceEnabled()) {
             log.trace("{}", frame.getFlag());
         }
 
@@ -73,6 +73,10 @@ public class ProcessorDefault implements Processor {
                     }
                     case Subscribe: {
                         onMessage(channel.getSession(), frame.getPayload());
+                        break;
+                    }
+                    case Reply: {
+                        channel.retrieve(frame);
                         break;
                     }
                     default: {

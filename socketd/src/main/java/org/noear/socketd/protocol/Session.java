@@ -53,5 +53,5 @@ public interface Session {
     /**
      * 答复
      */
-    void reply(Payload from, Payload message) throws IOException;
+    void reply(Payload from, byte[] content) throws IOException;
 }

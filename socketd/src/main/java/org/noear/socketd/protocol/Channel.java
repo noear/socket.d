@@ -41,7 +41,12 @@ public interface Channel extends Closeable {
     /**
      * 发送
      */
-    void send(Frame frame) throws IOException;
+    void send(Frame frame, Acceptor acceptor) throws IOException;
+
+    /**
+     * 收回
+     * */
+    void retrieve(Frame frame) throws IOException;
 
     /**
      * 获取会话

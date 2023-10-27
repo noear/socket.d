@@ -4,6 +4,7 @@ import org.noear.socketd.broker.bio.BioBroker;
 import org.noear.socketd.protocol.Payload;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.impl.ListenerDefault;
+import org.noear.socketd.protocol.impl.PayloadDefault;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 import org.noear.socketd.utils.Utils;
@@ -30,7 +31,7 @@ public class ServerTest {
         @Override
         public void onMessage(Session session, Payload payload) throws IOException {
             super.onMessage(session,payload);
-            session.send(new Payload(Utils.guid(), "temp", ""));
+            session.send(new PayloadDefault(Utils.guid(), "temp", ""));
         }
     }
 }

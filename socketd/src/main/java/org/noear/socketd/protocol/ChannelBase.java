@@ -26,21 +26,21 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public void sendConnect(String uri) throws IOException {
-        send(Frames.connectFrame(uri));
+        send(Frames.connectFrame(uri), null);
     }
 
     @Override
     public void sendConnack() throws IOException {
-        send(Frames.connackFrame());
+        send(Frames.connackFrame(), null);
     }
 
     @Override
     public void sendPing() throws IOException {
-        send(Frames.pingFrame());
+        send(Frames.pingFrame(), null);
     }
 
     @Override
     public void sendPong() throws IOException {
-        send(Frames.pongFrame());
+        send(Frames.pongFrame(), null);
     }
 }

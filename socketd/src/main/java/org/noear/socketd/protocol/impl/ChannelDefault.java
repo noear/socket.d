@@ -4,6 +4,8 @@ import org.noear.socketd.protocol.*;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 通道默认实现
@@ -16,20 +18,38 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     private Closeable sourceCloseable;
     private OutputTarget<S> outputTarget;
     private Session session;
+    private Map<String, Acceptor> acceptorMap;
 
     public ChannelDefault(S source, Closeable sourceCloseable, OutputTarget<S> outputTarget) {
         super();
         this.source = source;
         this.sourceCloseable = sourceCloseable;
         this.outputTarget = outputTarget;
+        this.acceptorMap = new HashMap<>();
     }
 
     /**
      * 发送
      */
     @Override
-    public void send(Frame frame) throws IOException {
+    public void send(Frame frame, Acceptor acceptor) throws IOException {
+        if (acceptor != null) {
+            acceptorMap.put(frame.getPayload().getKey(), acceptor);
+        }
+
         outputTarget.write(source, frame);
+    }
+
+    @Override
+    public void retrieve(Frame frame) throws IOException {
+        Acceptor acceptor = acceptorMap.get(frame.getPayload().getKey());
+
+        if (acceptor != null) {
+            if (acceptor.isSingle()) {
+                acceptorMap.remove(frame.getPayload().getKey());
+            }
+            acceptor.accept(frame.getPayload());
+        }
     }
 
     /**

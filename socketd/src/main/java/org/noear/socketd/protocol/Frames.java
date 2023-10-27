@@ -1,5 +1,6 @@
 package org.noear.socketd.protocol;
 
+import org.noear.socketd.protocol.impl.PayloadDefault;
 import org.noear.socketd.utils.Utils;
 
 /**
@@ -9,11 +10,11 @@ import org.noear.socketd.utils.Utils;
  * */
 public class Frames {
     public static final Frame connectFrame(String uri) {
-        return new Frame(Flag.Connect, new Payload(Utils.guid(), uri, Constants.HEARDER_CONNECT));
+        return new Frame(Flag.Connect, new PayloadDefault(Utils.guid(), uri, Constants.HEARDER_CONNECT));
     }
 
     public static final Frame connackFrame() {
-        return new Frame(Flag.Connack, new Payload(Constants.HEARDER_CONNACK));
+        return new Frame(Flag.Connack, new PayloadDefault(Constants.HEARDER_CONNACK));
     }
 
     public static final Frame pingFrame() {

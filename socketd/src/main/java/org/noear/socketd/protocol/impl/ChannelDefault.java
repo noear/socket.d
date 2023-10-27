@@ -70,5 +70,6 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     @Override
     public void close() throws IOException {
         sourceCloseable.close();
+        acceptorMap.clear();
     }
 }

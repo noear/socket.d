@@ -27,7 +27,7 @@ public class ProcessorDefault implements Processor {
 
     public void onReceive(Channel channel, Frame frame) throws IOException {
         if (log.isTraceEnabled()) {
-            log.trace("{}", frame.getFlag());
+            log.trace("{}", frame);
         }
 
         if (frame.getFlag() == Flag.Connect) {

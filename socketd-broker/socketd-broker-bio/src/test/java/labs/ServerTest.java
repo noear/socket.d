@@ -30,16 +30,19 @@ public class ServerTest {
         @Override
         public void onMessage(Session session, Payload payload) throws IOException {
             super.onMessage(session,payload);
-            session.send(new Payload(Utils.guid(), "temp", ""));
 
-            if(payload.isRequest() || payload.isSubscribe()){
+            if(payload.isRequest()){
                 session.reply(payload, "hi reply".getBytes());
             }
 
             if(payload.isSubscribe()){
+                session.reply(payload, "hi reply".getBytes());
                 session.reply(payload, "hi reply**".getBytes());
                 session.reply(payload, "hi reply****".getBytes());
             }
+
+
+            session.send(new Payload(Utils.guid(), "temp", ""));
         }
     }
 }

@@ -29,7 +29,7 @@ public class ClientTest {
         System.out.println("sendAndRequest====" + result);
 
         session.sendAndSubscribe(new Payload(Utils.guid(), "/user/sub", "", "hi".getBytes()), payload -> {
-            System.out.println("sendAndSubscribe====" + result);
+            System.out.println("sendAndSubscribe====" + payload);
         });
 
         while (true) {

@@ -28,4 +28,12 @@ public class Frame {
     public Payload getPayload() {
         return payload;
     }
+
+    @Override
+    public String toString() {
+        return "Frame{" +
+                "flag=" + flag +
+                ", payload=" + payload +
+                '}';
+    }
 }

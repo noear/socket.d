@@ -121,8 +121,9 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
                 buffer.get(body, 0, len);
             }
 
-            Payload payload = new PayloadDefault(key, routeDescriptor, headers, body);
-            return new Frame(Flag.Of(flag), payload);
+            PayloadDefault payload = new PayloadDefault(key, routeDescriptor, headers, body);
+            payload.setFlag(Flag.Of(flag));
+            return new Frame(payload.getFlag(), payload);
         }
     }
 

@@ -10,6 +10,16 @@ import java.util.Map;
  */
 public interface Payload {
     /**
+     * 是否为请求（是，则需要答复）
+     */
+    boolean isRequest();
+
+    /**
+     * 是否为订阅（是，则需要答复）
+     */
+    boolean isSubscribe();
+
+    /**
      * Key
      */
     String getKey();

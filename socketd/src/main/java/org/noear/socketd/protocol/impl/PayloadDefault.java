@@ -1,5 +1,6 @@
 package org.noear.socketd.protocol.impl;
 
+import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Payload;
 
 import java.util.LinkedHashMap;
@@ -16,6 +17,7 @@ public class PayloadDefault implements Payload {
     private String routeDescriptor;
     private String header;
     private byte[] body;
+    private Flag flag = Flag.Unknown;
 
     public PayloadDefault(String header) {
         this("", "", header, new byte[]{});
@@ -30,6 +32,24 @@ public class PayloadDefault implements Payload {
         this.routeDescriptor = routeDescriptor;
         this.header = header;
         this.body = body;
+    }
+
+    public void setFlag(Flag flag) {
+        this.flag = flag;
+    }
+
+    public Flag getFlag() {
+        return flag;
+    }
+
+    @Override
+    public boolean isRequest() {
+        return flag == Flag.Request;
+    }
+
+    @Override
+    public boolean isSubscribe() {
+        return flag == Flag.Subscribe;
     }
 
     /**

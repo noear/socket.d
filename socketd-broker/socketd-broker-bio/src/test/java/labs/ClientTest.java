@@ -25,8 +25,8 @@ public class ClientTest {
                 .open();
         session.send(new Payload(Utils.guid(), "/user/created", "", "hi".getBytes()));
 
-        Payload result = session.sendAndRequest(new Payload(Utils.guid(), "/user/get", "", "hi".getBytes()));
-        System.out.println("sendAndRequest====" + result);
+        Payload response = session.sendAndRequest(new Payload(Utils.guid(), "/user/get", "", "hi".getBytes()));
+        System.out.println("sendAndRequest====" + response);
 
         session.sendAndSubscribe(new Payload(Utils.guid(), "/user/sub", "", "hi".getBytes()), payload -> {
             System.out.println("sendAndSubscribe====" + payload);

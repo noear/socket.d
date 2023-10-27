@@ -48,6 +48,6 @@ public class SessionDefault extends SessionBase implements Session {
 
     @Override
     public void reply(Payload from, byte[] content) throws IOException {
-        channel.send(new Frame(Flag.Reply, new Payload(from.getKey(), from.getRouteDescriptor(), from.getHeader(), content)), null);
+        channel.send(new Frame(Flag.Reply, new Payload(from.getKey(), "", "", content)), null);
     }
 }

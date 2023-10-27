@@ -1,6 +1,6 @@
 package org.noear.socketd.protocol;
 
-import org.noear.socketd.protocol.impl.PayloadDefault;
+import org.noear.socketd.protocol.impl.PayloadInternal;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -121,7 +121,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
                 buffer.get(body, 0, len);
             }
 
-            PayloadDefault payload = new PayloadDefault(key, routeDescriptor, headers, body);
+            PayloadInternal payload = new PayloadInternal(key, routeDescriptor, headers, body);
             payload.setFlag(Flag.Of(flag));
             return new Frame(payload.getFlag(), payload);
         }

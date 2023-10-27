@@ -1,8 +1,5 @@
-package org.noear.socketd.protocol.impl;
+package org.noear.socketd.protocol;
 
-import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.protocol.Payload;
-import org.noear.socketd.protocol.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

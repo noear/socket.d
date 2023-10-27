@@ -31,6 +31,15 @@ public class ServerTest {
         public void onMessage(Session session, Payload payload) throws IOException {
             super.onMessage(session,payload);
             session.send(new Payload(Utils.guid(), "temp", ""));
+
+            if(payload.isRequest() || payload.isSubscribe()){
+                session.reply(payload, "hi reply".getBytes());
+            }
+
+            if(payload.isSubscribe()){
+                session.reply(payload, "hi reply**".getBytes());
+                session.reply(payload, "hi reply****".getBytes());
+            }
         }
     }
 }

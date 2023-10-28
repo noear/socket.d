@@ -1,14 +1,15 @@
 package labs;
 
 import org.noear.socketd.client.ClientConfig;
-import org.noear.socketd.protocol.Payload;
+import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
 /**
- * @author noear 2023/10/12 created
+ * @author noear
+ * @since 2.0
  */
 public class Demo {
     public void main(String[] args) throws Throwable {
@@ -26,8 +27,8 @@ public class Demo {
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .autoReconnect(true) //自动重链
                 .open();
-        session.send(null);
-        Payload response = session.sendAndRequest(null);
-        session.sendAndSubscribe(null, null);
+        session.send("demo", null);
+        Entity response = session.sendAndRequest("demo", null);
+        session.sendAndSubscribe("demo", null, entity -> {});
     }
 }

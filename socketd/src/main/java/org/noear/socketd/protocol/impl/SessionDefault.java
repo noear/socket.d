@@ -1,6 +1,7 @@
 package org.noear.socketd.protocol.impl;
 
 import org.noear.socketd.protocol.*;
+import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -26,14 +27,18 @@ public class SessionDefault extends SessionBase implements Session {
     }
 
     @Override
-    public void send(Payload message) throws IOException {
-        channel.send(new Frame(Flag.Message, message), null);
+    public void send(String topic, Entity content) throws IOException {
+        Payload payload = new PayloadDefault().key(Utils.guid()).topic(topic).entity(content);
+
+        channel.send(new Frame(Flag.Message, payload), null);
     }
 
     @Override
-    public Payload sendAndRequest(Payload message) throws IOException {
-        CompletableFuture<Payload> future = new CompletableFuture<>();
-        channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future));
+    public Entity sendAndRequest(String topic, Entity content) throws IOException {
+        Payload payload = new PayloadDefault().key(Utils.guid()).topic(topic).entity(content);
+
+        CompletableFuture<Entity> future = new CompletableFuture<>();
+        channel.send(new Frame(Flag.Request, payload), new AcceptorRequest(future));
         try {
             return future.get(2000, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
@@ -42,12 +47,13 @@ public class SessionDefault extends SessionBase implements Session {
     }
 
     @Override
-    public void sendAndSubscribe(Payload message, Consumer<Payload> consumer) throws IOException {
-        channel.send(new Frame(Flag.Subscribe, message), new AcceptorSubscribe(consumer));
+    public void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException {
+        Payload payload = new PayloadDefault().key(Utils.guid()).topic(topic).entity(content);
+        channel.send(new Frame(Flag.Subscribe, payload), new AcceptorSubscribe(consumer));
     }
 
     @Override
-    public void reply(Payload from, byte[] content) throws IOException {
-        channel.send(new Frame(Flag.Reply, new Payload(from.getKey(), "", "", content)), null);
+    public void reply(Payload from, Entity content) throws IOException {
+        channel.send(new Frame(Flag.Reply, new PayloadDefault().key(from.getKey()).entity(content)), null);
     }
 }

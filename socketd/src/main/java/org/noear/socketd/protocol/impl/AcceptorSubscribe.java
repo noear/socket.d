@@ -2,6 +2,7 @@ package org.noear.socketd.protocol.impl;
 
 
 import org.noear.socketd.protocol.Acceptor;
+import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Payload;
 
 import java.util.function.Consumer;
@@ -13,8 +14,8 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public class AcceptorSubscribe implements Acceptor {
-    private final Consumer<Payload> future;
-    public AcceptorSubscribe(Consumer<Payload> future){
+    private final Consumer<Entity> future;
+    public AcceptorSubscribe(Consumer<Entity> future){
         this.future = future;
     }
 
@@ -30,7 +31,7 @@ public class AcceptorSubscribe implements Acceptor {
 
     @Override
     public boolean accept(Payload payload) {
-        future.accept(payload);
+        future.accept(payload.getEntity());
         return true;
     }
 }

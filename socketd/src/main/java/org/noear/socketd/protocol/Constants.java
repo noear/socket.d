@@ -12,4 +12,10 @@ public class Constants {
 
     public static final String HEARDER_CONNECT = "SocketD-Version=2.0";
     public static final String HEARDER_CONNACK = "SocketD-Version=2.0";
+
+
+    public static final String DEF_KEY = "";
+    public static final String DEF_TOPIC = "";
+    public static final String DEF_HEADER = "";
+    public static final byte[] DEF_BODY = new byte[]{};
 }

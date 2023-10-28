@@ -3,7 +3,7 @@
 协议格式（Extensible messaging protocols）：
 
 ```
-[len:int][flag:int][key:str][\n][routeDescriptor:str][\n][header:str][\n][body:byte..]
+[len:int][flag:int][key:str][\n][topic:str][\n][header:str][\n][body:byte..]
 ```
 
 适用场景：

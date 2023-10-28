@@ -1,6 +1,8 @@
 package org.noear.socketd.protocol;
 
-import org.noear.socketd.protocol.impl.PayloadInternal;
+
+import org.noear.socketd.protocol.impl.EntityBuilder;
+import org.noear.socketd.protocol.impl.PayloadDefault;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -40,12 +42,12 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             //key
             byte[] keyB = frame.getPayload().getKey().getBytes(charset);
             //routeDescriptor
-            byte[] routeDescriptorB = frame.getPayload().getRouteDescriptor().getBytes(charset);
+            byte[] routeDescriptorB = frame.getPayload().getTopic().getBytes(charset);
             //header
-            byte[] headerB = frame.getPayload().getHeader().getBytes(charset);
+            byte[] headerB = frame.getPayload().getEntity().getHeader().getBytes(charset);
 
             //length (flag + key + routeDescriptor + body + int.bytes + \n*3)
-            int len = keyB.length + routeDescriptorB.length + headerB.length + frame.getPayload().getBody().length + 2 * 3 + 4 + 4;
+            int len = keyB.length + routeDescriptorB.length + headerB.length + frame.getPayload().getEntity().getBody().length + 2 * 3 + 4 + 4;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -67,7 +69,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             buffer.putChar('\n');
 
             //body
-            buffer.put(frame.getPayload().getBody());
+            buffer.put(frame.getPayload().getEntity().getBody());
 
             buffer.flip();
 
@@ -108,9 +110,9 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
                 return null;
             }
 
-            //headers
-            String headers = decodeString(buffer, sb, 4096);
-            if (headers == null) {
+            //header
+            String header = decodeString(buffer, sb, 4096);
+            if (header == null) {
                 return null;
             }
 
@@ -121,8 +123,8 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
                 buffer.get(body, 0, len);
             }
 
-            PayloadInternal payload = new PayloadInternal(key, routeDescriptor, headers, body);
-            payload.setFlag(Flag.Of(flag));
+            PayloadDefault payload = new PayloadDefault().key(key).topic(routeDescriptor).entity(new EntityBuilder().header(header).body(body));
+            payload.flag(Flag.Of(flag));
             return new Frame(payload.getFlag(), payload);
         }
     }

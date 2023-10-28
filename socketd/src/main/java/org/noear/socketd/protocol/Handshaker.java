@@ -15,8 +15,8 @@ public class Handshaker {
     private final String version;
 
     public Handshaker(Payload payload) {
-        this.uri = payload.getRouteDescriptor();
-        this.headers = payload.getHeaderMap();
+        this.uri = payload.getTopic();
+        this.headers = payload.getEntity().getHeaderMap();
         this.protocols = headers.get(Constants.HEARDER_SOCKETD_PROTOCOLS);
         this.version = headers.get(Constants.HEARDER_SOCKETD_VERSION);
     }

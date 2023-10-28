@@ -2,10 +2,9 @@ package labs;
 
 import org.noear.socketd.broker.bio.BioBroker;
 import org.noear.socketd.client.ClientConfig;
-import org.noear.socketd.protocol.Payload;
+import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.ListenerDefault;
-import org.noear.socketd.utils.Utils;
 
 /**
  * @author noear
@@ -23,18 +22,18 @@ public class ClientTest {
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .autoReconnect(true) //自动重链
                 .open();
-        session.send(new Payload(Utils.guid(), "/user/created", "", "hi".getBytes()));
+        session.send("/user/created", new Entity("hi"));
 
-        Payload response = session.sendAndRequest(new Payload(Utils.guid(), "/user/get", "", "hi".getBytes()));
+        Entity response = session.sendAndRequest("/user/get", new Entity("hi"));
         System.out.println("sendAndRequest====" + response);
 
-        session.sendAndSubscribe(new Payload(Utils.guid(), "/user/sub", "", "hi".getBytes()), payload -> {
+        session.sendAndSubscribe("/user/sub", new Entity("hi"), payload -> {
             System.out.println("sendAndSubscribe====" + payload);
         });
 
         while (true) {
             Thread.sleep(1000);
-            session.send(new Payload(Utils.guid(), "/user/updated", "", "hi".getBytes()));
+            session.send("/user/updated", new Entity("hi"));
         }
         //Payload response = session.sendAndRequest(null);
         //session.sendAndSubscribe(null, null);

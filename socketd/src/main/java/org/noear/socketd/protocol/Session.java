@@ -38,20 +38,20 @@ public interface Session {
     /**
      * 发送
      */
-    void send(Payload message) throws IOException;
+    void send(String topic, Entity content) throws IOException;
 
     /**
      * 发送并请求
      */
-    Payload sendAndRequest(Payload message) throws IOException;
+    Entity sendAndRequest(String topic, Entity content) throws IOException;
 
     /**
      * 发送并订阅
      */
-    void sendAndSubscribe(Payload message, Consumer<Payload> subscriber) throws IOException;
+    void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
 
     /**
      * 答复
      */
-    void reply(Payload from, byte[] content) throws IOException;
+    void reply(Payload from, Entity content) throws IOException;
 }

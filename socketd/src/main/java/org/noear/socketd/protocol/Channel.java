@@ -17,6 +17,15 @@ public interface Channel extends Closeable {
      */
     Handshaker getHandshaker();
 
+    /**
+     * 设置心跳时间
+     * */
+    void setHeartbeatTime();
+    /**
+     * 获取心跳时间
+     * */
+    long getHeartbeatTime();
+
 
     /**
      * 发送连接（握手）

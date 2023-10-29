@@ -32,8 +32,12 @@ public class ClientTest {
         });
 
         while (true) {
-            Thread.sleep(1000);
-            session.send("/user/updated", new Entity("hi"));
+            try {
+                Thread.sleep(5000);
+                session.send("/user/updated", new Entity("hi"));
+            }catch (Throwable e){
+                e.printStackTrace();
+            }
         }
         //Payload response = session.sendAndRequest(null);
         //session.sendAndSubscribe(null, null);

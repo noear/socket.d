@@ -1,10 +1,11 @@
-package labs;
+package labs.aio;
 
-import org.noear.socketd.broker.bio.BioBroker;
+import org.noear.socketd.broker.Broker;
+import org.noear.socketd.broker.smartsocket.AioBroker;
 import org.noear.socketd.protocol.Entity;
+import org.noear.socketd.protocol.ListenerDefault;
 import org.noear.socketd.protocol.Payload;
 import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.ListenerDefault;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
  */
 public class ServerTest {
     public static void main(String[] args) throws Exception {
-        BioBroker broker = new BioBroker();
+        Broker broker = new AioBroker();
 
         //server
         ServerConfig serverConfig = new ServerConfig();

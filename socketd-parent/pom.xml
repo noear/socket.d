@@ -20,7 +20,7 @@
         <maven-resources.version>3.3.1</maven-resources.version>
 
         <slf4j.version>2.0.9</slf4j.version>
-        <solon.version>2.5.10</solon.version>
+        <solon.version>2.5.11</solon.version>
         <smartsocket.version>1.5.36</smartsocket.version>
     </properties>
 
@@ -36,6 +36,11 @@
                 <groupId>org.noear</groupId>
                 <artifactId>socketd</artifactId>
                 <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

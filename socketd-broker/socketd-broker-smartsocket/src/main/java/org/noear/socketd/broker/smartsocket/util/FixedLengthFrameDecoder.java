@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.aio.util;
+package org.noear.socketd.broker.smartsocket.util;
 
 import java.nio.ByteBuffer;
 

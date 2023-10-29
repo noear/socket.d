@@ -14,12 +14,12 @@ import org.noear.socketd.server.ServerConfig;
 public class BioBroker implements Broker {
 
     @Override
-    public Server createServer(ServerConfig config) {
-        return new BioServer(config);
+    public Server createServer(ServerConfig serverConfig) {
+        return new BioServer(serverConfig);
     }
 
     @Override
-    public Client createClient(ClientConfig config) {
-        return new BioClient(config);
+    public Client createClient(ClientConfig clientConfig) {
+        return new BioClient(clientConfig);
     }
 }

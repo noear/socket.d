@@ -16,7 +16,7 @@ public interface Broker {
         return null;
     }
 
-    Server createServer(ServerConfig config);
+    Server createServer(ServerConfig serverConfig);
 
-    Client createClient(ClientConfig config);
+    Client createClient(ClientConfig clientConfig);
 }

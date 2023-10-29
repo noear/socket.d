@@ -46,6 +46,9 @@ public class ProcessorDefault implements Processor {
         } else {
             if (channel.getHandshaker() == null) {
                 channel.close();
+                if (log.isWarnEnabled()) {
+                    log.warn("Channel handshaker is null, sessionId={}", channel.getSession().getSessionId());
+                }
                 return;
             }
 

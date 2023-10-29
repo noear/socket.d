@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.aio;
+package org.noear.socketd.broker.smartsocket;
 
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Frame;
@@ -49,6 +49,8 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
             server.setWriteBuffer(serverConfig.getWriteBufferSize(), 16);
         }
         server.start();
+
+        log.info("Server started: {server=emp:tcp://127.0.0.1:" + serverConfig.getPort() + "}");
     }
 
     @Override
@@ -58,10 +60,11 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
 
 
     @Override
-    public void process(AioSession aioSession, Frame frame) {
-        Channel channel = AioAttachment.getChannel(aioSession, exchanger);
+    public void process(AioSession s, Frame frame) {
+        Channel channel = AioAttachment.getChannel(s, exchanger);
+
         try {
-            processor.onReceive(AioAttachment.getChannel(aioSession, exchanger), frame);
+            processor.onReceive(channel, frame);
         } catch (Throwable e) {
             if (channel == null) {
                 log.warn(e.getMessage(), e);
@@ -72,14 +75,14 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
     }
 
     @Override
-    public void stateEvent(AioSession aioSession, StateMachineEnum state, Throwable e) {
+    public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION:
-                processor.onOpen(AioAttachment.getChannel(aioSession, exchanger).getSession());
+                //processor.onOpen(AioAttachment.getChannel(s, exchanger).getSession());
                 break;
 
             case SESSION_CLOSED:
-                processor.onClose(AioAttachment.getChannel(aioSession, exchanger).getSession());
+                processor.onClose(AioAttachment.getChannel(s, exchanger).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -87,7 +90,7 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                processor.onError(AioAttachment.getChannel(aioSession, exchanger).getSession(), e);
+                processor.onError(AioAttachment.getChannel(s, exchanger).getSession(), e);
                 break;
         }
     }

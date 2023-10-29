@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.noear</groupId>
             <artifactId>socketd</artifactId>
         </dependency>
@@ -24,6 +29,26 @@
             <groupId>org.smartboot.socket</groupId>
             <artifactId>aio-core</artifactId>
             <version>${smartsocket.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-test-junit5</artifactId>
+            <version>${solon.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon.logging.simple</artifactId>
+            <version>${solon.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

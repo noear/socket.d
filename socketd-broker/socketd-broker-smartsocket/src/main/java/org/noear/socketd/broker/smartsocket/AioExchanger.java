@@ -1,6 +1,6 @@
-package org.noear.socketd.broker.aio;
+package org.noear.socketd.broker.smartsocket;
 
-import org.noear.socketd.broker.aio.util.FixedLengthFrameDecoder;
+import org.noear.socketd.broker.smartsocket.util.FixedLengthFrameDecoder;
 import org.noear.socketd.protocol.CodecByteBuffer;
 import org.noear.socketd.protocol.OutputTarget;
 import org.noear.socketd.protocol.Frame;

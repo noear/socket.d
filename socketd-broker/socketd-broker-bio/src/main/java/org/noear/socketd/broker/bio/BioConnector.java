@@ -1,5 +1,6 @@
 package org.noear.socketd.broker.bio;
 
+import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.client.ClientConnector;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
@@ -24,12 +25,15 @@ import java.util.concurrent.TimeUnit;
 public class BioConnector implements ClientConnector {
     private static final Logger log = LoggerFactory.getLogger(BioConnector.class);
 
-    private BioClient client;
-    private Socket socket;
+    private final BioClient client;
+    private final ClientConfig clientConfig;
+
+    private Socket real;
     private Thread socketThread;
 
     public BioConnector(BioClient client) {
         this.client = client;
+        this.clientConfig = client.clientConfig;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class BioConnector implements ClientConnector {
 
     @Override
     public long getHeartbeatInterval() {
-        return client.clientConfig.getHeartbeatInterval();
+        return clientConfig.getHeartbeatInterval();
     }
 
     @Override
@@ -52,25 +56,25 @@ public class BioConnector implements ClientConnector {
         SocketAddress socketAddress = new InetSocketAddress(client.uri().getHost(), client.uri().getPort());
 
 
-        if (client.clientConfig.getSslContext() == null) {
-            socket = new Socket();
+        if (clientConfig.getSslContext() == null) {
+            real = new Socket();
         } else {
-            socket = client.clientConfig.getSslContext().getSocketFactory().createSocket();
+            real = clientConfig.getSslContext().getSocketFactory().createSocket();
         }
 
-        if (client.clientConfig.getConnectTimeout() > 0) {
-            socket.connect(socketAddress, (int) client.clientConfig.getConnectTimeout());
+        if (clientConfig.getConnectTimeout() > 0) {
+            real.connect(socketAddress, (int) clientConfig.getConnectTimeout());
         } else {
-            socket.connect(socketAddress);
+            real.connect(socketAddress);
         }
 
         CompletableFuture<Channel> future = new CompletableFuture<>();
         try {
-            Channel channel = new ChannelDefault<>(socket, socket::close, client.exchanger);
+            Channel channel = new ChannelDefault<>(real, real::close, client.exchanger);
 
             socketThread = new Thread(() -> {
                 try {
-                    receive(channel, socket, future);
+                    receive(channel, real, future);
                 } catch (Throwable e) {
                     throw new IllegalStateException(e);
                 }
@@ -85,7 +89,7 @@ public class BioConnector implements ClientConnector {
         }
 
         try {
-            return future.get(client.clientConfig.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            return future.get(clientConfig.getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
@@ -122,13 +126,13 @@ public class BioConnector implements ClientConnector {
 
     @Override
     public void close() throws IOException {
-        if (socket == null) {
+        if (real == null) {
             return;
         }
 
         try {
             socketThread.interrupt();
-            socket.close();
+            real.close();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

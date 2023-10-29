@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -55,10 +56,6 @@ public class BioConnector implements ClientConnector {
             socket = new Socket();
         } else {
             socket = client.clientConfig.getSslContext().getSocketFactory().createSocket();
-        }
-
-        if (client.clientConfig.getReadTimeout() > 0) {
-            socket.setSoTimeout((int) client.clientConfig.getReadTimeout());
         }
 
         if (client.clientConfig.getConnectTimeout() > 0) {
@@ -112,8 +109,12 @@ public class BioConnector implements ClientConnector {
                         future.complete(channel);
                     }
                 }
-            } catch (Throwable ex) {
-                client.processor().onError(channel.getSession(), ex);
+            } catch (Throwable e) {
+                client.processor().onError(channel.getSession(), e);
+
+                if(e instanceof SocketException){
+                    break;
+                }
             }
         }
     }

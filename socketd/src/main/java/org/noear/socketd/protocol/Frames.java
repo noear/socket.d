@@ -15,8 +15,8 @@ public class Frames {
         return new Frame(Flag.Connect, new PayloadDefault().key(Utils.guid()).topic(uri).entity(new EntityBuilder().header(Constants.HEARDER_CONNECT)));
     }
 
-    public static final Frame connackFrame() {
-        return new Frame(Flag.Connack, new PayloadDefault().entity(new EntityBuilder().header(Constants.HEARDER_CONNACK)));
+    public static final Frame connackFrame(Payload connect) {
+        return new Frame(Flag.Connack, new PayloadDefault().key(connect.getKey()).entity(new EntityBuilder().header(Constants.HEARDER_CONNACK)));
     }
 
     public static final Frame pingFrame() {

@@ -34,7 +34,7 @@ public class ProcessorDefault implements Processor {
             //if server
             Payload payload = frame.getPayload();
             channel.setHandshaker(new Handshaker(payload));
-            channel.sendConnack(); //->Connack
+            channel.sendConnack(payload); //->Connack
 
             onOpen(channel.getSession());
         } else if (frame.getFlag() == Flag.Connack) {

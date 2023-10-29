@@ -18,7 +18,7 @@ public class ClientTest {
         //client
         ClientConfig clientConfig = new ClientConfig();
         Session session = broker.createClient(clientConfig)
-                .url("tcp://localhost:6329/path?u=a&p=2")
+                .url("tcp://127.0.0.1:6329/path?u=a&p=2")
                 .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .autoReconnect(true) //自动重链

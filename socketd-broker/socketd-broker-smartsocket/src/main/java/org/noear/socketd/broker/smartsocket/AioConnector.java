@@ -67,9 +67,7 @@ public class AioConnector implements ClientConnector , MessageProcessor<Frame> {
         }
 
         future = new CompletableFuture<>();
-        AioSession s = real.start();
-        Channel channel = AioAttachment.getChannel(s, client.exchanger);
-        channel.sendConnect(client.url());
+        real.start();
 
         try {
             return future.get(clientConfig.getConnectTimeout(), TimeUnit.MILLISECONDS);
@@ -115,9 +113,15 @@ public class AioConnector implements ClientConnector , MessageProcessor<Frame> {
     @Override
     public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
-            case NEW_SESSION:
-                //client.processor().onOpen(AioAttachment.getChannel(s, client.exchanger).getSession());
-                break;
+            case NEW_SESSION: {
+                Channel channel = AioAttachment.getChannel(s, client.exchanger);
+                try {
+                    channel.sendConnect(client.url());
+                } catch (Throwable ex) {
+                    client.processor().onError(channel.getSession(), ex);
+                }
+            }
+            break;
 
             case SESSION_CLOSED:
                 client.processor().onClose(AioAttachment.getChannel(s, client.exchanger).getSession());

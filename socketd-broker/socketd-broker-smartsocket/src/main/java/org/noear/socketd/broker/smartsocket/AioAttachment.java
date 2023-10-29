@@ -22,12 +22,12 @@ public class AioAttachment extends HashMap<Class<?>,Object> {
         return tmp;
     }
 
-    public static synchronized Channel getChannel(AioSession aioSession, AioExchanger exchanger) {
+    public static Channel getChannel(AioSession aioSession, AioExchanger exchanger) {
         AioAttachment attachment = get(aioSession);
         ChannelDefault tmp = (ChannelDefault) attachment.get(ChannelDefault.class);
         if (tmp == null) {
             tmp = new ChannelDefault(aioSession, aioSession::close, exchanger);
-            attachment.put(AioAttachment.class, tmp);
+            attachment.put(ChannelDefault.class, tmp);
         }
         return tmp;
     }

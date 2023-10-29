@@ -69,7 +69,7 @@ public class Entity {
     public String toString() {
         return "Entity{" +
                 "header='" + header + '\'' +
-                ", body=" + Arrays.toString(body) +
+                ", body=" + new String(body, StandardCharsets.UTF_8) +
                 '}';
     }
 }

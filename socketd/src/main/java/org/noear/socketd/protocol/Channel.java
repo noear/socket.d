@@ -1,5 +1,7 @@
 package org.noear.socketd.protocol;
 
+import org.noear.socketd.exception.SocktedConnectionException;
+
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -50,7 +52,7 @@ public interface Channel extends Closeable {
     /**
      * 发送
      */
-    void send(Frame frame, Acceptor acceptor) throws IOException;
+    void send(Frame frame, Acceptor acceptor) throws IOException, SocktedConnectionException;
 
     /**
      * 收回

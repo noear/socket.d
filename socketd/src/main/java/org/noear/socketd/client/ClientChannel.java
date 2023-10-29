@@ -1,5 +1,6 @@
 package org.noear.socketd.client;
 
+import org.noear.socketd.exception.SocktedConnectionException;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.protocol.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;
@@ -51,7 +52,9 @@ public class ClientChannel extends ChannelBase implements Channel {
                     real = null;
                 }
 
-                throw new RuntimeException(e);
+                throw new SocktedConnectionException(e);
+            } catch (IOException e) {
+                throw e;
             } catch (RuntimeException e) {
                 throw e;
             } catch (Throwable e) {

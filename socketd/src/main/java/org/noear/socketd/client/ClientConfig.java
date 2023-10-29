@@ -14,7 +14,6 @@ public class ClientConfig {
     protected long heartbeatInterval;
 
     protected long connectTimeout;
-    protected long readTimeout;
     protected long writeTimeout;
 
     protected int readBufferSize;
@@ -23,7 +22,6 @@ public class ClientConfig {
     public ClientConfig() {
         connectTimeout = 3000;
         heartbeatInterval = 20 * 1000;
-        readTimeout = 3000;
         writeTimeout = 3000;
     }
 
@@ -44,13 +42,6 @@ public class ClientConfig {
      */
     public long getConnectTimeout() {
         return connectTimeout;
-    }
-
-    /**
-     * 读超时
-     */
-    public long getReadTimeout() {
-        return readTimeout;
     }
 
     /**

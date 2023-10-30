@@ -8,7 +8,7 @@ import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
 /**
- * Bio 经纪人实现
+ * Tcp-Bio 经纪人实现
  *
  * @author noear
  * @since 2.0

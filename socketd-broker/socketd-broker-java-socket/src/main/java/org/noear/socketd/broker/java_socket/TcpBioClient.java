@@ -7,7 +7,7 @@ import org.noear.socketd.protocol.impl.SessionDefault;
 import java.io.IOException;
 
 /**
- * Bio 客户端实现
+ * Tcp-Bio 客户端实现
  *
  * @author noear
  * @since 2.0

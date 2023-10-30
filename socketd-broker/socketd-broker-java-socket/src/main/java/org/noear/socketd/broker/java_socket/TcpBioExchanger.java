@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 /**
- * Bio 交换器实现（它没法固定接口，但可以固定输出目录）
+ * Tcp-Bio 交换器实现（它没法固定接口，但可以固定输出目录）
  *
  * @author noear
  * @since 2.0

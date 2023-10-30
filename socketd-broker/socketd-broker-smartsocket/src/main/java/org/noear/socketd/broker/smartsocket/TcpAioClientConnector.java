@@ -1,11 +1,9 @@
 package org.noear.socketd.broker.smartsocket;
 
-import org.noear.socketd.client.ClientConfig;
-import org.noear.socketd.client.ClientConnector;
+import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.HeartbeatHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.MessageProcessor;
@@ -23,55 +21,36 @@ import java.util.concurrent.TimeUnit;
  * @author noear
  * @since 2.0
  */
-public class TcpAioClientConnector implements ClientConnector , MessageProcessor<Frame> {
+public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> implements MessageProcessor<Frame> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
-
-    private final TcpAioClient client;
-    private final ClientConfig clientConfig;
 
     private AioQuickClient real;
     private CompletableFuture<Channel> future;
 
     public TcpAioClientConnector(TcpAioClient client) {
-        this.client = client;
-        this.clientConfig = client.clientConfig();
-    }
-
-    @Override
-    public HeartbeatHandler heartbeatHandler() {
-        return client.heartbeatHandler();
-    }
-
-    @Override
-    public long getHeartbeatInterval() {
-        return clientConfig.getHeartbeatInterval();
-    }
-
-    @Override
-    public boolean autoReconnect() {
-        return client.autoReconnect();
+        super(client);
     }
 
     @Override
     public Channel connect() throws IOException {
-        real = new AioQuickClient(client.uri().getHost(), client.uri().getPort(), client.exchanger, this);
-        if (clientConfig.getReadBufferSize() > 0) {
-            real.setReadBufferSize(clientConfig.getReadBufferSize());
+        real = new AioQuickClient(client.uri().getHost(), client.uri().getPort(), client.exchanger(), this);
+        if (client.config().getReadBufferSize() > 0) {
+            real.setReadBufferSize(client.config().getReadBufferSize());
         }
 
-        if (clientConfig.getWriteBufferSize() > 0) {
-            real.setWriteBuffer(clientConfig.getWriteBufferSize(), 16);
+        if (client.config().getWriteBufferSize() > 0) {
+            real.setWriteBuffer(client.config().getWriteBufferSize(), 16);
         }
 
-        if (clientConfig.getConnectTimeout() > 0) {
-            real.connectTimeout((int) clientConfig.getConnectTimeout());
+        if (client.config().getConnectTimeout() > 0) {
+            real.connectTimeout((int) client.config().getConnectTimeout());
         }
 
         future = new CompletableFuture<>();
         real.start();
 
         try {
-            return future.get(clientConfig.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
@@ -94,7 +73,7 @@ public class TcpAioClientConnector implements ClientConnector , MessageProcessor
 
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = Attachment.getChannel(s, client.exchanger);
+        Channel channel = Attachment.getChannel(s, client.exchanger());
 
         try {
             client.processor().onReceive(channel, frame);
@@ -115,7 +94,7 @@ public class TcpAioClientConnector implements ClientConnector , MessageProcessor
     public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION: {
-                Channel channel = Attachment.getChannel(s, client.exchanger);
+                Channel channel = Attachment.getChannel(s, client.exchanger());
                 try {
                     channel.sendConnect(client.url());
                 } catch (Throwable ex) {
@@ -125,7 +104,7 @@ public class TcpAioClientConnector implements ClientConnector , MessageProcessor
             break;
 
             case SESSION_CLOSED:
-                client.processor().onClose(Attachment.getChannel(s, client.exchanger).getSession());
+                client.processor().onClose(Attachment.getChannel(s, client.exchanger()).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -133,7 +112,7 @@ public class TcpAioClientConnector implements ClientConnector , MessageProcessor
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                client.processor().onError(Attachment.getChannel(s, client.exchanger).getSession(), e);
+                client.processor().onError(Attachment.getChannel(s, client.exchanger()).getSession(), e);
                 break;
         }
     }

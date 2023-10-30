@@ -2,6 +2,7 @@ package org.noear.socketd.client;
 
 import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.Listener;
+import org.noear.socketd.protocol.OutputTarget;
 import org.noear.socketd.protocol.Processor;
 import org.noear.socketd.protocol.impl.ProcessorDefault;
 
@@ -13,21 +14,40 @@ import java.net.URI;
  * @author noear
  * @since 2.0
  */
-public abstract class ClientBase implements Client {
+public abstract class ClientBase<T extends OutputTarget> implements Client {
     protected String url;
     protected URI uri;
     protected boolean autoReconnect;
     protected Processor processor = new ProcessorDefault();
     protected HeartbeatHandler heartbeatHandler;
 
-    protected final ClientConfig clientConfig;
+    private final ClientConfig config;
+    private final T exchanger;
 
-    public ClientBase(ClientConfig clientConfig){
-        this.clientConfig = clientConfig;
+    public ClientBase(ClientConfig clientConfig, T exchanger) {
+        this.config = clientConfig;
+        this.exchanger = exchanger;
     }
 
-    public ClientConfig clientConfig() {
-        return clientConfig;
+    /**
+     * 配置
+     */
+    public ClientConfig config() {
+        return config;
+    }
+
+    /**
+     * 交换机
+     */
+    public T exchanger() {
+        return exchanger;
+    }
+
+    /**
+     * 处理器
+     */
+    public Processor processor() {
+        return processor;
     }
 
     public URI uri() {
@@ -68,13 +88,13 @@ public abstract class ClientBase implements Client {
         return heartbeatHandler;
     }
 
+    public long heartbeatInterval() {
+        return config.getHeartbeatInterval();
+    }
+
     @Override
     public Client listen(Listener listener) {
         processor.setListener(listener);
         return this;
-    }
-
-    public Processor processor(){
-        return processor;
     }
 }

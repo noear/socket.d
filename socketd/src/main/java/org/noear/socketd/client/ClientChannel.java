@@ -33,7 +33,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         if (connector.autoReconnect() && scheduledFuture == null) {
             scheduledFuture = RunUtils.delayAndRepeat(() -> {
                 heartbeatHandle();
-            }, connector.getHeartbeatInterval());
+            }, connector.heartbeatInterval());
         }
     }
 

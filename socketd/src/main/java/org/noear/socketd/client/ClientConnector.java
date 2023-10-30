@@ -21,7 +21,7 @@ public interface ClientConnector extends Closeable {
     /**
      * 心跳频率（单位：毫秒）
      * */
-    long getHeartbeatInterval();
+    long heartbeatInterval();
 
     /**
      * 是否自动重连

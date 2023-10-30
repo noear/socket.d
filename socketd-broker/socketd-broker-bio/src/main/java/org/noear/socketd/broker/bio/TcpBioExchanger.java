@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class TcpBioExchanger implements OutputTarget<Socket> {
-    CodecByteBuffer codec = new CodecByteBuffer();
+    private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override
     public void write(Socket source, Frame frame) throws IOException {

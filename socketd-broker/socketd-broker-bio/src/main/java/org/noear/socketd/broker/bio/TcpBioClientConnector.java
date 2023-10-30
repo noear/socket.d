@@ -1,11 +1,9 @@
 package org.noear.socketd.broker.bio;
 
-import org.noear.socketd.client.ClientConfig;
-import org.noear.socketd.client.ClientConnector;
+import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,55 +22,36 @@ import java.util.concurrent.TimeUnit;
  * @author noear
  * @since 2.0
  */
-public class TcpBioClientConnector implements ClientConnector {
+public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioClientConnector.class);
-
-    private final TcpBioClient client;
-    private final ClientConfig clientConfig;
 
     private Socket real;
     private Thread socketThread;
 
     public TcpBioClientConnector(TcpBioClient client) {
-        this.client = client;
-        this.clientConfig = client.clientConfig();
-    }
-
-    @Override
-    public HeartbeatHandler heartbeatHandler() {
-        return client.heartbeatHandler();
-    }
-
-    @Override
-    public long getHeartbeatInterval() {
-        return clientConfig.getHeartbeatInterval();
-    }
-
-    @Override
-    public boolean autoReconnect() {
-        return client.autoReconnect();
+        super(client);
     }
 
     @Override
     public Channel connect() throws IOException {
         SocketAddress socketAddress = new InetSocketAddress(client.uri().getHost(), client.uri().getPort());
 
-
-        if (clientConfig.getSslContext() == null) {
+        if (client.config().getSslContext() == null) {
             real = new Socket();
         } else {
-            real = clientConfig.getSslContext().getSocketFactory().createSocket();
+            real = client.config().getSslContext().getSocketFactory().createSocket();
         }
 
-        if (clientConfig.getConnectTimeout() > 0) {
-            real.connect(socketAddress, (int) clientConfig.getConnectTimeout());
+        if (client.config().getConnectTimeout() > 0) {
+            real.connect(socketAddress, (int) client.config().getConnectTimeout());
         } else {
             real.connect(socketAddress);
         }
 
         CompletableFuture<Channel> future = new CompletableFuture<>();
+
         try {
-            Channel channel = new ChannelDefault<>(real, real::close, client.exchanger);
+            Channel channel = new ChannelDefault<>(real, real::close, client.exchanger());
 
             socketThread = new Thread(() -> {
                 try {
@@ -91,7 +70,7 @@ public class TcpBioClientConnector implements ClientConnector {
         }
 
         try {
-            return future.get(clientConfig.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {
@@ -107,7 +86,7 @@ public class TcpBioClientConnector implements ClientConnector {
                     break;
                 }
 
-                Frame frame = client.exchanger.read(socket);
+                Frame frame = client.exchanger().read(socket);
                 if (frame != null) {
                     client.processor().onReceive(channel, frame);
 
@@ -118,13 +97,12 @@ public class TcpBioClientConnector implements ClientConnector {
             } catch (Throwable e) {
                 client.processor().onError(channel.getSession(), e);
 
-                if(e instanceof SocketException){
+                if (e instanceof SocketException) {
                     break;
                 }
             }
         }
     }
-
 
     @Override
     public void close() throws IOException {

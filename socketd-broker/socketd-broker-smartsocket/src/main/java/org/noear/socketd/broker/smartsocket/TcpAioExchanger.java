@@ -17,7 +17,8 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class TcpAioExchanger implements OutputTarget<AioSession>, Protocol<Frame> {
-    CodecByteBuffer codec = new CodecByteBuffer();
+    private CodecByteBuffer codec = new CodecByteBuffer();
+
     @Override
     public void write(AioSession source, Frame frame) throws IOException {
         ByteBuffer buf = codec.encode(frame);

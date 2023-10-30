@@ -1,6 +1,6 @@
 # socketd
 
-### 协议格式（Extensible messaging protocols）：
+### 协议格式：
 
 * codec
 

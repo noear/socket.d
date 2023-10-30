@@ -27,9 +27,9 @@
 
     <modules>
         <module>../socketd</module>
-        <module>../socketd-broker/socketd-broker-bio</module>
+        <module>../socketd-broker/socketd-broker-java-socket</module>
+        <module>../socketd-broker/socketd-broker-java-websocket</module>
         <module>../socketd-broker/socketd-broker-smartsocket</module>
-        <module>../socketd-broker/socketd-broker-websocket</module>
     </modules>
 
     <dependencyManagement>

@@ -89,16 +89,12 @@ public class ClientChannel extends ChannelBase implements Channel {
                 prepareSend();
 
                 heartbeatHandler.heartbeatHandle(getSession());
-            } catch (SocketException e) {
+            } catch (Throwable e) {
                 if (connector.autoReconnect()) {
                     real = null;
                 }
 
-                throw new RuntimeException(e);
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
+                throw new SocktedConnectionException(e);
             }
         }
     }

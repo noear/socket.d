@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- * 客户端（用于构建配置）
+ * 客户端（用于构建会话）
  *
  * @author noear
  * @since 2.0

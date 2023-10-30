@@ -12,6 +12,9 @@ import java.io.IOException;
  * @since 2.0
  */
 public interface Channel extends Closeable {
+    /**
+     * 设置握手信息
+     * */
     void setHandshaker(Handshaker handshaker);
 
     /**
@@ -23,6 +26,7 @@ public interface Channel extends Closeable {
      * 设置心跳时间
      * */
     void setHeartbeatTime();
+
     /**
      * 获取心跳时间
      * */

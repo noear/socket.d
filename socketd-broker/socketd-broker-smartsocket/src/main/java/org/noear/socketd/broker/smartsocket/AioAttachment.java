@@ -8,6 +8,8 @@ import org.smartboot.socket.transport.AioSession;
 import java.util.HashMap;
 
 /**
+ * Aio 附件管理
+ *
  * @author noear
  * @since 2.0
  */

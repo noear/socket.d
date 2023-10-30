@@ -19,11 +19,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Bio 客户端连接器实现
+ *
  * @author noear
  * @since 2.0
  */
-public class BioConnector implements ClientConnector {
-    private static final Logger log = LoggerFactory.getLogger(BioConnector.class);
+public class BioClientConnector implements ClientConnector {
+    private static final Logger log = LoggerFactory.getLogger(BioClientConnector.class);
 
     private final BioClient client;
     private final ClientConfig clientConfig;
@@ -31,7 +33,7 @@ public class BioConnector implements ClientConnector {
     private Socket real;
     private Thread socketThread;
 
-    public BioConnector(BioClient client) {
+    public BioClientConnector(BioClient client) {
         this.client = client;
         this.clientConfig = client.clientConfig;
     }

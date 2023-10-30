@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
+ * 工具
+ *
  * @author noear
  * @since 2.0
  */

@@ -16,6 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * Bio 服务端实现
+ *
  * @author noear
  * @since 2.0
  */

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
+ * Bio 客户端实现
+ *
  * @author noear
  * @since 2.0
  */
@@ -22,7 +24,7 @@ public class BioClient extends ClientBase implements Client {
 
     @Override
     public Session open() throws IOException, TimeoutException {
-        ClientConnector connector = new BioConnector(this);
+        ClientConnector connector = new BioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);
     }

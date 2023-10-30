@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
+ * Aio 交换机实现（它没法固定接口，但可以固定输出目录）
+ *
  * @author noear
  * @since 2.0
  */

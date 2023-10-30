@@ -6,7 +6,6 @@ import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.HeartbeatHandler;
-import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.MessageProcessor;
@@ -19,11 +18,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Aio 客户端连接器实现
+ *
  * @author noear
  * @since 2.0
  */
-public class AioConnector implements ClientConnector , MessageProcessor<Frame> {
-    private static final Logger log = LoggerFactory.getLogger(AioConnector.class);
+public class AioClientConnector implements ClientConnector , MessageProcessor<Frame> {
+    private static final Logger log = LoggerFactory.getLogger(AioClientConnector.class);
 
     private final AioClient client;
     private final ClientConfig clientConfig;
@@ -31,7 +32,7 @@ public class AioConnector implements ClientConnector , MessageProcessor<Frame> {
     private AioQuickClient real;
     private CompletableFuture<Channel> future;
 
-    public AioConnector(AioClient client) {
+    public AioClientConnector(AioClient client) {
         this.client = client;
         this.clientConfig = client.clientConfig;
     }

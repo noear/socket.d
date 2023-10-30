@@ -1,7 +1,6 @@
 package org.noear.socketd.protocol;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

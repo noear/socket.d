@@ -1,22 +1,36 @@
 # socketd
 
-协议格式（Extensible messaging protocols）：
+### 协议格式（Extensible messaging protocols）：
 
 ```
 [len:int][flag:int][key:str][\n][topic:str][\n][header:str][\n][body:byte..]
 ```
 
-适用场景：
+| Flag            | Server                     | Client                     |
+|-----------------|----------------------------|----------------------------|
+| Unknown         | ::close()                  | ::close()                  |
+| Connect         | /                          | c(Connect)->s              |
+| Connack         | s(Connack),s::c.onOpen()->c | s(Connack)->c::onOpen()    |
+| Ping            | /                          | c(Ping)->s                 |
+| Pong            | s(Pong)->c                 | /                          |
+| Message         | s(Message)->c              | c(Message)->s              |
+| Request         | s(Request)->c(Reply)->s    | c(Request)->s(Reply)->c    |
+| Subscribe       | s(Subscribe)->c(Reply..)->s | c(Subscribe)->s(Reply..)->c |
+| Reply           | s(Reply)->c                | c(Reply)->s                |
+
+
+
+### 适用场景：
 
 可扩展的消息协议。可用于消息通讯、RPC、IM、MQ，及一些长链接的场景开发
 
-链接示例:
+### 链接示例:
 
 * tcp://19.10.2.3:9812/path?a=1&b=1
 * udp://19.10.2.3:9812/path?a=1&b=1
 * ws://19.10.2.3:1023/path?a=1&b=1
 
-简单演示（引入一个 broker 适配包后）:
+### 简单演示（引入一个 broker 适配包后）:
 
 ```java
 public class Demo {

@@ -17,7 +17,7 @@
 * emp:ws://19.10.2.3:1023/path?a=1&b=1
 * emp:resocket://19.10.2.3:1023/path?a=1&b=1
 
-简单演示:
+简单演示（引入一个 broker 适配包后）:
 
 ```java
 public class Demo {

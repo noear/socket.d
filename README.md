@@ -22,7 +22,7 @@
 ```java
 public class Demo {
     public void main(String[] args) throws Throwable {
-        Broker broker = Broker.getInstance();
+        Broker broker = BrokerManager.getBroker("tcp");
 
         ServerConfig serverConfig = null;
         Server server = broker.createServer(serverConfig);

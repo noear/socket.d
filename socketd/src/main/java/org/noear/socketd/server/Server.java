@@ -29,5 +29,5 @@ public interface Server {
     /**
      * 停止
      */
-    void stop() throws IOException;
+    void stop() throws Exception;
 }

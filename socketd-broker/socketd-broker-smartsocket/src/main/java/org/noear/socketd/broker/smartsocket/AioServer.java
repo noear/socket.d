@@ -50,7 +50,7 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
         }
         server.start();
 
-        log.info("Server started: {server=emp:tcp://127.0.0.1:" + serverConfig.getPort() + "}");
+        log.info("Server started: {server=tcp://127.0.0.1:" + serverConfig.getPort() + "}");
     }
 
     @Override

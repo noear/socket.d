@@ -2,7 +2,6 @@ package org.noear.socketd.broker.bio;
 
 import org.noear.socketd.client.*;
 import org.noear.socketd.protocol.*;
-import org.noear.socketd.protocol.impl.ProcessorDefault;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
 import java.io.IOException;

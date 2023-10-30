@@ -71,7 +71,7 @@ public class BioServer extends ServerBase implements Server {
 
         serverThread.start();
 
-        log.info("Server started: {server=emp:tcp://127.0.0.1:" + serverConfig.getPort() + "}");
+        log.info("Server started: {server=tcp://127.0.0.1:" + serverConfig.getPort() + "}");
     }
 
     private void receive(Channel channel, Socket socket) {

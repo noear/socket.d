@@ -4,10 +4,12 @@ import org.noear.socketd.protocol.*;
 import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -15,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Bio 服务端实现
+ * Bio 服务端实现（支持 ssl, host）
  *
  * @author noear
  * @since 2.0
@@ -31,6 +33,25 @@ public class TcpBioServer extends ServerBase<TcpBioExchanger> {
         super(config, new TcpBioExchanger());
     }
 
+    /**
+     * 创建 server（支持 ssl, host）
+     * */
+    private ServerSocket createServer() throws IOException {
+        if (config().getSslContext() == null) {
+            if (Utils.isEmpty(config().getHost())) {
+                return new ServerSocket(config().getPort());
+            } else {
+                return new ServerSocket(config().getPort(), 50, InetAddress.getByName(config().getHost()));
+            }
+        } else {
+            if (Utils.isEmpty(config().getHost())) {
+                return config().getSslContext().getServerSocketFactory().createServerSocket(config().getPort());
+            } else {
+                return config().getSslContext().getServerSocketFactory().createServerSocket(config().getPort(), 50, InetAddress.getByName(config().getHost()));
+            }
+        }
+    }
+
     @Override
     public void start() throws IOException {
         if (serverThread != null) {
@@ -41,9 +62,7 @@ public class TcpBioServer extends ServerBase<TcpBioExchanger> {
             serverExecutor = Executors.newFixedThreadPool(config().getCoreThreads());
         }
 
-        if (server == null) {
-            server = new ServerSocket(config().getPort());
-        }
+        server = createServer();
 
         serverThread = new Thread(() -> {
             try {

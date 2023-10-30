@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Bio 客户端连接器实现
+ * Bio 客户端连接器实现（支持 ssl）
  *
  * @author noear
  * @since 2.0

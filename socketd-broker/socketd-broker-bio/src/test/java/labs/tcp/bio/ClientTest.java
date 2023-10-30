@@ -1,4 +1,4 @@
-package labs.bio;
+package labs.tcp.bio;
 
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.broker.BrokerManager;

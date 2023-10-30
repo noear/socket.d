@@ -1,4 +1,4 @@
-package labs.aio;
+package labs.tcp.aio;
 
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.broker.BrokerManager;

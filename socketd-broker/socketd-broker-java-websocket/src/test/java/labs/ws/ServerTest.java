@@ -18,8 +18,7 @@ import java.io.IOException;
 public class ServerTest {
     public static void main(String[] args) throws Exception {
         //server
-        ServerConfig serverConfig = new ServerConfig("ws");
-        Server server = SocketD.createServer(serverConfig);
+        Server server = SocketD.createServer(new ServerConfig("ws"));
         server.listen(new ServerListener());
         server.start();
     }

@@ -39,8 +39,7 @@
 ```java
 public class Demo {
     public void main(String[] args) throws Throwable {
-        ServerConfig serverConfig = new ServerConfig("tcp");
-        Server server = SocketD.createServer(serverConfig);
+        Server server = SocketD.createServer(new ServerConfig("tcp"));
         server.listen(new ServerListener());
         server.start();
 

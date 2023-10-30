@@ -9,22 +9,22 @@ import javax.net.ssl.SSLContext;
  * @since 2.0
  */
 public class ServerConfig {
-    protected final String schema;
+    private final String schema;
 
-    protected String host;
-    protected int port;
+    private String host;
+    private int port;
 
-    protected SSLContext sslContext;
+    private SSLContext sslContext;
 
-    protected int coreThreads;
-    protected int maxThreads;
+    private int coreThreads;
+    private int maxThreads;
 
-    protected long idleTimeout;
-    protected long readTimeout;
-    protected long writeTimeout;
+    private long idleTimeout;
+    private long readTimeout;
+    private long writeTimeout;
 
-    protected int readBufferSize;
-    protected int writeBufferSize;
+    private int readBufferSize;
+    private int writeBufferSize;
 
     public ServerConfig(String schema) {
         this.schema = schema;
@@ -43,74 +43,160 @@ public class ServerConfig {
         writeBufferSize = 512;
     }
 
+    /**
+     * 获取协议架构
+     */
     public String getSchema() {
         return schema;
     }
 
     /**
-     * 端口
+     * 获取主机
+     */
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * 配置主机
+     */
+    public ServerConfig host(String host) {
+        this.host = host;
+        return this;
+    }
+
+    /**
+     * 获取端口
      */
     public int getPort() {
         return port;
     }
 
     /**
-     * 主题
+     * 配置端口
      */
-    public String getHost() {
-        return host;
+    public ServerConfig port(int port) {
+        this.port = port;
+        return this;
     }
 
+    /**
+     * 获取 ssl 上下文
+     */
     public SSLContext getSslContext() {
         return sslContext;
     }
 
     /**
-     * 核心线程数
+     * 配置 ssl 上下文
+     */
+    public ServerConfig sslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
+        return this;
+    }
+
+    /**
+     * 获取核心线程数
      */
     public int getCoreThreads() {
         return coreThreads;
     }
 
     /**
-     * 最大线程数
+     * 配置核心线程数
+     */
+    public ServerConfig coreThreads(int coreThreads) {
+        this.coreThreads = coreThreads;
+        return this;
+    }
+
+    /**
+     * 获取最大线程数
      */
     public int getMaxThreads() {
         return maxThreads;
     }
 
     /**
-     * 空闲超时
+     * 配置最大线程数
+     */
+    public ServerConfig maxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+        return this;
+    }
+
+    /**
+     * 获取线程空闲超时
      */
     public long getIdleTimeout() {
         return idleTimeout;
     }
 
     /**
-     * 读超时
+     * 配置线程空闲超时
+     */
+    public ServerConfig idleTimeout(long idleTimeout) {
+        this.idleTimeout = idleTimeout;
+        return this;
+    }
+
+    /**
+     * 获取读超时
      */
     public long getReadTimeout() {
         return readTimeout;
     }
 
     /**
-     * 写超时
+     * 配置读超时
+     */
+    public ServerConfig readTimeout(long readTimeout) {
+        this.readTimeout = readTimeout;
+        return this;
+    }
+
+    /**
+     * 获取写超时
      */
     public long getWriteTimeout() {
         return writeTimeout;
     }
 
     /**
-     * 读缓冲大小
+     * 配置写超时
+     */
+    public ServerConfig writeTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
+        return this;
+    }
+
+    /**
+     * 获取读缓冲大小
      */
     public int getReadBufferSize() {
         return readBufferSize;
     }
 
     /**
-     * 写缓冲大小
+     * 配置读缓冲大小
+     */
+    public ServerConfig readBufferSize(int readBufferSize) {
+        this.readBufferSize = readBufferSize;
+        return this;
+    }
+
+    /**
+     * 获取写缓冲大小
      */
     public int getWriteBufferSize() {
         return writeBufferSize;
+    }
+
+    /**
+     * 配置写缓冲大小
+     */
+    public ServerConfig writeBufferSize(int writeBufferSize) {
+        this.writeBufferSize = writeBufferSize;
+        return this;
     }
 }

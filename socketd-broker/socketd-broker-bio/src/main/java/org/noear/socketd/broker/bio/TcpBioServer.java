@@ -2,7 +2,6 @@ package org.noear.socketd.broker.bio;
 
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.protocol.impl.ChannelDefault;
-import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
@@ -21,19 +20,15 @@ import java.util.concurrent.Executors;
  * @author noear
  * @since 2.0
  */
-public class TcpBioServer extends ServerBase implements Server {
+public class TcpBioServer extends ServerBase<TcpBioExchanger> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioServer.class);
 
     private ServerSocket server;
-    private ServerConfig serverConfig;
     private Thread serverThread;
     private ExecutorService serverExecutor;
 
-    private TcpBioExchanger exchanger;
-
     public TcpBioServer(ServerConfig config) {
-        this.serverConfig = config;
-        this.exchanger = new TcpBioExchanger();
+        super(config, new TcpBioExchanger());
     }
 
     @Override
@@ -43,11 +38,11 @@ public class TcpBioServer extends ServerBase implements Server {
         }
 
         if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(serverConfig.getCoreThreads());
+            serverExecutor = Executors.newFixedThreadPool(config().getCoreThreads());
         }
 
         if (server == null) {
-            server = new ServerSocket(serverConfig.getPort());
+            server = new ServerSocket(config().getPort());
         }
 
         serverThread = new Thread(() -> {
@@ -56,7 +51,7 @@ public class TcpBioServer extends ServerBase implements Server {
                     Socket socket = server.accept();
 
                     try {
-                        Channel channel = new ChannelDefault<>(socket, socket::close, exchanger);
+                        Channel channel = new ChannelDefault<>(socket, socket::close, exchanger());
 
                         serverExecutor.submit(() -> {
                             receive(channel, socket);
@@ -73,28 +68,28 @@ public class TcpBioServer extends ServerBase implements Server {
 
         serverThread.start();
 
-        log.info("Server started: {server=tcp://127.0.0.1:" + serverConfig.getPort() + "}");
+        log.info("Server started: {server=tcp://127.0.0.1:" + config().getPort() + "}");
     }
 
     private void receive(Channel channel, Socket socket) {
         while (true) {
             try {
                 if (socket.isClosed()) {
-                    processor.onClose(channel.getSession());
+                    processor().onClose(channel.getSession());
                     break;
                 }
 
-                Frame frame = exchanger.read(socket);
+                Frame frame = exchanger().read(socket);
                 if (frame != null) {
-                    processor.onReceive(channel, frame);
+                    processor().onReceive(channel, frame);
                 }
             } catch (SocketException e) {
-                processor.onError(channel.getSession(), e);
-                processor.onClose(channel.getSession());
+                processor().onError(channel.getSession(), e);
+                processor().onClose(channel.getSession());
                 close(socket);
                 break;
             } catch (Throwable e) {
-                processor.onError(channel.getSession(), e);
+                processor().onError(channel.getSession(), e);
             }
         }
     }

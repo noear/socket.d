@@ -5,7 +5,6 @@ import org.noear.socketd.protocol.*;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Bio 客户端实现
@@ -19,7 +18,7 @@ public class TcpBioClient extends ClientBase<TcpBioExchanger> {
     }
 
     @Override
-    public Session open() throws IOException, TimeoutException {
+    public Session open() throws IOException {
         ClientConnector connector = new TcpBioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);

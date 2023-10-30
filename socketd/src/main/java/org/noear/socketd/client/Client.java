@@ -37,5 +37,5 @@ public interface Client {
     /**
      * 打开
      */
-    Session open() throws IOException, TimeoutException;
+    Session open() throws IOException;
 }

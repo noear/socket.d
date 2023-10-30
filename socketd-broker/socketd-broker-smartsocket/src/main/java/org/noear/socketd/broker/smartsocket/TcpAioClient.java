@@ -6,7 +6,6 @@ import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Aio 客户端实现
@@ -19,7 +18,7 @@ public class TcpAioClient extends ClientBase<TcpAioExchanger>{
     }
 
     @Override
-    public Session open() throws IOException, TimeoutException {
+    public Session open() throws IOException {
         ClientConnector connector = new TcpAioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);

@@ -2,7 +2,6 @@ package org.noear.socketd.broker.smartsocket;
 
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
@@ -20,39 +19,36 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class TcpAioServer extends ServerBase implements Server, MessageProcessor<Frame> {
+public class TcpAioServer extends ServerBase<TcpAioExchanger> implements MessageProcessor<Frame> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioServer.class);
 
     private AioQuickServer server;
-    private ServerConfig serverConfig;
-    private TcpAioExchanger exchanger;
 
     public TcpAioServer(ServerConfig serverConfig) {
-        this.serverConfig = serverConfig;
-        this.exchanger = new TcpAioExchanger();
+        super(serverConfig, new TcpAioExchanger());
     }
 
     @Override
     public void start() throws IOException {
-        if (serverConfig.getHost() != null) {
-            server = new AioQuickServer(serverConfig.getPort(),
-                    exchanger, this);
+        if (config().getHost() != null) {
+            server = new AioQuickServer(config().getPort(),
+                    exchanger(), this);
         } else {
-            server = new AioQuickServer(serverConfig.getHost(), serverConfig.getPort(),
-                    exchanger, this);
+            server = new AioQuickServer(config().getHost(), config().getPort(),
+                    exchanger(), this);
         }
 
-        server.setThreadNum(serverConfig.getCoreThreads());
+        server.setThreadNum(config().getCoreThreads());
         server.setBannerEnabled(false);
-        if (serverConfig.getReadBufferSize() > 0) {
-            server.setReadBufferSize(serverConfig.getReadBufferSize());
+        if (config().getReadBufferSize() > 0) {
+            server.setReadBufferSize(config().getReadBufferSize());
         }
-        if (serverConfig.getWriteBufferSize() > 0) {
-            server.setWriteBuffer(serverConfig.getWriteBufferSize(), 16);
+        if (config().getWriteBufferSize() > 0) {
+            server.setWriteBuffer(config().getWriteBufferSize(), 16);
         }
         server.start();
 
-        log.info("Server started: {server=tcp://127.0.0.1:" + serverConfig.getPort() + "}");
+        log.info("Server started: {server=tcp://127.0.0.1:" + config().getPort() + "}");
     }
 
     @Override
@@ -63,15 +59,15 @@ public class TcpAioServer extends ServerBase implements Server, MessageProcessor
 
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = Attachment.getChannel(s, exchanger);
+        Channel channel = Attachment.getChannel(s, exchanger());
 
         try {
-            processor.onReceive(channel, frame);
+            processor().onReceive(channel, frame);
         } catch (Throwable e) {
             if (channel == null) {
                 log.warn(e.getMessage(), e);
             } else {
-                processor.onError(channel.getSession(), e);
+                processor().onError(channel.getSession(), e);
             }
         }
     }
@@ -80,11 +76,11 @@ public class TcpAioServer extends ServerBase implements Server, MessageProcessor
     public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION:
-                //processor.onOpen(AioAttachment.getChannel(s, exchanger).getSession());
+                //略过
                 break;
 
             case SESSION_CLOSED:
-                processor.onClose(Attachment.getChannel(s, exchanger).getSession());
+                processor().onClose(Attachment.getChannel(s, exchanger()).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -92,7 +88,7 @@ public class TcpAioServer extends ServerBase implements Server, MessageProcessor
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                processor.onError(Attachment.getChannel(s, exchanger).getSession(), e);
+                processor().onError(Attachment.getChannel(s, exchanger()).getSession(), e);
                 break;
         }
     }

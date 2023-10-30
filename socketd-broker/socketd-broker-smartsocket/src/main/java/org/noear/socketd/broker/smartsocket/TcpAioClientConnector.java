@@ -42,7 +42,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
         //支持 ssl
         if(client.config().getSslContext() != null){
             sslPlugin = new SslPlugin<>(client.config()::getSslContext, sslEngine -> {
-                sslEngine.setUseClientMode(false);
+                sslEngine.setUseClientMode(true);
             });
         }
 

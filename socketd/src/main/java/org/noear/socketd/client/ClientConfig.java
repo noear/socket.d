@@ -9,6 +9,8 @@ import javax.net.ssl.SSLContext;
  * @since 2.0
  */
 public class ClientConfig {
+    protected final String schema;
+
     protected SSLContext sslContext;
 
     protected long heartbeatInterval;
@@ -19,12 +21,17 @@ public class ClientConfig {
     protected int readBufferSize;
     protected int writeBufferSize;
 
-    public ClientConfig() {
+    public ClientConfig(String schema) {
+        this.schema = schema;
+
         connectTimeout = 3000;
         heartbeatInterval = 20 * 1000;
         writeTimeout = 3000;
     }
 
+    public String getSchema() {
+        return schema;
+    }
 
     public SSLContext getSslContext() {
         return sslContext;

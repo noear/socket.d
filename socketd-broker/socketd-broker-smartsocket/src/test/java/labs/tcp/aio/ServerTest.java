@@ -1,7 +1,6 @@
 package labs.tcp.aio;
 
-import org.noear.socketd.broker.Broker;
-import org.noear.socketd.broker.BrokerManager;
+import org.noear.socketd.SocketD;
 import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.ListenerDefault;
 import org.noear.socketd.protocol.Payload;
@@ -18,11 +17,9 @@ import java.io.IOException;
  */
 public class ServerTest {
     public static void main(String[] args) throws Exception {
-        Broker broker = BrokerManager.getBroker("tcp");
-
         //server
-        ServerConfig serverConfig = new ServerConfig();
-        Server server = broker.createServer(serverConfig);
+        ServerConfig serverConfig = new ServerConfig("tcp");
+        Server server = SocketD.createServer(serverConfig);
         server.listen(new ServerListener());
         server.start();
     }

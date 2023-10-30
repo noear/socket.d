@@ -9,6 +9,8 @@ import javax.net.ssl.SSLContext;
  * @since 2.0
  */
 public class ServerConfig {
+    protected final String schema;
+
     protected String host;
     protected int port;
 
@@ -24,7 +26,9 @@ public class ServerConfig {
     protected int readBufferSize;
     protected int writeBufferSize;
 
-    public ServerConfig() {
+    public ServerConfig(String schema) {
+        this.schema = schema;
+
         host = "";
         port = 6329;
 
@@ -39,6 +43,9 @@ public class ServerConfig {
         writeBufferSize = 512;
     }
 
+    public String getSchema() {
+        return schema;
+    }
 
     /**
      * 端口

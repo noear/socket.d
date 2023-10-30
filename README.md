@@ -6,17 +6,17 @@
 [len:int][flag:int][key:str][\n][topic:str][\n][header:str][\n][body:byte..]
 ```
 
-| Flag            | Server                     | Client                     |
-|-----------------|----------------------------|----------------------------|
-| Unknown         | ::close()                  | ::close()                  |
-| Connect         | /                          | c(Connect)->s              |
-| Connack         | s(Connack),s::c.onOpen()->c | s(Connack)->c::onOpen()    |
-| Ping            | /                          | c(Ping)->s                 |
-| Pong            | s(Pong)->c                 | /                          |
-| Message         | s(Message)->c              | c(Message)->s              |
-| Request         | s(Request)->c(Reply)->s    | c(Request)->s(Reply)->c    |
-| Subscribe       | s(Subscribe)->c(Reply..)->s | c(Subscribe)->s(Reply..)->c |
-| Reply           | s(Reply)->c                | c(Reply)->s                |
+| Flag            | Server                       | Client                       |
+|-----------------|------------------------------|------------------------------|
+| Unknown         | ::close()                    | ::close()                    |
+| Connect         | /                            | c(Connect)->s                |
+| Connack         | s(Connack),s::c.onOpen()->c  | s(Connack)->c::onOpen()      |
+| Ping            | /                            | c(Ping)->s                   |
+| Pong            | s(Pong)->c                   | /                            |
+| Message         | s(Message)->c                | c(Message)->s                |
+| Request         | s(Request)->c(Reply)->s      | c(Request)->s(Reply)->c      |
+| Subscribe       | s(Subscribe)->c(Reply?..)->s | c(Subscribe)->s(Reply?..)->c |
+| Reply           | s(Reply)->c                  | c(Reply)->s                  |
 
 
 

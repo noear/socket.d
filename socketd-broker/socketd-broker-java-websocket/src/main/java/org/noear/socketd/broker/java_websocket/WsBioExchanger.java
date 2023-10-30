@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
+ * Ws-Bio 交换机实现
+ *
  * @author noear
  * @since 2.0
  */

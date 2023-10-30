@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Ws-Bio 客户端连接器实现（支持 ssl）
+ *
  * @author noear
  * @since 2.0
  */
@@ -25,6 +27,11 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
     @Override
     public Channel connect() throws IOException {
         real = new SocketClientImpl(client.uri(), client);
+
+        //支持 ssl
+        if(client.config().getSslContext() != null) {
+            real.setSocketFactory(client.config().getSslContext().getSocketFactory());
+        }
 
         try {
             if (real.connectBlocking(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS)) {

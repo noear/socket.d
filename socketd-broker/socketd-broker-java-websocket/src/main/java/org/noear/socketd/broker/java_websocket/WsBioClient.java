@@ -8,6 +8,8 @@ import org.noear.socketd.protocol.impl.SessionDefault;
 import java.io.IOException;
 
 /**
+ * Ws-Bio 客户端实现
+ *
  * @author noear
  * @since 2.0
  */

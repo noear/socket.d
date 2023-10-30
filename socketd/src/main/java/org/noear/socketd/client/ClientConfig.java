@@ -35,82 +35,112 @@ public class ClientConfig {
     }
 
 
-    public String getUrl() {
-        return url;
-    }
-
-    public URI getUri() {
-        return uri;
-    }
-
+    /**
+     * 获取协议架构
+     */
     public String getSchema() {
         return schema;
     }
 
+    /**
+     * 获取连接地址
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * 获取连接地址
+     */
+    public URI getUri() {
+        return uri;
+    }
+
+    /**
+     * 获取 ssl 上下文
+     */
     public SSLContext getSslContext() {
         return sslContext;
     }
 
+    /**
+     * 配置 ssl 上下文
+     */
     public ClientConfig sslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
         return this;
     }
 
     /**
-     * 心跳间隔
+     * 获取心跳间隔
      */
     public long getHeartbeatInterval() {
         return heartbeatInterval;
     }
 
+    /**
+     * 配置心跳间隔
+     */
     public ClientConfig heartbeatInterval(long heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
         return this;
     }
 
     /**
-     * 连接超时
+     * 获取连接超时
      */
     public long getConnectTimeout() {
         return connectTimeout;
     }
 
+    /**
+     * 配置连接超时
+     */
     public ClientConfig connectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
 
     /**
-     * 写超时
+     * 获取写超时
      */
     public long getWriteTimeout() {
         return writeTimeout;
     }
 
+    /**
+     * 配置写超时
+     */
     public ClientConfig writeTimeout(long writeTimeout) {
         this.writeTimeout = writeTimeout;
         return this;
     }
 
     /**
-     * 读缓冲大小
+     * 获取读缓冲大小
      */
     public int getReadBufferSize() {
         return readBufferSize;
     }
 
+    /**
+     * 配置读缓冲大小
+     */
     public ClientConfig readBufferSize(int readBufferSize) {
         this.readBufferSize = readBufferSize;
         return this;
     }
 
     /**
-     * 写缓冲大小
+     * 获取写缓冲大小
      */
     public int getWriteBufferSize() {
         return writeBufferSize;
     }
 
+    /**
+     * 配置写缓冲大小
+     */
     public ClientConfig writeBufferSize(int writeBufferSize) {
         this.writeBufferSize = writeBufferSize;
         return this;

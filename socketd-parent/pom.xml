@@ -22,12 +22,14 @@
         <slf4j.version>2.0.9</slf4j.version>
         <solon.version>2.5.11</solon.version>
         <smartsocket.version>1.5.36</smartsocket.version>
+        <java-websocket.version>1.5.3</java-websocket.version>
     </properties>
 
     <modules>
         <module>../socketd</module>
         <module>../socketd-broker/socketd-broker-bio</module>
         <module>../socketd-broker/socketd-broker-smartsocket</module>
+        <module>../socketd-broker/socketd-broker-websocket</module>
     </modules>
 
     <dependencyManagement>

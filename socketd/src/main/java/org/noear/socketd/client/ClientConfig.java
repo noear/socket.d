@@ -9,17 +9,17 @@ import javax.net.ssl.SSLContext;
  * @since 2.0
  */
 public class ClientConfig {
-    protected final String schema;
+    private final String schema;
 
-    protected SSLContext sslContext;
+    private SSLContext sslContext;
 
-    protected long heartbeatInterval;
+    private long heartbeatInterval;
 
-    protected long connectTimeout;
-    protected long writeTimeout;
+    private long connectTimeout;
+    private long writeTimeout;
 
-    protected int readBufferSize;
-    protected int writeBufferSize;
+    private int readBufferSize;
+    private int writeBufferSize;
 
     public ClientConfig(String schema) {
         this.schema = schema;
@@ -37,11 +37,21 @@ public class ClientConfig {
         return sslContext;
     }
 
+    public ClientConfig sslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
+        return this;
+    }
+
     /**
      * 心跳间隔
      */
     public long getHeartbeatInterval() {
         return heartbeatInterval;
+    }
+
+    public ClientConfig heartbeatInterval(long heartbeatInterval) {
+        this.heartbeatInterval = heartbeatInterval;
+        return this;
     }
 
     /**
@@ -51,11 +61,21 @@ public class ClientConfig {
         return connectTimeout;
     }
 
+    public ClientConfig connectTimeout(long connectTimeout) {
+        this.connectTimeout = connectTimeout;
+        return this;
+    }
+
     /**
      * 写超时
      */
     public long getWriteTimeout() {
         return writeTimeout;
+    }
+
+    public ClientConfig writeTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
+        return this;
     }
 
     /**
@@ -65,10 +85,20 @@ public class ClientConfig {
         return readBufferSize;
     }
 
+    public ClientConfig readBufferSize(int readBufferSize) {
+        this.readBufferSize = readBufferSize;
+        return this;
+    }
+
     /**
      * 写缓冲大小
      */
     public int getWriteBufferSize() {
         return writeBufferSize;
+    }
+
+    public ClientConfig writeBufferSize(int writeBufferSize) {
+        this.writeBufferSize = writeBufferSize;
+        return this;
     }
 }

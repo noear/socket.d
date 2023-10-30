@@ -4,8 +4,7 @@ import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.Listener;
 import org.noear.socketd.protocol.Session;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 /**
  * 客户端（用于构建会话）
@@ -28,6 +27,11 @@ public interface Client {
      * 心跳
      */
     Client heartbeatHandler(HeartbeatHandler handler);
+
+    /**
+     * 配置
+     */
+    Client config(Consumer<ClientConfig> consumer);
 
     /**
      * 监听

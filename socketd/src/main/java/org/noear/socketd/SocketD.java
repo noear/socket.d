@@ -6,6 +6,7 @@ import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -46,10 +47,13 @@ public class SocketD {
     }
 
     /**
-     * 创建客户端
+     * 创建客户端（支持 url 自动识别）
      */
-    public static Client createClient(ClientConfig clientConfig) {
-        return getBroker(clientConfig.getSchema())
-                .createClient(clientConfig);
+    public static Client createClient(String url) {
+        URI uri = URI.create(url);
+        String schema = uri.getScheme();
+
+        return getBroker(schema)
+                .createClient(new ClientConfig(schema));
     }
 }

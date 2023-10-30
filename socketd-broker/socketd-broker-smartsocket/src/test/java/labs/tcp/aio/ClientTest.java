@@ -1,7 +1,6 @@
 package labs.tcp.aio;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.ListenerDefault;
 import org.noear.socketd.protocol.Session;
@@ -13,9 +12,9 @@ import org.noear.socketd.protocol.Session;
 public class ClientTest {
     public static void main(String[] args) throws Exception {
         //client
-        ClientConfig clientConfig = new ClientConfig("tcp");
-        Session session = SocketD.createClient(clientConfig)
-                .url("tcp://127.0.0.1:6329/path?u=a&p=2")
+        Session session = SocketD
+                .createClient("tcp://127.0.0.1:6329/path?u=a&p=2")
+                .config(c -> c.connectTimeout(3000)) //配置
                 .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .autoReconnect(true) //自动重链

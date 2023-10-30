@@ -7,6 +7,7 @@ import org.noear.socketd.protocol.Processor;
 import org.noear.socketd.protocol.impl.ProcessorDefault;
 
 import java.net.URI;
+import java.util.function.Consumer;
 
 /**
  * 客户端基类
@@ -90,6 +91,12 @@ public abstract class ClientBase<T extends OutputTarget> implements Client {
 
     public long heartbeatInterval() {
         return config.getHeartbeatInterval();
+    }
+
+    @Override
+    public Client config(Consumer<ClientConfig> consumer) {
+        consumer.accept(config);
+        return this;
     }
 
     @Override

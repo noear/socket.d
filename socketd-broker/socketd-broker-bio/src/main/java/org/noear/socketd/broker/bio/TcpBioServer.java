@@ -21,19 +21,19 @@ import java.util.concurrent.Executors;
  * @author noear
  * @since 2.0
  */
-public class BioServer extends ServerBase implements Server {
-    private static final Logger log = LoggerFactory.getLogger(BioServer.class);
+public class TcpBioServer extends ServerBase implements Server {
+    private static final Logger log = LoggerFactory.getLogger(TcpBioServer.class);
 
     private ServerSocket server;
     private ServerConfig serverConfig;
     private Thread serverThread;
     private ExecutorService serverExecutor;
 
-    private BioExchanger exchanger;
+    private TcpBioExchanger exchanger;
 
-    public BioServer(ServerConfig config) {
+    public TcpBioServer(ServerConfig config) {
         this.serverConfig = config;
-        this.exchanger = new BioExchanger();
+        this.exchanger = new TcpBioExchanger();
     }
 
     @Override

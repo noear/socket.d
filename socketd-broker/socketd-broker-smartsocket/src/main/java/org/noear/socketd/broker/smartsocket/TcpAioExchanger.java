@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class AioExchanger implements OutputTarget<AioSession>, Protocol<Frame> {
+public class TcpAioExchanger implements OutputTarget<AioSession>, Protocol<Frame> {
     CodecByteBuffer codec = new CodecByteBuffer();
     @Override
     public void write(AioSession source, Frame frame) throws IOException {
@@ -26,7 +26,7 @@ public class AioExchanger implements OutputTarget<AioSession>, Protocol<Frame> {
 
     @Override
     public Frame decode(ByteBuffer buffer, AioSession aioSession) {
-        FixedLengthFrameDecoder decoder = AioAttachment.getDecoder(aioSession);
+        FixedLengthFrameDecoder decoder = Attachment.getDecoder(aioSession);
 
         if (decoder == null) {
             if (buffer.remaining() < Integer.BYTES) {
@@ -35,14 +35,14 @@ public class AioExchanger implements OutputTarget<AioSession>, Protocol<Frame> {
                 buffer.mark();
                 decoder = new FixedLengthFrameDecoder(buffer.getInt());
                 buffer.reset();
-                AioAttachment.setDecoder(aioSession, decoder);
+                Attachment.setDecoder(aioSession, decoder);
             }
         }
 
         if (decoder.read(buffer) == false) {
             return null;
         } else {
-            AioAttachment.setDecoder(aioSession, null);
+            Attachment.setDecoder(aioSession, null);
             buffer = decoder.getBuffer();
             buffer.flip();
         }

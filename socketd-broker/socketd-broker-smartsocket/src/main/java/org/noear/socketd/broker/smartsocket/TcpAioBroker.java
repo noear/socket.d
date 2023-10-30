@@ -1,5 +1,4 @@
-package org.noear.socketd.broker.bio;
-
+package org.noear.socketd.broker.smartsocket;
 
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.client.Client;
@@ -8,13 +7,12 @@ import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
 /**
- * Bio 经纪人实现
+ * Aio 经纪人实现
  *
  * @author noear
  * @since 2.0
  */
-public class BioBroker implements Broker {
-
+public class TcpAioBroker implements Broker {
     @Override
     public String schema() {
         return "tcp";
@@ -22,11 +20,11 @@ public class BioBroker implements Broker {
 
     @Override
     public Server createServer(ServerConfig serverConfig) {
-        return new BioServer(serverConfig);
+        return new TcpAioServer(serverConfig);
     }
 
     @Override
     public Client createClient(ClientConfig clientConfig) {
-        return new BioClient(clientConfig);
+        return new TcpAioClient(clientConfig);
     }
 }

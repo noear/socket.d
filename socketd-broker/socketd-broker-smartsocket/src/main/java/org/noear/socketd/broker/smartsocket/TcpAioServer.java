@@ -20,16 +20,16 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class AioServer extends ServerBase implements Server, MessageProcessor<Frame> {
-    private static final Logger log = LoggerFactory.getLogger(AioServer.class);
+public class TcpAioServer extends ServerBase implements Server, MessageProcessor<Frame> {
+    private static final Logger log = LoggerFactory.getLogger(TcpAioServer.class);
 
     private AioQuickServer server;
     private ServerConfig serverConfig;
-    private AioExchanger exchanger;
+    private TcpAioExchanger exchanger;
 
-    public AioServer(ServerConfig serverConfig) {
+    public TcpAioServer(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
-        this.exchanger = new AioExchanger();
+        this.exchanger = new TcpAioExchanger();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
 
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = AioAttachment.getChannel(s, exchanger);
+        Channel channel = Attachment.getChannel(s, exchanger);
 
         try {
             processor.onReceive(channel, frame);
@@ -84,7 +84,7 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
                 break;
 
             case SESSION_CLOSED:
-                processor.onClose(AioAttachment.getChannel(s, exchanger).getSession());
+                processor.onClose(Attachment.getChannel(s, exchanger).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -92,7 +92,7 @@ public class AioServer extends ServerBase implements Server, MessageProcessor<Fr
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                processor.onError(AioAttachment.getChannel(s, exchanger).getSession(), e);
+                processor.onError(Attachment.getChannel(s, exchanger).getSession(), e);
                 break;
         }
     }

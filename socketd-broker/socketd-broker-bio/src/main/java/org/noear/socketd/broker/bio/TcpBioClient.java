@@ -13,18 +13,18 @@ import java.util.concurrent.TimeoutException;
  * @author noear
  * @since 2.0
  */
-public class BioClient extends ClientBase implements Client {
+public class TcpBioClient extends ClientBase implements Client {
     protected final ClientConfig clientConfig;
-    protected final BioExchanger exchanger;
+    protected final TcpBioExchanger exchanger;
 
-    public BioClient(ClientConfig clientConfig) {
+    public TcpBioClient(ClientConfig clientConfig) {
         this.clientConfig = clientConfig;
-        this.exchanger = new BioExchanger();
+        this.exchanger = new TcpBioExchanger();
     }
 
     @Override
     public Session open() throws IOException, TimeoutException {
-        ClientConnector connector = new BioClientConnector(this);
+        ClientConnector connector = new TcpBioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);
     }

@@ -13,18 +13,18 @@ import java.util.concurrent.TimeoutException;
  * @author noear
  * @since 2.0
  */
-public class AioClient extends ClientBase implements Client {
+public class TcpAioClient extends ClientBase implements Client {
     protected final ClientConfig clientConfig;
-    protected final AioExchanger exchanger;
-    public AioClient(ClientConfig clientConfig){
+    protected final TcpAioExchanger exchanger;
+    public TcpAioClient(ClientConfig clientConfig){
         this.clientConfig = clientConfig;
-        this.exchanger = new AioExchanger();
+        this.exchanger = new TcpAioExchanger();
     }
 
 
     @Override
     public Session open() throws IOException, TimeoutException {
-        ClientConnector connector = new AioClientConnector(this);
+        ClientConnector connector = new TcpAioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);
     }

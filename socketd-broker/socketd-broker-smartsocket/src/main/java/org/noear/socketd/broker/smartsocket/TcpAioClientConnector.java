@@ -23,16 +23,16 @@ import java.util.concurrent.TimeUnit;
  * @author noear
  * @since 2.0
  */
-public class AioClientConnector implements ClientConnector , MessageProcessor<Frame> {
-    private static final Logger log = LoggerFactory.getLogger(AioClientConnector.class);
+public class TcpAioClientConnector implements ClientConnector , MessageProcessor<Frame> {
+    private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
 
-    private final AioClient client;
+    private final TcpAioClient client;
     private final ClientConfig clientConfig;
 
     private AioQuickClient real;
     private CompletableFuture<Channel> future;
 
-    public AioClientConnector(AioClient client) {
+    public TcpAioClientConnector(TcpAioClient client) {
         this.client = client;
         this.clientConfig = client.clientConfig;
     }
@@ -94,7 +94,7 @@ public class AioClientConnector implements ClientConnector , MessageProcessor<Fr
 
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = AioAttachment.getChannel(s, client.exchanger);
+        Channel channel = Attachment.getChannel(s, client.exchanger);
 
         try {
             client.processor().onReceive(channel, frame);
@@ -115,7 +115,7 @@ public class AioClientConnector implements ClientConnector , MessageProcessor<Fr
     public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION: {
-                Channel channel = AioAttachment.getChannel(s, client.exchanger);
+                Channel channel = Attachment.getChannel(s, client.exchanger);
                 try {
                     channel.sendConnect(client.url());
                 } catch (Throwable ex) {
@@ -125,7 +125,7 @@ public class AioClientConnector implements ClientConnector , MessageProcessor<Fr
             break;
 
             case SESSION_CLOSED:
-                client.processor().onClose(AioAttachment.getChannel(s, client.exchanger).getSession());
+                client.processor().onClose(Attachment.getChannel(s, client.exchanger).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -133,7 +133,7 @@ public class AioClientConnector implements ClientConnector , MessageProcessor<Fr
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                client.processor().onError(AioAttachment.getChannel(s, client.exchanger).getSession(), e);
+                client.processor().onError(Attachment.getChannel(s, client.exchanger).getSession(), e);
                 break;
         }
     }

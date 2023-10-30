@@ -24,16 +24,16 @@ import java.util.concurrent.TimeUnit;
  * @author noear
  * @since 2.0
  */
-public class BioClientConnector implements ClientConnector {
-    private static final Logger log = LoggerFactory.getLogger(BioClientConnector.class);
+public class TcpBioClientConnector implements ClientConnector {
+    private static final Logger log = LoggerFactory.getLogger(TcpBioClientConnector.class);
 
-    private final BioClient client;
+    private final TcpBioClient client;
     private final ClientConfig clientConfig;
 
     private Socket real;
     private Thread socketThread;
 
-    public BioClientConnector(BioClient client) {
+    public TcpBioClientConnector(TcpBioClient client) {
         this.client = client;
         this.clientConfig = client.clientConfig;
     }

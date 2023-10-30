@@ -2,7 +2,6 @@ package labs.aio;
 
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.broker.BrokerManager;
-import org.noear.socketd.broker.smartsocket.AioBroker;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.ListenerDefault;

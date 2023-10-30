@@ -2,7 +2,6 @@ package labs.bio;
 
 import org.noear.socketd.broker.Broker;
 import org.noear.socketd.broker.BrokerManager;
-import org.noear.socketd.broker.bio.BioBroker;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Session;

@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class BioExchanger implements OutputTarget<Socket> {
+public class TcpBioExchanger implements OutputTarget<Socket> {
     CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override

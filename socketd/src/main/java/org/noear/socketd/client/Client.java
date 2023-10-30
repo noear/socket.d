@@ -14,11 +14,6 @@ import java.util.function.Consumer;
  */
 public interface Client {
     /**
-     * 连接地址
-     */
-    Client url(String url);
-
-    /**
      * 自动重链
      */
     Client autoReconnect(boolean enable);

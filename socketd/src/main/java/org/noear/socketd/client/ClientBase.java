@@ -16,8 +16,6 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public abstract class ClientBase<T extends OutputTarget> implements Client {
-    protected String url;
-    protected URI uri;
     protected boolean autoReconnect;
     protected Processor processor = new ProcessorDefault();
     protected HeartbeatHandler heartbeatHandler;
@@ -49,21 +47,6 @@ public abstract class ClientBase<T extends OutputTarget> implements Client {
      */
     public Processor processor() {
         return processor;
-    }
-
-    public URI uri() {
-        return uri;
-    }
-
-    public String url() {
-        return url;
-    }
-
-    @Override
-    public Client url(String url) {
-        this.url = url;
-        this.uri = URI.create(url);
-        return this;
     }
 
     @Override

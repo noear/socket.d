@@ -1,6 +1,7 @@
 package org.noear.socketd.client;
 
 import javax.net.ssl.SSLContext;
+import java.net.URI;
 
 /**
  * 客记端配置（单位：毫秒）
@@ -9,6 +10,8 @@ import javax.net.ssl.SSLContext;
  * @since 2.0
  */
 public class ClientConfig {
+    private final String url;
+    private final URI uri;
     private final String schema;
 
     private SSLContext sslContext;
@@ -21,12 +24,23 @@ public class ClientConfig {
     private int readBufferSize;
     private int writeBufferSize;
 
-    public ClientConfig(String schema) {
-        this.schema = schema;
+    public ClientConfig(String url) {
+        this.url = url;
+        this.uri = URI.create(url);
+        this.schema = uri.getScheme();
 
         connectTimeout = 3000;
         heartbeatInterval = 20 * 1000;
         writeTimeout = 3000;
+    }
+
+
+    public String getUrl() {
+        return url;
+    }
+
+    public URI getUri() {
+        return uri;
     }
 
     public String getSchema() {

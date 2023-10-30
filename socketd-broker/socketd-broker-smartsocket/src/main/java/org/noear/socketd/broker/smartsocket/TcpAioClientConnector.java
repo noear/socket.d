@@ -37,7 +37,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
 
     @Override
     public Channel connect() throws Exception {
-        real = new AioQuickClient(client.uri().getHost(), client.uri().getPort(), client.exchanger(), this);
+        real = new AioQuickClient(client.config().getUri().getHost(), client.config().getUri().getPort(), client.exchanger(), this);
 
         //支持 ssl
         if(client.config().getSslContext() != null){
@@ -108,7 +108,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
             case NEW_SESSION: {
                 Channel channel = Attachment.getChannel(s, client.exchanger());
                 try {
-                    channel.sendConnect(client.url());
+                    channel.sendConnect(client.config().getUrl());
                 } catch (Throwable ex) {
                     client.processor().onError(channel.getSession(), ex);
                 }

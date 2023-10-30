@@ -32,7 +32,7 @@ public class SocketClientImpl extends WebSocketClient {
 
         //...
         try {
-            channel.sendConnect(client.url());
+            channel.sendConnect(client.config().getUrl());
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);
         }

@@ -39,18 +39,14 @@
 ```java
 public class Demo {
     public void main(String[] args) throws Throwable {
-        Broker broker = BrokerManager.getBroker("tcp");
-
-        
-        ServerConfig serverConfig = new ServerConfig();
-        Server server = broker.createServer(serverConfig);
+        ServerConfig serverConfig = new ServerConfig("tcp");
+        Server server = SocketD.createServer(serverConfig);
         server.listen(new ServerListener());
         server.start();
 
         
-        ClientConfig clientConfig = new ClientConfig();
-        Session session = broker.createClient(clientConfig)
-                .url("tcp://127.0.0.1:6329/path?u=a&p=2")
+        Session session = SocketD.createClient("tcp://127.0.0.1:6329/path?u=a&p=2")
+                .config(c -> c.connectTimeout(3000)) //配置
                 .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .autoReconnect(true) //自动重链

@@ -14,10 +14,9 @@ import java.util.concurrent.TimeoutException;
  * @since 2.0
  */
 public class TcpAioClient extends ClientBase implements Client {
-    protected final ClientConfig clientConfig;
     protected final TcpAioExchanger exchanger;
     public TcpAioClient(ClientConfig clientConfig){
-        this.clientConfig = clientConfig;
+        super(clientConfig);
         this.exchanger = new TcpAioExchanger();
     }
 

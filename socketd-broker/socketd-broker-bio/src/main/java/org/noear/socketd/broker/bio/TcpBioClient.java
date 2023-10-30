@@ -14,11 +14,10 @@ import java.util.concurrent.TimeoutException;
  * @since 2.0
  */
 public class TcpBioClient extends ClientBase implements Client {
-    protected final ClientConfig clientConfig;
     protected final TcpBioExchanger exchanger;
 
     public TcpBioClient(ClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
+        super(clientConfig);
         this.exchanger = new TcpBioExchanger();
     }
 

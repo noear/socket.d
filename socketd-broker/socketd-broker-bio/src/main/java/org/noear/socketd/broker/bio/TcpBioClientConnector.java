@@ -35,7 +35,7 @@ public class TcpBioClientConnector implements ClientConnector {
 
     public TcpBioClientConnector(TcpBioClient client) {
         this.client = client;
-        this.clientConfig = client.clientConfig;
+        this.clientConfig = client.clientConfig();
     }
 
     @Override

@@ -20,6 +20,16 @@ public abstract class ClientBase implements Client {
     protected Processor processor = new ProcessorDefault();
     protected HeartbeatHandler heartbeatHandler;
 
+    protected final ClientConfig clientConfig;
+
+    public ClientBase(ClientConfig clientConfig){
+        this.clientConfig = clientConfig;
+    }
+
+    public ClientConfig clientConfig() {
+        return clientConfig;
+    }
+
     public URI uri() {
         return uri;
     }

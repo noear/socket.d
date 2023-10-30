@@ -34,7 +34,7 @@ public class TcpAioClientConnector implements ClientConnector , MessageProcessor
 
     public TcpAioClientConnector(TcpAioClient client) {
         this.client = client;
-        this.clientConfig = client.clientConfig;
+        this.clientConfig = client.clientConfig();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class TcpAioClientConnector implements ClientConnector , MessageProcessor
 
     @Override
     public long getHeartbeatInterval() {
-        return client.clientConfig.getHeartbeatInterval();
+        return clientConfig.getHeartbeatInterval();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class TcpAioClientConnector implements ClientConnector , MessageProcessor
     public Channel connect() throws IOException {
         real = new AioQuickClient(client.uri().getHost(), client.uri().getPort(), client.exchanger, this);
         if (clientConfig.getReadBufferSize() > 0) {
-            real.setReadBufferSize(client.clientConfig.getReadBufferSize());
+            real.setReadBufferSize(clientConfig.getReadBufferSize());
         }
 
         if (clientConfig.getWriteBufferSize() > 0) {

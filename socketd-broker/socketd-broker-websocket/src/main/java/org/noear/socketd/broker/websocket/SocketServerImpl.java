@@ -5,7 +5,6 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.Handshaker;
 import org.noear.socketd.protocol.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +19,14 @@ import java.nio.ByteBuffer;
 public class SocketServerImpl extends WebSocketServer {
     static final Logger log = LoggerFactory.getLogger(SocketServerImpl.class);
 
-    private WsServer server;
+    private WsBioServer server;
 
-    public SocketServerImpl(int port, WsServer server) {
+    public SocketServerImpl(int port, WsBioServer server) {
         super(new InetSocketAddress(port));
         this.server = server;
     }
 
-    public SocketServerImpl(String addr, int port, WsServer server) {
+    public SocketServerImpl(String addr, int port, WsBioServer server) {
         super(new InetSocketAddress(addr, port));
         this.server = server;
     }

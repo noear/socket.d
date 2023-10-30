@@ -1,7 +1,5 @@
 package org.noear.socketd.broker.websocket;
 
-import org.java_websocket.exceptions.WebsocketNotConnectedException;
-import org.noear.socketd.client.ClientChannel;
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocktedConnectionException;
 import org.noear.socketd.protocol.Channel;
@@ -9,19 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author noear
  * @since 2.0
  */
-public class WsClientConnector extends ClientConnectorBase<WsClient> {
-    private static final Logger log = LoggerFactory.getLogger(WsClientConnector.class);
+public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
+    private static final Logger log = LoggerFactory.getLogger(WsBioClientConnector.class);
 
     private SocketClientImpl real;
 
-    public WsClientConnector(WsClient client) {
+    public WsBioClientConnector(WsBioClient client) {
         super(client);
     }
 

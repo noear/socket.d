@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class WsExchanger implements OutputTarget<WebSocket> {
+public class WsBioExchanger implements OutputTarget<WebSocket> {
     private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override

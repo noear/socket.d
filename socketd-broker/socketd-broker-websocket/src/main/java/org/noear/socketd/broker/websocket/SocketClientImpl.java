@@ -13,10 +13,10 @@ import java.nio.ByteBuffer;
 
 public class SocketClientImpl extends WebSocketClient {
     static final Logger log = LoggerFactory.getLogger(SocketClientImpl.class);
-    private WsClient client;
+    private WsBioClient client;
     private Channel channel;
 
-    public SocketClientImpl(URI serverUri, WsClient client) {
+    public SocketClientImpl(URI serverUri, WsBioClient client) {
         super(serverUri);
         this.client = client;
         this.channel = new ChannelDefault<>(this,this::close,client.exchanger());

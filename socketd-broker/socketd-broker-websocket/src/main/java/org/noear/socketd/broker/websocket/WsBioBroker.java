@@ -10,7 +10,7 @@ import org.noear.socketd.server.ServerConfig;
  * @author noear
  * @since 2.0
  */
-public class WsBroker implements Broker {
+public class WsBioBroker implements Broker {
     @Override
     public String schema() {
         return "ws";
@@ -18,11 +18,11 @@ public class WsBroker implements Broker {
 
     @Override
     public Server createServer(ServerConfig serverConfig) {
-        return new WsServer(serverConfig);
+        return new WsBioServer(serverConfig);
     }
 
     @Override
     public Client createClient(ClientConfig clientConfig) {
-        return new WsClient(clientConfig);
+        return new WsBioClient(clientConfig);
     }
 }

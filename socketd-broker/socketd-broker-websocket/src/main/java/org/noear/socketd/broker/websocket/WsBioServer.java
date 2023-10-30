@@ -9,10 +9,10 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class WsServer extends ServerBase<WsExchanger> {
+public class WsBioServer extends ServerBase<WsBioExchanger> {
     private  SocketServerImpl server;
-    public WsServer(ServerConfig serverConfig){
-        super(serverConfig, new WsExchanger());
+    public WsBioServer(ServerConfig serverConfig){
+        super(serverConfig, new WsBioExchanger());
     }
 
     @Override

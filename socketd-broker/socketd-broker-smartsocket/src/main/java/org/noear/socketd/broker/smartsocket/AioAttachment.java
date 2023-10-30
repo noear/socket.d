@@ -12,7 +12,7 @@ import java.util.HashMap;
  * @since 2.0
  */
 public class AioAttachment extends HashMap<Class<?>,Object> {
-    public static synchronized AioAttachment get(AioSession aioSession) {
+    public static AioAttachment get(AioSession aioSession) {
         AioAttachment tmp = aioSession.getAttachment();
         if (tmp == null) {
             tmp = new AioAttachment();

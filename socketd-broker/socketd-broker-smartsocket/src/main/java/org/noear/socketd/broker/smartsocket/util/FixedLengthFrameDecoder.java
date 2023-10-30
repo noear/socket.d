@@ -3,6 +3,8 @@ package org.noear.socketd.broker.smartsocket.util;
 import java.nio.ByteBuffer;
 
 /**
+ * 固定帧长解码器
+ *
  * @author noear
  * @since 2.0
  */

@@ -2,9 +2,13 @@
 
 ### 协议格式（Extensible messaging protocols）：
 
+* codec
+
 ```
 [len:int][flag:int][key:str][\n][topic:str][\n][header:str][\n][body:byte..]
 ```
+
+* flag
 
 | Flag            | Server                       | Client                       |
 |-----------------|------------------------------|------------------------------|

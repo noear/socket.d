@@ -3,10 +3,8 @@ package org.noear.socketd.broker.websocket;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.impl.ChannelDefault;
-import org.noear.socketd.protocol.impl.PayloadDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,16 +28,19 @@ public class SocketClientImpl extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        client.processor().onOpen(channel.getSession());
+        log.info("Client:Websocket onOpen...");
+
+        //...
+        try {
+            channel.sendConnect(client.url());
+        } catch (Throwable e) {
+            log.warn(e.getMessage(), e);
+        }
     }
 
     @Override
     public void onMessage(String test) {
-        try {
-            client.processor().onMessage(channel.getSession(), new PayloadDefault().entity(new Entity(test)));
-        } catch (Throwable e) {
-            log.warn(e.getMessage(), e);
-        }
+        //sockted nonsupport
     }
 
     @Override

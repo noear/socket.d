@@ -8,4 +8,8 @@ public class SocktedException extends RuntimeException {
     public SocktedException(Throwable cause){
         super(cause);
     }
+
+    public SocktedException(String message){
+        super(message);
+    }
 }

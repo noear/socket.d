@@ -1,12 +1,16 @@
 package org.noear.socketd.broker.websocket;
 
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.noear.socketd.client.ClientChannel;
 import org.noear.socketd.client.ClientConnectorBase;
+import org.noear.socketd.exception.SocktedConnectionException;
 import org.noear.socketd.protocol.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author noear
@@ -17,14 +21,25 @@ public class WsClientConnector extends ClientConnectorBase<WsClient> {
 
     private SocketClientImpl real;
 
-    public WsClientConnector(WsClient client){
+    public WsClientConnector(WsClient client) {
         super(client);
     }
 
     @Override
     public Channel connect() throws IOException {
-        SocketClientImpl real = new SocketClientImpl(client.uri(),client);
-        return new ClientChannel(real.getChannel(), this);
+        real = new SocketClientImpl(client.uri(), client);
+
+        try {
+            if (real.connectBlocking(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS)) {
+                return real.getChannel();
+            } else {
+                throw new SocktedConnectionException("Client:Connection fail");
+            }
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

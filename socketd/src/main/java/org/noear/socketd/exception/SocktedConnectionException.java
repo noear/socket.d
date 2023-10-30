@@ -10,4 +10,8 @@ public class SocktedConnectionException extends SocktedException{
     public SocktedConnectionException(Throwable cause){
         super(cause);
     }
+
+    public SocktedConnectionException(String message){
+        super(message);
+    }
 }

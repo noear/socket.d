@@ -47,18 +47,12 @@ public class ClientChannel extends ChannelBase implements Channel {
                 prepareSend();
 
                 real.send(frame, acceptor);
-            } catch (SocketException e) {
+            } catch (Throwable e) {
                 if (connector.autoReconnect()) {
                     real = null;
                 }
 
                 throw new SocktedConnectionException(e);
-            } catch (IOException e) {
-                throw e;
-            } catch (RuntimeException e) {
-                throw e;
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
             }
         }
     }

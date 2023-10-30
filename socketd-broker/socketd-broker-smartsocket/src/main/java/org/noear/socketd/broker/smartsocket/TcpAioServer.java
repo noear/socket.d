@@ -7,35 +7,46 @@ import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.MessageProcessor;
+import org.smartboot.socket.NetMonitor;
 import org.smartboot.socket.StateMachineEnum;
+import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickServer;
 import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
+import java.nio.channels.AsynchronousSocketChannel;
 
 /**
- * Aio 服务端实现
+ * Aio 服务端实现（支持 ssl）
  *
  * @author noear
  * @since 2.0
  */
-public class TcpAioServer extends ServerBase<TcpAioExchanger> implements MessageProcessor<Frame> {
+public class TcpAioServer extends ServerBase<TcpAioExchanger> implements MessageProcessor<Frame>, NetMonitor {
     private static final Logger log = LoggerFactory.getLogger(TcpAioServer.class);
 
     private AioQuickServer server;
+    private SslPlugin<Integer> sslPlugin;
 
     public TcpAioServer(ServerConfig serverConfig) {
         super(serverConfig, new TcpAioExchanger());
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() throws Exception {
         if (config().getHost() != null) {
             server = new AioQuickServer(config().getPort(),
                     exchanger(), this);
         } else {
             server = new AioQuickServer(config().getHost(), config().getPort(),
                     exchanger(), this);
+        }
+
+        //支持 ssl
+        if(config().getSslContext() != null){
+            sslPlugin = new SslPlugin<>(config()::getSslContext, sslEngine -> {
+                sslEngine.setUseClientMode(false);
+            });
         }
 
         server.setThreadNum(config().getCoreThreads());
@@ -91,5 +102,30 @@ public class TcpAioServer extends ServerBase<TcpAioExchanger> implements Message
                 processor().onError(Attachment.getChannel(s, exchanger()).getSession(), e);
                 break;
         }
+    }
+
+    @Override
+    public AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel asynchronousSocketChannel) {
+        return null;
+    }
+
+    @Override
+    public void afterRead(AioSession aioSession, int i) {
+
+    }
+
+    @Override
+    public void beforeRead(AioSession aioSession) {
+
+    }
+
+    @Override
+    public void afterWrite(AioSession aioSession, int i) {
+
+    }
+
+    @Override
+    public void beforeWrite(AioSession aioSession) {
+
     }
 }

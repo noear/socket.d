@@ -33,5 +33,5 @@ public interface ClientConnector extends Closeable {
      *
      * @return 通道
      */
-    Channel connect() throws IOException;
+    Channel connect() throws Exception;
 }

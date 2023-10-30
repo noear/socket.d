@@ -7,33 +7,45 @@ import org.noear.socketd.protocol.Frame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.MessageProcessor;
+import org.smartboot.socket.NetMonitor;
 import org.smartboot.socket.StateMachineEnum;
+import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickClient;
 import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Aio 客户端连接器实现
+ * Aio 客户端连接器实现（支持 ssl）
  *
  * @author noear
  * @since 2.0
  */
-public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> implements MessageProcessor<Frame> {
+public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> implements MessageProcessor<Frame>, NetMonitor {
     private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
 
     private AioQuickClient real;
     private CompletableFuture<Channel> future;
+    private SslPlugin<Integer> sslPlugin;
 
     public TcpAioClientConnector(TcpAioClient client) {
         super(client);
     }
 
     @Override
-    public Channel connect() throws IOException {
+    public Channel connect() throws Exception {
         real = new AioQuickClient(client.uri().getHost(), client.uri().getPort(), client.exchanger(), this);
+
+        //支持 ssl
+        if(client.config().getSslContext() != null){
+            sslPlugin = new SslPlugin<>(client.config()::getSslContext, sslEngine -> {
+                sslEngine.setUseClientMode(false);
+            });
+        }
+
         if (client.config().getReadBufferSize() > 0) {
             real.setReadBufferSize(client.config().getReadBufferSize());
         }
@@ -115,5 +127,34 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
                 client.processor().onError(Attachment.getChannel(s, client.exchanger()).getSession(), e);
                 break;
         }
+    }
+
+    @Override
+    public AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel asynchronousSocketChannel) {
+        if (sslPlugin == null) {
+            return asynchronousSocketChannel;
+        } else {
+            return sslPlugin.shouldAccept(asynchronousSocketChannel);
+        }
+    }
+
+    @Override
+    public void afterRead(AioSession aioSession, int i) {
+
+    }
+
+    @Override
+    public void beforeRead(AioSession aioSession) {
+
+    }
+
+    @Override
+    public void afterWrite(AioSession aioSession, int i) {
+
+    }
+
+    @Override
+    public void beforeWrite(AioSession aioSession) {
+
     }
 }

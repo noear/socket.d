@@ -20,7 +20,7 @@ public class WsBioClient extends ClientBase<WsBioExchanger> {
     }
 
     @Override
-    public Session open() throws IOException {
+    public Session open() throws Exception {
         ClientConnector connector = new WsBioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);

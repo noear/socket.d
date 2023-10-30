@@ -109,7 +109,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      *
      * @return 是否为新链接
      */
-    private boolean prepareSend() throws IOException {
+    private boolean prepareSend() throws Exception {
         if (real == null) {
             real = connector.connect();
 

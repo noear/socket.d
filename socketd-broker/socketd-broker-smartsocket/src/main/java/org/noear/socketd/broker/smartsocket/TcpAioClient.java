@@ -18,7 +18,7 @@ public class TcpAioClient extends ClientBase<TcpAioExchanger>{
     }
 
     @Override
-    public Session open() throws IOException {
+    public Session open() throws Exception {
         ClientConnector connector = new TcpAioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);

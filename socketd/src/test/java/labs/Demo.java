@@ -1,5 +1,6 @@
 package labs;
 
+import org.noear.socketd.broker.BrokerManager;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Session;
@@ -13,7 +14,7 @@ import org.noear.socketd.server.ServerConfig;
  */
 public class Demo {
     public void main(String[] args) throws Throwable {
-        Broker broker = Broker.getInstance();
+        Broker broker = BrokerManager.getBroker("tcp");
 
         ServerConfig serverConfig = null;
         Server server = broker.createServer(serverConfig);

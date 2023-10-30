@@ -14,6 +14,11 @@ import org.noear.socketd.server.ServerConfig;
 public class BioBroker implements Broker {
 
     @Override
+    public String schema() {
+        return "tcp";
+    }
+
+    @Override
     public Server createServer(ServerConfig serverConfig) {
         return new BioServer(serverConfig);
     }

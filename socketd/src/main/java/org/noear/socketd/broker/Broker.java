@@ -12,11 +12,18 @@ import org.noear.socketd.server.ServerConfig;
  * @since 2.0
  */
 public interface Broker {
-    static Broker getInstance() {
-        return null;
-    }
+    /**
+     * 协议架构
+     */
+    String schema();
 
+    /**
+     * 创建服务端
+     */
     Server createServer(ServerConfig serverConfig);
 
+    /**
+     * 创建客户端
+     */
     Client createClient(ClientConfig clientConfig);
 }

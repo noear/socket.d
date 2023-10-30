@@ -1,6 +1,7 @@
 package labs.bio;
 
 import org.noear.socketd.broker.Broker;
+import org.noear.socketd.broker.BrokerManager;
 import org.noear.socketd.broker.bio.BioBroker;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.protocol.Entity;
@@ -13,7 +14,7 @@ import org.noear.socketd.protocol.ListenerDefault;
  */
 public class ClientTest {
     public static void main(String[] args) throws Exception {
-        Broker broker = new BioBroker();
+        Broker broker = BrokerManager.getBroker("tcp");
 
         //client
         ClientConfig clientConfig = new ClientConfig();

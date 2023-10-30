@@ -12,6 +12,11 @@ import org.noear.socketd.server.ServerConfig;
  */
 public class AioBroker implements Broker {
     @Override
+    public String schema() {
+        return "tcp";
+    }
+
+    @Override
     public Server createServer(ServerConfig serverConfig) {
         return new AioServer(serverConfig);
     }

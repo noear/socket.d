@@ -1,5 +1,7 @@
 package org.noear.socketd.protocol;
 
+import org.noear.socketd.utils.Utils;
+
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,7 +14,9 @@ import java.util.Map;
  */
 public class Entity {
 
+    private boolean headerChanged = false;
     protected String header = Constants.DEF_HEADER;
+
     protected byte[] body = Constants.DEF_BODY;
 
     public Entity() {
@@ -23,7 +27,7 @@ public class Entity {
         this.body = body;
     }
 
-    public Entity(String body){
+    public Entity(String body) {
         this.body = body.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -31,30 +35,51 @@ public class Entity {
      * Header
      */
     public String getHeader() {
+        if (headerChanged) {
+            StringBuilder buf = new StringBuilder();
+            getHeaderMap().forEach((key, val) -> {
+                buf.append(key).append("=").append(val).append("&");
+            });
+            if (buf.length() > 0) {
+                buf.setLength(buf.length() - 1);
+            }
+            header = buf.toString();
+            headerChanged = false;
+        }
+
         return header;
     }
 
-    Map<String, String> headerMap;
+    private Map<String, String> headerMap;
 
     /**
      * Header as map
      */
-    public Map<String, String> getHeaderMap() {
-        if (header == null) {
-            return null;
-        }
-
+    private Map<String, String> getHeaderMap() {
         if (headerMap == null) {
             headerMap = new LinkedHashMap<>();
+            headerChanged = false;
 
             //此处要优化
-            for (String kvStr : header.split("&")) {
-                String[] kv = kvStr.split("=");
-                headerMap.put(kv[0], kv[1]);
+            if (Utils.isNotEmpty(header)) {
+                for (String kvStr : header.split("&")) {
+                    String[] kv = kvStr.split("=");
+                    headerMap.put(kv[0], kv[1]);
+                }
             }
         }
 
         return headerMap;
+    }
+
+    public Entity putHeader(String name, String val) {
+        getHeaderMap().put(name, val);
+        headerChanged =true;
+        return this;
+    }
+
+    public String getHeader(String name){
+        return getHeaderMap().get(name);
     }
 
     /**

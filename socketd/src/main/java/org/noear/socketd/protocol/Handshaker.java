@@ -1,7 +1,5 @@
 package org.noear.socketd.protocol;
 
-import java.util.Map;
-
 /**
  * 握手信息
  *
@@ -10,15 +8,15 @@ import java.util.Map;
  */
 public class Handshaker {
     private final String uri;
-    private final Map<String, String> headers;
+    private final Entity entity;
     private final String protocols;
     private final String version;
 
     public Handshaker(Payload payload) {
         this.uri = payload.getTopic();
-        this.headers = payload.getEntity().getHeaderMap();
-        this.protocols = headers.get(Constants.HEARDER_SOCKETD_PROTOCOLS);
-        this.version = headers.get(Constants.HEARDER_SOCKETD_VERSION);
+        this.entity = payload.getEntity();
+        this.protocols = entity.getHeader(Constants.HEARDER_SOCKETD_PROTOCOLS);
+        this.version = entity.getHeader(Constants.HEARDER_SOCKETD_VERSION);
     }
 
     /**

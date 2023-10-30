@@ -21,6 +21,7 @@ public class SocketClientImpl extends WebSocketClient {
     public SocketClientImpl(URI serverUri, WsClient client) {
         super(serverUri);
         this.client = client;
+        this.channel = new ChannelDefault<>(this,this::close,client.exchanger());
     }
 
     public Channel getChannel() {
@@ -29,7 +30,6 @@ public class SocketClientImpl extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        channel = new ChannelDefault<>(this,this::close,client.exchanger());
         client.processor().onOpen(channel.getSession());
     }
 

@@ -20,7 +20,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     public WebSocketClientImpl(URI serverUri, WsBioClient client) {
         super(serverUri);
         this.client = client;
-        this.channel = new ChannelDefault<>(this, client.exchanger());
+        this.channel = new ChannelDefault<>(this, client.assistant());
     }
 
     public Channel getChannel() {
@@ -46,7 +46,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     @Override
     public void onMessage(ByteBuffer bytes) {
         try {
-            Frame frame = client.exchanger().read(bytes);
+            Frame frame = client.assistant().read(bytes);
             client.processor().onReceive(channel, frame);
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);

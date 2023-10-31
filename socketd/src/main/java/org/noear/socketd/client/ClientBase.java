@@ -19,11 +19,11 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
     protected HeartbeatHandler heartbeatHandler;
 
     private final ClientConfig config;
-    private final T exchanger;
+    private final T assistant;
 
-    public ClientBase(ClientConfig clientConfig, T exchanger) {
+    public ClientBase(ClientConfig clientConfig, T assistant) {
         this.config = clientConfig;
-        this.exchanger = exchanger;
+        this.assistant = assistant;
     }
 
     /**
@@ -34,10 +34,10 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
     }
 
     /**
-     * 交换机
+     * 通道助理
      */
-    public T exchanger() {
-        return exchanger;
+    public T assistant() {
+        return assistant;
     }
 
     /**

@@ -54,7 +54,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         CompletableFuture<Channel> future = new CompletableFuture<>();
 
         try {
-            Channel channel = new ChannelDefault<>(real, client.exchanger());
+            Channel channel = new ChannelDefault<>(real, client.assistant());
 
             socketThread = new Thread(() -> {
                 try {
@@ -89,7 +89,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                     break;
                 }
 
-                Frame frame = client.exchanger().read(socket);
+                Frame frame = client.assistant().read(socket);
                 if (frame != null) {
                     client.processor().onReceive(channel, frame);
 

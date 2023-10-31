@@ -17,15 +17,17 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLContext;
 
 /**
+ * Tcp-Nio 服务端实现（支持 ssl）
+ *
  * @author noear
  * @since 2.0
  */
-public class TcpNioServer extends ServerBase<TcpNioExchanger> {
+public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(TcpNioServer.class);
     private ChannelFuture server;
 
     public TcpNioServer(ServerConfig config) {
-        super(config, new TcpNioExchanger());
+        super(config, new TcpNioChannelAssistant());
     }
 
     @Override

@@ -18,29 +18,29 @@ import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 
 /**
- * Aio 服务端实现（支持 ssl）
+ * Tcp-Aio 服务端实现（支持 ssl）
  *
  * @author noear
  * @since 2.0
  */
-public class TcpAioServer extends ServerBase<TcpAioExchanger> implements MessageProcessor<Frame>, NetMonitor {
+public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements MessageProcessor<Frame>, NetMonitor {
     private static final Logger log = LoggerFactory.getLogger(TcpAioServer.class);
 
     private AioQuickServer server;
     private SslPlugin<Integer> sslPlugin;
 
     public TcpAioServer(ServerConfig serverConfig) {
-        super(serverConfig, new TcpAioExchanger());
+        super(serverConfig, new TcpAioChannelAssistant());
     }
 
     @Override
     public void start() throws Exception {
         if (config().getHost() != null) {
             server = new AioQuickServer(config().getPort(),
-                    exchanger(), this);
+                    assistant(), this);
         } else {
             server = new AioQuickServer(config().getHost(), config().getPort(),
-                    exchanger(), this);
+                    assistant(), this);
         }
 
         //支持 ssl
@@ -71,7 +71,7 @@ public class TcpAioServer extends ServerBase<TcpAioExchanger> implements Message
 
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = Attachment.getChannel(s, exchanger());
+        Channel channel = Attachment.getChannel(s, assistant());
 
         try {
             processor().onReceive(channel, frame);
@@ -92,7 +92,7 @@ public class TcpAioServer extends ServerBase<TcpAioExchanger> implements Message
                 break;
 
             case SESSION_CLOSED:
-                processor().onClose(Attachment.getChannel(s, exchanger()).getSession());
+                processor().onClose(Attachment.getChannel(s, assistant()).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -100,7 +100,7 @@ public class TcpAioServer extends ServerBase<TcpAioExchanger> implements Message
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                processor().onError(Attachment.getChannel(s, exchanger()).getSession(), e);
+                processor().onError(Attachment.getChannel(s, assistant()).getSession(), e);
                 break;
         }
     }

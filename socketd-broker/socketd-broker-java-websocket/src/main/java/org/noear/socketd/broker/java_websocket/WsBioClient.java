@@ -5,18 +5,16 @@ import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
-import java.io.IOException;
-
 /**
  * Ws-Bio 客户端实现
  *
  * @author noear
  * @since 2.0
  */
-public class WsBioClient extends ClientBase<WsBioExchanger> {
+public class WsBioClient extends ClientBase<WsBioChannelAssistant> {
 
     public WsBioClient(ClientConfig clientConfig) {
-        super(clientConfig, new WsBioExchanger());
+        super(clientConfig, new WsBioChannelAssistant());
     }
 
     @Override

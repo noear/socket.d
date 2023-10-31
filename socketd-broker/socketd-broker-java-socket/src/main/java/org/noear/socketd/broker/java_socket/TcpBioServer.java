@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
  * @author noear
  * @since 2.0
  */
-public class TcpBioServer extends ServerBase<TcpBioExchanger> {
+public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioServer.class);
 
     private ServerSocket server;
@@ -30,7 +30,7 @@ public class TcpBioServer extends ServerBase<TcpBioExchanger> {
     private ExecutorService serverExecutor;
 
     public TcpBioServer(ServerConfig config) {
-        super(config, new TcpBioExchanger());
+        super(config, new TcpBioChannelAssistant());
     }
 
     /**
@@ -70,7 +70,7 @@ public class TcpBioServer extends ServerBase<TcpBioExchanger> {
                     Socket socket = server.accept();
 
                     try {
-                        Channel channel = new ChannelDefault<>(socket, exchanger());
+                        Channel channel = new ChannelDefault<>(socket, assistant());
 
                         serverExecutor.submit(() -> {
                             receive(channel, socket);
@@ -98,7 +98,7 @@ public class TcpBioServer extends ServerBase<TcpBioExchanger> {
                     break;
                 }
 
-                Frame frame = exchanger().read(socket);
+                Frame frame = assistant().read(socket);
                 if (frame != null) {
                     processor().onReceive(channel, frame);
                 }

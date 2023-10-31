@@ -9,12 +9,14 @@ import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
 /**
+ * Tcp-Nio 客户端实现
+ *
  * @author noear
  * @since 2.0
  */
-public class TcpNioClient extends ClientBase<TcpNioExchanger> {
+public class TcpNioClient extends ClientBase<TcpNioChannelAssistant> {
     public TcpNioClient(ClientConfig clientConfig) {
-        super(clientConfig, new TcpNioExchanger());
+        super(clientConfig, new TcpNioChannelAssistant());
     }
 
     @Override

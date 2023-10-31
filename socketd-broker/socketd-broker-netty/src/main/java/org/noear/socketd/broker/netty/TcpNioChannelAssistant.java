@@ -10,10 +10,12 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
+ * Tcp-Nio 通道助理实现
+ *
  * @author noear
  * @since 2.0
  */
-public class TcpNioExchanger implements ChannelAssistant<Channel> {
+public class TcpNioChannelAssistant implements ChannelAssistant<Channel> {
     @Override
     public void write(Channel source, Frame frame) throws IOException {
         if (source.isActive()) {

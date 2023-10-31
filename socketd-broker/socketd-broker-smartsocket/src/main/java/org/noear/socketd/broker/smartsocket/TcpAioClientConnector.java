@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Aio 客户端连接器实现（支持 ssl）
+ * Tcp-Aio 客户端连接器实现（支持 ssl）
  *
  * @author noear
  * @since 2.0
@@ -40,7 +40,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
     public Channel connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
-        real = new AioQuickClient(client.config().getUri().getHost(), client.config().getUri().getPort(), client.exchanger(), this);
+        real = new AioQuickClient(client.config().getUri().getHost(), client.config().getUri().getPort(), client.assistant(), this);
 
         //支持 ssl
         if(client.config().getSslContext() != null){
@@ -88,7 +88,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
 
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = Attachment.getChannel(s, client.exchanger());
+        Channel channel = Attachment.getChannel(s, client.assistant());
 
         try {
             client.processor().onReceive(channel, frame);
@@ -109,7 +109,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
     public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION: {
-                Channel channel = Attachment.getChannel(s, client.exchanger());
+                Channel channel = Attachment.getChannel(s, client.assistant());
                 try {
                     channel.sendConnect(client.config().getUrl());
                 } catch (Throwable ex) {
@@ -119,7 +119,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
             break;
 
             case SESSION_CLOSED:
-                client.processor().onClose(Attachment.getChannel(s, client.exchanger()).getSession());
+                client.processor().onClose(Attachment.getChannel(s, client.assistant()).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -127,7 +127,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                client.processor().onError(Attachment.getChannel(s, client.exchanger()).getSession(), e);
+                client.processor().onError(Attachment.getChannel(s, client.assistant()).getSession(), e);
                 break;
         }
     }

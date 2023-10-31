@@ -13,11 +13,11 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class WsBioServer extends ServerBase<WsBioExchanger> {
+public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
     private WebSocketServerImpl server;
 
     public WsBioServer(ServerConfig serverConfig) {
-        super(serverConfig, new WsBioExchanger());
+        super(serverConfig, new WsBioChannelAssistant());
     }
 
     @Override

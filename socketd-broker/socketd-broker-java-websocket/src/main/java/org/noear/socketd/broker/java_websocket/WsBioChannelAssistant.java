@@ -10,12 +10,12 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
 /**
- * Ws-Bio 交换机实现
+ * Ws-Bio 通道助理实现
  *
  * @author noear
  * @since 2.0
  */
-public class WsBioExchanger implements ChannelAssistant<WebSocket> {
+public class WsBioChannelAssistant implements ChannelAssistant<WebSocket> {
     private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override

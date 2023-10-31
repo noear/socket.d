@@ -36,7 +36,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         log.info("Server:Websocket onOpen...");
 
-        Channel channel = new ChannelDefault<>(conn, server.exchanger());
+        Channel channel = new ChannelDefault<>(conn, server.assistant());
         conn.setAttachment(channel);
     }
 
@@ -55,7 +55,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     public void onMessage(WebSocket conn, ByteBuffer message) {
         try {
             Channel channel = conn.getAttachment();
-            Frame frame = server.exchanger().read(message);
+            Frame frame = server.assistant().read(message);
             server.processor().onReceive(channel, frame);
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);

@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Tcp-Nio 客户端连接器实现（支持 ssl）
+ *
  * @author noear
  * @since 2.0
  */

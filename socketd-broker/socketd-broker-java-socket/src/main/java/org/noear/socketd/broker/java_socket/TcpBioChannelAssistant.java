@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class TcpBioExchanger implements ChannelAssistant<Socket> {
+public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
     private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override

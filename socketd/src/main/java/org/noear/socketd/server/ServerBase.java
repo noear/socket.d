@@ -14,11 +14,11 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
 
     private final ServerConfig config;
 
-    private final T exchanger;
+    private final T assistant;
 
-    public ServerBase(ServerConfig config, T exchanger) {
+    public ServerBase(ServerConfig config, T assistant) {
         this.config = config;
-        this.exchanger = exchanger;
+        this.assistant = assistant;
     }
 
     /**
@@ -29,10 +29,10 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     }
 
     /**
-     * 交换机
+     * 通道助理
      */
-    public T exchanger() {
-        return exchanger;
+    public T assistant() {
+        return assistant;
     }
 
     /**

@@ -4,17 +4,15 @@ import org.noear.socketd.client.*;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
-import java.io.IOException;
-
 /**
  * Tcp-Bio 客户端实现
  *
  * @author noear
  * @since 2.0
  */
-public class TcpBioClient extends ClientBase<TcpBioExchanger> {
+public class TcpBioClient extends ClientBase<TcpBioChannelAssistant> {
     public TcpBioClient(ClientConfig clientConfig) {
-        super(clientConfig, new TcpBioExchanger());
+        super(clientConfig, new TcpBioChannelAssistant());
     }
 
     @Override

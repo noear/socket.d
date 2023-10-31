@@ -5,16 +5,15 @@ import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
-import java.io.IOException;
-
 /**
- * Aio 客户端实现
+ * Tcp-Aio 客户端实现
+ *
  * @author noear
  * @since 2.0
  */
-public class TcpAioClient extends ClientBase<TcpAioExchanger>{
+public class TcpAioClient extends ClientBase<TcpAioChannelAssistant>{
     public TcpAioClient(ClientConfig clientConfig){
-        super(clientConfig, new TcpAioExchanger());
+        super(clientConfig, new TcpAioChannelAssistant());
     }
 
     @Override

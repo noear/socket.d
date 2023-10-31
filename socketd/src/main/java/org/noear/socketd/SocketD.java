@@ -24,11 +24,15 @@ public class SocketD {
         serverBrokerMap = new HashMap<>();
 
         ServiceLoader.load(ClientBroker.class).iterator().forEachRemaining(broker -> {
-            clientBrokerMap.put(broker.schema(), broker);
+            for (String s : broker.schema()) {
+                clientBrokerMap.put(s, broker);
+            }
         });
 
         ServiceLoader.load(ServerBroker.class).iterator().forEachRemaining(broker -> {
-            serverBrokerMap.put(broker.schema(), broker);
+            for (String s : broker.schema()) {
+                serverBrokerMap.put(s, broker);
+            }
         });
     }
 

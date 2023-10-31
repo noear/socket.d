@@ -4,6 +4,8 @@ import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.noear.socketd.broker.java_websocket.impl.WebSocketServerImpl;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -14,6 +16,7 @@ import java.io.IOException;
  * @since 2.0
  */
 public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
+    private static final Logger log = LoggerFactory.getLogger(WsBioServer.class);
     private WebSocketServerImpl server;
 
     public WsBioServer(ServerConfig serverConfig) {
@@ -34,6 +37,8 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
         }
 
         server.start();
+
+        log.info("Server started: {server=ws://127.0.0.1:" + config().getPort() + "}");
     }
 
     @Override

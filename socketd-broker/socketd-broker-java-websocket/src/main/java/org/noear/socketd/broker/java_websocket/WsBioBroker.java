@@ -15,8 +15,8 @@ import org.noear.socketd.server.ServerConfig;
  */
 public class WsBioBroker implements ClientBroker, ServerBroker {
     @Override
-    public String schema() {
-        return "ws";
+    public String[] schema() {
+        return new String[]{"ws", "wss"};
     }
 
     @Override

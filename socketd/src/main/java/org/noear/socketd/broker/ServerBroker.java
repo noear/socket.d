@@ -15,7 +15,7 @@ public interface ServerBroker {
     /**
      * 协议架构
      */
-    String schema();
+    String[] schema();
 
     /**
      * 创建服务端

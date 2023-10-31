@@ -15,7 +15,7 @@ public interface ClientBroker {
     /**
      * 协议架构
      */
-    String schema();
+    String[] schema();
 
     /**
      * 创建客户端

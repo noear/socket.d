@@ -15,8 +15,8 @@ import org.noear.socketd.server.ServerConfig;
  */
 public class TcpNioBroker implements ClientBroker, ServerBroker {
     @Override
-    public String schema() {
-        return "tcp";
+    public String[] schema() {
+        return new String[]{"tcp", "tcps"};
     }
 
     @Override

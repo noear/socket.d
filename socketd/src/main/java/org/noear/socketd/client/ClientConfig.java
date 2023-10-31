@@ -19,7 +19,6 @@ public class ClientConfig {
     private long heartbeatInterval;
 
     private long connectTimeout;
-    private long writeTimeout;
 
     private int readBufferSize;
     private int writeBufferSize;
@@ -33,7 +32,6 @@ public class ClientConfig {
 
         connectTimeout = 3000;
         heartbeatInterval = 20 * 1000;
-        writeTimeout = 3000;
     }
 
 
@@ -100,21 +98,6 @@ public class ClientConfig {
      */
     public ClientConfig connectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
-        return this;
-    }
-
-    /**
-     * 获取写超时
-     */
-    public long getWriteTimeout() {
-        return writeTimeout;
-    }
-
-    /**
-     * 配置写超时
-     */
-    public ClientConfig writeTimeout(long writeTimeout) {
-        this.writeTimeout = writeTimeout;
         return this;
     }
 

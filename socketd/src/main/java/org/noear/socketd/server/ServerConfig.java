@@ -20,8 +20,6 @@ public class ServerConfig {
     private int maxThreads;
 
     private long idleTimeout;
-    private long readTimeout;
-    private long writeTimeout;
 
     private int readBufferSize;
     private int writeBufferSize;
@@ -35,9 +33,6 @@ public class ServerConfig {
         coreThreads = Runtime.getRuntime().availableProcessors() * 2;
         maxThreads = coreThreads * 8;
         idleTimeout = 3000;
-
-        readTimeout = 3000;
-        writeTimeout = 3000;
 
         readBufferSize = 512;
         writeBufferSize = 512;
@@ -137,36 +132,6 @@ public class ServerConfig {
      */
     public ServerConfig idleTimeout(long idleTimeout) {
         this.idleTimeout = idleTimeout;
-        return this;
-    }
-
-    /**
-     * 获取读超时
-     */
-    public long getReadTimeout() {
-        return readTimeout;
-    }
-
-    /**
-     * 配置读超时
-     */
-    public ServerConfig readTimeout(long readTimeout) {
-        this.readTimeout = readTimeout;
-        return this;
-    }
-
-    /**
-     * 获取写超时
-     */
-    public long getWriteTimeout() {
-        return writeTimeout;
-    }
-
-    /**
-     * 配置写超时
-     */
-    public ServerConfig writeTimeout(long writeTimeout) {
-        this.writeTimeout = writeTimeout;
         return this;
     }
 

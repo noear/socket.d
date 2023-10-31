@@ -5,6 +5,7 @@ import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.OutputTarget;
 
 import java.io.IOException;
+import java.io.NotActiveException;
 
 /**
  * @author noear
@@ -13,6 +14,11 @@ import java.io.IOException;
 public class TcpNioExchanger implements OutputTarget<Channel> {
     @Override
     public void write(Channel source, Frame frame) throws IOException {
-        source.writeAndFlush(frame);
+        if (source.isActive()) {
+            source.writeAndFlush(frame);
+        } else {
+            //触发自动重链
+            throw new NotActiveException();
+        }
     }
 }

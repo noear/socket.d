@@ -28,7 +28,7 @@ public class Attachment extends HashMap<Class<?>,Object> {
         Attachment attachment = get(aioSession);
         ChannelDefault tmp = (ChannelDefault) attachment.get(ChannelDefault.class);
         if (tmp == null) {
-            tmp = new ChannelDefault<>(aioSession, aioSession::close, r -> !r.isInvalid(), exchanger);
+            tmp = new ChannelDefault<>(aioSession, exchanger);
             attachment.put(ChannelDefault.class, tmp);
         }
         return tmp;

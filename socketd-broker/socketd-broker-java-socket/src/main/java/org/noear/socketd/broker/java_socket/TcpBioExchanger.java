@@ -1,6 +1,6 @@
 package org.noear.socketd.broker.java_socket;
 
-import org.noear.socketd.protocol.OutputTarget;
+import org.noear.socketd.protocol.ChannelTarget;
 import org.noear.socketd.protocol.CodecByteBuffer;
 import org.noear.socketd.protocol.Frame;
 
@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class TcpBioExchanger implements OutputTarget<Socket> {
+public class TcpBioExchanger implements ChannelTarget<Socket> {
     private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override
@@ -24,6 +24,16 @@ public class TcpBioExchanger implements OutputTarget<Socket> {
        OutputStream output = source.getOutputStream();
        output.write(codec.encode(frame).array());
        output.flush();
+    }
+
+    @Override
+    public boolean isValid(Socket target) {
+        return target.isConnected();
+    }
+
+    @Override
+    public void close(Socket target) throws IOException {
+        target.close();
     }
 
     public Frame read(Socket source) throws IOException {

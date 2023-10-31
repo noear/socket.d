@@ -2,12 +2,9 @@ package org.noear.socketd.protocol.impl;
 
 import org.noear.socketd.protocol.*;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 
 /**
  * 通道默认实现
@@ -17,25 +14,21 @@ import java.util.function.Predicate;
  */
 public class ChannelDefault<S> extends ChannelBase implements Channel {
     private S source;
-    private Closeable sourceCloseable;
-    private Predicate<S> sourceTester;
 
-    private OutputTarget<S> outputTarget;
+    private ChannelTarget<S> channelTarget;
     private Session session;
     private Map<String, Acceptor> acceptorMap;
 
-    public ChannelDefault(S source, Closeable sourceCloseable, Predicate<S> sourceTester, OutputTarget<S> outputTarget) {
+    public ChannelDefault(S source,  ChannelTarget<S> channelTarget) {
         super();
         this.source = source;
-        this.sourceCloseable = sourceCloseable;
-        this.sourceTester = sourceTester;
-        this.outputTarget = outputTarget;
+        this.channelTarget = channelTarget;
         this.acceptorMap = new HashMap<>();
     }
 
     @Override
     public boolean isValid() {
-        return sourceTester.test(source);
+        return channelTarget.isValid(source);
     }
 
     /**
@@ -47,7 +40,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
             acceptorMap.put(frame.getPayload().getKey(), acceptor);
         }
 
-        outputTarget.write(source, frame);
+        channelTarget.write(source, frame);
     }
 
     @Override
@@ -79,7 +72,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      */
     @Override
     public void close() throws IOException {
-        sourceCloseable.close();
+        channelTarget.close(source);
         acceptorMap.clear();
     }
 }

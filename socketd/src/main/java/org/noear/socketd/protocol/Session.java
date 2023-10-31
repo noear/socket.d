@@ -16,6 +16,11 @@ public interface Session {
     boolean isValid();
 
     /**
+     * 获取握手信息
+     * */
+    Handshaker getHandshaker();
+
+    /**
      * 获取附件
      *
      * @param key 关键字

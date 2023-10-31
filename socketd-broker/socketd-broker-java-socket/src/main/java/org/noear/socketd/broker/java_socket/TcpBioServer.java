@@ -70,7 +70,7 @@ public class TcpBioServer extends ServerBase<TcpBioExchanger> {
                     Socket socket = server.accept();
 
                     try {
-                        Channel channel = new ChannelDefault<>(socket, socket::close, r->r.isConnected(), exchanger());
+                        Channel channel = new ChannelDefault<>(socket, exchanger());
 
                         serverExecutor.submit(() -> {
                             receive(channel, socket);

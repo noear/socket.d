@@ -26,7 +26,7 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Frame
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
 
-        Channel channel = new ChannelDefault<>(ctx.channel(), ctx.channel()::close, r->r.isActive(), server.exchanger());
+        Channel channel = new ChannelDefault<>(ctx.channel(), server.exchanger());
         ctx.attr(CHANNEL_KEY).set(channel);
     }
 

@@ -27,6 +27,11 @@ public class SessionDefault extends SessionBase implements Session {
     }
 
     @Override
+    public Handshaker getHandshaker() {
+        return channel.getHandshaker();
+    }
+
+    @Override
     public void sendPing() throws IOException {
         channel.sendPing();
     }

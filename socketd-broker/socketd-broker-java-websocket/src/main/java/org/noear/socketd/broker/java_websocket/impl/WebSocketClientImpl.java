@@ -20,7 +20,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     public WebSocketClientImpl(URI serverUri, WsBioClient client) {
         super(serverUri);
         this.client = client;
-        this.channel = new ChannelDefault<>(this,this::close,r->r.isOpen(),client.exchanger());
+        this.channel = new ChannelDefault<>(this, client.exchanger());
     }
 
     public Channel getChannel() {

@@ -3,7 +3,7 @@ package org.noear.socketd.broker.smartsocket;
 import org.noear.socketd.broker.smartsocket.impl.Attachment;
 import org.noear.socketd.broker.smartsocket.impl.FixedLengthFrameDecoder;
 import org.noear.socketd.protocol.CodecByteBuffer;
-import org.noear.socketd.protocol.OutputTarget;
+import org.noear.socketd.protocol.ChannelTarget;
 import org.noear.socketd.protocol.Frame;
 import org.smartboot.socket.Protocol;
 import org.smartboot.socket.transport.AioSession;
@@ -17,13 +17,23 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class TcpAioExchanger implements OutputTarget<AioSession>, Protocol<Frame> {
+public class TcpAioExchanger implements ChannelTarget<AioSession>, Protocol<Frame> {
     private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override
     public void write(AioSession source, Frame frame) throws IOException {
         ByteBuffer buf = codec.encode(frame);
         source.writeBuffer().writeAndFlush(buf.array());
+    }
+
+    @Override
+    public boolean isValid(AioSession target) {
+        return target.isInvalid() == false;
+    }
+
+    @Override
+    public void close(AioSession target) throws IOException {
+        target.close();
     }
 
     @Override

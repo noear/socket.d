@@ -2,11 +2,10 @@ package org.noear.socketd.client;
 
 import org.noear.socketd.protocol.HeartbeatHandler;
 import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.protocol.OutputTarget;
+import org.noear.socketd.protocol.ChannelTarget;
 import org.noear.socketd.protocol.Processor;
 import org.noear.socketd.protocol.impl.ProcessorDefault;
 
-import java.net.URI;
 import java.util.function.Consumer;
 
 /**
@@ -15,7 +14,7 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.0
  */
-public abstract class ClientBase<T extends OutputTarget> implements Client {
+public abstract class ClientBase<T extends ChannelTarget> implements Client {
     protected Processor processor = new ProcessorDefault();
     protected HeartbeatHandler heartbeatHandler;
 

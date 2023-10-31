@@ -7,7 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.noear.socketd.broker.netty.impl.NettyChannelInitializer;
-import org.noear.socketd.broker.netty.impl.NettyServerProcessor;
+import org.noear.socketd.broker.netty.impl.NettyServerInboundHandler;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.noear.socketd.utils.Utils;
@@ -35,9 +35,9 @@ public class TcpNioServer extends ServerBase<TcpNioExchanger> {
 
 
         try {
-            NettyServerProcessor processor = new NettyServerProcessor(this);
+            NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
             SSLContext sslContext = config().getSslContext();
-            ChannelHandler handler = new NettyChannelInitializer(sslContext, false, processor);
+            ChannelHandler handler = new NettyChannelInitializer(sslContext, false, inboundHandler);
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)

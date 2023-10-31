@@ -38,6 +38,8 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
 
     @Override
     public Channel connect() throws Exception {
+        log.debug("Start connecting to: {}", client.config().getUrl());
+
         real = new AioQuickClient(client.config().getUri().getHost(), client.config().getUri().getPort(), client.exchanger(), this);
 
         //支持 ssl

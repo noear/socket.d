@@ -13,6 +13,6 @@ import java.io.IOException;
 public class TcpNioExchanger implements OutputTarget<Channel> {
     @Override
     public void write(Channel source, Frame frame) throws IOException {
-        source.write(frame);
+        source.writeAndFlush(frame);
     }
 }

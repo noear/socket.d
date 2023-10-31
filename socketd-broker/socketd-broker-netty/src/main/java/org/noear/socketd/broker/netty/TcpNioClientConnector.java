@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.noear.socketd.broker.netty.impl.NettyChannelInitializer;
-import org.noear.socketd.broker.netty.impl.NettyClientProcessor;
+import org.noear.socketd.broker.netty.impl.NettyClientInboundHandler;
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.protocol.Channel;
 import org.slf4j.Logger;
@@ -31,23 +31,25 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     @Override
     public Channel connect() throws Exception {
+        log.info("Start connecting to: {}", client.config().getUrl());
+
         NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
 
         try {
             Bootstrap bootstrap = new Bootstrap();
 
-            NettyClientProcessor processor = new NettyClientProcessor(client);
+            NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
             SSLContext sslContext = client.config().getSslContext();
-            ChannelHandler handler = new NettyChannelInitializer(sslContext, true, processor);
+            ChannelHandler handler = new NettyChannelInitializer(sslContext, true, inboundHandler);
 
             real = bootstrap.group(eventLoopGroup)
                     .channel(NioSocketChannel.class)
                     .handler(handler)
                     .connect(client.config().getUri().getHost(),
                             client.config().getUri().getPort())
-                    .sync();
+                    .await();
 
-            return processor.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            return inboundHandler.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             eventLoopGroup.shutdownGracefully();
             throw e;

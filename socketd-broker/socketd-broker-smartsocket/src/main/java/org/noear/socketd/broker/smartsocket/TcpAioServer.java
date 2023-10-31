@@ -107,7 +107,11 @@ public class TcpAioServer extends ServerBase<TcpAioExchanger> implements Message
 
     @Override
     public AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel asynchronousSocketChannel) {
-        return null;
+        if (sslPlugin == null) {
+            return asynchronousSocketChannel;
+        } else {
+            return sslPlugin.shouldAccept(asynchronousSocketChannel);
+        }
     }
 
     @Override

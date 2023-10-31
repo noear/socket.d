@@ -27,6 +27,8 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
 
     @Override
     public Channel connect() throws IOException {
+        log.debug("Start connecting to: {}", client.config().getUrl());
+
         real = new WebSocketClientImpl(client.config().getUri(), client);
 
         //支持 ssl

@@ -86,7 +86,7 @@ public interface Session {
     void reply(Message from, Entity content) throws IOException;
 
     /**
-     * 答复为空
+     * 答复为空（起到快速响应的效果）
      */
     default void replyAsEmpty(Message from) throws IOException {
         reply(from, new MetaEntity(""));

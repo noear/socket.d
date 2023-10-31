@@ -10,6 +10,7 @@ import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 /**
@@ -38,13 +39,13 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
     }
 
     @Override
-    public InetAddress getRemoteAddress(AioSession target) throws IOException{
-        return target.getRemoteAddress().getAddress();
+    public InetSocketAddress getRemoteAddress(AioSession target) throws IOException{
+        return target.getRemoteAddress();
     }
 
     @Override
-    public InetAddress getLocalAddress(AioSession target) throws IOException{
-        return target.getLocalAddress().getAddress();
+    public InetSocketAddress getLocalAddress(AioSession target) throws IOException{
+        return target.getLocalAddress();
     }
 
     @Override

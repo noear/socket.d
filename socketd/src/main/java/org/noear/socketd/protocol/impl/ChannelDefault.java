@@ -4,6 +4,7 @@ import org.noear.socketd.protocol.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,12 +42,12 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     }
 
     @Override
-    public InetAddress getRemoteAddress() throws IOException {
+    public InetSocketAddress getRemoteAddress() throws IOException {
         return assistant.getRemoteAddress(source);
     }
 
     @Override
-    public InetAddress getLocalAddress() throws IOException {
+    public InetSocketAddress getLocalAddress() throws IOException {
         return assistant.getLocalAddress(source);
     }
 

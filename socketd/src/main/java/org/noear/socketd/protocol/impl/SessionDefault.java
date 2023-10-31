@@ -7,6 +7,7 @@ import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -31,12 +32,12 @@ public class SessionDefault extends SessionBase implements Session {
     }
 
     @Override
-    public InetAddress getRemoteAddress() throws IOException {
+    public InetSocketAddress getRemoteAddress() throws IOException {
         return channel.getRemoteAddress();
     }
 
     @Override
-    public InetAddress getLocalAddress() throws IOException {
+    public InetSocketAddress getLocalAddress() throws IOException {
         return channel.getLocalAddress();
     }
 

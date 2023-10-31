@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
@@ -38,13 +39,13 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
     }
 
     @Override
-    public InetAddress getRemoteAddress(Socket target) {
-        return target.getInetAddress();
+    public InetSocketAddress getRemoteAddress(Socket target) {
+        return (InetSocketAddress)target.getRemoteSocketAddress();
     }
 
     @Override
-    public InetAddress getLocalAddress(Socket target) {
-        return target.getLocalAddress();
+    public InetSocketAddress getLocalAddress(Socket target) {
+        return (InetSocketAddress)target.getLocalSocketAddress();
     }
 
     public Frame read(Socket source) throws IOException {

@@ -5,6 +5,7 @@ import org.noear.socketd.exception.SocktedConnectionException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -42,12 +43,12 @@ public interface Channel extends Closeable {
     /**
      * 获取远程地址
      */
-    InetAddress getRemoteAddress() throws IOException;
+    InetSocketAddress getRemoteAddress() throws IOException;
 
     /**
      * 获取本地地址
      */
-    InetAddress getLocalAddress() throws IOException;
+    InetSocketAddress getLocalAddress() throws IOException;
 
 
     /**

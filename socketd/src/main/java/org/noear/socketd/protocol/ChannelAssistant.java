@@ -2,6 +2,7 @@ package org.noear.socketd.protocol;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 /**
  * 通道助理
@@ -31,10 +32,10 @@ public interface ChannelAssistant<T> {
     /**
      * 获取远程地址
      */
-    InetAddress getRemoteAddress(T target) throws IOException;
+    InetSocketAddress getRemoteAddress(T target) throws IOException;
 
     /**
      * 获取本地地址
      */
-    InetAddress getLocalAddress(T target) throws IOException;
+    InetSocketAddress getLocalAddress(T target) throws IOException;
 }

@@ -7,6 +7,7 @@ import org.noear.socketd.protocol.ChannelAssistant;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 /**
@@ -34,13 +35,13 @@ public class WsBioChannelAssistant implements ChannelAssistant<WebSocket> {
     }
 
     @Override
-    public InetAddress getRemoteAddress(WebSocket target) {
-        return target.getRemoteSocketAddress().getAddress();
+    public InetSocketAddress getRemoteAddress(WebSocket target) {
+        return target.getRemoteSocketAddress();
     }
 
     @Override
-    public InetAddress getLocalAddress(WebSocket target) {
-        return target.getLocalSocketAddress().getAddress();
+    public InetSocketAddress getLocalAddress(WebSocket target) {
+        return target.getLocalSocketAddress();
     }
 
     public Frame read(ByteBuffer buffer){

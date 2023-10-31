@@ -4,6 +4,7 @@ import org.noear.socketd.protocol.entity.MetaEntity;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
 /**
@@ -21,12 +22,12 @@ public interface Session {
     /**
      * 获取远程地址
      */
-    InetAddress getRemoteAddress() throws IOException;
+    InetSocketAddress getRemoteAddress() throws IOException;
 
     /**
      * 获取本地地址
      */
-    InetAddress getLocalAddress() throws IOException;
+    InetSocketAddress getLocalAddress() throws IOException;
 
     /**
      * 获取握手信息

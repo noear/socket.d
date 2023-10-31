@@ -6,7 +6,6 @@ import org.noear.socketd.protocol.ChannelAssistant;
 
 import java.io.IOException;
 import java.io.NotActiveException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -37,20 +36,12 @@ public class TcpNioChannelAssistant implements ChannelAssistant<Channel> {
     }
 
     @Override
-    public InetAddress getRemoteAddress(Channel target) {
-        if (target.remoteAddress() instanceof InetSocketAddress) {
-            return ((InetSocketAddress) target.remoteAddress()).getAddress();
-        } else {
-            return null;
-        }
+    public InetSocketAddress getRemoteAddress(Channel target) {
+        return (InetSocketAddress) target.remoteAddress();
     }
 
     @Override
-    public InetAddress getLocalAddress(Channel target) {
-        if (target.localAddress() instanceof InetSocketAddress) {
-            return ((InetSocketAddress) target.localAddress()).getAddress();
-        } else {
-            return null;
-        }
+    public InetSocketAddress getLocalAddress(Channel target) {
+        return (InetSocketAddress) target.localAddress();
     }
 }

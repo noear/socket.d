@@ -23,7 +23,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
      */
     @Override
     public ByteBuffer encode(Frame frame) {
-        if (frame.getPayload() == null) {
+        if (frame.getMessage() == null) {
             //length (flag + int.bytes)
             int len = 4 + 4;
 
@@ -40,14 +40,14 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             return buffer;
         } else {
             //key
-            byte[] keyB = frame.getPayload().getKey().getBytes(charset);
+            byte[] keyB = frame.getMessage().getKey().getBytes(charset);
             //topic
-            byte[] topicB = frame.getPayload().getTopic().getBytes(charset);
+            byte[] topicB = frame.getMessage().getTopic().getBytes(charset);
             //metaString
-            byte[] metaStringB = frame.getPayload().getEntity().getMetaString().getBytes(charset);
+            byte[] metaStringB = frame.getMessage().getEntity().getMetaString().getBytes(charset);
 
             //length (flag + key + topic + metaString + data + int.bytes + \n*3)
-            int len = keyB.length + topicB.length + metaStringB.length + frame.getPayload().getEntity().getData().length + 2 * 3 + 4 + 4;
+            int len = keyB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getData().length + 2 * 3 + 4 + 4;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -70,7 +70,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             buffer.putChar('\n');
 
             //data
-            buffer.put(frame.getPayload().getEntity().getData());
+            buffer.put(frame.getMessage().getEntity().getData());
 
             buffer.flip();
 

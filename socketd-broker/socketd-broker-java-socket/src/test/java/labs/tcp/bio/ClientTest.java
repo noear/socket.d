@@ -36,7 +36,7 @@ public class ClientTest {
                 e.printStackTrace();
             }
         }
-        //Payload response = session.sendAndRequest(null);
+        //Entity response = session.sendAndRequest(null);
         //session.sendAndSubscribe(null, null);
     }
 

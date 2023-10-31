@@ -25,7 +25,7 @@ public class Frame {
     /**
      * 载体
      * */
-    public Message getPayload() {
+    public Message getMessage() {
         return message;
     }
 

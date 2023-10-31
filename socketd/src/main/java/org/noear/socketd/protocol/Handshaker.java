@@ -25,12 +25,14 @@ public class Handshaker {
         this.paramMap = new HashMap<>();
 
         String queryString = uri.getQuery();
-        for (String kvStr : queryString.split("&")) {
-            String[] kv = kvStr.split("=");
-            if (kv.length > 1) {
-                paramMap.put(kv[0], kv[1]);
-            } else {
-                paramMap.put(kv[0], "");
+        if(queryString != null) {
+            for (String kvStr : queryString.split("&")) {
+                String[] kv = kvStr.split("=");
+                if (kv.length > 1) {
+                    paramMap.put(kv[0], kv[1]);
+                } else {
+                    paramMap.put(kv[0], "");
+                }
             }
         }
     }

@@ -79,7 +79,7 @@ public class MessageDefault implements Message {
 
     @Override
     public String toString() {
-        return "Payload{" +
+        return "Message{" +
                 "key='" + key + '\'' +
                 ", topic='" + topic + '\'' +
                 ", entity=" + entity +

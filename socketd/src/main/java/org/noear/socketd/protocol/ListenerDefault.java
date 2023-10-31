@@ -15,7 +15,7 @@ public class ListenerDefault implements Listener {
     static final Logger log = LoggerFactory.getLogger(ListenerDefault.class);
 
     @Override
-    public void onOpen(Session session) {
+    public void onOpen(Session session) throws IOException{
         if (log.isTraceEnabled()) {
             log.trace("Session onOpen: {}", session.getSessionId());
         }

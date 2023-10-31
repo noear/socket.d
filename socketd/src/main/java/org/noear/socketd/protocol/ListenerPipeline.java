@@ -24,7 +24,7 @@ public class ListenerPipeline implements Listener {
     }
 
     @Override
-    public void onOpen(Session session) {
+    public void onOpen(Session session) throws IOException{
         for (Listener listener : deque) {
             listener.onOpen(session);
         }

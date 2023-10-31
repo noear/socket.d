@@ -12,7 +12,7 @@ public interface Listener {
     /**
      * 打开时
      */
-    void onOpen(Session session);
+    void onOpen(Session session) throws IOException;
 
     /**
      * 收到消息时

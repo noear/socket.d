@@ -3,7 +3,6 @@ package org.noear.socketd.protocol.impl;
 import org.noear.socketd.protocol.*;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     @Override
     public void send(Frame frame, Acceptor acceptor) throws IOException {
         if (acceptor != null) {
-            acceptorMap.put(frame.getPayload().getKey(), acceptor);
+            acceptorMap.put(frame.getMessage().getKey(), acceptor);
         }
 
         assistant.write(source, frame);
@@ -65,13 +64,13 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
 
     @Override
     public void retrieve(Frame frame) throws IOException {
-        Acceptor acceptor = acceptorMap.get(frame.getPayload().getKey());
+        Acceptor acceptor = acceptorMap.get(frame.getMessage().getKey());
 
         if (acceptor != null) {
             if (acceptor.isSingle()) {
-                acceptorMap.remove(frame.getPayload().getKey());
+                acceptorMap.remove(frame.getMessage().getKey());
             }
-            acceptor.accept(frame.getPayload());
+            acceptor.accept(frame.getMessage());
         }
     }
 

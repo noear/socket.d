@@ -16,7 +16,7 @@ public class Frames {
     }
 
     public static final Frame connackFrame(Message connect) {
-        return new Frame(Flag.Connack, new MessageDefault().key(connect.getKey()).entity(new MetaEntity(Constants.HEARDER_CONNACK)));
+        return new Frame(Flag.Connack, new MessageDefault().key(connect.getKey()).topic(connect.getTopic()).entity(new MetaEntity(Constants.HEARDER_CONNACK)));
     }
 
     public static final Frame pingFrame() {

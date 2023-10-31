@@ -1,5 +1,6 @@
 package org.noear.socketd.broker.smartsocket;
 
+import org.noear.socketd.broker.smartsocket.impl.Attachment;
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;

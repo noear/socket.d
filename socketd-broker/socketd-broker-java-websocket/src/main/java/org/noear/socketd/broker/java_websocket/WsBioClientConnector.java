@@ -1,5 +1,6 @@
 package org.noear.socketd.broker.java_websocket;
 
+import org.noear.socketd.broker.java_websocket.impl.WebSocketClientImpl;
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocktedConnectionException;
 import org.noear.socketd.protocol.Channel;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
     private static final Logger log = LoggerFactory.getLogger(WsBioClientConnector.class);
 
-    private SocketClientImpl real;
+    private WebSocketClientImpl real;
 
     public WsBioClientConnector(WsBioClient client) {
         super(client);
@@ -26,7 +27,7 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
 
     @Override
     public Channel connect() throws IOException {
-        real = new SocketClientImpl(client.config().getUri(), client);
+        real = new WebSocketClientImpl(client.config().getUri(), client);
 
         //支持 ssl
         if(client.config().getSslContext() != null) {

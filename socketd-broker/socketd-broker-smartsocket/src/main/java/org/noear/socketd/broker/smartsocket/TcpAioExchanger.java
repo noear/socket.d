@@ -1,6 +1,7 @@
 package org.noear.socketd.broker.smartsocket;
 
-import org.noear.socketd.broker.smartsocket.util.FixedLengthFrameDecoder;
+import org.noear.socketd.broker.smartsocket.impl.Attachment;
+import org.noear.socketd.broker.smartsocket.impl.FixedLengthFrameDecoder;
 import org.noear.socketd.protocol.CodecByteBuffer;
 import org.noear.socketd.protocol.OutputTarget;
 import org.noear.socketd.protocol.Frame;

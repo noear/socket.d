@@ -1,7 +1,8 @@
-package org.noear.socketd.broker.java_websocket;
+package org.noear.socketd.broker.java_websocket.impl;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.noear.socketd.broker.java_websocket.WsBioClient;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.impl.ChannelDefault;
@@ -11,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.nio.ByteBuffer;
 
-public class SocketClientImpl extends WebSocketClient {
-    static final Logger log = LoggerFactory.getLogger(SocketClientImpl.class);
+public class WebSocketClientImpl extends WebSocketClient {
+    static final Logger log = LoggerFactory.getLogger(WebSocketClientImpl.class);
     private WsBioClient client;
     private Channel channel;
 
-    public SocketClientImpl(URI serverUri, WsBioClient client) {
+    public WebSocketClientImpl(URI serverUri, WsBioClient client) {
         super(serverUri);
         this.client = client;
         this.channel = new ChannelDefault<>(this,this::close,client.exchanger());
@@ -30,7 +31,6 @@ public class SocketClientImpl extends WebSocketClient {
     public void onOpen(ServerHandshake serverHandshake) {
         log.info("Client:Websocket onOpen...");
 
-        //...
         try {
             channel.sendConnect(client.config().getUrl());
         } catch (Throwable e) {

@@ -1,8 +1,9 @@
-package org.noear.socketd.broker.java_websocket;
+package org.noear.socketd.broker.java_websocket.impl;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.noear.socketd.broker.java_websocket.WsBioServer;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Frame;
 import org.noear.socketd.protocol.impl.ChannelDefault;
@@ -16,17 +17,17 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class SocketServerImpl extends WebSocketServer {
-    static final Logger log = LoggerFactory.getLogger(SocketServerImpl.class);
+public class WebSocketServerImpl extends WebSocketServer {
+    static final Logger log = LoggerFactory.getLogger(WebSocketServerImpl.class);
 
     private WsBioServer server;
 
-    public SocketServerImpl(int port, WsBioServer server) {
+    public WebSocketServerImpl(int port, WsBioServer server) {
         super(new InetSocketAddress(port));
         this.server = server;
     }
 
-    public SocketServerImpl(String addr, int port, WsBioServer server) {
+    public WebSocketServerImpl(String addr, int port, WsBioServer server) {
         super(new InetSocketAddress(addr, port));
         this.server = server;
     }

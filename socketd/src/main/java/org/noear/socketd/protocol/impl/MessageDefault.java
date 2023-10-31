@@ -7,7 +7,7 @@ import org.noear.socketd.protocol.Message;
 
 
 /**
- * 负载
+ * 消息
  *
  * @author noear
  * @since 2.0

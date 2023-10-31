@@ -8,7 +8,7 @@ package org.noear.socketd.protocol;
  */
 public interface Entity {
     /**
-     * 获取元信息字符串
+     * 获取元信息字符串（queryString style）
      */
     String getMetaString();
 

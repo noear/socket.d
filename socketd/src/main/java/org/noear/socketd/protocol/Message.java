@@ -2,7 +2,7 @@ package org.noear.socketd.protocol;
 
 
 /**
- * 负载
+ * 消息
  *
  * @author noear
  * @since 2.0
@@ -20,17 +20,17 @@ public interface Message {
     boolean isSubscribe();
 
     /**
-     * Key
+     * 获取消息id
      */
     String getKey();
 
     /**
-     * topic
+     * 获取消息主题
      */
     String getTopic();
 
     /**
-     * entity
+     * 获取消息实体
      */
     Entity getEntity();
 }

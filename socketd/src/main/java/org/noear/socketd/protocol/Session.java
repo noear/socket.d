@@ -71,22 +71,26 @@ public interface Session {
     }
 
     /**
-     * 发送并请求
+     * 发送并请求（限为一次答复）
      */
     Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
 
     /**
-     * 发送并订阅
+     * 发送并订阅（不限答复次数）
      */
     void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
 
     /**
      * 答复
+     *
+     * @param from 来源消息
      */
     void reply(Message from, Entity content) throws IOException;
 
     /**
-     * 答复为空（起到快速响应的效果）
+     * 答复为空（快速完成答复链）
+     *
+     * @param from 来源消息
      */
     default void replyAsEmpty(Message from) throws IOException {
         reply(from, new MetaEntity(""));

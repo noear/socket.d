@@ -40,14 +40,14 @@ public interface Channel extends Closeable {
 
 
     /**
-     * 设置心跳时间
+     * 设置活动时间
      * */
-    void setHeartbeatTime();
+    void setLiveTime();
 
     /**
-     * 获取心跳时间
+     * 获取活动时间
      * */
-    long getHeartbeatTime();
+    long getLiveTime();
 
 
     /**

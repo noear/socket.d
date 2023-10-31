@@ -52,7 +52,7 @@ public class ProcessorDefault implements Processor {
                 return;
             }
 
-            channel.setHeartbeatTime();
+            channel.setLiveTime();
 
             try {
                 switch (frame.getFlag()) {

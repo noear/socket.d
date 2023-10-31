@@ -11,7 +11,7 @@ import java.io.IOException;
 public abstract class ChannelBase implements Channel {
 
     private Handshaker handshaker;
-    private long heartbeatTime;
+    private long liveTime;
     //
     @Override
     public void setHandshaker(Handshaker handshaker) {
@@ -25,13 +25,13 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void setHeartbeatTime() {
-        heartbeatTime = System.currentTimeMillis();
+    public void setLiveTime() {
+        liveTime = System.currentTimeMillis();
     }
 
     @Override
-    public long getHeartbeatTime() {
-        return heartbeatTime;
+    public long getLiveTime() {
+        return liveTime;
     }
 
     @Override

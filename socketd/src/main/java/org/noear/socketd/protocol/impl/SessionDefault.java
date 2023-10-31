@@ -96,4 +96,9 @@ public class SessionDefault extends SessionBase implements Session {
     public void reply(Message from, Entity content) throws IOException {
         channel.send(new Frame(Flag.Reply, new MessageDefault().key(from.getKey()).entity(content)), null);
     }
+
+    @Override
+    public void close() throws IOException {
+        channel.close();
+    }
 }

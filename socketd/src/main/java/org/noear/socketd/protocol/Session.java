@@ -2,6 +2,7 @@ package org.noear.socketd.protocol;
 
 import org.noear.socketd.protocol.entity.MetaEntity;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -13,7 +14,7 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.0
  */
-public interface Session {
+public interface Session extends Closeable {
     /**
      * 是否有效
      */

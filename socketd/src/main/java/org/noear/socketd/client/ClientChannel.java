@@ -7,6 +7,7 @@ import org.noear.socketd.utils.RunUtils;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -52,7 +53,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     @Override
-    public InetAddress getRemoteAddress() throws IOException {
+    public InetSocketAddress getRemoteAddress() throws IOException {
         if (real == null) {
             return null;
         } else {
@@ -61,7 +62,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     @Override
-    public InetAddress getLocalAddress() throws IOException {
+    public InetSocketAddress getLocalAddress() throws IOException {
         if (real == null) {
             return null;
         } else {

@@ -3,6 +3,7 @@ package org.noear.socketd.protocol.impl;
 import org.noear.socketd.protocol.*;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,20 +16,30 @@ import java.util.Map;
 public class ChannelDefault<S> extends ChannelBase implements Channel {
     private S source;
 
-    private ChannelTarget<S> channelTarget;
+    private ChannelAssistant<S> assistant;
     private Session session;
     private Map<String, Acceptor> acceptorMap;
 
-    public ChannelDefault(S source,  ChannelTarget<S> channelTarget) {
+    public ChannelDefault(S source,  ChannelAssistant<S> assistant) {
         super();
         this.source = source;
-        this.channelTarget = channelTarget;
+        this.assistant = assistant;
         this.acceptorMap = new HashMap<>();
     }
 
     @Override
     public boolean isValid() {
-        return channelTarget.isValid(source);
+        return assistant.isValid(source);
+    }
+
+    @Override
+    public InetAddress getRemoteAddress() throws IOException {
+        return assistant.getRemoteAddress(source);
+    }
+
+    @Override
+    public InetAddress getLocalAddress() throws IOException {
+        return assistant.getLocalAddress(source);
     }
 
     /**
@@ -40,7 +51,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
             acceptorMap.put(frame.getPayload().getKey(), acceptor);
         }
 
-        channelTarget.write(source, frame);
+        assistant.write(source, frame);
     }
 
     @Override
@@ -72,7 +83,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      */
     @Override
     public void close() throws IOException {
-        channelTarget.close(source);
+        assistant.close(source);
         acceptorMap.clear();
     }
 }

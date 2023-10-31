@@ -1,7 +1,7 @@
 package org.noear.socketd.server;
 
 import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.protocol.ChannelTarget;
+import org.noear.socketd.protocol.ChannelAssistant;
 import org.noear.socketd.protocol.Processor;
 import org.noear.socketd.protocol.impl.ProcessorDefault;
 
@@ -9,7 +9,7 @@ import org.noear.socketd.protocol.impl.ProcessorDefault;
  * @author noear
  * @since 2.0
  */
-public abstract class ServerBase<T extends ChannelTarget> implements Server {
+public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     private Processor processor = new ProcessorDefault();
 
     private final ServerConfig config;

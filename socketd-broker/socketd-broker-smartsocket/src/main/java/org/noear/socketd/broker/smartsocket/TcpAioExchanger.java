@@ -3,12 +3,13 @@ package org.noear.socketd.broker.smartsocket;
 import org.noear.socketd.broker.smartsocket.impl.Attachment;
 import org.noear.socketd.broker.smartsocket.impl.FixedLengthFrameDecoder;
 import org.noear.socketd.protocol.CodecByteBuffer;
-import org.noear.socketd.protocol.ChannelTarget;
+import org.noear.socketd.protocol.ChannelAssistant;
 import org.noear.socketd.protocol.Frame;
 import org.smartboot.socket.Protocol;
 import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
 /**
@@ -17,7 +18,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class TcpAioExchanger implements ChannelTarget<AioSession>, Protocol<Frame> {
+public class TcpAioExchanger implements ChannelAssistant<AioSession>, Protocol<Frame> {
     private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override
@@ -34,6 +35,16 @@ public class TcpAioExchanger implements ChannelTarget<AioSession>, Protocol<Fram
     @Override
     public void close(AioSession target) throws IOException {
         target.close();
+    }
+
+    @Override
+    public InetAddress getRemoteAddress(AioSession target) throws IOException{
+        return target.getRemoteAddress().getAddress();
+    }
+
+    @Override
+    public InetAddress getLocalAddress(AioSession target) throws IOException{
+        return target.getLocalAddress().getAddress();
     }
 
     @Override

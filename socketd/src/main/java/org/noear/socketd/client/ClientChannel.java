@@ -6,7 +6,7 @@ import org.noear.socketd.protocol.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;
 
 import java.io.IOException;
-import java.net.SocketException;
+import java.net.InetAddress;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -43,6 +43,24 @@ public class ClientChannel extends ChannelBase implements Channel {
             return false;
         } else {
             return real.isValid();
+        }
+    }
+
+    @Override
+    public InetAddress getRemoteAddress() throws IOException {
+        if (real == null) {
+            return null;
+        } else {
+            return real.getRemoteAddress();
+        }
+    }
+
+    @Override
+    public InetAddress getLocalAddress() throws IOException {
+        if (real == null) {
+            return null;
+        } else {
+            return real.getLocalAddress();
         }
     }
 

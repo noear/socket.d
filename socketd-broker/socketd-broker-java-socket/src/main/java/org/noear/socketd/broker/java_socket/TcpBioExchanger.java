@@ -1,12 +1,13 @@
 package org.noear.socketd.broker.java_socket;
 
-import org.noear.socketd.protocol.ChannelTarget;
+import org.noear.socketd.protocol.ChannelAssistant;
 import org.noear.socketd.protocol.CodecByteBuffer;
 import org.noear.socketd.protocol.Frame;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
@@ -16,7 +17,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class TcpBioExchanger implements ChannelTarget<Socket> {
+public class TcpBioExchanger implements ChannelAssistant<Socket> {
     private CodecByteBuffer codec = new CodecByteBuffer();
 
     @Override
@@ -34,6 +35,16 @@ public class TcpBioExchanger implements ChannelTarget<Socket> {
     @Override
     public void close(Socket target) throws IOException {
         target.close();
+    }
+
+    @Override
+    public InetAddress getRemoteAddress(Socket target) {
+        return target.getInetAddress();
+    }
+
+    @Override
+    public InetAddress getLocalAddress(Socket target) {
+        return target.getLocalAddress();
     }
 
     public Frame read(Socket source) throws IOException {

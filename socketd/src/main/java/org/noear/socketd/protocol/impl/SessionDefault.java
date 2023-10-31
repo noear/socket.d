@@ -4,6 +4,7 @@ import org.noear.socketd.protocol.*;
 import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -24,6 +25,16 @@ public class SessionDefault extends SessionBase implements Session {
     @Override
     public boolean isValid() {
         return channel.isValid();
+    }
+
+    @Override
+    public InetAddress getRemoteAddress() throws IOException {
+        return channel.getRemoteAddress();
+    }
+
+    @Override
+    public InetAddress getLocalAddress() throws IOException {
+        return channel.getLocalAddress();
     }
 
     @Override

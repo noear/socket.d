@@ -16,7 +16,6 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public abstract class ClientBase<T extends OutputTarget> implements Client {
-    protected boolean autoReconnect;
     protected Processor processor = new ProcessorDefault();
     protected HeartbeatHandler heartbeatHandler;
 
@@ -47,16 +46,6 @@ public abstract class ClientBase<T extends OutputTarget> implements Client {
      */
     public Processor processor() {
         return processor;
-    }
-
-    @Override
-    public Client autoReconnect(boolean enable) {
-        this.autoReconnect = enable;
-        return this;
-    }
-
-    public boolean autoReconnect() {
-        return autoReconnect;
     }
 
     @Override

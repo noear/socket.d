@@ -18,12 +18,13 @@ public class Demo {
         server.start();
 
         Session session = SocketD.createClient("tcp://192.169.0.3/path?u=a&p=2")
+                .config(c -> c.autoReconnect(true)) //配置
                 .listen(null) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
-                .autoReconnect(true) //自动重链
                 .open();
         session.send("demo", null);
         Entity response = session.sendAndRequest("demo", null);
-        session.sendAndSubscribe("demo", null, entity -> {});
+        session.sendAndSubscribe("demo", null, entity -> {
+        });
     }
 }

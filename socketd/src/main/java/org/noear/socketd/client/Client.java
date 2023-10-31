@@ -14,11 +14,6 @@ import java.util.function.Consumer;
  */
 public interface Client {
     /**
-     * 自动重链
-     */
-    Client autoReconnect(boolean enable);
-
-    /**
      * 心跳
      */
     Client heartbeatHandler(HeartbeatHandler handler);

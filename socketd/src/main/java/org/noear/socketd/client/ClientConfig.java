@@ -24,6 +24,8 @@ public class ClientConfig {
     private int readBufferSize;
     private int writeBufferSize;
 
+    private boolean autoReconnect;
+
     public ClientConfig(String url) {
         this.url = url;
         this.uri = URI.create(url);
@@ -143,6 +145,15 @@ public class ClientConfig {
      */
     public ClientConfig writeBufferSize(int writeBufferSize) {
         this.writeBufferSize = writeBufferSize;
+        return this;
+    }
+
+    public boolean isAutoReconnect() {
+        return autoReconnect;
+    }
+
+    public ClientConfig autoReconnect(boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
         return this;
     }
 }

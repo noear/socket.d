@@ -1,6 +1,7 @@
 package org.noear.socketd.broker.java_socket;
 
 import org.noear.socketd.client.ClientConnectorBase;
+import org.noear.socketd.exception.SocktedTimeoutException;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
@@ -15,6 +16,7 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Tcp-Bio 客户端连接器实现（支持 ssl）
@@ -33,7 +35,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     }
 
     @Override
-    public Channel connect() throws IOException {
+    public Channel connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getUri().getHost(), client.config().getUri().getPort());
@@ -74,10 +76,10 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
         try {
             return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
-        } catch (RuntimeException e) {
+        } catch (TimeoutException e) {
+            throw new SocktedTimeoutException("Connection timeout: " + client.config().getUrl());
+        } catch (Exception e) {
             throw e;
-        } catch (Throwable e) {
-            throw new IllegalStateException(e);
         }
     }
 

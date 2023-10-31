@@ -2,6 +2,7 @@ package org.noear.socketd.broker.smartsocket;
 
 import org.noear.socketd.broker.smartsocket.impl.Attachment;
 import org.noear.socketd.client.ClientConnectorBase;
+import org.noear.socketd.exception.SocktedTimeoutException;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Tcp-Aio 客户端连接器实现（支持 ssl）
@@ -43,7 +45,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
         real = new AioQuickClient(client.config().getUri().getHost(), client.config().getUri().getPort(), client.assistant(), this);
 
         //支持 ssl
-        if(client.config().getSslContext() != null){
+        if (client.config().getSslContext() != null) {
             sslPlugin = new SslPlugin<>(client.config()::getSslContext, sslEngine -> {
                 sslEngine.setUseClientMode(true);
             });
@@ -66,10 +68,10 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
 
         try {
             return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
-        } catch (RuntimeException e) {
+        } catch (TimeoutException e) {
+            throw new SocktedTimeoutException("Connection timeout: " + client.config().getUrl());
+        } catch (Exception e) {
             throw e;
-        } catch (Throwable e) {
-            throw new IllegalStateException(e);
         }
     }
 

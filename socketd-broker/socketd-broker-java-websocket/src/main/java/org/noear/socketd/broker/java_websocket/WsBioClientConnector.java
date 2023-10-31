@@ -26,13 +26,13 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
     }
 
     @Override
-    public Channel connect() throws IOException {
+    public Channel connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         real = new WebSocketClientImpl(client.config().getUri(), client);
 
         //支持 ssl
-        if(client.config().getSslContext() != null) {
+        if (client.config().getSslContext() != null) {
             real.setSocketFactory(client.config().getSslContext().getSocketFactory());
         }
 
@@ -40,12 +40,12 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
             if (real.connectBlocking(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS)) {
                 return real.getChannel();
             } else {
-                throw new SocktedConnectionException("Client:Connection fail");
+                throw new SocktedConnectionException("Connection fail: " + client.config().getUrl());
             }
         } catch (RuntimeException e) {
             throw e;
-        } catch (Throwable e) {
-            throw new IllegalStateException(e);
+        } catch (Exception e) {
+            throw e;
         }
     }
 

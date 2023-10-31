@@ -15,18 +15,23 @@ import java.io.IOException;
 public interface ClientConnector extends Closeable {
     /**
      * 心跳处理
-     * */
+     */
     HeartbeatHandler heartbeatHandler();
 
     /**
      * 心跳频率（单位：毫秒）
-     * */
+     */
     long heartbeatInterval();
 
     /**
      * 是否自动重连
      */
     boolean autoReconnect();
+
+    /**
+     * 最大允许请求数（用于背压控制）
+     */
+    int maxRequests();
 
     /**
      * 连接

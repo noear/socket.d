@@ -34,9 +34,7 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        log.info("Server:Websocket onOpen...");
-
-        Channel channel = new ChannelDefault<>(conn, server.assistant());
+        Channel channel = new ChannelDefault<>(conn, server.config().getMaxRequests(), server.assistant());
         conn.setAttachment(channel);
     }
 

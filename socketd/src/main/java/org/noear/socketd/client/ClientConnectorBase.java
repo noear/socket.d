@@ -26,4 +26,9 @@ public abstract class ClientConnectorBase<T extends ClientBase> implements Clien
     public boolean autoReconnect() {
         return client.config().isAutoReconnect();
     }
+
+    @Override
+    public int maxRequests() {
+        return client.config().getMaxRequests();
+    }
 }

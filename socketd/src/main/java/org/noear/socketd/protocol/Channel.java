@@ -5,6 +5,7 @@ import org.noear.socketd.exception.SocktedConnectionException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 通道
@@ -15,12 +16,22 @@ import java.net.InetAddress;
 public interface Channel extends Closeable {
     /**
      * 是否有效
-     * */
+     */
     boolean isValid();
 
     /**
+     * 请求数（用于背压控制）
+     */
+    AtomicInteger getRequests();
+
+    /**
+     * 最大请求数
+     */
+    int getRequestMax();
+
+    /**
      * 设置握手信息
-     * */
+     */
     void setHandshaker(Handshaker handshaker);
 
     /**
@@ -41,12 +52,12 @@ public interface Channel extends Closeable {
 
     /**
      * 设置活动时间
-     * */
+     */
     void setLiveTime();
 
     /**
      * 获取活动时间
-     * */
+     */
     long getLiveTime();
 
 
@@ -77,7 +88,7 @@ public interface Channel extends Closeable {
 
     /**
      * 收回
-     * */
+     */
     void retrieve(Frame frame) throws IOException;
 
     /**

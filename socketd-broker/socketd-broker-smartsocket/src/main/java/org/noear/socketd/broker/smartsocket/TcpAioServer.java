@@ -68,10 +68,14 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
         server.shutdown();
     }
 
+    private Channel getChannel(AioSession s) {
+        return Attachment.getChannel(s, config().getMaxRequests(), assistant());
+    }
+
 
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = Attachment.getChannel(s, assistant());
+        Channel channel = getChannel(s);
 
         try {
             processor().onReceive(channel, frame);
@@ -92,7 +96,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
                 break;
 
             case SESSION_CLOSED:
-                processor().onClose(Attachment.getChannel(s, assistant()).getSession());
+                processor().onClose(getChannel(s).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -100,7 +104,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                processor().onError(Attachment.getChannel(s, assistant()).getSession(), e);
+                processor().onError(getChannel(s).getSession(), e);
                 break;
         }
     }

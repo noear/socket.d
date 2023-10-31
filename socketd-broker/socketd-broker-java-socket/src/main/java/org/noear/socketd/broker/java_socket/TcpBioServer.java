@@ -70,7 +70,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                     Socket socket = server.accept();
 
                     try {
-                        Channel channel = new ChannelDefault<>(socket, assistant());
+                        Channel channel = new ChannelDefault<>(socket, config().getMaxRequests(), assistant());
 
                         serverExecutor.submit(() -> {
                             receive(channel, socket);

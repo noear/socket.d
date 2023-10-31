@@ -1,5 +1,6 @@
 package org.noear.socketd.protocol.impl;
 
+import org.noear.socketd.exception.SocktedException;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.utils.Utils;
 
@@ -57,14 +58,26 @@ public class SessionDefault extends SessionBase implements Session {
 
     @Override
     public Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException {
-        Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
+        //背压控制
+        if (channel.getRequests().get() > channel.getRequestMax()) {
+            throw new SocktedException("Sending too many requests: " + channel.getRequests().get());
+        } else {
+            channel.getRequests().incrementAndGet();
+        }
 
-        CompletableFuture<Entity> future = new CompletableFuture<>();
-        channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future));
         try {
-            return future.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (Throwable e) {
-            throw new IOException(e);
+
+            Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
+
+            CompletableFuture<Entity> future = new CompletableFuture<>();
+            channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future));
+            try {
+                return future.get(timeout, TimeUnit.MILLISECONDS);
+            } catch (Throwable e) {
+                throw new IOException(e);
+            }
+        } finally {
+            channel.getRequests().decrementAndGet();
         }
     }
 

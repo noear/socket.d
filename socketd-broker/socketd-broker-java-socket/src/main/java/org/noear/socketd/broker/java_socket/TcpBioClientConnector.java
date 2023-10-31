@@ -54,7 +54,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         CompletableFuture<Channel> future = new CompletableFuture<>();
 
         try {
-            Channel channel = new ChannelDefault<>(real, client.assistant());
+            Channel channel = new ChannelDefault<>(real, client.config().getMaxRequests(), client.assistant());
 
             socketThread = new Thread(() -> {
                 try {

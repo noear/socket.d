@@ -24,11 +24,11 @@ public class Attachment extends HashMap<Class<?>,Object> {
         return tmp;
     }
 
-    public static Channel getChannel(AioSession aioSession, TcpAioChannelAssistant exchanger) {
+    public static Channel getChannel(AioSession aioSession, int maxRequests, TcpAioChannelAssistant exchanger) {
         Attachment attachment = get(aioSession);
         ChannelDefault tmp = (ChannelDefault) attachment.get(ChannelDefault.class);
         if (tmp == null) {
-            tmp = new ChannelDefault<>(aioSession, exchanger);
+            tmp = new ChannelDefault<>(aioSession, maxRequests, exchanger);
             attachment.put(ChannelDefault.class, tmp);
         }
         return tmp;

@@ -1,5 +1,7 @@
 package org.noear.socketd.server;
 
+import org.noear.socketd.client.ClientConfig;
+
 import javax.net.ssl.SSLContext;
 
 /**
@@ -24,6 +26,8 @@ public class ServerConfig {
     private int readBufferSize;
     private int writeBufferSize;
 
+    private int maxRequests;
+
     public ServerConfig(String schema) {
         this.schema = schema;
 
@@ -36,6 +40,8 @@ public class ServerConfig {
 
         readBufferSize = 512;
         writeBufferSize = 512;
+
+        maxRequests = 10;
     }
 
     /**
@@ -162,6 +168,18 @@ public class ServerConfig {
      */
     public ServerConfig writeBufferSize(int writeBufferSize) {
         this.writeBufferSize = writeBufferSize;
+        return this;
+    }
+
+    /**
+     * 允许最大请求数
+     * */
+    public int getMaxRequests() {
+        return maxRequests;
+    }
+
+    public ServerConfig maxRequests(int maxRequests) {
+        this.maxRequests = maxRequests;
         return this;
     }
 }

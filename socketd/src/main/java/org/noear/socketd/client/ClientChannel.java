@@ -47,6 +47,11 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     @Override
+    public int getRequestMax() {
+        return connector.maxRequests();
+    }
+
+    @Override
     public InetAddress getRemoteAddress() throws IOException {
         if (real == null) {
             return null;

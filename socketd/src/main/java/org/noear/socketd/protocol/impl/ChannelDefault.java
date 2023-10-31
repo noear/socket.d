@@ -14,22 +14,30 @@ import java.util.Map;
  * @since 2.0
  */
 public class ChannelDefault<S> extends ChannelBase implements Channel {
-    private S source;
+    private final S source;
 
-    private ChannelAssistant<S> assistant;
+    private final ChannelAssistant<S> assistant;
+    private final Map<String, Acceptor> acceptorMap;
+    private final int maxRequests;
+
     private Session session;
-    private Map<String, Acceptor> acceptorMap;
 
-    public ChannelDefault(S source,  ChannelAssistant<S> assistant) {
+    public ChannelDefault(S source, int maxRequests,  ChannelAssistant<S> assistant) {
         super();
         this.source = source;
         this.assistant = assistant;
         this.acceptorMap = new HashMap<>();
+        this.maxRequests = maxRequests;
     }
 
     @Override
     public boolean isValid() {
         return assistant.isValid(source);
+    }
+
+    @Override
+    public int getRequestMax() {
+        return maxRequests;
     }
 
     @Override

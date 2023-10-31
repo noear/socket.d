@@ -86,9 +86,13 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
         }
     }
 
+    private Channel getChannel(AioSession s) {
+        return Attachment.getChannel(s, client.config().getMaxRequests(), client.assistant());
+    }
+
     @Override
     public void process(AioSession s, Frame frame) {
-        Channel channel = Attachment.getChannel(s, client.assistant());
+        Channel channel = getChannel(s);
 
         try {
             client.processor().onReceive(channel, frame);
@@ -109,7 +113,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
     public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION: {
-                Channel channel = Attachment.getChannel(s, client.assistant());
+                Channel channel = getChannel(s);
                 try {
                     channel.sendConnect(client.config().getUrl());
                 } catch (Throwable ex) {
@@ -119,7 +123,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
             break;
 
             case SESSION_CLOSED:
-                client.processor().onClose(Attachment.getChannel(s, client.assistant()).getSession());
+                client.processor().onClose(getChannel(s).getSession());
                 break;
 
             case PROCESS_EXCEPTION:
@@ -127,7 +131,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                client.processor().onError(Attachment.getChannel(s, client.assistant()).getSession(), e);
+                client.processor().onError(getChannel(s).getSession(), e);
                 break;
         }
     }

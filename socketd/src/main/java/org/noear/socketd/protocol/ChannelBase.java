@@ -1,6 +1,7 @@
 package org.noear.socketd.protocol;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 通道基类
@@ -10,9 +11,15 @@ import java.io.IOException;
  */
 public abstract class ChannelBase implements Channel {
 
+    private final AtomicInteger requests = new AtomicInteger();
     private Handshaker handshaker;
     private long liveTime;
-    //
+
+    @Override
+    public AtomicInteger getRequests() {
+        return requests;
+    }
+
     @Override
     public void setHandshaker(Handshaker handshaker) {
         this.handshaker = handshaker;

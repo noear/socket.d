@@ -25,6 +25,8 @@ public class ClientConfig {
 
     private boolean autoReconnect;
 
+    private int maxRequests;
+
     public ClientConfig(String url) {
         this.url = url;
         this.uri = URI.create(url);
@@ -32,6 +34,8 @@ public class ClientConfig {
 
         connectTimeout = 3000;
         heartbeatInterval = 20 * 1000;
+
+        maxRequests = 10;
     }
 
 
@@ -131,12 +135,27 @@ public class ClientConfig {
         return this;
     }
 
+    /**
+     * 是否自动重链
+     * */
     public boolean isAutoReconnect() {
         return autoReconnect;
     }
 
     public ClientConfig autoReconnect(boolean autoReconnect) {
         this.autoReconnect = autoReconnect;
+        return this;
+    }
+
+    /**
+     * 允许最大请求数
+     * */
+    public int getMaxRequests() {
+        return maxRequests;
+    }
+
+    public ClientConfig maxRequests(int maxRequests) {
+        this.maxRequests = maxRequests;
         return this;
     }
 }

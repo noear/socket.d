@@ -1,6 +1,7 @@
 package org.noear.socketd.protocol.impl;
 
 import org.noear.socketd.exception.SocktedException;
+import org.noear.socketd.exception.SocktedTimeoutException;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.utils.Utils;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 /**
@@ -73,8 +75,10 @@ public class SessionDefault extends SessionBase implements Session {
             channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future));
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException e) {
+                throw new SocktedTimeoutException("Request timeout: " + topic);
             } catch (Throwable e) {
-                throw new IOException(e);
+                throw new SocktedException(e);
             }
         } finally {
             channel.getRequests().decrementAndGet();

@@ -4,8 +4,8 @@ import org.noear.socketd.protocol.entity.MetaEntity;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -36,19 +36,24 @@ public interface Session extends Closeable {
     Handshaker getHandshaker();
 
     /**
-     * 获取附件
-     *
-     * @param key 关键字
+     * 获取所有属性名
      */
-    <T> T getAttachment(Class<T> key);
+    Collection<String> getAttrNames();
 
     /**
-     * 设置附件
+     * 获取属性
      *
-     * @param key   关键字
+     * @param name 名字
+     */
+    <T> T getAttr(String name);
+
+    /**
+     * 设置属性
+     *
+     * @param name  名字
      * @param value 值
      */
-    <T> void setAttachment(Class<T> key, T value);
+    <T> void setAttr(String name, T value);
 
     /**
      * 获取会话Id

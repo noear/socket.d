@@ -2,6 +2,7 @@ package org.noear.socketd.protocol;
 
 import org.noear.socketd.utils.Utils;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,29 +15,38 @@ public abstract class SessionBase implements Session {
     /**
      * 会话的附件与通道的各自独立
      */
-    private Map<Class<?>, Object> attachments;
+    private Map<String, Object> attrMap;
+
+    @Override
+    public Collection<String> getAttrNames() {
+        if (attrMap == null) {
+            attrMap = new HashMap<>();
+        }
+
+        return attrMap.keySet();
+    }
 
     /**
      * 获取附件
      */
     @Override
-    public <T> T getAttachment(Class<T> key) {
-        if (attachments == null) {
+    public <T> T getAttr(String name) {
+        if (attrMap == null) {
             return null;
         }
 
-        return (T) attachments.get(key);
+        return (T) attrMap.get(name);
     }
 
     /**
      * 设置附件
      */
     @Override
-    public <T> void setAttachment(Class<T> key, T value) {
-        if (attachments == null) {
-            attachments = new HashMap<>();
+    public <T> void setAttr(String name, T value) {
+        if (attrMap == null) {
+            attrMap = new HashMap<>();
         }
-        attachments.put(key, value);
+        attrMap.put(name, value);
     }
 
     private String sessionId;

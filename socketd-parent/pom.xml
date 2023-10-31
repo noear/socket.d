@@ -25,6 +25,8 @@
         <java-websocket.version>1.5.3</java-websocket.version>
         <netty.version>4.1.86.Final</netty.version>
 
+        <solon.version>2.5.11</solon.version>
+
         <maven-compiler.version>3.11.0</maven-compiler.version>
         <maven-assembly.version>3.6.0</maven-assembly.version>
         <maven-resources.version>3.3.1</maven-resources.version>
@@ -36,6 +38,8 @@
         <module>../socketd-broker/socketd-broker-java-websocket</module>
         <module>../socketd-broker/socketd-broker-netty</module>
         <module>../socketd-broker/socketd-broker-smartsocket</module>
+
+        <module>../socketd-solon-plugin</module>
     </modules>
 
     <dependencyManagement>

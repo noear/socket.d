@@ -55,8 +55,8 @@ public class Demo {
         Entity response = session.sendAndRequest("/user/get", new Entity("hi"));
         System.out.println("sendAndRequest====" + response);
 
-        session.sendAndSubscribe("/user/sub", new Entity("hi"), payload -> {
-            System.out.println("sendAndSubscribe====" + payload);
+        session.sendAndSubscribe("/user/sub", new Entity("hi"), message -> {
+            System.out.println("sendAndSubscribe====" + message);
         });
     }
 }

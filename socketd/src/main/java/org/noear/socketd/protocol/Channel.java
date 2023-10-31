@@ -41,7 +41,7 @@ public interface Channel extends Closeable {
     /**
      * 发送连接确认（握手）
      */
-    void sendConnack(Payload connect) throws IOException;
+    void sendConnack(Message connect) throws IOException;
 
     /**
      * 发送 Ping（心跳）

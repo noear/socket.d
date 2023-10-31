@@ -17,7 +17,7 @@ public interface Listener {
     /**
      * 收到消息时
      */
-    void onMessage(Session session, Payload payload) throws IOException;
+    void onMessage(Session session, Message message) throws IOException;
 
     /**
      * 关闭时

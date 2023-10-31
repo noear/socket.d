@@ -12,9 +12,9 @@ public class Handshaker {
     private final String protocols;
     private final String version;
 
-    public Handshaker(Payload payload) {
-        this.uri = payload.getTopic();
-        this.entity = payload.getEntity();
+    public Handshaker(Message message) {
+        this.uri = message.getTopic();
+        this.entity = message.getEntity();
         this.protocols = entity.getHeader(Constants.HEARDER_SOCKETD_PROTOCOLS);
         this.version = entity.getHeader(Constants.HEARDER_SOCKETD_VERSION);
     }

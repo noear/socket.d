@@ -7,7 +7,7 @@ package org.noear.socketd.protocol;
  * @author noear
  * @since 2.0
  */
-public interface Payload {
+public interface Message {
 
     /**
      * 是否为请求

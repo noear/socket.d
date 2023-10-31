@@ -32,15 +32,15 @@ public class ProcessorDefault implements Processor {
 
         if (frame.getFlag() == Flag.Connect) {
             //if server
-            Payload payload = frame.getPayload();
-            channel.setHandshaker(new Handshaker(payload));
-            channel.sendConnack(payload); //->Connack
+            Message message = frame.getPayload();
+            channel.setHandshaker(new Handshaker(message));
+            channel.sendConnack(message); //->Connack
 
             onOpen(channel.getSession());
         } else if (frame.getFlag() == Flag.Connack) {
             //if client
-            Payload payload = frame.getPayload();
-            channel.setHandshaker(new Handshaker(payload));
+            Message message = frame.getPayload();
+            channel.setHandshaker(new Handshaker(message));
 
             onOpen(channel.getSession());
         } else {
@@ -102,7 +102,7 @@ public class ProcessorDefault implements Processor {
     }
 
     @Override
-    public void onMessage(Session session, Payload message) throws IOException {
+    public void onMessage(Session session, Message message) throws IOException {
         listener.onMessage(session, message);
     }
 

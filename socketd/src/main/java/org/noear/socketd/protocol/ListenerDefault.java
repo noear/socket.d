@@ -22,9 +22,9 @@ public class ListenerDefault implements Listener {
     }
 
     @Override
-    public void onMessage(Session session, Payload payload) throws IOException {
+    public void onMessage(Session session, Message message) throws IOException {
         if (log.isTraceEnabled()) {
-            log.trace("Session onMessage: {}: {}", session.getSessionId(), payload);
+            log.trace("Session onMessage: {}: {}", session.getSessionId(), message);
         }
     }
 

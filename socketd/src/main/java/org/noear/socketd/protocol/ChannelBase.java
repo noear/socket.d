@@ -40,7 +40,7 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void sendConnack(Payload connect) throws IOException {
+    public void sendConnack(Message connect) throws IOException {
         send(Frames.connackFrame(connect), null);
     }
 

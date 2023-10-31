@@ -8,11 +8,11 @@ package org.noear.socketd.protocol;
  */
 public class Frame {
     private Flag flag;
-    private Payload payload;
+    private Message message;
 
-    public Frame(Flag flag, Payload payload) {
+    public Frame(Flag flag, Message message) {
         this.flag = flag;
-        this.payload = payload;
+        this.message = message;
     }
 
     /**
@@ -25,15 +25,15 @@ public class Frame {
     /**
      * 载体
      * */
-    public Payload getPayload() {
-        return payload;
+    public Message getPayload() {
+        return message;
     }
 
     @Override
     public String toString() {
         return "Frame{" +
                 "flag=" + flag +
-                ", payload=" + payload +
+                ", message=" + message +
                 '}';
     }
 }

@@ -3,7 +3,7 @@ package labs.ws;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.ListenerDefault;
-import org.noear.socketd.protocol.Payload;
+import org.noear.socketd.protocol.Message;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
@@ -25,17 +25,17 @@ public class ServerTest {
 
     public static class ServerListener extends ListenerDefault {
         @Override
-        public void onMessage(Session session, Payload payload) throws IOException {
-            super.onMessage(session, payload);
+        public void onMessage(Session session, Message message) throws IOException {
+            super.onMessage(session, message);
 
-            if (payload.isRequest()) {
-                session.reply(payload, new Entity("hi reply"));
+            if (message.isRequest()) {
+                session.reply(message, new Entity("hi reply"));
             }
 
-            if (payload.isSubscribe()) {
-                session.reply(payload, new Entity("hi reply"));
-                session.reply(payload, new Entity("hi reply**"));
-                session.reply(payload, new Entity("hi reply****"));
+            if (message.isSubscribe()) {
+                session.reply(message, new Entity("hi reply"));
+                session.reply(message, new Entity("hi reply**"));
+                session.reply(message, new Entity("hi reply****"));
             }
 
 

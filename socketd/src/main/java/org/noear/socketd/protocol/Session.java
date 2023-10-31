@@ -53,5 +53,5 @@ public interface Session {
     /**
      * 答复
      */
-    void reply(Payload from, Entity content) throws IOException;
+    void reply(Message from, Entity content) throws IOException;
 }

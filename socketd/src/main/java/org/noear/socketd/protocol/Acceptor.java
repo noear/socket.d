@@ -21,5 +21,5 @@ public interface Acceptor {
     /**
      * 接收
      * */
-    boolean accept(Payload payload);
+    boolean accept(Message message);
 }

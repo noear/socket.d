@@ -1,10 +1,10 @@
 package labs.tcp.aio;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.ListenerDefault;
 import org.noear.socketd.protocol.Message;
 import org.noear.socketd.protocol.Session;
+import org.noear.socketd.protocol.entity.StringEntity;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
@@ -29,17 +29,17 @@ public class ServerTest {
             super.onMessage(session, message);
 
             if (message.isRequest()) {
-                session.reply(message, new Entity("hi reply"));
+                session.reply(message, new StringEntity("hi reply"));
             }
 
             if (message.isSubscribe()) {
-                session.reply(message, new Entity("hi reply"));
-                session.reply(message, new Entity("hi reply**"));
-                session.reply(message, new Entity("hi reply****"));
+                session.reply(message, new StringEntity("hi reply"));
+                session.reply(message, new StringEntity("hi reply**"));
+                session.reply(message, new StringEntity("hi reply****"));
             }
 
 
-            session.send("demo", new Entity("test"));
+            session.send("demo", new StringEntity("test"));
         }
     }
 }

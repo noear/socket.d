@@ -1,6 +1,6 @@
 package org.noear.socketd.protocol;
 
-import org.noear.socketd.protocol.impl.EntityBuilder;
+import org.noear.socketd.protocol.entity.MetaEntity;
 import org.noear.socketd.protocol.impl.MessageDefault;
 import org.noear.socketd.utils.Utils;
 
@@ -12,11 +12,11 @@ import org.noear.socketd.utils.Utils;
  * */
 public class Frames {
     public static final Frame connectFrame(String uri) {
-        return new Frame(Flag.Connect, new MessageDefault().key(Utils.guid()).topic(uri).entity(new EntityBuilder().header(Constants.HEARDER_CONNECT)));
+        return new Frame(Flag.Connect, new MessageDefault().key(Utils.guid()).topic(uri).entity(new MetaEntity(Constants.HEARDER_CONNECT)));
     }
 
     public static final Frame connackFrame(Message connect) {
-        return new Frame(Flag.Connack, new MessageDefault().key(connect.getKey()).entity(new EntityBuilder().header(Constants.HEARDER_CONNACK)));
+        return new Frame(Flag.Connack, new MessageDefault().key(connect.getKey()).entity(new MetaEntity(Constants.HEARDER_CONNACK)));
     }
 
     public static final Frame pingFrame() {

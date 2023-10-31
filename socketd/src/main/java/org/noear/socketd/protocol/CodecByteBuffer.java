@@ -1,7 +1,7 @@
 package org.noear.socketd.protocol;
 
 
-import org.noear.socketd.protocol.impl.EntityBuilder;
+import org.noear.socketd.protocol.entity.EntityDefault;
 import org.noear.socketd.protocol.impl.MessageDefault;
 
 import java.nio.ByteBuffer;
@@ -41,13 +41,13 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
         } else {
             //key
             byte[] keyB = frame.getPayload().getKey().getBytes(charset);
-            //routeDescriptor
-            byte[] routeDescriptorB = frame.getPayload().getTopic().getBytes(charset);
-            //header
-            byte[] headerB = frame.getPayload().getEntity().getHeader().getBytes(charset);
+            //topic
+            byte[] topicB = frame.getPayload().getTopic().getBytes(charset);
+            //metaString
+            byte[] metaStringB = frame.getPayload().getEntity().getMetaString().getBytes(charset);
 
-            //length (flag + key + routeDescriptor + body + int.bytes + \n*3)
-            int len = keyB.length + routeDescriptorB.length + headerB.length + frame.getPayload().getEntity().getBody().length + 2 * 3 + 4 + 4;
+            //length (flag + key + topic + metaString + data + int.bytes + \n*3)
+            int len = keyB.length + topicB.length + metaStringB.length + frame.getPayload().getEntity().getData().length + 2 * 3 + 4 + 4;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -61,15 +61,16 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             buffer.put(keyB);
             buffer.putChar('\n');
 
-            //routeDescriptor
-            buffer.put(routeDescriptorB);
-            buffer.putChar('\n');
-            //header
-            buffer.put(headerB);
+            //topic
+            buffer.put(topicB);
             buffer.putChar('\n');
 
-            //body
-            buffer.put(frame.getPayload().getEntity().getBody());
+            //metaString
+            buffer.put(metaStringB);
+            buffer.putChar('\n');
+
+            //data
+            buffer.put(frame.getPayload().getEntity().getData());
 
             buffer.flip();
 
@@ -95,7 +96,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             return new Frame(Flag.Of(flag), null);
         } else {
 
-            //1.解码key and routeDescriptor
+            //1.解码key and topic
             ByteBuffer sb = ByteBuffer.allocate(Math.min(4096, buffer.limit()));
 
             //key
@@ -104,26 +105,26 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
                 return null;
             }
 
-            //routeDescriptor
-            String routeDescriptor = decodeString(buffer, sb, 512);
-            if (routeDescriptor == null) {
+            //topic
+            String topic = decodeString(buffer, sb, 512);
+            if (topic == null) {
                 return null;
             }
 
-            //header
-            String header = decodeString(buffer, sb, 4096);
-            if (header == null) {
+            //metaString
+            String metaString = decodeString(buffer, sb, 4096);
+            if (metaString == null) {
                 return null;
             }
 
             //2.解码 body
             int len = len0 - buffer.position();
-            byte[] body = new byte[len];
+            byte[] data = new byte[len];
             if (len > 0) {
-                buffer.get(body, 0, len);
+                buffer.get(data, 0, len);
             }
 
-            MessageDefault message = new MessageDefault().key(key).topic(routeDescriptor).entity(new EntityBuilder().header(header).body(body));
+            MessageDefault message = new MessageDefault().key(key).topic(topic).entity(new EntityDefault(metaString, data));
             message.flag(Flag.Of(flag));
             return new Frame(message.getFlag(), message);
         }

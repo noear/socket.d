@@ -5,7 +5,7 @@
 * codec
 
 ```
-[len:int][flag:int][key:str][\n][topic:str][\n][header:str][\n][body:byte..]
+[len:int][flag:int][key:str][\n][topic:str][\n][metaString:str][\n][data:byte..]
 ```
 
 * flag
@@ -50,12 +50,12 @@ public class Demo {
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .open();
         
-        session.send("/user/created", new Entity("hi"));
+        session.send("/user/created", new StringEntity("hi"));
         
-        Entity response = session.sendAndRequest("/user/get", new Entity("hi"));
+        Entity response = session.sendAndRequest("/user/get", new StringEntity("hi"));
         System.out.println("sendAndRequest====" + response);
 
-        session.sendAndSubscribe("/user/sub", new Entity("hi"), message -> {
+        session.sendAndSubscribe("/user/sub", new StringEntity("hi"), message -> {
             System.out.println("sendAndSubscribe====" + message);
         });
     }

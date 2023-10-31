@@ -4,6 +4,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.ListenerDefault;
 import org.noear.socketd.protocol.Session;
+import org.noear.socketd.protocol.entity.StringEntity;
 
 /**
  * @author noear
@@ -18,19 +19,19 @@ public class ClientTest {
                 .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .open();
-        session.send("/user/created", new Entity("hi"));
+        session.send("/user/created", new StringEntity("hi"));
 
-        Entity response = session.sendAndRequest("/user/get", new Entity("hi"));
+        Entity response = session.sendAndRequest("/user/get", new StringEntity("hi"));
         System.out.println("sendAndRequest====" + response);
 
-        session.sendAndSubscribe("/user/sub", new Entity("hi"), message -> {
+        session.sendAndSubscribe("/user/sub", new StringEntity("hi"), message -> {
             System.out.println("sendAndSubscribe====" + message);
         });
 
         while (true) {
             try {
                 Thread.sleep(5000);
-                session.send("/user/updated", new Entity("hi"));
+                session.send("/user/updated", new StringEntity("hi"));
             }catch (Throwable e){
                 e.printStackTrace();
             }

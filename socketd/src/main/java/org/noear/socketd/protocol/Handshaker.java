@@ -15,8 +15,8 @@ public class Handshaker {
     public Handshaker(Message message) {
         this.uri = message.getTopic();
         this.entity = message.getEntity();
-        this.protocols = entity.getHeader(Constants.HEARDER_SOCKETD_PROTOCOLS);
-        this.version = entity.getHeader(Constants.HEARDER_SOCKETD_VERSION);
+        this.protocols = entity.getMeta(Constants.HEARDER_SOCKETD_PROTOCOLS);
+        this.version = entity.getMeta(Constants.HEARDER_SOCKETD_VERSION);
     }
 
     /**

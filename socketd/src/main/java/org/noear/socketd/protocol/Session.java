@@ -11,6 +11,11 @@ import java.util.function.Consumer;
  */
 public interface Session {
     /**
+     * 是否有效
+     * */
+    boolean isValid();
+
+    /**
      * 获取附件
      *
      * @param key 关键字

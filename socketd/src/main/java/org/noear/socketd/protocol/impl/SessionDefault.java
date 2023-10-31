@@ -22,6 +22,11 @@ public class SessionDefault extends SessionBase implements Session {
     }
 
     @Override
+    public boolean isValid() {
+        return channel.isValid();
+    }
+
+    @Override
     public void sendPing() throws IOException {
         channel.sendPing();
     }

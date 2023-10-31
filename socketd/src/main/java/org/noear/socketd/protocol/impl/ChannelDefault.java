@@ -6,6 +6,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 /**
  * 通道默认实现
@@ -16,16 +18,24 @@ import java.util.Map;
 public class ChannelDefault<S> extends ChannelBase implements Channel {
     private S source;
     private Closeable sourceCloseable;
+    private Predicate<S> sourceTester;
+
     private OutputTarget<S> outputTarget;
     private Session session;
     private Map<String, Acceptor> acceptorMap;
 
-    public ChannelDefault(S source, Closeable sourceCloseable, OutputTarget<S> outputTarget) {
+    public ChannelDefault(S source, Closeable sourceCloseable, Predicate<S> sourceTester, OutputTarget<S> outputTarget) {
         super();
         this.source = source;
         this.sourceCloseable = sourceCloseable;
+        this.sourceTester = sourceTester;
         this.outputTarget = outputTarget;
         this.acceptorMap = new HashMap<>();
+    }
+
+    @Override
+    public boolean isValid() {
+        return sourceTester.test(source);
     }
 
     /**

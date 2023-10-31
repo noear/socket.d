@@ -36,7 +36,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         log.info("Server:Websocket onOpen...");
 
-        Channel channel = new ChannelDefault<>(conn, conn::close, server.exchanger());
+        Channel channel = new ChannelDefault<>(conn, conn::close,r->r.isOpen(), server.exchanger());
         conn.setAttachment(channel);
     }
 

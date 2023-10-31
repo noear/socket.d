@@ -13,6 +13,11 @@ import java.io.IOException;
  */
 public interface Channel extends Closeable {
     /**
+     * 是否有效
+     * */
+    boolean isValid();
+
+    /**
      * 设置握手信息
      * */
     void setHandshaker(Handshaker handshaker);

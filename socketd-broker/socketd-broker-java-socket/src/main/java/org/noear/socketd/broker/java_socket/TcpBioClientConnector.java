@@ -54,7 +54,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         CompletableFuture<Channel> future = new CompletableFuture<>();
 
         try {
-            Channel channel = new ChannelDefault<>(real, real::close, client.exchanger());
+            Channel channel = new ChannelDefault<>(real, real::close, r->r.isConnected(), client.exchanger());
 
             socketThread = new Thread(() -> {
                 try {

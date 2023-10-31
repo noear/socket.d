@@ -37,6 +37,15 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    @Override
+    public boolean isValid() {
+        if (real == null) {
+            return false;
+        } else {
+            return real.isValid();
+        }
+    }
+
     /**
      * 发送
      */

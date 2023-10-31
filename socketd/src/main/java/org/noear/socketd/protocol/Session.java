@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -36,9 +37,9 @@ public interface Session extends Closeable {
     Handshaker getHandshaker();
 
     /**
-     * 获取所有属性名
+     * 获取所有属性
      */
-    Collection<String> getAttrNames();
+    Map<String,Object> getAttrMap();
 
     /**
      * 获取属性

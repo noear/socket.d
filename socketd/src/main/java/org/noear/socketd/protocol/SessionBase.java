@@ -18,12 +18,12 @@ public abstract class SessionBase implements Session {
     private Map<String, Object> attrMap;
 
     @Override
-    public Collection<String> getAttrNames() {
+    public Map<String, Object> getAttrMap() {
         if (attrMap == null) {
             attrMap = new HashMap<>();
         }
 
-        return attrMap.keySet();
+        return attrMap;
     }
 
     /**

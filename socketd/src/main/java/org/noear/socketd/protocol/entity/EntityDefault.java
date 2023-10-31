@@ -49,7 +49,8 @@ public class EntityDefault implements Entity {
     /**
      * Header as map
      */
-    private Map<String, String> getMetaMap() {
+    @Override
+    public Map<String, String> getMetaMap() {
         if (metaMap == null) {
             metaMap = new LinkedHashMap<>();
             metaChanged = false;
@@ -58,7 +59,11 @@ public class EntityDefault implements Entity {
             if (Utils.isNotEmpty(metaString)) {
                 for (String kvStr : metaString.split("&")) {
                     String[] kv = kvStr.split("=");
-                    metaMap.put(kv[0], kv[1]);
+                    if (kv.length > 1) {
+                        metaMap.put(kv[0], kv[1]);
+                    } else {
+                        metaMap.put(kv[0], "");
+                    }
                 }
             }
         }

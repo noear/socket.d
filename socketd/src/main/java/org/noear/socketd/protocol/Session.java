@@ -1,5 +1,7 @@
 package org.noear.socketd.protocol;
 
+import org.noear.socketd.protocol.entity.MetaEntity;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.function.Consumer;
@@ -82,4 +84,11 @@ public interface Session {
      * 答复
      */
     void reply(Message from, Entity content) throws IOException;
+
+    /**
+     * 答复为空
+     */
+    default void replyAsEmpty(Message from) throws IOException {
+        reply(from, new MetaEntity(""));
+    }
 }

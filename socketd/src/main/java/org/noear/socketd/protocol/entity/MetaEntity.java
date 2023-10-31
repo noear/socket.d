@@ -1,5 +1,7 @@
 package org.noear.socketd.protocol.entity;
 
+import org.noear.socketd.protocol.Constants;
+
 /**
  * 头实体
  *
@@ -8,6 +10,6 @@ package org.noear.socketd.protocol.entity;
  */
 public class MetaEntity extends EntityDefault {
     public MetaEntity(String metaString) {
-        super(metaString, new byte[]{});
+        super(metaString, Constants.DEF_DATA);
     }
 }

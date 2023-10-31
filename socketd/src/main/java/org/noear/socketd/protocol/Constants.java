@@ -16,6 +16,6 @@ public class Constants {
 
     public static final String DEF_KEY = "";
     public static final String DEF_TOPIC = "";
-    public static final String DEF_HEADER = "";
-    public static final byte[] DEF_BODY = new byte[]{};
+    public static final String DEF_META_STRING = "";
+    public static final byte[] DEF_DATA = new byte[]{};
 }

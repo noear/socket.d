@@ -20,15 +20,16 @@
         <maven-resources.version>3.3.1</maven-resources.version>
 
         <slf4j.version>2.0.9</slf4j.version>
-        <solon.version>2.5.11</solon.version>
         <smartsocket.version>1.5.36</smartsocket.version>
         <java-websocket.version>1.5.3</java-websocket.version>
+        <netty.version>4.1.86.Final</netty.version>
     </properties>
 
     <modules>
         <module>../socketd</module>
         <module>../socketd-broker/socketd-broker-java-socket</module>
         <module>../socketd-broker/socketd-broker-java-websocket</module>
+        <module>../socketd-broker/socketd-broker-netty</module>
         <module>../socketd-broker/socketd-broker-smartsocket</module>
     </modules>
 

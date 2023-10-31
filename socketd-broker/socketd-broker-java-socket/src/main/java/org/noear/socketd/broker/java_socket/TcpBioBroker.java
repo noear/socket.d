@@ -1,7 +1,7 @@
 package org.noear.socketd.broker.java_socket;
 
-
-import org.noear.socketd.broker.Broker;
+import org.noear.socketd.broker.ClientBroker;
+import org.noear.socketd.broker.ServerBroker;
 import org.noear.socketd.client.Client;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.server.Server;
@@ -13,7 +13,7 @@ import org.noear.socketd.server.ServerConfig;
  * @author noear
  * @since 2.0
  */
-public class TcpBioBroker implements Broker {
+public class TcpBioBroker implements ClientBroker, ServerBroker {
 
     @Override
     public String schema() {

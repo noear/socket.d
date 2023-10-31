@@ -11,7 +11,7 @@ import org.noear.socketd.server.ServerConfig;
  * @author noear
  * @since 2.0
  */
-public interface Broker {
+public interface ServerBroker {
     /**
      * 协议架构
      */
@@ -21,9 +21,4 @@ public interface Broker {
      * 创建服务端
      */
     Server createServer(ServerConfig serverConfig);
-
-    /**
-     * 创建客户端
-     */
-    Client createClient(ClientConfig clientConfig);
 }

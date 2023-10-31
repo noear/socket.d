@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 public interface Session {
     /**
      * 是否有效
-     * */
+     */
     boolean isValid();
 
     /**
@@ -28,7 +28,7 @@ public interface Session {
 
     /**
      * 获取握手信息
-     * */
+     */
     Handshaker getHandshaker();
 
     /**
@@ -64,7 +64,14 @@ public interface Session {
     /**
      * 发送并请求
      */
-    Entity sendAndRequest(String topic, Entity content) throws IOException;
+    default Entity sendAndRequest(String topic, Entity content) throws IOException {
+        return sendAndRequest(topic, content, 3000);
+    }
+
+    /**
+     * 发送并请求
+     */
+    Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
 
     /**
      * 发送并订阅

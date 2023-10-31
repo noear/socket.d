@@ -54,14 +54,15 @@ public class SessionDefault extends SessionBase implements Session {
         channel.send(new Frame(Flag.Message, message), null);
     }
 
+
     @Override
-    public Entity sendAndRequest(String topic, Entity content) throws IOException {
+    public Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException {
         Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
 
         CompletableFuture<Entity> future = new CompletableFuture<>();
         channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future));
         try {
-            return future.get(2000, TimeUnit.MILLISECONDS);
+            return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
             throw new IOException(e);
         }

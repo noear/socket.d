@@ -52,15 +52,15 @@ public class ProcessorDefault implements Processor {
                 return;
             }
 
+            channel.setHeartbeatTime();
+
             try {
                 switch (frame.getFlag()) {
                     case Ping: {
-                        channel.setHeartbeatTime();
                         channel.sendPong();
                         break;
                     }
                     case Pong: {
-                        channel.setHeartbeatTime();
                         break;
                     }
                     case Close: {

@@ -1,6 +1,7 @@
 package org.noear.socketd.protocol;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.function.Consumer;
 
 /**
@@ -14,6 +15,16 @@ public interface Session {
      * 是否有效
      * */
     boolean isValid();
+
+    /**
+     * 获取远程地址
+     */
+    InetAddress getRemoteAddress() throws IOException;
+
+    /**
+     * 获取本地地址
+     */
+    InetAddress getLocalAddress() throws IOException;
 
     /**
      * 获取握手信息

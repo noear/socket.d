@@ -4,6 +4,7 @@ import org.noear.socketd.exception.SocktedConnectionException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.InetAddress;
 
 /**
  * 通道
@@ -26,6 +27,17 @@ public interface Channel extends Closeable {
      * 获取握手信息
      */
     Handshaker getHandshaker();
+
+    /**
+     * 获取远程地址
+     */
+    InetAddress getRemoteAddress() throws IOException;
+
+    /**
+     * 获取本地地址
+     */
+    InetAddress getLocalAddress() throws IOException;
+
 
     /**
      * 设置心跳时间

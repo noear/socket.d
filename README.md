@@ -10,18 +10,19 @@
 
 * flag
 
-| Flag      | Server                       | Client                       | 备注     |
-|-----------|------------------------------|------------------------------|---------|
-| Unknown   | ::close()                    | ::close()                    |         |
-| Connect   | /                            | c(Connect)->s                |         |
-| Connack   | s(Connack),s::c.onOpen()->c  | s(Connack)->c::onOpen()      |         |
-| Ping      | /                            | c(Ping)->s                   |         |
-| Pong      | s(Pong)->c                   | /                            |         |
-| Message   | s(Message)->c                | c(Message)->s                |         |
-| Request   | s(Request)->c(Reply)->s      | c(Request)->s(Reply)->c      |         |
-| Subscribe | s(Subscribe)->c(Reply?..)->s | c(Subscribe)->s(Reply?..)->c |         |
-| Reply     | s(Reply)->c                  | c(Reply)->s                  |         |
-| ReplyEnd  | s(ReplyEnd)->c               | c(ReplyEnd)->s               | 结束答复 |
+| Flag      | Server                       | Client                       | 备注           |
+|-----------|------------------------------|------------------------------|--------------|
+| Unknown   | ::close()                    | ::close()                    |              |
+| Connect   | /                            | c(Connect)->s                |              |
+| Connack   | s(Connack),s::c.onOpen()->c  | s(Connack)->c::onOpen()      |              |
+| Ping      | /                            | c(Ping)->s                   |              |
+| Pong      | s(Pong)->c                   | /                            |              |
+| Close     | s(Close)->c                  | c(Close)->s                  | 用于特殊场景（如：T人） |
+| Message   | s(Message)->c                | c(Message)->s                |              |
+| Request   | s(Request)->c(Reply)->s      | c(Request)->s(Reply)->c      |              |
+| Subscribe | s(Subscribe)->c(Reply?..)->s | c(Subscribe)->s(Reply?..)->c |              |
+| Reply     | s(Reply)->c                  | c(Reply)->s                  |              |
+| ReplyEnd  | s(ReplyEnd)->c               | c(ReplyEnd)->s               | 结束答复         |
 
 
 
@@ -39,6 +40,6 @@
 
 * java
 
-[java/README.md](java/README.md)
+[java/README.md](java/)
 
 

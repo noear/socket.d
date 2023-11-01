@@ -9,7 +9,9 @@ import org.noear.socketd.solon.annotation.SocketdClient;
 import org.noear.socketd.solon.annotation.SocketdServer;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
+import org.noear.solon.core.bean.LifecycleBean;
 import org.noear.solon.core.event.EventBus;
+import org.noear.solon.core.util.RunUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +51,19 @@ public class XPluginImpl implements Plugin {
             }
         });
 
-        context.lifecycle(-99, () -> {
-            for (Server server : serverList) {
-                server.start();
+        context.lifecycle(-99, new LifecycleBean() {
+            @Override
+            public void start() throws Throwable {
+                for (Server server : serverList) {
+                    server.start();
+                }
+            }
+
+            @Override
+            public void stop() throws Throwable {
+                for (Server server : serverList) {
+                    RunUtil.runAndTry(server::stop);
+                }
             }
         });
 

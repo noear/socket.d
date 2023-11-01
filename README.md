@@ -74,6 +74,13 @@ public class ServerMvcDemo extends SocketMvcListener {
     public static void main(String[] args){
         Solon.start(ServerMvcDemo.class, args);
     }
+
+    @Override
+    public void onMessage(Session session, Message message) throws IOException {
+        //如果某些主题不想 mvc，这里还可以换掉
+
+        super.onMessage(session, message);
+    }
 }
 
 @Controller

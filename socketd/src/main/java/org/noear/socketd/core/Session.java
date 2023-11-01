@@ -76,12 +76,12 @@ public interface Session extends Closeable {
     }
 
     /**
-     * 发送并请求（限为一次答复）
+     * 发送并请求（限为一次答复；指定超时）
      */
     Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
 
     /**
-     * 发送并订阅（不限答复次数）
+     * 发送并订阅（答复结束之前，不限答复次数）
      */
     void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
 
@@ -93,7 +93,7 @@ public interface Session extends Closeable {
     void reply(Message from, Entity content) throws IOException;
 
     /**
-     * 答复并结束
+     * 答复并结束（即最后一次答复）
      *
      * @param from 来源消息
      */

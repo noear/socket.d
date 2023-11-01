@@ -3,9 +3,9 @@ package org.noear.socketd.broker.java_websocket.impl;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.noear.socketd.broker.java_websocket.WsBioClient;
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.impl.ChannelDefault;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.Frame;
+import org.noear.socketd.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

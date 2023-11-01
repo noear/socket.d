@@ -1,10 +1,9 @@
 package org.noear.socketd.client;
 
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.HeartbeatHandler;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.HeartbeatHandler;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 /**
  * 客户端连接器

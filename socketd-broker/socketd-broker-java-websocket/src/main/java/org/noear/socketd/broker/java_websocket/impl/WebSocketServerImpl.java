@@ -4,9 +4,9 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.noear.socketd.broker.java_websocket.WsBioServer;
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.impl.ChannelDefault;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.Frame;
+import org.noear.socketd.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
 package labs;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.protocol.Entity;
-import org.noear.socketd.protocol.Session;
+import org.noear.socketd.core.Entity;
+import org.noear.socketd.core.Session;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 

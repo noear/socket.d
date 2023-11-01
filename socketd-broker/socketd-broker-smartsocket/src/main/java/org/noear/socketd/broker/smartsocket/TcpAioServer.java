@@ -1,8 +1,8 @@
 package org.noear.socketd.broker.smartsocket;
 
 import org.noear.socketd.broker.smartsocket.impl.Attachment;
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Frame;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.Frame;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;

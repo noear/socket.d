@@ -1,7 +1,7 @@
 package org.noear.socketd.broker.java_tcp;
 
-import org.noear.socketd.protocol.*;
-import org.noear.socketd.protocol.impl.ChannelDefault;
+import org.noear.socketd.core.*;
+import org.noear.socketd.core.impl.ChannelDefault;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.noear.socketd.utils.Utils;

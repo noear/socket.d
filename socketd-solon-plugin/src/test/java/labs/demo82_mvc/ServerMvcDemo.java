@@ -1,7 +1,7 @@
 package labs.demo82_mvc;
 
-import org.noear.socketd.protocol.Message;
-import org.noear.socketd.protocol.Session;
+import org.noear.socketd.core.Message;
+import org.noear.socketd.core.Session;
 import org.noear.socketd.solon.annotation.SocketdServer;
 import org.noear.socketd.solon.mvc.SocketMvcListener;
 import org.noear.solon.Solon;

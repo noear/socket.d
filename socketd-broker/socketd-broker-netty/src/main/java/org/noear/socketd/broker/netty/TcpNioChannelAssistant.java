@@ -1,8 +1,8 @@
 package org.noear.socketd.broker.netty;
 
 import io.netty.channel.Channel;
-import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.ChannelAssistant;
+import org.noear.socketd.core.Frame;
+import org.noear.socketd.core.ChannelAssistant;
 
 import java.io.IOException;
 import java.io.NotActiveException;

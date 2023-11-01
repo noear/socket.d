@@ -1,10 +1,10 @@
 package org.noear.socketd.client;
 
-import org.noear.socketd.protocol.HeartbeatHandler;
-import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.protocol.ChannelAssistant;
-import org.noear.socketd.protocol.Processor;
-import org.noear.socketd.protocol.impl.ProcessorDefault;
+import org.noear.socketd.core.HeartbeatHandler;
+import org.noear.socketd.core.Listener;
+import org.noear.socketd.core.ChannelAssistant;
+import org.noear.socketd.core.Processor;
+import org.noear.socketd.core.impl.ProcessorDefault;
 
 import java.util.function.Consumer;
 

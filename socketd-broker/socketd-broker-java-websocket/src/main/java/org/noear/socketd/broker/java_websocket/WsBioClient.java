@@ -1,9 +1,9 @@
 package org.noear.socketd.broker.java_websocket;
 
 import org.noear.socketd.client.*;
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.impl.SessionDefault;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.Session;
+import org.noear.socketd.core.impl.SessionDefault;
 
 /**
  * Ws-Bio 客户端实现

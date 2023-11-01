@@ -1,10 +1,10 @@
 package labs.udp;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.protocol.Entity;
-import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.SimpleListener;
-import org.noear.socketd.protocol.entity.StringEntity;
+import org.noear.socketd.core.Entity;
+import org.noear.socketd.core.Session;
+import org.noear.socketd.core.SimpleListener;
+import org.noear.socketd.core.entity.StringEntity;
 
 public class ClientTest {
     public static void main(String[] args) throws Exception {

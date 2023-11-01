@@ -1,8 +1,8 @@
 package labs;
 
-import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.protocol.Message;
-import org.noear.socketd.protocol.Session;
+import org.noear.socketd.core.Listener;
+import org.noear.socketd.core.Message;
+import org.noear.socketd.core.Session;
 
 import java.io.IOException;
 

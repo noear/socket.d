@@ -1,7 +1,7 @@
 package labs.demo83_mvc2;
 
 import labs.demo82_mvc.ServerMvcDemo;
-import org.noear.socketd.protocol.ListenerPipeline;
+import org.noear.socketd.core.ListenerPipeline;
 import org.noear.socketd.solon.annotation.SocketdServer;
 import org.noear.socketd.solon.mvc.SocketMvcListener;
 import org.noear.solon.Solon;

@@ -1,9 +1,9 @@
 package labs.demo82_mvc;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.protocol.Entity;
-import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.entity.StringEntity;
+import org.noear.socketd.core.Entity;
+import org.noear.socketd.core.Session;
+import org.noear.socketd.core.entity.StringEntity;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.boot.web.MimeType;
 import org.noear.solon.core.bean.LifecycleBean;

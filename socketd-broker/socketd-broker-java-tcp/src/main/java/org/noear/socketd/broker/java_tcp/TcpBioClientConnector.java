@@ -2,10 +2,10 @@ package org.noear.socketd.broker.java_tcp;
 
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Flag;
-import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.impl.ChannelDefault;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.Flag;
+import org.noear.socketd.core.Frame;
+import org.noear.socketd.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

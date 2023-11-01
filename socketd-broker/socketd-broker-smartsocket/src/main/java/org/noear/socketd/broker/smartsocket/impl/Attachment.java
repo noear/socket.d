@@ -1,8 +1,8 @@
 package org.noear.socketd.broker.smartsocket.impl;
 
 import org.noear.socketd.broker.smartsocket.TcpAioChannelAssistant;
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.impl.ChannelDefault;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.impl.ChannelDefault;
 import org.smartboot.socket.transport.AioSession;
 
 import java.util.HashMap;

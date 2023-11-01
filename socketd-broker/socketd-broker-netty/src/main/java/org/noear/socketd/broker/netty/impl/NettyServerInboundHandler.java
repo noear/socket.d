@@ -5,9 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import org.noear.socketd.broker.netty.TcpNioServer;
-import org.noear.socketd.protocol.Channel;
-import org.noear.socketd.protocol.Frame;
-import org.noear.socketd.protocol.impl.ChannelDefault;
+import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.Frame;
+import org.noear.socketd.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

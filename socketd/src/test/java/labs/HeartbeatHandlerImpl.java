@@ -1,9 +1,7 @@
 package labs;
 
-import org.noear.socketd.protocol.HeartbeatHandler;
-import org.noear.socketd.protocol.Session;
-
-import java.io.IOException;
+import org.noear.socketd.core.HeartbeatHandler;
+import org.noear.socketd.core.Session;
 
 /**
  * @author noear 2023/10/16 created

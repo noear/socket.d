@@ -1,6 +1,6 @@
 package org.noear.socketd.client;
 
-import org.noear.socketd.protocol.HeartbeatHandler;
+import org.noear.socketd.core.HeartbeatHandler;
 
 /**
  * @author noear

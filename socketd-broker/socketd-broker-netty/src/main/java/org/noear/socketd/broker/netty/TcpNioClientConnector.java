@@ -9,7 +9,7 @@ import org.noear.socketd.broker.netty.impl.NettyChannelInitializer;
 import org.noear.socketd.broker.netty.impl.NettyClientInboundHandler;
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
-import org.noear.socketd.protocol.Channel;
+import org.noear.socketd.core.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

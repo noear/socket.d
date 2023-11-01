@@ -1,8 +1,8 @@
 package org.noear.socketd.client;
 
 import org.noear.socketd.exception.SocketdConnectionException;
-import org.noear.socketd.protocol.*;
-import org.noear.socketd.protocol.impl.HeartbeatHandlerDefault;
+import org.noear.socketd.core.*;
+import org.noear.socketd.core.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;
 
 import java.io.IOException;

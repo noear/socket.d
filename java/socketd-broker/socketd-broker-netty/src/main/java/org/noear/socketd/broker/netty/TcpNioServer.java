@@ -8,6 +8,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.noear.socketd.broker.netty.impl.NettyChannelInitializer;
 import org.noear.socketd.broker.netty.impl.NettyServerInboundHandler;
+import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.noear.socketd.utils.Utils;
@@ -31,7 +32,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
     }
 
     @Override
-    public void start() throws Exception {
+    public Server start() throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup(config().getCoreThreads());
         EventLoopGroup workGroup = new NioEventLoopGroup(config().getMaxThreads());
 
@@ -64,6 +65,8 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
 
             throw new IllegalStateException(e);
         }
+
+        return this;
     }
 
     @Override

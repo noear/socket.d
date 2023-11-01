@@ -30,8 +30,6 @@ public class ClientTest {
                 e.printStackTrace();
             }
         }
-        //Payload response = session.sendAndRequest(null);
-        //session.sendAndSubscribe(null, null);
     }
 
     public static class ClientListener extends SimpleListener {

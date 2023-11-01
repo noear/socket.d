@@ -4,6 +4,7 @@ import org.noear.socketd.broker.java_udp.impl.DatagramFrame;
 import org.noear.socketd.broker.java_udp.impl.DatagramTagert;
 import org.noear.socketd.core.Channel;
 import org.noear.socketd.core.impl.ChannelDefault;
+import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
     }
 
     @Override
-    public void start() throws IOException {
+    public Server start() throws IOException {
         if (serverThread != null) {
             throw new IllegalStateException("Server started");
         }
@@ -79,6 +80,8 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
         serverThread.start();
 
         log.info("Server started: {server=udp://127.0.0.1:" + config().getPort() + "}");
+
+        return this;
     }
 
     private Channel getChannel(DatagramFrame datagramFrame) {

@@ -3,6 +3,7 @@ package org.noear.socketd.broker.smartsocket;
 import org.noear.socketd.broker.smartsocket.impl.Attachment;
 import org.noear.socketd.core.Channel;
 import org.noear.socketd.core.Frame;
+import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
     }
 
     @Override
-    public void start() throws Exception {
+    public Server start() throws Exception {
         if (config().getHost() != null) {
             server = new AioQuickServer(config().getPort(),
                     assistant(), this);
@@ -61,6 +62,8 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
         server.start();
 
         log.info("Server started: {server=tcp://127.0.0.1:" + config().getPort() + "}");
+
+        return this;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.noear.socketd.broker.java_websocket;
 
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.noear.socketd.broker.java_websocket.impl.WebSocketServerImpl;
+import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
     }
 
     @Override
-    public void start() throws IOException {
+    public Server start() throws IOException {
         if (config().getHost() != null) {
             server = new WebSocketServerImpl(config().getPort(), this);
         } else {
@@ -39,6 +40,8 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
         server.start();
 
         log.info("Server started: {server=ws://127.0.0.1:" + config().getPort() + "}");
+
+        return this;
     }
 
     @Override

@@ -24,9 +24,9 @@
 ```java
 public class Demo {
     public void main(String[] args) throws Throwable {
-        Server server = SocketD.createServer(new ServerConfig("ws"));
-        server.listen(new ServerListener());
-        server.start();
+        SocketD.createServer(new ServerConfig("ws"))
+                .listen(new ServerListener())
+                .start();
 
         
         Session session = SocketD.createClient("ws://127.0.0.1:6329/path?u=a&p=2")

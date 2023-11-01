@@ -2,6 +2,7 @@ package org.noear.socketd.broker.java_tcp;
 
 import org.noear.socketd.core.*;
 import org.noear.socketd.core.impl.ChannelDefault;
+import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerBase;
 import org.noear.socketd.server.ServerConfig;
 import org.noear.socketd.utils.Utils;
@@ -35,7 +36,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
     /**
      * 创建 server（支持 ssl, host）
-     * */
+     */
     private ServerSocket createServer() throws IOException {
         if (config().getSslContext() == null) {
             if (Utils.isEmpty(config().getHost())) {
@@ -53,7 +54,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     }
 
     @Override
-    public void start() throws IOException {
+    public Server start() throws IOException {
         if (serverThread != null) {
             throw new IllegalStateException("Server started");
         }
@@ -88,6 +89,8 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         serverThread.start();
 
         log.info("Server started: {server=tcp://127.0.0.1:" + config().getPort() + "}");
+
+        return this;
     }
 
     private void receive(Channel channel, Socket socket) {

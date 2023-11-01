@@ -6,10 +6,6 @@ import org.noear.socketd.core.Session;
 import org.noear.socketd.core.SimpleListener;
 import org.noear.socketd.core.entity.StringEntity;
 
-/**
- * @author noear
- * @since 2.0
- */
 public class ClientTest {
     public static void main(String[] args) throws Exception {
         //client
@@ -36,8 +32,6 @@ public class ClientTest {
                 e.printStackTrace();
             }
         }
-        //Entity response = session.sendAndRequest(null);
-        //session.sendAndSubscribe(null, null);
     }
 
     public static class ClientListener extends SimpleListener {

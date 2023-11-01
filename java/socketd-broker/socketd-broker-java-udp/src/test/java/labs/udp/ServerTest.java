@@ -13,9 +13,9 @@ import java.io.IOException;
 public class ServerTest {
     public static void main(String[] args) throws Exception {
         //server
-        Server server = SocketD.createServer(new ServerConfig("udp"));
-        server.listen(new ServerListener());
-        server.start();
+        SocketD.createServer(new ServerConfig("udp"))
+                .listen(new ServerListener())
+                .start();
     }
 
     public static class ServerListener extends SimpleListener {

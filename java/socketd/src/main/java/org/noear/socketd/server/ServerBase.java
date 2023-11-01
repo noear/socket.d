@@ -5,6 +5,8 @@ import org.noear.socketd.core.ChannelAssistant;
 import org.noear.socketd.core.Processor;
 import org.noear.socketd.core.impl.ProcessorDefault;
 
+import java.util.function.Consumer;
+
 /**
  * @author noear
  * @since 2.0
@@ -22,41 +24,53 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     }
 
     /**
-     * 配置
-     */
-    public ServerConfig config() {
-        return config;
-    }
-
-    /**
-     * 通道助理
+     * 获取通道助理
      */
     public T assistant() {
         return assistant;
     }
 
     /**
-     * 处理器
+     * 获取配置
+     */
+    public ServerConfig config() {
+        return config;
+    }
+
+    /**
+     * 配置
+     */
+    public Server config(Consumer<ServerConfig> consumer) {
+        consumer.accept(config);
+        return this;
+    }
+
+
+    /**
+     * 获取处理器
      */
     public Processor processor() {
         return processor;
     }
 
     /**
-     * 处理
+     * 设置处理器
      */
     @Override
-    public void process(Processor processor) {
+    public Server process(Processor processor) {
         if (processor != null) {
             this.processor = processor;
         }
+
+        return this;
     }
 
     /**
-     * 监听
+     * 设置监听器
      */
     @Override
-    public void listen(Listener listener) {
+    public Server listen(Listener listener) {
         processor.setListener(listener);
+        return this;
     }
 }

@@ -8,7 +8,6 @@ package org.noear.socketd.core;
  */
 public class Constants {
     public static final String HEARDER_SOCKETD_VERSION = "SocketD-Version";
-    public static final String HEARDER_SOCKETD_PROTOCOLS = "SocketD-Protocols";
 
     public static final String HEARDER_CONNECT = "SocketD-Version=2.0";
     public static final String HEARDER_CONNACK = "SocketD-Version=2.0";

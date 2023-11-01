@@ -27,26 +27,44 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
     }
 
     /**
-     * 配置
-     */
-    public ClientConfig config() {
-        return config;
-    }
-
-    /**
-     * 通道助理
+     * 获取通道助理
      */
     public T assistant() {
         return assistant;
     }
 
     /**
-     * 处理器
+     * 获取心跳处理
+     */
+    public HeartbeatHandler heartbeatHandler() {
+        return heartbeatHandler;
+    }
+
+    /**
+     * 获取心跳间隔（毫秒）
+     */
+    public long heartbeatInterval() {
+        return config.getHeartbeatInterval();
+    }
+
+
+    /**
+     * 获取配置
+     */
+    public ClientConfig config() {
+        return config;
+    }
+
+    /**
+     * 获取处理器
      */
     public Processor processor() {
         return processor;
     }
 
+    /**
+     * 设置心跳
+     */
     @Override
     public Client heartbeatHandler(HeartbeatHandler handler) {
         if (handler != null) {
@@ -56,20 +74,31 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
         return this;
     }
 
-    public HeartbeatHandler heartbeatHandler() {
-        return heartbeatHandler;
-    }
-
-    public long heartbeatInterval() {
-        return config.getHeartbeatInterval();
-    }
-
+    /**
+     * 配置
+     */
     @Override
     public Client config(Consumer<ClientConfig> consumer) {
         consumer.accept(config);
         return this;
     }
 
+
+    /**
+     * 设置处理器
+     */
+    @Override
+    public Client process(Processor processor) {
+        if (processor != null) {
+            this.processor = processor;
+        }
+
+        return this;
+    }
+
+    /**
+     * 设置监听器
+     */
     @Override
     public Client listen(Listener listener) {
         processor.setListener(listener);

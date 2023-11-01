@@ -81,7 +81,7 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     case Reply:
-                    case ReplyEnd:{
+                    case ReplyEnd: {
                         channel.retrieve(frame);
                         break;
                     }
@@ -97,21 +97,43 @@ public class ProcessorDefault implements Processor {
     }
 
 
+    /**
+     * 打开时
+     *
+     * @param session 会话
+     */
     @Override
-    public void onOpen(Session session) throws IOException{
+    public void onOpen(Session session) throws IOException {
         listener.onOpen(session);
     }
 
+    /**
+     * 收到消息时
+     *
+     * @param session 会话
+     * @param message 消息
+     */
     @Override
     public void onMessage(Session session, Message message) throws IOException {
         listener.onMessage(session, message);
     }
 
+    /**
+     * 关闭时
+     *
+     * @param session 会话
+     */
     @Override
     public void onClose(Session session) {
         listener.onClose(session);
     }
 
+    /**
+     * 出错时
+     *
+     * @param session 会话
+     * @param error   错误信息
+     */
     @Override
     public void onError(Session session, Throwable error) {
         listener.onError(session, error);

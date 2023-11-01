@@ -1,7 +1,5 @@
 package org.noear.socketd.core;
 
-import java.io.IOException;
-
 /**
  * 心跳处理器
  *

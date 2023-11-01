@@ -13,14 +13,12 @@ import java.util.Map;
 public class Handshaker {
     private final URI uri;
     private final Entity entity;
-    private final String protocols;
     private final String version;
     private final Map<String,String> paramMap;
 
     public Handshaker(Message message) {
         this.uri = URI.create(message.getTopic());
         this.entity = message.getEntity();
-        this.protocols = entity.getMeta(Constants.HEARDER_SOCKETD_PROTOCOLS);
         this.version = entity.getMeta(Constants.HEARDER_SOCKETD_VERSION);
         this.paramMap = new HashMap<>();
 
@@ -38,7 +36,7 @@ public class Handshaker {
     }
 
     /**
-     * 地址
+     * 获请地址
      *
      * @return tcp://192.168.0.1/path?user=1&path=2
      */
@@ -46,25 +44,18 @@ public class Handshaker {
         return uri;
     }
 
+    /**
+     * 获取参数集合
+     * */
     public Map<String, String> getParamMap(){
         return paramMap;
     }
 
+    /**
+     * 获取参数
+     * */
     public String getParam(String name){
         return paramMap.get(name);
-    }
-
-    /**
-     * 协议
-     *
-     * @return [http,ws] ; [tcp,sd]; [tcp,http,ws,sd]
-     * */
-    public String[] getProtocols() {
-        if (protocols == null) {
-            return null;
-        } else {
-            return protocols.split(":");
-        }
     }
 
     /**

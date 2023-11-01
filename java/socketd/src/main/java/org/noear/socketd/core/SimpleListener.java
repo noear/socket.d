@@ -1,44 +1,53 @@
 package org.noear.socketd.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 
 /**
- * 简单的监听器（一般用于占位，避免 null）
+ * 简单的监听器（一般用于占位）
  *
  * @author noear
  * @since 2.0
  */
 public class SimpleListener implements Listener {
-    static final Logger log = LoggerFactory.getLogger(SimpleListener.class);
-
+    /**
+     * 打开时
+     *
+     * @param session 会话
+     */
     @Override
     public void onOpen(Session session) throws IOException{
-        if (log.isTraceEnabled()) {
-            log.trace("Session onOpen: {}", session.getSessionId());
-        }
+
     }
 
+    /**
+     * 收到消息时
+     *
+     * @param session 会话
+     * @param message 消息
+     */
     @Override
     public void onMessage(Session session, Message message) throws IOException {
-        if (log.isTraceEnabled()) {
-            log.trace("Session onMessage: {}: {}", session.getSessionId(), message);
-        }
+
     }
 
+    /**
+     * 关闭时
+     *
+     * @param session 会话
+     */
     @Override
     public void onClose(Session session) {
-        if (log.isTraceEnabled()) {
-            log.trace("Session onClose: {}", session.getSessionId());
-        }
+
     }
 
+    /**
+     * 出错时
+     *
+     * @param session 会话
+     * @param error   错误信息
+     */
     @Override
     public void onError(Session session, Throwable error) {
-        if (log.isTraceEnabled()) {
-            log.trace("Session onError: {}", session.getSessionId(), error);
-        }
+
     }
 }

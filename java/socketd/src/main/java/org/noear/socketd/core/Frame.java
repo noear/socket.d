@@ -23,7 +23,7 @@ public class Frame {
     }
 
     /**
-     * 载体
+     * 消息
      * */
     public Message getMessage() {
         return message;

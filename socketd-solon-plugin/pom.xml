@@ -49,7 +49,7 @@
 
         <dependency>
             <groupId>org.noear</groupId>
-            <artifactId>socketd-broker-java-socket</artifactId>
+            <artifactId>socketd-broker-java-tcp</artifactId>
             <scope>test</scope>
         </dependency>
 

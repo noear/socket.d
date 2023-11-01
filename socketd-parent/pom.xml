@@ -34,7 +34,8 @@
 
     <modules>
         <module>../socketd</module>
-        <module>../socketd-broker/socketd-broker-java-socket</module>
+        <module>../socketd-broker/socketd-broker-java-tcp</module>
+        <module>../socketd-broker/socketd-broker-java-udp</module>
         <module>../socketd-broker/socketd-broker-java-websocket</module>
         <module>../socketd-broker/socketd-broker-netty</module>
         <module>../socketd-broker/socketd-broker-smartsocket</module>

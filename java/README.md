@@ -6,6 +6,17 @@
 * udp://19.10.2.3:9812/path?u=a&p=2
 * ws://19.10.2.3:1023/path?u=a&p=2
 
+### 适配情况
+
+| broker                        | schema  | 支持端 | 备注 |
+|-------------------------------|---------|-----|--|
+| socketd-broker-java-tcp       | tcp-bio | c,s |  |
+| socketd-broker-java-udp       | udp     | c,s |  |
+| socketd-broker-java-websocket | ws-bio  | c,s |  |
+| socketd-broker-netty          | tcp-nio | c,s |  |
+| socketd-broker-smartsocket    | tcp-aio | c,s |  |
+
+
 ### 简单演示（引入一个 broker 适配包后）:
 
 * 手动模式

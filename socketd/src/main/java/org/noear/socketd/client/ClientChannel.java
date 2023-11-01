@@ -1,12 +1,11 @@
 package org.noear.socketd.client;
 
-import org.noear.socketd.exception.SocktedConnectionException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.protocol.*;
 import org.noear.socketd.protocol.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ScheduledFuture;
 
@@ -85,7 +84,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                     real = null;
                 }
 
-                throw new SocktedConnectionException(e);
+                throw new SocketdConnectionException(e);
             }
         }
     }
@@ -127,7 +126,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                     real = null;
                 }
 
-                throw new SocktedConnectionException(e);
+                throw new SocketdConnectionException(e);
             }
         }
     }

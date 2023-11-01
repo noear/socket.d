@@ -2,7 +2,7 @@ package org.noear.socketd.broker.smartsocket;
 
 import org.noear.socketd.broker.smartsocket.impl.Attachment;
 import org.noear.socketd.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocktedTimeoutException;
+import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
@@ -69,7 +69,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
         try {
             return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            throw new SocktedTimeoutException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             throw e;
         }

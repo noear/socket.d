@@ -8,7 +8,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.noear.socketd.broker.netty.impl.NettyChannelInitializer;
 import org.noear.socketd.broker.netty.impl.NettyClientInboundHandler;
 import org.noear.socketd.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocktedTimeoutException;
+import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.protocol.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
             return inboundHandler.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            throw new SocktedTimeoutException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             eventLoopGroup.shutdownGracefully();
             throw e;

@@ -2,7 +2,7 @@ package org.noear.socketd.broker.java_websocket;
 
 import org.noear.socketd.broker.java_websocket.impl.WebSocketClientImpl;
 import org.noear.socketd.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocktedConnectionException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.protocol.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
             if (real.connectBlocking(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS)) {
                 return real.getChannel();
             } else {
-                throw new SocktedConnectionException("Connection fail: " + client.config().getUrl());
+                throw new SocketdConnectionException("Connection fail: " + client.config().getUrl());
             }
         } catch (RuntimeException e) {
             throw e;

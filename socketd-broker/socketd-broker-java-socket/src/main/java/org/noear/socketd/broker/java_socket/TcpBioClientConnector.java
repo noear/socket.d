@@ -1,7 +1,7 @@
 package org.noear.socketd.broker.java_socket;
 
 import org.noear.socketd.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocktedTimeoutException;
+import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.protocol.Channel;
 import org.noear.socketd.protocol.Flag;
 import org.noear.socketd.protocol.Frame;
@@ -77,7 +77,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         try {
             return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            throw new SocktedTimeoutException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             throw e;
         }

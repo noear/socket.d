@@ -36,7 +36,7 @@ public interface Session extends Closeable {
     /**
      * 获取所有属性
      */
-    Map<String,Object> getAttrMap();
+    Map<String, Object> getAttrMap();
 
     /**
      * 获取属性
@@ -65,11 +65,17 @@ public interface Session extends Closeable {
 
     /**
      * 发送
+     *
+     * @param topic   主题
+     * @param content 内容
      */
     void send(String topic, Entity content) throws IOException;
 
     /**
      * 发送并请求
+     *
+     * @param topic   主题
+     * @param content 内容
      */
     default Entity sendAndRequest(String topic, Entity content) throws IOException {
         return sendAndRequest(topic, content, 3000);
@@ -77,25 +83,35 @@ public interface Session extends Closeable {
 
     /**
      * 发送并请求（限为一次答复；指定超时）
+     *
+     * @param topic   主题
+     * @param content 内容
+     * @param timeout 超时（毫秒）
      */
     Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
+     *
+     * @param topic    主题
+     * @param content  内容
+     * @param consumer 回调消费者
      */
     void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
 
     /**
      * 答复
      *
-     * @param from 来源消息
+     * @param from    来源消息
+     * @param content 内容
      */
     void reply(Message from, Entity content) throws IOException;
 
     /**
      * 答复并结束（即最后一次答复）
      *
-     * @param from 来源消息
+     * @param from    来源消息
+     * @param content 内容
      */
     void replyEnd(Message from, Entity content) throws IOException;
 }

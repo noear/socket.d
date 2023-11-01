@@ -7,7 +7,7 @@ import org.noear.socketd.core.Message;
 
 
 /**
- * 消息
+ * 消息默认实现（帧[消息[实体]]）
  *
  * @author noear
  * @since 2.0
@@ -72,6 +72,9 @@ public class MessageDefault implements Message {
         return topic;
     }
 
+    /**
+     * entity
+     */
     @Override
     public Entity getEntity() {
         return entity;

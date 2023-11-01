@@ -2,12 +2,9 @@ package org.noear.socketd.core.impl;
 
 import org.noear.socketd.core.HeartbeatHandler;
 import org.noear.socketd.core.Session;
-import org.noear.socketd.exception.SocketdException;
-
-import java.io.IOException;
 
 /**
- * 默认心跳处理
+ * 默认心跳处理默认实现
  *
  * @author noear
  * @since 2.0

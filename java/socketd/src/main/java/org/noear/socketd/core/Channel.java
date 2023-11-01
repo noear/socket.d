@@ -31,6 +31,8 @@ public interface Channel extends Closeable {
 
     /**
      * 设置握手信息
+     *
+     * @param handshaker 握手信息
      */
     void setHandshaker(Handshaker handshaker);
 
@@ -63,13 +65,17 @@ public interface Channel extends Closeable {
 
     /**
      * 发送连接（握手）
+     *
+     * @param url 连接地址
      */
-    void sendConnect(String uri) throws IOException;
+    void sendConnect(String url) throws IOException;
 
     /**
      * 发送连接确认（握手）
+     *
+     * @param connectMessage 连接消息
      */
-    void sendConnack(Message connect) throws IOException;
+    void sendConnack(Message connectMessage) throws IOException;
 
     /**
      * 发送 Ping（心跳）
@@ -88,11 +94,16 @@ public interface Channel extends Closeable {
 
     /**
      * 发送
+     *
+     * @param frame    帧
+     * @param acceptor 答复接收器（没有则为 null）
      */
     void send(Frame frame, Acceptor acceptor) throws IOException, SocketdConnectionException;
 
     /**
-     * 收回
+     * 收回（收回答复帧）
+     *
+     * @param frame 帧
      */
     void retrieve(Frame frame) throws IOException;
 

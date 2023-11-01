@@ -3,7 +3,7 @@ package org.noear.socketd.core;
 import java.util.Map;
 
 /**
- * 消息实体
+ * 消息实体（帧[消息[实体]]）
  *
  * @author noear
  * @since 2.0

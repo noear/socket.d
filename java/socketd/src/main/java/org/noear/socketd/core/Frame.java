@@ -1,7 +1,7 @@
 package org.noear.socketd.core;
 
 /**
- * 帧
+ * 帧（帧[消息[实体]]）
  *
  * @author noear
  * @since 2.0

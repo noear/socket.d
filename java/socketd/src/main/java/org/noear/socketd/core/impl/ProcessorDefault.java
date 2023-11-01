@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * 处理器
+ * 处理器默认实现
  *
  * @author noear
  * @since 2.0
@@ -32,9 +32,9 @@ public class ProcessorDefault implements Processor {
 
         if (frame.getFlag() == Flag.Connect) {
             //if server
-            Message message = frame.getMessage();
-            channel.setHandshaker(new Handshaker(message));
-            channel.sendConnack(message); //->Connack
+            Message connectMessage = frame.getMessage();
+            channel.setHandshaker(new Handshaker(connectMessage));
+            channel.sendConnack(connectMessage); //->Connack
 
             onOpen(channel.getSession());
         } else if (frame.getFlag() == Flag.Connack) {

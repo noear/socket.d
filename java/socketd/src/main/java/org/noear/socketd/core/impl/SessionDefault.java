@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 /**
- * 服务端会话
+ * 会话默认实现
  *
  * @author noear
  * @since 2.0
@@ -25,31 +25,49 @@ public class SessionDefault extends SessionBase implements Session {
         this.channel = channel;
     }
 
+    /**
+     * 是否有效
+     */
     @Override
     public boolean isValid() {
         return channel.isValid();
     }
 
+    /**
+     * 获取远程地址
+     */
     @Override
     public InetSocketAddress getRemoteAddress() throws IOException {
         return channel.getRemoteAddress();
     }
 
+    /**
+     * 获取本地地址
+     */
     @Override
     public InetSocketAddress getLocalAddress() throws IOException {
         return channel.getLocalAddress();
     }
 
+    /**
+     * 获取握手信息
+     */
     @Override
     public Handshaker getHandshaker() {
         return channel.getHandshaker();
     }
 
+    /**
+     * 发送 Ping
+     */
     @Override
     public void sendPing() throws IOException {
         channel.sendPing();
     }
 
+    /**
+     * 发送
+     */
     @Override
     public void send(String topic, Entity content) throws IOException {
         Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
@@ -58,6 +76,13 @@ public class SessionDefault extends SessionBase implements Session {
     }
 
 
+    /**
+     * 发送并请求（限为一次答复；指定超时）
+     *
+     * @param topic   主题
+     * @param content 内容
+     * @param timeout 超时（毫秒）
+     */
     @Override
     public Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException {
         //背压控制
@@ -85,17 +110,36 @@ public class SessionDefault extends SessionBase implements Session {
         }
     }
 
+    /**
+     * 发送并订阅（答复结束之前，不限答复次数）
+     *
+     * @param topic    主题
+     * @param content  内容
+     * @param consumer 回调消费者
+     */
     @Override
     public void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException {
         Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
         channel.send(new Frame(Flag.Subscribe, message), new AcceptorSubscribe(consumer));
     }
 
+    /**
+     * 答复
+     *
+     * @param from    来源消息
+     * @param content 内容
+     */
     @Override
     public void reply(Message from, Entity content) throws IOException {
         channel.send(new Frame(Flag.Reply, new MessageDefault().key(from.getKey()).entity(content)), null);
     }
 
+    /**
+     * 答复并结束（即最后一次答复）
+     *
+     * @param from    来源消息
+     * @param content 内容
+     */
     @Override
     public void replyEnd(Message from, Entity content) throws IOException {
         channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().key(from.getKey()).entity(content)), null);

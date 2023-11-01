@@ -47,8 +47,8 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void sendConnack(Message connect) throws IOException {
-        send(Frames.connackFrame(connect), null);
+    public void sendConnack(Message connectMessage) throws IOException {
+        send(Frames.connackFrame(connectMessage), null);
     }
 
     @Override

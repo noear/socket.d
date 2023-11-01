@@ -56,7 +56,7 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public Object request() {
-        return _session;
+        return _message;
     }
 
     @Override

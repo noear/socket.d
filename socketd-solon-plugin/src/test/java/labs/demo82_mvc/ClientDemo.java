@@ -1,21 +1,21 @@
 package labs.demo82_mvc;
 
+import org.noear.socketd.SocketD;
+import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.SimpleListener;
 import org.noear.socketd.protocol.entity.StringEntity;
-import org.noear.socketd.solon.annotation.SocketdClient;
+import org.noear.solon.annotation.Component;
 import org.noear.solon.boot.web.MimeType;
+import org.noear.solon.core.bean.LifecycleBean;
 
-import java.io.IOException;
-
-@SocketdClient(url = "tcp://127.0.0.1:6329/test?a=12&b=1")
-public class ClientDemo extends SimpleListener {
+@Component
+public class ClientDemo implements LifecycleBean {
     @Override
-    public void onOpen(Session session) throws IOException {
-        super.onOpen(session);
+    public void start() throws Throwable {
+        Session session = SocketD.createClient("tcp://127.0.0.1:6329/test?a=12&b=1").open();
 
         //设定内容
-        StringEntity entity = new StringEntity("{\"order\":1111}");
+        StringEntity entity = new StringEntity("{\"order\":12345}");
 
         //设定头信息
         entity.putMeta("Content-Type", MimeType.APPLICATION_JSON_UTF8_VALUE);
@@ -24,10 +24,9 @@ public class ClientDemo extends SimpleListener {
         //发送
         session.send("/demo", entity);
 
-        //发送
+        //发送2
         entity.putMeta("user", "solon");
-        session.sendAndSubscribe("/demo", entity, r -> {
-            System.out.println(r);
-        });
+        Entity response = session.sendAndRequest("/demo2", entity);
+        System.out.println(response);
     }
 }

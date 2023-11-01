@@ -31,9 +31,9 @@
 
 ### 链接示例:
 
-* tcp://19.10.2.3:9812/path?a=1&b=1
-* udp://19.10.2.3:9812/path?a=1&b=1
-* ws://19.10.2.3:1023/path?a=1&b=1
+* tcp://19.10.2.3:9812/path?u=a&p=2
+* udp://19.10.2.3:9812/path?u=a&p=2
+* ws://19.10.2.3:1023/path?u=a&p=2
 
 ### 简单演示（引入一个 broker 适配包后）:
 
@@ -111,7 +111,7 @@ public class ControllerDemo {
 public class ClientDemo implements LifecycleBean {
     @Override
     public void start() throws Throwable {
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/test?a=12&b=1").open();
+        Session session = SocketD.createClient("ws://127.0.0.1:6329/test?u=a&p=2").open();
 
         //设定内容
         StringEntity entity = new StringEntity("{\"order\":12345}");

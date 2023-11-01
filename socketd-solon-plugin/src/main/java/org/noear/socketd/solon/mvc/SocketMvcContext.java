@@ -1,24 +1,26 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.exception.SocktedException;
 import org.noear.socketd.protocol.Message;
 import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.entity.EntityDefault;
+import org.noear.socketd.protocol.entity.DataEntity;
 import org.noear.solon.Utils;
 import org.noear.solon.core.handle.ContextAsyncListener;
 import org.noear.solon.core.handle.ContextEmpty;
 import org.noear.solon.core.handle.MethodType;
 import org.noear.solon.core.util.IoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
-import java.util.Map;
 
 /**
  * @author noear
  * @since 2.0
  */
 public class SocketMvcContext extends ContextEmpty {
+    static final Logger log = LoggerFactory.getLogger(SocketMvcContext.class);
+
     private Session _session;
     private Message _message;
     private MethodType _method;
@@ -176,10 +178,10 @@ public class SocketMvcContext extends ContextEmpty {
     protected void commit() throws IOException {
         if (_session.isValid()) {
             if (_message.isRequest() || _message.isSubscribe()) {
-                _session.reply(_message, new EntityDefault("", _outputStream.toByteArray()));
+                _session.replyEnd(_message, new DataEntity(_outputStream.toByteArray()));
             } else {
                 if (_outputStream.size() > 0) {
-                    throw new SocktedException("No reply is supported for the current message");
+                    log.warn("No reply is supported for the current message, key={}", _message.getKey());
                 }
             }
         }

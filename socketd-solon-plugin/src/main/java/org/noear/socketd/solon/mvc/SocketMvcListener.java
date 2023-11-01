@@ -1,7 +1,6 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.protocol.Listener;
-import org.noear.socketd.protocol.ListenerDefault;
+import org.noear.socketd.protocol.SimpleListener;
 import org.noear.socketd.protocol.Message;
 import org.noear.socketd.protocol.Session;
 import org.noear.solon.Solon;
@@ -14,7 +13,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class SocketMvcListener extends ListenerDefault {
+public class SocketMvcListener extends SimpleListener {
     static final Logger log = LoggerFactory.getLogger(SocketMvcListener.class);
 
     @Override

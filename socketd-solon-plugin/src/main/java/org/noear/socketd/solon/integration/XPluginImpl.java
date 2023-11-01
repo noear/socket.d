@@ -38,20 +38,25 @@ public class XPluginImpl implements Plugin {
         });
 
         context.beanBuilderAdd(SocketdClient.class, (clz, bw, anno) -> {
-            Client client = SocketD.createClient(anno.url());
-            client.config(options -> options
-                    .autoReconnect(anno.autoReconnect())
-                    .heartbeatInterval(anno.heartbeatRate() * 1000));
+            if (bw.raw() instanceof Listener) {
+                Client client = SocketD.createClient(anno.url());
+                client.config(options -> options
+                                .autoReconnect(anno.autoReconnect())
+                                .heartbeatInterval(anno.heartbeatRate() * 1000))
+                        .listen(bw.raw());
 
-            clientList.add(client);
+                clientList.add(client);
+            }
         });
 
-        context.lifecycle(() -> {
+        context.lifecycle(-99, () -> {
             for (Server server : serverList) {
                 server.start();
             }
+        });
 
-            for(Client client : clientList){
+        context.lifecycle(99, () -> {
+            for (Client client : clientList) {
                 client.open();
             }
         });

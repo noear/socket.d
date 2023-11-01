@@ -53,14 +53,14 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             real.connect(socketAddress);
         }
 
-        CompletableFuture<Channel> future = new CompletableFuture<>();
+        CompletableFuture<Channel> channelFuture = new CompletableFuture<>();
 
         try {
             Channel channel = new ChannelDefault<>(real, client.config().getMaxRequests(), client.assistant());
 
             socketThread = new Thread(() -> {
                 try {
-                    receive(channel, real, future);
+                    receive(channel, real, channelFuture);
                 } catch (Throwable e) {
                     throw new IllegalStateException(e);
                 }
@@ -75,7 +75,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         try {
-            return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            return channelFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {

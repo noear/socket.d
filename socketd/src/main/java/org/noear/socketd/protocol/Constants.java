@@ -18,4 +18,6 @@ public class Constants {
     public static final String DEF_TOPIC = "";
     public static final String DEF_META_STRING = "";
     public static final byte[] DEF_DATA = new byte[]{};
+
+    public static final int LEN_INT = 4;
 }

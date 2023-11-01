@@ -28,7 +28,7 @@ public class Frames {
     }
 
     /**
-     * 一般用于 Udp（它没有断链的概念，需要通知）
+     * 一般没用处
      * */
     public static final Frame closeFrame() {
         return new Frame(Flag.Close, null);

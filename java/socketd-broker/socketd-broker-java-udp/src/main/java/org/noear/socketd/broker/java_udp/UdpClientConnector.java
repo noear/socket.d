@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
 public class UdpClientConnector extends ClientConnectorBase<UdpClient> {
     private static final Logger log = LoggerFactory.getLogger(UdpClientConnector.class);
 
-    private DatagramSocket socket;
+    private DatagramSocket real;
     private Thread receiveThread;
 
     public UdpClientConnector(UdpClient client) {
@@ -33,34 +33,22 @@ public class UdpClientConnector extends ClientConnectorBase<UdpClient> {
 
     @Override
     public Channel connect() throws Exception {
-        socket = new DatagramSocket();
+        real = new DatagramSocket();
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getUri().getHost(), client.config().getUri().getPort());
-        socket.connect(socketAddress);
+        real.connect(socketAddress);
 
-        DatagramTagert tagert = new DatagramTagert(socket, null, true);
+        DatagramTagert tagert = new DatagramTagert(real, null, true);
         Channel channel = new ChannelDefault<>(tagert, client.config().getMaxRequests(), client.assistant());
 
         CompletableFuture<Channel> channelFuture = new CompletableFuture<>();
         //定义接收线程
         receiveThread = new Thread(() -> {
-            while (true) {
-                try {
-                    DatagramFrame datagramFrame = client.assistant().read(socket);
-                    if (datagramFrame == null) {
-                        continue;
-                    }
-
-                    client.processor().onReceive(channel, datagramFrame.getFrame());
-
-                    if(datagramFrame.getFrame().getFlag() == Flag.Connack){
-                        channelFuture.complete(channel);
-                    }
-                } catch (Throwable e) {
-                    log.warn("{}", e);
-                }
+            try {
+                receive(channel, real, channelFuture);
+            } catch (Throwable e) {
+                throw new IllegalStateException(e);
             }
-
         });
 
         receiveThread.start();
@@ -77,15 +65,42 @@ public class UdpClientConnector extends ClientConnectorBase<UdpClient> {
         }
     }
 
+    private void receive(Channel channel, DatagramSocket socket, CompletableFuture<Channel> channelFuture) {
+        while (true) {
+            try {
+                if (socket.isClosed()) {
+                    client.processor().onClose(channel.getSession());
+                    break;
+                }
+
+                DatagramFrame frame = client.assistant().read(socket);
+                if (frame != null) {
+                    client.processor().onReceive(channel, frame.getFrame());
+
+                    if(frame.getFrame().getFlag() == Flag.Connack){
+                        channelFuture.complete(channel);
+                    }
+                }
+
+            }  catch (Throwable e) {
+                client.processor().onError(channel.getSession(), e);
+
+                if (e instanceof SocketException) {
+                    break;
+                }
+            }
+        }
+    }
+
     @Override
     public void close() {
-        if (socket == null) {
+        if (real == null) {
             return;
         }
 
         try {
             receiveThread.interrupt();
-            socket.close();
+            real.close();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

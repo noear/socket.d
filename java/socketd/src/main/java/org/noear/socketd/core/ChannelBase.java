@@ -60,4 +60,9 @@ public abstract class ChannelBase implements Channel {
     public void sendPong() throws IOException {
         send(Frames.pongFrame(), null);
     }
+
+    @Override
+    public void sendClose() throws IOException {
+        send(Frames.closeFrame(), null);
+    }
 }

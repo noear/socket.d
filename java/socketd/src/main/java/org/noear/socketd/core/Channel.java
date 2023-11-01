@@ -82,6 +82,11 @@ public interface Channel extends Closeable {
     void sendPong() throws IOException;
 
     /**
+     * 发送 Close
+     */
+    void sendClose() throws IOException;
+
+    /**
      * 发送
      */
     void send(Frame frame, Acceptor acceptor) throws IOException, SocketdConnectionException;

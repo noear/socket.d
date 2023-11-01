@@ -73,8 +73,6 @@ public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
 
     @Override
     public void close(DatagramTagert target) throws IOException {
-        //发送关闭帧
-        write(target, Frames.closeFrame());
         target.close();
     }
 

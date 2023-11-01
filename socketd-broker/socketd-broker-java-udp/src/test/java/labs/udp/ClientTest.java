@@ -6,10 +6,6 @@ import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.SimpleListener;
 import org.noear.socketd.protocol.entity.StringEntity;
 
-/**
- * @author noear
- * @since 2.0
- */
 public class ClientTest {
     public static void main(String[] args) throws Exception {
         //client

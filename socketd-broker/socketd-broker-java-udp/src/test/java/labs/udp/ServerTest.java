@@ -10,11 +10,6 @@ import org.noear.socketd.server.ServerConfig;
 
 import java.io.IOException;
 
-
-/**
- * @author noear
- * @since 2.0
- */
 public class ServerTest {
     public static void main(String[] args) throws Exception {
         //server

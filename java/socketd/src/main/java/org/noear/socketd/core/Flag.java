@@ -28,7 +28,7 @@ public enum Flag {
      */
     Pong(21), //心跳:pong(c<->s)
     /**
-     * 关闭
+     * 关闭（Udp 没有断链的概念，需要发消息）
      */
     Close(30),
     /**
@@ -47,7 +47,7 @@ public enum Flag {
      * 回复
      */
     Reply(48),/**
-     * 回复结束
+     * 回复结束（结束订阅接收）
      */
     ReplyEnd(49),
     ;

@@ -9,3 +9,5 @@
 * sendAndRequest() 超时
 * sendAndRequest() 背压
 * ssl
+* 通道::close -> 触发一次关闭事件
+* 实时自动重链, close 时立即尝试一次重链

@@ -26,4 +26,11 @@ public class Frames {
     public static final Frame pongFrame() {
         return new Frame(Flag.Pong, null);
     }
+
+    /**
+     * 一般用于 Udp（它没有断链的概念，需要通知）
+     * */
+    public static final Frame closeFrame() {
+        return new Frame(Flag.Close, null);
+    }
 }

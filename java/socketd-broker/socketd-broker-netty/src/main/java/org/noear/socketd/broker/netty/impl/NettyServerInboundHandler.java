@@ -8,12 +8,13 @@ import org.noear.socketd.broker.netty.TcpNioServer;
 import org.noear.socketd.core.Channel;
 import org.noear.socketd.core.Frame;
 import org.noear.socketd.core.impl.ChannelDefault;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * @author noear
+ * @since 2.0
+ */
 @ChannelHandler.Sharable
 public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Frame> {
-    private static final Logger log = LoggerFactory.getLogger(NettyServerInboundHandler.class);
     private static AttributeKey<Channel> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
 
     private TcpNioServer server;

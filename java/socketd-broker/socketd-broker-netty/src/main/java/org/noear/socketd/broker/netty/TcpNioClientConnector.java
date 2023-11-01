@@ -44,7 +44,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
             NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
             SSLContext sslContext = client.config().getSslContext();
-            ChannelHandler handler = new NettyChannelInitializer(sslContext, true, inboundHandler);
+            ChannelHandler handler = new NettyChannelInitializer(client.config().getCodec(), sslContext, true, inboundHandler);
 
             real = bootstrap.group(eventLoopGroup)
                     .channel(NioSocketChannel.class)

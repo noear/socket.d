@@ -11,8 +11,8 @@ import org.noear.socketd.core.impl.SessionDefault;
  * @since 2.0
  */
 public class TcpBioClient extends ClientBase<TcpBioChannelAssistant> {
-    public TcpBioClient(ClientConfig clientConfig) {
-        super(clientConfig, new TcpBioChannelAssistant());
+    public TcpBioClient(ClientConfig config) {
+        super(config, new TcpBioChannelAssistant(config.getCodec()));
     }
 
     @Override

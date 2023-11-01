@@ -27,6 +27,6 @@ public class UdpBroker implements ClientBroker, ServerBroker {
 
     @Override
     public Client createClient(ClientConfig clientConfig) {
-        return new UdpBioClient(clientConfig);
+        return new UdpClient(clientConfig);
     }
 }

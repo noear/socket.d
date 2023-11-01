@@ -1,7 +1,11 @@
 package org.noear.socketd.client;
 
+import org.noear.socketd.core.Codec;
+import org.noear.socketd.core.CodecByteBuffer;
+
 import javax.net.ssl.SSLContext;
 import java.net.URI;
+import java.nio.ByteBuffer;
 
 /**
  * 客记端配置（单位：毫秒）
@@ -27,10 +31,13 @@ public class ClientConfig {
 
     private int maxRequests;
 
+    private Codec<ByteBuffer> codec;
+
     public ClientConfig(String url) {
         this.url = url;
         this.uri = URI.create(url);
         this.schema = uri.getScheme();
+        this.codec = new CodecByteBuffer();
 
         connectTimeout = 3000;
         heartbeatInterval = 20 * 1000;
@@ -44,6 +51,18 @@ public class ClientConfig {
      */
     public String getSchema() {
         return schema;
+    }
+
+    /**
+     * 获取编码器
+     * */
+    public Codec<ByteBuffer> getCodec() {
+        return codec;
+    }
+
+    public ClientConfig codec(Codec<ByteBuffer> codec) {
+        this.codec = codec;
+        return this;
     }
 
     /**

@@ -11,6 +11,10 @@ import org.noear.socketd.core.impl.ChannelDefault;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * @author noear
+ * @since 2.0
+ */
 public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame> {
     private static AttributeKey<Channel> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
 

@@ -3,14 +3,23 @@ package org.noear.socketd.broker.netty.impl;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.CodecByteBuffer;
 import org.noear.socketd.core.Frame;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 
+/**
+ * @author noear
+ * @since 2.0
+ */
 public class NettyMessageDecoder extends ByteToMessageDecoder {
-    private CodecByteBuffer codec = new CodecByteBuffer();
+    private final Codec<ByteBuffer> codec;
+
+    public NettyMessageDecoder(Codec<ByteBuffer> codec) {
+        this.codec = codec;
+    }
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> out) throws Exception {

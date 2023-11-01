@@ -12,8 +12,8 @@ import org.noear.socketd.core.impl.SessionDefault;
  * @since 2.0
  */
 public class TcpAioClient extends ClientBase<TcpAioChannelAssistant>{
-    public TcpAioClient(ClientConfig clientConfig){
-        super(clientConfig, new TcpAioChannelAssistant());
+    public TcpAioClient(ClientConfig config){
+        super(config, new TcpAioChannelAssistant(config.getCodec()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.noear.socketd.broker.java_tcp;
 
 import org.noear.socketd.core.ChannelAssistant;
+import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.CodecByteBuffer;
 import org.noear.socketd.core.Frame;
 
@@ -18,13 +19,17 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
-    private CodecByteBuffer codec = new CodecByteBuffer();
+    private final Codec<ByteBuffer> codec;
+
+    public TcpBioChannelAssistant(Codec<ByteBuffer> codec) {
+        this.codec = codec;
+    }
 
     @Override
     public void write(Socket source, Frame frame) throws IOException {
-       OutputStream output = source.getOutputStream();
-       output.write(codec.encode(frame).array());
-       output.flush();
+        OutputStream output = source.getOutputStream();
+        output.write(codec.encode(frame).array());
+        output.flush();
     }
 
     @Override
@@ -39,12 +44,12 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
 
     @Override
     public InetSocketAddress getRemoteAddress(Socket target) {
-        return (InetSocketAddress)target.getRemoteSocketAddress();
+        return (InetSocketAddress) target.getRemoteSocketAddress();
     }
 
     @Override
     public InetSocketAddress getLocalAddress(Socket target) {
-        return (InetSocketAddress)target.getLocalSocketAddress();
+        return (InetSocketAddress) target.getLocalSocketAddress();
     }
 
     public Frame read(Socket source) throws IOException {

@@ -12,10 +12,10 @@ public interface Codec<T> {
     /**
      * 编码
      */
-    Frame decode(T buffer) throws IOException;
+    Frame decode(T buffer);
 
     /**
      * 解码
      */
-    T encode(Frame frame) throws IOException;
+    T encode(Frame frame);
 }

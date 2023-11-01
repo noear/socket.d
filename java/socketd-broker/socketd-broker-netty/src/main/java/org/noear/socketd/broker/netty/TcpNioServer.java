@@ -39,7 +39,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
             SSLContext sslContext = config().getSslContext();
-            ChannelHandler handler = new NettyChannelInitializer(sslContext, false, inboundHandler);
+            ChannelHandler handler = new NettyChannelInitializer(config().getCodec(), sslContext, false, inboundHandler);
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)

@@ -31,7 +31,7 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
     private ExecutorService serverExecutor;
 
     public UdpServer(ServerConfig config) {
-        super(config, new UdpChannelAssistant());
+        super(config, new UdpChannelAssistant(config.getCodec()));
     }
 
     private DatagramSocket createServer() throws IOException {

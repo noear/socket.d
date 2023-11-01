@@ -1,8 +1,11 @@
 package org.noear.socketd.server;
 
 import org.noear.socketd.client.ClientConfig;
+import org.noear.socketd.core.Codec;
+import org.noear.socketd.core.CodecByteBuffer;
 
 import javax.net.ssl.SSLContext;
+import java.nio.ByteBuffer;
 
 /**
  * 服务端属性（单位：毫秒）
@@ -12,6 +15,7 @@ import javax.net.ssl.SSLContext;
  */
 public class ServerConfig {
     private final String schema;
+    private Codec<ByteBuffer> codec;
 
     private String host;
     private int port;
@@ -30,6 +34,7 @@ public class ServerConfig {
 
     public ServerConfig(String schema) {
         this.schema = schema;
+        this.codec = new CodecByteBuffer();
 
         host = "";
         port = 6329;
@@ -49,6 +54,15 @@ public class ServerConfig {
      */
     public String getSchema() {
         return schema;
+    }
+
+    public Codec<ByteBuffer> getCodec() {
+        return codec;
+    }
+
+    public ServerConfig codec(Codec<ByteBuffer> codec) {
+        this.codec = codec;
+        return this;
     }
 
     /**

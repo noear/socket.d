@@ -2,7 +2,7 @@ package org.noear.socketd.broker.smartsocket;
 
 import org.noear.socketd.broker.smartsocket.impl.Attachment;
 import org.noear.socketd.broker.smartsocket.impl.FixedLengthFrameDecoder;
-import org.noear.socketd.core.CodecByteBuffer;
+import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.ChannelAssistant;
 import org.noear.socketd.core.Frame;
 import org.smartboot.socket.Protocol;
@@ -19,7 +19,11 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Protocol<Frame> {
-    private CodecByteBuffer codec = new CodecByteBuffer();
+    private final Codec<ByteBuffer> codec;
+
+    public TcpAioChannelAssistant(Codec<ByteBuffer> codec) {
+        this.codec = codec;
+    }
 
     @Override
     public void write(AioSession source, Frame frame) throws IOException {
@@ -48,7 +52,7 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
     }
 
     @Override
-    public Frame decode(ByteBuffer buffer, AioSession aioSession) {
+    public Frame decode(ByteBuffer buffer, AioSession aioSession){
         FixedLengthFrameDecoder decoder = Attachment.getDecoder(aioSession);
 
         if (decoder == null) {

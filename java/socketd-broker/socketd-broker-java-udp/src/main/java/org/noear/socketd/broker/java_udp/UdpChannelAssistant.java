@@ -3,6 +3,7 @@ package org.noear.socketd.broker.java_udp;
 import org.noear.socketd.broker.java_udp.impl.DatagramFrame;
 import org.noear.socketd.broker.java_udp.impl.DatagramTagert;
 import org.noear.socketd.core.ChannelAssistant;
+import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.CodecByteBuffer;
 import org.noear.socketd.core.Frame;
 import java.io.IOException;
@@ -19,7 +20,11 @@ import java.nio.ByteBuffer;
  */
 public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
     private static final int LEN_INT = 4;
-    private CodecByteBuffer codec = new CodecByteBuffer();
+    private final Codec<ByteBuffer> codec;
+
+    public UdpChannelAssistant(Codec<ByteBuffer> codec) {
+        this.codec = codec;
+    }
 
     /**
      * 读取

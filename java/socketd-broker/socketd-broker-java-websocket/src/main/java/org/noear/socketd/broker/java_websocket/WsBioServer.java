@@ -19,8 +19,8 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(WsBioServer.class);
     private WebSocketServerImpl server;
 
-    public WsBioServer(ServerConfig serverConfig) {
-        super(serverConfig, new WsBioChannelAssistant());
+    public WsBioServer(ServerConfig config) {
+        super(config, new WsBioChannelAssistant(config.getCodec()));
     }
 
     @Override

@@ -6,18 +6,26 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslHandler;
+import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.Frame;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import java.nio.ByteBuffer;
 
+/**
+ * @author noear
+ * @since 2.0
+ */
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
-    SimpleChannelInboundHandler<Frame> processor;
-    SSLContext sslContext;
-    boolean clientMode;
+    private SimpleChannelInboundHandler<Frame> processor;
+    private Codec<ByteBuffer> codec;
+    private SSLContext sslContext;
+    private boolean clientMode;
 
-    public NettyChannelInitializer(SSLContext sslContext, boolean clientMode, SimpleChannelInboundHandler<Frame> processor) {
+    public NettyChannelInitializer(Codec<ByteBuffer> codec, SSLContext sslContext, boolean clientMode, SimpleChannelInboundHandler<Frame> processor) {
         this.processor = processor;
+        this.codec = codec;
         this.sslContext = sslContext;
         this.clientMode = clientMode;
     }
@@ -36,8 +44,8 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         }
 
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0));
-        pipeline.addLast(new NettyMessageEncoder());
-        pipeline.addLast(new NettyMessageDecoder());
+        pipeline.addLast(new NettyMessageEncoder(codec));
+        pipeline.addLast(new NettyMessageDecoder(codec));
         pipeline.addLast(processor);
     }
 }

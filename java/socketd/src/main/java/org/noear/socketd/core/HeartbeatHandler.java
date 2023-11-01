@@ -1,5 +1,7 @@
 package org.noear.socketd.core;
 
+import java.io.IOException;
+
 /**
  * 心跳处理器
  *
@@ -10,5 +12,5 @@ public interface HeartbeatHandler {
     /**
      * 心跳处理
      */
-    void heartbeatHandle(Session session);
+    void heartbeatHandle(Session session) throws Exception;
 }

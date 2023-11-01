@@ -18,6 +18,6 @@
     </properties>
 
     <modules>
-        <module>socketd-parent</module>
+        <module>java/socketd-parent</module>
     </modules>
 </project>

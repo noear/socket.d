@@ -54,7 +54,13 @@
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>socketd-broker-java-socket</artifactId>
+                <artifactId>socketd-broker-java-tcp</artifactId>
+                <version>${socketd.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>socketd-broker-java-udp</artifactId>
                 <version>${socketd.version}</version>
             </dependency>
 

@@ -6,7 +6,6 @@ import org.noear.socketd.protocol.*;
 import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -95,6 +94,11 @@ public class SessionDefault extends SessionBase implements Session {
     @Override
     public void reply(Message from, Entity content) throws IOException {
         channel.send(new Frame(Flag.Reply, new MessageDefault().key(from.getKey()).entity(content)), null);
+    }
+
+    @Override
+    public void replyEnd(Message from, Entity content) throws IOException {
+        channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().key(from.getKey()).entity(content)), null);
     }
 
     @Override

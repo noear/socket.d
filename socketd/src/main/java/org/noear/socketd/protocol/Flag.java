@@ -79,8 +79,10 @@ public enum Flag {
                 return Request;
             case 42:
                 return Subscribe;
-            case 49:
+            case 48:
                 return Reply;
+            case 49:
+                return ReplyEnd;
             default:
                 return Unknown;
         }

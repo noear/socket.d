@@ -1,10 +1,9 @@
 package labs.tcp.bio;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.protocol.Entity;
 import org.noear.socketd.protocol.Message;
 import org.noear.socketd.protocol.Session;
-import org.noear.socketd.protocol.ListenerDefault;
+import org.noear.socketd.protocol.SimpleListener;
 import org.noear.socketd.protocol.entity.StringEntity;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
@@ -24,7 +23,7 @@ public class ServerTest {
         server.start();
     }
 
-    public static class ServerListener extends ListenerDefault {
+    public static class ServerListener extends SimpleListener {
         @Override
         public void onMessage(Session session, Message message) throws IOException {
             super.onMessage(session, message);

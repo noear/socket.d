@@ -1,11 +1,8 @@
 package org.noear.socketd.protocol;
 
-import org.noear.socketd.protocol.entity.MetaEntity;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -96,11 +93,9 @@ public interface Session extends Closeable {
     void reply(Message from, Entity content) throws IOException;
 
     /**
-     * 答复为空（快速完成答复链）
+     * 答复并结束
      *
      * @param from 来源消息
      */
-    default void replyAsEmpty(Message from) throws IOException {
-        reply(from, new MetaEntity(""));
-    }
+    void replyEnd(Message from, Entity content) throws IOException;
 }

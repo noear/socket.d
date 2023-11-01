@@ -10,8 +10,8 @@ import java.nio.charset.StandardCharsets;
  * @author noear
  * @since 2.0
  */
-public class StringEntity extends EntityDefault {
+public class StringEntity extends DataEntity {
     public StringEntity(String str) {
-        super(Constants.DEF_META_STRING, str.getBytes(StandardCharsets.UTF_8));
+        super(str.getBytes(StandardCharsets.UTF_8));
     }
 }

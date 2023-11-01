@@ -2,7 +2,7 @@ package labs.tcp.nio;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.protocol.Entity;
-import org.noear.socketd.protocol.ListenerDefault;
+import org.noear.socketd.protocol.SimpleListener;
 import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.entity.StringEntity;
 
@@ -40,7 +40,7 @@ public class ClientTest {
         //session.sendAndSubscribe(null, null);
     }
 
-    public static class ClientListener extends ListenerDefault {
+    public static class ClientListener extends SimpleListener {
 
     }
 }

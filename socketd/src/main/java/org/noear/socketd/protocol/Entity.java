@@ -17,7 +17,7 @@ public interface Entity {
     /**
      * 获取元信息
      */
-    Map<String,String> getMetaMap();
+    Map<String, String> getMetaMap();
 
     /**
      * 获取元信息

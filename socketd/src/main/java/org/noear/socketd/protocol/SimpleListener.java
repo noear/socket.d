@@ -6,13 +6,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * 空监听器（一般用于占位，避免 null）
+ * 简单的监听器（一般用于占位，避免 null）
  *
  * @author noear
  * @since 2.0
  */
-public class ListenerDefault implements Listener {
-    static final Logger log = LoggerFactory.getLogger(ListenerDefault.class);
+public class SimpleListener implements Listener {
+    static final Logger log = LoggerFactory.getLogger(SimpleListener.class);
 
     @Override
     public void onOpen(Session session) throws IOException{

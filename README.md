@@ -69,7 +69,7 @@ public class Demo {
 服务端
 
 ```java
-@SocketdServer(path = "/demo", schema = "tcp")
+@SocketdServer(path = "/demo", schema = "ws")
 public class ServerMvcDemo extends SocketMvcListener {
     public static void main(String[] args){
         Solon.start(ServerMvcDemo.class, args);
@@ -110,7 +110,7 @@ public class ControllerDemo {
 public class ClientDemo implements LifecycleBean {
     @Override
     public void start() throws Throwable {
-        Session session = SocketD.createClient("tcp://127.0.0.1:6329/test?a=12&b=1").open();
+        Session session = SocketD.createClient("ws://127.0.0.1:6329/test?a=12&b=1").open();
 
         //设定内容
         StringEntity entity = new StringEntity("{\"order\":12345}");

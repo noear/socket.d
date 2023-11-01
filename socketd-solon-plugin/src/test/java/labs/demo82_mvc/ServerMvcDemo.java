@@ -8,7 +8,7 @@ import org.noear.solon.Solon;
 
 import java.io.IOException;
 
-@SocketdServer(path = "/demo", schema = "tcp")
+@SocketdServer(path = "/demo", schema = "ws")
 public class ServerMvcDemo extends SocketMvcListener {
     public static void main(String[] args){
         Solon.start(ServerMvcDemo.class, args);

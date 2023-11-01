@@ -19,19 +19,19 @@ import java.util.concurrent.Executors;
 /**
  * Udp-Bio 服务端实现（支持 ssl, host）
  *
- * @author noear
+ * @author Urara
  * @since 2.0
  */
-public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
-    private static final Logger log = LoggerFactory.getLogger(UdpBioServer.class);
+public class UdpServer extends ServerBase<UdpChannelAssistant> {
+    private static final Logger log = LoggerFactory.getLogger(UdpServer.class);
 
     private Map<String, Channel> channelMap = new HashMap<>();
     private DatagramSocket server;
     private Thread serverThread;
     private ExecutorService serverExecutor;
 
-    public UdpBioServer(ServerConfig config) {
-        super(config, new UdpBioChannelAssistant());
+    public UdpServer(ServerConfig config) {
+        super(config, new UdpChannelAssistant());
     }
 
     private DatagramSocket createServer() throws IOException {

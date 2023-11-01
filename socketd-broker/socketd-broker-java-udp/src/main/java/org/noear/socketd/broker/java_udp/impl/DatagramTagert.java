@@ -7,7 +7,9 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
 /**
- * @author noear
+ * Udp 通道目标
+ *
+ * @author Urara
  * @since 2.0
  */
 public class DatagramTagert implements Closeable {

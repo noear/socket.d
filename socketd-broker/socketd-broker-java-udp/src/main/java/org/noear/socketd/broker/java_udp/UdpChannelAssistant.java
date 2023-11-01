@@ -12,12 +12,12 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 /**
- * Udp-Bio 交换器实现（它没法固定接口，但可以固定输出目录）
+ * Udp 交换器实现（它没法固定接口，但可以固定输出目录）
  *
- * @author noear
+ * @author Urara
  * @since 2.0
  */
-public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> {
+public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
     private static final int LEN_INT = 4;
     private CodecByteBuffer codec = new CodecByteBuffer();
 

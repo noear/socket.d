@@ -9,14 +9,14 @@ import org.noear.socketd.protocol.Session;
 import org.noear.socketd.protocol.impl.SessionDefault;
 
 /**
- * Udp-Bio 客户端实现
+ * Udp 客户端实现
  *
- * @author noear
+ * @author Urara
  * @since 2.0
  */
-public class UdpBioClient extends ClientBase<UdpBioChannelAssistant> {
+public class UdpBioClient extends ClientBase<UdpChannelAssistant> {
     public UdpBioClient(ClientConfig clientConfig) {
-        super(clientConfig, new UdpBioChannelAssistant());
+        super(clientConfig, new UdpChannelAssistant());
     }
 
     @Override

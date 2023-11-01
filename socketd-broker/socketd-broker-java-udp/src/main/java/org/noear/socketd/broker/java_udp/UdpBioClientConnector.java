@@ -16,9 +16,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Udp-Bio 客户端连接器实现（支持 ssl）
+ * Udp 客户端连接器实现（支持 ssl）
  *
- * @author noear
+ * @author Urara
  * @since 2.0
  */
 public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {

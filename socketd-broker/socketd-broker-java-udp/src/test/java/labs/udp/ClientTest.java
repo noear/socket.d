@@ -1,4 +1,4 @@
-package labs.udp.bio;
+package labs.udp;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.protocol.Entity;

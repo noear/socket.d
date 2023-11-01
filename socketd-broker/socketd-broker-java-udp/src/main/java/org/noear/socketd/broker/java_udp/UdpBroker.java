@@ -8,12 +8,12 @@ import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
 /**
- * Udp-Bio 经纪人实现
+ * Udp 经纪人实现
  *
- * @author noear
+ * @author Urara
  * @since 2.0
  */
-public class UdpBioBroker implements ClientBroker, ServerBroker {
+public class UdpBroker implements ClientBroker, ServerBroker {
 
     @Override
     public String[] schema() {
@@ -22,7 +22,7 @@ public class UdpBioBroker implements ClientBroker, ServerBroker {
 
     @Override
     public Server createServer(ServerConfig serverConfig) {
-        return new UdpBioServer(serverConfig);
+        return new UdpServer(serverConfig);
     }
 
     @Override

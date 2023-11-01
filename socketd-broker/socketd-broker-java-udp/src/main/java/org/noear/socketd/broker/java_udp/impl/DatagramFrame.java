@@ -5,8 +5,10 @@ import org.noear.socketd.protocol.Frame;
 import java.net.DatagramPacket;
 
 /**
- * @author noear
- * @since 2.5
+ * Udp 帖
+ *
+ * @author Urara
+ * @since 2.0
  */
 public class DatagramFrame {
     private DatagramPacket packet;

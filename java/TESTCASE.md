@@ -8,3 +8,4 @@
 * client:session:close() -> 不会再自动重连
 * sendAndRequest() 超时
 * sendAndRequest() 背压
+* ssl

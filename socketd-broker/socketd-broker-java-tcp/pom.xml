@@ -11,7 +11,7 @@
         <relativePath>../../socketd-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>socketd-broker-java-socket</artifactId>
+    <artifactId>socketd-broker-java-tcp</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

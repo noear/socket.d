@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.java_socket;
+package org.noear.socketd.broker.java_tcp;
 
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;

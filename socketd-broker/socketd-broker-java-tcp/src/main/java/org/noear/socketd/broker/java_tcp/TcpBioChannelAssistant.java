@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.java_socket;
+package org.noear.socketd.broker.java_tcp;
 
 import org.noear.socketd.protocol.ChannelAssistant;
 import org.noear.socketd.protocol.CodecByteBuffer;
@@ -7,7 +7,6 @@ import org.noear.socketd.protocol.Frame;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;

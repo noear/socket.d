@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.java_socket;
+package org.noear.socketd.broker.java_tcp;
 
 import org.noear.socketd.broker.ClientBroker;
 import org.noear.socketd.broker.ServerBroker;

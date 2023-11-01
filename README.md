@@ -41,12 +41,12 @@
 ```java
 public class Demo {
     public void main(String[] args) throws Throwable {
-        Server server = SocketD.createServer(new ServerConfig("tcp"));
+        Server server = SocketD.createServer(new ServerConfig("ws"));
         server.listen(new ServerListener());
         server.start();
 
         
-        Session session = SocketD.createClient("tcp://127.0.0.1:6329/path?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:6329/path?u=a&p=2")
                 .config(c -> c.autoReconnect(true)) //配置
                 .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下

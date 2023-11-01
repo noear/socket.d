@@ -1,6 +1,5 @@
 package org.noear.socketd.server;
 
-import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.CodecByteBuffer;
 
@@ -25,8 +24,6 @@ public class ServerConfig {
     private int coreThreads;
     private int maxThreads;
 
-    private long idleTimeout;
-
     private int readBufferSize;
     private int writeBufferSize;
 
@@ -36,17 +33,16 @@ public class ServerConfig {
         this.schema = schema;
         this.codec = new CodecByteBuffer();
 
-        host = "";
-        port = 6329;
+        this.host = "";
+        this.port = 6329;
 
-        coreThreads = Runtime.getRuntime().availableProcessors() * 2;
-        maxThreads = coreThreads * 8;
-        idleTimeout = 3000;
+        this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
+        this.maxThreads = coreThreads * 8;
 
-        readBufferSize = 512;
-        writeBufferSize = 512;
+        this.readBufferSize = 512;
+        this.writeBufferSize = 512;
 
-        maxRequests = 10;
+        this.maxRequests = 10;
     }
 
     /**
@@ -137,21 +133,6 @@ public class ServerConfig {
      */
     public ServerConfig maxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
-        return this;
-    }
-
-    /**
-     * 获取线程空闲超时
-     */
-    public long getIdleTimeout() {
-        return idleTimeout;
-    }
-
-    /**
-     * 配置线程空闲超时
-     */
-    public ServerConfig idleTimeout(long idleTimeout) {
-        this.idleTimeout = idleTimeout;
         return this;
     }
 

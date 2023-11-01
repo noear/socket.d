@@ -8,6 +8,8 @@ import org.noear.socketd.core.impl.ProcessorDefault;
 import java.util.function.Consumer;
 
 /**
+ * 服务端基类
+ *
  * @author noear
  * @since 2.0
  */

@@ -37,6 +37,9 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 是否有效
+     */
     @Override
     public boolean isValid() {
         if (real == null) {
@@ -46,11 +49,17 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 请求数（用于背压控制）
+     */
     @Override
     public int getRequestMax() {
         return connector.maxRequests();
     }
 
+    /**
+     * 获取远程地址
+     */
     @Override
     public InetSocketAddress getRemoteAddress() throws IOException {
         if (real == null) {
@@ -60,6 +69,9 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 获取本地地址
+     */
     @Override
     public InetSocketAddress getLocalAddress() throws IOException {
         if (real == null) {
@@ -89,6 +101,11 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 收回（收回答复帧）
+     *
+     * @param frame 帧
+     */
     @Override
     public void retrieve(Frame frame) throws IOException {
         real.retrieve(frame);

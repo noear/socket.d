@@ -39,10 +39,10 @@ public class ClientConfig {
         this.schema = uri.getScheme();
         this.codec = new CodecByteBuffer();
 
-        connectTimeout = 3000;
-        heartbeatInterval = 20 * 1000;
+        this.connectTimeout = 3000;
+        this.heartbeatInterval = 20 * 1000;
 
-        maxRequests = 10;
+        this.maxRequests = 10;
     }
 
 

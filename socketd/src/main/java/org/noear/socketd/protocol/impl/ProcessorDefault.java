@@ -15,7 +15,7 @@ import java.io.IOException;
 public class ProcessorDefault implements Processor {
     private static Logger log = LoggerFactory.getLogger(ProcessorDefault.class);
 
-    private Listener listener = new ListenerDefault();
+    private Listener listener = new SimpleListener();
 
 
     @Override
@@ -80,7 +80,8 @@ public class ProcessorDefault implements Processor {
                         onMessage(channel.getSession(), frame.getMessage());
                         break;
                     }
-                    case Reply: {
+                    case Reply:
+                    case ReplyEnd:{
                         channel.retrieve(frame);
                         break;
                     }

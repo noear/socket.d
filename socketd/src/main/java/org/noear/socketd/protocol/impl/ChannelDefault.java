@@ -67,7 +67,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         Acceptor acceptor = acceptorMap.get(frame.getMessage().getKey());
 
         if (acceptor != null) {
-            if (acceptor.isSingle()) {
+            if (acceptor.isSingle() || frame.getFlag() == Flag.ReplyEnd) {
                 acceptorMap.remove(frame.getMessage().getKey());
             }
             acceptor.accept(frame.getMessage());

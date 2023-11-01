@@ -46,7 +46,10 @@ public enum Flag {
     /**
      * 回复
      */
-    Reply(49),
+    Reply(48),/**
+     * 回复结束
+     */
+    ReplyEnd(49),
     ;
     int code;
 

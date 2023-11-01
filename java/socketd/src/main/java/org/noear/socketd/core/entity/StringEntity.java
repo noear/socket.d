@@ -3,7 +3,7 @@ package org.noear.socketd.core.entity;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 字符串实体
+ * 字符串数据实体
  *
  * @author noear
  * @since 2.0

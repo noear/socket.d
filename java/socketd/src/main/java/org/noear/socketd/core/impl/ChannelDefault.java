@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 通道默认实现
+ * 通道默认实现（每个连接都会建立一个通道）
  *
  * @author noear
  * @since 2.0
@@ -16,10 +16,13 @@ import java.util.Map;
 public class ChannelDefault<S> extends ChannelBase implements Channel {
     private final S source;
 
-    private final ChannelAssistant<S> assistant;
+    //接收器注册
     private final Map<String, Acceptor> acceptorMap;
+    //助理
+    private final ChannelAssistant<S> assistant;
+    //最大请求数（根据请求、响应加减计数）
     private final int maxRequests;
-
+    //会话（懒加载）
     private Session session;
 
     public ChannelDefault(S source, int maxRequests,  ChannelAssistant<S> assistant) {
@@ -62,6 +65,9 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         assistant.write(source, frame);
     }
 
+    /**
+     * 收回（收回答复）
+     * */
     @Override
     public void retrieve(Frame frame) throws IOException {
         Acceptor acceptor = acceptorMap.get(frame.getMessage().getKey());
@@ -70,6 +76,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
             if (acceptor.isSingle() || frame.getFlag() == Flag.ReplyEnd) {
                 acceptorMap.remove(frame.getMessage().getKey());
             }
+
             acceptor.accept(frame.getMessage());
         }
     }

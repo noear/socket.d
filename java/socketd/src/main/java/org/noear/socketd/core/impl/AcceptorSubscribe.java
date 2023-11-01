@@ -8,7 +8,7 @@ import org.noear.socketd.core.Message;
 import java.util.function.Consumer;
 
 /**
- * 请求接收器
+ * 订阅接收器
  *
  * @author noear
  * @since 2.0

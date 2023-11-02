@@ -83,7 +83,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
     }
 
-    private void receive(Channel channel, Socket socket, CompletableFuture<Channel> future) {
+    private void receive(Channel channel, Socket socket, CompletableFuture<Channel> channelFuture) {
         while (true) {
             try {
                 if (socket.isClosed()) {
@@ -96,7 +96,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                     client.processor().onReceive(channel, frame);
 
                     if (frame.getFlag() == Flag.Connack) {
-                        future.complete(channel);
+                        channelFuture.complete(channel);
                     }
                 }
             } catch (Throwable e) {

@@ -14,6 +14,9 @@ public class BenchmarkTest {
             "ws-java",};
 
 
+    /**
+     * 用于调试
+     * */
     public static void main(String[] args) throws Exception {
         String s1 = schemas[0];
         TestCase01 testCase01 = new TestCase01(s1, 9386);

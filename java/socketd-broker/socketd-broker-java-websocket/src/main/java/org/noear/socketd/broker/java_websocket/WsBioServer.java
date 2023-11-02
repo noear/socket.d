@@ -21,7 +21,7 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
     private WebSocketServerImpl server;
 
     public WsBioServer(ServerConfig config) {
-        super(config, new WsBioChannelAssistant(config.getCodec()));
+        super(config, new WsBioChannelAssistant(config));
     }
 
     @Override

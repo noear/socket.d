@@ -31,7 +31,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
     private SslPlugin<Integer> sslPlugin;
 
     public TcpAioServer(ServerConfig config) {
-        super(config, new TcpAioChannelAssistant(config.getCodec()));
+        super(config, new TcpAioChannelAssistant(config));
     }
 
     @Override

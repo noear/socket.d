@@ -31,7 +31,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     private ExecutorService serverExecutor;
 
     public TcpBioServer(ServerConfig config) {
-        super(config, new TcpBioChannelAssistant(config.getCodec()));
+        super(config, new TcpBioChannelAssistant(config));
     }
 
     /**

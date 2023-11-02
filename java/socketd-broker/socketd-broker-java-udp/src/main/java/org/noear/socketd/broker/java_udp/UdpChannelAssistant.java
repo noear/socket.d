@@ -18,10 +18,10 @@ import java.nio.ByteBuffer;
  */
 public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
     private static final int LEN_INT = 4;
-    private final Codec<ByteBuffer> codec;
+    private final Config config;
 
-    public UdpChannelAssistant(Codec<ByteBuffer> codec) {
-        this.codec = codec;
+    public UdpChannelAssistant(Config config) {
+        this.config = config;
     }
 
     /**
@@ -46,7 +46,7 @@ public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
         }
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(dataBytes);
-        Frame frame = codec.decode(byteBuffer);
+        Frame frame = config.getCodec().decode(byteBuffer);
 
         return new DatagramFrame(datagramPacket, frame);
     }
@@ -56,7 +56,7 @@ public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
      */
     @Override
     public void write(DatagramTagert target, Frame frame) throws IOException {
-        byte[] dataBytes = codec.encode(frame).array();
+        byte[] dataBytes = config.getCodec().encode(frame).array();
 
         byte[] sizeBytes = ByteBuffer.allocate(LEN_INT).putInt(dataBytes.length).array();
 

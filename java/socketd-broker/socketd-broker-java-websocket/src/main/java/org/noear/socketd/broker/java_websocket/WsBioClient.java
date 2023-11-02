@@ -14,7 +14,7 @@ import org.noear.socketd.core.impl.SessionDefault;
 public class WsBioClient extends ClientBase<WsBioChannelAssistant> {
 
     public WsBioClient(ClientConfig config) {
-        super(config, new WsBioChannelAssistant(config.getCodec()));
+        super(config, new WsBioChannelAssistant(config));
     }
 
     @Override

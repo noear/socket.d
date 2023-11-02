@@ -1,10 +1,7 @@
 package org.noear.socketd.broker.java_websocket;
 
 import org.java_websocket.WebSocket;
-import org.noear.socketd.core.Codec;
-import org.noear.socketd.core.CodecByteBuffer;
-import org.noear.socketd.core.Frame;
-import org.noear.socketd.core.ChannelAssistant;
+import org.noear.socketd.core.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,15 +14,15 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class WsBioChannelAssistant implements ChannelAssistant<WebSocket> {
-    private final Codec<ByteBuffer> codec;
+    private final Config config;
 
-    public WsBioChannelAssistant(Codec<ByteBuffer> codec) {
-        this.codec = codec;
+    public WsBioChannelAssistant(Config config) {
+        this.config = config;
     }
 
     @Override
     public void write(WebSocket source, Frame frame) throws IOException {
-        source.send(codec.encode(frame));
+        source.send(config.getCodec().encode(frame));
     }
 
     @Override
@@ -49,6 +46,6 @@ public class WsBioChannelAssistant implements ChannelAssistant<WebSocket> {
     }
 
     public Frame read(ByteBuffer buffer) throws IOException{
-        return codec.decode(buffer);
+        return config.getCodec().decode(buffer);
     }
 }

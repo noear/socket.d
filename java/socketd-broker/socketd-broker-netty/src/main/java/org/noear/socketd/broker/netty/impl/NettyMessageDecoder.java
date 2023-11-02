@@ -3,7 +3,7 @@ package org.noear.socketd.broker.netty.impl;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.noear.socketd.core.Codec;
+import org.noear.socketd.core.Config;
 import org.noear.socketd.core.Frame;
 
 import java.nio.ByteBuffer;
@@ -14,10 +14,10 @@ import java.util.List;
  * @since 2.0
  */
 public class NettyMessageDecoder extends ByteToMessageDecoder {
-    private final Codec<ByteBuffer> codec;
+    private final Config config;
 
-    public NettyMessageDecoder(Codec<ByteBuffer> codec) {
-        this.codec = codec;
+    public NettyMessageDecoder(Config config) {
+        this.config = config;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
             byteBuffer.put(bytes);
             byteBuffer.flip();
 
-            Frame message = codec.decode(byteBuffer);
+            Frame message = config.getCodec().decode(byteBuffer);
             if (message != null) {
                 out.add(message);
             }

@@ -38,8 +38,8 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         }
 
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0));
-        pipeline.addLast(new NettyMessageEncoder(config.getCodec()));
-        pipeline.addLast(new NettyMessageDecoder(config.getCodec()));
+        pipeline.addLast(new NettyMessageEncoder(config));
+        pipeline.addLast(new NettyMessageDecoder(config));
         pipeline.addLast(processor);
     }
 }

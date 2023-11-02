@@ -16,7 +16,7 @@ import org.noear.socketd.core.impl.SessionDefault;
  */
 public class UdpClient extends ClientBase<UdpChannelAssistant> {
     public UdpClient(ClientConfig config) {
-        super(config, new UdpChannelAssistant(config.getCodec()));
+        super(config, new UdpChannelAssistant(config));
     }
 
     @Override

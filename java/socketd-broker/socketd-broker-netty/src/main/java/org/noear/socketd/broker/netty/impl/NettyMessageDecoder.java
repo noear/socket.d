@@ -36,8 +36,6 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
             if (message != null) {
                 out.add(message);
             }
-
-            byteBuffer.compact(); //时间久了，都不知道这是干嘛的
         }
 
         inBuf.discardReadBytes(); //时间久了，都不知道这是干嘛的

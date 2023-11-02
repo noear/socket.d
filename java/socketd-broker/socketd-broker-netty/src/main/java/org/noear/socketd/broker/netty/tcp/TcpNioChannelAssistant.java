@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.netty;
+package org.noear.socketd.broker.netty.tcp;
 
 import io.netty.channel.Channel;
 import org.noear.socketd.core.Frame;

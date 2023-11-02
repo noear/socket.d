@@ -1,12 +1,12 @@
-package org.noear.socketd.broker.netty;
+package org.noear.socketd.broker.netty.tcp;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.noear.socketd.broker.netty.impl.NettyChannelInitializer;
-import org.noear.socketd.broker.netty.impl.NettyClientInboundHandler;
+import org.noear.socketd.broker.netty.tcp.impl.NettyChannelInitializer;
+import org.noear.socketd.broker.netty.tcp.impl.NettyClientInboundHandler;
 import org.noear.socketd.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.core.Channel;

@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.netty;
+package org.noear.socketd.broker.netty.tcp;
 
 import org.noear.socketd.broker.ClientBroker;
 import org.noear.socketd.broker.ServerBroker;

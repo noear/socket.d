@@ -1,9 +1,9 @@
-package org.noear.socketd.broker.netty.impl;
+package org.noear.socketd.broker.netty.tcp.impl;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
-import org.noear.socketd.broker.netty.TcpNioClient;
+import org.noear.socketd.broker.netty.tcp.TcpNioClient;
 import org.noear.socketd.core.Channel;
 import org.noear.socketd.core.Flag;
 import org.noear.socketd.core.Frame;

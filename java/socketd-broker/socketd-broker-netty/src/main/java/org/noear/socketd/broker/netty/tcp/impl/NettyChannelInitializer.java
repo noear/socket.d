@@ -1,4 +1,4 @@
-package org.noear.socketd.broker.netty.impl;
+package org.noear.socketd.broker.netty.tcp.impl;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

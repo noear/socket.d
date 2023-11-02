@@ -5,6 +5,7 @@ import org.noear.socketd.core.CodecByteBuffer;
 import org.noear.socketd.core.Config;
 import org.noear.socketd.core.KeyGenerator;
 import org.noear.socketd.core.impl.KeyGeneratorGuid;
+import org.noear.socketd.utils.Utils;
 
 import javax.net.ssl.SSLContext;
 import java.nio.ByteBuffer;
@@ -113,6 +114,18 @@ public class ServerConfig implements Config {
         return this;
     }
 
+
+    /**
+     * 获取本机地址
+     */
+    public String getLocalUrl() {
+        if (Utils.isEmpty(host)) {
+            return schema + "://127.0.0.1:" + port;
+        } else {
+            return schema + "://" + host + ":" + port;
+        }
+    }
+
     /**
      * 获取 ssl 上下文
      */
@@ -190,7 +203,7 @@ public class ServerConfig implements Config {
 
     /**
      * 允许最大请求数
-     * */
+     */
     public int getMaxRequests() {
         return maxRequests;
     }

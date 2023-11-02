@@ -61,7 +61,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
         }
         server.start();
 
-        log.info("Server started: {server=tcp://127.0.0.1:" + config().getPort() + "}");
+        log.info("Server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
     }

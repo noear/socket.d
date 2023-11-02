@@ -84,7 +84,7 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
         });
         serverThread.start();
 
-        log.info("Server started: {server=udp://127.0.0.1:" + config().getPort() + "}");
+        log.info("Server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
     }

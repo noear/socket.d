@@ -39,12 +39,12 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
-            ChannelHandler handler = new NettyChannelInitializer(config(), inboundHandler);
+            ChannelHandler channelHandler = new NettyChannelInitializer(config(), inboundHandler);
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(handler);
+                    .childHandler(channelHandler);
 
             if (Utils.isEmpty(config().getHost())) {
                 server = bootstrap.bind(config().getPort()).await();
@@ -52,7 +52,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
                 server = bootstrap.bind(config().getHost(), config().getPort()).await();
             }
 
-            log.info("Server started: {server=tcp://127.0.0.1:" + config().getPort() + "}");
+            log.info("Server started: {server=" + config().getLocalUrl() + "}");
         } catch (RuntimeException e) {
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();

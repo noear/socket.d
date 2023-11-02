@@ -50,9 +50,11 @@ public class SocketD {
 
     /**
      * 创建客户端（支持 url 自动识别）
+     *
+     * @param serverUrl 服务器地址
      */
-    public static Client createClient(String url) {
-        ClientConfig clientConfig = new ClientConfig(url);
+    public static Client createClient(String serverUrl) {
+        ClientConfig clientConfig = new ClientConfig(serverUrl);
 
         ClientBroker broker = clientBrokerMap.get(clientConfig.getSchema());
         if (broker == null) {

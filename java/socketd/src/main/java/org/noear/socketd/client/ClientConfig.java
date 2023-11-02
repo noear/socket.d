@@ -50,7 +50,9 @@ public class ClientConfig implements Config {
         this.maxRequests = 10;
     }
 
-
+    /**
+     * 是否客户端模式
+     */
     @Override
     public boolean clientMode() {
         return true;

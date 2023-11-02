@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 以客户端为主的消息发送测试
@@ -116,7 +117,7 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
         RunUtils.async(() -> {
             RunUtils.runAnTry(() -> {
-                sendAndRequestLatch.await();
+                RunUtils.runAnTry(()->sendAndRequestLatch.await(40, TimeUnit.SECONDS));
                 long timeSpan2 = System.currentTimeMillis() - startTime;
                 System.out.println(getSchema() + "::sendAndRequest:: time:" + timeSpan + ", time2:" + timeSpan2
                         + ", count=" + (count - sendAndRequestLatch.getCount()));
@@ -136,7 +137,7 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
         RunUtils.async(() -> {
             RunUtils.runAnTry(() -> {
-                sendAndSubscribeLatch.await();
+                RunUtils.runAnTry(()->sendAndSubscribeLatch.await(40, TimeUnit.SECONDS));
                 long timeSpan2 = System.currentTimeMillis() - startTime;
                 System.out.println(getSchema() + "::sendAndSubscribe:: time:" + timeSpan + ", time2:" + timeSpan2
                         + ", count=" + (count - sendAndSubscribeLatch.getCount()));

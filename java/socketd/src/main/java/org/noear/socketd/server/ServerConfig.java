@@ -36,6 +36,7 @@ public class ServerConfig implements Config {
     private int writeBufferSize;
 
     private int maxRequests;
+    private int maxFrameSize;
 
     public ServerConfig(String schema) {
         this.schema = schema;
@@ -53,6 +54,7 @@ public class ServerConfig implements Config {
         this.writeBufferSize = 512;
 
         this.maxRequests = 10;
+        this.maxFrameSize = 4096;
     }
 
     /**
@@ -228,10 +230,22 @@ public class ServerConfig implements Config {
         return this;
     }
 
+
+    @Override
+    public int getMaxFrameSize() {
+        return maxFrameSize;
+    }
+
+    public ServerConfig maxFrameSize(int maxFrameSize) {
+        this.maxFrameSize = maxFrameSize;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "ServerConfig{" +
                 "schema='" + schema + '\'' +
+                ", charset=" + charset +
                 ", host='" + host + '\'' +
                 ", port=" + port +
                 ", coreThreads=" + coreThreads +
@@ -239,6 +253,7 @@ public class ServerConfig implements Config {
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
                 ", maxRequests=" + maxRequests +
+                ", maxFrameSize=" + maxFrameSize +
                 '}';
     }
 }

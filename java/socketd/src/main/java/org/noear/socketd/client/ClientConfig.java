@@ -39,6 +39,7 @@ public class ClientConfig implements Config {
     private boolean autoReconnect;
 
     private int maxRequests;
+    private int maxFrameSize;
 
     public ClientConfig(String url) {
         this.url = url;
@@ -54,6 +55,7 @@ public class ClientConfig implements Config {
 
         this.autoReconnect = true;
         this.maxRequests = 10;
+        this.maxFrameSize = 4096;
     }
 
     /**
@@ -238,9 +240,20 @@ public class ClientConfig implements Config {
     }
 
     @Override
+    public int getMaxFrameSize() {
+        return maxFrameSize;
+    }
+
+    public ClientConfig maxFrameSize(int maxFrameSize) {
+        this.maxFrameSize = maxFrameSize;
+        return this;
+    }
+
+    @Override
     public String toString() {
         return "ClientConfig{" +
                 "schema='" + schema + '\'' +
+                ", charset=" + charset +
                 ", url='" + url + '\'' +
                 ", heartbeatInterval=" + heartbeatInterval +
                 ", connectTimeout=" + connectTimeout +
@@ -248,6 +261,7 @@ public class ClientConfig implements Config {
                 ", writeBufferSize=" + writeBufferSize +
                 ", autoReconnect=" + autoReconnect +
                 ", maxRequests=" + maxRequests +
+                ", maxFrameSize=" + maxFrameSize +
                 '}';
     }
 }

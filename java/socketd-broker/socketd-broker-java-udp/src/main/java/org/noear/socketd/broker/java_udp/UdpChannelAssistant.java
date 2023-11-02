@@ -3,6 +3,8 @@ package org.noear.socketd.broker.java_udp;
 import org.noear.socketd.broker.java_udp.impl.DatagramFrame;
 import org.noear.socketd.broker.java_udp.impl.DatagramTagert;
 import org.noear.socketd.core.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -17,6 +19,8 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
+    private static final Logger log = LoggerFactory.getLogger(UdpChannelAssistant.class);
+
     private final Config config;
 
     public UdpChannelAssistant(Config config) {
@@ -27,24 +31,23 @@ public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
      * 读取
      */
     public DatagramFrame read(DatagramSocket source) throws IOException {
-        //获取长度
-        DatagramPacket datagramPacket = new DatagramPacket(new byte[Integer.BYTES], Integer.BYTES);
+        //获取第一个包
+        DatagramPacket datagramPacket = new DatagramPacket(new byte[config.getMaxFrameSize()], config.getMaxFrameSize());
         source.receive(datagramPacket);
-        byte[] sizeBytes = datagramPacket.getData();
-        if (sizeBytes == null || sizeBytes.length == 0) {
+        if (datagramPacket.getLength() < Integer.BYTES) {
             return null;
         }
 
         //获取数据（接着在原地址上拿）
-        int size = ByteBuffer.wrap(sizeBytes).getInt();
-        datagramPacket = new DatagramPacket(new byte[size], size, datagramPacket.getSocketAddress());
-        source.receive(datagramPacket);
-        byte[] dataBytes = datagramPacket.getData();
-        if (dataBytes == null || dataBytes.length == 0) {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(datagramPacket.getData(), 0, datagramPacket.getLength());
+        byteBuffer.mark();
+
+        int frameSize = byteBuffer.getInt();
+        if (frameSize > datagramPacket.getLength()) {
             return null;
         }
+        byteBuffer.reset();
 
-        ByteBuffer byteBuffer = ByteBuffer.wrap(dataBytes);
         Frame frame = config.getCodec().decode(byteBuffer);
 
         return new DatagramFrame(datagramPacket, frame);
@@ -57,10 +60,10 @@ public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
     public void write(DatagramTagert target, Frame frame) throws IOException {
         byte[] dataBytes = config.getCodec().encode(frame).array();
 
-        byte[] sizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(dataBytes.length).array();
+        //byte[] sizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(dataBytes.length).array();
 
         //先发长度包
-        target.send(sizeBytes);
+        //target.send(sizeBytes);
         //再发数据包
         target.send(dataBytes);
     }

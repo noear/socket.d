@@ -23,7 +23,7 @@ public interface Config {
 
     /**
      * 获取字符集
-     * */
+     */
     Charset getCharset();
 
     /**
@@ -45,4 +45,9 @@ public interface Config {
      * 允许最大请求数
      */
     int getMaxRequests();
+
+    /**
+     * 允许最大帧大小
+     */
+    int getMaxFrameSize();
 }

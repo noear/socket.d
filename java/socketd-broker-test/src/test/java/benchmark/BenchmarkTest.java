@@ -18,8 +18,8 @@ public class BenchmarkTest {
      * 用于调试
      */
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[0];
-        TestCase01 testCase01 = new TestCase01(s1, 1000,9386);
+        String s1 = schemas[3];
+        TestCase01 testCase01 = new TestCase01(s1, 100000,9386);
         try {
             testCase01.start();
 

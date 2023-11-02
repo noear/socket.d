@@ -39,7 +39,7 @@ public class ClientConfig implements Config {
     private boolean autoReconnect;
 
     private int maxRequests;
-    private int maxFrameSize;
+    private int maxUdpSize;
 
     public ClientConfig(String url) {
         this.url = url;
@@ -55,7 +55,7 @@ public class ClientConfig implements Config {
 
         this.autoReconnect = true;
         this.maxRequests = 10;
-        this.maxFrameSize = 2048; //实际可能只有1464 //或许用1024更好？
+        this.maxUdpSize = 2048; //实际可能只有1464 //或许用1024更好？
     }
 
     /**
@@ -240,12 +240,12 @@ public class ClientConfig implements Config {
     }
 
     @Override
-    public int getMaxFrameSize() {
-        return maxFrameSize;
+    public int getMaxUdpSize() {
+        return maxUdpSize;
     }
 
-    public ClientConfig maxFrameSize(int maxFrameSize) {
-        this.maxFrameSize = maxFrameSize;
+    public ClientConfig maxUdpSize(int maxUdpSize) {
+        this.maxUdpSize = maxUdpSize;
         return this;
     }
 
@@ -261,7 +261,7 @@ public class ClientConfig implements Config {
                 ", writeBufferSize=" + writeBufferSize +
                 ", autoReconnect=" + autoReconnect +
                 ", maxRequests=" + maxRequests +
-                ", maxFrameSize=" + maxFrameSize +
+                ", maxUdpSize=" + maxUdpSize +
                 '}';
     }
 }

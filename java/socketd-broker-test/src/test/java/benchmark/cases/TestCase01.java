@@ -51,9 +51,7 @@ public class TestCase01 extends BaseTestCase {
 
         //server
         server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
-                .config(config -> config
-                        .keyGenerator(new KeyGeneratorTime())
-                        .maxFrameSize(1024))
+                .config(config -> config.keyGenerator(new KeyGeneratorTime()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -76,9 +74,7 @@ public class TestCase01 extends BaseTestCase {
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
-                .config(config -> config
-                        .keyGenerator(new KeyGeneratorTime())
-                        .maxFrameSize(1024))
+                .config(config -> config.keyGenerator(new KeyGeneratorTime()))
                 .open();
 
         //单预热

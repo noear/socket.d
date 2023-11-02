@@ -36,7 +36,7 @@ public class ServerConfig implements Config {
     private int writeBufferSize;
 
     private int maxRequests;
-    private int maxFrameSize;
+    private int maxUdpSize;
 
     public ServerConfig(String schema) {
         this.schema = schema;
@@ -54,7 +54,7 @@ public class ServerConfig implements Config {
         this.writeBufferSize = 512;
 
         this.maxRequests = 10;
-        this.maxFrameSize = 2048; //实际可能只有1464 //或许用1024更好？
+        this.maxUdpSize = 2048; //实际可能只有1464 //或许用1024更好？
     }
 
     /**
@@ -232,12 +232,12 @@ public class ServerConfig implements Config {
 
 
     @Override
-    public int getMaxFrameSize() {
-        return maxFrameSize;
+    public int getMaxUdpSize() {
+        return maxUdpSize;
     }
 
-    public ServerConfig maxFrameSize(int maxFrameSize) {
-        this.maxFrameSize = maxFrameSize;
+    public ServerConfig maxUdpSize(int maxUdpSize) {
+        this.maxUdpSize = maxUdpSize;
         return this;
     }
 
@@ -253,7 +253,7 @@ public class ServerConfig implements Config {
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
                 ", maxRequests=" + maxRequests +
-                ", maxFrameSize=" + maxFrameSize +
+                ", maxUdpSize=" + maxUdpSize +
                 '}';
     }
 }

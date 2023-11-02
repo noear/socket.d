@@ -32,7 +32,7 @@ public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> 
      */
     public DatagramFrame read(DatagramSocket source) throws IOException {
         //获取第一个包
-        DatagramPacket datagramPacket = new DatagramPacket(new byte[config.getMaxFrameSize()], config.getMaxFrameSize());
+        DatagramPacket datagramPacket = new DatagramPacket(new byte[config.getMaxUdpSize()], config.getMaxUdpSize());
         source.receive(datagramPacket);
         if (datagramPacket.getLength() < Integer.BYTES) {
             return null;

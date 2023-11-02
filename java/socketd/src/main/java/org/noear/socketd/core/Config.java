@@ -47,7 +47,7 @@ public interface Config {
     int getMaxRequests();
 
     /**
-     * 允许最大帧大小
+     * 允许最大UDP包大小
      */
-    int getMaxFrameSize();
+    int getMaxUdpSize();
 }

@@ -1,1 +1,2 @@
 org.noear.socketd.broker.netty.tcp.TcpNioBroker
+org.noear.socketd.broker.netty.udp.UdpNioBroker

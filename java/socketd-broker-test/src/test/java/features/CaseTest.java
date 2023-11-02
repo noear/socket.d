@@ -10,15 +10,15 @@ import org.junit.jupiter.api.Test;
 public class CaseTest {
     static final String[] schemas = new String[]{
             "tcp-java", "tcp-netty", "tcp-smartsocket",
-            "udp-java",
+            "udp-java", "udp-netty",
             "ws-java",};
 
     /**
      * 用于调试
      * */
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[3];
-        TestCase01 testCase01 = new TestCase01(s1, 1000 + 9386);
+        String s1 = schemas[4];
+        TestCase01 testCase01 = new TestCase01(s1,  9386);
         try {
             testCase01.start();
             testCase01.stop();

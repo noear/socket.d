@@ -45,9 +45,14 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
     }
 
     @Override
-    public void stop() throws Exception {
-        if (server != null) {
+    public void stop() {
+        if (server == null) {
+            return;
+        }
+        try {
             server.stop();
+        } catch (Exception e) {
+            log.debug("{}", e);
         }
     }
 }

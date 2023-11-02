@@ -67,8 +67,16 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
     }
 
     @Override
-    public void stop() throws IOException {
-        server.shutdown();
+    public void stop() {
+        if (server == null) {
+            return;
+        }
+
+        try {
+            server.shutdown();
+        } catch (Exception e) {
+            log.debug("{}", e);
+        }
     }
 
     private Channel getChannel(AioSession s) {

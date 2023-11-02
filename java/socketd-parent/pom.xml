@@ -21,6 +21,7 @@
         <socketd.version>2.0.1</socketd.version>
 
         <slf4j.version>2.0.9</slf4j.version>
+        <junit5.version>5.9.1</junit5.version>
         <smartsocket.version>1.5.36</smartsocket.version>
         <java-websocket.version>1.5.3</java-websocket.version>
         <netty.version>4.1.86.Final</netty.version>

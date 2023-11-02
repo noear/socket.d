@@ -19,5 +19,6 @@
 
     <modules>
         <module>java/socketd-parent</module>
+        <module>java/socketd-broker-test</module>
     </modules>
 </project>

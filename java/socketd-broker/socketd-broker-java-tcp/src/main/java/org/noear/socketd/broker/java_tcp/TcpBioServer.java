@@ -66,8 +66,8 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         server = createServer();
 
         serverThread = new Thread(() -> {
-            try {
-                while (true) {
+            while (true) {
+                try {
                     Socket socket = server.accept();
 
                     try {
@@ -80,9 +80,14 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                         log.debug("{}", e);
                         close(socket);
                     }
+                } catch (IOException e) {
+                    if (server.isClosed()) {
+                        //说明被手动关掉了
+                        return;
+                    }
+
+                    log.debug("{}", e);
                 }
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
             }
         });
 
@@ -126,13 +131,14 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     }
 
     @Override
-    public void stop() throws IOException {
+    public void stop() {
         if (server == null || server.isClosed()) {
             return;
         }
 
         try {
             server.close();
+            serverThread.interrupt();
         } catch (Exception e) {
             log.debug("{}", e);
         }

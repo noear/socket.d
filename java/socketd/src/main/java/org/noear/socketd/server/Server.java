@@ -35,5 +35,5 @@ public interface Server {
     /**
      * 停止
      */
-    void stop() throws Exception;
+    void stop();
 }

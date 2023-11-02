@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,7 +30,9 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
     public Channel connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
-        real = new WebSocketClientImpl(client.config().getUri(), client);
+        //处理自定义架构的影响
+        String wsUrl = client.config().getUrl().replace("-java://","://");
+        real = new WebSocketClientImpl(URI.create(wsUrl), client);
 
         //支持 ssl
         if (client.config().getSslContext() != null) {

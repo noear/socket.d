@@ -70,11 +70,15 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         if (server == null) {
             return;
         }
 
-        server.channel().close();
+        try {
+            server.channel().close();
+        } catch (Exception e) {
+            log.debug("{}", e);
+        }
     }
 }

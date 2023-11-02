@@ -73,7 +73,12 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
                         log.debug("{}", e);
                     }
                 } catch (IOException e) {
-                    throw new IllegalStateException(e);
+                    if (server.isClosed()) {
+                        //说明被手动关掉了
+                        return;
+                    }
+
+                    log.debug("{}", e);
                 }
             }
         });
@@ -99,11 +104,12 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
 
 
     @Override
-    public void stop() throws IOException {
+    public void stop() {
         if (server == null || server.isClosed()) {
             return;
         }
         try {
+            server.close();
             serverThread.stop();
         } catch (Exception e) {
             log.debug("{}", e);

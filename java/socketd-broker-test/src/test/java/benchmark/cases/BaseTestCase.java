@@ -1,4 +1,4 @@
-package features.cases;
+package benchmark.cases;
 
 /**
  * @author noear
@@ -40,4 +40,3 @@ public abstract class BaseTestCase {
         System.out.println("------------------ (test error: " + getSchema() + ", port=" + getPort() + ")------------------");
     }
 }
-

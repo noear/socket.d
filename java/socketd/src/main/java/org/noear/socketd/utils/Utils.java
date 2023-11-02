@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 工具
@@ -13,13 +12,6 @@ import java.util.UUID;
  * @since 2.0
  */
 public class Utils {
-    /**
-     * 生成UGID
-     */
-    public static String guid() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
-    }
-
     /**
      * 检查字符串是否为空
      *

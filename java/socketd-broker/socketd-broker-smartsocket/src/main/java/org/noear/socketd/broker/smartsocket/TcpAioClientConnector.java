@@ -89,7 +89,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
     }
 
     private Channel getChannel(AioSession s) {
-        return Attachment.getChannel(s, client.config().getMaxRequests(), client.assistant());
+        return Attachment.getChannel(s, client.config(), client.assistant());
     }
 
     @Override

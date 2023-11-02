@@ -20,14 +20,14 @@ public interface Channel extends Closeable {
     boolean isValid();
 
     /**
-     * 请求数（用于背压控制）
+     * 获取配置
      */
-    AtomicInteger getRequests();
+    Config getConfig();
 
     /**
-     * 最大请求数
+     * 获取请求计数（用于背压控制）
      */
-    int getRequestMax();
+    AtomicInteger getRequests();
 
     /**
      * 设置握手信息

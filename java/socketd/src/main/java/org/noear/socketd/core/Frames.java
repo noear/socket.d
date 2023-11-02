@@ -16,8 +16,8 @@ public class Frames {
      *
      * @param url 连接地址
      */
-    public static final Frame connectFrame(String url) {
-        return new Frame(Flag.Connect, new MessageDefault().key(Utils.guid()).topic(url).entity(new MetaEntity(Constants.HEARDER_CONNECT)));
+    public static final Frame connectFrame(String key, String url) {
+        return new Frame(Flag.Connect, new MessageDefault().key(key).topic(url).entity(new MetaEntity(Constants.HEARDER_CONNECT)));
     }
 
     /**

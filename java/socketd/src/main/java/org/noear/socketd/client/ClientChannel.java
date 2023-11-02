@@ -22,6 +22,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     private ScheduledFuture<?> scheduledFuture;
 
     public ClientChannel(Channel real, ClientConnector connector) {
+        super(real.getConfig());
         this.real = real;
         this.connector = connector;
         this.heartbeatHandler = connector.heartbeatHandler();
@@ -47,14 +48,6 @@ public class ClientChannel extends ChannelBase implements Channel {
         } else {
             return real.isValid();
         }
-    }
-
-    /**
-     * 请求数（用于背压控制）
-     */
-    @Override
-    public int getRequestMax() {
-        return connector.maxRequests();
     }
 
     /**

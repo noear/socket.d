@@ -10,10 +10,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2.0
  */
 public abstract class ChannelBase implements Channel {
+    //最大请求数（根据请求、响应加减计数）
+    private final Config config;
 
     private final AtomicInteger requests = new AtomicInteger();
     private Handshaker handshaker;
     private long liveTime;
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public ChannelBase(Config config) {
+        this.config = config;
+    }
 
     @Override
     public AtomicInteger getRequests() {
@@ -43,7 +53,7 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public void sendConnect(String uri) throws IOException {
-        send(Frames.connectFrame(uri), null);
+        send(Frames.connectFrame(getConfig().getKeyGenerator().generate(), uri), null);
     }
 
     @Override

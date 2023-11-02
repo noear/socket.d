@@ -1,7 +1,5 @@
 package org.noear.socketd.core;
 
-import org.noear.socketd.utils.Utils;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +9,12 @@ import java.util.Map;
  * @author noear
  */
 public abstract class SessionBase implements Session {
+    protected final Channel channel;
+
+    public SessionBase(Channel channel) {
+        this.channel = channel;
+    }
+
     /**
      * 会话的附件与通道的各自独立
      */
@@ -53,9 +57,13 @@ public abstract class SessionBase implements Session {
     @Override
     public String getSessionId() {
         if (sessionId == null) {
-            sessionId = Utils.guid();
+            sessionId = generateKey();
         }
 
         return sessionId;
+    }
+
+    protected String generateKey(){
+        return channel.getConfig().getKeyGenerator().generate();
     }
 }

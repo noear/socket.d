@@ -95,7 +95,7 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
 
         if (channel0 == null) {
             DatagramTagert tagert = new DatagramTagert(server, datagramFrame.getPacket(), false);
-            channel0 = new ChannelDefault<>(tagert, config().getMaxRequests(), assistant());
+            channel0 = new ChannelDefault<>(tagert, config(), assistant());
             channelMap.put(addressAndPort, channel0);
         }
 

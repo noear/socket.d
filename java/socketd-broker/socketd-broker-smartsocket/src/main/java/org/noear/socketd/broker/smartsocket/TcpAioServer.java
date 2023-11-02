@@ -80,7 +80,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
     }
 
     private Channel getChannel(AioSession s) {
-        return Attachment.getChannel(s, config().getMaxRequests(), assistant());
+        return Attachment.getChannel(s, config(), assistant());
     }
 
 

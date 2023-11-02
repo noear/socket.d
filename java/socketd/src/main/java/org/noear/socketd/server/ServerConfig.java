@@ -2,6 +2,9 @@ package org.noear.socketd.server;
 
 import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.CodecByteBuffer;
+import org.noear.socketd.core.Config;
+import org.noear.socketd.core.KeyGenerator;
+import org.noear.socketd.core.impl.KeyGeneratorGuid;
 
 import javax.net.ssl.SSLContext;
 import java.nio.ByteBuffer;
@@ -12,9 +15,10 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class ServerConfig {
+public class ServerConfig implements Config {
     private final String schema;
     private Codec<ByteBuffer> codec;
+    private KeyGenerator keyGenerator;
 
     private String host;
     private int port;
@@ -32,6 +36,7 @@ public class ServerConfig {
     public ServerConfig(String schema) {
         this.schema = schema;
         this.codec = new CodecByteBuffer();
+        this.keyGenerator = new KeyGeneratorGuid();
 
         this.host = "";
         this.port = 6329;
@@ -58,6 +63,15 @@ public class ServerConfig {
 
     public ServerConfig codec(Codec<ByteBuffer> codec) {
         this.codec = codec;
+        return this;
+    }
+
+    public KeyGenerator getKeyGenerator() {
+        return keyGenerator;
+    }
+
+    public ServerConfig keyGenerator(KeyGenerator keyGenerator) {
+        this.keyGenerator = keyGenerator;
         return this;
     }
 

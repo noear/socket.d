@@ -3,7 +3,6 @@ package org.noear.socketd.core.impl;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.core.*;
-import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,10 +18,8 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public class SessionDefault extends SessionBase implements Session {
-    private Channel channel;
-
     public SessionDefault(Channel channel) {
-        this.channel = channel;
+        super(channel);
     }
 
     /**
@@ -70,7 +67,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void send(String topic, Entity content) throws IOException {
-        Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
+        Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
 
         channel.send(new Frame(Flag.Message, message), null);
     }
@@ -86,7 +83,7 @@ public class SessionDefault extends SessionBase implements Session {
     @Override
     public Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException {
         //背压控制
-        if (channel.getRequests().get() > channel.getRequestMax()) {
+        if (channel.getRequests().get() > channel.getConfig().getMaxRequests()) {
             throw new SocketdException("Sending too many requests: " + channel.getRequests().get());
         } else {
             channel.getRequests().incrementAndGet();
@@ -94,7 +91,7 @@ public class SessionDefault extends SessionBase implements Session {
 
         try {
 
-            Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
+            Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
 
             CompletableFuture<Entity> future = new CompletableFuture<>();
             channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future));
@@ -119,7 +116,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException {
-        Message message = new MessageDefault().key(Utils.guid()).topic(topic).entity(content);
+        Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
         channel.send(new Frame(Flag.Subscribe, message), new AcceptorSubscribe(consumer));
     }
 

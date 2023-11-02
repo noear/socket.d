@@ -2,6 +2,9 @@ package org.noear.socketd.client;
 
 import org.noear.socketd.core.Codec;
 import org.noear.socketd.core.CodecByteBuffer;
+import org.noear.socketd.core.Config;
+import org.noear.socketd.core.KeyGenerator;
+import org.noear.socketd.core.impl.KeyGeneratorGuid;
 
 import javax.net.ssl.SSLContext;
 import java.net.URI;
@@ -13,7 +16,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class ClientConfig {
+public class ClientConfig implements Config {
     private final String url;
     private final URI uri;
     private final String schema;
@@ -32,12 +35,14 @@ public class ClientConfig {
     private int maxRequests;
 
     private Codec<ByteBuffer> codec;
+    private KeyGenerator keyGenerator;
 
     public ClientConfig(String url) {
         this.url = url;
         this.uri = URI.create(url);
         this.schema = uri.getScheme();
         this.codec = new CodecByteBuffer();
+        this.keyGenerator = new KeyGeneratorGuid();
 
         this.connectTimeout = 3000;
         this.heartbeatInterval = 20 * 1000;
@@ -55,14 +60,26 @@ public class ClientConfig {
     }
 
     /**
-     * 获取编码器
-     * */
+     * 获取编解码器
+     */
     public Codec<ByteBuffer> getCodec() {
         return codec;
     }
 
     public ClientConfig codec(Codec<ByteBuffer> codec) {
         this.codec = codec;
+        return this;
+    }
+
+    /**
+     * 获取标识生成器
+     */
+    public KeyGenerator getKeyGenerator() {
+        return keyGenerator;
+    }
+
+    public ClientConfig keyGenerator(KeyGenerator keyGenerator) {
+        this.keyGenerator = keyGenerator;
         return this;
     }
 
@@ -157,7 +174,7 @@ public class ClientConfig {
 
     /**
      * 是否自动重链
-     * */
+     */
     public boolean isAutoReconnect() {
         return autoReconnect;
     }
@@ -169,7 +186,7 @@ public class ClientConfig {
 
     /**
      * 允许最大请求数
-     * */
+     */
     public int getMaxRequests() {
         return maxRequests;
     }

@@ -2,6 +2,7 @@ package org.noear.socketd.broker.smartsocket.impl;
 
 import org.noear.socketd.broker.smartsocket.TcpAioChannelAssistant;
 import org.noear.socketd.core.Channel;
+import org.noear.socketd.core.Config;
 import org.noear.socketd.core.impl.ChannelDefault;
 import org.smartboot.socket.transport.AioSession;
 
@@ -24,11 +25,11 @@ public class Attachment extends HashMap<Class<?>,Object> {
         return tmp;
     }
 
-    public static Channel getChannel(AioSession aioSession, int maxRequests, TcpAioChannelAssistant exchanger) {
+    public static Channel getChannel(AioSession aioSession, Config config, TcpAioChannelAssistant exchanger) {
         Attachment attachment = get(aioSession);
         ChannelDefault tmp = (ChannelDefault) attachment.get(ChannelDefault.class);
         if (tmp == null) {
-            tmp = new ChannelDefault<>(aioSession, maxRequests, exchanger);
+            tmp = new ChannelDefault<>(aioSession, config, exchanger);
             attachment.put(ChannelDefault.class, tmp);
         }
         return tmp;

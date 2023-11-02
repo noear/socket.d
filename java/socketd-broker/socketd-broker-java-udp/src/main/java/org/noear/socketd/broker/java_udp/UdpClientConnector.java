@@ -39,7 +39,7 @@ public class UdpClientConnector extends ClientConnectorBase<UdpClient> {
         real.connect(socketAddress);
 
         DatagramTagert tagert = new DatagramTagert(real, null, true);
-        Channel channel = new ChannelDefault<>(tagert, client.config().getMaxRequests(), client.assistant());
+        Channel channel = new ChannelDefault<>(tagert, client.config(), client.assistant());
 
         CompletableFuture<Channel> channelFuture = new CompletableFuture<>();
         //定义接收线程

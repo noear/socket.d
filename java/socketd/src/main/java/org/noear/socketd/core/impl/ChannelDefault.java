@@ -20,27 +20,19 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     private final Map<String, Acceptor> acceptorMap;
     //助理
     private final ChannelAssistant<S> assistant;
-    //最大请求数（根据请求、响应加减计数）
-    private final int maxRequests;
     //会话（懒加载）
     private Session session;
 
-    public ChannelDefault(S source, int maxRequests,  ChannelAssistant<S> assistant) {
-        super();
+    public ChannelDefault(S source, Config config,  ChannelAssistant<S> assistant) {
+        super(config);
         this.source = source;
         this.assistant = assistant;
         this.acceptorMap = new HashMap<>();
-        this.maxRequests = maxRequests;
     }
 
     @Override
     public boolean isValid() {
         return assistant.isValid(source);
-    }
-
-    @Override
-    public int getRequestMax() {
-        return maxRequests;
     }
 
     @Override

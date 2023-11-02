@@ -25,7 +25,7 @@ public abstract class BaseTestCase {
      * 开始测试
      */
     public void start() throws Exception {
-        System.out.println("------------------ (test start: " + getSchema() + ", port=" + getPort() + ")------------------");
+        System.out.println("------------------ (test start: " + getSchema() + ")------------------");
     }
 
     /**
@@ -33,10 +33,10 @@ public abstract class BaseTestCase {
      */
     public void stop() throws Exception {
 
-        System.out.println("------------------ (test stop:  " + getSchema() + ", port=" + getPort() + ")------------------");
+        System.out.println("------------------ (test stop:  " + getSchema() + ")------------------");
     }
 
     public void onError() {
-        System.out.println("------------------ (test error: " + getSchema() + ", port=" + getPort() + ")------------------");
+        System.out.println("------------------ (test error: " + getSchema() + ")------------------");
     }
 }

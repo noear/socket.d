@@ -16,18 +16,18 @@ public class BenchmarkTest {
 
     /**
      * 用于调试
-     * */
+     */
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[1];
-        TestCase01 testCase01 = new TestCase01(s1, 9386);
+        String s1 = schemas[0];
+        TestCase01 testCase01 = new TestCase01(s1, 1000,9386);
         try {
             testCase01.start();
 
-            testCase01.send(1000000);
-            testCase01.sendAndRequest(1000000);
-            testCase01.sendAndSubscribe(1000000);
+            testCase01.send();
+            testCase01.sendAndRequest();
+            testCase01.sendAndSubscribe();
 
-            testCase01.stop();
+           // testCase01.stop();
         } catch (Exception e) {
             testCase01.onError();
             e.printStackTrace();
@@ -38,18 +38,19 @@ public class BenchmarkTest {
     public void testCase01() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase01 testCase01 = new TestCase01(s1, 9386 + i);
+            TestCase01 testCase01 = new TestCase01(s1, 10000, 9386 + i);
             try {
                 testCase01.start();
 
-                testCase01.send(100000);
-                testCase01.sendAndRequest(100000);
-                testCase01.sendAndSubscribe(100000);
+                testCase01.send();
+                testCase01.sendAndRequest();
+                testCase01.sendAndSubscribe();
 
-                testCase01.stop();
+                //testCase01.stop();
+
+                Thread.sleep(1000 * 2);
             } catch (Exception e) {
                 testCase01.onError();
-                e.printStackTrace();
             }
         }
     }

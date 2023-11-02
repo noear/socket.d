@@ -40,13 +40,16 @@ public class TestCase01 extends BaseTestCase {
                         serverOnMessageCounter.incrementAndGet();
 
                         if (message.isRequest()) {
-                            session.reply(message, new StringEntity("hi reply"));
+                            session.reply(message, new StringEntity("hi reply")); //这之后，无效了
+                            session.reply(message, new StringEntity("hi reply**"));
                         }
 
                         if (message.isSubscribe()) {
                             session.reply(message, new StringEntity("hi reply"));
                             session.reply(message, new StringEntity("hi reply**"));
-                            session.replyEnd(message, new StringEntity("hi reply****"));
+                            session.replyEnd(message, new StringEntity("hi reply****")); //这之后，无效了
+                            session.reply(message, new StringEntity("hi reply******"));
+                            session.reply(message, new StringEntity("hi reply********"));
                         }
 
                         session.send("demo", new StringEntity("test"));

@@ -17,13 +17,13 @@ import java.nio.ByteBuffer;
  */
 public class ServerConfig implements Config {
     private final String schema;
+
     private Codec<ByteBuffer> codec;
     private KeyGenerator keyGenerator;
+    private SSLContext sslContext;
 
     private String host;
     private int port;
-
-    private SSLContext sslContext;
 
     private int coreThreads;
     private int maxThreads;
@@ -190,5 +190,19 @@ public class ServerConfig implements Config {
     public ServerConfig maxRequests(int maxRequests) {
         this.maxRequests = maxRequests;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerConfig{" +
+                "schema='" + schema + '\'' +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                ", coreThreads=" + coreThreads +
+                ", maxThreads=" + maxThreads +
+                ", readBufferSize=" + readBufferSize +
+                ", writeBufferSize=" + writeBufferSize +
+                ", maxRequests=" + maxRequests +
+                '}';
     }
 }

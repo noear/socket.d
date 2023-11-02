@@ -17,10 +17,12 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class ClientConfig implements Config {
+    private final String schema;
     private final String url;
     private final URI uri;
-    private final String schema;
 
+    private Codec<ByteBuffer> codec;
+    private KeyGenerator keyGenerator;
     private SSLContext sslContext;
 
     private long heartbeatInterval;
@@ -33,9 +35,6 @@ public class ClientConfig implements Config {
     private boolean autoReconnect;
 
     private int maxRequests;
-
-    private Codec<ByteBuffer> codec;
-    private KeyGenerator keyGenerator;
 
     public ClientConfig(String url) {
         this.url = url;
@@ -194,5 +193,19 @@ public class ClientConfig implements Config {
     public ClientConfig maxRequests(int maxRequests) {
         this.maxRequests = maxRequests;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ClientConfig{" +
+                "schema='" + schema + '\'' +
+                ", url='" + url + '\'' +
+                ", heartbeatInterval=" + heartbeatInterval +
+                ", connectTimeout=" + connectTimeout +
+                ", readBufferSize=" + readBufferSize +
+                ", writeBufferSize=" + writeBufferSize +
+                ", autoReconnect=" + autoReconnect +
+                ", maxRequests=" + maxRequests +
+                '}';
     }
 }

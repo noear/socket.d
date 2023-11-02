@@ -55,7 +55,7 @@ public class ClientConfig implements Config {
 
         this.autoReconnect = true;
         this.maxRequests = 10;
-        this.maxFrameSize = 4096;
+        this.maxFrameSize = 2048; //实际可能只有1464 //或许用1024更好？
     }
 
     /**

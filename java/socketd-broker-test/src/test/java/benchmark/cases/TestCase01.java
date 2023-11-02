@@ -51,7 +51,9 @@ public class TestCase01 extends BaseTestCase {
 
         //server
         server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
-                .config(config -> config.keyGenerator(new KeyGeneratorTime()))
+                .config(config -> config
+                        .keyGenerator(new KeyGeneratorTime())
+                        .maxFrameSize(1024))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -74,7 +76,9 @@ public class TestCase01 extends BaseTestCase {
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
-                .config(config -> config.keyGenerator(new KeyGeneratorTime()))
+                .config(config -> config
+                        .keyGenerator(new KeyGeneratorTime())
+                        .maxFrameSize(1024))
                 .open();
 
         //单预热
@@ -99,7 +103,7 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
         RunUtils.async(() -> {
             RunUtils.runAnTry(() -> {
-                sendLatch.await();
+                RunUtils.runAnTry(()->sendLatch.await(4, TimeUnit.SECONDS));
                 long timeSpan2 = System.currentTimeMillis() - startTime;
                 System.out.println(getSchema() + "::send:: time:" + timeSpan + ", time2:" + timeSpan2
                         + ", count=" + (count - sendLatch.getCount()));
@@ -117,7 +121,7 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
         RunUtils.async(() -> {
             RunUtils.runAnTry(() -> {
-                RunUtils.runAnTry(()->sendAndRequestLatch.await(40, TimeUnit.SECONDS));
+                RunUtils.runAnTry(()->sendAndRequestLatch.await(4, TimeUnit.SECONDS));
                 long timeSpan2 = System.currentTimeMillis() - startTime;
                 System.out.println(getSchema() + "::sendAndRequest:: time:" + timeSpan + ", time2:" + timeSpan2
                         + ", count=" + (count - sendAndRequestLatch.getCount()));
@@ -137,7 +141,7 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
         RunUtils.async(() -> {
             RunUtils.runAnTry(() -> {
-                RunUtils.runAnTry(()->sendAndSubscribeLatch.await(40, TimeUnit.SECONDS));
+                RunUtils.runAnTry(()->sendAndSubscribeLatch.await(4, TimeUnit.SECONDS));
                 long timeSpan2 = System.currentTimeMillis() - startTime;
                 System.out.println(getSchema() + "::sendAndSubscribe:: time:" + timeSpan + ", time2:" + timeSpan2
                         + ", count=" + (count - sendAndSubscribeLatch.getCount()));

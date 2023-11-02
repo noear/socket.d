@@ -38,7 +38,7 @@ public class BenchmarkTest {
     public void testCase01() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase01 testCase01 = new TestCase01(s1, 10000, 9386 + i);
+            TestCase01 testCase01 = new TestCase01(s1, 1000, 9386 + i);
             try {
                 testCase01.start();
 
@@ -51,6 +51,7 @@ public class BenchmarkTest {
                 Thread.sleep(1000 * 2);
             } catch (Exception e) {
                 testCase01.onError();
+                e.printStackTrace();
             }
         }
     }

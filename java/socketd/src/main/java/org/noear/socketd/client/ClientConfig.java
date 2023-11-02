@@ -42,6 +42,7 @@ public class ClientConfig {
         this.connectTimeout = 3000;
         this.heartbeatInterval = 20 * 1000;
 
+        this.autoReconnect = true;
         this.maxRequests = 10;
     }
 

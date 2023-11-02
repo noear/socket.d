@@ -38,7 +38,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     public Channel connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
-        SocketAddress socketAddress = new InetSocketAddress(client.config().getUri().getHost(), client.config().getUri().getPort());
+        SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
 
         //支持 ssl
         if (client.config().getSslContext() == null) {

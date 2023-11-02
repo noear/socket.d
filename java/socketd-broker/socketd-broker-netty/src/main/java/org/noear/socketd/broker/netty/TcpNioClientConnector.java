@@ -13,7 +13,6 @@ import org.noear.socketd.core.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -43,14 +42,13 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             Bootstrap bootstrap = new Bootstrap();
 
             NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
-            SSLContext sslContext = client.config().getSslContext();
-            ChannelHandler handler = new NettyChannelInitializer(client.config().getCodec(), sslContext, true, inboundHandler);
+            ChannelHandler handler = new NettyChannelInitializer(client.config(), inboundHandler);
 
             real = bootstrap.group(eventLoopGroup)
                     .channel(NioSocketChannel.class)
                     .handler(handler)
-                    .connect(client.config().getUri().getHost(),
-                            client.config().getUri().getPort())
+                    .connect(client.config().getHost(),
+                            client.config().getPort())
                     .await();
 
             return inboundHandler.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);

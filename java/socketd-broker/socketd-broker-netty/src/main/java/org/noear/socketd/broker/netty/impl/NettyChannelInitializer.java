@@ -6,37 +6,31 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslHandler;
-import org.noear.socketd.core.Codec;
+import org.noear.socketd.core.Config;
 import org.noear.socketd.core.Frame;
 
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
-import java.nio.ByteBuffer;
 
 /**
  * @author noear
  * @since 2.0
  */
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
-    private SimpleChannelInboundHandler<Frame> processor;
-    private Codec<ByteBuffer> codec;
-    private SSLContext sslContext;
-    private boolean clientMode;
+    private final SimpleChannelInboundHandler<Frame> processor;
+    private final Config config;
 
-    public NettyChannelInitializer(Codec<ByteBuffer> codec, SSLContext sslContext, boolean clientMode, SimpleChannelInboundHandler<Frame> processor) {
+    public NettyChannelInitializer(Config config, SimpleChannelInboundHandler<Frame> processor) {
         this.processor = processor;
-        this.codec = codec;
-        this.sslContext = sslContext;
-        this.clientMode = clientMode;
+        this.config = config;
     }
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
-        if (sslContext != null) {
-            SSLEngine engine = sslContext.createSSLEngine();
-            if (clientMode == false) {
+        if (config.getSslContext() != null) {
+            SSLEngine engine = config.getSslContext().createSSLEngine();
+            if (config.clientMode() == false) {
                 engine.setUseClientMode(false);
                 engine.setNeedClientAuth(true);
             }
@@ -44,8 +38,8 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         }
 
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0));
-        pipeline.addLast(new NettyMessageEncoder(codec));
-        pipeline.addLast(new NettyMessageDecoder(codec));
+        pipeline.addLast(new NettyMessageEncoder(config.getCodec()));
+        pipeline.addLast(new NettyMessageDecoder(config.getCodec()));
         pipeline.addLast(processor);
     }
 }

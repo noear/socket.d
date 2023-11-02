@@ -35,7 +35,7 @@ public class UdpClientConnector extends ClientConnectorBase<UdpClient> {
     public Channel connect() throws Exception {
         real = new DatagramSocket();
 
-        SocketAddress socketAddress = new InetSocketAddress(client.config().getUri().getHost(), client.config().getUri().getPort());
+        SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
         real.connect(socketAddress);
 
         DatagramTagert tagert = new DatagramTagert(real, null, true);

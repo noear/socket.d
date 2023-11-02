@@ -50,6 +50,11 @@ public class ServerConfig implements Config {
         this.maxRequests = 10;
     }
 
+    @Override
+    public boolean clientMode() {
+        return false;
+    }
+
     /**
      * 获取协议架构
      */

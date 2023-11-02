@@ -51,6 +51,11 @@ public class ClientConfig implements Config {
     }
 
 
+    @Override
+    public boolean clientMode() {
+        return true;
+    }
+
     /**
      * 获取协议架构
      */
@@ -94,6 +99,20 @@ public class ClientConfig implements Config {
      */
     public URI getUri() {
         return uri;
+    }
+
+    /**
+     * 获取连接主机
+     */
+    public String getHost() {
+        return uri.getHost();
+    }
+
+    /**
+     * 获取连接端口
+     */
+    public int getPort() {
+        return uri.getPort();
     }
 
     /**

@@ -11,6 +11,11 @@ import java.nio.ByteBuffer;
  */
 public interface Config {
     /**
+     * 是否为客户端模式
+     */
+    boolean clientMode();
+
+    /**
      * 获取协议架构
      */
     String getSchema();

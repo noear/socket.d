@@ -17,7 +17,7 @@ public class UdpBroker implements ClientBroker, ServerBroker {
 
     @Override
     public String[] schema() {
-        return new String[]{"udp"};
+        return new String[]{"udp", "udp-java"};
     }
 
     @Override

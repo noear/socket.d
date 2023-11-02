@@ -16,7 +16,7 @@ import org.noear.socketd.server.ServerConfig;
 public class TcpAioBroker implements ClientBroker, ServerBroker {
     @Override
     public String[] schema() {
-        return new String[]{"tcp", "tcps"};
+        return new String[]{"tcp", "tcps", "tcp-smartsocket"};
     }
 
     @Override

@@ -17,7 +17,6 @@ import java.nio.ByteBuffer;
  * @since 2.0
  */
 public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
-    private static final int LEN_INT = 4;
     private final Config config;
 
     public UdpChannelAssistant(Config config) {
@@ -29,7 +28,7 @@ public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
      */
     public DatagramFrame read(DatagramSocket source) throws IOException {
         //获取长度
-        DatagramPacket datagramPacket = new DatagramPacket(new byte[LEN_INT], LEN_INT);
+        DatagramPacket datagramPacket = new DatagramPacket(new byte[Integer.BYTES], Integer.BYTES);
         source.receive(datagramPacket);
         byte[] sizeBytes = datagramPacket.getData();
         if (sizeBytes == null || sizeBytes.length == 0) {
@@ -58,9 +57,9 @@ public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
     public void write(DatagramTagert target, Frame frame) throws IOException {
         byte[] dataBytes = config.getCodec().encode(frame).array();
 
-        byte[] sizeBytes = ByteBuffer.allocate(LEN_INT).putInt(dataBytes.length).array();
+        byte[] sizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(dataBytes.length).array();
 
-        //先发个长度包
+        //先发长度包
         target.send(sizeBytes);
         //再发数据包
         target.send(dataBytes);

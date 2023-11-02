@@ -47,6 +47,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
         client.processor().onReceive(channel, frame);
 
         if (frame.getFlag() == Flag.Connack) {
+            //握手完成，通道可用了
             channelFuture.complete(channel);
         }
     }
@@ -54,12 +55,15 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
+
         Channel channel = ctx.attr(CHANNEL_KEY).get();
         client.processor().onClose(channel.getSession());
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+
         Channel channel = ctx.attr(CHANNEL_KEY).get();
         client.processor().onError(channel.getSession(), cause);
         ctx.close();

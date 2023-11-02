@@ -21,8 +21,9 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
         int len = byteBuf.readInt();
+
         if(len > 0) {
             byte[] bytes = new byte[len - Integer.BYTES];
             byteBuf.readBytes(bytes);
@@ -37,8 +38,9 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
                 out.add(message);
             }
 
-            byteBuffer.compact();
+            byteBuffer.compact(); //时间久了，都不知道这是干嘛的
         }
-        byteBuf.discardReadBytes();
+
+        byteBuf.discardReadBytes(); //时间久了，都不知道这是干嘛的
     }
 }

@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class NettyMessageDecoder extends ByteToMessageDecoder {
     private final Config config;
-
     public NettyMessageDecoder(Config config) {
         this.config = config;
     }

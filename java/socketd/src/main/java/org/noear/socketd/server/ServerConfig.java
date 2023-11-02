@@ -54,7 +54,7 @@ public class ServerConfig implements Config {
         this.writeBufferSize = 512;
 
         this.maxRequests = 10;
-        this.maxUdpSize = 2048; //实际可能只有1464 //或许用1024更好？
+        this.maxUdpSize = 2048; //与 netty 保持一致 //实际可用 1464
     }
 
     /**

@@ -21,13 +21,13 @@ import java.util.concurrent.TimeoutException;
  * @author Urara
  * @since 2.0
  */
-public class UdpClientConnector extends ClientConnectorBase<UdpClient> {
-    private static final Logger log = LoggerFactory.getLogger(UdpClientConnector.class);
+public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
+    private static final Logger log = LoggerFactory.getLogger(UdpBioClientConnector.class);
 
     private DatagramSocket real;
     private Thread receiveThread;
 
-    public UdpClientConnector(UdpClient client) {
+    public UdpBioClientConnector(UdpBioClient client) {
         super(client);
     }
 

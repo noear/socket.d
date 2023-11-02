@@ -18,12 +18,12 @@ import java.nio.ByteBuffer;
  * @author Urara
  * @since 2.0
  */
-public class UdpChannelAssistant implements ChannelAssistant<DatagramTagert> {
-    private static final Logger log = LoggerFactory.getLogger(UdpChannelAssistant.class);
+public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> {
+    private static final Logger log = LoggerFactory.getLogger(UdpBioChannelAssistant.class);
 
     private final Config config;
 
-    public UdpChannelAssistant(Config config) {
+    public UdpBioChannelAssistant(Config config) {
         this.config = config;
     }
 

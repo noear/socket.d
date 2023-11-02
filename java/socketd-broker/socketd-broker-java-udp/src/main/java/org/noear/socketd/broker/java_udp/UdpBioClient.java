@@ -14,14 +14,14 @@ import org.noear.socketd.core.impl.SessionDefault;
  * @author Urara
  * @since 2.0
  */
-public class UdpClient extends ClientBase<UdpChannelAssistant> {
-    public UdpClient(ClientConfig config) {
-        super(config, new UdpChannelAssistant(config));
+public class UdpBioClient extends ClientBase<UdpBioChannelAssistant> {
+    public UdpBioClient(ClientConfig config) {
+        super(config, new UdpBioChannelAssistant(config));
     }
 
     @Override
     public Session open() throws Exception {
-        ClientConnector connector = new UdpClientConnector(this);
+        ClientConnector connector = new UdpBioClientConnector(this);
         Channel channel = new ClientChannel(connector.connect(), connector);
         return new SessionDefault(channel);
     }

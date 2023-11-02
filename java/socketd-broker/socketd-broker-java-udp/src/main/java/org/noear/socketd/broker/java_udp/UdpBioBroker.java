@@ -13,7 +13,7 @@ import org.noear.socketd.server.ServerConfig;
  * @author Urara
  * @since 2.0
  */
-public class UdpBroker implements ClientBroker, ServerBroker {
+public class UdpBioBroker implements ClientBroker, ServerBroker {
 
     @Override
     public String[] schema() {
@@ -22,11 +22,11 @@ public class UdpBroker implements ClientBroker, ServerBroker {
 
     @Override
     public Server createServer(ServerConfig serverConfig) {
-        return new UdpServer(serverConfig);
+        return new UdpBioServer(serverConfig);
     }
 
     @Override
     public Client createClient(ClientConfig clientConfig) {
-        return new UdpClient(clientConfig);
+        return new UdpBioClient(clientConfig);
     }
 }

@@ -6,6 +6,7 @@ import org.noear.socketd.core.Message;
 import org.noear.socketd.core.Session;
 import org.noear.socketd.core.SimpleListener;
 import org.noear.socketd.core.entity.StringEntity;
+import org.noear.socketd.core.impl.KeyGeneratorTime;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
@@ -36,6 +37,7 @@ public class TestCase01 extends BaseTestCase {
 
         //server
         server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+                .config(config -> config.keyGenerator(new KeyGeneratorTime()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -53,7 +55,9 @@ public class TestCase01 extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl)
+                .config(config -> config.keyGenerator(new KeyGeneratorTime()))
+                .open();
 
         //单预热
         for (int i = 0; i < 10; i++) {

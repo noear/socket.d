@@ -2,6 +2,7 @@ package org.noear.socketd.core;
 
 import javax.net.ssl.SSLContext;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 /**
  * 配置类
@@ -19,6 +20,11 @@ public interface Config {
      * 获取协议架构
      */
     String getSchema();
+
+    /**
+     * 获取字符集
+     * */
+    Charset getCharset();
 
     /**
      * 获取编解码器

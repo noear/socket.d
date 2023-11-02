@@ -99,7 +99,7 @@ public class EntityDefault implements Entity {
     public String toString() {
         return "Entity{" +
                 "meta='" + getMetaString() + '\'' +
-                ", data=" + new String(getData(), StandardCharsets.UTF_8) +
+                ", data=byte[" + getData().length + ']' + //避免内容太大，影响打印
                 '}';
     }
 }

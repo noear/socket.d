@@ -9,6 +9,8 @@ import org.noear.socketd.utils.Utils;
 
 import javax.net.ssl.SSLContext;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 服务端属性（单位：毫秒）
@@ -18,6 +20,7 @@ import java.nio.ByteBuffer;
  */
 public class ServerConfig implements Config {
     private final String schema;
+    private Charset charset;
 
     private Codec<ByteBuffer> codec;
     private KeyGenerator keyGenerator;
@@ -36,7 +39,8 @@ public class ServerConfig implements Config {
 
     public ServerConfig(String schema) {
         this.schema = schema;
-        this.codec = new CodecByteBuffer();
+        this.charset = StandardCharsets.UTF_8;
+        this.codec = new CodecByteBuffer(this);
         this.keyGenerator = new KeyGeneratorGuid();
 
         this.host = "";
@@ -64,6 +68,17 @@ public class ServerConfig implements Config {
      */
     public String getSchema() {
         return schema;
+    }
+
+
+    @Override
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public ServerConfig charset(Charset charset) {
+        this.charset = charset;
+        return this;
     }
 
     public Codec<ByteBuffer> getCodec() {

@@ -42,9 +42,9 @@ public class BenchmarkTest {
             try {
                 testCase01.start();
 
-                testCase01.send(1000000);
-                testCase01.sendAndRequest(1000000);
-                testCase01.sendAndSubscribe(1000000);
+                testCase01.send(100000);
+                testCase01.sendAndRequest(100000);
+                testCase01.sendAndSubscribe(100000);
 
                 testCase01.stop();
             } catch (Exception e) {

@@ -15,15 +15,26 @@ import java.util.List;
  */
 public class NettyMessageDecoder extends ByteToMessageDecoder {
     private final Config config;
+
     public NettyMessageDecoder(Config config) {
         this.config = config;
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf inBuf, List<Object> out) throws Exception {
+        if (inBuf.readableBytes() < Integer.BYTES) {
+            return;
+        }
+
+        inBuf.markReaderIndex();
         int len = inBuf.readInt();
 
-        if(len > 0) {
+        if (inBuf.readableBytes() < (len - Integer.BYTES)) {
+            inBuf.resetReaderIndex();
+            return;
+        }
+
+        if (len > 0) {
             byte[] bytes = new byte[len - Integer.BYTES];
             inBuf.readBytes(bytes);
 
@@ -38,6 +49,7 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
             }
         }
 
-        inBuf.discardReadBytes(); //时间久了，都不知道这是干嘛的
+        //弃用已读的空间，从而复用
+        inBuf.discardReadBytes();
     }
 }

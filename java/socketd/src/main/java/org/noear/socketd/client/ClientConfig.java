@@ -9,6 +9,8 @@ import org.noear.socketd.core.impl.KeyGeneratorGuid;
 import javax.net.ssl.SSLContext;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 客记端配置（单位：毫秒）
@@ -18,6 +20,8 @@ import java.nio.ByteBuffer;
  */
 public class ClientConfig implements Config {
     private final String schema;
+    private Charset charset;
+
     private final String url;
     private final URI uri;
 
@@ -40,7 +44,9 @@ public class ClientConfig implements Config {
         this.url = url;
         this.uri = URI.create(url);
         this.schema = uri.getScheme();
-        this.codec = new CodecByteBuffer();
+        this.charset = StandardCharsets.UTF_8;
+
+        this.codec = new CodecByteBuffer(this);
         this.keyGenerator = new KeyGeneratorGuid();
 
         this.connectTimeout = 3000;
@@ -61,13 +67,25 @@ public class ClientConfig implements Config {
     /**
      * 获取协议架构
      */
+    @Override
     public String getSchema() {
         return schema;
+    }
+
+    @Override
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public ClientConfig charset(Charset charset) {
+        this.charset = charset;
+        return this;
     }
 
     /**
      * 获取编解码器
      */
+    @Override
     public Codec<ByteBuffer> getCodec() {
         return codec;
     }
@@ -80,6 +98,7 @@ public class ClientConfig implements Config {
     /**
      * 获取标识生成器
      */
+    @Override
     public KeyGenerator getKeyGenerator() {
         return keyGenerator;
     }
@@ -120,6 +139,7 @@ public class ClientConfig implements Config {
     /**
      * 获取 ssl 上下文
      */
+    @Override
     public SSLContext getSslContext() {
         return sslContext;
     }
@@ -207,6 +227,7 @@ public class ClientConfig implements Config {
     /**
      * 允许最大请求数
      */
+    @Override
     public int getMaxRequests() {
         return maxRequests;
     }

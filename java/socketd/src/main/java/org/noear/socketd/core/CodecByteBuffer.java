@@ -5,8 +5,6 @@ import org.noear.socketd.core.entity.EntityDefault;
 import org.noear.socketd.core.impl.MessageDefault;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 编解码器（基于 ByteBuffer 编解）
@@ -15,8 +13,15 @@ import java.nio.charset.StandardCharsets;
  * @since 2.0
  */
 public class CodecByteBuffer implements Codec<ByteBuffer> {
+    private static final int MAX_SIZE_KEY = 256;
+    private static final int MAX_SIZE_TOPIC = 512;
+    private static final int MAX_SIZE_META = 4096;
 
-    private Charset charset = StandardCharsets.UTF_8;
+    private final Config config;
+
+    public CodecByteBuffer(Config config) {
+        this.config = config;
+    }
 
     /**
      * 编码
@@ -25,7 +30,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
     public ByteBuffer encode(Frame frame) {
         if (frame.getMessage() == null) {
             //length (flag + int.bytes)
-            int len = 4 + 4;
+            int len = Integer.BYTES + Integer.BYTES;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -40,14 +45,14 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             return buffer;
         } else {
             //key
-            byte[] keyB = frame.getMessage().getKey().getBytes(charset);
+            byte[] keyB = frame.getMessage().getKey().getBytes(config.getCharset());
             //topic
-            byte[] topicB = frame.getMessage().getTopic().getBytes(charset);
+            byte[] topicB = frame.getMessage().getTopic().getBytes(config.getCharset());
             //metaString
-            byte[] metaStringB = frame.getMessage().getEntity().getMetaString().getBytes(charset);
+            byte[] metaStringB = frame.getMessage().getEntity().getMetaString().getBytes(config.getCharset());
 
             //length (flag + key + topic + metaString + data + int.bytes + \n*3)
-            int len = keyB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getData().length + 2 * 3 + 4 + 4;
+            int len = keyB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getData().length + 2 * 3 + Integer.BYTES + Integer.BYTES;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -85,7 +90,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
     public Frame decode(ByteBuffer buffer) {
         int len0 = buffer.getInt();
 
-        if (len0 > (buffer.remaining() + 4)) {
+        if (len0 > (buffer.remaining() + Integer.BYTES)) {
             return null;
         }
 
@@ -97,22 +102,22 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
         } else {
 
             //1.解码key and topic
-            ByteBuffer sb = ByteBuffer.allocate(Math.min(4096, buffer.limit()));
+            ByteBuffer sb = ByteBuffer.allocate(Math.min(MAX_SIZE_META, buffer.limit()));
 
             //key
-            String key = decodeString(buffer, sb, 256);
+            String key = decodeString(buffer, sb, MAX_SIZE_KEY);
             if (key == null) {
                 return null;
             }
 
             //topic
-            String topic = decodeString(buffer, sb, 512);
+            String topic = decodeString(buffer, sb, MAX_SIZE_TOPIC);
             if (topic == null) {
                 return null;
             }
 
             //metaString
-            String metaString = decodeString(buffer, sb, 4096);
+            String metaString = decodeString(buffer, sb, MAX_SIZE_META);
             if (metaString == null) {
                 return null;
             }
@@ -152,6 +157,6 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             return "";
         }
 
-        return new String(sb.array(), 0, sb.limit());
+        return new String(sb.array(), 0, sb.limit(), config.getCharset());
     }
 }

@@ -72,7 +72,7 @@ public class UdpServer extends ServerBase<UdpChannelAssistant> {
                     } catch (Throwable e) {
                         log.debug("{}", e);
                     }
-                } catch (IOException e) {
+                } catch (Throwable e) {
                     if (server.isClosed()) {
                         //说明被手动关掉了
                         return;

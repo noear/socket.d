@@ -80,7 +80,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                         log.debug("{}", e);
                         close(socket);
                     }
-                } catch (IOException e) {
+                } catch (Throwable e) {
                     if (server.isClosed()) {
                         //说明被手动关掉了
                         return;

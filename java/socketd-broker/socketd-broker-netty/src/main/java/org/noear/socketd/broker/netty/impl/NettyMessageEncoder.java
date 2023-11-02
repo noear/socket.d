@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.noear.socketd.core.Codec;
-import org.noear.socketd.core.CodecByteBuffer;
 import org.noear.socketd.core.Frame;
 
 import java.nio.ByteBuffer;

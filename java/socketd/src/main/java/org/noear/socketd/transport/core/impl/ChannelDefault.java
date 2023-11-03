@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core.impl;
 
+import org.noear.socketd.exception.SocketdChannelException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.core.*;
 
 import java.io.IOException;
@@ -37,6 +39,11 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     }
 
     @Override
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    @Override
     public InetSocketAddress getRemoteAddress() throws IOException {
         return assistant.getRemoteAddress(source);
     }
@@ -51,6 +58,8 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      */
     @Override
     public void send(Frame frame, Acceptor acceptor) throws IOException {
+        Asserts.assertClosed(this);
+
         if (frame.getMessage() != null) {
             Message message = frame.getMessage();
 
@@ -113,11 +122,15 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         return session;
     }
 
+    //用于做关闭异常提醒
+    private boolean isClosed;
+
     /**
      * 关闭
      */
     @Override
     public void close() throws IOException {
+        isClosed = true;
         assistant.close(source);
         acceptorMap.clear();
     }

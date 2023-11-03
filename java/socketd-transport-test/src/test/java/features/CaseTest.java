@@ -2,6 +2,7 @@ package features;
 
 import features.cases.TestCase01;
 import features.cases.TestCase11;
+import features.cases.TestCase12;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -49,6 +50,21 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
             TestCase11 testCase01 = new TestCase11(s1, 2000 + i);
+            try {
+                testCase01.start();
+                testCase01.stop();
+            } catch (Exception e) {
+                testCase01.onError();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Test
+    public void testCase12() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+            TestCase12 testCase01 = new TestCase12(s1, 3000 + i);
             try {
                 testCase01.start();
                 testCase01.stop();

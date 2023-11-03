@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.client;
 
 import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;
@@ -50,6 +51,15 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    @Override
+    public boolean isClosed() {
+        if (real == null) {
+            return false;
+        } else {
+            return real.isClosed();
+        }
+    }
+
     /**
      * 获取远程地址
      */
@@ -75,20 +85,46 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
-     * 发送
+     * 心跳处理
      */
-    @Override
-    public void send(Frame frame, Acceptor acceptor) throws IOException {
+    private void heartbeatHandle() {
+        Asserts.assertClosed(real);
+
         synchronized (this) {
             try {
                 prepareSend();
 
-                real.send(frame, acceptor);
+                heartbeatHandler.heartbeatHandle(getSession());
+            } catch (SocketdException e) {
+                throw e;
             } catch (Throwable e) {
                 if (connector.autoReconnect()) {
                     real = null;
                 }
 
+                throw new SocketdConnectionException(e);
+            }
+        }
+    }
+
+    /**
+     * 发送
+     */
+    @Override
+    public void send(Frame frame, Acceptor acceptor) throws IOException {
+        Asserts.assertClosed(real);
+
+        synchronized (this) {
+            try {
+                prepareSend();
+
+                real.send(frame, acceptor);
+            } catch (SocketdException e) {
+                throw e;
+            } catch (Throwable e) {
+                if (connector.autoReconnect()) {
+                    real = null;
+                }
                 throw new SocketdConnectionException(e);
             }
         }
@@ -122,24 +158,6 @@ public class ClientChannel extends ChannelBase implements Channel {
         RunUtils.runAnTry(() -> real.close());
     }
 
-    /**
-     * 心跳处理
-     */
-    private void heartbeatHandle() {
-        synchronized (this) {
-            try {
-                prepareSend();
-
-                heartbeatHandler.heartbeatHandle(getSession());
-            } catch (Throwable e) {
-                if (connector.autoReconnect()) {
-                    real = null;
-                }
-
-                throw new SocketdConnectionException(e);
-            }
-        }
-    }
 
 
     /**

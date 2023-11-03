@@ -30,6 +30,11 @@ public interface Channel extends Closeable {
     boolean isValid();
 
     /**
+     * 是否已关闭
+     * */
+    boolean isClosed();
+
+    /**
      * 获取配置
      */
     Config getConfig();

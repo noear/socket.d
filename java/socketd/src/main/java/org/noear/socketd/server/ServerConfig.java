@@ -1,14 +1,8 @@
 package org.noear.socketd.server;
 
 import org.noear.socketd.core.*;
-import org.noear.socketd.core.impl.KeyGeneratorGuid;
-import org.noear.socketd.core.impl.RangesHandlerDefault;
 import org.noear.socketd.utils.Utils;
 
-import javax.net.ssl.SSLContext;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 服务端属性（单位：毫秒）
@@ -16,14 +10,8 @@ import java.nio.charset.StandardCharsets;
  * @author noear
  * @since 2.0
  */
-public class ServerConfig implements Config {
+public class ServerConfig extends ConfigBase<ServerConfig> {
     private final String schema;
-    private Charset charset;
-
-    private Codec<ByteBuffer> codec;
-    private KeyGenerator keyGenerator;
-    private RangesHandler rangesHandler;
-    private SSLContext sslContext;
 
     private String host;
     private int port;
@@ -34,16 +22,9 @@ public class ServerConfig implements Config {
     private int readBufferSize;
     private int writeBufferSize;
 
-    private int maxRequests;
-    private int maxUdpSize;
-    private int rangeSize;
-
     public ServerConfig(String schema) {
+        super(false);
         this.schema = schema;
-        this.charset = StandardCharsets.UTF_8;
-        this.codec = new CodecByteBuffer(this);
-        this.keyGenerator = new KeyGeneratorGuid();
-        this.rangesHandler = new RangesHandlerDefault();
 
         this.host = "";
         this.port = 6329;
@@ -53,59 +34,14 @@ public class ServerConfig implements Config {
 
         this.readBufferSize = 512;
         this.writeBufferSize = 512;
-
-        this.maxRequests = 10;
-        this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
-        this.rangeSize = 1024 * 1024 * 16; //16m
     }
 
-    /**
-     * 是否客户端模式
-     */
-    @Override
-    public boolean clientMode() {
-        return false;
-    }
 
     /**
      * 获取协议架构
      */
     public String getSchema() {
         return schema;
-    }
-
-
-    @Override
-    public Charset getCharset() {
-        return charset;
-    }
-
-    public ServerConfig charset(Charset charset) {
-        this.charset = charset;
-        return this;
-    }
-
-    public Codec<ByteBuffer> getCodec() {
-        return codec;
-    }
-
-    public ServerConfig codec(Codec<ByteBuffer> codec) {
-        this.codec = codec;
-        return this;
-    }
-
-    public KeyGenerator getKeyGenerator() {
-        return keyGenerator;
-    }
-
-    @Override
-    public RangesHandler getRangesHandler() {
-        return rangesHandler;
-    }
-
-    public ServerConfig keyGenerator(KeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
-        return this;
     }
 
     /**
@@ -138,7 +74,6 @@ public class ServerConfig implements Config {
         return this;
     }
 
-
     /**
      * 获取本机地址
      */
@@ -148,21 +83,6 @@ public class ServerConfig implements Config {
         } else {
             return schema + "://" + host + ":" + port;
         }
-    }
-
-    /**
-     * 获取 ssl 上下文
-     */
-    public SSLContext getSslContext() {
-        return sslContext;
-    }
-
-    /**
-     * 配置 ssl 上下文
-     */
-    public ServerConfig sslContext(SSLContext sslContext) {
-        this.sslContext = sslContext;
-        return this;
     }
 
     /**
@@ -222,46 +142,6 @@ public class ServerConfig implements Config {
      */
     public ServerConfig writeBufferSize(int writeBufferSize) {
         this.writeBufferSize = writeBufferSize;
-        return this;
-    }
-
-    /**
-     * 允许最大请求数
-     */
-    public int getMaxRequests() {
-        return maxRequests;
-    }
-
-    public ServerConfig maxRequests(int maxRequests) {
-        this.maxRequests = maxRequests;
-        return this;
-    }
-
-
-    /**
-     * 允许最大UDP包大小
-     */
-    @Override
-    public int getMaxUdpSize() {
-        return maxUdpSize;
-    }
-
-
-    public ServerConfig maxUdpSize(int maxUdpSize) {
-        this.maxUdpSize = maxUdpSize;
-        return this;
-    }
-
-    /**
-     * 获取分片大小
-     */
-    @Override
-    public int getRangeSize() {
-        return rangeSize;
-    }
-
-    public ServerConfig rangeSize(int rangeSize) {
-        this.rangeSize = rangeSize;
         return this;
     }
 

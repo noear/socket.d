@@ -18,8 +18,11 @@ public class BenchmarkTest {
      * 用于调试
      */
     public static void main(String[] args) throws Exception {
+        int count = 1000;
+        int timeout = 1;
+
         String s1 = schemas[3];
-        TestCase01 testCase01 = new TestCase01(s1, 100000,9386);
+        TestCase01 testCase01 = new TestCase01(s1, timeout, count,9386);
         try {
             testCase01.start();
 
@@ -36,9 +39,12 @@ public class BenchmarkTest {
 
     @Test
     public void testCase01() throws Exception {
+        int count = 10000000;
+        int timeout = 10;
+
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase01 testCase01 = new TestCase01(s1, 1000, 9386 + i);
+            TestCase01 testCase01 = new TestCase01(s1, timeout,count, 9386 + i);
             try {
                 testCase01.start();
 
@@ -48,7 +54,7 @@ public class BenchmarkTest {
 
                 //testCase01.stop();
 
-                Thread.sleep(1000 * 2);
+                Thread.sleep(timeout * 1000 );
             } catch (Exception e) {
                 testCase01.onError();
                 e.printStackTrace();

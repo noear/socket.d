@@ -25,9 +25,10 @@ import java.util.concurrent.TimeUnit;
 public class TestCase01 extends BaseTestCase {
     private static Logger log = LoggerFactory.getLogger(TestCase01.class);
 
-    public TestCase01(String schema, int count, int port) {
+    public TestCase01(String schema, int timeout, int count, int port) {
         super(schema, port);
 
+        this.timeout =timeout;
         this.count = count;
         this.sendLatch = new CountDownLatch(count + 1);
         this.sendAndRequestLatch = new CountDownLatch(count + 1);
@@ -38,6 +39,7 @@ public class TestCase01 extends BaseTestCase {
     private Session clientSession;
 
     private final int count;
+    private final int timeout;
 
     private final CountDownLatch sendLatch;
     private final CountDownLatch sendAndRequestLatch;
@@ -97,14 +99,11 @@ public class TestCase01 extends BaseTestCase {
         }
 
         long timeSpan = System.currentTimeMillis() - startTime;
-        RunUtils.async(() -> {
-            RunUtils.runAnTry(() -> {
-                RunUtils.runAnTry(()->sendLatch.await(4, TimeUnit.SECONDS));
-                long timeSpan2 = System.currentTimeMillis() - startTime;
-                System.out.println(getSchema() + "::send:: time:" + timeSpan + ", time2:" + timeSpan2
-                        + ", count=" + (count - sendLatch.getCount()));
-            });
-        });
+
+        sendLatch.await(timeout, TimeUnit.SECONDS);
+        long timeSpan2 = System.currentTimeMillis() - startTime;
+        System.out.println(getSchema() + "::send:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
+                + ", count=" + (count - sendLatch.getCount()));
     }
 
     public void sendAndRequest() throws Exception {
@@ -115,14 +114,11 @@ public class TestCase01 extends BaseTestCase {
         }
 
         long timeSpan = System.currentTimeMillis() - startTime;
-        RunUtils.async(() -> {
-            RunUtils.runAnTry(() -> {
-                RunUtils.runAnTry(()->sendAndRequestLatch.await(4, TimeUnit.SECONDS));
-                long timeSpan2 = System.currentTimeMillis() - startTime;
-                System.out.println(getSchema() + "::sendAndRequest:: time:" + timeSpan + ", time2:" + timeSpan2
-                        + ", count=" + (count - sendAndRequestLatch.getCount()));
-            });
-        });
+
+        sendAndRequestLatch.await(timeout, TimeUnit.SECONDS);
+        long timeSpan2 = System.currentTimeMillis() - startTime;
+        System.out.println(getSchema() + "::sendAndRequest:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
+                + ", count=" + (count - sendAndRequestLatch.getCount()));
     }
 
     public void sendAndSubscribe() throws Exception {
@@ -135,14 +131,11 @@ public class TestCase01 extends BaseTestCase {
         }
 
         long timeSpan = System.currentTimeMillis() - startTime;
-        RunUtils.async(() -> {
-            RunUtils.runAnTry(() -> {
-                RunUtils.runAnTry(()->sendAndSubscribeLatch.await(4, TimeUnit.SECONDS));
-                long timeSpan2 = System.currentTimeMillis() - startTime;
-                System.out.println(getSchema() + "::sendAndSubscribe:: time:" + timeSpan + ", time2:" + timeSpan2
-                        + ", count=" + (count - sendAndSubscribeLatch.getCount()));
-            });
-        });
+
+        sendAndSubscribeLatch.await(timeout, TimeUnit.SECONDS);
+        long timeSpan2 = System.currentTimeMillis() - startTime;
+        System.out.println(getSchema() + "::sendAndSubscribe:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
+                + ", count=" + (count - sendAndSubscribeLatch.getCount()));
     }
 
     @Override

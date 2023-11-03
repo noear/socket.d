@@ -11,16 +11,10 @@
         <relativePath>../socketd-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>socketd-solon-plugin</artifactId>
+    <artifactId>socketd-transport-test</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon</artifactId>
-            <version>${solon.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>socketd</artifactId>
@@ -28,35 +22,40 @@
 
         <dependency>
             <groupId>org.noear</groupId>
-            <artifactId>solon.boot</artifactId>
-            <version>${solon.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon.serialization.snack3</artifactId>
-            <version>${solon.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon.logging.simple</artifactId>
-            <version>${solon.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.noear</groupId>
             <artifactId>socketd-transport-java-tcp</artifactId>
-            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>socketd-transport-java-udp</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>socketd-transport-java-websocket</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>socketd-transport-netty</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>socketd-transport-smartsocket</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
         </dependency>
     </dependencies>
 

@@ -35,11 +35,11 @@
 
     <modules>
         <module>../socketd</module>
-        <module>../socketd-broker/socketd-broker-java-tcp</module>
-        <module>../socketd-broker/socketd-broker-java-udp</module>
-        <module>../socketd-broker/socketd-broker-java-websocket</module>
-        <module>../socketd-broker/socketd-broker-netty</module>
-        <module>../socketd-broker/socketd-broker-smartsocket</module>
+        <module>../socketd-transport/socketd-transport-java-tcp</module>
+        <module>../socketd-transport/socketd-transport-java-udp</module>
+        <module>../socketd-transport/socketd-transport-java-websocket</module>
+        <module>../socketd-transport/socketd-transport-netty</module>
+        <module>../socketd-transport/socketd-transport-smartsocket</module>
 
         <module>../socketd-solon-plugin</module>
         <module>../socketd-springboot-starter</module>
@@ -55,31 +55,31 @@
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>socketd-broker-java-tcp</artifactId>
+                <artifactId>socketd-transport-java-tcp</artifactId>
                 <version>${socketd.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>socketd-broker-java-udp</artifactId>
+                <artifactId>socketd-transport-java-udp</artifactId>
                 <version>${socketd.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>socketd-broker-java-websocket</artifactId>
+                <artifactId>socketd-transport-java-websocket</artifactId>
                 <version>${socketd.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>socketd-broker-netty</artifactId>
+                <artifactId>socketd-transport-netty</artifactId>
                 <version>${socketd.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>socketd-broker-smartsocket</artifactId>
+                <artifactId>socketd-transport-smartsocket</artifactId>
                 <version>${socketd.version}</version>
             </dependency>
 

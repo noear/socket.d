@@ -8,16 +8,16 @@
 
 ### 适配情况
 
-| broker                        | schema           | 支持端 | 备注 |
+| transport                        | schema           | 支持端 | 备注 |
 |-------------------------------|------------------|-----|--|
-| socketd-broker-java-tcp       | tcp-bio          | c,s |  |
-| socketd-broker-java-udp       | udp-bio          | c,s |  |
-| socketd-broker-java-websocket | ws-bio           | c,s |  |
-| socketd-broker-netty          | tcp-nio, udp-nio | c,s |  |
-| socketd-broker-smartsocket    | tcp-aio          | c,s |  |
+| socketd-transport-java-tcp       | tcp-bio          | c,s |  |
+| socketd-transport-java-udp       | udp-bio          | c,s |  |
+| socketd-transport-java-websocket | ws-bio           | c,s |  |
+| socketd-transport-netty          | tcp-nio, udp-nio | c,s |  |
+| socketd-transport-smartsocket    | tcp-aio          | c,s |  |
 
 
-### 简单演示（引入一个 broker 适配包后）:
+### 简单演示（引入一个 transport 适配包后）:
 
 * 手动模式
 

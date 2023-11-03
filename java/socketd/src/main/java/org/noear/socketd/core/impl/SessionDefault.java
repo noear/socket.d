@@ -90,7 +90,6 @@ public class SessionDefault extends SessionBase implements Session {
         }
 
         try {
-
             Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
 
             CompletableFuture<Entity> future = new CompletableFuture<>();
@@ -98,7 +97,7 @@ public class SessionDefault extends SessionBase implements Session {
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
             } catch (TimeoutException e) {
-                throw new SocketdTimeoutException("Request timeout: " + topic);
+                throw new SocketdTimeoutException("Request reply timeout, topic=" + topic);
             } catch (Throwable e) {
                 throw new SocketdException(e);
             }

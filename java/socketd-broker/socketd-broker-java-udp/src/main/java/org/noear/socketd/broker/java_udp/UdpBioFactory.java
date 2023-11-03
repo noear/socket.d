@@ -1,31 +1,32 @@
-package org.noear.socketd.broker.netty.tcp;
+package org.noear.socketd.broker.java_udp;
 
-import org.noear.socketd.broker.ClientBroker;
-import org.noear.socketd.broker.ServerBroker;
+import org.noear.socketd.client.ClientFactory;
+import org.noear.socketd.server.ServerFactory;
 import org.noear.socketd.client.Client;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
 /**
- * Tcp-Nio 经纪人实现
+ * Udp 经纪人实现
  *
- * @author noear
+ * @author Urara
  * @since 2.0
  */
-public class TcpNioBroker implements ClientBroker, ServerBroker {
+public class UdpBioFactory implements ClientFactory, ServerFactory {
+
     @Override
     public String[] schema() {
-        return new String[]{"tcp", "tcps", "tcp-netty"};
+        return new String[]{"udp", "udp-java"};
     }
 
     @Override
     public Server createServer(ServerConfig serverConfig) {
-        return new TcpNioServer(serverConfig);
+        return new UdpBioServer(serverConfig);
     }
 
     @Override
     public Client createClient(ClientConfig clientConfig) {
-        return new TcpNioClient(clientConfig);
+        return new UdpBioClient(clientConfig);
     }
 }

@@ -1,15 +1,12 @@
-package org.noear.socketd.broker;
-
-import org.noear.socketd.client.Client;
-import org.noear.socketd.client.ClientConfig;
+package org.noear.socketd.client;
 
 /**
- * 客户端中间人
+ * 客户端工厂
  *
  * @author noear
  * @since 2.0
  */
-public interface ClientBroker {
+public interface ClientFactory {
     /**
      * 协议架构
      */

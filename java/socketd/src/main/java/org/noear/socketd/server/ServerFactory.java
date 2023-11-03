@@ -1,15 +1,12 @@
-package org.noear.socketd.broker;
-
-import org.noear.socketd.server.Server;
-import org.noear.socketd.server.ServerConfig;
+package org.noear.socketd.server;
 
 /**
- * 服务端中间人
+ * 服务端工厂
  *
  * @author noear
  * @since 2.0
  */
-public interface ServerBroker {
+public interface ServerFactory {
     /**
      * 协议架构
      */

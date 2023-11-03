@@ -1,7 +1,7 @@
 package org.noear.socketd;
 
-import org.noear.socketd.broker.ClientBroker;
-import org.noear.socketd.broker.ServerBroker;
+import org.noear.socketd.client.ClientFactory;
+import org.noear.socketd.server.ServerFactory;
 import org.noear.socketd.client.Client;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.server.Server;
@@ -16,22 +16,22 @@ import java.util.ServiceLoader;
  * @since 2.0
  */
 public class SocketD {
-    static Map<String, ClientBroker> clientBrokerMap;
-    static Map<String, ServerBroker> serverBrokerMap;
+    static Map<String, ClientFactory> clientFactoryMap;
+    static Map<String, ServerFactory> serverFactoryMap;
 
     static {
-        clientBrokerMap = new HashMap<>();
-        serverBrokerMap = new HashMap<>();
+        clientFactoryMap = new HashMap<>();
+        serverFactoryMap = new HashMap<>();
 
-        ServiceLoader.load(ClientBroker.class).iterator().forEachRemaining(broker -> {
-            for (String s : broker.schema()) {
-                clientBrokerMap.put(s, broker);
+        ServiceLoader.load(ClientFactory.class).iterator().forEachRemaining(factory -> {
+            for (String s : factory.schema()) {
+                clientFactoryMap.put(s, factory);
             }
         });
 
-        ServiceLoader.load(ServerBroker.class).iterator().forEachRemaining(broker -> {
-            for (String s : broker.schema()) {
-                serverBrokerMap.put(s, broker);
+        ServiceLoader.load(ServerFactory.class).iterator().forEachRemaining(factory -> {
+            for (String s : factory.schema()) {
+                serverFactoryMap.put(s, factory);
             }
         });
     }
@@ -40,12 +40,12 @@ public class SocketD {
      * 创建服务端
      */
     public static Server createServer(ServerConfig serverConfig) {
-        ServerBroker broker = serverBrokerMap.get(serverConfig.getSchema());
-        if (broker == null) {
+        ServerFactory factory = serverFactoryMap.get(serverConfig.getSchema());
+        if (factory == null) {
             throw new IllegalStateException("No ServerBroker providers were found.");
         }
 
-        return broker.createServer(serverConfig);
+        return factory.createServer(serverConfig);
     }
 
     /**
@@ -56,11 +56,11 @@ public class SocketD {
     public static Client createClient(String serverUrl) {
         ClientConfig clientConfig = new ClientConfig(serverUrl);
 
-        ClientBroker broker = clientBrokerMap.get(clientConfig.getSchema());
-        if (broker == null) {
+        ClientFactory factory = clientFactoryMap.get(clientConfig.getSchema());
+        if (factory == null) {
             throw new IllegalStateException("No ClientBroker providers were found.");
         }
 
-        return broker.createClient(clientConfig);
+        return factory.createClient(clientConfig);
     }
 }

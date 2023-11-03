@@ -1,31 +1,31 @@
-package org.noear.socketd.broker.java_websocket;
+package org.noear.socketd.broker.netty.udp;
 
-import org.noear.socketd.broker.ClientBroker;
-import org.noear.socketd.broker.ServerBroker;
+import org.noear.socketd.client.ClientFactory;
+import org.noear.socketd.server.ServerFactory;
 import org.noear.socketd.client.Client;
 import org.noear.socketd.client.ClientConfig;
 import org.noear.socketd.server.Server;
 import org.noear.socketd.server.ServerConfig;
 
 /**
- * Ws-Bio 经纪人实现
+ * Udp-Nio 经纪人实现
  *
  * @author noear
  * @since 2.0
  */
-public class WsBioBroker implements ClientBroker, ServerBroker {
+public class UdpNioFactory implements ClientFactory, ServerFactory {
     @Override
     public String[] schema() {
-        return new String[]{"ws", "wss", "ws-java"};
+        return new String[]{"udp", "udp-netty"};
     }
 
     @Override
     public Server createServer(ServerConfig serverConfig) {
-        return new WsBioServer(serverConfig);
+        return new UdpNioServer(serverConfig);
     }
 
     @Override
     public Client createClient(ClientConfig clientConfig) {
-        return new WsBioClient(clientConfig);
+        return new UdpNioClient(clientConfig);
     }
 }

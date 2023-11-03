@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 public class CaseTest {
     static final String[] schemas = new String[]{
             "tcp-java", "tcp-netty", "tcp-smartsocket",
-            "udp-java", "udp-netty",
-            "ws-java",};
+            "ws-java",
+            "udp-java", "udp-netty"};
 
     /**
      * 用于调试

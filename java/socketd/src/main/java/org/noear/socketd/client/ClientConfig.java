@@ -1,10 +1,8 @@
 package org.noear.socketd.client;
 
-import org.noear.socketd.core.Codec;
-import org.noear.socketd.core.CodecByteBuffer;
-import org.noear.socketd.core.Config;
-import org.noear.socketd.core.KeyGenerator;
+import org.noear.socketd.core.*;
 import org.noear.socketd.core.impl.KeyGeneratorGuid;
+import org.noear.socketd.core.impl.RangesHandlerDefault;
 
 import javax.net.ssl.SSLContext;
 import java.net.URI;
@@ -27,6 +25,7 @@ public class ClientConfig implements Config {
 
     private Codec<ByteBuffer> codec;
     private KeyGenerator keyGenerator;
+    private RangesHandler rangesHandler;
     private SSLContext sslContext;
 
     private long heartbeatInterval;
@@ -40,7 +39,7 @@ public class ClientConfig implements Config {
 
     private int maxRequests;
     private int maxUdpSize;
-    private int maxRangeSize;
+    private int rangeSize;
 
     public ClientConfig(String url) {
         this.url = url;
@@ -50,6 +49,7 @@ public class ClientConfig implements Config {
 
         this.codec = new CodecByteBuffer(this);
         this.keyGenerator = new KeyGeneratorGuid();
+        this.rangesHandler = new RangesHandlerDefault();
 
         this.connectTimeout = 3000;
         this.heartbeatInterval = 20 * 1000;
@@ -58,7 +58,7 @@ public class ClientConfig implements Config {
 
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
-        this.maxRangeSize = 1024 * 1024 * 16; //16m
+        this.rangeSize = 1024 * 1024 * 16; //16m
     }
 
     /**
@@ -106,6 +106,11 @@ public class ClientConfig implements Config {
     @Override
     public KeyGenerator getKeyGenerator() {
         return keyGenerator;
+    }
+
+    @Override
+    public RangesHandler getRangesHandler() {
+        return rangesHandler;
     }
 
     public ClientConfig keyGenerator(KeyGenerator keyGenerator) {
@@ -256,15 +261,15 @@ public class ClientConfig implements Config {
     }
 
     /**
-     * 允许最大分片大小
+     * 获取分片大小
      */
     @Override
-    public int getMaxRangeSize() {
-        return maxRangeSize;
+    public int getRangeSize() {
+        return rangeSize;
     }
 
-    public ClientConfig maxRangeSize(int maxRangeSize) {
-        this.maxRangeSize = maxRangeSize;
+    public ClientConfig rangeSize(int rangeSize) {
+        this.rangeSize = rangeSize;
         return this;
     }
 

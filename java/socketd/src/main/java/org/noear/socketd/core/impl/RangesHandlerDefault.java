@@ -1,8 +1,9 @@
-package org.noear.socketd.utils;
+package org.noear.socketd.core.impl;
 
 import org.noear.socketd.core.Config;
 import org.noear.socketd.core.Constants;
 import org.noear.socketd.core.Entity;
+import org.noear.socketd.core.RangesHandler;
 import org.noear.socketd.core.entity.EntityDefault;
 
 import java.io.ByteArrayOutputStream;
@@ -10,12 +11,14 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * 数据分片默认实现
+ *
  * @author noear
  * @since 2.0
  */
-public class RangeUtils {
-
-    public static Entity nextRange(Config config, AtomicReference<Integer> rangeIndex, Entity entity) throws IOException {
+public class RangesHandlerDefault implements RangesHandler {
+    @Override
+    public Entity nextRange(Config config, AtomicReference<Integer> rangeIndex, Entity entity) throws IOException {
         rangeIndex.set(rangeIndex.get() + 1);
 
         byte[] rangeBytes = readRangeBytes(config, entity);
@@ -36,7 +39,7 @@ public class RangeUtils {
         int tmp;
         while ((tmp = entity.getData().read()) != -1) {
             buf.write(tmp);
-            if (buf.size() == config.getMaxRangeSize()) {
+            if (buf.size() == config.getRangeSize()) {
                 break;
             }
         }

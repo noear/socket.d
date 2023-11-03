@@ -1,7 +1,6 @@
 package org.noear.socketd.core.impl;
 
 import org.noear.socketd.core.*;
-import org.noear.socketd.utils.RangeUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -62,10 +61,10 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
 
             //尝试分片
             if (message.getEntity() != null) {
-                if (message.getEntity().getDataSize() > getConfig().getMaxRangeSize()) {
+                if (message.getEntity().getDataSize() > getConfig().getRangeSize()) {
                     AtomicReference<Integer> rangeIndex = new AtomicReference<>(0);
                     while (true) {
-                        Entity rangeEntity = RangeUtils.nextRange(getConfig(), rangeIndex, message.getEntity());
+                        Entity rangeEntity = getConfig().getRangesHandler().nextRange(getConfig(), rangeIndex, message.getEntity());
 
                         if (rangeEntity != null) {
                             //主要是 key 和 entity

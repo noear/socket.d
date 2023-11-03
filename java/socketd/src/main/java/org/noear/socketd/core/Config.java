@@ -37,6 +37,11 @@ public interface Config {
     KeyGenerator getKeyGenerator();
 
     /**
+     * 获取分布处理器
+     * */
+    RangesHandler getRangesHandler();
+
+    /**
      * 获取 ssl 上下文
      */
     SSLContext getSslContext();
@@ -52,7 +57,7 @@ public interface Config {
     int getMaxUdpSize();
 
     /**
-     * 允许最大分片大小
+     * 获取分片大小
      */
-    int getMaxRangeSize();
+    int getRangeSize();
 }

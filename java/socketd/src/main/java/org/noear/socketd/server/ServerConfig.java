@@ -1,10 +1,8 @@
 package org.noear.socketd.server;
 
-import org.noear.socketd.core.Codec;
-import org.noear.socketd.core.CodecByteBuffer;
-import org.noear.socketd.core.Config;
-import org.noear.socketd.core.KeyGenerator;
+import org.noear.socketd.core.*;
 import org.noear.socketd.core.impl.KeyGeneratorGuid;
+import org.noear.socketd.core.impl.RangesHandlerDefault;
 import org.noear.socketd.utils.Utils;
 
 import javax.net.ssl.SSLContext;
@@ -24,6 +22,7 @@ public class ServerConfig implements Config {
 
     private Codec<ByteBuffer> codec;
     private KeyGenerator keyGenerator;
+    private RangesHandler rangesHandler;
     private SSLContext sslContext;
 
     private String host;
@@ -37,13 +36,14 @@ public class ServerConfig implements Config {
 
     private int maxRequests;
     private int maxUdpSize;
-    private int maxRangeSize;
+    private int rangeSize;
 
     public ServerConfig(String schema) {
         this.schema = schema;
         this.charset = StandardCharsets.UTF_8;
         this.codec = new CodecByteBuffer(this);
         this.keyGenerator = new KeyGeneratorGuid();
+        this.rangesHandler = new RangesHandlerDefault();
 
         this.host = "";
         this.port = 6329;
@@ -56,7 +56,7 @@ public class ServerConfig implements Config {
 
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
-        this.maxRangeSize = 1024 * 1024 * 16; //16m
+        this.rangeSize = 1024 * 1024 * 16; //16m
     }
 
     /**
@@ -96,6 +96,11 @@ public class ServerConfig implements Config {
 
     public KeyGenerator getKeyGenerator() {
         return keyGenerator;
+    }
+
+    @Override
+    public RangesHandler getRangesHandler() {
+        return rangesHandler;
     }
 
     public ServerConfig keyGenerator(KeyGenerator keyGenerator) {
@@ -241,20 +246,22 @@ public class ServerConfig implements Config {
         return maxUdpSize;
     }
 
-    /**
-     * 允许最大分片大小
-     */
-    @Override
-    public int getMaxRangeSize() {
-        return maxRangeSize;
-    }
 
-    public ServerConfig maxRangeSize(int maxRangeSize) {
-        this.maxRangeSize = maxRangeSize;
-        return this;
-    }
     public ServerConfig maxUdpSize(int maxUdpSize) {
         this.maxUdpSize = maxUdpSize;
+        return this;
+    }
+
+    /**
+     * 获取分片大小
+     */
+    @Override
+    public int getRangeSize() {
+        return rangeSize;
+    }
+
+    public ServerConfig rangeSize(int rangeSize) {
+        this.rangeSize = rangeSize;
         return this;
     }
 

@@ -1,5 +1,6 @@
 package features.cases;
 
+import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Message;
@@ -83,7 +84,10 @@ public class TestCase14_file extends BaseTestCase {
         Thread.sleep(1000);
 
         System.out.println("counter: " + messageCounter.get());
-        //Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
+        Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
+
+        File file = new File("/Users/noear/Downloads/socketd-upload.mov");
+        assert file.length() > 1024 * 1024 * 10;
     }
 
     @Override

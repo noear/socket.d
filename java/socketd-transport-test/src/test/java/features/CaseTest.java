@@ -92,15 +92,18 @@ public class CaseTest {
     public void testCase14() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
+            if(s1.startsWith("udp")){
+                continue;
+            }
+
             TestCase14_file testCase01 = new TestCase14_file(s1, 4000 + i);
             try {
                 testCase01.start();
-                //testCase01.stop();
+                testCase01.stop();
             } catch (Exception e) {
                 testCase01.onError();
                 e.printStackTrace();
             }
-            break;
         }
     }
 }

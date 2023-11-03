@@ -61,4 +61,25 @@ public class BenchmarkTest {
             }
         }
     }
+
+    @Test
+    public void testCase01_2() throws Exception {
+        int count = 10000000;
+        int timeout = 10;
+
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+            TestCase01 testCase01 = new TestCase01(s1, timeout,count, 9386 + i);
+            try {
+                testCase01.start();
+
+                testCase01.send();
+
+                Thread.sleep(timeout * 1000 );
+            } catch (Exception e) {
+                testCase01.onError();
+                e.printStackTrace();
+            }
+        }
+    }
 }

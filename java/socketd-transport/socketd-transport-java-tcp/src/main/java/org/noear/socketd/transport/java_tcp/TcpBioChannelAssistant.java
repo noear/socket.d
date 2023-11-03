@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.java_tcp;
 
-import org.noear.socketd.core.*;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;

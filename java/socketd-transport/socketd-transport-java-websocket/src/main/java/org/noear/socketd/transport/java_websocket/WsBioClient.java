@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.java_websocket;
 
-import org.noear.socketd.client.*;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.impl.SessionDefault;

@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.client;
 
 import org.noear.socketd.exception.SocketdConnectionException;
-import org.noear.socketd.core.*;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;

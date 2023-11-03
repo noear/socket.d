@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.server;
 
-import org.noear.socketd.core.*;
 import org.noear.socketd.transport.core.ConfigBase;
 import org.noear.socketd.utils.Utils;
 

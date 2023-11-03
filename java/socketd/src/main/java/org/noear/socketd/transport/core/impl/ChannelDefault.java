@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.core.impl;
 
-import org.noear.socketd.core.*;
 import org.noear.socketd.transport.core.*;
 
 import java.io.IOException;

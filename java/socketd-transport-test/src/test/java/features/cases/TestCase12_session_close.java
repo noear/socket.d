@@ -21,9 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author noear
  * @since 2.0
  */
-public class TestCase12 extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase12.class);
-    public TestCase12(String schema, int port) {
+public class TestCase12_session_close extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase12_session_close.class);
+    public TestCase12_session_close(String schema, int port) {
         super(schema, port);
     }
 

@@ -20,9 +20,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author noear
  * @since 2.0
  */
-public class TestCase11 extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase11.class);
-    public TestCase11(String schema, int port) {
+public class TestCase11_autoReconnect extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase11_autoReconnect.class);
+    public TestCase11_autoReconnect(String schema, int port) {
         super(schema, port);
     }
 

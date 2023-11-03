@@ -1,8 +1,8 @@
 package features;
 
-import features.cases.TestCase01;
-import features.cases.TestCase11;
-import features.cases.TestCase12;
+import features.cases.TestCase01_client_send;
+import features.cases.TestCase11_autoReconnect;
+import features.cases.TestCase12_session_close;
 import features.cases.TestCase13_sendAndRequest_timeout;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ public class CaseTest {
     public void testCase01() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase01 testCase01 = new TestCase01(s1, 1000 + i);
+            TestCase01_client_send testCase01 = new TestCase01_client_send(s1, 1000 + i);
             try {
                 testCase01.start();
                 testCase01.stop();
@@ -50,7 +50,7 @@ public class CaseTest {
     public void testCase11() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase11 testCase01 = new TestCase11(s1, 2000 + i);
+            TestCase11_autoReconnect testCase01 = new TestCase11_autoReconnect(s1, 2000 + i);
             try {
                 testCase01.start();
                 testCase01.stop();
@@ -65,7 +65,7 @@ public class CaseTest {
     public void testCase12() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase12 testCase01 = new TestCase12(s1, 3000 + i);
+            TestCase12_session_close testCase01 = new TestCase12_session_close(s1, 3000 + i);
             try {
                 testCase01.start();
                 testCase01.stop();

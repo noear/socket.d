@@ -21,10 +21,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author noear
  * @since 2.0
  */
-public class TestCase01 extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase01.class);
+public class TestCase01_client_send extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase01_client_send.class);
 
-    public TestCase01(String schema, int port) {
+    public TestCase01_client_send(String schema, int port) {
         super(schema, port);
     }
 

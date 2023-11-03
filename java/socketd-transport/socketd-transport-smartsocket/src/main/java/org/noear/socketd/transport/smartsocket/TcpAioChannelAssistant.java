@@ -2,9 +2,9 @@ package org.noear.socketd.transport.smartsocket;
 
 import org.noear.socketd.transport.smartsocket.impl.Attachment;
 import org.noear.socketd.transport.smartsocket.impl.FixedLengthFrameDecoder;
-import org.noear.socketd.core.ChannelAssistant;
-import org.noear.socketd.core.Config;
-import org.noear.socketd.core.Frame;
+import org.noear.socketd.transport.core.ChannelAssistant;
+import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.Frame;
 import org.smartboot.socket.Protocol;
 import org.smartboot.socket.transport.AioSession;
 

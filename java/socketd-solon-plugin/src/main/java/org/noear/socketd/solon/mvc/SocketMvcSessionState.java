@@ -1,6 +1,6 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.core.Session;
+import org.noear.socketd.transport.core.Session;
 import org.noear.solon.core.handle.SessionState;
 
 import java.util.Collection;

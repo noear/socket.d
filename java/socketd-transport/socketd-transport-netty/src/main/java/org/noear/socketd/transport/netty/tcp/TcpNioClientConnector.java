@@ -7,9 +7,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyClientInboundHandler;
-import org.noear.socketd.client.ClientConnectorBase;
+import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
-import org.noear.socketd.core.Channel;
+import org.noear.socketd.transport.core.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

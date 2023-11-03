@@ -1,8 +1,8 @@
 package org.noear.socketd.transport.netty.tcp;
 
 import io.netty.channel.Channel;
-import org.noear.socketd.core.Frame;
-import org.noear.socketd.core.ChannelAssistant;
+import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.ChannelAssistant;
 
 import java.io.IOException;
 import java.io.NotActiveException;

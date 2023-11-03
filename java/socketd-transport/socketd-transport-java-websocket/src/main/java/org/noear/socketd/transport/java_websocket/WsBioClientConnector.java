@@ -1,9 +1,9 @@
 package org.noear.socketd.transport.java_websocket;
 
 import org.noear.socketd.transport.java_websocket.impl.WebSocketClientImpl;
-import org.noear.socketd.client.ClientConnectorBase;
+import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdConnectionException;
-import org.noear.socketd.core.Channel;
+import org.noear.socketd.transport.core.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

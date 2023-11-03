@@ -2,13 +2,13 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.core.Entity;
-import org.noear.socketd.core.Message;
-import org.noear.socketd.core.Session;
-import org.noear.socketd.core.SimpleListener;
-import org.noear.socketd.core.entity.StringEntity;
-import org.noear.socketd.server.Server;
-import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.transport.core.Entity;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.SimpleListener;
+import org.noear.socketd.transport.core.entity.StringEntity;
+import org.noear.socketd.transport.server.Server;
+import org.noear.socketd.transport.server.ServerConfig;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -6,8 +6,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslHandler;
-import org.noear.socketd.core.Config;
-import org.noear.socketd.core.Frame;
+import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.Frame;
 
 import javax.net.ssl.SSLEngine;
 

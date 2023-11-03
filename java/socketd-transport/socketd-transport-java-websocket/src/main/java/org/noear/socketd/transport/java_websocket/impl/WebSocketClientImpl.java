@@ -3,9 +3,9 @@ package org.noear.socketd.transport.java_websocket.impl;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.noear.socketd.transport.java_websocket.WsBioClient;
-import org.noear.socketd.core.Channel;
-import org.noear.socketd.core.Frame;
-import org.noear.socketd.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

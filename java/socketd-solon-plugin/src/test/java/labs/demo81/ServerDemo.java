@@ -1,9 +1,9 @@
 package labs.demo81;
 
-import org.noear.socketd.core.SimpleListener;
-import org.noear.socketd.core.Message;
-import org.noear.socketd.core.Session;
-import org.noear.socketd.core.entity.StringEntity;
+import org.noear.socketd.transport.core.SimpleListener;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.solon.annotation.SocketdServer;
 import org.noear.solon.Solon;
 

@@ -3,8 +3,8 @@ package org.noear.socketd.transport.netty.tcp.impl;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import org.noear.socketd.core.Config;
-import org.noear.socketd.core.Frame;
+import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.Frame;
 
 import java.nio.ByteBuffer;
 

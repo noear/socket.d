@@ -1,9 +1,9 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.core.Constants;
-import org.noear.socketd.core.Message;
-import org.noear.socketd.core.Session;
-import org.noear.socketd.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.Constants;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.solon.Utils;
 import org.noear.solon.core.handle.ContextAsyncListener;
 import org.noear.solon.core.handle.ContextEmpty;

@@ -1,11 +1,11 @@
 package org.noear.socketd.transport.java_tcp;
 
-import org.noear.socketd.client.ClientConnectorBase;
+import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
-import org.noear.socketd.core.Channel;
-import org.noear.socketd.core.Flag;
-import org.noear.socketd.core.Frame;
-import org.noear.socketd.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

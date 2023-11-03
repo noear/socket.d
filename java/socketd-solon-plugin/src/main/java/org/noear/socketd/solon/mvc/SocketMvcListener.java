@@ -1,8 +1,8 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.core.SimpleListener;
-import org.noear.socketd.core.Message;
-import org.noear.socketd.core.Session;
+import org.noear.socketd.transport.core.SimpleListener;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
 import org.noear.solon.Solon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

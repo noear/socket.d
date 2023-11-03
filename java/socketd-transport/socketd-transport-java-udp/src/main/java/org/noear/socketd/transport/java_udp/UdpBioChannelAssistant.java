@@ -1,5 +1,8 @@
 package org.noear.socketd.transport.java_udp;
 
+import org.noear.socketd.transport.core.ChannelAssistant;
+import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.core.*;

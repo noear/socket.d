@@ -1,7 +1,7 @@
 package labs.demo82_mvc;
 
-import org.noear.socketd.core.Message;
-import org.noear.socketd.core.Session;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Header;
 import org.noear.solon.annotation.Mapping;

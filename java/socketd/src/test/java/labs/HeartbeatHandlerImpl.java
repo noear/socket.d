@@ -1,7 +1,7 @@
 package labs;
 
-import org.noear.socketd.core.HeartbeatHandler;
-import org.noear.socketd.core.Session;
+import org.noear.socketd.transport.core.HeartbeatHandler;
+import org.noear.socketd.transport.core.Session;
 
 /**
  * @author noear 2023/10/16 created

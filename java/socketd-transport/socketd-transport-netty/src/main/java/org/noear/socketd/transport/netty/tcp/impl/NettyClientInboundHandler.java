@@ -4,10 +4,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import org.noear.socketd.transport.netty.tcp.TcpNioClient;
-import org.noear.socketd.core.Channel;
-import org.noear.socketd.core.Flag;
-import org.noear.socketd.core.Frame;
-import org.noear.socketd.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 
 import java.util.concurrent.CompletableFuture;
 

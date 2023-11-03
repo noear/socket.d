@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.java_udp.impl;
 
-import org.noear.socketd.core.Frame;
+import org.noear.socketd.transport.core.Frame;
 
 import java.net.DatagramPacket;
 

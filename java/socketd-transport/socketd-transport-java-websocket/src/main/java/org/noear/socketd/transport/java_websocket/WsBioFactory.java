@@ -1,11 +1,11 @@
 package org.noear.socketd.transport.java_websocket;
 
-import org.noear.socketd.client.ClientFactory;
-import org.noear.socketd.server.ServerFactory;
-import org.noear.socketd.client.Client;
-import org.noear.socketd.client.ClientConfig;
-import org.noear.socketd.server.Server;
-import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.transport.client.ClientFactory;
+import org.noear.socketd.transport.server.ServerFactory;
+import org.noear.socketd.transport.client.Client;
+import org.noear.socketd.transport.client.ClientConfig;
+import org.noear.socketd.transport.server.Server;
+import org.noear.socketd.transport.server.ServerConfig;
 
 /**
  * Ws-Bio 经纪人实现

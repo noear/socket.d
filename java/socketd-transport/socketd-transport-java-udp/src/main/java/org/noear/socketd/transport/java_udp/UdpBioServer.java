@@ -2,11 +2,11 @@ package org.noear.socketd.transport.java_udp;
 
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
-import org.noear.socketd.core.Channel;
-import org.noear.socketd.core.impl.ChannelDefault;
-import org.noear.socketd.server.Server;
-import org.noear.socketd.server.ServerBase;
-import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
+import org.noear.socketd.transport.server.Server;
+import org.noear.socketd.transport.server.ServerBase;
+import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,10 +1,10 @@
 package org.noear.socketd.solon.integration;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.client.Client;
-import org.noear.socketd.core.Listener;
-import org.noear.socketd.server.Server;
-import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.transport.client.Client;
+import org.noear.socketd.transport.core.Listener;
+import org.noear.socketd.transport.server.Server;
+import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.solon.annotation.SocketdClient;
 import org.noear.socketd.solon.annotation.SocketdServer;
 import org.noear.solon.core.AppContext;

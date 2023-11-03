@@ -2,9 +2,9 @@ package org.noear.socketd.transport.java_websocket;
 
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketServerImpl;
-import org.noear.socketd.server.Server;
-import org.noear.socketd.server.ServerBase;
-import org.noear.socketd.server.ServerConfig;
+import org.noear.socketd.transport.server.Server;
+import org.noear.socketd.transport.server.ServerBase;
+import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

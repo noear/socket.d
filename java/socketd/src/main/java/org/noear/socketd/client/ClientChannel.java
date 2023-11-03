@@ -148,7 +148,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      * @return 是否为新链接
      */
     private boolean prepareSend() throws Exception {
-        if (real == null) {
+        if (real == null || real.isValid() == false) {
             real = connector.connect();
 
             return true;

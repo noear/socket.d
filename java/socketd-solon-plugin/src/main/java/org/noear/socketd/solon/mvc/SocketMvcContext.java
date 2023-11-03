@@ -1,6 +1,5 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.EntityDefault;
@@ -23,12 +22,14 @@ public class SocketMvcContext extends ContextEmpty {
     static final Logger log = LoggerFactory.getLogger(SocketMvcContext.class);
 
     private Session _session;
-    private Message _message;
+    private Message _request;
+    private EntityDefault _response;
     private MethodType _method;
 
     public SocketMvcContext(Session session, Message message) throws IOException {
         _session = session;
-        _message = message;
+        _request = message;
+        _response = new EntityDefault();
 
         String scheme = session.getHandshaker().getUri().getScheme();
         if (scheme.startsWith("ws")) {
@@ -57,7 +58,7 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public Object request() {
-        return _message;
+        return _request;
     }
 
     @Override
@@ -112,15 +113,15 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public String url() {
-        return _message.getTopic();
+        return _request.getTopic();
     }
 
     @Override
     public long contentLength() {
-        if (_message.getEntity().getData() == null) {
+        if (_request.getEntity().getData() == null) {
             return 0;
         } else {
-            return _message.getEntity().getDataSize();
+            return _request.getEntity().getDataSize();
         }
     }
 
@@ -136,7 +137,7 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public InputStream bodyAsStream() throws IOException {
-        return _message.getEntity().getData();
+        return _request.getEntity().getData();
     }
 
     //==============
@@ -150,6 +151,22 @@ public class SocketMvcContext extends ContextEmpty {
     public void contentType(String contentType) {
         headerSet("Content-Type", contentType);
     }
+
+    @Override
+    public void headerSet(String key, String val) {
+        _response.putMeta(key,val);
+    }
+
+    @Override
+    public void headerAdd(String key, String val) {
+        _response.putMeta(key,val);
+    }
+
+    @Override
+    public String headerOfResponse(String name) {
+        return _response.getMeta(name);
+    }
+
 
     ByteArrayOutputStream _outputStream = new ByteArrayOutputStream();
 
@@ -178,11 +195,13 @@ public class SocketMvcContext extends ContextEmpty {
 
     protected void commit() throws IOException {
         if (_session.isValid()) {
-            if (_message.isRequest() || _message.isSubscribe()) {
-                _session.replyEnd(_message, new EntityDefault(Constants.DEF_META_STRING, _outputStream.toByteArray()));
+            if (_request.isRequest() || _request.isSubscribe()) {
+                _response.setData(_outputStream.toByteArray());
+                _response.setMetaMap(headerMap());
+                _session.replyEnd(_request, _response);
             } else {
                 if (_outputStream.size() > 0) {
-                    log.warn("No reply is supported for the current message, key={}", _message.getKey());
+                    log.warn("No reply is supported for the current message, key={}", _request.getKey());
                 }
             }
         }

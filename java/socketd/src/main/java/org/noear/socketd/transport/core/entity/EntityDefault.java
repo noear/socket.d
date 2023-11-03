@@ -9,8 +9,17 @@ import java.io.ByteArrayInputStream;
  * @since 2.0
  */
 public class EntityDefault extends BaseEntity {
+    public EntityDefault() {
+    }
+
     public EntityDefault(String metaString, byte[] data) {
         this.metaString = metaString;
+        this.data = new ByteArrayInputStream(data);
+        this.dataSize = data.length;
+    }
+
+
+    public void setData(byte[] data) {
         this.data = new ByteArrayInputStream(data);
         this.dataSize = data.length;
     }

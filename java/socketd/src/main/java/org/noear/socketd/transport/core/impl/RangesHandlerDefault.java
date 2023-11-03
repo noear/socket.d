@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.utils.IoUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,12 +19,16 @@ public class RangesHandlerDefault implements RangesHandler {
     public Entity nextRange(Config config, AtomicReference<Integer> rangeIndex, Entity entity) throws IOException {
         rangeIndex.set(rangeIndex.get() + 1);
 
-        byte[] rangeBytes = readRangeBytes(config, entity);
+        ByteArrayOutputStream rangeBuf = new ByteArrayOutputStream();
+        IoUtils.transferTo(entity.getData(), rangeBuf, 0, config.getRangeSize());
+        byte[] rangeBytes = rangeBuf.toByteArray();
         if (rangeBytes.length == 0) {
             return null;
         }
         EntityDefault rangeEntity = new EntityDefault(null, rangeBytes);
-        rangeEntity.setMetaMap(entity.getMetaMap());
+        if (rangeIndex.get() == 1) {
+            rangeEntity.setMetaMap(entity.getMetaMap());
+        }
         rangeEntity.putMeta(Constants.META_DATA_RANGE_IDX, String.valueOf(rangeIndex));
         return rangeEntity;
     }
@@ -35,7 +40,6 @@ public class RangesHandlerDefault implements RangesHandler {
         if (aggregator == null) {
             aggregator = new RangesFrameDefault(frame);
             channel.setAttachment(aggregator.getKey(), aggregator);
-            return null;
         }
 
         aggregator.add(frame);
@@ -47,21 +51,5 @@ public class RangesHandlerDefault implements RangesHandler {
             //重置为聚合帖
             return aggregator;
         }
-    }
-
-    /**
-     * 获取分片数据
-     */
-    private static byte[] readRangeBytes(Config config, Entity entity) throws IOException {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        int tmp;
-        while ((tmp = entity.getData().read()) != -1) {
-            buf.write(tmp);
-            if (buf.size() == config.getRangeSize()) {
-                break;
-            }
-        }
-
-        return buf.toByteArray();
     }
 }

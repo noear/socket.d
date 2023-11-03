@@ -64,14 +64,14 @@ public class RangesFrameDefault implements RangesFrame {
     /**
      * 获取聚合后的帧
      * */
-    public Frame getFrame() throws IOException{
+    public Frame getFrame() throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(dataStream.toByteArray());
 
         return new Frame(main.getFlag(), new MessageDefault()
                 .flag(main.getFlag())
                 .key(main.getMessage().getKey())
                 .topic(main.getMessage().getTopic())
-                .entity(new StreamEntity(inputStream)));
+                .entity(new StreamEntity(main.getMessage().getEntity().getMetaMap(), inputStream)));
     }
 
     /**

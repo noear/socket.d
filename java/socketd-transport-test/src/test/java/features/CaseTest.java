@@ -1,9 +1,6 @@
 package features;
 
-import features.cases.TestCase01_client_send;
-import features.cases.TestCase11_autoReconnect;
-import features.cases.TestCase12_session_close;
-import features.cases.TestCase13_sendAndRequest_timeout;
+import features.cases.*;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -88,6 +85,22 @@ public class CaseTest {
                 testCase01.onError();
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Test
+    public void testCase14() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+            TestCase14_file testCase01 = new TestCase14_file(s1, 4000 + i);
+            try {
+                testCase01.start();
+                //testCase01.stop();
+            } catch (Exception e) {
+                testCase01.onError();
+                e.printStackTrace();
+            }
+            break;
         }
     }
 }

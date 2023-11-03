@@ -70,6 +70,42 @@ public class IoUtils {
         return out;
     }
 
+    /**
+     * 将输入流转换为输出流
+     *
+     * @param ins    输入流
+     * @param out    输出流
+     * @param start  开始位
+     * @param length 长度
+     */
+    public static <T extends OutputStream> T transferTo(InputStream ins, T out, long start, long length) throws IOException {
+        int len = 0;
+        byte[] buf = new byte[512];
+        int bufMax = buf.length;
+        if (length < bufMax) {
+            bufMax = (int) length;
+        }
+
+        if (start > 0) {
+            ins.skip(start);
+        }
+
+        while ((len = ins.read(buf, 0, bufMax)) != -1) {
+            out.write(buf, 0, len);
+
+            length -= len;
+            if (bufMax > length) {
+                bufMax = (int) length;
+
+                if (bufMax == 0) {
+                    break;
+                }
+            }
+        }
+
+        return out;
+    }
+
 
     /**
      * 将输入流转换为输出流

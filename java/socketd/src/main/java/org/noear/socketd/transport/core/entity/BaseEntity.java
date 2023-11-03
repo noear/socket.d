@@ -19,8 +19,8 @@ import java.util.Map;
 public abstract class BaseEntity implements Entity {
     private boolean metaChanged = false;
 
+    private Map<String, String> metaMap;
     protected String metaString;
-    protected Map<String, String> metaMap;
     protected InputStream data;
     protected int dataSize;
 

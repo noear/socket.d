@@ -4,6 +4,7 @@ import org.noear.socketd.transport.core.Constants;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * 流实体
@@ -13,11 +14,15 @@ import java.io.InputStream;
  */
 public class StreamEntity extends BaseEntity {
 
-    private int rangeIndex;
-
     public StreamEntity(InputStream stream) throws IOException {
         this.data = stream;
         this.dataSize = stream.available();
         putMeta(Constants.META_DATA_LENGTH, String.valueOf(dataSize));
+    }
+
+    public StreamEntity(Map<String, String> metaMap, InputStream stream) throws IOException {
+        this.data = stream;
+        this.dataSize = stream.available();
+        this.setMetaMap(metaMap);
     }
 }

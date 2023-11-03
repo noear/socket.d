@@ -42,9 +42,9 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Datag
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        //super.exceptionCaught(ctx, cause);
+
         Channel channel = ctx.attr(CHANNEL_KEY).get();
         server.processor().onError(channel.getSession(), cause);
-
-        ctx.close();
     }
 }

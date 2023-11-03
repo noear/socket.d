@@ -35,6 +35,12 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
 
     @Override
     public Server start() throws Exception {
+        if (isStarted) {
+            throw new IllegalStateException("Server started");
+        }else {
+            isStarted = true;
+        }
+
         if (config().getHost() != null) {
             server = new AioQuickServer(config().getPort(),
                     assistant(), this);
@@ -67,7 +73,9 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
 
     @Override
     public void stop() {
-        if (server == null) {
+        if (isStarted) {
+            isStarted = false;
+        } else {
             return;
         }
 

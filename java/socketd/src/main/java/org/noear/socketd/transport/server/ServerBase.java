@@ -17,8 +17,8 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     private Processor processor = new ProcessorDefault();
 
     private final ServerConfig config;
-
     private final T assistant;
+    protected boolean isStarted;
 
     public ServerBase(ServerConfig config, T assistant) {
         this.config = config;

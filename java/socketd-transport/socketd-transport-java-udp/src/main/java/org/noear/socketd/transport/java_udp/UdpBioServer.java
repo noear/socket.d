@@ -41,8 +41,10 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
     @Override
     public Server start() throws IOException {
-        if (serverThread != null) {
+        if (isStarted) {
             throw new IllegalStateException("Server started");
+        }else {
+            isStarted = true;
         }
 
         if (serverExecutor == null) {
@@ -105,9 +107,12 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
     @Override
     public void stop() {
-        if (server == null || server.isClosed()) {
+        if (isStarted) {
+            isStarted = false;
+        } else {
             return;
         }
+
         try {
             server.close();
             serverThread.stop();

@@ -9,6 +9,8 @@ import org.noear.socketd.transport.core.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2.0
  */
 public class TestCase01 extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase01.class);
+
     public TestCase01(String schema, int port) {
         super(schema, port);
     }
@@ -32,6 +36,8 @@ public class TestCase01 extends BaseTestCase {
 
     @Override
     public void start() throws Exception {
+        log.trace("...");
+
         super.start();
         //server
         server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))

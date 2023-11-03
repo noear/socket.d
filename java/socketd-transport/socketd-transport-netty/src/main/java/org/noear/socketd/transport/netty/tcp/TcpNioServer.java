@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(TcpNioServer.class);
     private ChannelFuture server;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workGroup;
 
     public TcpNioServer(ServerConfig config) {
         super(config, new TcpNioChannelAssistant());
@@ -31,9 +33,14 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
 
     @Override
     public Server start() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(config().getCoreThreads());
-        EventLoopGroup workGroup = new NioEventLoopGroup(config().getMaxThreads());
+        if (isStarted) {
+            throw new IllegalStateException("Server started");
+        } else {
+            isStarted = true;
+        }
 
+        bossGroup = new NioEventLoopGroup(config().getCoreThreads());
+        workGroup = new NioEventLoopGroup(config().getMaxThreads());
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
@@ -51,16 +58,11 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
             }
 
             log.info("Server started: {server=" + config().getLocalUrl() + "}");
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
 
             throw e;
-        } catch (Throwable e) {
-            bossGroup.shutdownGracefully();
-            workGroup.shutdownGracefully();
-
-            throw new IllegalStateException(e);
         }
 
         return this;
@@ -68,12 +70,16 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
 
     @Override
     public void stop() {
-        if (server == null) {
+        if (isStarted) {
+            isStarted = false;
+        } else {
             return;
         }
 
         try {
             server.channel().close();
+            bossGroup.shutdownGracefully();
+            workGroup.shutdownGracefully();
         } catch (Exception e) {
             log.debug("{}", e);
         }

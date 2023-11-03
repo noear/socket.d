@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(UdpNioServer.class);
     private ChannelFuture server;
+    private EventLoopGroup bossGroup;
 
     public UdpNioServer(ServerConfig config) {
         super(config, new UdpNioChannelAssistant(config));
@@ -29,7 +30,13 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> {
 
     @Override
     public Server start() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(config().getCoreThreads());
+        if (isStarted) {
+            throw new IllegalStateException("Server started");
+        } else {
+            isStarted = true;
+        }
+
+        bossGroup = new NioEventLoopGroup(config().getCoreThreads());
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
@@ -47,14 +54,9 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> {
             }
 
             log.info("Server started: {server=" + config().getLocalUrl() + "}");
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             bossGroup.shutdownGracefully();
-
             throw e;
-        } catch (Throwable e) {
-            bossGroup.shutdownGracefully();
-
-            throw new IllegalStateException(e);
         }
 
         return this;
@@ -62,12 +64,15 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> {
 
     @Override
     public void stop() {
-        if (server == null) {
+        if (isStarted) {
+            isStarted = false;
+        } else {
             return;
         }
 
         try {
             server.channel().close();
+            bossGroup.shutdownGracefully();
         } catch (Exception e) {
             log.debug("{}", e);
         }

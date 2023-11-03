@@ -56,8 +56,10 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
     @Override
     public Server start() throws IOException {
-        if (serverThread != null) {
+        if (isStarted) {
             throw new IllegalStateException("Server started");
+        }else {
+            isStarted = true;
         }
 
         if (serverExecutor == null) {
@@ -133,7 +135,9 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
     @Override
     public void stop() {
-        if (server == null || server.isClosed()) {
+        if (isStarted) {
+            isStarted = false;
+        } else {
             return;
         }
 

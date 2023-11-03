@@ -26,6 +26,12 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
 
     @Override
     public Server start() throws IOException {
+        if (isStarted) {
+            throw new IllegalStateException("Server started");
+        }else {
+            isStarted = true;
+        }
+
         if (config().getHost() != null) {
             server = new WebSocketServerImpl(config().getPort(), this);
         } else {
@@ -46,9 +52,12 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
 
     @Override
     public void stop() {
-        if (server == null) {
+        if (isStarted) {
+            isStarted = false;
+        } else {
             return;
         }
+
         try {
             server.stop();
         } catch (Exception e) {

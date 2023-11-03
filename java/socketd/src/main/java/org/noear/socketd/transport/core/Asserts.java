@@ -7,8 +7,8 @@ import org.noear.socketd.exception.SocketdChannelException;
  * @since 2.0
  */
 public class Asserts {
-    public static void assertClosed(Channel channel){
-        if(channel.isClosed()) {
+    public static void assertClosed(Channel channel) {
+        if (channel != null && channel.isClosed()) {
             throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().getSessionId());
         }
     }

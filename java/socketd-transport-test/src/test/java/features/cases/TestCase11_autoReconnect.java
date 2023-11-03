@@ -83,7 +83,7 @@ public class TestCase11_autoReconnect extends BaseTestCase {
         server.start();
 
         //休息下，启动可能要等会儿
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
 
         clientSession.send("/user/created", new StringEntity("hi"));

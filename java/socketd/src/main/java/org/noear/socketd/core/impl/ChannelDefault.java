@@ -1,11 +1,13 @@
 package org.noear.socketd.core.impl;
 
 import org.noear.socketd.core.*;
+import org.noear.socketd.utils.RangeUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 通道默认实现（每个连接都会建立一个通道）
@@ -50,8 +52,35 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      */
     @Override
     public void send(Frame frame, Acceptor acceptor) throws IOException {
-        if (acceptor != null) {
-            acceptorMap.put(frame.getMessage().getKey(), acceptor);
+        if (frame.getMessage() != null) {
+            Message message = frame.getMessage();
+
+            //注册接收器
+            if (acceptor != null) {
+                acceptorMap.put(message.getKey(), acceptor);
+            }
+
+            //尝试分片
+            if (message.getEntity() != null) {
+                if (message.getEntity().getDataSize() > getConfig().getMaxRangeSize()) {
+                    AtomicReference<Integer> rangeIndex = new AtomicReference<>(0);
+                    while (true) {
+                        Entity rangeEntity = RangeUtils.nextRange(getConfig(), rangeIndex, message.getEntity());
+
+                        if (rangeEntity != null) {
+                            //主要是 key 和 entity
+                            Frame rangeFrame = new Frame(frame.getFlag(), new MessageDefault()
+                                    .flag(frame.getFlag())
+                                    .key(message.getKey())
+                                    .entity(rangeEntity));
+
+                            assistant.write(source, rangeFrame);
+                        } else {
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         assistant.write(source, frame);

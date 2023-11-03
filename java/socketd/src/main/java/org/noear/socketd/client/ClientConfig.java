@@ -40,6 +40,7 @@ public class ClientConfig implements Config {
 
     private int maxRequests;
     private int maxUdpSize;
+    private int maxRangeSize;
 
     public ClientConfig(String url) {
         this.url = url;
@@ -54,8 +55,10 @@ public class ClientConfig implements Config {
         this.heartbeatInterval = 20 * 1000;
 
         this.autoReconnect = true;
+
         this.maxRequests = 10;
-        this.maxUdpSize = 2048; //与 netty 保持一致 //实际可用 1464
+        this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
+        this.maxRangeSize = 1024 * 1024 * 16; //16m
     }
 
     /**
@@ -239,6 +242,9 @@ public class ClientConfig implements Config {
         return this;
     }
 
+    /**
+     * 允许最大UDP包大小
+     */
     @Override
     public int getMaxUdpSize() {
         return maxUdpSize;
@@ -246,6 +252,19 @@ public class ClientConfig implements Config {
 
     public ClientConfig maxUdpSize(int maxUdpSize) {
         this.maxUdpSize = maxUdpSize;
+        return this;
+    }
+
+    /**
+     * 允许最大分片大小
+     */
+    @Override
+    public int getMaxRangeSize() {
+        return maxRangeSize;
+    }
+
+    public ClientConfig maxRangeSize(int maxRangeSize) {
+        this.maxRangeSize = maxRangeSize;
         return this;
     }
 

@@ -1,8 +1,9 @@
 package org.noear.socketd.solon.mvc;
 
+import org.noear.socketd.core.Constants;
 import org.noear.socketd.core.Message;
 import org.noear.socketd.core.Session;
-import org.noear.socketd.core.entity.DataEntity;
+import org.noear.socketd.core.entity.EntityDefault;
 import org.noear.solon.Utils;
 import org.noear.solon.core.handle.ContextAsyncListener;
 import org.noear.solon.core.handle.ContextEmpty;
@@ -119,7 +120,7 @@ public class SocketMvcContext extends ContextEmpty {
         if (_message.getEntity().getData() == null) {
             return 0;
         } else {
-            return _message.getEntity().getData().length;
+            return _message.getEntity().getDataSize();
         }
     }
 
@@ -135,7 +136,7 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public InputStream bodyAsStream() throws IOException {
-        return new ByteArrayInputStream(_message.getEntity().getData());
+        return _message.getEntity().getData();
     }
 
     //==============
@@ -178,7 +179,7 @@ public class SocketMvcContext extends ContextEmpty {
     protected void commit() throws IOException {
         if (_session.isValid()) {
             if (_message.isRequest() || _message.isSubscribe()) {
-                _session.replyEnd(_message, new DataEntity(_outputStream.toByteArray()));
+                _session.replyEnd(_message, new EntityDefault(Constants.DEF_META_STRING, _outputStream.toByteArray()));
             } else {
                 if (_outputStream.size() > 0) {
                     log.warn("No reply is supported for the current message, key={}", _message.getKey());

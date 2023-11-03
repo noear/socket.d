@@ -91,7 +91,7 @@ public class TestCase01 extends BaseTestCase {
         System.out.println("counter: " + serverOnMessageCounter.get() + ", " + clientSubscribeReplyCounter.get());
 
         Assertions.assertNotNull(response, getSchema() + ":sendAndRequest 返回不对");
-        Assertions.assertEquals("hi reply", new String(response.getData()), getSchema() + ":sendAndRequest 返回不对");
+        Assertions.assertEquals("hi reply", response.getDataAsString(), getSchema() + ":sendAndRequest 返回不对");
         Assertions.assertEquals(serverOnMessageCounter.get(), 6, getSchema() + ":server 收的消息数量对不上");
         Assertions.assertEquals(clientSubscribeReplyCounter.get(), 3, getSchema() + ":client 订阅回收数量对不上");
     }

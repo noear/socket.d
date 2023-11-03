@@ -50,4 +50,9 @@ public interface Config {
      * 允许最大UDP包大小
      */
     int getMaxUdpSize();
+
+    /**
+     * 允许最大分片大小
+     */
+    int getMaxRangeSize();
 }

@@ -1,5 +1,7 @@
 package org.noear.socketd.core.entity;
 
+import org.noear.socketd.core.Constants;
+
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -8,8 +10,8 @@ import java.nio.charset.StandardCharsets;
  * @author noear
  * @since 2.0
  */
-public class StringEntity extends DataEntity {
+public class StringEntity extends EntityDefault {
     public StringEntity(String str) {
-        super(str.getBytes(StandardCharsets.UTF_8));
+        super(Constants.DEF_META_STRING, str.getBytes(StandardCharsets.UTF_8));
     }
 }

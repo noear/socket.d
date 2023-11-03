@@ -3,7 +3,10 @@ package org.noear.socketd.core;
 
 import org.noear.socketd.core.entity.EntityDefault;
 import org.noear.socketd.core.impl.MessageDefault;
+import org.noear.socketd.exception.SocketdCodecException;
+import org.noear.socketd.utils.IoUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -52,7 +55,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             byte[] metaStringB = frame.getMessage().getEntity().getMetaString().getBytes(config.getCharset());
 
             //length (flag + key + topic + metaString + data + int.bytes + \n*3)
-            int len = keyB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getData().length + 2 * 3 + Integer.BYTES + Integer.BYTES;
+            int len = keyB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + 2 * 3 + Integer.BYTES + Integer.BYTES;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -75,7 +78,11 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             buffer.putChar('\n');
 
             //data
-            buffer.put(frame.getMessage().getEntity().getData());
+            try {
+                IoUtils.writeTo(frame.getMessage().getEntity().getData(), buffer);
+            } catch (IOException e) {
+                throw new SocketdCodecException(e);
+            }
 
             buffer.flip();
 

@@ -1,7 +1,5 @@
 package org.noear.socketd.core;
 
-import java.io.IOException;
-
 /**
  * 编解码器
  *

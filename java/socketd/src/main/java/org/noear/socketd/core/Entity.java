@@ -1,5 +1,6 @@
 package org.noear.socketd.core;
 
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -27,5 +28,15 @@ public interface Entity {
     /**
      * 获取数据
      */
-    byte[] getData();
+    InputStream getData();
+
+    /**
+     * 获取数据并转为这符串
+     */
+    String getDataAsString();
+
+    /**
+     * 获取数据长度
+     */
+    int getDataSize();
 }

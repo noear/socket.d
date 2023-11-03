@@ -7,10 +7,23 @@ package org.noear.socketd.core;
  * @since 2.0
  */
 public class Constants {
-    public static final String HEARDER_SOCKETD_VERSION = "SocketD-Version";
+    public static final String META_SOCKETD_VERSION = "SocketD-Version";
 
-    public static final String HEARDER_CONNECT = "SocketD-Version=2.0";
-    public static final String HEARDER_CONNACK = "SocketD-Version=2.0";
+    public static final String META_CONNECT = "SocketD-Version=2.0";
+    public static final String META_CONNACK = "SocketD-Version=2.0";
+
+    /**
+     * 数据长度
+     */
+    public static final String META_DATA_LENGTH = "Data-Length";
+    /**
+     * 数据分片索引
+     */
+    public static final String META_DATA_RANGE_IDX = "Data-Range-Idx";
+    /**
+     * 数据描述之文件名
+     */
+    public static final String META_DATA_DISPOSITION_FILENAME = "Data-Disposition-Filename";
 
 
     public static final String DEF_KEY = "";

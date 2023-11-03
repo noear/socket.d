@@ -1,6 +1,7 @@
 package org.noear.socketd.utils;
 
 import org.noear.socketd.core.Config;
+import org.noear.socketd.core.Constants;
 import org.noear.socketd.core.Entity;
 import org.noear.socketd.core.entity.EntityDefault;
 
@@ -23,7 +24,7 @@ public class RangeUtils {
         }
         EntityDefault rangeEntity = new EntityDefault(null, rangeBytes);
         rangeEntity.setMetaMap(entity.getMetaMap());
-        rangeEntity.putMeta("Data-Range-Id", String.valueOf(rangeIndex));
+        rangeEntity.putMeta(Constants.META_DATA_RANGE_IDX, String.valueOf(rangeIndex));
         return rangeEntity;
     }
 

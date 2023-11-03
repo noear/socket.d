@@ -2,7 +2,6 @@ package org.noear.socketd.core;
 
 import org.noear.socketd.core.entity.MetaEntity;
 import org.noear.socketd.core.impl.MessageDefault;
-import org.noear.socketd.utils.Utils;
 
 /**
  * 帧工厂
@@ -17,7 +16,7 @@ public class Frames {
      * @param url 连接地址
      */
     public static final Frame connectFrame(String key, String url) {
-        return new Frame(Flag.Connect, new MessageDefault().key(key).topic(url).entity(new MetaEntity(Constants.HEARDER_CONNECT)));
+        return new Frame(Flag.Connect, new MessageDefault().key(key).topic(url).entity(new MetaEntity(Constants.META_CONNECT)));
     }
 
     /**
@@ -26,7 +25,7 @@ public class Frames {
      * @param connectMessage 连接消息
      */
     public static final Frame connackFrame(Message connectMessage) {
-        return new Frame(Flag.Connack, new MessageDefault().key(connectMessage.getKey()).topic(connectMessage.getTopic()).entity(new MetaEntity(Constants.HEARDER_CONNACK)));
+        return new Frame(Flag.Connack, new MessageDefault().key(connectMessage.getKey()).topic(connectMessage.getTopic()).entity(new MetaEntity(Constants.META_CONNACK)));
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.noear.socketd.core.entity;
 
+import org.noear.socketd.core.Constants;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,6 +18,6 @@ public class StreamEntity extends BaseEntity {
     public StreamEntity(InputStream stream) throws IOException {
         this.data = stream;
         this.dataSize = stream.available();
-        putMeta("Data-Length", String.valueOf(dataSize));
+        putMeta(Constants.META_DATA_LENGTH, String.valueOf(dataSize));
     }
 }

@@ -19,7 +19,7 @@ public class Handshaker {
     public Handshaker(Message message) {
         this.uri = URI.create(message.getTopic());
         this.entity = message.getEntity();
-        this.version = entity.getMeta(Constants.HEARDER_SOCKETD_VERSION);
+        this.version = entity.getMeta(Constants.META_SOCKETD_VERSION);
         this.paramMap = new HashMap<>();
 
         String queryString = uri.getQuery();

@@ -36,6 +36,7 @@ public class Demo {
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .open();
         
+        //常规发消息
         session.send("/user/created", new StringEntity("hi"));
         
         Entity response = session.sendAndRequest("/user/get", new StringEntity("hi"));
@@ -44,6 +45,10 @@ public class Demo {
         session.sendAndSubscribe("/user/sub", new StringEntity("hi"), message -> {
             System.out.println("sendAndSubscribe====" + message);
         });
+
+
+        //发送文件
+        session.send("/user/logo/upload", new FileEntity(new File("/data/user.jpg")));
     }
 }
 ```

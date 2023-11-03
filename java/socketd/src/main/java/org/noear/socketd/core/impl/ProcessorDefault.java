@@ -68,21 +68,15 @@ public class ProcessorDefault implements Processor {
                         onClose(channel.getSession());
                         break;
                     }
-                    case Message: {
-                        onMessage(channel.getSession(), frame.getMessage());
-                        break;
-                    }
-                    case Request: {
-                        onMessage(channel.getSession(), frame.getMessage());
-                        break;
-                    }
+                    case Message:
+                    case Request:
                     case Subscribe: {
-                        onMessage(channel.getSession(), frame.getMessage());
+                        onReceiveDo(channel, frame, false);
                         break;
                     }
                     case Reply:
                     case ReplyEnd: {
-                        channel.retrieve(frame);
+                        onReceiveDo(channel, frame, true);
                         break;
                     }
                     default: {
@@ -93,6 +87,25 @@ public class ProcessorDefault implements Processor {
             } catch (Throwable e) {
                 onError(channel.getSession(), e);
             }
+        }
+    }
+
+    private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
+        String rangeIdxStr = frame.getMessage().getEntity().getMeta(Constants.META_DATA_RANGE_IDX);
+        if (rangeIdxStr != null) {
+            RangesFrame rangesFrame = channel.getConfig().getRangesHandler().aggrRanges(channel, frame);
+
+            if (rangesFrame == null) {
+                return;
+            } else {
+                frame = rangesFrame.getFrame();
+            }
+        }
+
+        if (isReply) {
+            channel.retrieve(frame);
+        } else {
+            onMessage(channel.getSession(), frame.getMessage());
         }
     }
 

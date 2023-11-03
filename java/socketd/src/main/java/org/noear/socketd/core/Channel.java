@@ -15,6 +15,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public interface Channel extends Closeable {
     /**
+     * 获取附件
+     */
+    <T> T getAttachment(String key);
+
+    /**
+     * 设置附件
+     */
+    void setAttachment(String key, Object val);
+
+    /**
      * 是否有效
      */
     boolean isValid();

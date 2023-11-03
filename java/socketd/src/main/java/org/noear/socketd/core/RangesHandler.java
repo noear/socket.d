@@ -10,5 +10,13 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 2.0
  */
 public interface RangesHandler {
+    /**
+     * 获取下个分片
+     * */
     Entity nextRange(Config config, AtomicReference<Integer> rangeIndex, Entity entity) throws IOException;
+
+    /**
+     * 聚合所有分片
+     * */
+    RangesFrame aggrRanges(Channel channel, Frame frame) throws IOException;
 }

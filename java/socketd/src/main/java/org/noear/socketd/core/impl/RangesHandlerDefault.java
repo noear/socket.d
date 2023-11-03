@@ -1,9 +1,6 @@
 package org.noear.socketd.core.impl;
 
-import org.noear.socketd.core.Config;
-import org.noear.socketd.core.Constants;
-import org.noear.socketd.core.Entity;
-import org.noear.socketd.core.RangesHandler;
+import org.noear.socketd.core.*;
 import org.noear.socketd.core.entity.EntityDefault;
 
 import java.io.ByteArrayOutputStream;
@@ -29,6 +26,27 @@ public class RangesHandlerDefault implements RangesHandler {
         rangeEntity.setMetaMap(entity.getMetaMap());
         rangeEntity.putMeta(Constants.META_DATA_RANGE_IDX, String.valueOf(rangeIndex));
         return rangeEntity;
+    }
+
+
+    @Override
+    public RangesFrame aggrRanges(Channel channel, Frame frame) throws IOException {
+        RangesFrameDefault aggregator = channel.getAttachment(frame.getMessage().getKey());
+        if (aggregator == null) {
+            aggregator = new RangesFrameDefault(frame);
+            channel.setAttachment(aggregator.getKey(), aggregator);
+            return null;
+        }
+
+        aggregator.add(frame);
+
+        if (aggregator.getDataLength() > aggregator.getDataStreamSize()) {
+            //长度不够，等下一个分片包
+            return null;
+        } else {
+            //重置为聚合帖
+            return aggregator;
+        }
     }
 
     /**

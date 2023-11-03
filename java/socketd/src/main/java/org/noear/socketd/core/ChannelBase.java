@@ -1,6 +1,8 @@
 package org.noear.socketd.core;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,6 +18,7 @@ public abstract class ChannelBase implements Channel {
     private final AtomicInteger requests = new AtomicInteger();
     private Handshaker handshaker;
     private long liveTime;
+    private Map<String,Object> attachments;
 
     public Config getConfig() {
         return config;
@@ -23,6 +26,24 @@ public abstract class ChannelBase implements Channel {
 
     public ChannelBase(Config config) {
         this.config = config;
+    }
+
+
+    @Override
+    public <T> T getAttachment(String key) {
+        if (attachments == null) {
+            return null;
+        }
+        return (T) attachments.get(key);
+    }
+
+    @Override
+    public void setAttachment(String key, Object val) {
+        if (attachments == null) {
+            attachments = new HashMap<>();
+        }
+
+        attachments.put(key, val);
     }
 
     @Override

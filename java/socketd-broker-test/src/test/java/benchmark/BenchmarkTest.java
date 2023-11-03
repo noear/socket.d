@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 public class BenchmarkTest {
     static final String[] schemas = new String[]{
             "tcp-java", "tcp-netty", "tcp-smartsocket",
-            "udp-java",
+            "udp-java", "udp-netty",
             "ws-java",};
 
 

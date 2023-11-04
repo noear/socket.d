@@ -54,7 +54,10 @@ public class WebSocketServerImpl extends WebSocketServer {
         try {
             Channel channel = conn.getAttachment();
             Frame frame = server.assistant().read(message);
-            server.processor().onReceive(channel, frame);
+
+            if(frame != null) {
+                server.processor().onReceive(channel, frame);
+            }
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);
         }
@@ -64,7 +67,11 @@ public class WebSocketServerImpl extends WebSocketServer {
     public void onError(WebSocket conn, Exception ex) {
         try {
             Channel channel = conn.getAttachment();
-            server.processor().onError(channel.getSession(), ex);
+
+            if (channel != null) {
+                //有可能未 onOpen，就 onError 了；此时通道未成
+                server.processor().onError(channel.getSession(), ex);
+            }
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);
         }

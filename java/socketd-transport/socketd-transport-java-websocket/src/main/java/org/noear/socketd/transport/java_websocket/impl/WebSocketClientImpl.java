@@ -47,7 +47,10 @@ public class WebSocketClientImpl extends WebSocketClient {
     public void onMessage(ByteBuffer bytes) {
         try {
             Frame frame = client.assistant().read(bytes);
-            client.processor().onReceive(channel, frame);
+
+            if (frame != null) {
+                client.processor().onReceive(channel, frame);
+            }
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);
         }

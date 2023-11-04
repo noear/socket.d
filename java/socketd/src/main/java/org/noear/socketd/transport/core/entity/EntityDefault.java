@@ -89,6 +89,11 @@ public class EntityDefault implements Entity {
         return metaMap;
     }
 
+    public EntityDefault meta(String name, String val) {
+        putMeta(name, val);
+        return this;
+    }
+
     /**
      * 设置元信息
      */
@@ -111,7 +116,7 @@ public class EntityDefault implements Entity {
         return this;
     }
 
-    public EntityDefault data(InputStream data) throws IOException{
+    public EntityDefault data(InputStream data) throws IOException {
         this.data = data;
         this.dataSize = data.available();
         putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));

@@ -57,7 +57,7 @@ public class Demo {
 
 * Mvc 模式（比较适合应答场景）
 
-服务端
+服务端（需要 socketd-solon-plugin 支持）
 
 ```java
 @SocketdServer(path = "/demo", schema = "ws")
@@ -115,27 +115,9 @@ public class ClientDemo implements LifecycleBean {
 
         //发送2
         entity.putMeta("user", "solon");
+        entity.getData().reset(); //因为是 InputStream 接口，复用需要 reset
         Entity response = session.sendAndRequest("/demo2", entity);
         System.out.println(response);
-    }
-}
-```
-
-客户端（接口模式）//未完成
-
-```java
-@Component
-public class ClientDemo implements LifecycleBean {
-    @Override
-    public void start() throws Throwable {
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/test?u=a&p=2").open();
-        UserApi userApi = SocketD.build(session, UserApi.class);
-        
-        //发送
-        userApi.demo("noear", "123456");
-
-        //发送2
-        userApi.demo2("solon", "123456");
     }
 }
 ```

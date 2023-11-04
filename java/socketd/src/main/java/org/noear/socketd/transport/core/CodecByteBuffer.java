@@ -136,7 +136,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
                 buffer.get(data, 0, len);
             }
 
-            MessageDefault message = new MessageDefault().key(key).topic(topic).entity(new EntityDefault(metaString, data));
+            MessageDefault message = new MessageDefault().key(key).topic(topic).entity(new EntityDefault().metaString(metaString).data(data));
             message.flag(Flag.Of(flag));
             return new Frame(message.getFlag(), message);
         }

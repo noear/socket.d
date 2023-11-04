@@ -1,11 +1,14 @@
 package org.noear.socketd.solon.mvc;
 
+import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.solon.Solon;
 import org.noear.solon.Utils;
 import org.noear.solon.core.handle.ContextAsyncListener;
 import org.noear.solon.core.handle.ContextEmpty;
+import org.noear.solon.core.handle.DownloadedFile;
 import org.noear.solon.core.handle.MethodType;
 import org.noear.solon.core.util.IoUtil;
 import org.slf4j.Logger;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URLEncoder;
 
 /**
  * @author noear
@@ -127,7 +131,7 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public String contentType() {
-        return headerMap().get("Content-Type");
+        return header("Content-Type");
     }
 
     @Override
@@ -178,7 +182,7 @@ public class SocketMvcContext extends ContextEmpty {
     @Override
     public void output(byte[] bytes) {
         try {
-            _outputStream.write(bytes);
+            outputStream().write(bytes);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -187,22 +191,48 @@ public class SocketMvcContext extends ContextEmpty {
     @Override
     public void output(InputStream stream) {
         try {
-            IoUtil.transferTo(stream, _outputStream);
+            IoUtil.transferTo(stream, outputStream());
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
     }
 
+    @Override
+    public void outputAsFile(File file) throws IOException {
+        String fileName = URLEncoder.encode(file.getName(), Solon.encoding());
+        String contentType = Utils.mime(file.getName());
+
+        headerSet(Constants.META_DATA_DISPOSITION_FILENAME, fileName);
+        contentType(contentType);
+
+        try (InputStream ins = new FileInputStream(file)) {
+            replyDo(ins, (int) file.length());
+        }
+    }
+
+    @Override
+    public void outputAsFile(DownloadedFile file) throws IOException {
+        String fileName = URLEncoder.encode(file.getName(), Solon.encoding());
+
+        headerSet(Constants.META_DATA_DISPOSITION_FILENAME, fileName);
+        contentType(file.getContentType());
+
+        try (InputStream ins = file.getContent()) {
+            replyDo(ins, (int) file.getContentSize());
+        }
+    }
+
     protected void commit() throws IOException {
-        if (_session.isValid()) {
-            if (_request.isRequest() || _request.isSubscribe()) {
-                _response.setData(_outputStream.toByteArray());
-                _response.setMetaMap(headerMap());
-                _session.replyEnd(_request, _response);
-            } else {
-                if (_outputStream.size() > 0) {
-                    log.warn("No reply is supported for the current message, key={}", _request.getKey());
-                }
+        replyDo(new ByteArrayInputStream(_outputStream.toByteArray()),  _outputStream.size());
+    }
+
+    private void replyDo(InputStream dataStream, int dataSize) throws IOException {
+        if (_request.isRequest() || _request.isSubscribe()) {
+            _response.data(dataStream);
+            _session.replyEnd(_request, _response);
+        } else {
+            if (dataSize > 0) {
+                log.warn("No reply is supported for the current message, key={}", _request.getKey());
             }
         }
     }

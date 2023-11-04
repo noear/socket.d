@@ -1,5 +1,8 @@
 package org.noear.socketd.transport.core;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 /**
  * 常量
  *
@@ -29,5 +32,5 @@ public class Constants {
     public static final String DEF_KEY = "";
     public static final String DEF_TOPIC = "";
     public static final String DEF_META_STRING = "";
-    public static final byte[] DEF_DATA = new byte[]{};
+    public static final InputStream DEF_DATA = new ByteArrayInputStream(new byte[]{});
 }

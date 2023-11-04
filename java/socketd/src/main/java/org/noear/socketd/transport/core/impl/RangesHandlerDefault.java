@@ -25,9 +25,9 @@ public class RangesHandlerDefault implements RangesHandler {
         if (rangeBytes.length == 0) {
             return null;
         }
-        EntityDefault rangeEntity = new EntityDefault(null, rangeBytes);
+        EntityDefault rangeEntity = new EntityDefault().data(rangeBytes);
         if (rangeIndex.get() == 1) {
-            rangeEntity.setMetaMap(entity.getMetaMap());
+            rangeEntity.metaMap(entity.getMetaMap());
         }
         rangeEntity.putMeta(Constants.META_DATA_RANGE_IDX, String.valueOf(rangeIndex));
         return rangeEntity;

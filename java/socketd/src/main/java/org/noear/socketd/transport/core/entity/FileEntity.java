@@ -12,10 +12,9 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class FileEntity extends StreamEntity {
-
+public class FileEntity extends EntityDefault {
     public FileEntity(File file) throws IOException {
-        super(new FileInputStream(file));
+        data(new FileInputStream(file));
         putMeta(Constants.META_DATA_DISPOSITION_FILENAME, file.getName());
     }
 }

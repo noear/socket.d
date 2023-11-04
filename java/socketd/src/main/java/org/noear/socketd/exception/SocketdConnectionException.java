@@ -6,7 +6,7 @@ package org.noear.socketd.exception;
  * @author noear
  * @since 2.0
  */
-public class SocketdConnectionException extends SocketdException {
+public class SocketdConnectionException extends SocketdChannelException {
     public SocketdConnectionException(Throwable cause){
         super(cause);
     }

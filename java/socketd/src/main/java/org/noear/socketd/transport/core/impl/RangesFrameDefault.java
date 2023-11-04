@@ -3,8 +3,8 @@ package org.noear.socketd.transport.core.impl;
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.RangesFrame;
-import org.noear.socketd.transport.core.entity.StreamEntity;
 import org.noear.socketd.exception.SocketdCodecException;
+import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.utils.IoUtils;
 import org.noear.socketd.utils.Utils;
 
@@ -71,7 +71,7 @@ public class RangesFrameDefault implements RangesFrame {
                 .flag(main.getFlag())
                 .key(main.getMessage().getKey())
                 .topic(main.getMessage().getTopic())
-                .entity(new StreamEntity(main.getMessage().getEntity().getMetaMap(), inputStream)));
+                .entity(new EntityDefault().metaMap(main.getMessage().getEntity().getMetaMap()).data(inputStream)));
     }
 
     /**

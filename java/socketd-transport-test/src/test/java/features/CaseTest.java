@@ -13,20 +13,6 @@ public class CaseTest {
             "ws-java",
             "udp-java", "udp-netty"};
 
-    /**
-     * 用于调试
-     * */
-//    public static void main(String[] args) throws Exception {
-//        String s1 = schemas[4];
-//        TestCase11 testCase01 = new TestCase11(s1, 2000);
-//        try {
-//            testCase01.start();
-//            testCase01.stop();
-//        } catch (Exception e) {
-//            testCase01.onError();
-//            e.printStackTrace();
-//        }
-//    }
 
     @Test
     public void testCase01() throws Exception {

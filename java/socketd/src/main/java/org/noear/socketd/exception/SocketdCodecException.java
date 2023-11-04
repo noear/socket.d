@@ -6,7 +6,7 @@ package org.noear.socketd.exception;
  * @author noear
  * @since 2.0
  */
-public class SocketdCodecException extends RuntimeException {
+public class SocketdCodecException extends SocketdException {
     public SocketdCodecException(Throwable cause){
         super(cause);
     }

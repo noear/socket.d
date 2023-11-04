@@ -18,7 +18,6 @@ public interface Listener {
 
 ### 2、会话接口（Session）
 
-
 ```java
 public interface Session {
     //是否有效

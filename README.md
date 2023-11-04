@@ -2,7 +2,7 @@
   SocketD
 </h1>
 <p align="center">
-	<strong>基于连接的可扩展的消息驱动传输协议</strong>
+	<strong>基于连接的可扩展消息传输协议</strong>
 </p>
 
 <p align="center">

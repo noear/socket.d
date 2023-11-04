@@ -9,13 +9,13 @@
 
 ### 适配情况
 
-| transport                        | schema           | 支持端 | 备注 |
-|-------------------------------|------------------|-----|--|
-| socketd-transport-java-tcp       | tcp-bio          | c,s |  |
-| socketd-transport-java-udp       | udp-bio          | c,s |  |
-| socketd-transport-java-websocket | ws-bio           | c,s |  |
-| socketd-transport-netty          | tcp-nio, udp-nio | c,s |  |
-| socketd-transport-smartsocket    | tcp-aio          | c,s |  |
+| transport                        | schema                           | 支持端 | 备注 |
+|-------------------------------|----------------------------------|-----|--|
+| socketd-transport-java-tcp       | tcp, tcps, tcp-bio               | c,s |  |
+| socketd-transport-java-udp       | udp, udp-bio                     | c,s |  |
+| socketd-transport-java-websocket | ws, wss, ws-bio                  | c,s |  |
+| socketd-transport-netty          | tcp, tcps, udp, tcp-nio, udp-nio | c,s |  |
+| socketd-transport-smartsocket    | tcp, tcps, tcp-aio               | c,s |  |
 
 
 ### 简单演示（引入一个 transport 适配包后）:
@@ -25,18 +25,20 @@
 ```java
 public class Demo {
     public void main(String[] args) throws Throwable {
+        //::启动服务端
         SocketD.createServer(new ServerConfig("ws"))
                 .listen(new ServerListener())
                 .start();
 
         
+        //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:6329/path?u=a&p=2")
                 .config(c -> c.autoReconnect(true)) //配置
                 .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .open();
         
-        //常规发消息
+        //发送常规消息
         session.send("/user/created", new StringEntity("hi"));
         
         Entity response = session.sendAndRequest("/user/get", new StringEntity("hi"));
@@ -47,13 +49,13 @@ public class Demo {
         });
 
 
-        //发送文件
+        //发送文件消息（支持自动分片）
         session.send("/user/logo/upload", new FileEntity(new File("/data/user.jpg")));
     }
 }
 ```
 
-* Mvc模式
+* Mvc 模式（比较适合应签场景）
 
 服务端
 
@@ -92,7 +94,7 @@ public class ControllerDemo {
 }
 ```
 
-客户端
+客户端（消息模式）
 
 ```java
 @Component
@@ -115,6 +117,25 @@ public class ClientDemo implements LifecycleBean {
         entity.putMeta("user", "solon");
         Entity response = session.sendAndRequest("/demo2", entity);
         System.out.println(response);
+    }
+}
+```
+
+客户端（接口模式）
+
+```java
+@Component
+public class ClientDemo implements LifecycleBean {
+    @Override
+    public void start() throws Throwable {
+        Session session = SocketD.createClient("ws://127.0.0.1:6329/test?u=a&p=2").open();
+        UserApi userApi = Nami.create(session, UserApi.class);
+        
+        //发送
+        userApi.demo("noear", "123456");
+
+        //发送2
+        userApi.demo2("solon", "123456");
     }
 }
 ```

@@ -133,12 +133,7 @@ public class Demo {
                         }
 
                         //超过5次后，不玩了
-                        Integer count = session.getAttr("count");
-                        if(count == null){
-                            count = 0;
-                        }
-                        count++;
-
+                        Integer count = session.getAttrOrDefault("count", 0) ++;
                         if(count > 5){
                             return;
                         }else {

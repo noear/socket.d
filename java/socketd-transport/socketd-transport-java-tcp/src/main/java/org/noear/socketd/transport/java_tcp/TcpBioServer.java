@@ -58,7 +58,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     public Server start() throws IOException {
         if (isStarted) {
             throw new IllegalStateException("Server started");
-        }else {
+        } else {
             isStarted = true;
         }
 
@@ -73,16 +73,15 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                 try {
                     Socket socket = server.accept();
 
-                    try {
-                        Channel channel = new ChannelDefault<>(socket, config(), assistant());
-
-                        serverExecutor.submit(() -> {
+                    serverExecutor.submit(() -> {
+                        try {
+                            Channel channel = new ChannelDefault<>(socket, config(), assistant());
                             receive(channel, socket);
-                        });
-                    } catch (Throwable e) {
-                        log.debug("{}", e);
-                        close(socket);
-                    }
+                        } catch (Throwable e) {
+                            log.debug("{}", e);
+                            close(socket);
+                        }
+                    });
                 } catch (Throwable e) {
                     if (server.isClosed()) {
                         //说明被手动关掉了

@@ -11,7 +11,7 @@ import java.util.LinkedList;
  * @since 2.0
  */
 public class ListenerPipeline implements Listener {
-    Deque<Listener> deque = new LinkedList<>();
+    protected final Deque<Listener> deque = new LinkedList<>();
 
     /**
      * 前一个

@@ -1,0 +1,65 @@
+package org.noear.socketd.transport.core;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 监听路由器（根据握手地址路由，一般用于服务端）
+ *
+ * @author noear
+ * @since 2.0
+ */
+public class ListenerRouter implements Listener {
+    protected final Map<String, Listener> routingTable = new HashMap<>();
+
+    /**
+     * 路由
+     */
+    public void route(String path, Listener listener) {
+        routingTable.put(path, listener);
+    }
+
+    /**
+     * 匹配
+     */
+    public Listener matching(Session session) {
+        return routingTable.get(session.getHandshaker().getUri().getPath());
+    }
+
+    @Override
+    public void onOpen(Session session) throws IOException {
+        Listener listener = matching(session);
+
+        if (listener != null) {
+            listener.onOpen(session);
+        }
+    }
+
+    @Override
+    public void onMessage(Session session, Message message) throws IOException {
+        Listener listener = matching(session);
+
+        if (listener != null) {
+            listener.onMessage(session, message);
+        }
+    }
+
+    @Override
+    public void onClose(Session session) {
+        Listener listener = matching(session);
+
+        if (listener != null) {
+            listener.onClose(session);
+        }
+    }
+
+    @Override
+    public void onError(Session session, Throwable error) {
+        Listener listener = matching(session);
+
+        if (listener != null) {
+            listener.onError(session, error);
+        }
+    }
+}

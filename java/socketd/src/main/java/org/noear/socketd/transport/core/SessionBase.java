@@ -64,6 +64,6 @@ public abstract class SessionBase implements Session {
     }
 
     protected String generateKey(){
-        return channel.getConfig().getKeyGenerator().generate();
+        return channel.getConfig().getIdGenerator().generate();
     }
 }

@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.core.impl.KeyGeneratorGuid;
+import org.noear.socketd.transport.core.impl.IdGeneratorGuid;
 import org.noear.socketd.transport.core.impl.RangesHandlerDefault;
 
 import javax.net.ssl.SSLContext;
@@ -18,7 +18,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected Charset charset;
 
     protected Codec<ByteBuffer> codec;
-    protected KeyGenerator keyGenerator;
+    protected IdGenerator idGenerator;
     protected RangesHandler rangesHandler;
     protected SSLContext sslContext;
 
@@ -32,7 +32,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.charset = StandardCharsets.UTF_8;
 
         this.codec = new CodecByteBuffer(this);
-        this.keyGenerator = new KeyGeneratorGuid();
+        this.idGenerator = new IdGeneratorGuid();
         this.rangesHandler = new RangesHandlerDefault();
 
         this.maxRequests = 10;
@@ -83,13 +83,13 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 获取标识生成器
      */
     @Override
-    public KeyGenerator getKeyGenerator() {
-        return keyGenerator;
+    public IdGenerator getIdGenerator() {
+        return idGenerator;
     }
 
 
-    public T keyGenerator(KeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
+    public T keyGenerator(IdGenerator keyGenerator) {
+        this.idGenerator = keyGenerator;
         return (T) this;
     }
 

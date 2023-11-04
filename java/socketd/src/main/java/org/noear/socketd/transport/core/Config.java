@@ -32,9 +32,9 @@ public interface Config {
     Codec<ByteBuffer> getCodec();
 
     /**
-     * 获取标识生成器
+     * 获取Id生成器
      */
-    KeyGenerator getKeyGenerator();
+    IdGenerator getIdGenerator();
 
     /**
      * 获取分布处理器

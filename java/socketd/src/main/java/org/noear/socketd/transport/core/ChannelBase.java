@@ -74,7 +74,7 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public void sendConnect(String uri) throws IOException {
-        send(Frames.connectFrame(getConfig().getKeyGenerator().generate(), uri), null);
+        send(Frames.connectFrame(getConfig().getIdGenerator().generate(), uri), null);
     }
 
     @Override

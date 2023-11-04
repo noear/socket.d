@@ -1,12 +1,12 @@
 package org.noear.socketd.transport.core;
 
 /**
- * Key 生成器
+ * Id 生成器
  *
  * @author noear
  * @since 2.0
  */
-public interface KeyGenerator {
+public interface IdGenerator {
     /**
      * 生成
      */

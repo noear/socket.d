@@ -119,7 +119,7 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * 获取数据
+     * 获取数据（如果要多次复用，重用之前需要reset）
      */
     @Override
     public InputStream getData() {

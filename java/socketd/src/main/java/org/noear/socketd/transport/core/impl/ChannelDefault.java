@@ -1,10 +1,9 @@
 package org.noear.socketd.transport.core.impl;
 
-import org.noear.socketd.exception.SocketdChannelException;
-import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.core.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,22 +69,27 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
 
             //尝试分片
             if (message.getEntity() != null) {
-                if (message.getEntity().getDataSize() > getConfig().getRangeSize()) {
-                    AtomicReference<Integer> rangeIndex = new AtomicReference<>(0);
-                    while (true) {
-                        Entity rangeEntity = getConfig().getRangesHandler().nextRange(getConfig(), rangeIndex, message.getEntity());
+                //确保用完自动关闭
+                try (InputStream ins = message.getEntity().getData()) {
+                    if (message.getEntity().getDataSize() > getConfig().getRangeSize()) {
+                        AtomicReference<Integer> rangeIndex = new AtomicReference<>(0);
+                        while (true) {
+                            Entity rangeEntity = getConfig().getRangesHandler().nextRange(getConfig(), rangeIndex, message.getEntity());
 
-                        if (rangeEntity != null) {
-                            //主要是 key 和 entity
-                            Frame rangeFrame = new Frame(frame.getFlag(), new MessageDefault()
-                                    .flag(frame.getFlag())
-                                    .key(message.getKey())
-                                    .entity(rangeEntity));
+                            if (rangeEntity != null) {
+                                //主要是 key 和 entity
+                                Frame rangeFrame = new Frame(frame.getFlag(), new MessageDefault()
+                                        .flag(frame.getFlag())
+                                        .key(message.getKey())
+                                        .entity(rangeEntity));
 
-                            assistant.write(source, rangeFrame);
-                        } else {
-                            return;
+                                assistant.write(source, rangeFrame);
+                            } else {
+                                return;
+                            }
                         }
+                    } else {
+                        assistant.write(source, frame);
                     }
                 }
             }

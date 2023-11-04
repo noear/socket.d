@@ -1,6 +1,41 @@
-# SocketD
+<h1 align="center" style="text-align:center;">
+  SocketD
+</h1>
+<p align="center">
+	<strong>基于连接的可扩展消息驱动协议</strong>
+</p>
 
-SocketD ，基于连接的、可扩展的，消息驱动协议。规范具有异步，自动分片，背压流控，双向通讯，多路复用，断线重连，支持签权，基于主题消息等特性。
+<p align="center">
+    <a target="_blank" href="https://search.maven.org/artifact/org.noear/socketd">
+        <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Maven%20Central" alt="Maven" />
+    </a>
+    <a target="_blank" href="https://www.apache.org/licenses/LICENSE-2.0.txt">
+		<img src="https://img.shields.io/:license-Apache2-blue.svg" alt="Apache 2" />
+	</a>
+    <a target="_blank" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
+		<img src="https://img.shields.io/badge/JDK-8+-green.svg" alt="jdk-8+" />
+	</a>
+    <br />
+    <a target="_blank" href='https://gitee.com/noear/socketd/stargazers'>
+        <img src='https://gitee.com/noear/socketd/badge/star.svg' alt='gitee star'/>
+    </a>
+    <a target="_blank" href='https://github.com/noear/socketd/stargazers'>
+        <img src="https://img.shields.io/github/stars/noear/socketd.svg?logo=github" alt="github star"/>
+    </a>
+</p>
+
+<br/>
+<p align="center">
+	<a href="https://jq.qq.com/?_wv=1027&k=kjB5JNiC">
+	<img src="https://img.shields.io/badge/QQ交流群-870505482-orange"/></a>
+</p>
+
+
+<hr />
+
+
+
+SocketD 一个基于连接的、可扩展的、消息驱动的通讯协议。具有异步，自动分片，背压流控，双向通讯，多路复用，断线重连，支持签权，基于主题消息等特性。
 
 * 具有语言无关性的二进制通信协议（支持 tcp, ws, udp）
 * 异步非阻塞消息驱动通信

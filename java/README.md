@@ -104,18 +104,15 @@ public class ClientDemo implements LifecycleBean {
         Session session = SocketD.createClient("ws://127.0.0.1:6329/test?u=a&p=2").open();
 
         //设定内容
-        StringEntity entity = new StringEntity("{\"order\":12345}");
-
-        //设定头信息
-        entity.putMeta("Content-Type", MimeType.APPLICATION_JSON_UTF8_VALUE);
-        entity.putMeta("user", "noear");
+        StringEntity entity = new StringEntity("{\"order\":12345}")
+                .meta("Content-Type", MimeType.APPLICATION_JSON_UTF8_VALUE)
+                .meta("user", "noear");
 
         //发送
         session.send("/demo", entity);
 
         //发送2
-        entity.putMeta("user", "solon");
-        entity.getData().reset(); //因为是 InputStream 接口，复用需要 reset
+        entity.meta("user", "solon").getData().reset(); //因为是 InputStream 接口，复用需要 reset
         Entity response = session.sendAndRequest("/demo2", entity);
         System.out.println(response);
     }

@@ -30,20 +30,20 @@ public abstract class ChannelBase implements Channel {
 
 
     @Override
-    public <T> T getAttachment(String key) {
+    public <T> T getAttachment(String name) {
         if (attachments == null) {
             return null;
         }
-        return (T) attachments.get(key);
+        return (T) attachments.get(name);
     }
 
     @Override
-    public void setAttachment(String key, Object val) {
+    public void setAttachment(String name, Object val) {
         if (attachments == null) {
             attachments = new HashMap<>();
         }
 
-        attachments.put(key, val);
+        attachments.put(name, val);
     }
 
     @Override

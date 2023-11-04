@@ -42,8 +42,8 @@ public class EntityDefault implements Entity {
         if (metaStringChanged) {
             StringBuilder buf = new StringBuilder();
 
-            getMetaMap().forEach((key, val) -> {
-                buf.append(key).append("=").append(val).append("&");
+            getMetaMap().forEach((name, val) -> {
+                buf.append(name).append("=").append(val).append("&");
             });
 
             if (buf.length() > 0) {

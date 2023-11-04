@@ -47,15 +47,15 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
 
             return buffer;
         } else {
-            //key
-            byte[] keyB = frame.getMessage().getKey().getBytes(config.getCharset());
+            //sid
+            byte[] sidB = frame.getMessage().getSid().getBytes(config.getCharset());
             //topic
             byte[] topicB = frame.getMessage().getTopic().getBytes(config.getCharset());
             //metaString
             byte[] metaStringB = frame.getMessage().getEntity().getMetaString().getBytes(config.getCharset());
 
-            //length (flag + key + topic + metaString + data + int.bytes + \n*3)
-            int len = keyB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + 2 * 3 + Integer.BYTES + Integer.BYTES;
+            //length (flag + sid + topic + metaString + data + int.bytes + \n*3)
+            int len = sidB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + 2 * 3 + Integer.BYTES + Integer.BYTES;
 
             ByteBuffer buffer = ByteBuffer.allocate(len);
 
@@ -65,8 +65,8 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             //flag
             buffer.putInt(frame.getFlag().getCode());
 
-            //key
-            buffer.put(keyB);
+            //sid
+            buffer.put(sidB);
             buffer.putChar('\n');
 
             //topic
@@ -108,12 +108,12 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             return new Frame(Flag.Of(flag), null);
         } else {
 
-            //1.解码key and topic
+            //1.解码 sid and topic
             ByteBuffer sb = ByteBuffer.allocate(Math.min(MAX_SIZE_META, buffer.limit()));
 
-            //key
-            String key = decodeString(buffer, sb, MAX_SIZE_KEY);
-            if (key == null) {
+            //sid
+            String sid = decodeString(buffer, sb, MAX_SIZE_KEY);
+            if (sid == null) {
                 return null;
             }
 
@@ -136,7 +136,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
                 buffer.get(data, 0, len);
             }
 
-            MessageDefault message = new MessageDefault().key(key).topic(topic).entity(new EntityDefault().metaString(metaString).data(data));
+            MessageDefault message = new MessageDefault().sid(sid).topic(topic).entity(new EntityDefault().metaString(metaString).data(data));
             message.flag(Flag.Of(flag));
             return new Frame(message.getFlag(), message);
         }

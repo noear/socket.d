@@ -33,8 +33,8 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     }
 
     @Override
-    public void removeAcceptor(String key) {
-        acceptorMap.remove(key);
+    public void removeAcceptor(String sid) {
+        acceptorMap.remove(sid);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
 
             //注册接收器
             if (acceptor != null) {
-                acceptorMap.put(message.getKey(), acceptor);
+                acceptorMap.put(message.getSid(), acceptor);
             }
 
             //尝试分片
@@ -82,10 +82,10 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
                             Entity rangeEntity = getConfig().getRangesHandler().nextRange(getConfig(), rangeIndex, message.getEntity());
 
                             if (rangeEntity != null) {
-                                //主要是 key 和 entity
+                                //主要是 sid 和 entity
                                 Frame rangeFrame = new Frame(frame.getFlag(), new MessageDefault()
                                         .flag(frame.getFlag())
-                                        .key(message.getKey())
+                                        .sid(message.getSid())
                                         .entity(rangeEntity));
 
                                 assistant.write(source, rangeFrame);
@@ -109,11 +109,11 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      */
     @Override
     public void retrieve(Frame frame) throws IOException {
-        Acceptor acceptor = acceptorMap.get(frame.getMessage().getKey());
+        Acceptor acceptor = acceptorMap.get(frame.getMessage().getSid());
 
         if (acceptor != null) {
             if (acceptor.isSingle() || frame.getFlag() == Flag.ReplyEnd) {
-                acceptorMap.remove(frame.getMessage().getKey());
+                acceptorMap.remove(frame.getMessage().getSid());
             }
 
             acceptor.accept(frame.getMessage());

@@ -15,17 +15,17 @@ public interface Channel extends Closeable {
     /**
      * 获取附件
      */
-    <T> T getAttachment(String key);
+    <T> T getAttachment(String name);
 
     /**
      * 设置附件
      */
-    void setAttachment(String key, Object val);
+    void setAttachment(String name, Object val);
 
     /**
      * 移除接收器
      */
-    void removeAcceptor(String key);
+    void removeAcceptor(String sid);
 
     /**
      * 是否有效

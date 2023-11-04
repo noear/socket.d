@@ -67,7 +67,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void send(String topic, Entity content) throws IOException {
-        Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
+        Message message = new MessageDefault().sid(generateKey()).topic(topic).entity(content);
 
         channel.send(new Frame(Flag.Message, message), null);
     }
@@ -89,7 +89,7 @@ public class SessionDefault extends SessionBase implements Session {
             channel.getRequests().incrementAndGet();
         }
 
-        Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
+        Message message = new MessageDefault().sid(generateKey()).topic(topic).entity(content);
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
@@ -103,7 +103,7 @@ public class SessionDefault extends SessionBase implements Session {
                 throw new SocketdException(e);
             }
         } finally {
-            channel.removeAcceptor(message.getKey());
+            channel.removeAcceptor(message.getSid());
             channel.getRequests().decrementAndGet();
         }
     }
@@ -117,7 +117,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException {
-        Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
+        Message message = new MessageDefault().sid(generateKey()).topic(topic).entity(content);
         channel.send(new Frame(Flag.Subscribe, message), new AcceptorSubscribe(consumer));
     }
 
@@ -129,7 +129,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void reply(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flag.Reply, new MessageDefault().key(from.getKey()).entity(content)), null);
+        channel.send(new Frame(Flag.Reply, new MessageDefault().sid(from.getSid()).entity(content)), null);
     }
 
     /**
@@ -140,7 +140,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void replyEnd(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().key(from.getKey()).entity(content)), null);
+        channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().sid(from.getSid()).entity(content)), null);
     }
 
     @Override

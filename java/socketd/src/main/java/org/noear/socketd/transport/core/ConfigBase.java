@@ -88,8 +88,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
 
-    public T keyGenerator(IdGenerator keyGenerator) {
-        this.idGenerator = keyGenerator;
+    public T idGenerator(IdGenerator idGenerator) {
+        this.idGenerator = idGenerator;
         return (T) this;
     }
 

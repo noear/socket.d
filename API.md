@@ -30,9 +30,9 @@ public interface Session {
     //获取握手信息
     Handshaker getHandshaker();
     //获取附件
-    <T> T getAttachment(Class<T> key);
+    <T> T getAttachment(Class<T> type);
     //设置附件
-    <T> void setAttachment(Class<T> key, T value);
+    <T> void setAttachment(Class<T> type, T value);
    //获取会话Id
     String getSessionId();
     //发送 Ping

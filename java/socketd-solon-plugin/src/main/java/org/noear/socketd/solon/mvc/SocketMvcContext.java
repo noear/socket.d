@@ -232,7 +232,7 @@ public class SocketMvcContext extends ContextEmpty {
             _session.replyEnd(_request, _response);
         } else {
             if (dataSize > 0) {
-                log.warn("No reply is supported for the current message, key={}", _request.getKey());
+                log.warn("No reply is supported for the current message, key={}", _request.getSid());
             }
         }
     }

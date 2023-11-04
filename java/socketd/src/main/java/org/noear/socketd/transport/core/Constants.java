@@ -10,7 +10,7 @@ import java.io.InputStream;
  * @since 2.0
  */
 public interface Constants {
-    String DEF_KEY = "";
+    String DEF_SID = "";
     String DEF_TOPIC = "";
     String DEF_META_STRING = "";
     InputStream DEF_DATA = new ByteArrayInputStream(new byte[]{});

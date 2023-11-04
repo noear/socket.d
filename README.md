@@ -35,7 +35,7 @@ SocketD ，基于连接的、可扩展的，消息驱动协议。规范具有异
 * codec
 
 ```
-[len:int][flag:int][key:str][\n][topic:str][\n][metaString:str][\n][data:byte..]
+[len:int][flag:int][sid:str][\n][topic:str][\n][metaString:str][\n][data:byte..]
 ```
 
 * flag

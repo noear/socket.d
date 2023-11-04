@@ -13,7 +13,7 @@ import org.noear.socketd.transport.core.Message;
  * @since 2.0
  */
 public class MessageDefault implements Message {
-    private String key = Constants.DEF_KEY;
+    private String sid = Constants.DEF_SID;
     private String topic = Constants.DEF_TOPIC;
     private Entity entity = null;
 
@@ -28,8 +28,8 @@ public class MessageDefault implements Message {
         return this;
     }
 
-    public MessageDefault key(String key) {
-        this.key = key;
+    public MessageDefault sid(String sid) {
+        this.sid = sid;
         return this;
     }
 
@@ -59,10 +59,10 @@ public class MessageDefault implements Message {
     }
 
     /**
-     * 获取主键（用于事务）
+     * 获取流Id（用于消息交互、分片）
      */
-    public String getKey() {
-        return key;
+    public String getSid() {
+        return sid;
     }
 
     /**
@@ -83,7 +83,7 @@ public class MessageDefault implements Message {
     @Override
     public String toString() {
         return "Message{" +
-                "key='" + key + '\'' +
+                "sid='" + sid + '\'' +
                 ", topic='" + topic + '\'' +
                 ", entity=" + entity +
                 '}';

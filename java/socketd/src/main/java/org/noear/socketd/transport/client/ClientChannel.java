@@ -44,9 +44,9 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     @Override
-    public void removeAcceptor(String key) {
+    public void removeAcceptor(String sid) {
         if (real != null) {
-            real.removeAcceptor(key);
+            real.removeAcceptor(sid);
         }
     }
 

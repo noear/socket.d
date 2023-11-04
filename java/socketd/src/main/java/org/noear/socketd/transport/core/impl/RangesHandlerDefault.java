@@ -36,7 +36,7 @@ public class RangesHandlerDefault implements RangesHandler {
 
     @Override
     public RangesFrame aggrRanges(Channel channel, Frame frame) throws IOException {
-        RangesFrameDefault aggregator = channel.getAttachment(frame.getMessage().getKey());
+        RangesFrameDefault aggregator = channel.getAttachment(frame.getMessage().getSid());
         if (aggregator == null) {
             aggregator = new RangesFrameDefault(frame);
             channel.setAttachment(aggregator.getKey(), aggregator);

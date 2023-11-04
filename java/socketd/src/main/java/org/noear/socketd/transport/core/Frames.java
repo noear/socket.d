@@ -16,11 +16,11 @@ public class Frames {
      *
      * @param url 连接地址
      */
-    public static final Frame connectFrame(String key, String url) {
+    public static final Frame connectFrame(String sid, String url) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
         entity.putMeta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
-        return new Frame(Flag.Connect, new MessageDefault().key(key).topic(url).entity(entity));
+        return new Frame(Flag.Connect, new MessageDefault().sid(sid).topic(url).entity(entity));
     }
 
     /**
@@ -32,7 +32,7 @@ public class Frames {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
         entity.putMeta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
-        return new Frame(Flag.Connack, new MessageDefault().key(connectMessage.getKey()).topic(connectMessage.getTopic()).entity(entity));
+        return new Frame(Flag.Connack, new MessageDefault().sid(connectMessage.getSid()).topic(connectMessage.getTopic()).entity(entity));
     }
 
     /**

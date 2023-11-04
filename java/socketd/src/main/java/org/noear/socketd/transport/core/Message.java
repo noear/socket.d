@@ -20,9 +20,9 @@ public interface Message {
     boolean isSubscribe();
 
     /**
-     * 获取主键（用于事务）
+     * 获取流Id（用于消息交互、分片）
      */
-    String getKey();
+    String getSid();
 
     /**
      * 获取消息主题

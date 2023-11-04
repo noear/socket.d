@@ -44,7 +44,7 @@ public class RangesFrameDefault implements RangesFrame {
      * 获取主键（用于事务）
      */
     public String getKey() {
-        return main.getMessage().getKey();
+        return main.getMessage().getSid();
     }
 
     /**
@@ -69,7 +69,7 @@ public class RangesFrameDefault implements RangesFrame {
 
         return new Frame(main.getFlag(), new MessageDefault()
                 .flag(main.getFlag())
-                .key(main.getMessage().getKey())
+                .sid(main.getMessage().getSid())
                 .topic(main.getMessage().getTopic())
                 .entity(new EntityDefault().metaMap(main.getMessage().getEntity().getMetaMap()).data(inputStream)));
     }

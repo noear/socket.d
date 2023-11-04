@@ -90,6 +90,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
                         }
                     } else {
                         assistant.write(source, frame);
+                        return;
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.HeartbeatHandlerDefault;
@@ -115,7 +115,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                     real = null;
                 }
 
-                throw new SocketdConnectionException(e);
+                throw new SocketdChannelException(e);
             }
         }
     }
@@ -139,7 +139,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                     real.close();
                     real = null;
                 }
-                throw new SocketdConnectionException(e);
+                throw new SocketdChannelException(e);
             }
         }
     }

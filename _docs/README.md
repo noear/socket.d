@@ -103,7 +103,60 @@ public class Demo {
 }
 ```
 
-### 2、上传文件和使用元信息
+### 2、双向互发 + 会话属性
+
+```java
+public class Demo {
+    public void main(String[] args) throws Throwable {
+        //::启动服务端
+        SocketD.createServer(new ServerConfig("ws"))
+                .listen(new SimpleListener(){
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        if(message.isRequest() || message.isSubscribe()){
+                            session.replyEnd(message, new StringEntity("Server receive: " + message.getEntity()));
+                        }else{
+                            session.send("/demo2", new StringEntity("Hi!"));
+                        }
+                    }
+                })
+                .start();
+
+        
+        //::打开客户端会话
+        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
+                .listen(new SimpleListener(){
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        if(message.isRequest()){
+                            session.replyEnd(message, new StringEntity("And you too."));
+                        }
+
+                        //超过5次后，不玩了
+                        Integer count = session.getAttr("count");
+                        if(count == null){
+                            count = 0;
+                        }
+                        count++;
+
+                        if(count > 5){
+                            return;
+                        }else {
+                            session.setAttr("count", count);
+                        }
+
+                        session.send("/demo2", new StringEntity("Hi!"));
+                    }
+                })
+                .open();
+        
+        //发送并请求
+        Entity reply = session.sendAndRequest("/demo", new StringEntity("hello wrold!"));
+    }
+}
+```
+
+### 3、上传文件 + 使用元信息
 
 ```java
 public class Demo {

@@ -59,7 +59,7 @@ public class MessageDefault implements Message {
     }
 
     /**
-     * Key
+     * 获取主键（用于事务）
      */
     public String getKey() {
         return key;

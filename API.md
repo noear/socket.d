@@ -61,7 +61,7 @@ public interface Message {
     boolean isRequest();
     //是否为订阅
     boolean isSubscribe();
-    //获取消息id
+    //获取主键（用于事务）
     String getKey();
     //获取消息主题
     String getTopic();

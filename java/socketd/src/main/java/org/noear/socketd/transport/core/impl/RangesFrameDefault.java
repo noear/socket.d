@@ -41,7 +41,7 @@ public class RangesFrameDefault implements RangesFrame {
     }
 
     /**
-     * 主键
+     * 获取主键（用于事务）
      */
     public String getKey() {
         return main.getMessage().getKey();

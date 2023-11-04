@@ -2,10 +2,7 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.core.Message;
-import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.SimpleListener;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerConfig;
@@ -49,7 +46,7 @@ public class TestCase14_file extends BaseTestCase {
                         System.out.println("::" + message);
                         messageCounter.incrementAndGet();
 
-                        String fileName = message.getEntity().getMeta(Constants.META_DATA_DISPOSITION_FILENAME);
+                        String fileName = message.getEntity().getMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
 
                         if (fileName != null) {
                             System.out.println(fileName);

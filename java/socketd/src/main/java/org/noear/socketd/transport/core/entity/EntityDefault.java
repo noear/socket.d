@@ -3,6 +3,7 @@ package org.noear.socketd.transport.core.entity;
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.exception.SocketdCodecException;
+import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.utils.IoUtils;
 import org.noear.socketd.utils.Utils;
 
@@ -113,7 +114,7 @@ public class EntityDefault implements Entity {
     public EntityDefault data(InputStream data) throws IOException{
         this.data = data;
         this.dataSize = data.available();
-        putMeta(Constants.META_DATA_LENGTH, String.valueOf(dataSize));
+        putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
         return this;
     }
 

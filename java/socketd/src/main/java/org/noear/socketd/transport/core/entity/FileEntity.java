@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core.entity;
 
-import org.noear.socketd.transport.core.Constants;
+import org.noear.socketd.transport.core.EntityMetas;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +15,6 @@ import java.io.IOException;
 public class FileEntity extends EntityDefault {
     public FileEntity(File file) throws IOException {
         data(new FileInputStream(file));
-        putMeta(Constants.META_DATA_DISPOSITION_FILENAME, file.getName());
+        putMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
     }
 }

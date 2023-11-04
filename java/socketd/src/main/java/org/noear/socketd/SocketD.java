@@ -16,6 +16,14 @@ import java.util.ServiceLoader;
  * @since 2.0
  */
 public class SocketD {
+
+    /**
+     * 版本版本号
+     * */
+    public static String version(){
+        return "2.0";
+    }
+
     static Map<String, ClientFactory> clientFactoryMap;
     static Map<String, ServerFactory> serverFactoryMap;
 

@@ -29,7 +29,7 @@ public class RangesHandlerDefault implements RangesHandler {
         if (rangeIndex.get() == 1) {
             rangeEntity.metaMap(entity.getMetaMap());
         }
-        rangeEntity.putMeta(Constants.META_DATA_RANGE_IDX, String.valueOf(rangeIndex));
+        rangeEntity.putMeta(EntityMetas.META_DATA_RANGE_IDX, String.valueOf(rangeIndex));
         return rangeEntity;
     }
 

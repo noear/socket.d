@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core.impl;
 
-import org.noear.socketd.transport.core.Constants;
+import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.RangesFrame;
 import org.noear.socketd.exception.SocketdCodecException;
@@ -31,10 +31,10 @@ public class RangesFrameDefault implements RangesFrame {
     public RangesFrameDefault(Frame main) {
         this.main = main;
         this.dataStream = new ByteArrayOutputStream();
-        String dataLengthStr = main.getMessage().getEntity().getMeta(Constants.META_DATA_LENGTH);
+        String dataLengthStr = main.getMessage().getEntity().getMeta(EntityMetas.META_DATA_LENGTH);
 
         if (Utils.isEmpty(dataLengthStr)) {
-            throw new SocketdCodecException("Missing '" + Constants.META_DATA_LENGTH + "' meta");
+            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta");
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);

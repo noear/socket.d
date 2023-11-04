@@ -1,6 +1,6 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.transport.core.Constants;
+import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.EntityDefault;
@@ -202,7 +202,7 @@ public class SocketMvcContext extends ContextEmpty {
         String fileName = URLEncoder.encode(file.getName(), Solon.encoding());
         String contentType = Utils.mime(file.getName());
 
-        headerSet(Constants.META_DATA_DISPOSITION_FILENAME, fileName);
+        headerSet(EntityMetas.META_DATA_DISPOSITION_FILENAME, fileName);
         contentType(contentType);
 
         try (InputStream ins = new FileInputStream(file)) {
@@ -214,7 +214,7 @@ public class SocketMvcContext extends ContextEmpty {
     public void outputAsFile(DownloadedFile file) throws IOException {
         String fileName = URLEncoder.encode(file.getName(), Solon.encoding());
 
-        headerSet(Constants.META_DATA_DISPOSITION_FILENAME, fileName);
+        headerSet(EntityMetas.META_DATA_DISPOSITION_FILENAME, fileName);
         contentType(file.getContentType());
 
         try (InputStream ins = file.getContent()) {

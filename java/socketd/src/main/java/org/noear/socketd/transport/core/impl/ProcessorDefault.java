@@ -91,7 +91,7 @@ public class ProcessorDefault implements Processor {
     }
 
     private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
-        String rangeIdxStr = frame.getMessage().getEntity().getMeta(Constants.META_DATA_RANGE_IDX);
+        String rangeIdxStr = frame.getMessage().getEntity().getMeta(EntityMetas.META_DATA_RANGE_IDX);
         if (rangeIdxStr != null) {
             RangesFrame rangesFrame = channel.getConfig().getRangesHandler().aggrRanges(channel, frame);
 

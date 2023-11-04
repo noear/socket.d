@@ -67,7 +67,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void send(String topic, Entity content) throws IOException {
-        Message message = new MessageDefault().sid(generateKey()).topic(topic).entity(content);
+        Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
 
         channel.send(new Frame(Flag.Message, message), null);
     }
@@ -89,7 +89,7 @@ public class SessionDefault extends SessionBase implements Session {
             channel.getRequests().incrementAndGet();
         }
 
-        Message message = new MessageDefault().sid(generateKey()).topic(topic).entity(content);
+        Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
@@ -117,7 +117,7 @@ public class SessionDefault extends SessionBase implements Session {
      */
     @Override
     public void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException {
-        Message message = new MessageDefault().sid(generateKey()).topic(topic).entity(content);
+        Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
         channel.send(new Frame(Flag.Subscribe, message), new AcceptorSubscribe(consumer));
     }
 

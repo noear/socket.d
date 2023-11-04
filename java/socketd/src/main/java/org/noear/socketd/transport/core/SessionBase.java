@@ -57,13 +57,13 @@ public abstract class SessionBase implements Session {
     @Override
     public String getSessionId() {
         if (sessionId == null) {
-            sessionId = generateKey();
+            sessionId = generateId();
         }
 
         return sessionId;
     }
 
-    protected String generateKey(){
+    protected String generateId(){
         return channel.getConfig().getIdGenerator().generate();
     }
 }

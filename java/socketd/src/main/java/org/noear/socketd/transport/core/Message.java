@@ -20,7 +20,7 @@ public interface Message {
     boolean isSubscribe();
 
     /**
-     * 获取流Id（用于消息交互、分片）
+     * 获取消息流Id（用于消息交互、分片）
      */
     String getSid();
 

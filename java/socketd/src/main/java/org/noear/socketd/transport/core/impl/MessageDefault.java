@@ -59,7 +59,7 @@ public class MessageDefault implements Message {
     }
 
     /**
-     * 获取流Id（用于消息交互、分片）
+     * 获取消息流Id（用于消息交互、分片）
      */
     public String getSid() {
         return sid;

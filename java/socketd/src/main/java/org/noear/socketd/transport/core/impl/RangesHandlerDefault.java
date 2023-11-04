@@ -39,7 +39,7 @@ public class RangesHandlerDefault implements RangesHandler {
         RangesFrameDefault aggregator = channel.getAttachment(frame.getMessage().getSid());
         if (aggregator == null) {
             aggregator = new RangesFrameDefault(frame);
-            channel.setAttachment(aggregator.getKey(), aggregator);
+            channel.setAttachment(aggregator.getSid(), aggregator);
         }
 
         aggregator.add(frame);

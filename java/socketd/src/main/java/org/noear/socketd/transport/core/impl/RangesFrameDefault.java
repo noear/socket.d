@@ -41,9 +41,9 @@ public class RangesFrameDefault implements RangesFrame {
     }
 
     /**
-     * 获取主键（用于事务）
+     * 获取消息流Id（用于消息交互、分片）
      */
-    public String getKey() {
+    public String getSid() {
         return main.getMessage().getSid();
     }
 

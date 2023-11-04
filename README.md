@@ -9,6 +9,14 @@ SocketD 是一个简单的可扩展消息通讯方案。它的消息协议规范
 * 更加适合分布式通信场景
 * 支持 ssl，支持国密 ssl
 
+交互接口主要有（更多可见：[API.md](API.md) ）：
+
+* session::send
+* session::sendAndRequest
+* session::sendAndSubscribe
+* session::reply
+* session::replyEnd
+
 ### 协议格式：
 
 * codec

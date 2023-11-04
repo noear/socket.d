@@ -14,9 +14,11 @@ import java.util.concurrent.CompletableFuture;
  */
 public class AcceptorRequest implements Acceptor {
     private final CompletableFuture<Entity> future;
+    private final long timeout;
 
-    public AcceptorRequest(CompletableFuture<Entity> future) {
+    public AcceptorRequest(CompletableFuture<Entity> future, long timeout) {
         this.future = future;
+        this.timeout = timeout;
     }
 
     @Override
@@ -30,7 +32,12 @@ public class AcceptorRequest implements Acceptor {
     }
 
     @Override
-    public boolean accept(Message message) {
-        return future.complete(message.getEntity());
+    public long timeout() {
+        return timeout;
+    }
+
+    @Override
+    public void accept(Message message) {
+        future.complete(message.getEntity());
     }
 }

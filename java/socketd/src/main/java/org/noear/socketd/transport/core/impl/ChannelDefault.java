@@ -5,8 +5,8 @@ import org.noear.socketd.transport.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ChannelDefault<S> extends ChannelBase implements Channel {
     private final S source;
 
-    //接收器注册
+    //接收管理器
     private final Map<String, Acceptor> acceptorMap;
     //助理
     private final ChannelAssistant<S> assistant;
@@ -29,7 +29,12 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         super(config);
         this.source = source;
         this.assistant = assistant;
-        this.acceptorMap = new HashMap<>();
+        this.acceptorMap = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public void removeAcceptor(String key) {
+        acceptorMap.remove(key);
     }
 
     @Override
@@ -101,7 +106,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
 
     /**
      * 收回（收回答复）
-     * */
+     */
     @Override
     public void retrieve(Frame frame) throws IOException {
         Acceptor acceptor = acceptorMap.get(frame.getMessage().getKey());
@@ -136,7 +141,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     @Override
     public void close() throws IOException {
         isClosed = true;
-        assistant.close(source);
         acceptorMap.clear();
+        assistant.close(source);
     }
 }

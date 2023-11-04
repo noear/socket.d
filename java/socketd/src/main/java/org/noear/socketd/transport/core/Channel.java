@@ -1,7 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.exception.SocketdConnectionException;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -25,13 +23,18 @@ public interface Channel extends Closeable {
     void setAttachment(String key, Object val);
 
     /**
+     * 移除接收器
+     */
+    void removeAcceptor(String key);
+
+    /**
      * 是否有效
      */
     boolean isValid();
 
     /**
      * 是否已关闭
-     * */
+     */
     boolean isClosed();
 
     /**
@@ -113,7 +116,7 @@ public interface Channel extends Closeable {
      * @param frame    帧
      * @param acceptor 答复接收器（没有则为 null）
      */
-    void send(Frame frame, Acceptor acceptor) throws IOException, SocketdConnectionException;
+    void send(Frame frame, Acceptor acceptor) throws IOException;
 
     /**
      * 收回（收回答复帧）

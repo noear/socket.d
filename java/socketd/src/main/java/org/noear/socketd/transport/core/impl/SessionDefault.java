@@ -89,11 +89,12 @@ public class SessionDefault extends SessionBase implements Session {
             channel.getRequests().incrementAndGet();
         }
 
-        try {
-            Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
+        Message message = new MessageDefault().key(generateKey()).topic(topic).entity(content);
 
+        try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
-            channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future));
+            channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future, timeout));
+
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
             } catch (TimeoutException e) {
@@ -102,6 +103,7 @@ public class SessionDefault extends SessionBase implements Session {
                 throw new SocketdException(e);
             }
         } finally {
+            channel.removeAcceptor(message.getKey());
             channel.getRequests().decrementAndGet();
         }
     }

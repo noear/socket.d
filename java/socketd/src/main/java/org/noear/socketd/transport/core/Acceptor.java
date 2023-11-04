@@ -19,7 +19,12 @@ public interface Acceptor {
     boolean isDone();
 
     /**
+     * 超时（单位：毫秒）
+     * */
+    long timeout();
+
+    /**
      * 接收
      * */
-    boolean accept(Message message);
+    void accept(Message message);
 }

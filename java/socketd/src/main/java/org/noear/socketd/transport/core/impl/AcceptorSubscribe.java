@@ -30,8 +30,12 @@ public class AcceptorSubscribe implements Acceptor {
     }
 
     @Override
-    public boolean accept(Message message) {
+    public long timeout() {
+        return 0;
+    }
+
+    @Override
+    public void accept(Message message) {
         future.accept(message.getEntity());
-        return true;
     }
 }

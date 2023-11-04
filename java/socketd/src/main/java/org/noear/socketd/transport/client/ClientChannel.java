@@ -34,8 +34,19 @@ public class ClientChannel extends ChannelBase implements Channel {
 
         if (connector.autoReconnect() && scheduledFuture == null) {
             scheduledFuture = RunUtils.delayAndRepeat(() -> {
-                heartbeatHandle();
+                try {
+                    heartbeatHandle();
+                } catch (Exception e) {
+
+                }
             }, connector.heartbeatInterval());
+        }
+    }
+
+    @Override
+    public void removeAcceptor(String key) {
+        if (real != null) {
+            real.removeAcceptor(key);
         }
     }
 
@@ -59,6 +70,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             return real.isClosed();
         }
     }
+
 
     /**
      * 获取远程地址
@@ -87,7 +99,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     /**
      * 心跳处理
      */
-    private void heartbeatHandle() {
+    private void heartbeatHandle() throws IOException {
         Asserts.assertClosed(real);
 
         synchronized (this) {
@@ -99,6 +111,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 throw e;
             } catch (Throwable e) {
                 if (connector.autoReconnect()) {
+                    real.close();
                     real = null;
                 }
 
@@ -123,6 +136,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 throw e;
             } catch (Throwable e) {
                 if (connector.autoReconnect()) {
+                    real.close();
                     real = null;
                 }
                 throw new SocketdConnectionException(e);
@@ -157,7 +171,6 @@ public class ClientChannel extends ChannelBase implements Channel {
         RunUtils.runAnTry(() -> connector.close());
         RunUtils.runAnTry(() -> real.close());
     }
-
 
 
     /**

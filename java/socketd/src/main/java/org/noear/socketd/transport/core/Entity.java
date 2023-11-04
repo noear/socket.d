@@ -31,7 +31,7 @@ public interface Entity {
     InputStream getData();
 
     /**
-     * 获取数据并转为这符串
+     * 获取数据并转为字符串
      */
     String getDataAsString();
 

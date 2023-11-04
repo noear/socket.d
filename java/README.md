@@ -121,7 +121,7 @@ public class ClientDemo implements LifecycleBean {
 }
 ```
 
-客户端（接口模式）
+客户端（接口模式）//未完成
 
 ```java
 @Component
@@ -129,7 +129,7 @@ public class ClientDemo implements LifecycleBean {
     @Override
     public void start() throws Throwable {
         Session session = SocketD.createClient("ws://127.0.0.1:6329/test?u=a&p=2").open();
-        UserApi userApi = Nami.create(session, UserApi.class);
+        UserApi userApi = SocketD.build(session, UserApi.class);
         
         //发送
         userApi.demo("noear", "123456");

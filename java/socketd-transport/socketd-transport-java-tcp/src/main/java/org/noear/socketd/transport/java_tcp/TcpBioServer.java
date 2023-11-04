@@ -63,7 +63,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         }
 
         if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(config().getCoreThreads());
+            serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         }
 
         server = createServer();
@@ -143,6 +143,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         try {
             server.close();
             serverThread.interrupt();
+            serverExecutor.shutdown();
         } catch (Exception e) {
             log.debug("{}", e);
         }

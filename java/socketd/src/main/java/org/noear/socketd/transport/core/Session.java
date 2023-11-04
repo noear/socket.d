@@ -46,6 +46,14 @@ public interface Session extends Closeable {
     <T> T getAttr(String name);
 
     /**
+     * 获取属性或默认值
+     *
+     * @param name 名字
+     * @param def  默认值
+     */
+     <T> T getAttrOrDefault(String name, T def);
+
+    /**
      * 设置属性
      *
      * @param name  名字

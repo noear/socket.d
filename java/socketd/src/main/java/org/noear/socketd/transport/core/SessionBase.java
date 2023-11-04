@@ -42,6 +42,22 @@ public abstract class SessionBase implements Session {
     }
 
     /**
+     * 获取属性或默认值
+     *
+     * @param name 名字
+     * @param def  默认值
+     */
+    @Override
+    public  <T> T getAttrOrDefault(String name, T def) {
+        T tmp = getAttr(name);
+        if (tmp == null) {
+            return def;
+        } else {
+            return tmp;
+        }
+    }
+
+    /**
      * 设置附件
      */
     @Override

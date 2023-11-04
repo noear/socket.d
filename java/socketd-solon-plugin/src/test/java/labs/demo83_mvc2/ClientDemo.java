@@ -26,6 +26,7 @@ public class ClientDemo implements LifecycleBean {
 
         //发送2
         entity.putMeta("user", "solon");
+        entity.getData().reset();
         Entity response = session.sendAndRequest("/demo2", entity);
         System.out.println(response);
     }

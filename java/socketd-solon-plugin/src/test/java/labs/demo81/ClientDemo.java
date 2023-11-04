@@ -1,5 +1,6 @@
 package labs.demo81;
 
+import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.SimpleListener;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
@@ -11,9 +12,12 @@ import java.io.IOException;
 public class ClientDemo extends SimpleListener {
     @Override
     public void onOpen(Session session) throws IOException {
-        super.onOpen(session);
-
         //测试下
         session.send("test", new StringEntity("demo"));
+    }
+
+    @Override
+    public void onMessage(Session session, Message message) throws IOException {
+        System.out.println(message);
     }
 }

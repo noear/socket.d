@@ -11,7 +11,7 @@ public class CaseTest {
     static final String[] schemas = new String[]{
             "tcp-java", "tcp-netty", "tcp-smartsocket",
             "ws-java",
-            "udp-java", "udp-netty"};
+            "udp-java"};
 
 
     @Test

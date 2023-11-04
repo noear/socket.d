@@ -12,14 +12,15 @@ SocketD ，基于连接的、可扩展的，消息驱动协议。规范具有异
 主要交互接口有（更多可见：[API.md](API.md) ）：
 
 
-| 接口                      | 描述    | 说明            |
-|-------------------------|-------|---------------|
-| session             | 会话    | （可双向互发）       |
-| session::send           | 发送    |               |
-| session::sendAndRequest | 发送并请求 | 要求一次答复        |
+| 接口                        | 描述    | 说明            |
+|---------------------------|-------|---------------|
+| listener                  | 监听器   | （可双向互听）       |
+| session                   | 会话    | （可双向互发）       |
+| session::send             | 发送    |               |
+| session::sendAndRequest   | 发送并请求 | 要求一次答复        |
 | session::sendAndSubscribe | 发送并订阅 | 答复结束之前，不限答复次数 |
-| session::reply          | 答复    |               |
-| session::replyEnd       | 答复结束  |               |
+| session::reply            | 答复    |               |
+| session::replyEnd         | 答复结束  |               |
 
 
 

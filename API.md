@@ -27,7 +27,7 @@ public interface Session {
     //获取本地地址
     InetAddress getLocalAddress() throws IOException;
     //获取握手信息
-    Handshaker getHandshaker();
+    Handshake getHandshake();
     //获取附件
     <T> T getAttachment(Class<T> type);
     //设置附件

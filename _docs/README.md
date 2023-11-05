@@ -13,8 +13,26 @@
 
 项目中引入任何一个或多个传输适配包（例：socketd-transport-java-websocket）。
 
+## 二、主要交互接口
 
-## 二、基本使用
+开发时，主要交互只有 2 接口对象（更多可见：[API.md](../API.md) ）：
+
+
+| 接口                        | 描述    | 说明            |
+|---------------------------|-------|---------------|
+| listener                  | 监听器   | （可双向互听）       |
+| session                   | 会话    | （可双向互发）       |
+|                           |       |               |
+| session::send             | 发送    |               |
+| session::sendAndRequest   | 发送并请求 | 要求一次答复        |
+| session::sendAndSubscribe | 发送并订阅 | 答复结束之前，不限答复次数 |
+| session::reply            | 答复    |               |
+| session::replyEnd         | 答复结束  |               |
+
+
+
+
+## 三、基本使用
 
 ### 1、发送
 
@@ -94,7 +112,7 @@ public class Demo {
 }
 ```
 
-## 二、进阶使用
+## 四、进阶使用
 
 ### 1、配置
 

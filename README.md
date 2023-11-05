@@ -82,7 +82,7 @@ SocketD 是一个基于连接的、可扩展的、消息驱动的传输协议。
 * codec
 
 ```
-[len:int][flag:int][sid:str(<64)][\n][topic:str(<512)][\n][metaString:str(<4k)][\n][data:byte..(<16m)]
+[len:int][flag:int][sid:str(<64)][\n][topic:str(<512)][\n][metaString:str(<4k)][\n][data:bts(<16m)]
 ```
 
 * flag

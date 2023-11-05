@@ -1,9 +1,20 @@
 > 以 java 语言为例构建文档。用法上与 ws 很像
 
 
-项目中引入任何一个或多个传输适配包。例：socketd-transport-java-websocket
+## 一、适配情况
 
-## 一、基本使用
+| transport                        | schema  | 支持端 | 备注          |
+|-------------------------------|---------|-----|-------------|
+| socketd-transport-java-tcp       | tcp, tcps | c,s | bio, 支持 ssl |
+| socketd-transport-java-udp       | udp | c,s | bio         |
+| socketd-transport-java-websocket | ws, wss | c,s | nio, 支持 ssl         |
+| socketd-transport-netty          | tcp, tcps | c,s | nio, 支持 ssl         |
+| socketd-transport-smartsocket    | tcp, tcps | c,s | aio, 支持 ssl         |
+
+项目中引入任何一个或多个传输适配包（例：socketd-transport-java-websocket）。
+
+
+## 二、基本使用
 
 ### 1、发送
 
@@ -18,7 +29,7 @@ public class Demo {
         Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
                 .open();
         
-        //发送
+        //发送（单线程约为 30万/秒 的速率，2020年的 macbook）
         session.send("/demo", new StringEntity("hello wrold!"));
     }
 }

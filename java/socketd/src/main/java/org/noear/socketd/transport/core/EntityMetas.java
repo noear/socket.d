@@ -18,7 +18,7 @@ public interface EntityMetas {
     /**
      * 数据分片索引
      */
-    String META_DATA_RANGE_IDX = "Data-Fragment-Idx";
+    String META_DATA_FRAGMENT_IDX = "Data-Fragment-Idx";
     /**
      * 数据描述之文件名
      */

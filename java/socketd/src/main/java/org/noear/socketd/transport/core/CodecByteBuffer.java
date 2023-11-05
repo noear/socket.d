@@ -52,6 +52,11 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             //length (flag + sid + topic + metaString + data + int.bytes + \n*3)
             int len = sidB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + 2 * 3 + Integer.BYTES + Integer.BYTES;
 
+            assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
+            assertSize("topic", topicB.length, Constants.MAX_SIZE_TOPIC);
+            assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META);
+            assertSize("data", frame.getMessage().getEntity().getDataSize(), config.getFragmentSize());
+
             T target = factory.apply(len);
 
             //长度
@@ -163,8 +168,11 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
     }
 
     private void assertSize(String name, int size, int limitSize) {
-        if(size > limitSize) {
-            throw new SocketdSizeLimitException("This message " + name + " size is out of limit");
+        if (size > limitSize) {
+            StringBuilder buf = new StringBuilder();
+            buf.append("This message ").append(name).append(" size is out of limit ").append(limitSize)
+                    .append(" (").append(size).append(")");
+            throw new SocketdSizeLimitException(buf.toString());
         }
     }
 }

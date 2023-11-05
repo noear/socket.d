@@ -18,12 +18,12 @@ public class CaseTest {
     public void testCase01() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase01_client_send testCase01 = new TestCase01_client_send(s1, 1000 + i);
+            TestCase01_client_send testCase = new TestCase01_client_send(s1, 1000 + i);
             try {
-                testCase01.start();
-                testCase01.stop();
+                testCase.start();
+                testCase.stop();
             } catch (Exception e) {
-                testCase01.onError();
+                testCase.onError();
                 e.printStackTrace();
             }
         }
@@ -33,12 +33,12 @@ public class CaseTest {
     public void testCase11() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase11_autoReconnect testCase01 = new TestCase11_autoReconnect(s1, 2000 + i);
+            TestCase11_autoReconnect testCase = new TestCase11_autoReconnect(s1, 2000 + i);
             try {
-                testCase01.start();
-                testCase01.stop();
+                testCase.start();
+                testCase.stop();
             } catch (Exception e) {
-                testCase01.onError();
+                testCase.onError();
                 e.printStackTrace();
             }
         }
@@ -48,12 +48,12 @@ public class CaseTest {
     public void testCase12() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase12_session_close testCase01 = new TestCase12_session_close(s1, 3000 + i);
+            TestCase12_session_close testCase = new TestCase12_session_close(s1, 3000 + i);
             try {
-                testCase01.start();
-                testCase01.stop();
+                testCase.start();
+                testCase.stop();
             } catch (Exception e) {
-                testCase01.onError();
+                testCase.onError();
                 e.printStackTrace();
             }
         }
@@ -63,12 +63,12 @@ public class CaseTest {
     public void testCase13() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase13_sendAndRequest_timeout testCase01 = new TestCase13_sendAndRequest_timeout(s1, 4000 + i);
+            TestCase13_sendAndRequest_timeout testCase = new TestCase13_sendAndRequest_timeout(s1, 4000 + i);
             try {
-                testCase01.start();
-                testCase01.stop();
+                testCase.start();
+                testCase.stop();
             } catch (Exception e) {
-                testCase01.onError();
+                testCase.onError();
                 e.printStackTrace();
             }
         }
@@ -82,12 +82,31 @@ public class CaseTest {
                 continue;
             }
 
-            TestCase14_file testCase01 = new TestCase14_file(s1, 4000 + i);
+            TestCase14_file testCase = new TestCase14_file(s1, 4000 + i);
             try {
-                testCase01.start();
-                testCase01.stop();
+                testCase.start();
+                testCase.stop();
             } catch (Exception e) {
-                testCase01.onError();
+                testCase.onError();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Test
+    public void testCase15() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+            if(s1.startsWith("udp")){
+                continue;
+            }
+
+            TestCase15_size testCase = new TestCase15_size(s1, 4000 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
                 e.printStackTrace();
             }
         }

@@ -30,7 +30,6 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected long peplyTimeout;
     protected int maxRequests;
     protected int maxUdpSize;
-    protected int fragmentSize;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
@@ -47,7 +46,6 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.peplyTimeout = 3000;
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
-        this.fragmentSize = 1024 * 1024 * 16; //16m
     }
 
     @Override
@@ -197,19 +195,6 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     public T maxUdpSize(int maxUdpSize) {
         this.maxUdpSize = maxUdpSize;
-        return (T) this;
-    }
-
-    /**
-     * 获取分片大小
-     */
-    @Override
-    public int getFragmentSize() {
-        return fragmentSize;
-    }
-
-    public T fragmentSize(int fragmentSize) {
-        this.fragmentSize = fragmentSize;
         return (T) this;
     }
 }

@@ -76,7 +76,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
             if (message.getEntity() != null) {
                 //确保用完自动关闭
                 try (InputStream ins = message.getEntity().getData()) {
-                    if (message.getEntity().getDataSize() > getConfig().getFragmentSize()) {
+                    if (message.getEntity().getDataSize() > Config.MAX_SIZE_FRAGMENT) {
                         AtomicReference<Integer> fragmentIndex = new AtomicReference<>(0);
                         while (true) {
                             Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(getConfig(), fragmentIndex, message.getEntity());

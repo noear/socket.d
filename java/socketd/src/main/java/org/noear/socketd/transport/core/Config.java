@@ -12,6 +12,24 @@ import java.util.concurrent.ExecutorService;
  */
 public interface Config {
     /**
+     * 流ID大小限制
+     */
+    int MAX_SIZE_SID = 64;
+    /**
+     * 主题大小限制
+     */
+    int MAX_SIZE_TOPIC = 512;
+    /**
+     * 元信息串大小限制
+     */
+    int MAX_SIZE_META_STRING = 4096;
+    /**
+     * 分片大小限制
+     */
+    int MAX_SIZE_FRAGMENT = 1024 * 1024 * 16; //16m
+
+
+    /**
      * 是否客户端模式
      */
     boolean clientMode();
@@ -75,9 +93,4 @@ public interface Config {
      * 允许最大UDP包大小
      */
     int getMaxUdpSize();
-
-    /**
-     * 获取分片大小
-     */
-    int getFragmentSize();
 }

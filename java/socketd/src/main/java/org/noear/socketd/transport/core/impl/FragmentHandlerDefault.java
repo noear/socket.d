@@ -20,7 +20,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
         fragmentIndex.set(fragmentIndex.get() + 1);
 
         ByteArrayOutputStream fragmentBuf = new ByteArrayOutputStream();
-        IoUtils.transferTo(entity.getData(), fragmentBuf, 0, config.getFragmentSize());
+        IoUtils.transferTo(entity.getData(), fragmentBuf, 0, Config.MAX_SIZE_FRAGMENT);
         byte[] fragmentBytes = fragmentBuf.toByteArray();
         if (fragmentBytes.length == 0) {
             return null;

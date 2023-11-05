@@ -52,10 +52,10 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             //length (flag + sid + topic + metaString + data + int.bytes + \n*3)
             int len = sidB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + 2 * 3 + Integer.BYTES + Integer.BYTES;
 
-            assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
-            assertSize("topic", topicB.length, Constants.MAX_SIZE_TOPIC);
-            assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META);
-            assertSize("data", frame.getMessage().getEntity().getDataSize(), config.getFragmentSize());
+            assertSize("sid", sidB.length, Config.MAX_SIZE_SID);
+            assertSize("topic", topicB.length, Config.MAX_SIZE_TOPIC);
+            assertSize("metaString", metaStringB.length, Config.MAX_SIZE_META_STRING);
+            assertSize("data", frame.getMessage().getEntity().getDataSize(), Config.MAX_SIZE_FRAGMENT);
 
             T target = factory.apply(len);
 
@@ -103,28 +103,28 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             return new Frame(Flag.Of(flag), null);
         } else {
 
-            int metaBufSize = Math.min(Constants.MAX_SIZE_META, buffer.remaining());
+            int metaBufSize = Math.min(Config.MAX_SIZE_META_STRING, buffer.remaining());
 
             //1.解码 sid and topic
             ByteBuffer sb = ByteBuffer.allocate(metaBufSize);
 
             //sid
-            String sid = decodeString(buffer, sb, Constants.MAX_SIZE_SID);
+            String sid = decodeString(buffer, sb, Config.MAX_SIZE_SID);
 
             //topic
-            String topic = decodeString(buffer, sb, Constants.MAX_SIZE_TOPIC);
+            String topic = decodeString(buffer, sb, Config.MAX_SIZE_TOPIC);
 
             //metaString
-            String metaString = decodeString(buffer, sb, Constants.MAX_SIZE_META);
+            String metaString = decodeString(buffer, sb, Config.MAX_SIZE_META_STRING);
 
             //2.解码 body
             int dataRealSize = len0 - buffer.position();
             byte[] data;
-            if (dataRealSize > config.getFragmentSize()) {
+            if (dataRealSize > Config.MAX_SIZE_FRAGMENT) {
                 //超界了，空读。必须读，不然协议流会坏掉
-                data = new byte[config.getFragmentSize()];
-                buffer.get(data, 0, config.getFragmentSize());
-                for (int i = dataRealSize - config.getFragmentSize(); i > 0; i--) {
+                data = new byte[Config.MAX_SIZE_FRAGMENT];
+                buffer.get(data, 0, Config.MAX_SIZE_FRAGMENT);
+                for (int i = dataRealSize - Config.MAX_SIZE_FRAGMENT; i > 0; i--) {
                     buffer.get();
                 }
             } else {

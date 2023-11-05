@@ -17,34 +17,10 @@ public class BenchmarkTest {
             "ws-java",
             "udp-java"};
 
-
-    /**
-     * 用于调试
-     */
-    public static void main(String[] args) throws Exception {
-        int count = 1000;
-        int timeout = 1;
-
-        String s1 = schemas[3];
-        TestCase01 testCase01 = new TestCase01(s1, timeout, count, 9386);
-        try {
-            testCase01.start();
-
-            testCase01.send();
-            testCase01.sendAndRequest();
-            testCase01.sendAndSubscribe();
-
-            // testCase01.stop();
-        } catch (Exception e) {
-            testCase01.onError();
-            e.printStackTrace();
-        }
-    }
-
     @Test
     public void testCase01() throws Exception {
-        int count = 10000000;
-        int timeout = 10;
+        int count = 1000000;
+        int timeout = 2;
 
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
@@ -68,8 +44,8 @@ public class BenchmarkTest {
 
     @Test
     public void testCase01_send() throws Exception {
-        int count = 10000000;
-        int timeout = 10;
+        int count = 1000000;
+        int timeout = 2;
 
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
@@ -88,34 +64,44 @@ public class BenchmarkTest {
     }
 
     @Test
-    public void testCase01_send_th() throws Exception {
+    public void testCase01_sendAndRequest() throws Exception {
         int count = 1000000;
-        int timeout = 10;
-        List<Integer> tasks = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        int timeout = 2;
 
-        String s1 = schemas[0];
-        TestCase01 testCase01 = new TestCase01(s1, timeout, count, 9386);
-        try {
-            testCase01.start();
-            testCase01.send();
-            testCase01.send();
-            testCase01.send();
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+            TestCase01 testCase01 = new TestCase01(s1, timeout, count, 9386 + i);
+            try {
+                testCase01.start();
 
-            long start = System.currentTimeMillis();
+                testCase01.sendAndRequest();
 
-            tasks.parallelStream().forEach(n -> {
-                try {
-                    testCase01.send();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+                Thread.sleep(timeout * 1000);
+            } catch (Exception e) {
+                testCase01.onError();
+                e.printStackTrace();
+            }
+        }
+    }
 
-            System.out.println(s1+"::" + (System.currentTimeMillis() - start));
-            Thread.sleep(timeout * 1000);
-        } catch (Exception e) {
-            testCase01.onError();
-            e.printStackTrace();
+    @Test
+    public void testCase01_sendAndSubscribe() throws Exception {
+        int count = 1000000;
+        int timeout = 2;
+
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+            TestCase01 testCase01 = new TestCase01(s1, timeout, count, 9386 + i);
+            try {
+                testCase01.start();
+
+                testCase01.sendAndSubscribe();
+
+                Thread.sleep(timeout * 1000);
+            } catch (Exception e) {
+                testCase01.onError();
+                e.printStackTrace();
+            }
         }
     }
 }

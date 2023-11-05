@@ -14,6 +14,10 @@
     <artifactId>socketd-transport-test</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <jmh.version>1.25</jmh.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.noear</groupId>
@@ -51,6 +55,20 @@
 <!--            <version>${slf4j.version}</version>-->
 <!--            <scope>test</scope>-->
 <!--        </dependency>-->
+
+
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

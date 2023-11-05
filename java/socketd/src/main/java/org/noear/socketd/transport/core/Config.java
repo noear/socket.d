@@ -47,6 +47,11 @@ public interface Config {
     SSLContext getSslContext();
 
     /**
+     * 答复超时（单位：毫秒）
+     * */
+    long getReplyTimeout();
+
+    /**
      * 允许最大请求数
      */
     int getMaxRequests();

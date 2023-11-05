@@ -85,9 +85,7 @@ public interface Session extends Closeable {
      * @param topic   主题
      * @param content 内容
      */
-    default Entity sendAndRequest(String topic, Entity content) throws IOException {
-        return sendAndRequest(topic, content, 3000);
-    }
+    Entity sendAndRequest(String topic, Entity content) throws IOException;
 
     /**
      * 发送并请求（限为一次答复；指定超时）

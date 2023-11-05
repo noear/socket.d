@@ -22,6 +22,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected RangesHandler rangesHandler;
     protected SSLContext sslContext;
 
+    protected long peplyTimeout;
     protected int maxRequests;
     protected int maxUdpSize;
     protected int rangeSize;
@@ -35,6 +36,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.idGenerator = new IdGeneratorGuid();
         this.rangesHandler = new RangesHandlerDefault();
 
+        this.peplyTimeout = 3000;
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
         this.rangeSize = 1024 * 1024 * 16; //16m
@@ -110,6 +112,15 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
+    @Override
+    public long getReplyTimeout() {
+        return peplyTimeout;
+    }
+
+    public T peplyTimeout(long peplyTimeout) {
+        this.peplyTimeout = peplyTimeout;
+        return (T) this;
+    }
 
     /**
      * 允许最大请求数

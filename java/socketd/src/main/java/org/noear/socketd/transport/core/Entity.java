@@ -26,6 +26,11 @@ public interface Entity {
     String getMeta(String name);
 
     /**
+     * 获取元信息或默认
+     */
+    String getMetaOrDefault(String name, String def);
+
+    /**
      * 获取数据
      */
     InputStream getData();

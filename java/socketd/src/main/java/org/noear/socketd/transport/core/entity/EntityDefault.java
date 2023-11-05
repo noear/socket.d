@@ -110,6 +110,11 @@ public class EntityDefault implements Entity {
         return getMetaMap().get(name);
     }
 
+    @Override
+    public String getMetaOrDefault(String name, String def) {
+        return getMetaMap().getOrDefault(name, def);
+    }
+
     public EntityDefault data(byte[] data) {
         this.data = new ByteArrayInputStream(data);
         this.dataSize = data.length;

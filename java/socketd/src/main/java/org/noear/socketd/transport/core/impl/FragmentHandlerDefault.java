@@ -35,14 +35,14 @@ public class FragmentHandlerDefault implements FragmentHandler {
 
 
     @Override
-    public Frame aggrFragments(Channel channel, Frame frame) throws IOException {
-        FragmentCollector aggregator = channel.getAttachment(frame.getMessage().getSid());
+    public Frame aggrFragment(Channel channel, int index, Frame frame) throws IOException {
+        FragmentAggregator aggregator = channel.getAttachment(frame.getMessage().getSid());
         if (aggregator == null) {
-            aggregator = new FragmentCollector(frame);
+            aggregator = new FragmentAggregator(frame);
             channel.setAttachment(aggregator.getSid(), aggregator);
         }
 
-        aggregator.add(frame);
+        aggregator.add(index, frame);
 
         if (aggregator.getDataLength() > aggregator.getDataStreamSize()) {
             //长度不够，等下一个分片包

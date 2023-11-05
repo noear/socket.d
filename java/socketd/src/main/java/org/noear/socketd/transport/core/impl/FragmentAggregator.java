@@ -10,30 +10,31 @@ import org.noear.socketd.utils.Utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
- * 分片收集器
+ * 分片聚合器
  *
  * @author noear
  * @since 2.0
  */
-public class FragmentCollector {
+public class FragmentAggregator {
     //主帧
     private Frame main;
-    //数据聚合流
-    private ByteArrayOutputStream dataStream;
+    private List<FragmentHolder> fragmentHolders = new ArrayList<>();
     //数据流大小
     private int dataStreamSize;
     //数据总长度
-    private int dataLength = 0;
+    private int dataLength;
 
-    public FragmentCollector(Frame main) {
+    public FragmentAggregator(Frame main) {
         this.main = main;
-        this.dataStream = new ByteArrayOutputStream();
         String dataLengthStr = main.getMessage().getEntity().getMeta(EntityMetas.META_DATA_LENGTH);
 
         if (Utils.isEmpty(dataLengthStr)) {
-            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta");
+            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, topic=" + main.getMessage().getTopic());
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);
@@ -62,8 +63,20 @@ public class FragmentCollector {
 
     /**
      * 获取聚合后的帧
-     * */
+     */
     public Frame get() throws IOException {
+        //排序
+        fragmentHolders.sort(Comparator.comparing(fh -> fh.getIndex()));
+
+        //创建聚合流
+        ByteArrayOutputStream dataStream = new ByteArrayOutputStream(dataLength);
+
+        //添加分片数据
+        for (FragmentHolder fh : fragmentHolders) {
+            IoUtils.transferTo(fh.getFrame().getMessage().getEntity().getData(), dataStream);
+        }
+
+        //转流并输出
         ByteArrayInputStream inputStream = new ByteArrayInputStream(dataStream.toByteArray());
 
         return new Frame(main.getFlag(), new MessageDefault()
@@ -76,10 +89,10 @@ public class FragmentCollector {
     /**
      * 添加帧
      */
-    public void add(Frame frame) throws IOException {
+    public void add(int index, Frame frame) throws IOException {
+        //添加分片
+        fragmentHolders.add(new FragmentHolder(index, frame));
         //添加计数
         dataStreamSize = dataStreamSize + frame.getMessage().getEntity().getDataSize();
-        //添加数据
-        IoUtils.transferTo(frame.getMessage().getEntity().getData(), dataStream);
     }
 }

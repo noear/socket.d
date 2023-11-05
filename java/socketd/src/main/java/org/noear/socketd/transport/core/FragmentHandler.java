@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public interface FragmentHandler {
     /**
      * 获取下个分片
-     * */
+     */
     Entity nextFragment(Config config, AtomicReference<Integer> fragmentIndex, Entity entity) throws IOException;
 
     /**
      * 聚合所有分片
-     * */
-    Frame aggrFragments(Channel channel, Frame frame) throws IOException;
+     */
+    Frame aggrFragment(Channel channel, int fragmentIndex, Frame frame) throws IOException;
 }

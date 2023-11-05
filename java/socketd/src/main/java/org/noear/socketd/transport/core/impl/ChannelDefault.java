@@ -61,7 +61,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      * 发送
      */
     @Override
-    public void send(Frame frame, Acceptor acceptor) throws IOException {
+    public synchronized void send(Frame frame, Acceptor acceptor) throws IOException {
         Asserts.assertClosed(this);
 
         if (frame.getMessage() != null) {

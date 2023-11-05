@@ -9,14 +9,14 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author noear
  * @since 2.0
  */
-public interface RangesHandler {
+public interface FragmentHandler {
     /**
      * 获取下个分片
      * */
-    Entity nextRange(Config config, AtomicReference<Integer> rangeIndex, Entity entity) throws IOException;
+    Entity nextFragment(Config config, AtomicReference<Integer> fragmentIndex, Entity entity) throws IOException;
 
     /**
      * 聚合所有分片
      * */
-    RangesFrame aggrRanges(Channel channel, Frame frame) throws IOException;
+    Frame aggrFragments(Channel channel, Frame frame) throws IOException;
 }

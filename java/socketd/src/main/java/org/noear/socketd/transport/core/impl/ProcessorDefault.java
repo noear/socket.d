@@ -91,14 +91,14 @@ public class ProcessorDefault implements Processor {
     }
 
     private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
-        String rangeIdxStr = frame.getMessage().getEntity().getMeta(EntityMetas.META_DATA_RANGE_IDX);
-        if (rangeIdxStr != null) {
-            RangesFrame rangesFrame = channel.getConfig().getRangesHandler().aggrRanges(channel, frame);
+        String fragmentIdxStr = frame.getMessage().getEntity().getMeta(EntityMetas.META_DATA_RANGE_IDX);
+        if (fragmentIdxStr != null) {
+            Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragments(channel, frame);
 
-            if (rangesFrame == null) {
+            if (frameNew == null) {
                 return;
             } else {
-                frame = rangesFrame.getFrame();
+                frame = frameNew;
             }
         }
 

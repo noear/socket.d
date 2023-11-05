@@ -76,19 +76,19 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
             if (message.getEntity() != null) {
                 //确保用完自动关闭
                 try (InputStream ins = message.getEntity().getData()) {
-                    if (message.getEntity().getDataSize() > getConfig().getRangeSize()) {
-                        AtomicReference<Integer> rangeIndex = new AtomicReference<>(0);
+                    if (message.getEntity().getDataSize() > getConfig().getFragmentSize()) {
+                        AtomicReference<Integer> fragmentIndex = new AtomicReference<>(0);
                         while (true) {
-                            Entity rangeEntity = getConfig().getRangesHandler().nextRange(getConfig(), rangeIndex, message.getEntity());
+                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(getConfig(), fragmentIndex, message.getEntity());
 
-                            if (rangeEntity != null) {
+                            if (fragmentEntity != null) {
                                 //主要是 sid 和 entity
-                                Frame rangeFrame = new Frame(frame.getFlag(), new MessageDefault()
+                                Frame fragmentFrame = new Frame(frame.getFlag(), new MessageDefault()
                                         .flag(frame.getFlag())
                                         .sid(message.getSid())
-                                        .entity(rangeEntity));
+                                        .entity(fragmentEntity));
 
-                                assistant.write(source, rangeFrame);
+                                assistant.write(source, fragmentFrame);
                             } else {
                                 return;
                             }

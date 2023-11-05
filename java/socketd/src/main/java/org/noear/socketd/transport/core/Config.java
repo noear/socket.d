@@ -37,9 +37,9 @@ public interface Config {
     IdGenerator getIdGenerator();
 
     /**
-     * 获取分布处理器
+     * 获取分片处理器
      */
-    RangesHandler getRangesHandler();
+    FragmentHandler getFragmentHandler();
 
     /**
      * 获取 ssl 上下文
@@ -79,5 +79,5 @@ public interface Config {
     /**
      * 获取分片大小
      */
-    int getRangeSize();
+    int getFragmentSize();
 }

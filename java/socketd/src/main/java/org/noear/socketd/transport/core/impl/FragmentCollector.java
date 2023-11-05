@@ -2,7 +2,6 @@ package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.RangesFrame;
 import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.utils.IoUtils;
@@ -13,12 +12,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * 分片聚合帧默认实现
+ * 分片收集器
  *
  * @author noear
  * @since 2.0
  */
-public class RangesFrameDefault implements RangesFrame {
+public class FragmentCollector {
     //主帧
     private Frame main;
     //数据聚合流
@@ -28,7 +27,7 @@ public class RangesFrameDefault implements RangesFrame {
     //数据总长度
     private int dataLength = 0;
 
-    public RangesFrameDefault(Frame main) {
+    public FragmentCollector(Frame main) {
         this.main = main;
         this.dataStream = new ByteArrayOutputStream();
         String dataLengthStr = main.getMessage().getEntity().getMeta(EntityMetas.META_DATA_LENGTH);
@@ -64,7 +63,7 @@ public class RangesFrameDefault implements RangesFrame {
     /**
      * 获取聚合后的帧
      * */
-    public Frame getFrame() throws IOException {
+    public Frame get() throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(dataStream.toByteArray());
 
         return new Frame(main.getFlag(), new MessageDefault()

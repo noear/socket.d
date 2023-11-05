@@ -46,7 +46,7 @@
 |-------------------------|---------|------|------------|------|------------------|
 | send（发消息）               | 有       | 无    | 有        | 无    | 适合监听埋点，日志上报。速度极快 |
 | sendAndRequest（发送并请求）   | 有       | 有    | 无        | 有    | 适合马上答复，或确认的      |
-| sendAndSubscribe（发送并订阅） | 有       | 无    | 无          | 无    | 适合音频之类的，分块获取数据。速度快   |
+| sendAndSubscribe（发送并订阅） | 有       | 无    | 无          | 无    | 适合音频之类的，分块获取数据。速度极快   |
 | reply,replyEnd（答复）      | 有       | 有    | 无          | 有    |                  |
 | 单连接双向通讯（双向互发、互向互听）      | 有       | 无    | 无      | 无    |                  |
 | 自定义序列化                  | 有       | 无    | 无      | 无    |                  |
@@ -70,7 +70,7 @@ public class Demo {
         Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
                 .open();
         
-        //发送（单线程约为 30万/秒 的速率，2020年的 macbook）
+        //发送（单线程约为 200万/秒 的速率，2020年的 macbook）
         session.send("/demo", new StringEntity("hello wrold!"));
     }
 }

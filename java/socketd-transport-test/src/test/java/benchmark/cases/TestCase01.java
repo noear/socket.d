@@ -92,6 +92,10 @@ public class TestCase01 extends BaseTestCase {
     }
 
     public void send() throws Exception {
+        send(true);
+    }
+
+    public void send(boolean allowPrinting) throws Exception {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
@@ -101,12 +105,18 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
 
         sendLatch.await(timeout, TimeUnit.SECONDS);
-        long timeSpan2 = System.currentTimeMillis() - startTime;
-        System.out.println(getSchema() + "::send:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
-                + ", count=" + (count - sendLatch.getCount()));
+        if (allowPrinting) {
+            long timeSpan2 = System.currentTimeMillis() - startTime;
+            System.out.println(getSchema() + "::send:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
+                    + ", count=" + (count - sendLatch.getCount()));
+        }
     }
 
     public void sendAndRequest() throws Exception {
+        sendAndRequest(true);
+    }
+
+    public void sendAndRequest(boolean allowPrinting) throws Exception {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
@@ -116,12 +126,18 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
 
         sendAndRequestLatch.await(timeout, TimeUnit.SECONDS);
-        long timeSpan2 = System.currentTimeMillis() - startTime;
-        System.out.println(getSchema() + "::sendAndRequest:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
-                + ", count=" + (count - sendAndRequestLatch.getCount()));
+        if (allowPrinting) {
+            long timeSpan2 = System.currentTimeMillis() - startTime;
+            System.out.println(getSchema() + "::sendAndRequest:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
+                    + ", count=" + (count - sendAndRequestLatch.getCount()));
+        }
     }
 
     public void sendAndSubscribe() throws Exception {
+        sendAndSubscribe(true);
+    }
+
+    public void sendAndSubscribe(boolean allowPrinting) throws Exception {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
@@ -133,9 +149,11 @@ public class TestCase01 extends BaseTestCase {
         long timeSpan = System.currentTimeMillis() - startTime;
 
         sendAndSubscribeLatch.await(timeout, TimeUnit.SECONDS);
-        long timeSpan2 = System.currentTimeMillis() - startTime;
-        System.out.println(getSchema() + "::sendAndSubscribe:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
-                + ", count=" + (count - sendAndSubscribeLatch.getCount()));
+        if (allowPrinting) {
+            long timeSpan2 = System.currentTimeMillis() - startTime;
+            System.out.println(getSchema() + "::sendAndSubscribe:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
+                    + ", count=" + (count - sendAndSubscribeLatch.getCount()));
+        }
     }
 
     @Override

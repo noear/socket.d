@@ -31,7 +31,7 @@ public interface Session extends Closeable {
     /**
      * 获取握手信息
      */
-    Handshaker getHandshaker();
+    Handshake getHandshake();
 
     /**
      * 获取所有属性

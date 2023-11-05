@@ -10,13 +10,13 @@ import java.util.Map;
  * @author noear
  * @since 2.0
  */
-public class Handshaker {
+public class Handshake {
     private final URI uri;
     private final Entity entity;
     private final String version;
     private final Map<String,String> paramMap;
 
-    public Handshaker(Message message) {
+    public Handshake(Message message) {
         this.uri = URI.create(message.getTopic());
         this.entity = message.getEntity();
         this.version = entity.getMeta(EntityMetas.META_SOCKETD_VERSION);

@@ -3,6 +3,8 @@ package org.noear.socketd.transport.core;
 import javax.net.ssl.SSLContext;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 配置类
@@ -38,7 +40,7 @@ public interface Config {
 
     /**
      * 获取分布处理器
-     * */
+     */
     RangesHandler getRangesHandler();
 
     /**
@@ -47,8 +49,23 @@ public interface Config {
     SSLContext getSslContext();
 
     /**
-     * 答复超时（单位：毫秒）
+     * 执行器（第一优先，有些底层不支持）
      * */
+    ExecutorService getExecutor();
+
+    /**
+     * 核心线程数（第二优先）
+     */
+    int getCoreThreads();
+
+    /**
+     * 最大线程数
+     */
+    int getMaxThreads();
+
+    /**
+     * 答复超时（单位：毫秒）
+     */
     long getReplyTimeout();
 
     /**

@@ -2,11 +2,14 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.core.impl.IdGeneratorGuid;
 import org.noear.socketd.transport.core.impl.RangesHandlerDefault;
+import org.noear.socketd.transport.server.ServerConfig;
 
 import javax.net.ssl.SSLContext;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author noear
@@ -20,7 +23,12 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected Codec<ByteBuffer> codec;
     protected IdGenerator idGenerator;
     protected RangesHandler rangesHandler;
+
     protected SSLContext sslContext;
+    protected ExecutorService executor;
+
+    protected int coreThreads;
+    protected int maxThreads;
 
     protected long peplyTimeout;
     protected int maxRequests;
@@ -35,6 +43,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.codec = new CodecByteBuffer(this);
         this.idGenerator = new IdGeneratorGuid();
         this.rangesHandler = new RangesHandlerDefault();
+
+        this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
+        this.maxThreads = coreThreads * 8;
 
         this.peplyTimeout = 3000;
         this.maxRequests = 10;
@@ -109,6 +120,50 @@ public abstract class ConfigBase<T extends Config> implements Config {
      */
     public T sslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
+        return (T) this;
+    }
+
+    /**
+     * 获取执行器
+     * */
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
+    public T executor(ExecutorService executor) {
+        this.executor = executor;
+        return (T) this;
+    }
+
+    /**
+     * 获取核心线程数
+     */
+    @Override
+    public int getCoreThreads() {
+        return coreThreads;
+    }
+
+    /**
+     * 配置核心线程数
+     */
+    public T coreThreads(int coreThreads) {
+        this.coreThreads = coreThreads;
+        return (T) this;
+    }
+
+    /**
+     * 获取最大线程数
+     */
+    @Override
+    public int getMaxThreads() {
+        return maxThreads;
+    }
+
+    /**
+     * 配置最大线程数
+     */
+    public T maxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
         return (T) this;
     }
 

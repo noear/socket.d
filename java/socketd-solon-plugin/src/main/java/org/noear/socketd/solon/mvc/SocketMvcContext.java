@@ -35,7 +35,7 @@ public class SocketMvcContext extends ContextEmpty {
         _request = message;
         _response = new EntityDefault();
 
-        String scheme = session.getHandshaker().getUri().getScheme();
+        String scheme = session.getHandshake().getUri().getScheme();
         if (scheme.startsWith("ws")) {
             _method = MethodType.WEBSOCKET;
         } else {
@@ -43,8 +43,8 @@ public class SocketMvcContext extends ContextEmpty {
         }
 
         //传递 Header
-        if (session.getHandshaker().getParamMap().size() > 0) {
-            headerMap().putAll(session.getHandshaker().getParamMap());
+        if (session.getHandshake().getParamMap().size() > 0) {
+            headerMap().putAll(session.getHandshake().getParamMap());
         }
 
         if (Utils.isNotEmpty(message.getEntity().getMetaString())) {
@@ -52,8 +52,8 @@ public class SocketMvcContext extends ContextEmpty {
         }
 
         //传递 Param
-        if (session.getHandshaker().getParamMap().size() > 0) {
-            paramMap().putAll(session.getHandshaker().getParamMap());
+        if (session.getHandshake().getParamMap().size() > 0) {
+            paramMap().putAll(session.getHandshake().getParamMap());
         }
 
         sessionState = new SocketMvcSessionState(_session);

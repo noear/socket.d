@@ -33,21 +33,21 @@ public class ProcessorDefault implements Processor {
         if (frame.getFlag() == Flag.Connect) {
             //if server
             Message connectMessage = frame.getMessage();
-            channel.setHandshaker(new Handshaker(connectMessage));
+            channel.setHandshake(new Handshake(connectMessage));
             channel.sendConnack(connectMessage); //->Connack
 
             onOpen(channel.getSession());
         } else if (frame.getFlag() == Flag.Connack) {
             //if client
             Message message = frame.getMessage();
-            channel.setHandshaker(new Handshaker(message));
+            channel.setHandshake(new Handshake(message));
 
             onOpen(channel.getSession());
         } else {
-            if (channel.getHandshaker() == null) {
+            if (channel.getHandshake() == null) {
                 channel.close();
                 if (log.isWarnEnabled()) {
-                    log.warn("Channel handshaker is null, sessionId={}", channel.getSession().getSessionId());
+                    log.warn("Channel andshake is null, sessionId={}", channel.getSession().getSessionId());
                 }
                 return;
             }

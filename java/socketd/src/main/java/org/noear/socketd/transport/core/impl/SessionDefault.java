@@ -50,8 +50,8 @@ public class SessionDefault extends SessionBase implements Session {
      * 获取握手信息
      */
     @Override
-    public Handshaker getHandshaker() {
-        return channel.getHandshaker();
+    public Handshake getHandshake() {
+        return channel.getHandshake();
     }
 
     /**

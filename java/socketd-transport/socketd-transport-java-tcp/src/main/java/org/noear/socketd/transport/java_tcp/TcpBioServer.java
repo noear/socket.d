@@ -63,7 +63,10 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         }
 
         if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
+            serverExecutor = config().getExecutor();
+            if (serverExecutor == null) {
+                serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
+            }
         }
 
         server = createServer();

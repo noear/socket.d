@@ -16,9 +16,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
     private String host;
     private int port;
 
-    private int coreThreads;
-    private int maxThreads;
-
     private int readBufferSize;
     private int writeBufferSize;
 
@@ -28,9 +25,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
 
         this.host = "";
         this.port = 6329;
-
-        this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
-        this.maxThreads = coreThreads * 8;
 
         this.readBufferSize = 512;
         this.writeBufferSize = 512;
@@ -83,36 +77,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
         } else {
             return schema + "://" + host + ":" + port;
         }
-    }
-
-    /**
-     * 获取核心线程数
-     */
-    public int getCoreThreads() {
-        return coreThreads;
-    }
-
-    /**
-     * 配置核心线程数
-     */
-    public ServerConfig coreThreads(int coreThreads) {
-        this.coreThreads = coreThreads;
-        return this;
-    }
-
-    /**
-     * 获取最大线程数
-     */
-    public int getMaxThreads() {
-        return maxThreads;
-    }
-
-    /**
-     * 配置最大线程数
-     */
-    public ServerConfig maxThreads(int maxThreads) {
-        this.maxThreads = maxThreads;
-        return this;
     }
 
     /**

@@ -26,7 +26,8 @@ import java.util.concurrent.TimeoutException;
 public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpNioClientConnector.class);
 
-    ChannelFuture real;
+    private ChannelFuture real;
+    private NioEventLoopGroup eventLoopGroup;
 
     public TcpNioClientConnector(TcpNioClient client) {
         super(client);
@@ -36,7 +37,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
     public Channel connect() throws Exception {
         log.info("Start connecting to: {}", client.config().getUrl());
 
-        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+        eventLoopGroup = new NioEventLoopGroup(client.config().getCoreThreads());
 
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -68,6 +69,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
         try {
             real.channel().close();
+            eventLoopGroup.shutdownGracefully();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

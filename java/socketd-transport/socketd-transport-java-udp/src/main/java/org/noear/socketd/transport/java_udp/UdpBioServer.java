@@ -48,7 +48,10 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
         }
 
         if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(config().getCoreThreads());
+            serverExecutor = config().getExecutor();
+            if (serverExecutor == null) {
+                serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
+            }
         }
 
         server = createServer();
@@ -115,7 +118,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
         try {
             server.close();
-            serverThread.stop();
+            serverThread.interrupt();
         } catch (Exception e) {
             log.debug("{}", e);
         }

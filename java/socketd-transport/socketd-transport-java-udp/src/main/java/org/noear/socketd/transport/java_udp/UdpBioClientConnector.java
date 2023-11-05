@@ -99,8 +99,8 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         }
 
         try {
-            receiveThread.interrupt();
             real.close();
+            receiveThread.interrupt();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

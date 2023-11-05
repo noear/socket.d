@@ -50,14 +50,14 @@ public interface Channel extends Closeable {
     /**
      * 设置握手信息
      *
-     * @param handshaker 握手信息
+     * @param handshake 握手信息
      */
-    void setHandshaker(Handshaker handshaker);
+    void setHandshake(Handshake handshake);
 
     /**
      * 获取握手信息
      */
-    Handshaker getHandshaker();
+    Handshake getHandshake();
 
     /**
      * 获取远程地址

@@ -24,7 +24,7 @@ public class ListenerRouter implements Listener {
      * 匹配
      */
     public Listener matching(Session session) {
-        return routingTable.get(session.getHandshaker().getUri().getPath());
+        return routingTable.get(session.getHandshake().getUri().getPath());
     }
 
     @Override

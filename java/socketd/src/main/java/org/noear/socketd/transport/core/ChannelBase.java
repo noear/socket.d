@@ -16,7 +16,7 @@ public abstract class ChannelBase implements Channel {
     private final Config config;
 
     private final AtomicInteger requests = new AtomicInteger();
-    private Handshaker handshaker;
+    private Handshake handshake;
     private long liveTime;
     private Map<String,Object> attachments;
 
@@ -52,14 +52,14 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void setHandshaker(Handshaker handshaker) {
-        this.handshaker = handshaker;
+    public void setHandshake(Handshake handshake) {
+        this.handshake = handshake;
     }
 
 
     @Override
-    public Handshaker getHandshaker() {
-        return handshaker;
+    public Handshake getHandshake() {
+        return handshake;
     }
 
     @Override

@@ -70,7 +70,7 @@ public class Demo {
         Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
                 .open();
         
-        //发送（单线程约为 100万/秒 的速率，2020年的 macbook）
+        //发送（单线程约为 100万/秒 的速率，2020年的 macbook。新电脑估计会更快）
         session.send("/demo", new StringEntity("hello wrold!"));
     }
 }

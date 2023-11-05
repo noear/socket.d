@@ -2,13 +2,10 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.core.impl.IdGeneratorGuid;
 import org.noear.socketd.transport.core.impl.RangesHandlerDefault;
-import org.noear.socketd.transport.server.ServerConfig;
 
 import javax.net.ssl.SSLContext;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -20,7 +17,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     protected Charset charset;
 
-    protected Codec<ByteBuffer> codec;
+    protected Codec<BufferReader, BufferWriter> codec;
     protected IdGenerator idGenerator;
     protected RangesHandler rangesHandler;
 
@@ -72,11 +69,11 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 获取编解码器
      */
     @Override
-    public Codec<ByteBuffer> getCodec() {
+    public Codec<BufferReader, BufferWriter> getCodec() {
         return codec;
     }
 
-    public T codec(Codec<ByteBuffer> codec) {
+    public T codec(Codec<BufferReader, BufferWriter> codec) {
         this.codec = codec;
         return (T) this;
     }

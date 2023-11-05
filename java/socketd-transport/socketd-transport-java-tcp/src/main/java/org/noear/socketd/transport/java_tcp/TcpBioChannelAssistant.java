@@ -3,7 +3,10 @@ package org.noear.socketd.transport.java_tcp;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.impl.ByteBufferReader;
+import org.noear.socketd.transport.core.impl.ByteBufferWriter;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,12 +27,7 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
         this.config = config;
     }
 
-    @Override
-    public void write(Socket source, Frame frame) throws IOException {
-        OutputStream output = source.getOutputStream();
-        output.write(config.getCodec().encode(frame).array());
-        output.flush();
-    }
+
 
     @Override
     public boolean isValid(Socket target) {
@@ -49,6 +47,16 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
     @Override
     public InetSocketAddress getLocalAddress(Socket target) {
         return (InetSocketAddress) target.getLocalSocketAddress();
+    }
+
+    @Override
+    public void write(Socket source, Frame frame) throws IOException {
+        OutputStream output = source.getOutputStream();
+//        config.getCodec().write(frame, i -> new OutputStreamBufferWriter(output));
+//        output.flush();
+        ByteBuffer buffer = config.getCodec().write(frame, (i) -> new ByteBufferWriter(ByteBuffer.allocate(i))).getBuffer();
+        output.write(buffer.array());
+        output.flush();
     }
 
     public Frame read(Socket source) throws IOException {
@@ -92,7 +100,7 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
 
         buffer.flip();
 
-        return config.getCodec().decode(buffer);
+        return config.getCodec().read(new ByteBufferReader(buffer));
     }
 
     private static int bytesToInt32(byte[] bytes) {

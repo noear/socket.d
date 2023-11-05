@@ -6,8 +6,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 
-import java.nio.ByteBuffer;
-
 /**
  * @author noear
  * @since 2.0
@@ -22,8 +20,8 @@ public class NettyMessageEncoder extends MessageToByteEncoder<Frame> {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Frame message, ByteBuf byteBuf) throws Exception {
         if (message != null) {
-            ByteBuffer buf = config.getCodec().encode(message);
-            byteBuf.writeBytes(buf.array());
+            NettyBufferWriter writer = new NettyBufferWriter(byteBuf);
+            config.getCodec().write(message, i -> writer);
         }
     }
 }

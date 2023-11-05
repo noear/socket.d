@@ -1,9 +1,12 @@
 package org.noear.socketd.transport.java_websocket;
 
 import org.java_websocket.WebSocket;
+import org.noear.socketd.transport.core.BufferWriter;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.impl.ByteBufferReader;
+import org.noear.socketd.transport.core.impl.ByteBufferWriter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,7 +27,8 @@ public class WsBioChannelAssistant implements ChannelAssistant<WebSocket> {
 
     @Override
     public void write(WebSocket source, Frame frame) throws IOException {
-        source.send(config.getCodec().encode(frame));
+        ByteBufferWriter writer = config.getCodec().write(frame, len -> new ByteBufferWriter(ByteBuffer.allocate(len)));
+        source.send(writer.getBuffer());
     }
 
     @Override
@@ -48,6 +52,6 @@ public class WsBioChannelAssistant implements ChannelAssistant<WebSocket> {
     }
 
     public Frame read(ByteBuffer buffer) throws IOException{
-        return config.getCodec().decode(buffer);
+        return config.getCodec().read(new ByteBufferReader(buffer));
     }
 }

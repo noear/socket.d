@@ -1,10 +1,11 @@
 package org.noear.socketd.utils;
 
+import org.noear.socketd.transport.core.BufferWriter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
 /**
  * 输入输出工具
@@ -113,7 +114,7 @@ public class IoUtils {
      * @param ins 输入流
      * @param out 输出流
      */
-    public static void writeTo(InputStream ins, ByteBuffer out) throws IOException {
+    public static void writeTo(InputStream ins, BufferWriter out) throws IOException {
         if (ins == null || out == null) {
             return;
         }
@@ -121,7 +122,7 @@ public class IoUtils {
         int len = 0;
         byte[] buf = new byte[512];
         while ((len = ins.read(buf)) != -1) {
-            out.put(buf, 0, len);
+            out.putBytes(buf, 0, len);
         }
     }
 }

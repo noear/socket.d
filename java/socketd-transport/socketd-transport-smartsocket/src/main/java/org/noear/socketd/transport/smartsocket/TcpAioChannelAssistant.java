@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.smartsocket;
 
+import org.noear.socketd.transport.core.impl.ByteBufferReader;
 import org.noear.socketd.transport.smartsocket.impl.Attachment;
 import org.noear.socketd.transport.smartsocket.impl.FixedLengthFrameDecoder;
 import org.noear.socketd.transport.core.ChannelAssistant;
@@ -27,8 +28,7 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
 
     @Override
     public void write(AioSession source, Frame frame) throws IOException {
-        ByteBuffer buf = config.getCodec().encode(frame);
-        source.writeBuffer().writeAndFlush(buf.array());
+        config.getCodec().write(frame, i -> new TcpAioBufferWriter(source.writeBuffer()));
     }
 
     @Override
@@ -74,6 +74,6 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
             buffer.flip();
         }
 
-        return config.getCodec().decode(buffer);
+        return config.getCodec().read(new ByteBufferReader(buffer));
     }
 }

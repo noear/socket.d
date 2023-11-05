@@ -3,11 +3,11 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.impl.MessageDefault;
-import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.utils.IoUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.function.Function;
 
 /**
  * 编解码器（基于 ByteBuffer 编解）
@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class CodecByteBuffer implements Codec<ByteBuffer> {
+public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
     private static final int MAX_SIZE_KEY = 256;
     private static final int MAX_SIZE_TOPIC = 512;
     private static final int MAX_SIZE_META = 4096;
@@ -30,22 +30,20 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
      * 编码
      */
     @Override
-    public ByteBuffer encode(Frame frame) {
+    public <T extends BufferWriter> T write(Frame frame, Function<Integer,  T> factory) throws IOException {
         if (frame.getMessage() == null) {
             //length (flag + int.bytes)
             int len = Integer.BYTES + Integer.BYTES;
-
-            ByteBuffer buffer = ByteBuffer.allocate(len);
+            T target = factory.apply(len);
 
             //长度
-            buffer.putInt(len);
+            target.putInt(len);
 
             //flag
-            buffer.putInt(frame.getFlag().getCode());
+            target.putInt(frame.getFlag().getCode());
+            target.flush();
 
-            buffer.flip();
-
-            return buffer;
+            return target;
         } else {
             //sid
             byte[] sidB = frame.getMessage().getSid().getBytes(config.getCharset());
@@ -57,36 +55,31 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
             //length (flag + sid + topic + metaString + data + int.bytes + \n*3)
             int len = sidB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + 2 * 3 + Integer.BYTES + Integer.BYTES;
 
-            ByteBuffer buffer = ByteBuffer.allocate(len);
+            T target = factory.apply(len);
 
             //长度
-            buffer.putInt(len);
+            target.putInt(len);
 
             //flag
-            buffer.putInt(frame.getFlag().getCode());
+            target.putInt(frame.getFlag().getCode());
 
             //sid
-            buffer.put(sidB);
-            buffer.putChar('\n');
+            target.putBytes(sidB);
+            target.putChar('\n');
 
             //topic
-            buffer.put(topicB);
-            buffer.putChar('\n');
+            target.putBytes(topicB);
+            target.putChar('\n');
 
             //metaString
-            buffer.put(metaStringB);
-            buffer.putChar('\n');
+            target.putBytes(metaStringB);
+            target.putChar('\n');
 
             //data
-            try {
-                IoUtils.writeTo(frame.getMessage().getEntity().getData(), buffer);
-            } catch (IOException e) {
-                throw new SocketdCodecException(e);
-            }
+            IoUtils.writeTo(frame.getMessage().getEntity().getData(), target);
+            target.flush();
 
-            buffer.flip();
-
-            return buffer;
+            return target;
         }
     }
 
@@ -94,7 +87,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
      * 解码
      */
     @Override
-    public Frame decode(ByteBuffer buffer) {
+    public Frame read(BufferReader buffer) {
         int len0 = buffer.getInt();
 
         if (len0 > (buffer.remaining() + Integer.BYTES)) {
@@ -109,7 +102,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
         } else {
 
             //1.解码 sid and topic
-            ByteBuffer sb = ByteBuffer.allocate(Math.min(MAX_SIZE_META, buffer.limit()));
+            ByteBuffer sb = ByteBuffer.allocate(Math.min(MAX_SIZE_META, buffer.remaining()));
 
             //sid
             String sid = decodeString(buffer, sb, MAX_SIZE_KEY);
@@ -142,7 +135,7 @@ public class CodecByteBuffer implements Codec<ByteBuffer> {
         }
     }
 
-    protected String decodeString(ByteBuffer buffer, ByteBuffer sb, int maxLen) {
+    protected String decodeString(BufferReader buffer, ByteBuffer sb, int maxLen) {
         sb.clear();
 
         while (true) {

@@ -3,10 +3,10 @@ package org.noear.socketd.transport.netty.tcp.impl;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.noear.socketd.transport.core.BufferReader;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -23,17 +23,18 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf inBuf, List<Object> out) throws Exception {
         //前面有 LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0) 了
-        int len = inBuf.readInt();
+//        int len = inBuf.readInt();
+//
+//        byte[] bytes = new byte[len - Integer.BYTES];
+//        inBuf.readBytes(bytes);
+//
+//        ByteBuffer byteBuffer = ByteBuffer.allocate(len);
+//        byteBuffer.putInt(len);
+//        byteBuffer.put(bytes);
+//        byteBuffer.flip();
 
-        byte[] bytes = new byte[len - Integer.BYTES];
-        inBuf.readBytes(bytes);
-
-        ByteBuffer byteBuffer = ByteBuffer.allocate(len);
-        byteBuffer.putInt(len);
-        byteBuffer.put(bytes);
-        byteBuffer.flip();
-
-        Frame message = config.getCodec().decode(byteBuffer);
+        BufferReader reader = new NettyBufferReader(inBuf);
+        Frame message = config.getCodec().read(reader);
         if (message == null) {
             return;
         }

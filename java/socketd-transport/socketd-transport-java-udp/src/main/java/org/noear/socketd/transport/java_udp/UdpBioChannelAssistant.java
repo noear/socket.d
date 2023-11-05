@@ -1,8 +1,11 @@
 package org.noear.socketd.transport.java_udp;
 
+import org.noear.socketd.transport.core.BufferWriter;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.impl.ByteBufferReader;
+import org.noear.socketd.transport.core.impl.ByteBufferWriter;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.slf4j.Logger;
@@ -33,24 +36,25 @@ public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> 
      * 读取
      */
     public DatagramFrame read(DatagramSocket source) throws IOException {
-        //获取第一个包
+        //接收
         DatagramPacket datagramPacket = new DatagramPacket(new byte[config.getMaxUdpSize()], config.getMaxUdpSize());
         source.receive(datagramPacket);
         if (datagramPacket.getLength() < Integer.BYTES) {
             return null;
         }
 
-        //获取数据（接着在原地址上拿）
-        ByteBuffer byteBuffer = ByteBuffer.wrap(datagramPacket.getData(), 0, datagramPacket.getLength());
-        byteBuffer.mark();
+        //包装
+        ByteBuffer buffer = ByteBuffer.wrap(datagramPacket.getData(), 0, datagramPacket.getLength());
+        buffer.mark();
 
-        int frameSize = byteBuffer.getInt();
+        int frameSize = buffer.getInt();
         if (frameSize > datagramPacket.getLength()) {
             return null;
         }
-        byteBuffer.reset();
 
-        Frame frame = config.getCodec().decode(byteBuffer);
+        buffer.reset();
+
+        Frame frame = config.getCodec().read(new ByteBufferReader(buffer));
 
         return new DatagramFrame(datagramPacket, frame);
     }
@@ -60,14 +64,9 @@ public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> 
      */
     @Override
     public void write(DatagramTagert target, Frame frame) throws IOException {
-        byte[] dataBytes = config.getCodec().encode(frame).array();
-
-        //byte[] sizeBytes = ByteBuffer.allocate(Integer.BYTES).putInt(dataBytes.length).array();
-
-        //先发长度包
-        //target.send(sizeBytes);
+        BufferWriter writer= config.getCodec().write(frame, i-> new ByteBufferWriter(ByteBuffer.allocate(i)));
         //再发数据包
-        target.send(dataBytes);
+        target.send(((ByteBufferWriter) writer).getBuffer().array());
     }
 
     @Override

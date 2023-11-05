@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core;
 
 
+import org.noear.socketd.exception.SocketdSizeLimitException;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.impl.MessageDefault;
 import org.noear.socketd.utils.IoUtils;
@@ -16,10 +17,6 @@ import java.util.function.Function;
  * @since 2.0
  */
 public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
-    private static final int MAX_SIZE_KEY = 256;
-    private static final int MAX_SIZE_TOPIC = 512;
-    private static final int MAX_SIZE_META = 4096;
-
     private final Config config;
 
     public CodecByteBuffer(Config config) {
@@ -30,7 +27,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
      * 编码
      */
     @Override
-    public <T extends BufferWriter> T write(Frame frame, Function<Integer,  T> factory) throws IOException {
+    public <T extends BufferWriter> T write(Frame frame, Function<Integer, T> factory) throws IOException {
         if (frame.getMessage() == null) {
             //length (flag + int.bytes)
             int len = Integer.BYTES + Integer.BYTES;
@@ -101,32 +98,35 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             return new Frame(Flag.Of(flag), null);
         } else {
 
+            int metaBufSize = Math.min(Constants.MAX_SIZE_META, buffer.remaining());
+
             //1.解码 sid and topic
-            ByteBuffer sb = ByteBuffer.allocate(Math.min(MAX_SIZE_META, buffer.remaining()));
+            ByteBuffer sb = ByteBuffer.allocate(metaBufSize);
 
             //sid
-            String sid = decodeString(buffer, sb, MAX_SIZE_KEY);
-            if (sid == null) {
-                return null;
-            }
+            String sid = decodeString(buffer, sb, Constants.MAX_SIZE_SID);
 
             //topic
-            String topic = decodeString(buffer, sb, MAX_SIZE_TOPIC);
-            if (topic == null) {
-                return null;
-            }
+            String topic = decodeString(buffer, sb, Constants.MAX_SIZE_TOPIC);
 
             //metaString
-            String metaString = decodeString(buffer, sb, MAX_SIZE_META);
-            if (metaString == null) {
-                return null;
-            }
+            String metaString = decodeString(buffer, sb, Constants.MAX_SIZE_META);
 
             //2.解码 body
-            int len = len0 - buffer.position();
-            byte[] data = new byte[len];
-            if (len > 0) {
-                buffer.get(data, 0, len);
+            int dataRealSize = len0 - buffer.position();
+            byte[] data;
+            if (dataRealSize > config.getFragmentSize()) {
+                //超界了，空读。必须读，不然协议流会坏掉
+                data = new byte[config.getFragmentSize()];
+                buffer.get(data, 0, config.getFragmentSize());
+                for (int i = dataRealSize - config.getFragmentSize(); i > 0; i--) {
+                    buffer.get();
+                }
+            } else {
+                data = new byte[dataRealSize];
+                if (dataRealSize > 0) {
+                    buffer.get(data, 0, dataRealSize);
+                }
             }
 
             MessageDefault message = new MessageDefault().sid(sid).topic(topic).entity(new EntityDefault().metaString(metaString).data(data));
@@ -135,28 +135,36 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
         }
     }
 
-    protected String decodeString(BufferReader buffer, ByteBuffer sb, int maxLen) {
-        sb.clear();
+    protected String decodeString(BufferReader reader, ByteBuffer buf, int maxLen) {
+        buf.clear();
 
         while (true) {
-            byte c = buffer.get();
+            byte c = reader.get();
 
             if (c == 10) { //10:'\n'
                 break;
-            } else if (c != 0) { //32:' '
-                sb.put(c);
             }
 
-            if (maxLen > 0 && maxLen < sb.position()) {
-                return null;
+            if (maxLen > 0 && maxLen <= buf.position()) {
+                //超界了，空读。必须读，不然协议流会坏掉
+            } else {
+                if (c != 0) { //32:' '
+                    buf.put(c);
+                }
             }
         }
 
-        sb.flip();
-        if (sb.limit() < 1) {
+        buf.flip();
+        if (buf.limit() < 1) {
             return "";
         }
 
-        return new String(sb.array(), 0, sb.limit(), config.getCharset());
+        return new String(buf.array(), 0, buf.limit(), config.getCharset());
+    }
+
+    private void assertSize(String name, int size, int limitSize) {
+        if(size > limitSize) {
+            throw new SocketdSizeLimitException("This message " + name + " size is out of limit");
+        }
     }
 }

@@ -2,9 +2,9 @@ interface Consumer<T> {
     (t: T): void
 }
 
-interface Entity {
-    metaString: string
-    data: BinaryData
+class Entity {
+    metaString?: string
+    data?: object
 }
 
 class Message {
@@ -27,7 +27,9 @@ class Frame {
 
 class ClientConfig {
     readonly url: string
-    schema: string
+    schema?: string
+    replyTimeout?: number
+
     constructor(url:string){
         this.url = url;
     }
@@ -70,17 +72,23 @@ class ClientChannel implements Channel{
 }
 
 class Client {
-    config: ClientConfig
+    _config: ClientConfig
 
-    constructor(url:string) {
+    constructor(url: string) {
+        this._config = new ClientConfig(url);
     }
 
-    listen(listener): Client{
-
+    config(consumer: Consumer<ClientConfig>): Client {
+        consumer(this._config);
+        return this;
     }
 
-    open(): Session{
+    listen(listener): Client {
+        return this;
+    }
 
+    open(): Session {
+        return null;
     }
 }
 
@@ -98,7 +106,9 @@ var SocketD={
 }
 
 let session = SocketD.createClient("tcp://xxx.xxx.x")
-    .config({replyTimeout: 12})
+    .config(cfg=>{
+        cfg.replyTimeout=12
+    })
     .listen({
         onOpen: function (session){
 
@@ -115,9 +125,9 @@ let session = SocketD.createClient("tcp://xxx.xxx.x")
     })
     .open();
 
-session.send("/demo", {data: ""});
+session.send("/demo", new Entity());
 
-let entity = session.sendAndRequest("/demo", {data: ""});
-session.sendAndSubscribe("/demo",{data:""},  entity=>{
+let entity = session.sendAndRequest("/demo", new Entity());
+session.sendAndSubscribe("/demo",new Entity(),  entity=>{
 
 });

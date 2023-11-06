@@ -44,51 +44,63 @@
 
 
 
-SocketD 是一个基于连接的、可扩展的、消息驱动的传输协议。具有异步，背压流控，双向通讯，多路复用，断线重连，支持签权，基于主题消息等特性。
+SocketD 是一个基于连接的、可扩展的、消息驱动的传输协议。具有：
 
-* 具有语言无关性的二进制通信协议（支持 tcp, ws, udp）
-* 异步非阻塞消息驱动通信
-* 可以进行流量控制、自动连接恢复
-* 支持双向通信（如：单链接双向 RPC 接口调用）
-* 更加适合分布式通信场景
-* 支持 ssl，支持国密 ssl
-* 消息有由元信息和数据组成，通过元信息实现可扩展性
-* 自动分片（数据超出 16Mb，会自动分片、自动重组）
-* 接口简单
+* 异步通讯，非阻塞，由主题消息驱动
+* 语言无关，二进制通信协议（支持 tcp, ws, udp）。支持多语言、多平台
+* 背压流控，请求时不让你把服务端发死了
+* 断线重连，自动连接恢复
+* 双向通讯，单链接双向互发双向互听
+* 多路复用
+* 自动分片，数据超出 16Mb，会自动分片、自动重组（udp 除外）
+* 接口简单，等特性
 
 ### 快速入门与学习
 
-目前已完成 java 部分，学习可见：[《快速入门》](_docs/)
+请点击：[《快速入门与学习》](_docs/)。目前已完成 java 部分开发，其它语言与平台会尽快跟进（欢迎有兴趣的同学加入社区）
 
 ### 适用场景
 
 可用于 MSG、RPC、IM、MQ，等一些的场景开发，可替代 http, websocket, grpc 等一些协议。比如移动设备与服务器的连接，比如一些微服务场景等等。
 
 
-### 简单的协议格式
+### 简单的协议
+
+
+* link
+
+```
+tcp://19.10.2.3:9812/path?u=noear&t=1234
+udp://19.10.2.3:9812/path?u=noear&t=1234
+ws://19.10.2.3:1023/path?u=noear&t=1234
+```
+
 
 * codec
 
 ```
-[len:int][flag:int][sid:str(<64)][\n][topic:str(<512)][\n][metaString:str(<4k)][\n][data:bts(<16m)]
+//udp only <2k, and no auto fragments
+[len:int][flag:int][sid:str(<64)][\n][topic:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
-* flag
+* flag & flow
 
-| Flag      | Server                       | Client                       | 备注           |
-|-----------|------------------------------|------------------------------|--------------|
-| Unknown   | ::close()                    | ::close()                    |              |
-| Connect   | /                            | c(Connect)->s                |              |
-| Connack   | s(Connack),s::c.onOpen()->c  | s(Connack)->c::onOpen()      |              |
-| Ping      | /                            | c(Ping)->s                   |              |
-| Pong      | s(Pong)->c                   | /                            |              |
-| Close     | s(Close)->c                  | c(Close)->s                  | 用于特殊场景（如：T人） |
-| Message   | s(Message)->c                | c(Message)->s                |              |
-| Request   | s(Request)->c(Reply)->s      | c(Request)->s(Reply)->c      |              |
-| Subscribe | s(Subscribe)->c(Reply?..)->s | c(Subscribe)->s(Reply?..)->c |              |
-| Reply     | s(Reply)->c                  | c(Reply)->s                  |              |
-| ReplyEnd  | s(ReplyEnd)->c               | c(ReplyEnd)->s               | 结束答复         |
+| Flag      | Server                               | Client                               | 备注                      |
+|-----------|--------------------------------------|--------------------------------------|-------------------------|
+| Unknown   | ::close()                            | ::close()                            |                         |
+| Connect   | /                                    | c(Connect)->s(Connack)->c::onOpen()  |                         |
+| Connack   | s(Connack)->c,s::onOpen()            | /                                    |                         |
+| Ping      | /                                    | c(Ping)->s(Pong)->c                  |                         |
+| Pong      | s(Pong)->c                           | /                                    |                         |
+| Close     | s(Close)->c::onClose()               | c(Close)->s::onClose()               | 用于特殊场景（如：udp）           |
+| Message   | s(Message)->c                        | c(Message)->s                        |                         |
+| Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c  |               |
+| Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c |                         |
+| Reply     | ->s(Reply)->c                        | ->c(Reply)->s                        |                         |
+| ReplyEnd  | ->s(ReplyEnd)->c                     | ->c(ReplyEnd)->s                     | 结束答复                    |
 
-
+```
+//The reply acceptor registration in the channel is removed after the reply is completed
+```
 
 

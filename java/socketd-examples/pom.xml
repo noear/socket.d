@@ -21,6 +21,10 @@
         </dependency>
         <dependency>
             <groupId>org.noear</groupId>
+            <artifactId>socketd-transport-java-udp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.noear</groupId>
             <artifactId>socketd-transport-java-websocket</artifactId>
         </dependency>
     </dependencies>

@@ -104,3 +104,32 @@ ws://19.10.2.3:1023/path?u=noear&t=1234
 ```
 
 
+### 第一个程序：你好世界！
+
+```java
+public class Demo {
+    public void main(String[] args) throws Throwable {
+        //::启动服务端
+        SocketD.createServer(new ServerConfig("ws"))
+                .listen(new SimpleListener(){
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        if(message.isRequest()){
+                            session.replyEnd(message, new StringEntity("And you too."));
+                        }
+                    }
+                })
+                .start();
+
+        
+        //::打开客户端会话
+        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?user=noear")
+                .open();
+        
+        //发送并请求
+        Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!"));
+    }
+}
+```
+
+

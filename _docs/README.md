@@ -1,29 +1,20 @@
 
-# 《快速入门》
+# 《快速入门与学习》
 
-下面的代码示例，将以 java 语言呈现。目前只有 java 已完成开发，其它语言或平台会尽快跟上。欢迎有兴趣的伙伴加入！
 
 ## 一、适配情况
 
-| transport                        | schema  | 支持端 | 备注          |
-|-------------------------------|---------|-----|-------------|
-| socketd-transport-java-tcp       | tcp, tcps | c,s | bio, 支持 ssl |
-| socketd-transport-java-udp       | udp | c,s | bio         |
-| socketd-transport-java-websocket | ws, wss | c,s | nio, 支持 ssl         |
-| socketd-transport-netty          | tcp, tcps | c,s | nio, 支持 ssl         |
-| socketd-transport-smartsocket    | tcp, tcps | c,s | aio, 支持 ssl         |
+| transport                                  | schema    | 支持端 | 安全  | 备注  |
+|--------------------------------------------|-----------|-----|-----|-----|
+| org.noear:socketd-transport-java-tcp       | tcp, tcps | c,s | ssl | bio |
+| org.noear:socketd-transport-java-udp       | udp       | c,s | /   | bio |
+| org.noear:socketd-transport-java-websocket | ws, wss   | c,s | ssl | nio |
+| org.noear:socketd-transport-netty          | tcp, tcps | c,s | ssl | nio |
+| org.noear:socketd-transport-smartsocket    | tcp, tcps | c,s | ssl | aio |
 
-项目中引入任何一个或多个传输适配包（例：socketd-transport-java-websocket）。
+项目中引入任何一个或多个传输适配包即可（例：org.noear:socketd-transport-java-websocket）。
 
 ## 二、主要交互接口
-
-
-链接地址示例:
-
-* tcp://19.10.2.3:9812/path?u=a&p=2
-* udp://19.10.2.3:9812/path?u=a&p=2
-* ws://19.10.2.3:1023/path?u=a&p=2
-
 
 2个主要接口对象（更多可见：[API.md](../API.md) ）：
 

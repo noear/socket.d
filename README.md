@@ -93,7 +93,6 @@ ws://19.10.2.3:1023/path?u=noear&t=1234
 | Connack   | s::onOpen(),s(Connack)->c            | /                                               |                         |
 | Ping      | /                                    | c(Ping)->s(Pong)->c                             |                         |
 | Pong      | s(Pong)->c                           | /                                               |                         |
-| Close     | s(Close)->c::onClose()               | c(Close)->s::onClose()                          | 用于特殊场景（如：udp）           |
 | Message   | s(Message)->c                        | c(Message)->s                                   |                         |
 | Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c             |               |
 | Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c            |                         |

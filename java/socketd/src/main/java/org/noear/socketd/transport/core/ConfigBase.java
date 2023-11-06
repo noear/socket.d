@@ -212,7 +212,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     /**
      * 配置答复默认超时
      */
-    public T peplyTimeout(long replyTimeout) {
+    public T replyTimeout(long replyTimeout) {
         this.replyTimeout = replyTimeout;
         return (T) this;
     }

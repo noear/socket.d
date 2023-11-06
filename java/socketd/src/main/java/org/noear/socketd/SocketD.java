@@ -50,7 +50,7 @@ public class SocketD {
     public static Server createServer(ServerConfig serverConfig) {
         ServerFactory factory = serverFactoryMap.get(serverConfig.getSchema());
         if (factory == null) {
-            throw new IllegalStateException("No ServerBroker providers were found.");
+            throw new IllegalStateException("No socketd server providers were found.");
         }
 
         return factory.createServer(serverConfig);
@@ -66,7 +66,7 @@ public class SocketD {
 
         ClientFactory factory = clientFactoryMap.get(clientConfig.getSchema());
         if (factory == null) {
-            throw new IllegalStateException("No ClientBroker providers were found.");
+            throw new IllegalStateException("No socketd client providers were found.");
         }
 
         return factory.createClient(clientConfig);

@@ -49,7 +49,7 @@
 | 有元信息或头信息        | 有       | 有     | 无         |                         |
 
 
-## 四、基本使用
+## 四、基础接口使用
 
 ### 1、发送
 
@@ -126,7 +126,7 @@ public class Demo {
                 .open();
         
         //发送并订阅
-        session.sendAndRequest("/demo", new StringEntity("hello wrold!"), reply->{
+        session.sendAndSubscribe("/demo", new StringEntity("hello wrold!"), reply->{
             
         });
     }

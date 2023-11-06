@@ -4,13 +4,13 @@
 
 ## 一、适配情况
 
-| transport                                  | schema    | 支持端 | 安全  | 备注  |
-|--------------------------------------------|-----------|-----|-----|-----|
-| org.noear:socketd-transport-java-tcp       | tcp, tcps | c,s | ssl | bio |
-| org.noear:socketd-transport-java-udp       | udp       | c,s | /   | bio |
-| org.noear:socketd-transport-java-websocket | ws, wss   | c,s | ssl | nio |
-| org.noear:socketd-transport-netty          | tcp, tcps | c,s | ssl | nio |
-| org.noear:socketd-transport-smartsocket    | tcp, tcps | c,s | ssl | aio |
+| transport                                  | schema    | 支持端 | 安全  | 备注             |
+|--------------------------------------------|-----------|-----|-----|----------------|
+| org.noear:socketd-transport-java-tcp       | tcp, tcps | c,s | ssl | bio（包比较小，82kb） |
+| org.noear:socketd-transport-java-udp       | udp       | c,s | /   | bio            |
+| org.noear:socketd-transport-java-websocket | ws, wss   | c,s | ssl | nio            |
+| org.noear:socketd-transport-netty          | tcp, tcps | c,s | ssl | nio            |
+| org.noear:socketd-transport-smartsocket    | tcp, tcps | c,s | ssl | aio            |
 
 项目中引入任何一个或多个传输适配包即可（例：org.noear:socketd-transport-java-websocket）。
 

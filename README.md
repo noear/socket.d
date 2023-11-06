@@ -109,7 +109,7 @@ ws://19.10.2.3:1023/path?u=noear&t=1234
 
 ```java
 public class Demo {
-    public void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("ws"))
                 .listen(new SimpleListener(){
@@ -122,6 +122,7 @@ public class Demo {
                 })
                 .start();
 
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?token=1b0VsGusEkddgr3d")

@@ -68,7 +68,7 @@
 public class Demo {
     public void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws"))
+        SocketD.createServer(new ServerConfig("ws").port(8602))
                 .start();
         
         //::打开客户端会话
@@ -87,7 +87,7 @@ public class Demo {
 public class Demo {
     public void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws"))
+        SocketD.createServer(new ServerConfig("ws").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -115,7 +115,7 @@ public class Demo {
 public class Demo {
     public void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws"))
+        SocketD.createServer(new ServerConfig("ws").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -148,7 +148,7 @@ public class Demo {
 public class Demo {
     public void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws"))
+        SocketD.createServer(new ServerConfig("ws").port(8602))
                 .config(sc->sc.maxThreads(128).sslContext(null))
                 .start();
         
@@ -166,7 +166,7 @@ public class Demo {
 public class Demo {
     public void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws"))
+        SocketD.createServer(new ServerConfig("ws").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -214,7 +214,7 @@ public class Demo {
 public class Demo {
     public void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws"))
+        SocketD.createServer(new ServerConfig("ws").port(8602))
                 .start();
         
         //::打开客户端会话

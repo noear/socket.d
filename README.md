@@ -126,7 +126,7 @@ public class Demo {
         Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?user=noear")
                 .open();
         
-        //发送并请求
+        //发送并请求（且，收回答复）
         Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!"));
     }
 }

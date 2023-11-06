@@ -40,7 +40,7 @@ public class ProcessorDefault implements Processor {
             Message connectMessage = frame.getMessage();
             channel.setHandshake(new Handshake(connectMessage));
 
-            //开始打开（可用于签权）//禁止发消息
+            //开始打开（可用于 url 签权）//禁止发消息
             onOpen(channel.getSession());
 
             if (channel.isValid()) {

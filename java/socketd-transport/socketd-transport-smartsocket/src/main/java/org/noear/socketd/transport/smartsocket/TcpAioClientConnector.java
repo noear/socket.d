@@ -69,8 +69,10 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> imp
         try {
             return future.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
+            close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
+            close();
             throw e;
         }
     }

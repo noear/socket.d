@@ -39,9 +39,14 @@ public class ProcessorDefault implements Processor {
             //if server
             Message connectMessage = frame.getMessage();
             channel.setHandshake(new Handshake(connectMessage));
-            channel.sendConnack(connectMessage); //->Connack
 
+            //开始打开（可用于签权）//禁止发消息
             onOpen(channel.getSession());
+
+            if (channel.isValid()) {
+                //如果还有效，则发送链接确认
+                channel.sendConnack(connectMessage); //->Connack
+            }
         } else if (frame.getFlag() == Flag.Connack) {
             //if client
             Message message = frame.getMessage();

@@ -77,8 +77,10 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         try {
             return channelFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
+            close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
+            close();
             throw e;
         }
     }

@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.java_websocket;
 
-import org.noear.socketd.exception.SocketdChannelException;
+import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketClientImpl;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.core.Channel;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Ws-Bio 客户端连接器实现（支持 ssl）
@@ -31,7 +32,7 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         //处理自定义架构的影响
-        String wsUrl = client.config().getUrl().replace("-java://","://");
+        String wsUrl = client.config().getUrl().replace("-java://", "://");
         real = new WebSocketClientImpl(URI.create(wsUrl), client);
 
         //支持 ssl
@@ -39,15 +40,16 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
             real.setSocketFactory(client.config().getSslContext().getSocketFactory());
         }
 
+
+        real.connect();
+
         try {
-            if (real.connectBlocking(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS)) {
-                return real.getChannel();
-            } else {
-                throw new SocketdChannelException("Connection fail: " + client.config().getUrl());
-            }
-        } catch (RuntimeException e) {
-            throw e;
+            return real.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            close();
+            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
+            close();
             throw e;
         }
     }

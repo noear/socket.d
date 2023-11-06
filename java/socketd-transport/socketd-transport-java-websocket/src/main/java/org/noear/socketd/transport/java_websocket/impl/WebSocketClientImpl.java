@@ -2,6 +2,7 @@ package org.noear.socketd.transport.java_websocket.impl;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.java_websocket.WsBioClient;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
@@ -11,26 +12,27 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.concurrent.CompletableFuture;
 
 public class WebSocketClientImpl extends WebSocketClient {
     static final Logger log = LoggerFactory.getLogger(WebSocketClientImpl.class);
     private WsBioClient client;
     private Channel channel;
+    private CompletableFuture<Channel> futureChannel;
 
     public WebSocketClientImpl(URI serverUri, WsBioClient client) {
         super(serverUri);
         this.client = client;
         this.channel = new ChannelDefault<>(this, client.config(), client.assistant());
+        this.futureChannel = new CompletableFuture<>();
     }
 
-    public Channel getChannel() {
-        return channel;
+    public CompletableFuture<Channel> getChannel() {
+        return futureChannel;
     }
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        log.info("Client:Websocket onOpen...");
-
         try {
             channel.sendConnect(client.config().getUrl());
         } catch (Throwable e) {
@@ -50,6 +52,10 @@ public class WebSocketClientImpl extends WebSocketClient {
 
             if (frame != null) {
                 client.processor().onReceive(channel, frame);
+
+                if(frame.getFlag() == Flag.Connack){
+                    futureChannel.complete(channel);
+                }
             }
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);

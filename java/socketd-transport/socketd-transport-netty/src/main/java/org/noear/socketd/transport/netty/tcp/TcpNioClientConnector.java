@@ -54,9 +54,10 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
             return inboundHandler.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
+            close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
-            eventLoopGroup.shutdownGracefully();
+            close();
             throw e;
         }
     }

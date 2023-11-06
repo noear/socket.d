@@ -86,19 +86,19 @@ ws://19.10.2.3:1023/path?u=noear&t=1234
 
 * flag & flow
 
-| Flag      | Server                               | Client                               | 备注                      |
-|-----------|--------------------------------------|--------------------------------------|-------------------------|
-| Unknown   | ::close()                            | ::close()                            |                         |
-| Connect   | /                                    | c(Connect)->s(Connack)->c::onOpen()  |                         |
-| Connack   | s(Connack)->c,s::onOpen()            | /                                    |                         |
-| Ping      | /                                    | c(Ping)->s(Pong)->c                  |                         |
-| Pong      | s(Pong)->c                           | /                                    |                         |
-| Close     | s(Close)->c::onClose()               | c(Close)->s::onClose()               | 用于特殊场景（如：udp）           |
-| Message   | s(Message)->c                        | c(Message)->s                        |                         |
-| Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c  |               |
-| Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c |                         |
-| Reply     | ->s(Reply)->c                        | ->c(Reply)->s                        |                         |
-| ReplyEnd  | ->s(ReplyEnd)->c                     | ->c(ReplyEnd)->s                     | 结束答复                    |
+| Flag      | Server                               | Client                                          | 备注                      |
+|-----------|--------------------------------------|-------------------------------------------------|-------------------------|
+| Unknown   | ::close()                            | ::close()                                       |                         |
+| Connect   | /                                    | c(Connect)->s::onOpen(),s(Connack)->c::onOpen() |                         |
+| Connack   | s::onOpen(),s(Connack)->c            | /                                               |                         |
+| Ping      | /                                    | c(Ping)->s(Pong)->c                             |                         |
+| Pong      | s(Pong)->c                           | /                                               |                         |
+| Close     | s(Close)->c::onClose()               | c(Close)->s::onClose()                          | 用于特殊场景（如：udp）           |
+| Message   | s(Message)->c                        | c(Message)->s                                   |                         |
+| Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c             |               |
+| Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c            |                         |
+| Reply     | ->s(Reply)->c                        | ->c(Reply)->s                                   |                         |
+| ReplyEnd  | ->s(ReplyEnd)->c                     | ->c(ReplyEnd)->s                                | 结束答复                    |
 
 ```
 //The reply acceptor registration in the channel is removed after the reply is completed

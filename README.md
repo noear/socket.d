@@ -67,7 +67,7 @@ SocketD 是一个基于连接的、可扩展的、主题消息驱动的传输协
 ### 简单的协议
 
 
-* link
+* link (url style)
 
 ```
 tcp://19.10.2.3:9812/path?u=noear&t=1234

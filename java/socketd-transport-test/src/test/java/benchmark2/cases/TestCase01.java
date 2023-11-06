@@ -71,7 +71,7 @@ public class TestCase01 extends BaseTestCase {
             });
         }
 
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
     public void send() throws Exception {

@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.Throughput)
 @Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Threads(1)
-@Fork(1)
+@Measurement(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
+@Threads(2)
+@Fork(0)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 public class JMHMain_send {
@@ -22,22 +22,13 @@ public class JMHMain_send {
             "ws-java",
             "udp-java"};
 
-    TestCase01 testCase_tcp_java;
-    TestCase01 testCase_tcp_netty;
-    TestCase01 testCase_tcp_smartsocket;
-    TestCase01 testCase_ws_java;
-    TestCase01 testCase_udp_java;
+    static TestCase01 testCase_tcp_java;
+    static TestCase01 testCase_tcp_netty;
+    static TestCase01 testCase_tcp_smartsocket;
+    static TestCase01 testCase_ws_java;
+    static TestCase01 testCase_udp_java;
 
-    public static void main(String[] args) throws RunnerException {
-        Options opt = new
-                OptionsBuilder()
-                .include(JMHMain_send.class.getSimpleName())
-                .build();
-        new Runner(opt).run();
-    }
-
-    @Setup
-    public void init() throws Exception {
+    public static void main(String[] args) throws Exception {
         testCase_tcp_java = new TestCase01(schemas[0], 4000);
         testCase_tcp_java.start();
 
@@ -52,6 +43,18 @@ public class JMHMain_send {
 
         testCase_udp_java = new TestCase01(schemas[4], 4000 + 4);
         testCase_udp_java.start();
+
+
+        Options opt = new
+                OptionsBuilder()
+                .include(JMHMain_send.class.getSimpleName())
+                .build();
+        new Runner(opt).run();
+    }
+
+    @Setup
+    public void init() throws Exception {
+
     }
 
     @Benchmark

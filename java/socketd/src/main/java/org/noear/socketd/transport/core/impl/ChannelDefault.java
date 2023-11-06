@@ -43,11 +43,6 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     }
 
     @Override
-    public boolean isClosed() {
-        return isClosed;
-    }
-
-    @Override
     public InetSocketAddress getRemoteAddress() throws IOException {
         return assistant.getRemoteAddress(source);
     }
@@ -132,15 +127,12 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         return session;
     }
 
-    //用于做关闭异常提醒
-    private boolean isClosed;
-
     /**
      * 关闭
      */
     @Override
     public void close() throws IOException {
-        isClosed = true;
+        super.close();
         acceptorMap.clear();
         assistant.close(source);
     }

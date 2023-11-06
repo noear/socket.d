@@ -19,6 +19,8 @@ public abstract class ChannelBase implements Channel {
     private Handshake handshake;
     private long liveTime;
     private Map<String,Object> attachments;
+    //用于做关闭异常提醒
+    private boolean isClosed;
 
     public Config getConfig() {
         return config;
@@ -44,6 +46,12 @@ public abstract class ChannelBase implements Channel {
         }
 
         attachments.put(name, val);
+    }
+
+
+    @Override
+    public boolean isClosed() {
+        return isClosed;
     }
 
     @Override
@@ -95,5 +103,11 @@ public abstract class ChannelBase implements Channel {
     @Override
     public void sendClose() throws IOException {
         send(Frames.closeFrame(), null);
+    }
+
+    @Override
+    public void close() throws IOException {
+        isClosed = true;
+        attachments.clear();
     }
 }

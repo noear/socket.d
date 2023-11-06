@@ -244,3 +244,41 @@ public class Demo {
     }
 }
 ```
+
+
+### 4、Url 签权
+
+```java
+public class Demo {
+    public static void main(String[] args) throws Throwable {
+        //::启动服务端
+        SocketD.createServer(new ServerConfig("tcp").port(8602))
+                .listen(new SimpleListener() {
+                    @Override
+                    public void onOpen(Session session) throws IOException {
+                        String user = session.getHandshake().getParam("u");
+                        if ("noear".equals(user) == false) { //如果不是 noear，关闭会话
+                            session.close();
+                        }
+                    }
+
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        System.out.println(message);
+                    }
+                })
+                .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
+
+        //::打开客户端会话
+        //会成功
+        Session session1 = SocketD.createClient("tcp://127.0.0.1:8602/?u=noear&p=2").open();
+        session1.send("/demo", new StringEntity("hi"));
+
+        //会失败
+        Session session2 = SocketD.createClient("tcp://127.0.0.1:8602/?u=solon&p=1").open();
+        session2.send("/demo2", new StringEntity("hi"));
+    }
+}
+```

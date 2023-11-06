@@ -75,7 +75,7 @@ public class TestCase14_file extends BaseTestCase {
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl).open();
 
-        clientSession.send("/user/upload", new FileEntity(new File("/Users/noear/Downloads/snack3-rce-poc.mov")));
+        clientSession.send("/user/upload", new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov")));
 
 
         Thread.sleep(2000);

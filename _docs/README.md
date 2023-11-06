@@ -72,7 +72,7 @@ public class Demo {
                 .start();
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
                 .open();
         
         //发送（单线程约为 200万/秒 的速率，2020年的 macbook。新电脑估计会更快）
@@ -100,7 +100,7 @@ public class Demo {
 
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
                 .open();
         
         //发送并请求
@@ -129,7 +129,7 @@ public class Demo {
 
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
                 .open();
         
         //发送并订阅
@@ -153,7 +153,7 @@ public class Demo {
                 .start();
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
                 .config(cc->cc.sslContext(null))
                 .open();
     }
@@ -181,7 +181,7 @@ public class Demo {
 
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -218,7 +218,7 @@ public class Demo {
                 .start();
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
                 .open();
 
         //发送 + 元信息

@@ -32,7 +32,7 @@ public class Demo {
 
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/path?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/path?u=a&p=2")
                 .config(c -> c.autoReconnect(true)) //配置
                 .listen(new ClientListener()) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
@@ -101,7 +101,7 @@ public class ControllerDemo {
 public class ClientDemo implements LifecycleBean {
     @Override
     public void start() throws Throwable {
-        Session session = SocketD.createClient("ws://127.0.0.1:6329/test?u=a&p=2").open();
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/test?u=a&p=2").open();
 
         //设定内容
         StringEntity entity = new StringEntity("{\"order\":12345}")

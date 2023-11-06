@@ -118,7 +118,7 @@ ws://19.10.2.3:1023/path?u=noear&t=1234
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("tcp"))
+        SocketD.createServer(new ServerConfig("tcp").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -132,7 +132,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
-        Session session = SocketD.createClient("tcp://127.0.0.1:6329/hello?token=1b0VsGusEkddgr3d")
+        Session session = SocketD.createClient("tcp://127.0.0.1:8602/hello?token=1b0VsGusEkddgr3d")
                 .open();
         
         //发送并请求（且，收回答复）

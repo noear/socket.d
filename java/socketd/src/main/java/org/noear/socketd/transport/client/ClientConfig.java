@@ -17,6 +17,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     //连接地址
     private final String url;
     private final URI uri;
+    private int port;
 
     //心跳间隔（毫秒）
     private long heartbeatInterval;
@@ -37,7 +38,12 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
         super(true);
         this.url = url;
         this.uri = URI.create(url);
+        this.port = uri.getPort();
         this.schema = uri.getScheme();
+
+        if (this.port < 0) {
+            this.port = 8602;
+        }
 
         this.connectTimeout = 3000;
         this.heartbeatInterval = 20 * 1000;
@@ -80,7 +86,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
      * 获取连接端口
      */
     public int getPort() {
-        return uri.getPort();
+        return port;
     }
 
     /**

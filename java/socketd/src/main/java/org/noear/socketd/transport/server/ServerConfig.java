@@ -29,7 +29,7 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
         this.schema = schema;
 
         this.host = "";
-        this.port = 6329;
+        this.port = 8602;
 
         this.readBufferSize = 512;
         this.writeBufferSize = 512;

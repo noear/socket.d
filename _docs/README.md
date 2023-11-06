@@ -56,10 +56,12 @@
 
 ```java
 public class Demo {
-    public void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("ws").port(8602))
                 .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
@@ -75,7 +77,7 @@ public class Demo {
 
 ```java
 public class Demo {
-    public void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("ws").port(8602))
                 .listen(new SimpleListener(){
@@ -88,6 +90,7 @@ public class Demo {
                 })
                 .start();
 
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
@@ -103,7 +106,7 @@ public class Demo {
 
 ```java
 public class Demo {
-    public void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("ws").port(8602))
                 .listen(new SimpleListener(){
@@ -117,6 +120,7 @@ public class Demo {
                 })
                 .start();
 
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
@@ -136,11 +140,13 @@ public class Demo {
 
 ```java
 public class Demo {
-    public void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("ws").port(8602))
                 .config(sc->sc.maxThreads(128).sslContext(null))
                 .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
@@ -154,7 +160,7 @@ public class Demo {
 
 ```java
 public class Demo {
-    public void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("ws").port(8602))
                 .listen(new SimpleListener(){
@@ -169,6 +175,7 @@ public class Demo {
                 })
                 .start();
 
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
@@ -202,10 +209,27 @@ public class Demo {
 
 ```java
 public class Demo {
-    public void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("ws").port(8602))
+                .listen(new SimpleListener(){
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        String fileName = message.getEntity().getMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+
+                        if (fileName != null) {
+                            File fileNew = new File("/data/upload/user.jpg");
+                            fileNew.createNewFile();
+                            
+                            try (OutputStream outputStream = new FileOutputStream(fileNew)) {
+                                IoUtils.transferTo(message.getEntity().getData(), outputStream);
+                            }
+                        }
+                    }
+                })
                 .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
         Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")

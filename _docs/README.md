@@ -27,8 +27,8 @@
 | listener                  | 监听器   | （可双向互听）       |
 | session                   | 会话    | （可双向互发）       |
 |                           |       |               |
-| session::send             | 发送    |               |
-| session::sendAndRequest   | 发送并请求 | 要求一次答复        |
+| session::send             | 发送    | （Qos0）              |
+| session::sendAndRequest   | 发送并请求 | 要求一次答复（Qos1）        |
 | session::sendAndSubscribe | 发送并订阅 | 答复结束之前，不限答复次数 |
 | session::reply            | 答复    |               |
 | session::replyEnd         | 答复结束  |               |

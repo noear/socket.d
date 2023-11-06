@@ -1,8 +1,8 @@
 package org.noear.socketd.transport.core;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,9 +16,9 @@ public abstract class ChannelBase implements Channel {
     private final Config config;
 
     private final AtomicInteger requests = new AtomicInteger();
+    private final Map<String, Object> attachments = new ConcurrentHashMap<>();
     private Handshake handshake;
     private long liveTime;
-    private Map<String,Object> attachments;
     //用于做关闭异常提醒
     private boolean isClosed;
 
@@ -33,18 +33,11 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public <T> T getAttachment(String name) {
-        if (attachments == null) {
-            return null;
-        }
         return (T) attachments.get(name);
     }
 
     @Override
     public void setAttachment(String name, Object val) {
-        if (attachments == null) {
-            attachments = new HashMap<>();
-        }
-
         attachments.put(name, val);
     }
 

@@ -35,7 +35,7 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * Header
+     * 获取元信息字符串（queryString style）
      */
     @Override
     public String getMetaString() {
@@ -57,6 +57,11 @@ public class EntityDefault implements Entity {
         return metaString;
     }
 
+    /**
+     * 设置元信息字典
+     *
+     * @param metaMap 元信息字典
+     */
     public EntityDefault metaMap(Map<String, String> metaMap) {
         this.metaMap = metaMap;
         this.metaString = null;
@@ -65,7 +70,7 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * Header as map
+     * 获取元信息字典
      */
     @Override
     public Map<String, String> getMetaMap() {
@@ -89,6 +94,12 @@ public class EntityDefault implements Entity {
         return metaMap;
     }
 
+    /**
+     * 设置元信息
+     *
+     * @param name 名字
+     * @param val  值
+     */
     public EntityDefault meta(String name, String val) {
         putMeta(name, val);
         return this;
@@ -96,6 +107,9 @@ public class EntityDefault implements Entity {
 
     /**
      * 设置元信息
+     *
+     * @param name 名字
+     * @param val  值
      */
     public void putMeta(String name, String val) {
         getMetaMap().put(name, val);
@@ -104,23 +118,41 @@ public class EntityDefault implements Entity {
 
     /**
      * 获取元信息
+     *
+     * @param name 名字
      */
     @Override
     public String getMeta(String name) {
         return getMetaMap().get(name);
     }
 
+    /**
+     * 获取元信息或默认值
+     *
+     * @param name 名字
+     * @param def  默认值
+     */
     @Override
     public String getMetaOrDefault(String name, String def) {
         return getMetaMap().getOrDefault(name, def);
     }
 
+    /**
+     * 设置数据
+     *
+     * @param data 数据
+     */
     public EntityDefault data(byte[] data) {
         this.data = new ByteArrayInputStream(data);
         this.dataSize = data.length;
         return this;
     }
 
+    /**
+     * 设置数据
+     *
+     * @param data 数据
+     */
     public EntityDefault data(InputStream data) throws IOException {
         this.data = data;
         this.dataSize = data.available();
@@ -129,13 +161,16 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * 获取数据（如果要多次复用，重用之前需要reset）
+     * 获取数据（若多次复用，需要reset）
      */
     @Override
     public InputStream getData() {
         return data;
     }
 
+    /**
+     * 获取数据并转成字符串
+     */
     @Override
     public String getDataAsString() {
         try {

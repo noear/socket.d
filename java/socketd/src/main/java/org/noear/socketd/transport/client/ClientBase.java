@@ -15,10 +15,14 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public abstract class ClientBase<T extends ChannelAssistant> implements Client {
+    //协议处理器
     protected Processor processor = new ProcessorDefault();
+    //心跳处理
     protected HeartbeatHandler heartbeatHandler;
 
+    //配置
     private final ClientConfig config;
+    //助理
     private final T assistant;
 
     public ClientBase(ClientConfig clientConfig, T assistant) {

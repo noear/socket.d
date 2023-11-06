@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 通道默认实现（每个连接都会建立一个通道）
+ * 通道默认实现（每个连接都会建立一个或多个通道）
  *
  * @author noear
  * @since 2.0
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ChannelDefault<S> extends ChannelBase implements Channel {
     private final S source;
 
-    //接收管理器
+    //答复接收器字典（管理）
     private final Map<String, Acceptor> acceptorMap;
     //助理
     private final ChannelAssistant<S> assistant;
@@ -32,21 +32,33 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         this.acceptorMap = new ConcurrentHashMap<>();
     }
 
+    /**
+     * 移除接收器（答复接收器）
+     */
     @Override
     public void removeAcceptor(String sid) {
         acceptorMap.remove(sid);
     }
 
+    /**
+     * 是否有效
+     */
     @Override
     public boolean isValid() {
         return assistant.isValid(source);
     }
 
+    /**
+     * 获取远程地址
+     */
     @Override
     public InetSocketAddress getRemoteAddress() throws IOException {
         return assistant.getRemoteAddress(source);
     }
 
+    /**
+     * 获取本地地址
+     */
     @Override
     public InetSocketAddress getLocalAddress() throws IOException {
         return assistant.getLocalAddress(source);
@@ -67,13 +79,15 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
                 acceptorMap.put(message.getSid(), acceptor);
             }
 
-            //尝试分片
+            //如果有实体（尝试分片）
             if (message.getEntity() != null) {
                 //确保用完自动关闭
                 try (InputStream ins = message.getEntity().getData()) {
                     if (message.getEntity().getDataSize() > Config.MAX_SIZE_FRAGMENT) {
+                        //满足分片条件
                         AtomicReference<Integer> fragmentIndex = new AtomicReference<>(0);
                         while (true) {
+                            //获取分片
                             Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(getConfig(), fragmentIndex, message.getEntity());
 
                             if (fragmentEntity != null) {
@@ -85,10 +99,12 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
 
                                 assistant.write(source, fragmentFrame);
                             } else {
+                                //没有分片，说明发完了
                                 return;
                             }
                         }
                     } else {
+                        //不满足分片条件，直接发
                         assistant.write(source, frame);
                         return;
                     }
@@ -100,7 +116,9 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     }
 
     /**
-     * 收回（收回答复）
+     * 接收（接收答复帧）
+     *
+     * @param frame 帧
      */
     @Override
     public void retrieve(Frame frame) throws IOException {
@@ -108,6 +126,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
 
         if (acceptor != null) {
             if (acceptor.isSingle() || frame.getFlag() == Flag.ReplyEnd) {
+                //如果是单收或者答复结束，则移除接收器
                 acceptorMap.remove(frame.getMessage().getSid());
             }
 

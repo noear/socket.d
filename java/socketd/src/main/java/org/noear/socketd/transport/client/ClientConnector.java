@@ -28,11 +28,6 @@ public interface ClientConnector extends Closeable {
     boolean autoReconnect();
 
     /**
-     * 最大允许请求数（用于背压控制）
-     */
-    int maxRequests();
-
-    /**
      * 连接
      *
      * @return 通道

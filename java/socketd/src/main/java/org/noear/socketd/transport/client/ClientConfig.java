@@ -11,18 +11,25 @@ import java.net.URI;
  * @since 2.0
  */
 public class ClientConfig extends ConfigBase<ClientConfig> {
+    //通讯架构（tcp, ws, udp）
     private final String schema;
 
+    //连接地址
     private final String url;
     private final URI uri;
 
+    //心跳间隔（毫秒）
     private long heartbeatInterval;
 
+    //连接越时
     private long connectTimeout;
 
+    //读缓冲大小
     private int readBufferSize;
+    //写缓冲大小
     private int writeBufferSize;
 
+    //是否自动重链
     private boolean autoReconnect;
 
 
@@ -40,7 +47,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
 
 
     /**
-     * 获取协议架构
+     * 获取通讯架构（tcp, ws, udp）
      */
     @Override
     public String getSchema() {
@@ -77,14 +84,14 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     }
 
     /**
-     * 获取心跳间隔
+     * 获取心跳间隔（单位毫秒）
      */
     public long getHeartbeatInterval() {
         return heartbeatInterval;
     }
 
     /**
-     * 配置心跳间隔
+     * 配置心跳间隔（单位毫秒）
      */
     public ClientConfig heartbeatInterval(long heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
@@ -92,14 +99,14 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     }
 
     /**
-     * 获取连接超时
+     * 获取连接超时（单位毫秒）
      */
     public long getConnectTimeout() {
         return connectTimeout;
     }
 
     /**
-     * 配置连接超时
+     * 配置连接超时（单位毫秒）
      */
     public ClientConfig connectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
@@ -137,12 +144,15 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     }
 
     /**
-     * 是否自动重链
+     * 获取是否自动重链
      */
     public boolean isAutoReconnect() {
         return autoReconnect;
     }
 
+    /**
+     * 配置是否自动重链
+     */
     public ClientConfig autoReconnect(boolean autoReconnect) {
         this.autoReconnect = autoReconnect;
         return this;

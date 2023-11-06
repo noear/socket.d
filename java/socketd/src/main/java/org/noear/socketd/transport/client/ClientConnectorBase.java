@@ -37,12 +37,4 @@ public abstract class ClientConnectorBase<T extends ClientBase> implements Clien
     public boolean autoReconnect() {
         return client.config().isAutoReconnect();
     }
-
-    /**
-     * 最大允许请求数（用于背压控制）
-     */
-    @Override
-    public int maxRequests() {
-        return client.config().getMaxRequests();
-    }
 }

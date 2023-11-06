@@ -17,10 +17,14 @@ import java.util.concurrent.ScheduledFuture;
  * @since 2.0
  */
 public class ClientChannel extends ChannelBase implements Channel {
+    //连接器
     private ClientConnector connector;
+    //真实通道
     private Channel real;
+    //心跳处理
     private HeartbeatHandler heartbeatHandler;
-    private ScheduledFuture<?> scheduledFuture;
+    //心跳调度
+    private ScheduledFuture<?> heartbeatScheduledFuture;
 
     public ClientChannel(Channel real, ClientConnector connector) {
         super(real.getConfig());
@@ -32,8 +36,8 @@ public class ClientChannel extends ChannelBase implements Channel {
             heartbeatHandler = new HeartbeatHandlerDefault();
         }
 
-        if (connector.autoReconnect() && scheduledFuture == null) {
-            scheduledFuture = RunUtils.delayAndRepeat(() -> {
+        if (connector.autoReconnect() && heartbeatScheduledFuture == null) {
+            heartbeatScheduledFuture = RunUtils.delayAndRepeat(() -> {
                 try {
                     heartbeatHandle();
                 } catch (Exception e) {
@@ -43,6 +47,10 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+
+    /**
+     * 移除接收器（答复接收器）
+     */
     @Override
     public void removeAcceptor(String sid) {
         if (real != null) {
@@ -62,6 +70,9 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 是否已关闭
+     */
     @Override
     public boolean isClosed() {
         if (real == null) {
@@ -70,7 +81,6 @@ public class ClientChannel extends ChannelBase implements Channel {
             return real.isClosed();
         }
     }
-
 
     /**
      * 获取远程地址
@@ -122,6 +132,9 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     /**
      * 发送
+     *
+     * @param frame 帧
+     * @param acceptor 答复接收器（没有则为 null）
      */
     @Override
     public void send(Frame frame, Acceptor acceptor) throws IOException {
@@ -145,7 +158,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
-     * 收回（收回答复帧）
+     * 接收（接收答复帧）
      *
      * @param frame 帧
      */
@@ -167,11 +180,10 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     @Override
     public void close() throws IOException {
-        RunUtils.runAnTry(() -> scheduledFuture.cancel(true));
+        RunUtils.runAnTry(() -> heartbeatScheduledFuture.cancel(true));
         RunUtils.runAnTry(() -> connector.close());
         RunUtils.runAnTry(() -> real.close());
     }
-
 
     /**
      * 预备发送

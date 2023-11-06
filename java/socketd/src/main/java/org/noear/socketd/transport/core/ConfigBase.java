@@ -13,22 +13,34 @@ import java.util.concurrent.ExecutorService;
  * @since 2.0
  */
 public abstract class ConfigBase<T extends Config> implements Config {
+    //是否客户端模式
     private final boolean clientMode;
 
+    //字符集
     protected Charset charset;
 
+    //编解码器
     protected Codec<BufferReader, BufferWriter> codec;
+    //id生成器
     protected IdGenerator idGenerator;
+    //分片处理
     protected FragmentHandler fragmentHandler;
 
+    //ssl 上下文
     protected SSLContext sslContext;
+    //执行器（如果有且能用，则优先用。如 netty 没法用）
     protected ExecutorService executor;
 
+    //内核线程数
     protected int coreThreads;
+    //最大线程数
     protected int maxThreads;
 
-    protected long peplyTimeout;
+    //答复默认超时
+    protected long replyTimeout;
+    //最大同时请求数
     protected int maxRequests;
+    //最大udp包大小
     protected int maxUdpSize;
 
     public ConfigBase(boolean clientMode) {
@@ -43,21 +55,30 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
         this.maxThreads = coreThreads * 8;
 
-        this.peplyTimeout = 3000;
+        this.replyTimeout = 3000;
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
     }
 
+    /**
+     * 是否客户端模式
+     */
     @Override
     public boolean clientMode() {
         return clientMode;
     }
 
+    /**
+     * 获取字符集
+     */
     @Override
     public Charset getCharset() {
         return charset;
     }
 
+    /**
+     * 配置字符集
+     */
     public T charset(Charset charset) {
         this.charset = charset;
         return (T) this;
@@ -71,17 +92,25 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return codec;
     }
 
+    /**
+     * 配置编解码器
+     */
     public T codec(Codec<BufferReader, BufferWriter> codec) {
         this.codec = codec;
         return (T) this;
     }
 
-
+    /**
+     * 获取分片处理
+     */
     @Override
     public FragmentHandler getFragmentHandler() {
         return fragmentHandler;
     }
 
+    /**
+     * 配置分片处理
+     */
     public T fragmentHandler(FragmentHandler fragmentHandler) {
         this.fragmentHandler = fragmentHandler;
         return (T) this;
@@ -95,12 +124,13 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return idGenerator;
     }
 
-
+    /**
+     * 配置标识生成器
+     */
     public T idGenerator(IdGenerator idGenerator) {
         this.idGenerator = idGenerator;
         return (T) this;
     }
-
 
     /**
      * 获取 ssl 上下文
@@ -119,12 +149,15 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 获取执行器
-     * */
+     * 获取执行器（如果有且能用，则优先用）
+     */
     public ExecutorService getExecutor() {
         return executor;
     }
 
+    /**
+     * 配置执行器
+     */
     public T executor(ExecutorService executor) {
         this.executor = executor;
         return (T) this;
@@ -162,37 +195,49 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
+    /**
+     * 获取答复默认超时
+     */
     @Override
     public long getReplyTimeout() {
-        return peplyTimeout;
+        return replyTimeout;
     }
 
+    /**
+     * 配置答复默认超时
+     */
     public T peplyTimeout(long peplyTimeout) {
-        this.peplyTimeout = peplyTimeout;
+        this.replyTimeout = peplyTimeout;
         return (T) this;
     }
 
     /**
-     * 允许最大请求数
+     * 允许最大同时请求数
      */
     @Override
     public int getMaxRequests() {
         return maxRequests;
     }
 
+    /**
+     * 配置最大同时请求数
+     */
     public T maxRequests(int maxRequests) {
         this.maxRequests = maxRequests;
         return (T) this;
     }
 
     /**
-     * 允许最大UDP包大小
+     * 获取允许最大UDP包大小
      */
     @Override
     public int getMaxUdpSize() {
         return maxUdpSize;
     }
 
+    /**
+     * 配置允许最大UDP包大小
+     */
     public T maxUdpSize(int maxUdpSize) {
         this.maxUdpSize = maxUdpSize;
         return (T) this;

@@ -7,7 +7,7 @@ import org.noear.socketd.transport.core.Message;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 请求接收器
+ * 请求答复接收器
  *
  * @author noear
  * @since 2.0
@@ -21,21 +21,33 @@ public class AcceptorRequest implements Acceptor {
         this.timeout = timeout;
     }
 
+    /**
+     * 是否单发接收
+     * */
     @Override
     public boolean isSingle() {
         return true;
     }
 
+    /**
+     * 是否结束接收
+     * */
     @Override
     public boolean isDone() {
         return future.isDone();
     }
 
+    /**
+     * 超时设定（单位：毫秒）
+     * */
     @Override
     public long timeout() {
         return timeout;
     }
 
+    /**
+     * 接收答复
+     * */
     @Override
     public void accept(Message message) {
         future.complete(message.getEntity());

@@ -23,7 +23,7 @@ public interface Channel extends Closeable {
     void setAttachment(String name, Object val);
 
     /**
-     * 移除接收器
+     * 移除接收器（答复接收器）
      */
     void removeAcceptor(String sid);
 
@@ -119,7 +119,7 @@ public interface Channel extends Closeable {
     void send(Frame frame, Acceptor acceptor) throws IOException;
 
     /**
-     * 收回（收回答复帧）
+     * 接收（接收答复帧）
      *
      * @param frame 帧
      */

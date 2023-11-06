@@ -5,6 +5,8 @@ import org.noear.socketd.transport.core.IdGenerator;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * 时间生成器时间适配（不适合分布式）
+ *
  * @author noear
  * @since 2.0
  */

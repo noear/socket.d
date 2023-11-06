@@ -19,30 +19,44 @@ public class MessageDefault implements Message {
 
     private Flag flag = Flag.Unknown;
 
+    /**
+     * 获取标记
+     */
     public Flag getFlag() {
         return flag;
     }
 
+    /**
+     * 设置标记
+     */
     public MessageDefault flag(Flag flag) {
         this.flag = flag;
         return this;
     }
 
+    /**
+     * 设置流id
+     */
     public MessageDefault sid(String sid) {
         this.sid = sid;
         return this;
     }
 
+    /**
+     * 设置主题
+     */
     public MessageDefault topic(String topic) {
         this.topic = topic;
         return this;
     }
 
+    /**
+     * 设置实体
+     */
     public MessageDefault entity(Entity entity) {
         this.entity = entity;
         return this;
     }
-
 
     /**
      * 是否为请求
@@ -66,14 +80,14 @@ public class MessageDefault implements Message {
     }
 
     /**
-     * topic
+     * 获取消息主题
      */
     public String getTopic() {
         return topic;
     }
 
     /**
-     * entity
+     * 获取消息实体
      */
     @Override
     public Entity getEntity() {

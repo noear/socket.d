@@ -17,7 +17,9 @@ public class ProcessorDefault implements Processor {
 
     private Listener listener = new SimpleListener();
 
-
+    /**
+     * 设置监听
+     */
     @Override
     public void setListener(Listener listener) {
         if (listener != null) {
@@ -25,6 +27,9 @@ public class ProcessorDefault implements Processor {
         }
     }
 
+    /**
+     * 接收处理
+     */
     public void onReceive(Channel channel, Frame frame) throws IOException {
         if (log.isTraceEnabled()) {
             log.trace("{}", frame);
@@ -91,6 +96,7 @@ public class ProcessorDefault implements Processor {
     }
 
     private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
+        //尝试分片处理
         String fragmentIdxStr = frame.getMessage().getEntity().getMeta(EntityMetas.META_DATA_FRAGMENT_IDX);
         if (fragmentIdxStr != null) {
             //解析分片索引
@@ -104,6 +110,7 @@ public class ProcessorDefault implements Processor {
             }
         }
 
+        //执行接收处理
         if (isReply) {
             channel.retrieve(frame);
         } else {

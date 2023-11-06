@@ -153,6 +153,9 @@ public class SessionDefault extends SessionBase implements Session {
         channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().sid(from.getSid()).entity(content)), null);
     }
 
+    /**
+     * 关闭
+     */
     @Override
     public void close() throws IOException {
         channel.close();

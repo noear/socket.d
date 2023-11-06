@@ -9,12 +9,15 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 数据分片默认实现
+ * 数据分片默认实现（可以重写，把大流先缓存到磁盘以节省内存）
  *
  * @author noear
  * @since 2.0
  */
 public class FragmentHandlerDefault implements FragmentHandler {
+    /**
+     * 获取一个分片
+     */
     @Override
     public Entity nextFragment(Config config, AtomicReference<Integer> fragmentIndex, Entity entity) throws IOException {
         fragmentIndex.set(fragmentIndex.get() + 1);
@@ -33,7 +36,9 @@ public class FragmentHandlerDefault implements FragmentHandler {
         return fragmentEntity;
     }
 
-
+    /**
+     * 聚合分片（可以重写，把大流先缓存到磁盘以节省内存）
+     */
     @Override
     public Frame aggrFragment(Channel channel, int index, Frame frame) throws IOException {
         FragmentAggregator aggregator = channel.getAttachment(frame.getMessage().getSid());

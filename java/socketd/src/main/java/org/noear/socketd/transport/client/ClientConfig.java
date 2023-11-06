@@ -166,6 +166,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
                 ", url='" + url + '\'' +
                 ", heartbeatInterval=" + heartbeatInterval +
                 ", connectTimeout=" + connectTimeout +
+                ", replyTimeout=" + replyTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
                 ", autoReconnect=" + autoReconnect +

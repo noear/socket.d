@@ -15,7 +15,7 @@ public interface Processor extends Listener {
     void setListener(Listener listener);
 
     /**
-     * 接收时
+     * 接收处理
      */
     void onReceive(Channel channel, Frame frame) throws IOException;
 }

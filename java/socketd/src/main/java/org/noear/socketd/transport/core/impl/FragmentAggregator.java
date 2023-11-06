@@ -23,6 +23,7 @@ import java.util.List;
 public class FragmentAggregator {
     //主帧
     private Frame main;
+    //分片列表
     private List<FragmentHolder> fragmentHolders = new ArrayList<>();
     //数据流大小
     private int dataStreamSize;
@@ -55,7 +56,7 @@ public class FragmentAggregator {
     }
 
     /**
-     * 数据长度
+     * 数据总长度
      */
     public int getDataLength() {
         return dataLength;
@@ -76,9 +77,10 @@ public class FragmentAggregator {
             IoUtils.transferTo(fh.getFrame().getMessage().getEntity().getData(), dataStream);
         }
 
-        //转流并输出
+        //转为输入流
         ByteArrayInputStream inputStream = new ByteArrayInputStream(dataStream.toByteArray());
 
+        //返回
         return new Frame(main.getFlag(), new MessageDefault()
                 .flag(main.getFlag())
                 .sid(main.getMessage().getSid())

@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.server;
 
+import org.noear.socketd.transport.core.Asserts;
 import org.noear.socketd.transport.core.ConfigBase;
 import org.noear.socketd.utils.Utils;
 
@@ -13,10 +14,14 @@ import org.noear.socketd.utils.Utils;
 public class ServerConfig extends ConfigBase<ServerConfig> {
     private final String schema;
 
+    //主机名
     private String host;
+    //端口
     private int port;
 
+    //读缓冲大小
     private int readBufferSize;
+    //写缓冲大小
     private int writeBufferSize;
 
     public ServerConfig(String schema) {
@@ -118,6 +123,7 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
                 ", port=" + port +
                 ", coreThreads=" + coreThreads +
                 ", maxThreads=" + maxThreads +
+                ", replyTimeout=" + replyTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
                 ", maxRequests=" + maxRequests +

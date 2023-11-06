@@ -51,7 +51,7 @@ public interface Session extends Closeable {
      * @param name 名字
      * @param def  默认值
      */
-     <T> T getAttrOrDefault(String name, T def);
+    <T> T getAttrOrDefault(String name, T def);
 
     /**
      * 设置属性
@@ -95,6 +95,15 @@ public interface Session extends Closeable {
      * @param timeout 超时（毫秒）
      */
     Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
+
+
+    /**
+     * 发送并请求
+     *
+     * @param topic   主题
+     * @param content 内容
+     */
+    void sendAndRequest(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）

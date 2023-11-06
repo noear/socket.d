@@ -118,6 +118,16 @@ public class SessionDefault extends SessionBase implements Session {
         }
     }
 
+    @Override
+    public void sendAndRequest(String topic, Entity content, Consumer<Entity> consumer) throws IOException {
+        Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
+
+        CompletableFuture<Entity> future = new CompletableFuture<>();
+        future.thenAccept(consumer);
+
+        channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future, 0));
+    }
+
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *

@@ -161,45 +161,46 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws").port(8602))
-                .listen(new SimpleListener(){
+        SocketD.createServer(new ServerConfig("udp").port(8602))
+                .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
-                        if(message.isRequest() || message.isSubscribe()){
+                        if (message.isRequest() || message.isSubscribe()) {
                             session.replyEnd(message, new StringEntity("Server receive: " + message.getEntity()));
-                        }else{
-                            session.send("/demo2", new StringEntity("Hi!"));
-                        }
-                    }
-                })
-                .start();
-
-        Thread.sleep(1000); //等会儿，确保服务端启动完成
-        
-        //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
-                .listen(new SimpleListener(){
-                    @Override
-                    public void onMessage(Session session, Message message) throws IOException {
-                        if(message.isRequest()){
-                            session.replyEnd(message, new StringEntity("And you too."));
-                        }
-
-                        //超过5次后，不玩了
-                        Integer count = session.getAttrOrDefault("count", 0) ++;
-                        if(count > 5){
-                            return;
-                        }else {
-                            session.setAttr("count", count);
                         }
 
                         session.send("/demo2", new StringEntity("Hi!"));
                     }
                 })
+                .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
+
+        //::打开客户端会话
+        Session session = SocketD.createClient("udp://127.0.0.1:8602/hello?u=a&p=2")
+                .listen(new SimpleListener() {
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        if (message.isRequest()) {
+                            session.replyEnd(message, new StringEntity("And you too."));
+                        }
+                        
+                        //加个附件计数
+                        Integer count = session.getAttrOrDefault("count", 0);
+                        session.setAttr("count", ++count);
+
+                        if (count > 5) {
+                            //超过5次后，不玩了
+                            return;
+                        }
+
+                        session.send("/demo3", new StringEntity("Hi!"));
+                    }
+                })
                 .open();
-        
+
         //发送并请求
-        Entity reply = session.sendAndRequest("/demo", new StringEntity("hello wrold!"));
+        session.sendAndRequest("/demo", new StringEntity("hello wrold!"));
     }
 }
 ```
@@ -210,7 +211,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws").port(8602))
+        SocketD.createServer(new ServerConfig("tcp").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -219,25 +220,27 @@ public class Demo {
                         if (fileName != null) {
                             File fileNew = new File("/data/upload/user.jpg");
                             fileNew.createNewFile();
-                            
+
                             try (OutputStream outputStream = new FileOutputStream(fileNew)) {
                                 IoUtils.transferTo(message.getEntity().getData(), outputStream);
                             }
+                        }else{
+                            System.out.println(message);
                         }
                     }
                 })
                 .start();
 
         Thread.sleep(1000); //等会儿，确保服务端启动完成
-        
+
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("tcp://127.0.0.1:8602/hello?u=a&p=2")
                 .open();
 
         //发送 + 元信息
-        session.send("/demo", new StringEntity("{user:noear}").meta("Trace-Id", "111111"));
+        session.send("/demo", new StringEntity("{user:'noear'}").meta("Trace-Id", UUID.randomUUID().toString()));
         //发送文件
-        session.send("/demo2", new FileEntity("/data/user.jpg"));
+        session.send("/demo2", new FileEntity(new File("/data/user.jpg")));
     }
 }
 ```

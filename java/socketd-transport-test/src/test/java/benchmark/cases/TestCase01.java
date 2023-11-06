@@ -29,9 +29,9 @@ public class TestCase01 extends BaseTestCase {
 
         this.timeout =timeout;
         this.count = count;
-        this.sendLatch = new CountDownLatch(count + 1);
-        this.sendAndRequestLatch = new CountDownLatch(count + 1);
-        this.sendAndSubscribeLatch = new CountDownLatch(count + 1);
+        this.sendLatch = new CountDownLatch(count + 10);
+        this.sendAndRequestLatch = new CountDownLatch(count + 10);
+        this.sendAndSubscribeLatch = new CountDownLatch(count + 10);
     }
 
     private Server server;
@@ -40,9 +40,9 @@ public class TestCase01 extends BaseTestCase {
     private final int count;
     private final int timeout;
 
-    private final CountDownLatch sendLatch;
-    private final CountDownLatch sendAndRequestLatch;
-    private final CountDownLatch sendAndSubscribeLatch;
+    private  CountDownLatch sendLatch;
+    private  CountDownLatch sendAndRequestLatch;
+    private  CountDownLatch sendAndSubscribeLatch;
 
     @Override
     public void start() throws Exception {
@@ -96,6 +96,9 @@ public class TestCase01 extends BaseTestCase {
     }
 
     public void send(boolean allowPrinting) throws Exception {
+        this.sendLatch = new CountDownLatch(count);
+
+
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
@@ -117,6 +120,8 @@ public class TestCase01 extends BaseTestCase {
     }
 
     public void sendAndRequest(boolean allowPrinting) throws Exception {
+        this.sendAndRequestLatch = new CountDownLatch(count);
+
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
@@ -133,11 +138,40 @@ public class TestCase01 extends BaseTestCase {
         }
     }
 
+    public void sendAndRequest2() throws Exception {
+        sendAndRequest2(true);
+    }
+
+    public void sendAndRequest2(boolean allowPrinting) throws Exception {
+        this.sendAndRequestLatch = new CountDownLatch(count);
+
+
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < count; i++) {
+            clientSession.sendAndRequest("demo", new StringEntity("test"), e->{
+
+            });
+        }
+
+        long timeSpan = System.currentTimeMillis() - startTime;
+
+        sendAndRequestLatch.await(timeout, TimeUnit.SECONDS);
+        if (allowPrinting) {
+            long timeSpan2 = System.currentTimeMillis() - startTime;
+            System.out.println(getSchema() + "::sendAndRequest2:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
+                    + ", count=" + (count - sendAndRequestLatch.getCount()));
+        }
+    }
+
     public void sendAndSubscribe() throws Exception {
         sendAndSubscribe(true);
     }
 
     public void sendAndSubscribe(boolean allowPrinting) throws Exception {
+        this.sendAndSubscribeLatch = new CountDownLatch(count);
+
+
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {

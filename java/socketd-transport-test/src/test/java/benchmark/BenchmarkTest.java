@@ -20,7 +20,7 @@ public class BenchmarkTest {
     @Test
     public void testCase01() throws Exception {
         int count = 100000;
-        int timeout = 2;
+        int timeout = 10;
 
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
@@ -32,6 +32,8 @@ public class BenchmarkTest {
                 testCase01.send();
                 testCase01.sendAndRequest(false);
                 testCase01.sendAndRequest();
+                testCase01.sendAndRequest2(false);
+                testCase01.sendAndRequest2();
                 testCase01.sendAndSubscribe(false);
                 testCase01.sendAndSubscribe();
 

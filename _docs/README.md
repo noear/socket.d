@@ -3,7 +3,10 @@
 
 视频
 
-* https://www.ixigua.com/7298180531219497484
+* 《(1) helloworld》 https://www.bilibili.com/video/BV1aN4y1r7F2/
+* 《(2) 入门讲解》 https://www.bilibili.com/video/BV1Va4y1Q7Sp/
+* 《(3) 基础接口使用》 https://www.bilibili.com/video/BV1JN411G7RR/
+* 《(4) 进阶使用》 https://www.bilibili.com/video/BV1qz4y1A78V/
 
 
 ## 一、适配情况

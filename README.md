@@ -146,7 +146,7 @@ public class Demo {
                 .open();
         
         //发送并请求（且，收回答复）
-        Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!"));
+        Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!").meta("user","noear"));
     }
 }
 ```

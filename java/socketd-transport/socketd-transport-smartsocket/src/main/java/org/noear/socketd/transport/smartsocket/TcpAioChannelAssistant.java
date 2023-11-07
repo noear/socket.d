@@ -53,6 +53,19 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
 
     @Override
     public Frame decode(ByteBuffer buffer, AioSession aioSession){
+//        if (buffer.remaining() < Integer.BYTES) {
+//            return null;
+//        }
+//        buffer.mark();
+//        int length = buffer.getInt() - Integer.BYTES;
+//        if (length > buffer.remaining()) {
+//            buffer.reset();
+//            return null;
+//        }
+//        buffer.reset();
+//
+//        return config.getCodec().read(new ByteBufferReader(buffer));
+
         FixedLengthFrameDecoder decoder = Attachment.getDecoder(aioSession);
 
         if (decoder == null) {
@@ -71,7 +84,6 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
         } else {
             Attachment.setDecoder(aioSession, null);
             buffer = decoder.getBuffer();
-            //buffer.flip();
         }
 
         return config.getCodec().read(new ByteBufferReader(buffer));

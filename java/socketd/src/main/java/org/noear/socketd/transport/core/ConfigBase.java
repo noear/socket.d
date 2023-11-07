@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.core.impl.IdGeneratorGuid;
 import org.noear.socketd.transport.core.impl.FragmentHandlerDefault;
+import org.noear.socketd.transport.server.ServerConfig;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
@@ -36,6 +37,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     //最大线程数
     protected int maxThreads;
 
+    //连接空闲超时
+    protected long idleTimeout;
     //答复默认超时
     protected long replyTimeout;
     //最大同时请求数
@@ -55,7 +58,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
         this.maxThreads = coreThreads * 8;
 
-        this.replyTimeout = 3000;
+        this.replyTimeout = 3000L;
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
     }
@@ -199,6 +202,22 @@ public abstract class ConfigBase<T extends Config> implements Config {
     public T maxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
         return (T) this;
+    }
+
+
+    /**
+     * 获取连接空闲超时
+     * */
+    public long getIdleTimeout() {
+        return idleTimeout;
+    }
+
+    /**
+     * 配置连接空闲超时
+     * */
+    public T idleTimeout(int idleTimeout) {
+        this.idleTimeout = idleTimeout;
+        return (T)this;
     }
 
     /**

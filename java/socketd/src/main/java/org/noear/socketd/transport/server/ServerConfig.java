@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.server;
 
-import org.noear.socketd.transport.core.Asserts;
 import org.noear.socketd.transport.core.ConfigBase;
 import org.noear.socketd.utils.Utils;
 
@@ -30,6 +29,9 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
 
         this.host = "";
         this.port = 8602;
+
+
+        this.idleTimeout = 60 * 1000L;
 
         this.readBufferSize = 512;
         this.writeBufferSize = 512;
@@ -123,6 +125,7 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
                 ", port=" + port +
                 ", coreThreads=" + coreThreads +
                 ", maxThreads=" + maxThreads +
+                ", idleTimeout=" + idleTimeout +
                 ", replyTimeout=" + replyTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +

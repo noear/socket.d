@@ -45,10 +45,13 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
             this.port = 8602;
         }
 
+
+
         this.connectTimeout = 3000;
         this.heartbeatInterval = 20 * 1000;
 
         this.autoReconnect = true;
+        this.idleTimeout = 0L; //自动重连，则禁用 idleTimeout
     }
 
 
@@ -162,6 +165,16 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     public ClientConfig autoReconnect(boolean autoReconnect) {
         this.autoReconnect = autoReconnect;
         return this;
+    }
+
+    @Override
+    public ClientConfig idleTimeout(int idleTimeout) {
+        if (autoReconnect == false) {
+            //自动重链下，禁用 idleTimeout
+            return super.idleTimeout(idleTimeout);
+        } else {
+            return this;
+        }
     }
 
     @Override

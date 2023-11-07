@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -71,6 +68,12 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
         server = createServer();
 
+        //读取数据超时，即 source.getInputStream() 超时？
+        if(config().getIdleTimeout() > 0L) {
+            //单位：毫秒
+            server.setSoTimeout((int) config().getIdleTimeout());
+        }
+
         serverThread = new Thread(() -> {
             while (true) {
                 try {
@@ -115,7 +118,9 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                 if (frame != null) {
                     processor().onReceive(channel, frame);
                 }
-            } catch (SocketException e) {
+            }
+            catch (SocketException e) {
+                //如果是 java.net.ConnectException，说明 idleTimeout
                 processor().onError(channel.getSession(), e);
                 processor().onClose(channel.getSession());
                 close(socket);

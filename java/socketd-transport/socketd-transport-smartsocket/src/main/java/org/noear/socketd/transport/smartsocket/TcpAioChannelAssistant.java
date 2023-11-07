@@ -2,7 +2,7 @@ package org.noear.socketd.transport.smartsocket;
 
 import org.noear.socketd.transport.core.impl.ByteBufferReader;
 import org.noear.socketd.transport.smartsocket.impl.Attachment;
-import org.noear.socketd.transport.smartsocket.impl.FixedLengthFrameDecoder;
+import org.noear.socketd.transport.smartsocket.impl.FixedLengthFrameDecoder0;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
@@ -53,14 +53,14 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
 
     @Override
     public Frame decode(ByteBuffer buffer, AioSession aioSession){
-        FixedLengthFrameDecoder decoder = Attachment.getDecoder(aioSession);
+        FixedLengthFrameDecoder0 decoder = Attachment.getDecoder(aioSession);
 
         if (decoder == null) {
             if (buffer.remaining() < Integer.BYTES) {
                 return null;
             } else {
                 buffer.mark();
-                decoder = new FixedLengthFrameDecoder(buffer.getInt());
+                decoder = new FixedLengthFrameDecoder0(buffer.getInt());
                 buffer.reset();
                 Attachment.setDecoder(aioSession, decoder);
             }

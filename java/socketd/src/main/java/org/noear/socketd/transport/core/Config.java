@@ -80,6 +80,11 @@ public interface Config {
     int getMaxThreads();
 
     /**
+     * 获取连接空闲超时
+     * */
+    long getIdleTimeout();
+
+    /**
      * 答复超时（单位：毫秒）
      */
     long getReplyTimeout();

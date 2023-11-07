@@ -35,11 +35,11 @@ public class Attachment extends HashMap<Class<?>,Object> {
         return tmp;
     }
 
-    public static FixedLengthFrameDecoder getDecoder(AioSession aioSession) {
-        return (FixedLengthFrameDecoder) get(aioSession).get(FixedLengthFrameDecoder.class);
+    public static FixedLengthFrameDecoder0 getDecoder(AioSession aioSession) {
+        return (FixedLengthFrameDecoder0) get(aioSession).get(FixedLengthFrameDecoder0.class);
     }
 
-    public static void setDecoder(AioSession aioSession, FixedLengthFrameDecoder decoder) {
-        get(aioSession).put(FixedLengthFrameDecoder.class, decoder);
+    public static void setDecoder(AioSession aioSession, FixedLengthFrameDecoder0 decoder) {
+        get(aioSession).put(FixedLengthFrameDecoder0.class, decoder);
     }
 }

@@ -8,11 +8,11 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class FixedLengthFrameDecoder {
+public class FixedLengthFrameDecoder0 {
     private final int length;
     private final ByteBuffer buffer;
 
-    public FixedLengthFrameDecoder(int frameLength) {
+    public FixedLengthFrameDecoder0(int frameLength) {
         length = frameLength;
         buffer = ByteBuffer.allocate(frameLength);
     }

@@ -1,21 +1,15 @@
 package org.noear.socketd.transport.smartsocket;
 
-import org.noear.socketd.transport.smartsocket.impl.Attachment;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.transport.smartsocket.impl.ServerMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.smartboot.socket.MessageProcessor;
-import org.smartboot.socket.NetMonitor;
-import org.smartboot.socket.StateMachineEnum;
+import org.smartboot.socket.extension.plugins.IdleStatePlugin;
 import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickServer;
-import org.smartboot.socket.transport.AioSession;
-
-import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * Tcp-Aio 服务端实现（支持 ssl）
@@ -23,11 +17,10 @@ import java.nio.channels.AsynchronousSocketChannel;
  * @author noear
  * @since 2.0
  */
-public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements MessageProcessor<Frame>, NetMonitor {
+public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioServer.class);
 
     private AioQuickServer server;
-    private SslPlugin<Integer> sslPlugin;
 
     public TcpAioServer(ServerConfig config) {
         super(config, new TcpAioChannelAssistant(config));
@@ -41,20 +34,28 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             isStarted = true;
         }
 
-        if (config().getHost() != null) {
-            server = new AioQuickServer(config().getPort(),
-                    assistant(), this);
-        } else {
-            server = new AioQuickServer(config().getHost(), config().getPort(),
-                    assistant(), this);
-        }
+        ServerMessageProcessor processor = new ServerMessageProcessor(this);
 
         //支持 ssl
-        if(config().getSslContext() != null){
-            sslPlugin = new SslPlugin<>(config()::getSslContext, sslEngine -> {
+        if(config().getSslContext() != null) {
+            SslPlugin<Frame> sslPlugin = new SslPlugin<>(config()::getSslContext, sslEngine -> {
                 sslEngine.setUseClientMode(false);
             });
+            processor.addPlugin(sslPlugin);
         }
+
+        if(config().getIdleTimeout() > 0){
+            processor.addPlugin(new IdleStatePlugin<>((int)config().getIdleTimeout(), true, false));
+        }
+
+        if (config().getHost() != null) {
+            server = new AioQuickServer(config().getPort(),
+                    assistant(), processor);
+        } else {
+            server = new AioQuickServer(config().getHost(), config().getPort(),
+                    assistant(), processor);
+        }
+
 
         server.setThreadNum(config().getCoreThreads());
         server.setBannerEnabled(false);
@@ -84,75 +85,5 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
         } catch (Exception e) {
             log.debug("{}", e);
         }
-    }
-
-    private Channel getChannel(AioSession s) {
-        return Attachment.getChannel(s, config(), assistant());
-    }
-
-
-    @Override
-    public void process(AioSession s, Frame frame) {
-        Channel channel = getChannel(s);
-
-        try {
-            processor().onReceive(channel, frame);
-        } catch (Throwable e) {
-            if (channel == null) {
-                log.warn(e.getMessage(), e);
-            } else {
-                processor().onError(channel.getSession(), e);
-            }
-        }
-    }
-
-    @Override
-    public void stateEvent(AioSession s, StateMachineEnum state, Throwable e) {
-        switch (state) {
-            case NEW_SESSION:
-                //略过
-                break;
-
-            case SESSION_CLOSED:
-                processor().onClose(getChannel(s).getSession());
-                break;
-
-            case PROCESS_EXCEPTION:
-            case DECODE_EXCEPTION:
-            case INPUT_EXCEPTION:
-            case ACCEPT_EXCEPTION:
-            case OUTPUT_EXCEPTION:
-                processor().onError(getChannel(s).getSession(), e);
-                break;
-        }
-    }
-
-    @Override
-    public AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel asynchronousSocketChannel) {
-        if (sslPlugin == null) {
-            return asynchronousSocketChannel;
-        } else {
-            return sslPlugin.shouldAccept(asynchronousSocketChannel);
-        }
-    }
-
-    @Override
-    public void afterRead(AioSession aioSession, int i) {
-
-    }
-
-    @Override
-    public void beforeRead(AioSession aioSession) {
-
-    }
-
-    @Override
-    public void afterWrite(AioSession aioSession, int i) {
-
-    }
-
-    @Override
-    public void beforeWrite(AioSession aioSession) {
-
     }
 }

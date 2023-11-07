@@ -6,10 +6,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 
 import javax.net.ssl.SSLEngine;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author noear
@@ -40,6 +42,9 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0));
         pipeline.addLast(new NettyMessageEncoder(config));
         pipeline.addLast(new NettyMessageDecoder(config));
+        if (config.getIdleTimeout() > 0) {
+            pipeline.addLast(new IdleStateHandler(config.getIdleTimeout(), 0, 0, TimeUnit.MILLISECONDS));
+        }
         pipeline.addLast(processor);
     }
 }

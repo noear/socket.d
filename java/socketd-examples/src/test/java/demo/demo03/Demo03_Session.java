@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Demo03_Session {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("udp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:udp").port(8602))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {

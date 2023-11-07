@@ -9,7 +9,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 public class Demo04_Builder {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("tcp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
                 .listen(new BuilderListener().onMessage((s,m)->{
                     System.out.println(m);
                     s.send("/demo", new StringEntity("Me too!"));

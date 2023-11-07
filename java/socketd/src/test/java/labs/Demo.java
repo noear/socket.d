@@ -12,7 +12,7 @@ import org.noear.socketd.transport.server.ServerConfig;
  */
 public class Demo {
     public void main(String[] args) throws Throwable {
-        SocketD.createServer(new ServerConfig("tcp"))
+        SocketD.createServer(new ServerConfig("sd:tcp"))
                 .listen(new ServerListener())
                 .start();
 

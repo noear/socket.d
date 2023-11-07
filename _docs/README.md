@@ -69,7 +69,7 @@
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws").port(8602))
+        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
                 .start();
 
         Thread.sleep(1000); //等会儿，确保服务端启动完成
@@ -90,7 +90,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws").port(8602))
+        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -119,7 +119,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws").port(8602))
+        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -153,7 +153,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws").port(8602))
+        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
                 .config(sc->sc.maxThreads(128).sslContext(null))
                 .start();
 
@@ -173,7 +173,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("udp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:udp").port(8602))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -223,7 +223,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("tcp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -264,7 +264,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("tcp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
                 .listen(new SimpleListener() {
                     @Override
                     public void onOpen(Session session) throws IOException {
@@ -309,7 +309,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("tcp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
                 .listen(new BuilderListener().onMessage((s,m)->{
                     System.out.println(m);
                     s.send("/demo", new StringEntity("Me too!"));
@@ -339,7 +339,7 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("udp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:udp").port(8602))
                 .listen(new PipelineListener().next(new BuilderListener().onMessage((s, m) -> {
                     //这里可以做拦截
                     System.out.println("拦截打印::" + m);
@@ -367,7 +367,7 @@ public class Demo {
 public class Demo04_Router {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("tcp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
                 .listen(new RouterListener()
                         .of("/", new BuilderListener().onMessage((s, m) -> {
                             //用户频道

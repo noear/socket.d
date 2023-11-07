@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class JMHMain_send {
     static final String[] schemas = new String[]{
-            "tcp-java", "tcp-netty", "tcp-smartsocket",
-            "ws-java",
-            "udp-java"};
+            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
+            "sd:ws-java",
+            "sd:udp-java"};
 
     static TestCase01 testCase_tcp_java;
     static TestCase01 testCase_tcp_netty;

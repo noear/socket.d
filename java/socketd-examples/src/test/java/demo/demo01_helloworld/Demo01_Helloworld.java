@@ -13,7 +13,7 @@ import java.io.IOException;
 public class Demo01_Helloworld {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("ws"))
+        SocketD.createServer(new ServerConfig("sd:ws"))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {

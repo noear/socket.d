@@ -10,7 +10,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 public class Demo04_Router {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("tcp").port(8602))
+        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
                 .listen(new RouterListener()
                         .of("/", new BuilderListener().onMessage((s, m) -> {
                             //用户频道

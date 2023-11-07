@@ -9,10 +9,9 @@ import org.junit.jupiter.api.Test;
  */
 public class CaseTest {
     static final String[] schemas = new String[]{
-            "tcp-java", "tcp-netty", "tcp-smartsocket",
-            "ws-java",
-            "udp-java"};
-
+            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
+            "sd:ws-java",
+            "sd:udp-java"};
 
     @Test
     public void TestCase01_client_send() throws Exception {

@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class BenchmarkTest {
     static final String[] schemas = new String[]{
-            "tcp-java", "tcp-netty", "tcp-smartsocket",
-            "ws-java",
-            "udp-java"};
+            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
+            "sd:ws-java",
+            "sd:udp-java"};
 
     @Test
     public void testCase01() throws Exception {

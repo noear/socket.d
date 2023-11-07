@@ -8,9 +8,9 @@ import features.cases.TestCase17_idleTimeout;
 public class DebugTest {
 
     static final String[] schemas = new String[]{
-            "tcp-java", "tcp-netty", "tcp-smartsocket",
-            "ws-java",
-            "udp-java"};
+            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
+            "sd:ws-java",
+            "sd:udp-java"};
 
     /**
      * 用于调试

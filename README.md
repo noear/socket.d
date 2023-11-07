@@ -114,7 +114,7 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 //The reply acceptor registration in the channel is removed after the reply is completed
 ```
 
-### 加入到交流群：
+### 加入到社区交流群
 
 | QQ交流群：870505482                       | 微信交流群（申请时输入：SocketD）                   |
 |---------------------------|----------------------------------------|

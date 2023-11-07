@@ -45,7 +45,7 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      */
     @Override
     public boolean isValid() {
-        return assistant.isValid(source);
+        return isClosed() == false && assistant.isValid(source);
     }
 
     /**

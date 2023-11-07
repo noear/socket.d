@@ -2,7 +2,7 @@
   SocketD
 </h1>
 <p align="center">
-	<strong>基于语义消息的传输协议（类似于 http + websocket 的效果）</strong>
+	<strong>基于语义消息的网络应用协议（类似于 http + websocket 的效果）</strong>
 </p>
 
 <p align="center">
@@ -42,8 +42,7 @@
 
 <hr />
 
-
-SocketD 是一个基于语义消息的传输协议（类似于 http + websocket 的效果）。主要特性有：
+### 主要特性
 
 * 异步通讯，非阻塞，由主题消息驱动
 * 语言无关，二进制通信协议（支持 tcp, ws, udp）。支持多语言、多平台

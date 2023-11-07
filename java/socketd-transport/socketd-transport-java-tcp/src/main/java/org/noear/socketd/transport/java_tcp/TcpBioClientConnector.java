@@ -47,6 +47,12 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             real = client.config().getSslContext().getSocketFactory().createSocket();
         }
 
+        //闲置超时
+        if(client.config().getIdleTimeout() > 0L) {
+            //单位：毫秒
+            real.setSoTimeout((int) client.config().getIdleTimeout());
+        }
+
         if (client.config().getConnectTimeout() > 0) {
             real.connect(socketAddress, (int) client.config().getConnectTimeout());
         } else {

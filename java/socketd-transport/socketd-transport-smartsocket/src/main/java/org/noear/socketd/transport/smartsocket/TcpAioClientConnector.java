@@ -7,6 +7,7 @@ import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.impl.ClientMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.smartboot.socket.extension.plugins.IdleStatePlugin;
 import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickClient;
 
@@ -42,6 +43,11 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             });
 
             processor.addPlugin(sslPlugin);
+        }
+
+        //闲置超时
+        if(client.config().getIdleTimeout() > 0) {
+            processor.addPlugin(new IdleStatePlugin<>((int) client.config().getIdleTimeout(), true, false));
         }
 
 

@@ -40,6 +40,12 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
             real.setSocketFactory(client.config().getSslContext().getSocketFactory());
         }
 
+        //闲置超时
+        if(client.config().getIdleTimeout() > 0L) {
+            //单位：毫秒
+            real.setConnectionLostTimeout((int) (client.config().getIdleTimeout() / 1000L));
+        }
+
 
         real.connect();
 

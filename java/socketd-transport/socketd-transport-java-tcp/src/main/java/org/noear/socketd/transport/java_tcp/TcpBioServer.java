@@ -68,7 +68,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
         server = createServer();
 
-        //读取数据超时，即 source.getInputStream() 超时？
+        //闲置超时
         if(config().getIdleTimeout() > 0L) {
             //单位：毫秒
             server.setSoTimeout((int) config().getIdleTimeout());

@@ -44,6 +44,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
             processor.addPlugin(sslPlugin);
         }
 
+        //闲置超时
         if(config().getIdleTimeout() > 0){
             processor.addPlugin(new IdleStatePlugin<>((int)config().getIdleTimeout(), true, false));
         }

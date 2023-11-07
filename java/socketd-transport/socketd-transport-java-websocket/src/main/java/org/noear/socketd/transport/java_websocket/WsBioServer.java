@@ -43,6 +43,7 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
             server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(config().getSslContext()));
         }
 
+        //闲置超时
         if(config().clientMode() == false && config().getIdleTimeout() > 0L) {
             //单位：秒
             server.setConnectionLostTimeout((int) (config().getIdleTimeout() / 1000L));

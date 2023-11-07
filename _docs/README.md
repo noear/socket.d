@@ -300,7 +300,7 @@ public class Demo {
 
 * SimpleListener
 
-上面的示例，已经大量在使用了
+这是经典接口，上面已经有大量的使用示例。下面的都是链式写法，有些小伙伴可能不喜欢。
 
 
 * BuilderListener
@@ -363,28 +363,23 @@ public class Demo {
 * RouterListener（路由监听器）
 
 ```java
-public class Demo {
+public class Demo04_Router {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        RouterListener router = new RouterListener();
-
-        //用户频道
-        router.of("/").onMessage((s,m)->{
-            System.out.println("user::"+m);
-        });
-
-        //管理员频道
-        router.of("/admin").onOpen(s->{
-            if("admin".equals(s.getHandshake().getParam("u")) == false){
-                s.close(); //管理员频道，增加签权
-            }
-        }).onMessage((s,m)->{
-            System.out.println("admin::"+m);
-        });
-
-
-        SocketD.createServer(new ServerConfig("tcp").port(8602).coreThreads(20))
-                .listen(router)
+        SocketD.createServer(new ServerConfig("tcp").port(8602))
+                .listen(new RouterListener()
+                        .of("/", new BuilderListener().onMessage((s, m) -> {
+                            //用户频道
+                            System.out.println("user::" + m);
+                        }))
+                        .of("/admin", new BuilderListener().onOpen(s -> {
+                            //管理员频道
+                            if ("admin".equals(s.getHandshake().getParam("u")) == false) {
+                                s.close();
+                            }
+                        }).onMessage((s, m) -> {
+                            System.out.println("admin::" + m);
+                        })))
                 .start();
 
         Thread.sleep(1000); //等会儿，确保服务端启动完成

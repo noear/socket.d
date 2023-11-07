@@ -76,7 +76,7 @@
 可用于 MSG、RPC、IM、MQ 等一些的场景开发，可替代 Http, Websocket, gRpc 等一些协议。比如移动设备与服务器的连接，比如一些微服务场景等等。
 
 
-### 简单的协议
+### 简单的协议说明
 
 
 * link (url style)

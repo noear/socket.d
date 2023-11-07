@@ -1,5 +1,5 @@
 <h1 align="center" style="text-align:center;">
-  SocketD
+  Socket.D
 </h1>
 <p align="center">
 	<strong>基于语义消息的网络应用协议（类似于 http + websocket 的效果）</strong>

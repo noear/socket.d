@@ -326,6 +326,7 @@ public class Demo {
                     System.out.println(m);
                 }))
                 .open();
+        
         session.send("/order", new StringEntity("Hi"));
         session.send("/user", new StringEntity("Hi"));
     }
@@ -385,7 +386,6 @@ public class Demo04_Router {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-
         //用户频道（链接地址的 path ，算为频道）
         Session session1 = SocketD.createClient("tcp://127.0.0.1:8602/?u=a&p=2").open();
         session1.send("/demo", new StringEntity("Hi"));

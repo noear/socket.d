@@ -2,7 +2,6 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.SimpleListener;
@@ -68,8 +67,8 @@ public class TestCase16_url_auth extends BaseTestCase {
 
         //::打开客户端会话
         //会成功
-        Session session1 = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=noear&p=2").open();
-        session1.send("/demo", new StringEntity("hi"));
+        clientSession = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=noear&p=2").open();
+        clientSession.send("/demo", new StringEntity("hi"));
 
         //会失败
         try {

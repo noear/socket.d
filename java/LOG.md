@@ -1,3 +1,12 @@
+
+### 2.0.8
+
+* 添加 idleTimeout 配置支持（默认为 0） 
+* 添加 三个附助监听器 RouterListener,BuilderListener,RouterListener（简化开发）
+* 添加 url 鉴权支持
+* 优化 通道有效检测，增加是否关闭条件
+* 取消 Session::sendAndRequest(topic,entity,callback) 请求异步回调模式接口（感觉，宜少不宜多）
+
 ### 2.0.7
 
 * 调整 服务端默认端口改为 8602（用的时候一般都是自己指定）

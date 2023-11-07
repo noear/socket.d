@@ -42,8 +42,6 @@ public interface Session {
     Entity sendAndRequest(String topic, Entity content) throws IOException;
     //发送并请求（限为一次答复；指定超时）
     Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
-    //发送并请求，并异步回调（限为一次答复；指定超时）
-    void sendAndRequest(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
     //发送并订阅（答复结束之前，不限答复次数）
     void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
     //答复

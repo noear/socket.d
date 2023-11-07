@@ -19,7 +19,16 @@
 | org.noear:socketd-transport-netty          | tcp, tcps | c,s | ssl | nio（2.5mb） |
 | org.noear:socketd-transport-smartsocket    | tcp, tcps | c,s | ssl | aio（254kb） |
 
-项目中引入任何一个或多个传输适配包即可（例：org.noear:socketd-transport-java-websocket）。
+项目中引入任何 “一个” 或 “多个” 传输适配包即可，例用：
+
+```xml
+<dependency>
+    <groupId>org.noear</groupId>
+    <artifactId>socketd-transport-java-tcp</artifactId>
+    <version>2.0.7</version>
+</dependency>
+```
+
 
 ## 二、主要交互接口
 

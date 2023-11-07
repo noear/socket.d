@@ -30,11 +30,11 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
     public <T extends BufferWriter> T write(Frame frame, Function<Integer, T> factory) throws IOException {
         if (frame.getMessage() == null) {
             //length (flag + int.bytes)
-            int len = Integer.BYTES + Integer.BYTES;
-            T target = factory.apply(len);
+            int frameSize = Integer.BYTES + Integer.BYTES;
+            T target = factory.apply(frameSize);
 
             //长度
-            target.putInt(len);
+            target.putInt(frameSize);
 
             //flag
             target.putInt(frame.getFlag().getCode());
@@ -49,18 +49,18 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             //metaString
             byte[] metaStringB = frame.getMessage().getEntity().getMetaString().getBytes(config.getCharset());
 
-            //length (flag + sid + topic + metaString + data + int.bytes + \n*3)
-            int len = sidB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + 2 * 3 + Integer.BYTES + Integer.BYTES;
+            //length (int.bytes + flag + sid + topic + metaString + data + \n*3)
+            int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + topicB.length + metaStringB.length + frame.getMessage().getEntity().getDataSize() + Short.BYTES * 3;
 
             assertSize("sid", sidB.length, Config.MAX_SIZE_SID);
             assertSize("topic", topicB.length, Config.MAX_SIZE_TOPIC);
             assertSize("metaString", metaStringB.length, Config.MAX_SIZE_META_STRING);
             assertSize("data", frame.getMessage().getEntity().getDataSize(), Config.MAX_SIZE_FRAGMENT);
 
-            T target = factory.apply(len);
+            T target = factory.apply(frameSize);
 
             //长度
-            target.putInt(len);
+            target.putInt(frameSize);
 
             //flag
             target.putInt(frame.getFlag().getCode());
@@ -90,15 +90,15 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
      */
     @Override
     public Frame read(BufferReader buffer) {
-        int len0 = buffer.getInt();
+        int frameSize = buffer.getInt();
 
-        if (len0 > (buffer.remaining() + Integer.BYTES)) {
+        if (frameSize > (buffer.remaining() + Integer.BYTES)) {
             return null;
         }
 
         int flag = buffer.getInt();
 
-        if (len0 == 8) {
+        if (frameSize == 8) {
             //len + flag
             return new Frame(Flag.Of(flag), null);
         } else {
@@ -118,7 +118,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             String metaString = decodeString(buffer, sb, Config.MAX_SIZE_META_STRING);
 
             //2.解码 body
-            int dataRealSize = len0 - buffer.position();
+            int dataRealSize = frameSize - buffer.position();
             byte[] data;
             if (dataRealSize > Config.MAX_SIZE_FRAGMENT) {
                 //超界了，空读。必须读，不然协议流会坏掉

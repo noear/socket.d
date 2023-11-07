@@ -138,32 +138,6 @@ public class TestCase01 extends BaseTestCase {
         }
     }
 
-    public void sendAndRequest2() throws Exception {
-        sendAndRequest2(true);
-    }
-
-    public void sendAndRequest2(boolean allowPrinting) throws Exception {
-        this.sendAndRequestLatch = new CountDownLatch(count);
-
-
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < count; i++) {
-            clientSession.sendAndRequest("demo", new StringEntity("test"), e->{
-
-            });
-        }
-
-        long timeSpan = System.currentTimeMillis() - startTime;
-
-        sendAndRequestLatch.await(timeout, TimeUnit.SECONDS);
-        if (allowPrinting) {
-            long timeSpan2 = System.currentTimeMillis() - startTime;
-            System.out.println(getSchema() + "::sendAndRequest2:: sendTime:" + timeSpan + ", consumeTime:" + timeSpan2
-                    + ", count=" + (count - sendAndRequestLatch.getCount()));
-        }
-    }
-
     public void sendAndSubscribe() throws Exception {
         sendAndSubscribe(true);
     }

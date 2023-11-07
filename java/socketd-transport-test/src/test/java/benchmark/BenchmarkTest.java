@@ -32,8 +32,6 @@ public class BenchmarkTest {
                 testCase01.send();
                 testCase01.sendAndRequest(false);
                 testCase01.sendAndRequest();
-                testCase01.sendAndRequest2(false);
-                testCase01.sendAndRequest2();
                 testCase01.sendAndSubscribe(false);
                 testCase01.sendAndSubscribe();
 

@@ -96,15 +96,6 @@ public interface Session extends Closeable {
      */
     Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
 
-
-    /**
-     * 发送并请求
-     *
-     * @param topic   主题
-     * @param content 内容
-     */
-    void sendAndRequest(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
-
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *

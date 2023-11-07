@@ -2,7 +2,7 @@
   SocketD
 </h1>
 <p align="center">
-	<strong>基于语义消息的传输协议</strong>
+	<strong>基于语义消息的传输与应用协议</strong>
 </p>
 
 <p align="center">

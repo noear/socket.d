@@ -1,22 +1,26 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.listener;
+
+import org.noear.socketd.transport.core.Listener;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
 
 import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
 
 /**
- * 监听管道
+ * 管道监听器
  *
  * @author noear
  * @since 2.0
  */
-public class ListenerPipeline implements Listener {
+public class PipelineListener implements Listener {
     protected final Deque<Listener> deque = new LinkedList<>();
 
     /**
      * 前一个
      */
-    public ListenerPipeline prev(Listener listener) {
+    public PipelineListener prev(Listener listener) {
         deque.addFirst(listener);
         return this;
     }
@@ -24,7 +28,7 @@ public class ListenerPipeline implements Listener {
     /**
      * 后一个
      */
-    public ListenerPipeline next(Listener listener) {
+    public PipelineListener next(Listener listener) {
         deque.addLast(listener);
         return this;
     }

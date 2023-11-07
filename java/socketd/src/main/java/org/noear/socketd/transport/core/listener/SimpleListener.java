@@ -1,9 +1,13 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.listener;
+
+import org.noear.socketd.transport.core.Listener;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
 
 import java.io.IOException;
 
 /**
- * 简单的监听器（一般用于占位）
+ * 简单监听器（一般用于占位）
  *
  * @author noear
  * @since 2.0

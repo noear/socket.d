@@ -294,3 +294,116 @@ public class Demo {
     }
 }
 ```
+
+
+## 六、几个辅助监听器（可以相互组合）
+
+* SimpleListener
+
+上面的示例，已经大量在使用了
+
+
+* BuilderListener
+
+```java
+public class Demo {
+    public static void main(String[] args) throws Throwable {
+        //::启动服务端
+        SocketD.createServer(new ServerConfig("tcp").port(8602))
+                .listen(new BuilderListener().onMessage((s,m)->{
+                    System.out.println(m);
+                    s.send("/demo", new StringEntity("Me too!"));
+                }))
+                .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
+
+        //::打开客户端会话
+        Session session = SocketD.createClient("tcp://127.0.0.1:8602/hello?u=a&p=2")
+                .listen(new BuilderListener().onMessage((s, m) -> {
+                    System.out.println(m);
+                }).on("/demo", (s, m) -> { //带了主题路由的功能
+                    System.out.println(m);
+                }))
+                .open();
+        session.send("/order", new StringEntity("Hi"));
+        session.send("/user", new StringEntity("Hi"));
+    }
+}
+```
+
+* PipelineListener（提供监听管道功能）
+
+```java
+public class Demo {
+    public static void main(String[] args) throws Throwable {
+        //::启动服务端
+        SocketD.createServer(new ServerConfig("udp").port(8602).coreThreads(20))
+                .listen(new PipelineListener().next(new SimpleListener() {
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        //这里可以做拦截
+                        System.out.println("拦截打印::" + message);
+                    }
+                }).next(new SimpleListener() {
+                    @Override
+                    public void onMessage(Session session, Message message) throws IOException {
+                        //这里可以做业务处理
+                        System.out.println(message);
+                    }
+                }))
+                .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
+
+        //::打开客户端会话
+        Session session = SocketD.createClient("udp://127.0.0.1:8602/hello?u=a&p=2")
+                .open();
+
+        session.send("/demo", new StringEntity("Hi"));
+    }
+}
+```
+
+
+* RouterListener（路由监听器）
+
+```java
+public class Demo {
+    public static void main(String[] args) throws Throwable {
+        //::启动服务端
+        RouterListener router = new RouterListener();
+
+        //用户频道
+        router.of("/").onMessage((s,m)->{
+            System.out.println("user::"+m);
+        });
+
+        //管理员频道
+        router.of("/admin").onOpen(s->{
+            if("admin".equals(s.getHandshake().getParam("u")) == false){
+                s.close(); //管理员频道，增加签权
+            }
+        }).onMessage((s,m)->{
+            System.out.println("admin::"+m);
+        });
+
+
+        SocketD.createServer(new ServerConfig("tcp").port(8602).coreThreads(20))
+                .listen(router)
+                .start();
+
+        Thread.sleep(1000); //等会儿，确保服务端启动完成
+
+        //::打开客户端会话
+
+        //用户频道（链接地址的 path ，算为频道）
+        Session session1 = SocketD.createClient("tcp://127.0.0.1:8602/?u=a&p=2").open();
+        session1.send("/demo", new StringEntity("Hi"));
+
+        //管理员频道（链接地址的 path ，算为频道）
+        Session session2 = SocketD.createClient("tcp://127.0.0.1:8602/admin?u=a&p=2").open();
+        session2.send("/demo", new StringEntity("Hi"));
+    }
+}
+```

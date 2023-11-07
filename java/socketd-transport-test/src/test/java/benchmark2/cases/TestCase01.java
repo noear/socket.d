@@ -4,7 +4,7 @@ import benchmark.cases.BaseTestCase;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.SimpleListener;
+import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.impl.IdGeneratorTime;
 import org.noear.socketd.transport.server.Server;

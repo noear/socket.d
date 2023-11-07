@@ -1,23 +1,37 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.listener;
+
+import org.noear.socketd.transport.core.Listener;
+import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Session;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 监听路由器（根据握手地址路由，一般用于服务端）
+ * 路由监听器（根据握手地址路由，一般用于服务端）
  *
  * @author noear
  * @since 2.0
  */
-public class ListenerRouter implements Listener {
+public class RouterListener implements Listener {
     protected final Map<String, Listener> routingTable = new HashMap<>();
 
     /**
      * 路由
      */
-    public void route(String path, Listener listener) {
+    public RouterListener of(String path, Listener listener) {
         routingTable.put(path, listener);
+        return this;
+    }
+
+    /**
+     * 路由
+     */
+    public BuilderListener of(String path) {
+        BuilderListener listener = new BuilderListener();
+        routingTable.put(path, listener);
+        return listener;
     }
 
     /**

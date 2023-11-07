@@ -1,13 +1,13 @@
 package labs.demo83_mvc2;
 
 import labs.demo82_mvc.ServerMvcDemo;
-import org.noear.socketd.transport.core.ListenerPipeline;
+import org.noear.socketd.transport.core.listener.PipelineListener;
 import org.noear.socketd.solon.annotation.SocketdServer;
 import org.noear.socketd.solon.mvc.SocketMvcListener;
 import org.noear.solon.Solon;
 
 @SocketdServer(path = "/demo", schema = "tcp")
-public class ServerMvcDemo2 extends ListenerPipeline {
+public class ServerMvcDemo2 extends PipelineListener {
     public ServerMvcDemo2() {
         //可以添加前置，或后置监听
         next(new SocketMvcListener());

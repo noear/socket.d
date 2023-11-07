@@ -1,6 +1,6 @@
 package org.noear.socketd.solon.mvc;
 
-import org.noear.socketd.transport.core.SimpleListener;
+import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.solon.Solon;

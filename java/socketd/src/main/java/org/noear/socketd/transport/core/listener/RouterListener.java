@@ -37,7 +37,7 @@ public class RouterListener implements Listener {
     /**
      * 匹配
      */
-    public Listener matching(Session session) {
+    protected Listener matching(Session session) {
         return routingTable.get(session.getHandshake().getUri().getPath());
     }
 

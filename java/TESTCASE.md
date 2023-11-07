@@ -19,5 +19,5 @@
 * 自分片、组片测试（协议负责自动分片推送；分版请求应用层可自己控制） //ok
 * 数据大小、元信息大小超界  //ok
 * url 鉴权 //ok
-* idleTimeout 测试 (udp 是否需要?) //顺带研究下 Java-WebSocket 源码 
+* idleTimeout 测试 (？？？udp 是否需要？？？) //顺带研究下 Java-WebSocket 源码 
 * 单线程压力测试 //ok

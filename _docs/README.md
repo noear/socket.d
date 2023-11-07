@@ -75,7 +75,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/?u=a&p=2")
                 .open();
         
         //发送（单线程约为 200万/秒 的速率，2020年的 macbook。新电脑估计会更快）
@@ -104,7 +104,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/?u=a&p=2")
                 .open();
         
         //发送并请求
@@ -134,7 +134,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/?u=a&p=2")
                 .open();
         
         //发送并订阅
@@ -160,7 +160,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("ws://127.0.0.1:8602/?u=a&p=2")
                 .config(cc->cc.sslContext(null))
                 .open();
     }
@@ -189,7 +189,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        Session session = SocketD.createClient("udp://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("udp://127.0.0.1:8602/?u=a&p=2")
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -246,7 +246,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        Session session = SocketD.createClient("tcp://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("tcp://127.0.0.1:8602/?u=a&p=2")
                 .open();
 
         //发送 + 元信息
@@ -296,7 +296,7 @@ public class Demo {
 ```
 
 
-## 六、几个辅助监听器（可以相互组合）
+## 六、辅助增强监听器（可以相互组合）
 
 * SimpleListener
 
@@ -319,7 +319,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        Session session = SocketD.createClient("tcp://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("tcp://127.0.0.1:8602/?u=a&p=2")
                 .listen(new BuilderListener().onMessage((s, m) -> {
                     System.out.println(m);
                 }).on("/demo", (s, m) -> { //带了主题路由的功能
@@ -357,7 +357,7 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        Session session = SocketD.createClient("udp://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("udp://127.0.0.1:8602/?u=a&p=2")
                 .open();
 
         session.send("/demo", new StringEntity("Hi"));

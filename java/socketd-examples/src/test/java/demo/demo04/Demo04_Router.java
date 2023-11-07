@@ -31,11 +31,11 @@ public class Demo04_Router {
         //::打开客户端会话
 
         //用户频道（链接地址的 path ，算为频道）
-        Session session1 = SocketD.createClient("tcp://127.0.0.1:8602/?u=a&p=2").open();
+        Session session1 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2").open();
         session1.send("/demo", new StringEntity("Hi"));
 
         //管理员频道（链接地址的 path ，算为频道）
-        Session session2 = SocketD.createClient("tcp://127.0.0.1:8602/admin?u=a&p=2").open();
+        Session session2 = SocketD.createClient("sd:tcp://127.0.0.1:8602/admin?u=a&p=2").open();
         session2.send("/demo", new StringEntity("Hi"));
     }
 }

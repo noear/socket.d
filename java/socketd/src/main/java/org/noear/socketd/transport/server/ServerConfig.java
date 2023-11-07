@@ -25,6 +25,11 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
 
     public ServerConfig(String schema) {
         super(false);
+        //支持 sd: 开头的架构
+        if(schema.startsWith("sd:")){
+            schema = schema.substring(3);
+        }
+
         this.schema = schema;
 
         this.host = "";

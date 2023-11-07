@@ -25,7 +25,7 @@ public class Demo03_Config {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        Session session = SocketD.createClient("udp://127.0.0.1:8602/hello?u=a&p=2")
+        Session session = SocketD.createClient("sd:udp://127.0.0.1:8602/hello?u=a&p=2")
                 .config(cc->cc.replyTimeout(5000).sslContext(null))
                 .open();
 

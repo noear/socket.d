@@ -16,7 +16,7 @@ public class Demo {
                 .listen(new ServerListener())
                 .start();
 
-        Session session = SocketD.createClient("tcp://192.169.0.3/path?u=a&p=2")
+        Session session = SocketD.createClient("sd:tcp://192.169.0.3/path?u=a&p=2")
                 .config(c -> c.autoReconnect(true)) //配置
                 .listen(null) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下

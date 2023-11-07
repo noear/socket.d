@@ -12,7 +12,7 @@ import org.noear.solon.core.bean.LifecycleBean;
 public class ClientDemo implements LifecycleBean {
     @Override
     public void start() throws Throwable {
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/test?a=12&b=1").open();
+        Session session = SocketD.createClient("sd:ws://127.0.0.1:8602/test?a=12&b=1").open();
 
         //设定内容
         StringEntity entity = new StringEntity("{\"order\":12345}");

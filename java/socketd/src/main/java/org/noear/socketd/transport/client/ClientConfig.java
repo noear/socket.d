@@ -36,6 +36,12 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
 
     public ClientConfig(String url) {
         super(true);
+
+        //支持 sd: 开头的架构
+        if(url.startsWith("sd:")){
+            url = url.substring(3);
+        }
+
         this.url = url;
         this.uri = URI.create(url);
         this.port = uri.getPort();

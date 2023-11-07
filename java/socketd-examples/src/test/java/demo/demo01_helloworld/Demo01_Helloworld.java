@@ -29,7 +29,7 @@ public class Demo01_Helloworld {
         Thread.sleep(1000);
 
         //::打开客户端会话
-        Session session = SocketD.createClient("ws://127.0.0.1:8602/hello?token=WLSygkSIiHDxa9Ak")
+        Session session = SocketD.createClient("sd:ws://127.0.0.1:8602/hello?token=WLSygkSIiHDxa9Ak")
                 .open();
 
         //发送并请求（且，收回答复）

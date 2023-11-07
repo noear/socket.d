@@ -33,11 +33,11 @@ public class Demo03_UrlAuth {
 
         //::打开客户端会话
         //会成功
-        Session session1 = SocketD.createClient("udp://127.0.0.1:8602/?u=noear&p=2").open();
+        Session session1 = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=noear&p=2").open();
         session1.send("/demo", new StringEntity("hi"));
 
         //会失败
-        Session session2 = SocketD.createClient("udp://127.0.0.1:8602/?u=solon&p=1").open();
+        Session session2 = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=solon&p=1").open();
         session2.send("/demo2", new StringEntity("hi"));
     }
 }

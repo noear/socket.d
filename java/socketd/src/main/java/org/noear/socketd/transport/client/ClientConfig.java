@@ -51,7 +51,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
         this.heartbeatInterval = 20 * 1000;
 
         this.autoReconnect = true;
-        this.idleTimeout = 0L; //自动重连，则禁用 idleTimeout
     }
 
 
@@ -173,7 +172,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
             //自动重链下，禁用 idleTimeout
             return super.idleTimeout(idleTimeout);
         } else {
-            return this;
+            return super.idleTimeout(0);
         }
     }
 
@@ -185,6 +184,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
                 ", url='" + url + '\'' +
                 ", heartbeatInterval=" + heartbeatInterval +
                 ", connectTimeout=" + connectTimeout +
+                ", idleTimeout=" + idleTimeout +
                 ", replyTimeout=" + replyTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +

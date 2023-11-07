@@ -30,9 +30,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
         this.host = "";
         this.port = 8602;
 
-
-        this.idleTimeout = 60 * 1000L;
-
         this.readBufferSize = 512;
         this.writeBufferSize = 512;
     }

@@ -130,11 +130,11 @@ public class Demo {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
         
         //::打开客户端会话
-        Session session = SocketD.createClient("tcp://127.0.0.1:8602/hello?token=1b0VsGusEkddgr3d")
+        Session session = SocketD.createClient("tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
                 .open();
         
         //发送并请求（且，收回答复）
-        Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!").meta("user","noear"));
+        Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!"));
     }
 }
 ```

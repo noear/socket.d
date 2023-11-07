@@ -15,10 +15,10 @@ public class CaseTest {
 
 
     @Test
-    public void testCase01() throws Exception {
+    public void TestCase01_client_send() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase01_client_send testCase = new TestCase01_client_send(s1, 1000 + i);
+            BaseTestCase testCase = new TestCase01_client_send(s1, 1000 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -30,10 +30,10 @@ public class CaseTest {
     }
 
     @Test
-    public void testCase11() throws Exception {
+    public void TestCase11_autoReconnect() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase11_autoReconnect testCase = new TestCase11_autoReconnect(s1, 2000 + i);
+            BaseTestCase testCase = new TestCase11_autoReconnect(s1, 2000 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -45,10 +45,10 @@ public class CaseTest {
     }
 
     @Test
-    public void testCase12() throws Exception {
+    public void TestCase12_session_close() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase12_session_close testCase = new TestCase12_session_close(s1, 3000 + i);
+            BaseTestCase testCase = new TestCase12_session_close(s1, 3000 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -60,10 +60,10 @@ public class CaseTest {
     }
 
     @Test
-    public void testCase13() throws Exception {
+    public void TestCase13_sendAndRequest_timeout() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            TestCase13_sendAndRequest_timeout testCase = new TestCase13_sendAndRequest_timeout(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase13_sendAndRequest_timeout(s1, 4000 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -75,14 +75,14 @@ public class CaseTest {
     }
 
     @Test
-    public void testCase14() throws Exception {
+    public void TestCase14_file() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
             if(s1.startsWith("udp")){
                 continue;
             }
 
-            TestCase14_file testCase = new TestCase14_file(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase14_file(s1, 4000 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -94,14 +94,30 @@ public class CaseTest {
     }
 
     @Test
-    public void testCase15() throws Exception {
+    public void TestCase15_size() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
             if(s1.startsWith("udp")){
                 continue;
             }
 
-            TestCase15_size testCase = new TestCase15_size(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase15_size(s1, 4000 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Test
+    public void TestCase16_url_auth() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase16_url_auth(s1, 4000 + i);
             try {
                 testCase.start();
                 testCase.stop();

@@ -1,6 +1,8 @@
 package labs;
 
+import features.cases.BaseTestCase;
 import features.cases.TestCase01_client_send;
+import features.cases.TestCase14_file;
 
 public class DebugTest {
 
@@ -13,8 +15,8 @@ public class DebugTest {
      * 用于调试
      */
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[4];
-        TestCase01_client_send testCase01 = new TestCase01_client_send(s1, 2000);
+        String s1 = schemas[2];
+        BaseTestCase testCase01 = new TestCase01_client_send(s1, 2000);
         try {
             testCase01.start();
             testCase01.stop();

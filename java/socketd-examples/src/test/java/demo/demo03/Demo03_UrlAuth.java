@@ -9,7 +9,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 
 import java.io.IOException;
 
-public class Demo03_Auth {
+public class Demo03_UrlAuth {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer(new ServerConfig("udp").port(8602))

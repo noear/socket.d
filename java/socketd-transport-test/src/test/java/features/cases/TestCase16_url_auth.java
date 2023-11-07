@@ -21,9 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author noear
  * @since 2.0
  */
-public class TestCase15_size extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase15_size.class);
-    public TestCase15_size(String schema, int port) {
+public class TestCase16_url_auth extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase16_url_auth.class);
+    public TestCase16_url_auth(String schema, int port) {
         super(schema, port);
     }
 
@@ -41,10 +41,23 @@ public class TestCase15_size extends BaseTestCase {
         server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
+                    public void onOpen(Session session) throws IOException {
+                        String user = session.getHandshake().getParam("u");
+                        if ("noear".equals(user) == false) { //如果不是 noear，关闭会话
+                            session.close();
+                        }
+                    }
+
+                    @Override
                     public void onMessage(Session session, Message message) throws IOException {
                         System.out.println("::" + message);
                         messageCounter.incrementAndGet();
 
+                    }
+
+                    @Override
+                    public void onError(Session session, Throwable error) {
+                        error.printStackTrace();
                     }
                 })
                 .start();
@@ -53,26 +66,24 @@ public class TestCase15_size extends BaseTestCase {
         Thread.sleep(100);
 
 
-        //client
-        String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        //::打开客户端会话
+        //会成功
+        Session session1 = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=noear&p=2").open();
+        session1.send("/demo", new StringEntity("hi"));
 
-        StringBuilder meta = new StringBuilder(4000);
-        while (meta.length() < 50000){
-            meta.append("asdfqjwoefjasdfkqowefijqowefjqowefjoqwiefjqoweifjqowef");
-        }
-
+        //会失败
         try {
-            clientSession.send("/user/size", new StringEntity("hi").meta("test", meta.toString()));
-        }catch (SocketdException e){
+            Session session2 = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=solon&p=1").open();
+            session2.send("/demo2", new StringEntity("hi"));
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        clientSession.send("/user/size", new StringEntity("hi").meta("test", "ok"));
 
         Thread.sleep(100);
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
+
     }
 
     @Override

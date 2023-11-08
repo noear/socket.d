@@ -41,21 +41,15 @@ public class WebSocketClientImpl extends WebSocketClient {
     }
 
     @Override
-    public boolean connectBlocking() throws InterruptedException {
-        this.futureChannel = new CompletableFuture<>();
-        return super.connectBlocking();
-    }
-
-    @Override
-    public boolean connectBlocking(long timeout, TimeUnit timeUnit) throws InterruptedException {
-        this.futureChannel = new CompletableFuture<>();
-        return super.connectBlocking(timeout, timeUnit);
-    }
-
-    @Override
     public void connect() {
         this.futureChannel = new CompletableFuture<>();
         super.connect();
+    }
+
+    @Override
+    public void reconnect() {
+        this.futureChannel = new CompletableFuture<>();
+        super.reconnect();
     }
 
     @Override

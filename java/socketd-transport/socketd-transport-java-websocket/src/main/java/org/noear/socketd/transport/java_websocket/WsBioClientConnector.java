@@ -31,23 +31,27 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
     public Channel connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
-        //处理自定义架构的影响
-        String wsUrl = client.config().getUrl().replace("-java://", "://");
-        real = new WebSocketClientImpl(URI.create(wsUrl), client);
+        if (real == null) {
+            //处理自定义架构的影响
+            String wsUrl = client.config().getUrl().replace("-java://", "://");
+            real = new WebSocketClientImpl(URI.create(wsUrl), client);
 
-        //支持 ssl
-        if (client.config().getSslContext() != null) {
-            real.setSocketFactory(client.config().getSslContext().getSocketFactory());
+            //支持 ssl
+            if (client.config().getSslContext() != null) {
+                real.setSocketFactory(client.config().getSslContext().getSocketFactory());
+            }
+
+            //闲置超时
+            if (client.config().getIdleTimeout() > 0L) {
+                //单位：毫秒
+                real.setConnectionLostTimeout((int) (client.config().getIdleTimeout() / 1000L));
+            }
+
+
+            real.connect();
+        } else {
+            real.reconnect();
         }
-
-        //闲置超时
-        if(client.config().getIdleTimeout() > 0L) {
-            //单位：毫秒
-            real.setConnectionLostTimeout((int) (client.config().getIdleTimeout() / 1000L));
-        }
-
-
-        real.connect();
 
         try {
             return real.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);

@@ -80,7 +80,7 @@
 ### 简单的协议说明
 
 
-* link (url style)
+* 连接地址风格
 
 ```
 sd:tcp://19.10.2.3:9812/path?u=noear&t=1234
@@ -89,14 +89,14 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 ```
 
 
-* codec
+* 帧码结构
 
 ```
-//udp only <2k, and no auto fragments
+//udp only <2k
 [len:int][flag:int][sid:str(<64)][\n][topic:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
-* flag & flow
+* 指令流
 
 | Flag      | Server                               | Client                                          | 
 |-----------|--------------------------------------|-------------------------------------------------|

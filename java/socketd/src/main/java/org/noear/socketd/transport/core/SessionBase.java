@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 会话基类
@@ -11,8 +12,11 @@ import java.util.Map;
 public abstract class SessionBase implements Session {
     protected final Channel channel;
 
+    private final String sessionId;
+
     public SessionBase(Channel channel) {
         this.channel = channel;
+        this.sessionId = generateId();
     }
 
     /**
@@ -68,15 +72,22 @@ public abstract class SessionBase implements Session {
         attrMap.put(name, value);
     }
 
-    private String sessionId;
-
     @Override
     public String getSessionId() {
-        if (sessionId == null) {
-            sessionId = generateId();
-        }
-
         return sessionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Session)) return false;
+        Session that = (Session) o;
+        return Objects.equals(getSessionId(), that.getSessionId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSessionId());
     }
 
     protected String generateId(){

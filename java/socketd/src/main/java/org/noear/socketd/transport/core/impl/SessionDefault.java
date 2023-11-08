@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.0
  */
-public class SessionDefault extends SessionBase implements Session {
+public class SessionDefault extends SessionBase {
     public SessionDefault(Channel channel) {
         super(channel);
     }

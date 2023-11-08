@@ -10,7 +10,7 @@ public interface EntityMetas {
     /**
      * 框架版本号
      */
-    String META_SOCKETD_VERSION = "SocketD-Version";
+    String META_SOCKETD_VERSION = "SocketD";
     /**
      * 数据长度
      */

@@ -38,10 +38,17 @@ public class Handshake {
     /**
      * 获请地址
      *
-     * @return tcp://192.168.0.1/path?user=1&path=2
+     * @return sd:tcp://192.168.0.1/path?user=1&path=2
      */
     public URI getUri() {
         return uri;
+    }
+
+    /**
+     * 获取路径
+     * */
+    public String getPath(){
+        return uri.getPath();
     }
 
     /**

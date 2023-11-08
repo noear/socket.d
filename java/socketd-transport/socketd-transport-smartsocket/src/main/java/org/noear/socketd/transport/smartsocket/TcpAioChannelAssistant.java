@@ -1,10 +1,10 @@
 package org.noear.socketd.transport.smartsocket;
 
 import org.noear.socketd.transport.core.impl.ByteBufferReader;
-import org.noear.socketd.transport.smartsocket.impl.Attachment;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.smartsocket.impl.ChannelDefaultEx;
 import org.smartboot.socket.Protocol;
 import org.smartboot.socket.extension.decoder.FixedLengthFrameDecoder;
 import org.smartboot.socket.transport.AioSession;
@@ -24,6 +24,10 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
 
     public TcpAioChannelAssistant(Config config) {
         this.config = config;
+    }
+
+    private ChannelDefaultEx getChannel(AioSession s) {
+        return ChannelDefaultEx.get(s, config, this);
     }
 
     @Override
@@ -66,7 +70,7 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
 //
 //        return config.getCodec().read(new ByteBufferReader(buffer));
 
-        FixedLengthFrameDecoder decoder = Attachment.getDecoder(aioSession);
+        FixedLengthFrameDecoder decoder = getChannel(aioSession).getDecoder();
 
         if (decoder == null) {
             if (buffer.remaining() < Integer.BYTES) {
@@ -75,14 +79,14 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
                 buffer.mark();
                 decoder = new FixedLengthFrameDecoder(buffer.getInt());
                 buffer.reset();
-                Attachment.setDecoder(aioSession, decoder);
+                getChannel(aioSession).setDecoder(decoder);
             }
         }
 
         if (decoder.decode(buffer) == false) {
             return null;
         } else {
-            Attachment.setDecoder(aioSession, null);
+            getChannel(aioSession).setDecoder(null);
             buffer = decoder.getBuffer();
         }
 

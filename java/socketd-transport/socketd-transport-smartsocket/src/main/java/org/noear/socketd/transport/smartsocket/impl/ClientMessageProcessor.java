@@ -15,6 +15,8 @@ import org.smartboot.socket.transport.AioSession;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * 客户端消息处理器
+ *
  * @author noear
  * @since 2.0
  */
@@ -30,8 +32,8 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
         return handshakeFuture;
     }
 
-    private Channel getChannel(AioSession s) {
-        return Attachment.getChannel(s, client.config(), client.assistant());
+    private ChannelDefaultEx getChannel(AioSession s) {
+        return ChannelDefaultEx.get(s, client.config(), client.assistant());
     }
 
     @Override

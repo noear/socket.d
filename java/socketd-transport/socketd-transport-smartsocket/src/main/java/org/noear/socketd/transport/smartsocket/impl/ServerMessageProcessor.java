@@ -10,6 +10,8 @@ import org.smartboot.socket.extension.processor.AbstractMessageProcessor;
 import org.smartboot.socket.transport.AioSession;
 
 /**
+ * 服务端消息处理器
+ *
  * @author noear
  * @since 2.0
  */
@@ -20,8 +22,8 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
     public ServerMessageProcessor(TcpAioServer server){
         this.server = server;
     }
-    private Channel getChannel(AioSession s) {
-        return Attachment.getChannel(s, server.config(), server.assistant());
+    private ChannelDefaultEx getChannel(AioSession s) {
+        return ChannelDefaultEx.get(s, server.config(), server.assistant());
     }
 
     @Override

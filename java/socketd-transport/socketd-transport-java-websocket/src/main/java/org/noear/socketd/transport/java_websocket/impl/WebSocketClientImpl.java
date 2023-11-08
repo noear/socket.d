@@ -2,6 +2,8 @@ package org.noear.socketd.transport.java_websocket.impl;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.java_websocket.WsBioClient;
 import org.noear.socketd.transport.core.Channel;
@@ -19,7 +21,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     static final Logger log = LoggerFactory.getLogger(WebSocketClientImpl.class);
     private WsBioClient client;
     private Channel channel;
-    private CompletableFuture<Channel> futureChannel;
+    private CompletableFuture<ClientHandshakeResult> handshakeFuture;
 
     public WebSocketClientImpl(URI serverUri, WsBioClient client) {
         super(serverUri);
@@ -27,8 +29,8 @@ public class WebSocketClientImpl extends WebSocketClient {
         this.channel = new ChannelDefault<>(this, client.config(), client.assistant());
     }
 
-    public CompletableFuture<Channel> getChannel() {
-        return futureChannel;
+    public CompletableFuture<ClientHandshakeResult> getHandshakeFuture() {
+        return handshakeFuture;
     }
 
     @Override
@@ -42,13 +44,13 @@ public class WebSocketClientImpl extends WebSocketClient {
 
     @Override
     public void connect() {
-        this.futureChannel = new CompletableFuture<>();
+        this.handshakeFuture = new CompletableFuture<>();
         super.connect();
     }
 
     @Override
     public void reconnect() {
-        this.futureChannel = new CompletableFuture<>();
+        this.handshakeFuture = new CompletableFuture<>();
         super.reconnect();
     }
 
@@ -66,10 +68,16 @@ public class WebSocketClientImpl extends WebSocketClient {
                 client.processor().onReceive(channel, frame);
 
                 if(frame.getFlag() == Flag.Connack){
-                    futureChannel.complete(channel);
+                    handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            if (e instanceof SocketdHandshakeException) {
+                //说明握手失败了
+                handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                return;
+            }
+
             log.warn(e.getMessage(), e);
         }
     }

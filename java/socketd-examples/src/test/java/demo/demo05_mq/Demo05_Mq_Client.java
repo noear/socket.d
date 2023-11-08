@@ -38,7 +38,7 @@ public class Demo05_Mq_Client {
         }
 
         /**
-         * 链接
+         * 连接
          */
         public void connect() throws Exception {
             session = SocketD.createClient("sd:udp://" + server + ":" + port)

@@ -1,6 +1,7 @@
 package demo.demo05_mq;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
@@ -8,6 +9,7 @@ import org.noear.socketd.transport.core.listener.BuilderListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class Demo05_Mq_Client {
@@ -48,7 +50,20 @@ public class Demo05_Mq_Client {
                                 String topic = m.getMeta("topic");
                                 Consumer<String> listener = listenerMap.get(topic);
                                 if (listener != null) {
-                                    listener.accept(m.getDataAsString());
+                                    if (m.isRequest() || m.isSubscribe()) {
+                                        //Qos1
+                                        String id = m.getMeta("id");
+
+                                        try {
+                                            listener.accept(m.getDataAsString());
+                                            s.replyEnd(m, new StringEntity("Y").meta("id", id));
+                                        } catch (Throwable e) {
+                                            s.replyEnd(m, new StringEntity("N").meta("id", id));
+                                        }
+                                    } else {
+                                        //Qos0
+                                        listener.accept(m.getDataAsString());
+                                    }
                                 }
                             }))
                     .open();
@@ -67,10 +82,14 @@ public class Demo05_Mq_Client {
          * 发布消息
          */
         public void publish(String topic, String message, int qos) throws IOException {
+            Entity entity = new StringEntity(message)
+                    .meta("topic", topic)
+                    .meta("id", UUID.randomUUID().toString());
+
             if (qos > 0) {
-                session.sendAndRequest("mq.push", new StringEntity(message).meta("topic", topic));
+                session.sendAndRequest("mq.push", entity);
             } else {
-                session.send("mq.push", new StringEntity(message).meta("topic", topic));
+                session.send("mq.push", entity);
             }
         }
     }

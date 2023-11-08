@@ -381,3 +381,10 @@ public class Demo04_Router {
     }
 }
 ```
+
+## 六、实战训练
+
+* 开发一个简单的 im 程序（基于 cmd 界面）//已基本完成
+  * https://gitee.com/noear/socketd/tree/main/java/socketd-examples/src/test/java/demo/demo05_im  
+* 开发一个简单的分布式消息队列 mq （支持 sub/pub ）//未开始
+  * https://gitee.com/noear/socketd/tree/main/java/socketd-examples/src/test/java/demo/demo05_mq

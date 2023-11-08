@@ -24,6 +24,7 @@ public class CaseTest {
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }
@@ -32,13 +33,14 @@ public class CaseTest {
     public void TestCase11_autoReconnect() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            BaseTestCase testCase = new TestCase11_autoReconnect(s1, 2000 + i);
+            BaseTestCase testCase = new TestCase11_autoReconnect(s1, 1100 + i);
             try {
                 testCase.start();
                 testCase.stop();
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }
@@ -47,13 +49,14 @@ public class CaseTest {
     public void TestCase12_session_close() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            BaseTestCase testCase = new TestCase12_session_close(s1, 3000 + i);
+            BaseTestCase testCase = new TestCase12_session_close(s1, 1200 + i);
             try {
                 testCase.start();
                 testCase.stop();
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }
@@ -62,13 +65,14 @@ public class CaseTest {
     public void TestCase13_sendAndRequest_timeout() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            BaseTestCase testCase = new TestCase13_sendAndRequest_timeout(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase13_sendAndRequest_timeout(s1, 1300 + i);
             try {
                 testCase.start();
                 testCase.stop();
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }
@@ -77,17 +81,18 @@ public class CaseTest {
     public void TestCase14_file() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            if(s1.startsWith("udp")){
+            if(s1.contains("udp")){
                 continue;
             }
 
-            BaseTestCase testCase = new TestCase14_file(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase14_file(s1, 1400 + i);
             try {
                 testCase.start();
                 testCase.stop();
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }
@@ -96,17 +101,18 @@ public class CaseTest {
     public void TestCase15_size() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            if(s1.startsWith("udp")){
+            if(s1.contains("udp")){
                 continue;
             }
 
-            BaseTestCase testCase = new TestCase15_size(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase15_size(s1, 1500 + i);
             try {
                 testCase.start();
                 testCase.stop();
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }
@@ -116,13 +122,14 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            BaseTestCase testCase = new TestCase16_url_auth(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase16_url_auth(s1, 1600 + i);
             try {
                 testCase.start();
                 testCase.stop();
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }
@@ -132,13 +139,14 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            BaseTestCase testCase = new TestCase17_idleTimeout(s1, 4000 + i);
+            BaseTestCase testCase = new TestCase17_idleTimeout(s1, 1700 + i);
             try {
                 testCase.start();
                 testCase.stop();
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
+                assert false;
             }
         }
     }

@@ -32,7 +32,6 @@ public abstract class BaseTestCase {
      * 停止测试
      */
     public void stop() throws Exception {
-
         System.out.println("------------------ (test stop:  " + getSchema() + ", port=" + getPort() + ")------------------");
     }
 

@@ -108,7 +108,6 @@ public class TestCase11_autoReconnect extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        super.stop();
 
         if (server != null) {
             server.stop();
@@ -117,5 +116,8 @@ public class TestCase11_autoReconnect extends BaseTestCase {
         if (clientSession != null) {
             clientSession.close();
         }
+
+
+        super.stop();
     }
 }

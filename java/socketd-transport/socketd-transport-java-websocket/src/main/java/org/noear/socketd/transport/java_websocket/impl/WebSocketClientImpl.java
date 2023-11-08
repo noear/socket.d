@@ -2,7 +2,7 @@ package org.noear.socketd.transport.java_websocket.impl;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.java_websocket.WsBioClient;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class WebSocketClientImpl extends WebSocketClient {
     static final Logger log = LoggerFactory.getLogger(WebSocketClientImpl.class);
@@ -72,7 +71,7 @@ public class WebSocketClientImpl extends WebSocketClient {
                 }
             }
         } catch (Exception e) {
-            if (e instanceof SocketdHandshakeException) {
+            if (e instanceof SocketdConnectionException) {
                 //说明握手失败了
                 handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 return;

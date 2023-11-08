@@ -1,12 +1,11 @@
 package org.noear.socketd.transport.smartsocket.impl;
 
-import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.TcpAioClient;
-import org.noear.socketd.transport.smartsocket.TcpAioClientConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.StateMachineEnum;
@@ -46,7 +45,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
                 handshakeFuture.complete(new ClientHandshakeResult(channel, null));
             }
         } catch (Exception e) {
-            if (e instanceof SocketdHandshakeException) {
+            if (e instanceof SocketdConnectionException) {
                 //说明握手失败了
                 handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 return;

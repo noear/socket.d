@@ -1,11 +1,10 @@
 package org.noear.socketd.transport.java_udp;
 
-import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.impl.ChannelDefault;
@@ -69,7 +68,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             close();
             throw e;
@@ -94,7 +93,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                 }
 
             }  catch (Exception e) {
-                if (e instanceof SocketdHandshakeException) {
+                if (e instanceof SocketdConnectionException) {
                     //说明握手失败了
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                     break;

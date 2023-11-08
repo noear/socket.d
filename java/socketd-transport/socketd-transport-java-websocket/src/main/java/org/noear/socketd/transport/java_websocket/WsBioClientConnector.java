@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.java_websocket;
 
-import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketClientImpl;
 import org.noear.socketd.transport.client.ClientConnectorBase;
@@ -64,7 +64,7 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             close();
             throw e;

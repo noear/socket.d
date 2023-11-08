@@ -1,8 +1,7 @@
 package org.noear.socketd.transport.java_tcp;
 
-import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
@@ -92,7 +91,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             close();
             throw e;
@@ -116,7 +115,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                     }
                 }
             } catch (Exception e) {
-                if (e instanceof SocketdHandshakeException) {
+                if (e instanceof SocketdConnectionException) {
                     //说明握手失败了
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                     break;

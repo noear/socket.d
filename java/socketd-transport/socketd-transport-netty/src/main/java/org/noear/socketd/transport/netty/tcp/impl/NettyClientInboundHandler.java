@@ -3,7 +3,7 @@ package org.noear.socketd.transport.netty.tcp.impl;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
-import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.netty.tcp.TcpNioClient;
 import org.noear.socketd.transport.core.Channel;
@@ -54,7 +54,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
                 //握手完成，通道可用了
                 handshakeFuture.complete(new ClientHandshakeResult(channel, null));
             }
-        } catch (SocketdHandshakeException e) {
+        } catch (SocketdConnectionException e) {
             //说明握手失败了
             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
         }

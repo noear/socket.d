@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core.impl;
 
-import org.noear.socketd.exception.SocketdChannelException;
-import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ public class ProcessorDefault implements Processor {
             //if client
             if("0".equals(frame.getMessage().getDataAsString())){
                 //说明握手失败了
-                throw new SocketdHandshakeException("The connection request was rejected");
+                throw new SocketdConnectionException("Connection request was rejected");
             }
 
             HandshakeInternal handshake = new HandshakeInternal(frame.getMessage());

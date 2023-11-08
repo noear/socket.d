@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.smartsocket.impl;
 
+import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
@@ -20,14 +22,13 @@ import java.util.concurrent.CompletableFuture;
 public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
     private static final Logger log = LoggerFactory.getLogger(ClientMessageProcessor.class);
     private TcpAioClient client;
-    private CompletableFuture<Channel> channelFuture;
+    private CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
     public ClientMessageProcessor(TcpAioClient client){
         this.client = client;
-        this.channelFuture = new CompletableFuture<>();
     }
 
-    public CompletableFuture<Channel> getChannelFuture() {
-        return channelFuture;
+    public CompletableFuture<ClientHandshakeResult> getHandshakeFuture() {
+        return handshakeFuture;
     }
 
     private Channel getChannel(AioSession s) {
@@ -42,9 +43,15 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             client.processor().onReceive(channel, frame);
 
             if (frame.getFlag() == Flag.Connack) {
-                channelFuture.complete(channel);
+                handshakeFuture.complete(new ClientHandshakeResult(channel, null));
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            if (e instanceof SocketdHandshakeException) {
+                //说明握手失败了
+                handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                return;
+            }
+
             if (channel == null) {
                 log.warn(e.getMessage(), e);
             } else {

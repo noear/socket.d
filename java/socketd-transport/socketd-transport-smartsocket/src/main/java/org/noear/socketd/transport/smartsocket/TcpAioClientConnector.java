@@ -2,6 +2,7 @@ package org.noear.socketd.transport.smartsocket;
 
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.impl.ClientMessageProcessor;
@@ -69,7 +70,13 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         real.start();
 
         try {
-            return processor.getChannelFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = processor.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+
+            if (handshakeResult.getException() != null) {
+                throw handshakeResult.getException();
+            } else {
+                return handshakeResult.getChannel();
+            }
         } catch (TimeoutException e) {
             close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());

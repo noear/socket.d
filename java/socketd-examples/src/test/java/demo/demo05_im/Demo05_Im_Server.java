@@ -39,7 +39,7 @@ public class Demo05_Im_Server {
                                     String room = s.getAttr("room");
 
                                     if (Utils.isNotEmpty(room)) {
-                                        for (Session s2 : userList.values().stream()
+                                        for (Session s2 : userList.values().parallelStream()
                                                 .filter(s1 -> room.equals(s.getAttr("room")))
                                                 .collect(Collectors.toList())) {
 
@@ -56,7 +56,7 @@ public class Demo05_Im_Server {
                                     if (Utils.isNotEmpty(room)) {
                                         s.setAttr("room", room);
 
-                                        for (Session s2 : userList.values().stream()
+                                        for (Session s2 : userList.values().parallelStream()
                                                 .filter(s1 -> room.equals(s.getAttr("room")))
                                                 .collect(Collectors.toList())) {
 
@@ -77,7 +77,7 @@ public class Demo05_Im_Server {
                                                 .append(m.getDataAsString());
 
 
-                                        for (Session s2 : userList.values().stream()
+                                        for (Session s2 : userList.values().parallelStream()
                                                 .filter(s1 -> room.equals(s.getAttr("room")))
                                                 .collect(Collectors.toList())) {
                                             //给房间的人转发消息
@@ -103,7 +103,7 @@ public class Demo05_Im_Server {
                                     String user = m.getMeta("u");
                                     String room = m.getMeta("room");
 
-                                    Session s2 = userList.values().stream().filter(s1 -> user.equals(s1.getAttr("user"))).findFirst().get();
+                                    Session s2 = userList.values().parallelStream().filter(s1 -> user.equals(s1.getAttr("user"))).findFirst().get();
                                     if (s2 != null) {
                                         s2.setAttr("room", null);
                                         s2.send("cmd.t", new StringEntity("你被T出聊天室: " + room));

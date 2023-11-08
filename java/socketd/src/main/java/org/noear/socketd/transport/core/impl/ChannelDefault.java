@@ -135,6 +135,14 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
     }
 
     /**
+     * 手动重连（一般是自动）
+     */
+    @Override
+    public void reconnect() throws Exception {
+        //由 ClientChannel 实现
+    }
+
+    /**
      * 获取会话
      */
     @Override

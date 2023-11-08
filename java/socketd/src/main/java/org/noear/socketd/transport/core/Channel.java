@@ -126,6 +126,11 @@ public interface Channel extends Closeable {
     void retrieve(Frame frame) throws IOException;
 
     /**
+     * 手动重连（一般是自动）
+     */
+    void reconnect() throws Exception;
+
+    /**
      * 获取会话
      */
     Session getSession();

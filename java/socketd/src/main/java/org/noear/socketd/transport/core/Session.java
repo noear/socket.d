@@ -67,7 +67,12 @@ public interface Session extends Closeable {
     String getSessionId();
 
     /**
-     * 发送 Ping
+     * 手动重连（一般是自动）
+     */
+    void reconnect() throws Exception;
+
+    /**
+     * 手动发送 Ping（一般是自动）
      */
     void sendPing() throws IOException;
 

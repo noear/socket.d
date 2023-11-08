@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class WebSocketClientImpl extends WebSocketClient {
     static final Logger log = LoggerFactory.getLogger(WebSocketClientImpl.class);
@@ -24,7 +25,6 @@ public class WebSocketClientImpl extends WebSocketClient {
         super(serverUri);
         this.client = client;
         this.channel = new ChannelDefault<>(this, client.config(), client.assistant());
-        this.futureChannel = new CompletableFuture<>();
     }
 
     public CompletableFuture<Channel> getChannel() {
@@ -38,6 +38,24 @@ public class WebSocketClientImpl extends WebSocketClient {
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public boolean connectBlocking() throws InterruptedException {
+        this.futureChannel = new CompletableFuture<>();
+        return super.connectBlocking();
+    }
+
+    @Override
+    public boolean connectBlocking(long timeout, TimeUnit timeUnit) throws InterruptedException {
+        this.futureChannel = new CompletableFuture<>();
+        return super.connectBlocking(timeout, timeUnit);
+    }
+
+    @Override
+    public void connect() {
+        this.futureChannel = new CompletableFuture<>();
+        super.connect();
     }
 
     @Override

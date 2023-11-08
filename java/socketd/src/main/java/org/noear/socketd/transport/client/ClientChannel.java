@@ -114,7 +114,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
         synchronized (this) {
             try {
-                prepareSend();
+                prepareCheck();
 
                 heartbeatHandler.heartbeatHandle(getSession());
             } catch (SocketdException e) {
@@ -142,7 +142,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
         synchronized (this) {
             try {
-                prepareSend();
+                prepareCheck();
 
                 real.send(frame, acceptor);
             } catch (SocketdException e) {
@@ -167,6 +167,11 @@ public class ClientChannel extends ChannelBase implements Channel {
         real.retrieve(frame);
     }
 
+    @Override
+    public void reconnect() throws Exception {
+        prepareCheck();
+    }
+
     /**
      * 获取会话
      */
@@ -186,11 +191,11 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
-     * 预备发送
+     * 预备检
      *
      * @return 是否为新链接
      */
-    private boolean prepareSend() throws Exception {
+    private boolean prepareCheck() throws Exception {
         if (real == null || real.isValid() == false) {
             real = connector.connect();
 

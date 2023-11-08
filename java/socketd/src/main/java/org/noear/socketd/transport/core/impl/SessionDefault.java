@@ -55,7 +55,15 @@ public class SessionDefault extends SessionBase implements Session {
     }
 
     /**
-     * 发送 Ping
+     * 手动重连（一般是自动）
+     */
+    @Override
+    public void reconnect() throws Exception {
+        channel.reconnect();
+    }
+
+    /**
+     * 手动发送 Ping（一般是自动）
      */
     @Override
     public void sendPing() throws IOException {

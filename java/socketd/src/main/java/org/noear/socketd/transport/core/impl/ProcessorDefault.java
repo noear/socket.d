@@ -103,7 +103,7 @@ public class ProcessorDefault implements Processor {
 
     private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
         //尝试分片处理
-        String fragmentIdxStr = frame.getMessage().getEntity().getMeta(EntityMetas.META_DATA_FRAGMENT_IDX);
+        String fragmentIdxStr = frame.getMessage().getMeta(EntityMetas.META_DATA_FRAGMENT_IDX);
         if (fragmentIdxStr != null) {
             //解析分片索引
             int index = Integer.parseInt(fragmentIdxStr);

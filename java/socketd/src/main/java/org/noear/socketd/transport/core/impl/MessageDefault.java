@@ -5,6 +5,9 @@ import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Message;
 
+import java.io.InputStream;
+import java.util.Map;
+
 
 /**
  * 消息默认实现（帧[消息[实体]]）
@@ -101,5 +104,45 @@ public class MessageDefault implements Message {
                 ", topic='" + topic + '\'' +
                 ", entity=" + entity +
                 '}';
+    }
+
+    @Override
+    public String getMetaString() {
+        return entity.getMetaString();
+    }
+
+    @Override
+    public Map<String, String> getMetaMap() {
+        return entity.getMetaMap();
+    }
+
+    @Override
+    public String getMeta(String name) {
+        return entity.getMeta(name);
+    }
+
+    @Override
+    public String getMetaOrDefault(String name, String def) {
+        return entity.getMetaOrDefault(name, def);
+    }
+
+    @Override
+    public InputStream getData() {
+        return entity.getData();
+    }
+
+    @Override
+    public String getDataAsString() {
+        return entity.getDataAsString();
+    }
+
+    @Override
+    public byte[] getDataAsBytes() {
+        return entity.getDataAsBytes();
+    }
+
+    @Override
+    public int getDataSize() {
+        return entity.getDataSize();
     }
 }

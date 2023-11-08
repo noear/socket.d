@@ -7,7 +7,7 @@ package org.noear.socketd.transport.core;
  * @author noear
  * @since 2.0
  */
-public interface Message {
+public interface Message extends Entity{
 
     /**
      * 是否为请求
@@ -32,5 +32,6 @@ public interface Message {
     /**
      * 获取消息实体
      */
+    @Deprecated
     Entity getEntity();
 }

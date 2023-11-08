@@ -33,7 +33,7 @@ public class Demo05_Server {
                             }
                         }).on("cmd.join", (s, m) -> {
                             //::加入房间指令
-                            String room = m.getEntity().getMeta("room");
+                            String room = m.getMeta("room");
 
                             if (Utils.isNotEmpty(room)) {
                                 s.setAttr("room", room);
@@ -48,7 +48,7 @@ public class Demo05_Server {
                             }
                         }).on("cmd.chat", (s, m) -> {
                             //::聊天指令
-                            String room = m.getEntity().getMeta("room");
+                            String room = m.getMeta("room");
 
                             if (Utils.isNotEmpty(room)) {
                                 for (Session s2 : userList.values().stream()
@@ -56,8 +56,8 @@ public class Demo05_Server {
                                         .collect(Collectors.toList())) {
                                     //给房间的人转发消息
                                     StringBuilder buf = new StringBuilder();
-                                    buf.append(m.getEntity().getMeta("sender")).append(": ")
-                                                    .append(m.getEntity().getDataAsString());
+                                    buf.append(m.getMeta("sender")).append(": ")
+                                                    .append(m.getDataAsString());
                                     s2.send("cmd.chat", new StringEntity(buf.toString()));
                                 }
                             }
@@ -74,8 +74,8 @@ public class Demo05_Server {
                                 session.close();
                             }
                         }).on("cmd.t", (s,m)->{
-                            String user = m.getEntity().getMeta("u");
-                            String room = m.getEntity().getMeta("room");
+                            String user = m.getMeta("u");
+                            String room = m.getMeta("room");
 
                             Session s2 = userList.values().stream().filter(s1->user.equals(s1.getAttr("user"))).findFirst().get();
                             if(s2 != null){

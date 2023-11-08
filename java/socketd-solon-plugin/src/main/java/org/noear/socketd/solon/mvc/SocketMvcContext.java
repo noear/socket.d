@@ -47,8 +47,8 @@ public class SocketMvcContext extends ContextEmpty {
             headerMap().putAll(session.getHandshake().getParamMap());
         }
 
-        if (Utils.isNotEmpty(message.getEntity().getMetaString())) {
-            headerMap().putAll(message.getEntity().getMetaMap());
+        if (Utils.isNotEmpty(message.getMetaString())) {
+            headerMap().putAll(message.getMetaMap());
         }
 
         //传递 Param
@@ -122,10 +122,10 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public long contentLength() {
-        if (_request.getEntity().getData() == null) {
+        if (_request.getData() == null) {
             return 0;
         } else {
-            return _request.getEntity().getDataSize();
+            return _request.getDataSize();
         }
     }
 
@@ -141,7 +141,7 @@ public class SocketMvcContext extends ContextEmpty {
 
     @Override
     public InputStream bodyAsStream() throws IOException {
-        return _request.getEntity().getData();
+        return _request.getData();
     }
 
     //==============

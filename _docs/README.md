@@ -212,14 +212,14 @@ public class Demo {
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
-                        String fileName = message.getEntity().getMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+                        String fileName = message.getMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
 
                         if (fileName != null) {
                             File fileNew = new File("/data/upload/user.jpg");
                             fileNew.createNewFile();
 
                             try (OutputStream outputStream = new FileOutputStream(fileNew)) {
-                                IoUtils.transferTo(message.getEntity().getData(), outputStream);
+                                IoUtils.transferTo(message.getData(), outputStream);
                             }
                         }else{
                             System.out.println(message);

@@ -82,8 +82,8 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
             //如果有实体（尝试分片）
             if (message.getEntity() != null) {
                 //确保用完自动关闭
-                try (InputStream ins = message.getEntity().getData()) {
-                    if (message.getEntity().getDataSize() > Config.MAX_SIZE_FRAGMENT) {
+                try (InputStream ins = message.getData()) {
+                    if (message.getDataSize() > Config.MAX_SIZE_FRAGMENT) {
                         //满足分片条件
                         AtomicReference<Integer> fragmentIndex = new AtomicReference<>(0);
                         while (true) {

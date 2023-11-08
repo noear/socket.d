@@ -92,7 +92,7 @@ public class Demo05_Client {
         if (token == null) {
             //进入用户频道
             session = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new BuilderListener().onMessage((s, m) -> {
-                System.err.println("聊到室：" + m.getEntity().getDataAsString());
+                System.err.println("聊到室：" + m.getDataAsString());
             }).on("cmd.t", (s,m)->{
                 //把房间置空
                 room = null;

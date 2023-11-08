@@ -32,7 +32,7 @@ public class FragmentAggregator {
 
     public FragmentAggregator(Frame main) {
         this.main = main;
-        String dataLengthStr = main.getMessage().getEntity().getMeta(EntityMetas.META_DATA_LENGTH);
+        String dataLengthStr = main.getMessage().getMeta(EntityMetas.META_DATA_LENGTH);
 
         if (Utils.isEmpty(dataLengthStr)) {
             throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, topic=" + main.getMessage().getTopic());
@@ -74,7 +74,7 @@ public class FragmentAggregator {
 
         //添加分片数据
         for (FragmentHolder fh : fragmentHolders) {
-            IoUtils.transferTo(fh.getFrame().getMessage().getEntity().getData(), dataStream);
+            IoUtils.transferTo(fh.getFrame().getMessage().getData(), dataStream);
         }
 
         //转为输入流
@@ -85,7 +85,7 @@ public class FragmentAggregator {
                 .flag(main.getFlag())
                 .sid(main.getMessage().getSid())
                 .topic(main.getMessage().getTopic())
-                .entity(new EntityDefault().metaMap(main.getMessage().getEntity().getMetaMap()).data(inputStream)));
+                .entity(new EntityDefault().metaMap(main.getMessage().getMetaMap()).data(inputStream)));
     }
 
     /**
@@ -95,6 +95,6 @@ public class FragmentAggregator {
         //添加分片
         fragmentHolders.add(new FragmentHolder(index, frame));
         //添加计数
-        dataStreamSize = dataStreamSize + frame.getMessage().getEntity().getDataSize();
+        dataStreamSize = dataStreamSize + frame.getMessage().getDataSize();
     }
 }

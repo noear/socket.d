@@ -47,7 +47,7 @@ public class TestCase14_file extends BaseTestCase {
                         System.out.println("::" + message);
                         messageCounter.incrementAndGet();
 
-                        String fileName = message.getEntity().getMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+                        String fileName = message.getMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
 
                         if (fileName != null) {
                             System.out.println(fileName);
@@ -58,7 +58,7 @@ public class TestCase14_file extends BaseTestCase {
 
                             try {
                                 try (OutputStream outputStream = new FileOutputStream(fileNew)) {
-                                    IoUtils.transferTo(message.getEntity().getData(), outputStream);
+                                    IoUtils.transferTo(message.getData(), outputStream);
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();

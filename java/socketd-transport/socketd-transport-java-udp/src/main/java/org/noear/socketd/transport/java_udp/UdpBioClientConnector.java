@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.java_udp;
 
+import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
@@ -41,11 +43,12 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         DatagramTagert tagert = new DatagramTagert(real, null, true);
         Channel channel = new ChannelDefault<>(tagert, client.config(), client.assistant());
 
-        CompletableFuture<Channel> channelFuture = new CompletableFuture<>();
+        CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
+
         //定义接收线程
         receiveThread = new Thread(() -> {
             try {
-                receive(channel, real, channelFuture);
+                receive(channel, real, handshakeFuture);
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
@@ -57,7 +60,13 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         channel.sendConnect(client.config().getUrl());
 
         try {
-            return channelFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+
+            if (handshakeResult.getException() != null) {
+                throw handshakeResult.getException();
+            } else {
+                return handshakeResult.getChannel();
+            }
         } catch (TimeoutException e) {
             close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
@@ -67,7 +76,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         }
     }
 
-    private void receive(Channel channel, DatagramSocket socket, CompletableFuture<Channel> channelFuture) {
+    private void receive(Channel channel, DatagramSocket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
         while (true) {
             try {
                 if (socket.isClosed()) {
@@ -80,11 +89,17 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                     client.processor().onReceive(channel, frame.getFrame());
 
                     if(frame.getFrame().getFlag() == Flag.Connack){
-                        channelFuture.complete(channel);
+                        handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                     }
                 }
 
-            }  catch (Throwable e) {
+            }  catch (Exception e) {
+                if (e instanceof SocketdHandshakeException) {
+                    //说明握手失败了
+                    handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                    break;
+                }
+
                 client.processor().onError(channel.getSession(), e);
 
                 if (e instanceof SocketException) {

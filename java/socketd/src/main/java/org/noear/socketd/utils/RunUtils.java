@@ -85,6 +85,15 @@ public class RunUtils {
     }
 
     /**
+     * 尝试异步执行
+     */
+    public static CompletableFuture<Void> asyncAndTry(RunnableEx task) {
+        return CompletableFuture.runAsync(()->{
+            runAnTry(task);
+        }, asyncExecutor);
+    }
+
+    /**
      * 延迟执行
      */
     public static ScheduledFuture<?> delay(Runnable task, long millis) {

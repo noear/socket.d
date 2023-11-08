@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.impl.MessageDefault;
 
 /**
@@ -28,10 +29,10 @@ public class Frames {
      *
      * @param connectMessage 连接消息
      */
-    public static final Frame connackFrame(Message connectMessage) {
-        EntityDefault entity = new EntityDefault();
+    public static final Frame connackFrame(Message connectMessage, boolean isPassed) {
+        StringEntity entity = new StringEntity(isPassed ? "1" : "0");
         //添加框架版本号
-        entity.putMeta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
+        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
         return new Frame(Flag.Connack, new MessageDefault().sid(connectMessage.getSid()).topic(connectMessage.getTopic()).entity(entity));
     }
 

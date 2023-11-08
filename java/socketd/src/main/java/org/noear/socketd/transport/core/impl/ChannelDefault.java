@@ -159,6 +159,13 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
      */
     @Override
     public void close() throws IOException {
+        if (getHandshake() != null && isOpened() == false) {
+            if (getConfig().clientMode() == false) {
+                //如果未完成打开的；则告知没通过
+                sendConnack(getHandshake().getSource(), false);
+            }
+        }
+
         super.close();
         acceptorMap.clear();
         assistant.close(source);

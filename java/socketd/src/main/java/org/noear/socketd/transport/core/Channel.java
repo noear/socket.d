@@ -38,6 +38,11 @@ public interface Channel extends Closeable {
     boolean isClosed();
 
     /**
+     * 打开确认
+     * */
+    void openConfirm();
+
+    /**
      * 获取配置
      */
     Config getConfig();
@@ -52,12 +57,12 @@ public interface Channel extends Closeable {
      *
      * @param handshake 握手信息
      */
-    void setHandshake(Handshake handshake);
+    void setHandshake(HandshakeInternal handshake);
 
     /**
      * 获取握手信息
      */
-    Handshake getHandshake();
+    HandshakeInternal getHandshake();
 
     /**
      * 获取远程地址
@@ -92,8 +97,9 @@ public interface Channel extends Closeable {
      * 发送连接确认（握手）
      *
      * @param connectMessage 连接消息
+     * @param isPassed       已经通过
      */
-    void sendConnack(Message connectMessage) throws IOException;
+    void sendConnack(Message connectMessage, boolean isPassed) throws IOException;
 
     /**
      * 发送 Ping（心跳）

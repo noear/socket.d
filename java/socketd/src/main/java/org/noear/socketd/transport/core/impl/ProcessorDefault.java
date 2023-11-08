@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core.impl;
 
+import org.noear.socketd.exception.SocketdChannelException;
+import org.noear.socketd.exception.SocketdHandshakeException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.slf4j.Logger;
@@ -38,22 +40,29 @@ public class ProcessorDefault implements Processor {
 
         if (frame.getFlag() == Flag.Connect) {
             //if server
-            Message connectMessage = frame.getMessage();
-            channel.setHandshake(new Handshake(connectMessage));
+            HandshakeInternal handshake = new HandshakeInternal(frame.getMessage());
+            channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
             onOpen(channel.getSession());
+            channel.openConfirm();
 
             if (channel.isValid()) {
                 //如果还有效，则发送链接确认
-                channel.sendConnack(connectMessage); //->Connack
+                channel.sendConnack(frame.getMessage(), true); //->Connack
             }
         } else if (frame.getFlag() == Flag.Connack) {
             //if client
-            Message message = frame.getMessage();
-            channel.setHandshake(new Handshake(message));
+            if("0".equals(frame.getMessage().getDataAsString())){
+                //说明握手失败了
+                throw new SocketdHandshakeException("The connection request was rejected");
+            }
+
+            HandshakeInternal handshake = new HandshakeInternal(frame.getMessage());
+            channel.setHandshake(handshake);
 
             onOpen(channel.getSession());
+            channel.openConfirm();
         } else {
             if (channel.getHandshake() == null) {
                 channel.close();

@@ -17,10 +17,12 @@ public abstract class ChannelBase implements Channel {
 
     private final AtomicInteger requests = new AtomicInteger();
     private final Map<String, Object> attachments = new ConcurrentHashMap<>();
-    private Handshake handshake;
+    private HandshakeInternal handshake;
     private long liveTime;
-    //用于做关闭异常提醒
+    //是否已关闭（用于做关闭异常提醒）
     private boolean isClosed;
+    //是否已打开（即 onOpen 通过后）
+    private boolean isOpened;
 
     public Config getConfig() {
         return config;
@@ -47,19 +49,28 @@ public abstract class ChannelBase implements Channel {
         return isClosed;
     }
 
+    public boolean isOpened(){
+        return isOpened;
+    }
+
+    @Override
+    public void openConfirm() {
+        isOpened = true;
+    }
+
     @Override
     public AtomicInteger getRequests() {
         return requests;
     }
 
     @Override
-    public void setHandshake(Handshake handshake) {
+    public void setHandshake(HandshakeInternal handshake) {
         this.handshake = handshake;
     }
 
 
     @Override
-    public Handshake getHandshake() {
+    public HandshakeInternal getHandshake() {
         return handshake;
     }
 
@@ -79,8 +90,8 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void sendConnack(Message connectMessage) throws IOException {
-        send(Frames.connackFrame(connectMessage), null);
+    public void sendConnack(Message connectMessage, boolean isPassed) throws IOException {
+        send(Frames.connackFrame(connectMessage, isPassed), null);
     }
 
     @Override

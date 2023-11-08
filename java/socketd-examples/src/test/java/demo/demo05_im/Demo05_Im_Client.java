@@ -9,7 +9,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class Demo05_Im_Client {
-    private static String ADMIN_TOKEN = "pzuVU7MCXVTcRkve";
+    private static String ADMIN_TOKEN = "mahuateng";// 方便demo测试输入
 
     private static BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     private static String user = null;
@@ -98,10 +98,36 @@ public class Demo05_Im_Client {
                 room = null;
             })).open();
         } else {
+            System.out.println("进入管理频道");
             //进入管理频道
             session = SocketD.createClient("sd:udp://127.0.0.1:8602/admin?u=" + user + "&t=" + token).open();
+            // 群主上身
+            adminStart();
         }
 
         System.out.println("登录服务器成功!");
+    }
+
+    /**
+     * 群主上身
+     * @throws Exception
+     */
+    private static void adminStart() throws Exception {
+        System.out.println("群管理T人模式：");
+        while (true) {
+            System.out.println("请输入你想踢的人昵称:");
+            String id = console.readLine();
+
+            if(id == null){
+                System.err.println("请输入正确的昵称:");
+                return;
+            }
+
+            session.send("cmd.t", new StringEntity("")
+                    .meta("room", "当前聊天室")
+                    .meta("u", id));
+
+            System.err.println("用户已下线:" + id);
+        }
     }
 }

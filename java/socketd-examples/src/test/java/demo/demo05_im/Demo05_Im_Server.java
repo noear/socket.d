@@ -68,7 +68,7 @@ public class Demo05_Im_Server {
                                     String user = session.getHandshake().getParam("u");
                                     String token = session.getHandshake().getParam("t");
 
-                                    if ("admin".equals(user) && "pzuVU7MCXVTcRkve".equals(token)) {
+                                    if ("admin".equals(user) && "mahuateng".equals(token)) {
 
                                     } else {
                                         session.close();

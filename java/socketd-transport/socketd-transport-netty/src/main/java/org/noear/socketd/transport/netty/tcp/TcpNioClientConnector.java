@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyClientInboundHandler;
 import org.noear.socketd.transport.client.ClientConnectorBase;
@@ -52,7 +53,13 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
                             client.config().getPort())
                     .await();
 
-            return inboundHandler.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+
+            if (handshakeResult.getException() != null) {
+                throw handshakeResult.getException();
+            } else {
+                return handshakeResult.getChannel();
+            }
         } catch (TimeoutException e) {
             close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());

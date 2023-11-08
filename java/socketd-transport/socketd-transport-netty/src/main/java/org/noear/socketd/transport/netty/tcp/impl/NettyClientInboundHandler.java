@@ -3,6 +3,8 @@ package org.noear.socketd.transport.netty.tcp.impl;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
+import org.noear.socketd.exception.SocketdHandshakeException;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.netty.tcp.TcpNioClient;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
@@ -19,15 +21,15 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
     private static AttributeKey<Channel> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
 
     private final TcpNioClient client;
-    private final CompletableFuture<Channel> channelFuture = new CompletableFuture<>();
+    private final CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
     private Channel channel;
 
     public NettyClientInboundHandler(TcpNioClient client) {
         this.client = client;
     }
 
-    public CompletableFuture<Channel> getChannel() {
-        return channelFuture;
+    public CompletableFuture<ClientHandshakeResult> getHandshakeFuture() {
+        return handshakeFuture;
     }
 
     @Override
@@ -44,11 +46,17 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Frame frame) throws Exception {
         Channel channel = ctx.attr(CHANNEL_KEY).get();
-        client.processor().onReceive(channel, frame);
 
-        if (frame.getFlag() == Flag.Connack) {
-            //握手完成，通道可用了
-            channelFuture.complete(channel);
+        try {
+            client.processor().onReceive(channel, frame);
+
+            if (frame.getFlag() == Flag.Connack) {
+                //握手完成，通道可用了
+                handshakeFuture.complete(new ClientHandshakeResult(channel, null));
+            }
+        } catch (SocketdHandshakeException e) {
+            //说明握手失败了
+            handshakeFuture.complete(new ClientHandshakeResult(channel, e));
         }
     }
 

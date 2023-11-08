@@ -1,3 +1,11 @@
+### 2.0.10
+
+* 添加 Handshake::getScheme 接口
+* 添加 Handshake::getPath 接口
+* 添加 Session:reconnect 手动重链接口
+* 添加 Entity:getDataAsBytes 接口
+* 简化 java-websocket 重连处理
+
 ### 2.0.9
 
 * 添加 "sd:" 协议头支持（方便用户识别协议的区别）

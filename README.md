@@ -67,7 +67,7 @@
 | 大文件上传自动分片  | 有              | 无    | 无             |                 |
 | 断线自动重连     | 有              | /    | 无             |                 |
 | 有元信息或头信息   | 有              | 有    | 无             |                 |
-| 传输基础协议     | tcp,udp,ws | tcp  | http          | socketd.d 多种可选      |
+| 基础传输协议     | tcp,udp,ws | tcp  | http          | socketd.d 多种可选      |
 
 
 

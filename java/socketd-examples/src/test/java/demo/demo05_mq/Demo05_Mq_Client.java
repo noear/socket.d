@@ -58,7 +58,7 @@ public class Demo05_Mq_Client {
                                             listener.accept(m.getDataAsString());
                                             s.replyEnd(m, new StringEntity("Y").meta("id", id));
                                         } catch (Throwable e) {
-                                            s.replyEnd(m, new StringEntity("N").meta("id", id));
+                                            s.replyEnd(m, new StringEntity("N").meta("id", id).meta("error", e.getMessage()));
                                         }
                                     } else {
                                         //Qos0

@@ -50,7 +50,7 @@ public class Demo05_Mq_Server {
                                 userList.values().parallelStream().filter(s1 -> "1".equals(s.getAttr(topic)))
                                         .forEach(s1 -> {
                                             RunUtils.runAnTry(() -> {
-                                                //发送广播（如果要 Qos1，要改用 sendAndSubscribe ）
+                                                //发送广播（如果要 Ack，可改用 sendAndSubscribe ）//服务端支持 ACK 有点复杂，就不搞了
                                                 s1.send("mq.broadcast", tmp);
                                             });
                                         });

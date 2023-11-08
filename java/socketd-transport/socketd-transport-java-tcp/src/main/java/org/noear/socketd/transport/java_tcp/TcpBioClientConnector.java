@@ -1,7 +1,9 @@
 package org.noear.socketd.transport.java_tcp;
 
+import org.noear.socketd.exception.SocketdHandshakeException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
@@ -48,7 +50,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         //闲置超时
-        if(client.config().getIdleTimeout() > 0L) {
+        if (client.config().getIdleTimeout() > 0L) {
             //单位：毫秒
             real.setSoTimeout((int) client.config().getIdleTimeout());
         }
@@ -59,14 +61,14 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             real.connect(socketAddress);
         }
 
-        CompletableFuture<Channel> channelFuture = new CompletableFuture<>();
+        CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
         try {
             Channel channel = new ChannelDefault<>(real, client.config(), client.assistant());
 
             socketThread = new Thread(() -> {
                 try {
-                    receive(channel, real, channelFuture);
+                    receive(channel, real, handshakeFuture);
                 } catch (Throwable e) {
                     throw new IllegalStateException(e);
                 }
@@ -81,7 +83,13 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         try {
-            return channelFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+
+            if (handshakeResult.getException() != null) {
+                throw handshakeResult.getException();
+            } else {
+                return handshakeResult.getChannel();
+            }
         } catch (TimeoutException e) {
             close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
@@ -91,7 +99,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
     }
 
-    private void receive(Channel channel, Socket socket, CompletableFuture<Channel> channelFuture) {
+    private void receive(Channel channel, Socket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
         while (true) {
             try {
                 if (socket.isClosed()) {
@@ -104,10 +112,16 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                     client.processor().onReceive(channel, frame);
 
                     if (frame.getFlag() == Flag.Connack) {
-                        channelFuture.complete(channel);
+                        handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
+                if (e instanceof SocketdHandshakeException) {
+                    //说明握手失败了
+                    handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                    break;
+                }
+
                 client.processor().onError(channel.getSession(), e);
 
                 if (e instanceof SocketException) {

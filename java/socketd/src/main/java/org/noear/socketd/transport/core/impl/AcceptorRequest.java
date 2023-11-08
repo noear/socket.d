@@ -50,6 +50,6 @@ public class AcceptorRequest implements Acceptor {
      * */
     @Override
     public void accept(Message message) {
-        future.complete(message.getEntity());
+        future.complete(message);
     }
 }

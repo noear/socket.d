@@ -30,8 +30,7 @@ public interface Message extends Entity{
     String getTopic();
 
     /**
-     * 获取消息实体
+     * 获取消息实体（有时需要获取实体）
      */
-    @Deprecated
     Entity getEntity();
 }

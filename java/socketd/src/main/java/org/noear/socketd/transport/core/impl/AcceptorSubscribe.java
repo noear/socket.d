@@ -48,6 +48,6 @@ public class AcceptorSubscribe implements Acceptor {
      * */
     @Override
     public void accept(Message message) {
-        future.accept(message.getEntity());
+        future.accept(message);
     }
 }

@@ -8,7 +8,7 @@ import org.noear.socketd.transport.core.listener.BuilderListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class Demo05_Client {
+public class Demo05_Im_Client {
     private static String ADMIN_TOKEN = "pzuVU7MCXVTcRkve";
 
     private static BufferedReader console = new BufferedReader(new InputStreamReader(System.in));

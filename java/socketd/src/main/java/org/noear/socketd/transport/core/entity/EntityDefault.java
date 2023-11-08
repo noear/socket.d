@@ -180,6 +180,15 @@ public class EntityDefault implements Entity {
         }
     }
 
+    @Override
+    public byte[] getDataAsBytes() {
+        try {
+            return IoUtils.transferToBytes(getData());
+        } catch (IOException e) {
+            throw new SocketdCodecException(e);
+        }
+    }
+
     /**
      * 获取数据长度
      */

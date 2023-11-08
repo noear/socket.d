@@ -41,6 +41,11 @@ public interface Entity {
     String getDataAsString();
 
     /**
+     * 获取数据并转为字节数组
+     */
+    byte[] getDataAsBytes();
+
+    /**
      * 获取数据长度
      */
     int getDataSize();

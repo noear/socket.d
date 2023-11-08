@@ -35,7 +35,7 @@ public class SocketMvcContext extends ContextEmpty {
         _request = message;
         _response = new EntityDefault();
 
-        String scheme = session.getHandshake().getUri().getScheme();
+        String scheme = session.getHandshake().getScheme();
         if (scheme.startsWith("ws")) {
             _method = MethodType.WEBSOCKET;
         } else {

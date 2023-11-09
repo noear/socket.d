@@ -156,7 +156,24 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            BaseTestCase testCase = new TestCase18_closeReconnect(s1, 1800 + i);
+            BaseTestCase testCase = new TestCase18_clientCloseReconnect(s1, 1800 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void TestCase19_closeReconnect2() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase19_serverCloseReconnect(s1, 1900 + i);
             try {
                 testCase.start();
                 testCase.stop();

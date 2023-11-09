@@ -14,10 +14,10 @@ public class DebugTest {
      */
     public static void main(String[] args) throws Exception {
         String s1 = schemas[3];
-        BaseTestCase testCase = new TestCase18_closeReconnect(s1, 2100);
+        BaseTestCase testCase = new TestCase19_serverCloseReconnect(s1, 2100);
         try {
             testCase.start();
-            //testCase.stop();
+            testCase.stop();
         } catch (Exception e) {
             testCase.onError();
             e.printStackTrace();

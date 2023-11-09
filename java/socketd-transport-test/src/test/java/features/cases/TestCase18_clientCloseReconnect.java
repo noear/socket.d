@@ -20,9 +20,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author noear
  * @since 2.0
  */
-public class TestCase18_closeReconnect extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase18_closeReconnect.class);
-    public TestCase18_closeReconnect(String schema, int port) {
+public class TestCase18_clientCloseReconnect extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase18_clientCloseReconnect.class);
+    public TestCase18_clientCloseReconnect(String schema, int port) {
         super(schema, port);
     }
 
@@ -57,10 +57,10 @@ public class TestCase18_closeReconnect extends BaseTestCase {
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl).open();
 
-        clientSession.send("/user/created", new StringEntity("hi"));
+        clientSession.send("/demo", new StringEntity("hi"));
         clientSession.close();
         clientSession.reconnect();
-        clientSession.send("/user/created", new StringEntity("hi"));
+        clientSession.send("/demo", new StringEntity("hi"));
 
 
         //休息下（发完，那边还得收）

@@ -6,7 +6,7 @@
 
     <groupId>org.noear</groupId>
     <artifactId>socketd-parent</artifactId>
-    <version>2.0.10</version>
+    <version>2.0.11</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -18,7 +18,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
-        <socketd.version>2.0.10</socketd.version>
+        <socketd.version>2.0.11</socketd.version>
 
         <slf4j.version>2.0.9</slf4j.version>
         <junit5.version>5.9.1</junit5.version>

@@ -8,7 +8,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public interface Processor extends Listener {
+public interface Processor {
     /**
      * 设置监听
      */
@@ -18,4 +18,34 @@ public interface Processor extends Listener {
      * 接收处理
      */
     void onReceive(Channel channel, Frame frame) throws IOException;
+
+    /**
+     * 打开时
+     *
+     * @param channel 通道
+     */
+    void onOpen(Channel channel) throws IOException;
+
+    /**
+     * 收到消息时
+     *
+     * @param channel 通道
+     * @param message 消息
+     */
+    void onMessage(Channel channel, Message message) throws IOException;
+
+    /**
+     * 关闭时
+     *
+     * @param channel 通道
+     */
+    void onClose(Channel channel);
+
+    /**
+     * 出错时
+     *
+     * @param channel 通道
+     * @param error   错误信息
+     */
+    void onError(Channel channel, Throwable error);
 }

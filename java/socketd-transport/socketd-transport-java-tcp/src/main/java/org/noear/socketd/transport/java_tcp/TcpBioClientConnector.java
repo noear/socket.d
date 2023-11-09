@@ -102,9 +102,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         while (true) {
             try {
                 if (socket.isClosed()) {
-                    if (channel.isClosed() == false) { //有可能在协议里被关闭了
-                        client.processor().onClose(channel.getSession());
-                    }
+                    client.processor().onClose(channel);
                     break;
                 }
 
@@ -123,7 +121,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                     break;
                 }
 
-                client.processor().onError(channel.getSession(), e);
+                client.processor().onError(channel, e);
 
                 if (e instanceof SocketException) {
                     break;

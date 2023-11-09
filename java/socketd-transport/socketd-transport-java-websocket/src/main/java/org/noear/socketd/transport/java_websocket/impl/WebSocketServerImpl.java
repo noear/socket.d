@@ -41,7 +41,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         Channel channel = conn.getAttachment();
-        server.processor().onClose(channel.getSession());
+        server.processor().onClose(channel);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class WebSocketServerImpl extends WebSocketServer {
 
             if (channel != null) {
                 //有可能未 onOpen，就 onError 了；此时通道未成
-                server.processor().onError(channel.getSession(), ex);
+                server.processor().onError(channel, ex);
             }
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);

@@ -43,7 +43,7 @@ public class ProcessorDefault implements Processor {
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
-            onOpen(channel.getSession());
+            onOpen(channel);
             channel.openConfirm();
 
             if (channel.isValid()) {
@@ -60,7 +60,7 @@ public class ProcessorDefault implements Processor {
             HandshakeInternal handshake = new HandshakeInternal(frame.getMessage());
             channel.setHandshake(handshake);
 
-            onOpen(channel.getSession());
+            onOpen(channel);
             channel.openConfirm();
         } else {
             if (channel.getHandshake() == null) {
@@ -84,7 +84,7 @@ public class ProcessorDefault implements Processor {
                     }
                     case Close: {
                         channel.close();
-                        onClose(channel.getSession());
+                        onClose(channel);
                         break;
                     }
                     case Message:
@@ -100,11 +100,11 @@ public class ProcessorDefault implements Processor {
                     }
                     default: {
                         channel.close();
-                        onClose(channel.getSession());
+                        onCloseInternal(channel);
                     }
                 }
             } catch (Throwable e) {
-                onError(channel.getSession(), e);
+                onError(channel, e);
             }
         }
     }
@@ -128,7 +128,7 @@ public class ProcessorDefault implements Processor {
         if (isReply) {
             channel.retrieve(frame);
         } else {
-            onMessage(channel.getSession(), frame.getMessage());
+            onMessage(channel, frame.getMessage());
         }
     }
 
@@ -136,42 +136,53 @@ public class ProcessorDefault implements Processor {
     /**
      * 打开时
      *
-     * @param session 会话
+     * @param channel 通道
      */
     @Override
-    public void onOpen(Session session) throws IOException {
-        listener.onOpen(session);
+    public void onOpen(Channel channel) throws IOException {
+        listener.onOpen(channel.getSession());
     }
 
     /**
      * 收到消息时
      *
-     * @param session 会话
+     * @param channel 通道
      * @param message 消息
      */
     @Override
-    public void onMessage(Session session, Message message) throws IOException {
-        listener.onMessage(session, message);
+    public void onMessage(Channel channel, Message message) throws IOException {
+        listener.onMessage(channel.getSession(), message);
     }
 
     /**
      * 关闭时
      *
-     * @param session 会话
+     * @param channel 通道
      */
     @Override
-    public void onClose(Session session) {
-        listener.onClose(session);
+    public void onClose(Channel channel) {
+        if (channel.isClosed() == false) {
+            onCloseInternal(channel);
+        }
+    }
+
+    /**
+     * 关闭时（内部处理）
+     *
+     * @param channel 通道
+     */
+    private void onCloseInternal(Channel channel){
+        listener.onClose(channel.getSession());
     }
 
     /**
      * 出错时
      *
-     * @param session 会话
+     * @param channel 通道
      * @param error   错误信息
      */
     @Override
-    public void onError(Session session, Throwable error) {
-        listener.onError(session, error);
+    public void onError(Channel channel, Throwable error) {
+        listener.onError(channel.getSession(), error);
     }
 }

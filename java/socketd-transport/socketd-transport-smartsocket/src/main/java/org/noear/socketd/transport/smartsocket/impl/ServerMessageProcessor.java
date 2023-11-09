@@ -19,9 +19,11 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
     private static final Logger log = LoggerFactory.getLogger(ServerMessageProcessor.class);
 
     private TcpAioServer server;
-    public ServerMessageProcessor(TcpAioServer server){
+
+    public ServerMessageProcessor(TcpAioServer server) {
         this.server = server;
     }
+
     private ChannelDefaultEx getChannel(AioSession s) {
         return ChannelDefaultEx.get(s, server.config(), server.assistant());
     }
@@ -36,7 +38,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
             if (channel == null) {
                 log.warn(e.getMessage(), e);
             } else {
-                server.processor().onError(channel.getSession(), e);
+                server.processor().onError(channel, e);
             }
         }
     }
@@ -49,7 +51,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
                 break;
 
             case SESSION_CLOSED:
-                server.processor().onClose(getChannel(s).getSession());
+                server.processor().onClose(getChannel(s));
                 break;
 
             case PROCESS_EXCEPTION:
@@ -57,7 +59,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                server.processor().onError(getChannel(s).getSession(), e);
+                server.processor().onError(getChannel(s), e);
                 break;
         }
     }

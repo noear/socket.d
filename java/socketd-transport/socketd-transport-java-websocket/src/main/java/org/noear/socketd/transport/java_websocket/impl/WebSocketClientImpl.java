@@ -83,13 +83,11 @@ public class WebSocketClientImpl extends WebSocketClient {
 
     @Override
     public void onClose(int i, String s, boolean b) {
-        if (channel.isClosed() == false) { //有可能在协议里被关闭了
-            client.processor().onClose(channel.getSession());
-        }
+        client.processor().onClose(channel);
     }
 
     @Override
     public void onError(Exception e) {
-        client.processor().onError(channel.getSession(), e);
+        client.processor().onError(channel, e);
     }
 }

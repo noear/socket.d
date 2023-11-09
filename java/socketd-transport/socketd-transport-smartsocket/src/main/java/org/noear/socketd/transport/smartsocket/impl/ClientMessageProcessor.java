@@ -57,7 +57,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             if (channel == null) {
                 log.warn(e.getMessage(), e);
             } else {
-                client.processor().onError(channel.getSession(), e);
+                client.processor().onError(channel, e);
             }
         }
     }
@@ -70,25 +70,21 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
                 try {
                     channel.sendConnect(client.config().getUrl());
                 } catch (Throwable ex) {
-                    client.processor().onError(channel.getSession(), ex);
+                    client.processor().onError(channel, ex);
                 }
             }
             break;
 
-            case SESSION_CLOSED: {
-                Channel channel = getChannel(s);
-                if (channel.isClosed() == false) { //有可能在协议里被关闭了
-                    client.processor().onClose(channel.getSession());
-                }
-            }
-            break;
+            case SESSION_CLOSED:
+                client.processor().onClose(getChannel(s));
+                break;
 
             case PROCESS_EXCEPTION:
             case DECODE_EXCEPTION:
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                client.processor().onError(getChannel(s).getSession(), e);
+                client.processor().onError(getChannel(s), e);
                 break;
         }
     }

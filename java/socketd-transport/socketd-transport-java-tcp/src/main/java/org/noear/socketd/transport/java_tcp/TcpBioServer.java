@@ -110,7 +110,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         while (true) {
             try {
                 if (socket.isClosed()) {
-                    processor().onClose(channel.getSession());
+                    processor().onClose(channel);
                     break;
                 }
 
@@ -121,12 +121,12 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             }
             catch (SocketException e) {
                 //如果是 java.net.ConnectException，说明 idleTimeout
-                processor().onError(channel.getSession(), e);
-                processor().onClose(channel.getSession());
+                processor().onError(channel, e);
+                processor().onClose(channel);
                 close(socket);
                 break;
             } catch (Throwable e) {
-                processor().onError(channel.getSession(), e);
+                processor().onError(channel, e);
             }
         }
     }

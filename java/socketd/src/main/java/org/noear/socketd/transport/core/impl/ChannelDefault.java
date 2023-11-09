@@ -164,6 +164,10 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
                 //如果未完成打开的；则告知没通过
                 sendConnack(getHandshake().getSource(), false);
             }
+        }else{
+            if (getConfig().clientMode() == false && isClosed() == false) {
+                sendClose();
+            }
         }
 
         super.close();

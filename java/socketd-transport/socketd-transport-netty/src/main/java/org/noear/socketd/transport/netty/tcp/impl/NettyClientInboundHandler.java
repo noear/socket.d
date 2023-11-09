@@ -65,7 +65,9 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
         super.channelInactive(ctx);
 
         Channel channel = ctx.attr(CHANNEL_KEY).get();
-        client.processor().onClose(channel.getSession());
+        if (channel.isClosed() == false) { //有可能在协议里被关闭了
+            client.processor().onClose(channel.getSession());
+        }
     }
 
     @Override

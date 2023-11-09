@@ -24,7 +24,8 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
     private static final Logger log = LoggerFactory.getLogger(ClientMessageProcessor.class);
     private TcpAioClient client;
     private CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
-    public ClientMessageProcessor(TcpAioClient client){
+
+    public ClientMessageProcessor(TcpAioClient client) {
         this.client = client;
     }
 
@@ -74,9 +75,13 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             }
             break;
 
-            case SESSION_CLOSED:
-                client.processor().onClose(getChannel(s).getSession());
-                break;
+            case SESSION_CLOSED: {
+                Channel channel = getChannel(s);
+                if (channel.isClosed() == false) { //有可能在协议里被关闭了
+                    client.processor().onClose(channel.getSession());
+                }
+            }
+            break;
 
             case PROCESS_EXCEPTION:
             case DECODE_EXCEPTION:

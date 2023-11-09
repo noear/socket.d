@@ -81,7 +81,9 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         while (true) {
             try {
                 if (socket.isClosed()) {
-                    client.processor().onClose(channel.getSession());
+                    if (channel.isClosed() == false) { //有可能在协议里被关闭了
+                        client.processor().onClose(channel.getSession());
+                    }
                     break;
                 }
 

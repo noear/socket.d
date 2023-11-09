@@ -5,6 +5,8 @@ import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,6 +19,8 @@ import java.util.concurrent.ScheduledFuture;
  * @since 2.0
  */
 public class ClientChannel extends ChannelBase implements Channel {
+    private static final Logger log = LoggerFactory.getLogger(ClientChannel.class);
+
     //连接器
     private ClientConnector connector;
     //真实通道
@@ -49,7 +53,9 @@ public class ClientChannel extends ChannelBase implements Channel {
                     try {
                         heartbeatHandle();
                     } catch (Exception e) {
-
+                        if (log.isDebugEnabled()) {
+                            log.debug("{}", e);
+                        }
                     }
                 }, connector.heartbeatInterval());
             }

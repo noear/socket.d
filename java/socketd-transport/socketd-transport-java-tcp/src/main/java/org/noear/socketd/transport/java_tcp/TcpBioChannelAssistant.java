@@ -6,7 +6,6 @@ import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.impl.ByteBufferReader;
 import org.noear.socketd.transport.core.impl.ByteBufferWriter;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -79,7 +78,7 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
         ByteBuffer buffer = ByteBuffer.allocate(len);
         buffer.putInt(len);
 
-        int bufSize = 512;
+        int bufSize = config.getReadBufferSize();
         byte[] buf = new byte[bufSize];
 
         int readSize = 0;

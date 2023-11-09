@@ -32,7 +32,6 @@ public class OutputStreamBufferWriter implements BufferWriter {
         target.write((val >>> 16) & 0xFF);
         target.write((val >>> 8) & 0xFF);
         target.write((val >>> 0) & 0xFF);
-        target.flush();
     }
 
     @Override

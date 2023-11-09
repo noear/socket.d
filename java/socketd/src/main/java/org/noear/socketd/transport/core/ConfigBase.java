@@ -64,8 +64,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
         this.maxThreads = coreThreads * 8;
 
-        this.readBufferSize = 1024;
-        this.writeBufferSize = 1024;
+        this.readBufferSize = 512;
+        this.writeBufferSize = 512;
 
         this.idleTimeout = 0L; //默认不关（提供用户特殊场景选择）
         this.replyTimeout = 3000L;

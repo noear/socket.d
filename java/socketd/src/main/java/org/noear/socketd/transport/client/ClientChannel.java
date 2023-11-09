@@ -36,14 +36,23 @@ public class ClientChannel extends ChannelBase implements Channel {
             heartbeatHandler = new HeartbeatHandlerDefault();
         }
 
-        if (connector.autoReconnect() && heartbeatScheduledFuture == null) {
-            heartbeatScheduledFuture = RunUtils.delayAndRepeat(() -> {
-                try {
-                    heartbeatHandle();
-                } catch (Exception e) {
+        initHeartbeat();
+    }
 
-                }
-            }, connector.heartbeatInterval());
+    /**
+     * 初始化心跳（关闭后，手动重链时也会用到）
+     * */
+    private void initHeartbeat() {
+        if (connector.autoReconnect()) {
+            if (heartbeatScheduledFuture == null || heartbeatScheduledFuture.isCancelled()) {
+                heartbeatScheduledFuture = RunUtils.delayAndRepeat(() -> {
+                    try {
+                        heartbeatHandle();
+                    } catch (Exception e) {
+
+                    }
+                }, connector.heartbeatInterval());
+            }
         }
     }
 
@@ -167,17 +176,21 @@ public class ClientChannel extends ChannelBase implements Channel {
         real.retrieve(frame);
     }
 
-    @Override
-    public void reconnect() throws Exception {
-        prepareCheck();
-    }
-
     /**
      * 获取会话
      */
     @Override
     public Session getSession() {
         return real.getSession();
+    }
+
+
+
+    @Override
+    public void reconnect() throws Exception {
+        initHeartbeat();
+
+        prepareCheck();
     }
 
     /**
@@ -189,6 +202,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         RunUtils.runAnTry(() -> connector.close());
         RunUtils.runAnTry(() -> real.close());
     }
+
 
     /**
      * 预备检

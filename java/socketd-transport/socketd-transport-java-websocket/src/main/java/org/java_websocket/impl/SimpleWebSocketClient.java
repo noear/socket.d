@@ -1,4 +1,4 @@
-package org.java_websocket;
+package org.java_websocket.impl;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -12,6 +12,10 @@ import java.net.URI;
 public class SimpleWebSocketClient extends WebSocketClient {
     public SimpleWebSocketClient(URI serverUri) {
         super(serverUri);
+    }
+
+    public SimpleWebSocketClient(String serverUri) {
+        super(URI.create(serverUri));
     }
 
     @Override

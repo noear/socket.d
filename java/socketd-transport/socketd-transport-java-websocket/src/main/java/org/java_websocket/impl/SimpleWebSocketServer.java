@@ -1,5 +1,6 @@
-package org.java_websocket;
+package org.java_websocket.impl;
 
+import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 

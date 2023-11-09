@@ -21,3 +21,4 @@
 * url 鉴权 //ok
 * idleTimeout 测试 (？？？udp 是否需要？？？) //顺带研究下 Java-WebSocket 源码 
 * 单线程压力测试 //ok
+* 半闭后，马上手动重连测试 //ok

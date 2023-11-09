@@ -44,27 +44,26 @@ public class ProcessorDefault implements Processor {
 
             //开始打开（可用于 url 签权）//禁止发消息
             onOpen(channel);
-            channel.openConfirm();
 
             if (channel.isValid()) {
                 //如果还有效，则发送链接确认
-                channel.sendConnack(frame.getMessage(), true); //->Connack
+                channel.sendConnack(frame.getMessage()); //->Connack
             }
         } else if (frame.getFlag() == Flag.Connack) {
             //if client
-            if("0".equals(frame.getMessage().getDataAsString())){
-                //说明握手失败了
-                throw new SocketdConnectionException("Connection request was rejected");
-            }
-
             HandshakeInternal handshake = new HandshakeInternal(frame.getMessage());
             channel.setHandshake(handshake);
 
             onOpen(channel);
-            channel.openConfirm();
         } else {
             if (channel.getHandshake() == null) {
                 channel.close();
+
+                if(frame.getFlag() == Flag.Close){
+                    //说明握手失败了
+                    throw new SocketdConnectionException("Connection request was rejected");
+                }
+
                 if (log.isWarnEnabled()) {
                     log.warn("Channel andshake is null, sessionId={}", channel.getSession().getSessionId());
                 }
@@ -84,7 +83,7 @@ public class ProcessorDefault implements Processor {
                     }
                     case Close: {
                         channel.close();
-                        onClose(channel);
+                        onCloseInternal(channel);
                         break;
                     }
                     case Message:
@@ -100,7 +99,7 @@ public class ProcessorDefault implements Processor {
                     }
                     default: {
                         channel.close();
-                        onCloseInternal(channel);
+                        onClose(channel);
                     }
                 }
             } catch (Throwable e) {

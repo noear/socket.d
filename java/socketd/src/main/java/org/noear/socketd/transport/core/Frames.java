@@ -29,8 +29,8 @@ public class Frames {
      *
      * @param connectMessage 连接消息
      */
-    public static final Frame connackFrame(Message connectMessage, boolean isPassed) {
-        StringEntity entity = new StringEntity(isPassed ? "1" : "0");
+    public static final Frame connackFrame(Message connectMessage) {
+        EntityDefault entity = new EntityDefault();
         //添加框架版本号
         entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
         return new Frame(Flag.Connack, new MessageDefault().sid(connectMessage.getSid()).topic(connectMessage.getTopic()).entity(entity));

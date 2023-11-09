@@ -21,8 +21,6 @@ public abstract class ChannelBase implements Channel {
     private long liveTime;
     //是否已关闭（用于做关闭异常提醒）
     private boolean isClosed;
-    //是否已打开（即 onOpen 通过后）
-    private boolean isOpened;
 
     public Config getConfig() {
         return config;
@@ -47,15 +45,6 @@ public abstract class ChannelBase implements Channel {
     @Override
     public boolean isClosed() {
         return isClosed;
-    }
-
-    public boolean isOpened(){
-        return isOpened;
-    }
-
-    @Override
-    public void openConfirm() {
-        isOpened = true;
     }
 
     @Override
@@ -90,8 +79,8 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void sendConnack(Message connectMessage, boolean isPassed) throws IOException {
-        send(Frames.connackFrame(connectMessage, isPassed), null);
+    public void sendConnack(Message connectMessage) throws IOException {
+        send(Frames.connackFrame(connectMessage), null);
     }
 
     @Override

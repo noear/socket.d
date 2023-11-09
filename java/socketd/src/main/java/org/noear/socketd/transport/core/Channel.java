@@ -38,11 +38,6 @@ public interface Channel extends Closeable {
     boolean isClosed();
 
     /**
-     * 打开确认
-     * */
-    void openConfirm();
-
-    /**
      * 获取配置
      */
     Config getConfig();
@@ -97,9 +92,8 @@ public interface Channel extends Closeable {
      * 发送连接确认（握手）
      *
      * @param connectMessage 连接消息
-     * @param isPassed       已经通过
      */
-    void sendConnack(Message connectMessage, boolean isPassed) throws IOException;
+    void sendConnack(Message connectMessage) throws IOException;
 
     /**
      * 发送 Ping（心跳）

@@ -166,6 +166,10 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void close() throws IOException {
+        if (channel.isValid()) {
+            channel.sendClose();
+        }
+
         channel.close();
     }
 }

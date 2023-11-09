@@ -2,6 +2,32 @@ interface Consumer<T> {
     (t: T): void
 }
 
+interface
+
+interface Listener {
+    onOpen(session: Session): void;
+
+    onMessage(session: Session, message: Message): void;
+
+    onClose(session: Session): void;
+
+    onError(session: Session, error: Error): void;
+}
+
+class SimpleListener implements Listener {
+    onOpen(session: Session) {
+    }
+
+    onMessage(session: Session, message: Message) {
+    }
+
+    onClose(session: Session) {
+    }
+
+    onError(session: Session, error: Error) {
+    }
+}
+
 class Entity {
     metaString?: string
     data?: object
@@ -24,6 +50,7 @@ class Frame {
         this.message = message;
     }
 }
+
 
 class ClientConfig {
     readonly url: string
@@ -83,7 +110,27 @@ class Client {
         return this;
     }
 
-    listen(listener): Client {
+    listen(listener: Listener): Client {
+        return this;
+    }
+
+    onOpen(fun):Client{
+        return this;
+    }
+
+    onMessage(fun):Client{
+        return this;
+    }
+
+    on(topic:String, ):Client{
+        return this;
+    }
+
+    onClose(fun):Client{
+        return this;
+    }
+
+    onError(fun):Client{
         return this;
     }
 

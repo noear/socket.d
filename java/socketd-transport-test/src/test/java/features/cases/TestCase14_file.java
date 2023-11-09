@@ -69,7 +69,7 @@ public class TestCase14_file extends BaseTestCase {
                 .start();
 
         //休息下，启动可能要等会儿
-        Thread.sleep(100);
+        Thread.sleep(500);
 
 
         //client
@@ -79,7 +79,7 @@ public class TestCase14_file extends BaseTestCase {
         clientSession.send("/user/upload", new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov")));
 
 
-        Thread.sleep(3000);
+        Thread.sleep(8000);
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
@@ -90,15 +90,6 @@ public class TestCase14_file extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if (server != null) {
-            server.stop();
-        }
-
-        if (clientSession != null) {
-            clientSession.close();
-        }
-
-
         super.stop();
     }
 }

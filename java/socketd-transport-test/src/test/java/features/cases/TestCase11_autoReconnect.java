@@ -50,7 +50,7 @@ public class TestCase11_autoReconnect extends BaseTestCase {
                 .start();
 
         //休息下，启动可能要等会儿
-        Thread.sleep(100);
+        Thread.sleep(500);
 
 
         //client
@@ -108,16 +108,6 @@ public class TestCase11_autoReconnect extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-
-        if (server != null) {
-            server.stop();
-        }
-
-        if (clientSession != null) {
-            clientSession.close();
-        }
-
-
         super.stop();
     }
 }

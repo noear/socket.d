@@ -100,19 +100,19 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 
 * 指令流
 
-| Flag      | Server                               | Client                                           | 
-|-----------|--------------------------------------|--------------------------------------------------|
-| Unknown   | ::close()                            | ::close()                                        | 
-| Connect   | /                                    | c(Connect)->s::onOpen(),s(Connack?)->c::onOpen() | 
-| Connack   | s::onOpen(),s(Connack?)->c           | /                                                | 
-| Ping      | /                                    | c(Ping)->s(Pong)->c                              | 
-| Pong      | s(Pong)->c                           | /                                                | 
-| Close     | s(Close)->c                          | /                                                | 
-| Message   | s(Message)->c                        | c(Message)->s                                    | 
-| Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c              |  
-| Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c             | 
-| Reply     | ->s(Reply)->c                        | ->c(Reply)->s                                    | 
-| ReplyEnd  | ->s(ReplyEnd)->c                     | ->c(ReplyEnd)->s                                 | 
+| Flag      | Server                               | Client                                                | 
+|-----------|--------------------------------------|-------------------------------------------------------|
+| Unknown   | ::close()                            | ::close()                                             | 
+| Connect   | /                                    | c(Connect)->s::onOpen(),s(Connack?Close)->c::onOpen() | 
+| Connack   | s::onOpen(),s(Connack?Closes)->c     | /                                                     | 
+| Ping      | /                                    | c(Ping)->s(Pong)->c                                   | 
+| Pong      | s(Pong)->c                           | /                                                     | 
+| Close     | s(Close)->c                          | c(Close)->s                                           | 
+| Message   | s(Message)->c                        | c(Message)->s                                         | 
+| Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c                   |  
+| Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c                  | 
+| Reply     | ->s(Reply)->c                        | ->c(Reply)->s                                         | 
+| ReplyEnd  | ->s(ReplyEnd)->c                     | ->c(ReplyEnd)->s                                      | 
 
 ```
 //The reply acceptor registration in the channel is removed after the reply is completed

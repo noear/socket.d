@@ -79,7 +79,7 @@ Socket.D 是一种应用协议，也是一个开发框架。可以在客户端�
 可用于 MSG、RPC、IM、MQ 等一些的场景开发，可替代 Http, Websocket, gRpc 等一些协议。比如移动设备与服务器的连接，比如一些微服务场景等等。
 
 
-### 简单的协议说明
+### 简单的协议说明（ 详见：[《协议文档》](protocol.md) ）
 
 
 * 连接地址风格
@@ -118,7 +118,7 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 //The reply acceptor registration in the channel is removed after the reply is completed
 ```
 
-更多内容请参考：[《协议文档》](protocol.md)
+
 
 
 ### 快速入门与学习

@@ -174,11 +174,17 @@ public class EntityDefault implements Entity {
     @Override
     public String getDataAsString() {
         try {
-            return IoUtils.transferToString(getData());
+            if (dataAsString == null) {
+                dataAsString = IoUtils.transferToString(getData());
+            }
+
+            return dataAsString;
         } catch (IOException e) {
             throw new SocketdCodecException(e);
         }
     }
+
+    private String dataAsString;
 
     @Override
     public byte[] getDataAsBytes() {

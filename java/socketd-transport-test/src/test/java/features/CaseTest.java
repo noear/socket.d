@@ -152,7 +152,7 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase18_closeReconnect() throws Exception {
+    public void TestCase18_clientCloseReconnect() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
@@ -169,7 +169,7 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase19_closeReconnect2() throws Exception {
+    public void TestCase19_serverCloseReconnect() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 

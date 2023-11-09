@@ -67,7 +67,7 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
                         RunUtils.runAnTry(() -> {
                             System.out.println("被关闭了");
                             //要用外部这个会话；事件里的 s 没有重连功能
-                            clientSession.reconnect();
+                            s.reconnect();
                         });
                     }
                 }))

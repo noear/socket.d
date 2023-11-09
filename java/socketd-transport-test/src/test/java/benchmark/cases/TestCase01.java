@@ -5,7 +5,7 @@ import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.impl.IdGeneratorTime;
+import org.noear.socketd.transport.core.identifier.TimeidGenerator;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class TestCase01 extends BaseTestCase {
 
         //server
         server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
-                .config(config -> config.idGenerator(new IdGeneratorTime()))
+                .config(config -> config.idGenerator(new TimeidGenerator()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -75,7 +75,7 @@ public class TestCase01 extends BaseTestCase {
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
-                .config(config -> config.idGenerator(new IdGeneratorTime())
+                .config(config -> config.idGenerator(new TimeidGenerator())
                         .replyTimeout(5000))
                 .open();
 

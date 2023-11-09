@@ -81,6 +81,8 @@ frame: {flag, message: {sid, topic, entity: { meta, data}}}
 
 握手流，是在客户端打开连接时发生的
 
+<img src="protocol-1.png" width="520" />
+
 ### 2、心跳流
 
 心跳流，是平常保持连接活跃性的方式。就像心跳一样，按固定间隔进行跳动
@@ -97,5 +99,5 @@ frame: {flag, message: {sid, topic, entity: { meta, data}}}
 * 消息分片
 
 
-* 消息签复
+* 消息答复
 

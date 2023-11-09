@@ -1,4 +1,10 @@
+
+### 2.0.12
+
+* 实现 客户端监听器内的 session 手动重连能力（用户可控制关闭时，是否马上重连）
+
 ### 2.0.11
+
 * 简化 握手与关闭流程
 * 优化 Processor 接口设计（面向通道，不再面向会话）
 * 添加 ClientConfigHandler，ServerConfigHandler

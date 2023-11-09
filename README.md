@@ -2,7 +2,7 @@
   Socket.D
 </h1>
 <p align="center">
-	<strong>基于语义消息流的网络开发库</strong>
+	<strong>基于语义消息流的网络框架</strong>
 </p>
 
 <p align="center">

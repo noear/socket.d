@@ -118,6 +118,7 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 //The reply acceptor registration in the channel is removed after the reply is completed
 ```
 
+更多内容请参考：[《协议文档》](protocol.md)
 
 
 ### 快速入门与学习

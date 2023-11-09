@@ -9,7 +9,7 @@ import org.noear.socketd.transport.core.Session;
 public class HeartbeatHandlerImpl implements HeartbeatHandler {
 
     @Override
-    public void heartbeatHandle(Session session) {
+    public void heartbeat(Session session) {
 
     }
 }

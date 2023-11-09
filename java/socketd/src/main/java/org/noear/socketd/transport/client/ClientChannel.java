@@ -131,7 +131,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             try {
                 prepareCheck();
 
-                heartbeatHandler.heartbeatHandle(getSession());
+                heartbeatHandler.heartbeat(getSession());
             } catch (SocketdException e) {
                 throw e;
             } catch (Throwable e) {

@@ -15,7 +15,7 @@ public interface Server {
     /**
      * 配置
      */
-    Server config(Consumer<ServerConfig> consumer);
+    Server config(ServerConfigHandler consumer);
 
     /**
      * 处理

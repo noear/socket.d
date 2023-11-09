@@ -14,7 +14,7 @@ public class HeartbeatHandlerDefault implements HeartbeatHandler {
      * 心跳处理
      */
     @Override
-    public void heartbeatHandle(Session session) throws Exception {
+    public void heartbeat(Session session) throws Exception {
         session.sendPing();
     }
 }

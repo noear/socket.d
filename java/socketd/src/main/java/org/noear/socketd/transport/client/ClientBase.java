@@ -82,8 +82,8 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
      * 配置
      */
     @Override
-    public Client config(Consumer<ClientConfig> consumer) {
-        consumer.accept(config);
+    public Client config(ClientConfigHandler consumer) {
+        consumer.clientConfig(config);
         return this;
     }
 

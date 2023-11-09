@@ -22,7 +22,7 @@ public interface Client {
     /**
      * 配置
      */
-    Client config(Consumer<ClientConfig> consumer);
+    Client config(ClientConfigHandler consumer);
 
     /**
      * 处理

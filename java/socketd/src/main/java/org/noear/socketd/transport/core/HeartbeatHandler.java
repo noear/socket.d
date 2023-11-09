@@ -6,9 +6,10 @@ package org.noear.socketd.transport.core;
  * @author noear
  * @since 2.0
  */
+@FunctionalInterface
 public interface HeartbeatHandler {
     /**
      * 心跳处理
      */
-    void heartbeatHandle(Session session) throws Exception;
+    void heartbeat(Session session) throws Exception;
 }

@@ -42,8 +42,8 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     /**
      * 配置
      */
-    public Server config(Consumer<ServerConfig> consumer) {
-        consumer.accept(config);
+    public Server config(ServerConfigHandler consumer) {
+        consumer.serverConfig(config);
         return this;
     }
 

@@ -103,8 +103,8 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 | Flag      | Server                               | Client                                                | 
 |-----------|--------------------------------------|-------------------------------------------------------|
 | Unknown   | ::close()                            | ::close()                                             | 
-| Connect   | /                                    | c(Connect)->s::onOpen(),s(Connack?Close)->c::onOpen() | 
-| Connack   | s::onOpen(),s(Connack?Closes)->c     | /                                                     | 
+| Connect   | /                                    | c(Connect)->s::onOpen(),s(Connack?)->c::onOpen() | 
+| Connack   | s::onOpen(),s(Connack?)->c     | /                                                     | 
 | Ping      | /                                    | c(Ping)->s(Pong)->c                                   | 
 | Pong      | s(Pong)->c                           | /                                                     | 
 | Close     | s(Close)->c                          | c(Close)->s                                           | 

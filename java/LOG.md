@@ -4,7 +4,8 @@
 * 添加 Handshake::getPath 接口
 * 添加 Session:reconnect 手动重链接口
 * 添加 Entity:getDataAsBytes 接口
-* 简化 java-websocket 重连处理
+* 优化 Handshake 交互流（有拒绝异常，与超时异常）
+* 优化 Close 交互流（仅服务端向客户端发）
 
 ### 2.0.9
 

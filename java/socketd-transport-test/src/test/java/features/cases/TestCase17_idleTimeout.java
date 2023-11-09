@@ -53,7 +53,7 @@ public class TestCase17_idleTimeout extends BaseTestCase {
                 .start();
 
         //休息下，启动可能要等会儿
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
 
         //::打开客户端会话

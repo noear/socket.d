@@ -58,7 +58,7 @@ public class TestCase12_client_session_close extends BaseTestCase {
                 .start();
 
         //休息下，启动可能要等会儿
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
 
         //client

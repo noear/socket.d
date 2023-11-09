@@ -51,7 +51,7 @@ public class TestCase13_sendAndRequest_timeout extends BaseTestCase {
                 .start();
 
         //休息下，启动可能要等会儿
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
 
         //client

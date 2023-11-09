@@ -1,6 +1,7 @@
 ### 2.0.11
 * 简化 握手与关闭流程
 * 优化 Processor 接口设计（面向通道，不再面向会话）
+* 添加 ClientConfigHandler，ServerConfigHandler
 
 ### 2.0.10
 

@@ -10,14 +10,14 @@ import org.noear.socketd.transport.client.ClientConnector;
  * @author noear
  * @since 2.0
  */
-public class WsBioClient extends ClientBase<WsBioChannelAssistant> {
+public class WsNioClient extends ClientBase<WsNioChannelAssistant> {
 
-    public WsBioClient(ClientConfig config) {
-        super(config, new WsBioChannelAssistant(config));
+    public WsNioClient(ClientConfig config) {
+        super(config, new WsNioChannelAssistant(config));
     }
 
     @Override
     protected ClientConnector createConnector() {
-        return new WsBioClientConnector(this);
+        return new WsNioClientConnector(this);
     }
 }

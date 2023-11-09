@@ -17,10 +17,10 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class WsBioChannelAssistant implements ChannelAssistant<WebSocket> {
+public class WsNioChannelAssistant implements ChannelAssistant<WebSocket> {
     private final Config config;
 
-    public WsBioChannelAssistant(Config config) {
+    public WsNioChannelAssistant(Config config) {
         this.config = config;
     }
 

@@ -5,7 +5,6 @@ import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketClientImpl;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.transport.core.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +19,12 @@ import java.util.concurrent.TimeoutException;
  * @author noear
  * @since 2.0
  */
-public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
-    private static final Logger log = LoggerFactory.getLogger(WsBioClientConnector.class);
+public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
+    private static final Logger log = LoggerFactory.getLogger(WsNioClientConnector.class);
 
     private WebSocketClientImpl real;
 
-    public WsBioClientConnector(WsBioClient client) {
+    public WsNioClientConnector(WsNioClient client) {
         super(client);
     }
 

@@ -6,8 +6,7 @@ import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flag;
-import org.noear.socketd.transport.java_websocket.WsBioClient;
-import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.java_websocket.WsNioClient;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
@@ -19,11 +18,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class WebSocketClientImpl extends WebSocketClient {
     static final Logger log = LoggerFactory.getLogger(WebSocketClientImpl.class);
-    private WsBioClient client;
+    private WsNioClient client;
     private ChannelInternal channel;
     private CompletableFuture<ClientHandshakeResult> handshakeFuture;
 
-    public WebSocketClientImpl(URI serverUri, WsBioClient client) {
+    public WebSocketClientImpl(URI serverUri, WsNioClient client) {
         super(serverUri);
         this.client = client;
         this.channel = new ChannelDefault<>(this, client.config(), client.assistant());

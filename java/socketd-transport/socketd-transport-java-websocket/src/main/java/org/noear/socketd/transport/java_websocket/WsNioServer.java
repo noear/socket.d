@@ -16,12 +16,12 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
-    private static final Logger log = LoggerFactory.getLogger(WsBioServer.class);
+public class WsNioServer extends ServerBase<WsNioChannelAssistant> {
+    private static final Logger log = LoggerFactory.getLogger(WsNioServer.class);
     private WebSocketServerImpl server;
 
-    public WsBioServer(ServerConfig config) {
-        super(config, new WsBioChannelAssistant(config));
+    public WsNioServer(ServerConfig config) {
+        super(config, new WsNioChannelAssistant(config));
     }
 
     @Override

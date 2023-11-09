@@ -3,7 +3,7 @@ package org.noear.socketd.transport.java_websocket.impl;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.noear.socketd.transport.java_websocket.WsBioServer;
+import org.noear.socketd.transport.java_websocket.WsNioServer;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -20,14 +20,14 @@ import java.nio.ByteBuffer;
 public class WebSocketServerImpl extends WebSocketServer {
     static final Logger log = LoggerFactory.getLogger(WebSocketServerImpl.class);
 
-    private WsBioServer server;
+    private WsNioServer server;
 
-    public WebSocketServerImpl(int port, WsBioServer server) {
+    public WebSocketServerImpl(int port, WsNioServer server) {
         super(new InetSocketAddress(port));
         this.server = server;
     }
 
-    public WebSocketServerImpl(String addr, int port, WsBioServer server) {
+    public WebSocketServerImpl(String addr, int port, WsNioServer server) {
         super(new InetSocketAddress(addr, port));
         this.server = server;
     }

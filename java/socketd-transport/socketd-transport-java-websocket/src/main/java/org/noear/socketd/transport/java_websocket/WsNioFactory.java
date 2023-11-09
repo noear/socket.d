@@ -13,7 +13,7 @@ import org.noear.socketd.transport.server.ServerConfig;
  * @author noear
  * @since 2.0
  */
-public class WsBioFactory implements ClientFactory, ServerFactory {
+public class WsNioFactory implements ClientFactory, ServerFactory {
     @Override
     public String[] schema() {
         return new String[]{"ws", "wss", "ws-java"};
@@ -21,11 +21,11 @@ public class WsBioFactory implements ClientFactory, ServerFactory {
 
     @Override
     public Server createServer(ServerConfig serverConfig) {
-        return new WsBioServer(serverConfig);
+        return new WsNioServer(serverConfig);
     }
 
     @Override
     public Client createClient(ClientConfig clientConfig) {
-        return new WsBioClient(clientConfig);
+        return new WsNioClient(clientConfig);
     }
 }

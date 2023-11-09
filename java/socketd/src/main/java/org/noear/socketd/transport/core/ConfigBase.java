@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.core.impl.IdGeneratorGuid;
 import org.noear.socketd.transport.core.impl.FragmentHandlerDefault;
 import org.noear.socketd.transport.server.ServerConfig;
@@ -37,6 +38,11 @@ public abstract class ConfigBase<T extends Config> implements Config {
     //最大线程数
     protected int maxThreads;
 
+    //读缓冲大小
+    protected int readBufferSize;
+    //写缓冲大小
+    protected int writeBufferSize;
+
     //连接空闲超时
     protected long idleTimeout;
     //答复默认超时
@@ -57,6 +63,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
         this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
         this.maxThreads = coreThreads * 8;
+
+        this.readBufferSize = 1024;
+        this.writeBufferSize = 1024;
 
         this.idleTimeout = 0L; //默认不关（提供用户特殊场景选择）
         this.replyTimeout = 3000L;
@@ -203,6 +212,37 @@ public abstract class ConfigBase<T extends Config> implements Config {
     public T maxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
         return (T) this;
+    }
+
+
+    /**
+     * 获取读缓冲大小
+     */
+    public int getReadBufferSize() {
+        return readBufferSize;
+    }
+
+    /**
+     * 配置读缓冲大小
+     */
+    public T readBufferSize(int readBufferSize) {
+        this.readBufferSize = readBufferSize;
+        return (T)this;
+    }
+
+    /**
+     * 获取写缓冲大小
+     */
+    public int getWriteBufferSize() {
+        return writeBufferSize;
+    }
+
+    /**
+     * 配置写缓冲大小
+     */
+    public T writeBufferSize(int writeBufferSize) {
+        this.writeBufferSize = writeBufferSize;
+        return (T)this;
     }
 
 

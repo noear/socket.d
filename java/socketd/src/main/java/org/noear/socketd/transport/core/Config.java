@@ -80,6 +80,15 @@ public interface Config {
     int getMaxThreads();
 
     /**
+     * 获取读缓冲大小
+     */
+    int getReadBufferSize();
+    /**
+     * 配置读缓冲大小
+     */
+    int getWriteBufferSize();
+
+    /**
      * 获取连接空闲超时
      * */
     long getIdleTimeout();

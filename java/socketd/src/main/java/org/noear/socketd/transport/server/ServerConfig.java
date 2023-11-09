@@ -18,11 +18,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
     //端口
     private int port;
 
-    //读缓冲大小
-    private int readBufferSize;
-    //写缓冲大小
-    private int writeBufferSize;
-
     public ServerConfig(String schema) {
         super(false);
         //支持 sd: 开头的架构
@@ -34,9 +29,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
 
         this.host = "";
         this.port = 8602;
-
-        this.readBufferSize = 512;
-        this.writeBufferSize = 512;
     }
 
 
@@ -86,36 +78,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
         } else {
             return schema + "://" + host + ":" + port;
         }
-    }
-
-    /**
-     * 获取读缓冲大小
-     */
-    public int getReadBufferSize() {
-        return readBufferSize;
-    }
-
-    /**
-     * 配置读缓冲大小
-     */
-    public ServerConfig readBufferSize(int readBufferSize) {
-        this.readBufferSize = readBufferSize;
-        return this;
-    }
-
-    /**
-     * 获取写缓冲大小
-     */
-    public int getWriteBufferSize() {
-        return writeBufferSize;
-    }
-
-    /**
-     * 配置写缓冲大小
-     */
-    public ServerConfig writeBufferSize(int writeBufferSize) {
-        this.writeBufferSize = writeBufferSize;
-        return this;
     }
 
     @Override

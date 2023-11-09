@@ -60,12 +60,15 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
 
         server.setThreadNum(config().getCoreThreads());
         server.setBannerEnabled(false);
+
         if (config().getReadBufferSize() > 0) {
             server.setReadBufferSize(config().getReadBufferSize());
         }
+
         if (config().getWriteBufferSize() > 0) {
             server.setWriteBuffer(config().getWriteBufferSize(), 16);
         }
+
         server.start();
 
         log.info("Server started: {server=" + config().getLocalUrl() + "}");

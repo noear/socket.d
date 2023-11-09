@@ -56,14 +56,14 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
             } else {
                 server = bootstrap.bind(config().getHost(), config().getPort()).await();
             }
-
-            log.info("Server started: {server=" + config().getLocalUrl() + "}");
         } catch (Exception e) {
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
 
             throw e;
         }
+
+        log.info("Server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
     }

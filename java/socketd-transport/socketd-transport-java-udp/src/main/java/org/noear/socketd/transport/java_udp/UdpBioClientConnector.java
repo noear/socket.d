@@ -34,6 +34,8 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
     @Override
     public Channel connect() throws Exception {
+        log.debug("Start connecting to: {}", client.config().getUrl());
+
         real = new DatagramSocket();
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());

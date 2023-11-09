@@ -36,7 +36,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     @Override
     public Channel connect() throws Exception {
-        log.info("Start connecting to: {}", client.config().getUrl());
+        log.debug("Start connecting to: {}", client.config().getUrl());
 
         eventLoopGroup = new NioEventLoopGroup(client.config().getCoreThreads());
 

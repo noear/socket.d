@@ -48,6 +48,7 @@ public class WsBioServer extends ServerBase<WsBioChannelAssistant> {
             //单位：秒
             server.setConnectionLostTimeout((int) (config().getIdleTimeout() / 1000L));
         }
+
         server.start();
 
         log.info("Server started: {server=" + config().getLocalUrl() + "}");

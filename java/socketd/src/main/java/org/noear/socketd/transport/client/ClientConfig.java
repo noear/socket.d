@@ -25,11 +25,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     //连接越时
     private long connectTimeout;
 
-    //读缓冲大小
-    private int readBufferSize;
-    //写缓冲大小
-    private int writeBufferSize;
-
     //是否自动重链
     private boolean autoReconnect;
 
@@ -50,8 +45,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
         if (this.port < 0) {
             this.port = 8602;
         }
-
-
 
         this.connectTimeout = 3000;
         this.heartbeatInterval = 20 * 1000;
@@ -124,36 +117,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
      */
     public ClientConfig connectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
-        return this;
-    }
-
-    /**
-     * 获取读缓冲大小
-     */
-    public int getReadBufferSize() {
-        return readBufferSize;
-    }
-
-    /**
-     * 配置读缓冲大小
-     */
-    public ClientConfig readBufferSize(int readBufferSize) {
-        this.readBufferSize = readBufferSize;
-        return this;
-    }
-
-    /**
-     * 获取写缓冲大小
-     */
-    public int getWriteBufferSize() {
-        return writeBufferSize;
-    }
-
-    /**
-     * 配置写缓冲大小
-     */
-    public ClientConfig writeBufferSize(int writeBufferSize) {
-        this.writeBufferSize = writeBufferSize;
         return this;
     }
 

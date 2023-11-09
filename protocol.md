@@ -69,9 +69,9 @@ frame: {flag, message: {sid, topic, entity: { meta, data}}}
 |--------------|-------|--------------------------------------|-------------------------------------------------------|
 | Unknown      | 0     | ::close()                            | ::close()                                             | 
 | Connect      | 10    | /                                    | c(Connect)->s::onOpen(),s(Connack?)->c::onOpen() | 
-| Connack      | 11    | s::onOpen(),s(Connack?)->c           | /                                                     | 
+| Connack      | 11    | ->s::onOpen(),s(Connack?)->c         | /                                                     | 
 | Ping         | 20    | /                                    | c(Ping)->s(Pong)->c                                   | 
-| Pong         | 21    | s(Pong)->c                           | /                                                     | 
+| Pong         | 21    | ->s(Pong)->c                         | /                                                     | 
 | Close        | 30    | s(Close)->c                          | c(Close)->s                                           | 
 | Message      | 40    | s(Message)->c                        | c(Message)->s                                         | 
 | Request      | 41    | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c                   |  

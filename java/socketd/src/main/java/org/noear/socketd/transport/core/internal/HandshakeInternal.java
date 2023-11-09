@@ -1,4 +1,8 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.internal;
+
+import org.noear.socketd.transport.core.EntityMetas;
+import org.noear.socketd.transport.core.Handshake;
+import org.noear.socketd.transport.core.Message;
 
 import java.net.URI;
 import java.util.HashMap;

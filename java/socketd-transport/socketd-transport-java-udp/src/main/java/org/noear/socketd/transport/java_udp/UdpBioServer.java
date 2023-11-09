@@ -3,7 +3,7 @@ package org.noear.socketd.transport.java_udp;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.core.Channel;
-import org.noear.socketd.transport.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;

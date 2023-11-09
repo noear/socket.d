@@ -3,6 +3,7 @@ package org.noear.socketd.transport.smartsocket.impl;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.TcpAioClient;
@@ -39,7 +40,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
 
     @Override
     public void process0(AioSession s, Frame frame) {
-        Channel channel = getChannel(s);
+        ChannelInternal channel = getChannel(s);
 
         try {
             client.processor().onReceive(channel, frame);

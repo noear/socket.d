@@ -1,10 +1,6 @@
 package org.noear.socketd.transport.smartsocket;
 
-import org.noear.socketd.transport.core.Channel;
-import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.impl.SessionDefault;
 import org.noear.socketd.transport.client.ClientBase;
-import org.noear.socketd.transport.client.ClientChannel;
 import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.client.ClientConnector;
 
@@ -20,9 +16,7 @@ public class TcpAioClient extends ClientBase<TcpAioChannelAssistant> {
     }
 
     @Override
-    public Session open() throws Exception {
-        ClientConnector connector = new TcpAioClientConnector(this);
-        Channel channel = new ClientChannel(connector.connect(), connector);
-        return new SessionDefault(channel);
+    protected ClientConnector createConnector() {
+        return new TcpAioClientConnector(this);
     }
 }

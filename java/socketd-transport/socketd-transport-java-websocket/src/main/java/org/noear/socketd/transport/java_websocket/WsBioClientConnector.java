@@ -2,6 +2,7 @@ package org.noear.socketd.transport.java_websocket;
 
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketClientImpl;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.core.Channel;
@@ -29,7 +30,7 @@ public class WsBioClientConnector extends ClientConnectorBase<WsBioClient> {
     }
 
     @Override
-    public Channel connect() throws Exception {
+    public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
 

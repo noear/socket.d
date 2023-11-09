@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 
 /**
  * 客户端握手结果
@@ -9,10 +9,10 @@ import org.noear.socketd.transport.core.Channel;
  * @since 2.0
  */
 public class ClientHandshakeResult {
-    private final Channel channel;
+    private final ChannelInternal channel;
     private final Exception exception;
 
-    public Channel getChannel() {
+    public ChannelInternal getChannel() {
         return channel;
     }
 
@@ -20,7 +20,7 @@ public class ClientHandshakeResult {
         return exception;
     }
 
-    public ClientHandshakeResult(Channel channel, Exception exception) {
+    public ClientHandshakeResult(ChannelInternal channel, Exception exception) {
         this.channel = channel;
         this.exception = exception;
     }

@@ -7,6 +7,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyClientInboundHandler;
 import org.noear.socketd.transport.client.ClientConnectorBase;
@@ -35,7 +36,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
     }
 
     @Override
-    public Channel connect() throws Exception {
+    public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         eventLoopGroup = new NioEventLoopGroup(client.config().getCoreThreads());

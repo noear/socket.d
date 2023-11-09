@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core.impl;
+package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.BufferReader;
 

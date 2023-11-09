@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.HeartbeatHandler;
 
 import java.io.Closeable;
@@ -32,5 +32,5 @@ public interface ClientConnector extends Closeable {
      *
      * @return 通道
      */
-    Channel connect() throws Exception;
+    ChannelInternal connect() throws Exception;
 }

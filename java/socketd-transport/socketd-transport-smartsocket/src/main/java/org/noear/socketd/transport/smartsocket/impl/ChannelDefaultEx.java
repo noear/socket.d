@@ -2,7 +2,7 @@ package org.noear.socketd.transport.smartsocket.impl;
 
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
-import org.noear.socketd.transport.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.transport.smartsocket.TcpAioChannelAssistant;
 import org.smartboot.socket.extension.decoder.FixedLengthFrameDecoder;
 import org.smartboot.socket.transport.AioSession;

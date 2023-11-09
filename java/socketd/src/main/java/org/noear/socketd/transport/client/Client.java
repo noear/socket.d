@@ -35,7 +35,7 @@ public interface Client {
     Client listen(Listener listener);
 
     /**
-     * 打开
+     * 打开会话
      */
     Session open() throws Exception;
 }

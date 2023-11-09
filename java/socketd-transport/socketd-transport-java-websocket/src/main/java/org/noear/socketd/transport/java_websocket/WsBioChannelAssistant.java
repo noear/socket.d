@@ -1,12 +1,11 @@
 package org.noear.socketd.transport.java_websocket;
 
 import org.java_websocket.WebSocket;
-import org.noear.socketd.transport.core.BufferWriter;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.impl.ByteBufferReader;
-import org.noear.socketd.transport.core.impl.ByteBufferWriter;
+import org.noear.socketd.transport.core.internal.ByteBufferReader;
+import org.noear.socketd.transport.core.internal.ByteBufferWriter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

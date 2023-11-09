@@ -1,9 +1,7 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.client.ClientConfig;
-import org.noear.socketd.transport.core.impl.IdGeneratorGuid;
-import org.noear.socketd.transport.core.impl.FragmentHandlerDefault;
-import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.transport.core.internal.IdGeneratorGuid;
+import org.noear.socketd.transport.core.internal.FragmentHandlerDefault;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;

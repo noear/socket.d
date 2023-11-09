@@ -3,7 +3,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.exception.SocketdSizeLimitException;
 import org.noear.socketd.transport.core.entity.EntityDefault;
-import org.noear.socketd.transport.core.impl.MessageDefault;
+import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.IoUtils;
 
 import java.io.IOException;

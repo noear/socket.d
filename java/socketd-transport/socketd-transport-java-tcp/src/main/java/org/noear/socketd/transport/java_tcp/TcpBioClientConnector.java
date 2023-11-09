@@ -4,9 +4,10 @@ import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     }
 
     @Override
-    public Channel connect() throws Exception {
+    public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
@@ -63,7 +64,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
         try {
-            Channel channel = new ChannelDefault<>(real, client.config(), client.assistant());
+            ChannelInternal channel = new ChannelDefault<>(real, client.config(), client.assistant());
 
             socketThread = new Thread(() -> {
                 try {
@@ -98,7 +99,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
     }
 
-    private void receive(Channel channel, Socket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
+    private void receive(ChannelInternal channel, Socket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
         while (true) {
             try {
                 if (socket.isClosed()) {

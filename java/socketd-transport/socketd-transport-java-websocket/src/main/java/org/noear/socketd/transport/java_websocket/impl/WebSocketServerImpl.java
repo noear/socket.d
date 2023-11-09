@@ -6,7 +6,7 @@ import org.java_websocket.server.WebSocketServer;
 import org.noear.socketd.transport.java_websocket.WsBioServer;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

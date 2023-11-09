@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.smartsocket;
 
-import org.noear.socketd.transport.core.impl.ByteBufferReader;
+import org.noear.socketd.transport.core.internal.ByteBufferReader;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;

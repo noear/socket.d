@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core.impl;
+package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
 
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author noear
  * @since 2.0
  */
-public class ChannelDefault<S> extends ChannelBase implements Channel {
+public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final S source;
 
     //答复接收器字典（管理）
@@ -152,6 +152,11 @@ public class ChannelDefault<S> extends ChannelBase implements Channel {
         }
 
         return session;
+    }
+
+    @Override
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     /**

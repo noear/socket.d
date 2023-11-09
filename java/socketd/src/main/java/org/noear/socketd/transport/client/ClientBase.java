@@ -1,12 +1,8 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.transport.core.HeartbeatHandler;
-import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.ChannelAssistant;
-import org.noear.socketd.transport.core.Processor;
-import org.noear.socketd.transport.core.impl.ProcessorDefault;
-
-import java.util.function.Consumer;
+import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.internal.ProcessorDefault;
+import org.noear.socketd.transport.core.internal.SessionDefault;
 
 /**
  * 客户端基类
@@ -108,4 +104,26 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
         processor.setListener(listener);
         return this;
     }
+
+    /**
+     * 打开会话
+     */
+    @Override
+    public Session open() throws Exception {
+        ClientConnector connector = createConnector();
+
+        //连接
+        ChannelInternal channel0 = connector.connect();
+        //构建新会话
+        Session session = new SessionDefault(new ClientChannel(channel0, connector));
+        //切换 session
+        channel0.setSession(session);
+
+        return session;
+    }
+
+    /**
+     * 创建连接器
+     */
+    protected abstract ClientConnector createConnector();
 }

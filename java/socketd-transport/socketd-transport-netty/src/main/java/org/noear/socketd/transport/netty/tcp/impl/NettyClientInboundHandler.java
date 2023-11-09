@@ -5,11 +5,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.tcp.TcpNioClient;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.internal.ChannelDefault;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -18,11 +19,11 @@ import java.util.concurrent.CompletableFuture;
  * @since 2.0
  */
 public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame> {
-    private static AttributeKey<Channel> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
+    private static AttributeKey<ChannelInternal> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
 
     private final TcpNioClient client;
     private final CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
-    private Channel channel;
+    private ChannelInternal channel;
 
     public NettyClientInboundHandler(TcpNioClient client) {
         this.client = client;
@@ -45,7 +46,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Frame frame) throws Exception {
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
 
         try {
             client.processor().onReceive(channel, frame);

@@ -4,6 +4,7 @@ import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.impl.ClientMessageProcessor;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
     }
 
     @Override
-    public Channel connect() throws Exception {
+    public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         ClientMessageProcessor processor = new ClientMessageProcessor(client);

@@ -2,12 +2,13 @@ package org.noear.socketd.transport.java_udp;
 
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
-import org.noear.socketd.transport.core.impl.ChannelDefault;
+import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
     }
 
     @Override
-    public Channel connect() throws Exception {
+    public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         real = new DatagramSocket();
@@ -42,7 +43,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         real.connect(socketAddress);
 
         DatagramTagert tagert = new DatagramTagert(real, null, true);
-        Channel channel = new ChannelDefault<>(tagert, client.config(), client.assistant());
+        ChannelInternal channel = new ChannelDefault<>(tagert, client.config(), client.assistant());
 
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
@@ -77,7 +78,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         }
     }
 
-    private void receive(Channel channel, DatagramSocket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
+    private void receive(ChannelInternal channel, DatagramSocket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
         while (true) {
             try {
                 if (socket.isClosed()) {

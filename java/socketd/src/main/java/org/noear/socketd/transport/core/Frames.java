@@ -2,8 +2,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.entity.EntityDefault;
-import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.impl.MessageDefault;
+import org.noear.socketd.transport.core.internal.MessageDefault;
 
 /**
  * 帧工厂

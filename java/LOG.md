@@ -1,3 +1,7 @@
+### 2.0.11
+* 简化 握手与关闭流程
+* 优化 Processor 接口设计（面向通道，不再面向会话）
+
 ### 2.0.10
 
 * 添加 Handshake::getScheme 接口
@@ -5,7 +9,6 @@
 * 添加 Session:reconnect 手动重链接口
 * 添加 Entity:getDataAsBytes 接口
 * 优化 Handshake 交互流（有拒绝异常，与超时异常）
-* 优化 Close 交互流（仅服务端向客户端发）
 
 ### 2.0.9
 

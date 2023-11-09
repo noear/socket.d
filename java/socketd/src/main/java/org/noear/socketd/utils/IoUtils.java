@@ -1,6 +1,6 @@
 package org.noear.socketd.utils;
 
-import org.noear.socketd.transport.core.BufferWriter;
+import org.noear.socketd.transport.core.buffer.BufferWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

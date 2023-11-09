@@ -1,11 +1,11 @@
 package org.noear.socketd.transport.java_udp;
 
-import org.noear.socketd.transport.core.BufferWriter;
+import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.internal.ByteBufferReader;
-import org.noear.socketd.transport.core.internal.ByteBufferWriter;
+import org.noear.socketd.transport.core.buffer.ByteBufferReader;
+import org.noear.socketd.transport.core.buffer.ByteBufferWriter;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.slf4j.Logger;

@@ -3,7 +3,7 @@ package org.noear.socketd.transport.netty.tcp.impl;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.noear.socketd.transport.core.BufferReader;
+import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 

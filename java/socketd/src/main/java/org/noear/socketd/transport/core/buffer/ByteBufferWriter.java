@@ -1,6 +1,4 @@
-package org.noear.socketd.transport.core.internal;
-
-import org.noear.socketd.transport.core.BufferWriter;
+package org.noear.socketd.transport.core.buffer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

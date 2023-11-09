@@ -1,7 +1,9 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.core.internal.IdGeneratorGuid;
-import org.noear.socketd.transport.core.internal.FragmentHandlerDefault;
+import org.noear.socketd.transport.core.buffer.BufferReader;
+import org.noear.socketd.transport.core.buffer.BufferWriter;
+import org.noear.socketd.transport.core.identifier.GuidGenerator;
+import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
@@ -56,7 +58,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.charset = StandardCharsets.UTF_8;
 
         this.codec = new CodecByteBuffer(this);
-        this.idGenerator = new IdGeneratorGuid();
+        this.idGenerator = new GuidGenerator();
         this.fragmentHandler = new FragmentHandlerDefault();
 
         this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;

@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.identifier;
 
 import org.noear.socketd.transport.core.IdGenerator;
 
@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author noear
  * @since 2.0
  */
-public class IdGeneratorTime implements IdGenerator {
+public class TimeidGenerator implements IdGenerator {
     private long basetime;
     private AtomicLong count = new AtomicLong();
 

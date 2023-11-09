@@ -1,6 +1,4 @@
-package org.noear.socketd.transport.core.internal;
-
-import org.noear.socketd.transport.core.BufferReader;
+package org.noear.socketd.transport.core.buffer;
 
 import java.nio.ByteBuffer;
 

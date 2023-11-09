@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.smartsocket;
 
-import org.noear.socketd.transport.core.BufferWriter;
+import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.smartboot.socket.transport.WriteBuffer;
 
 import java.io.IOException;

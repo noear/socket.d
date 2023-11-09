@@ -1,6 +1,10 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.EntityMetas;
+import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 

@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.core.internal.Frames;
 import org.noear.socketd.transport.core.internal.HandshakeInternal;
 
 import java.io.IOException;

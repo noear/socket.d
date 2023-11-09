@@ -2,6 +2,8 @@ package org.noear.socketd.transport.core;
 
 
 import org.noear.socketd.exception.SocketdSizeLimitException;
+import org.noear.socketd.transport.core.buffer.BufferReader;
+import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.IoUtils;

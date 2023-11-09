@@ -1,9 +1,10 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.fragment;
 
 import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.IoUtils;
 import org.noear.socketd.utils.Utils;
 

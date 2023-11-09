@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.netty.tcp.impl;
 
 import io.netty.buffer.ByteBuf;
-import org.noear.socketd.transport.core.BufferWriter;
+import org.noear.socketd.transport.core.buffer.BufferWriter;
 
 import java.io.IOException;
 

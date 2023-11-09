@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.fragment;
 
 import org.noear.socketd.transport.core.Frame;
 

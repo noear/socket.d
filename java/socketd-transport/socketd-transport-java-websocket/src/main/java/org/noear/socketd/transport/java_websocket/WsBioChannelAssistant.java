@@ -4,8 +4,8 @@ import org.java_websocket.WebSocket;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.internal.ByteBufferReader;
-import org.noear.socketd.transport.core.internal.ByteBufferWriter;
+import org.noear.socketd.transport.core.buffer.ByteBufferReader;
+import org.noear.socketd.transport.core.buffer.ByteBufferWriter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

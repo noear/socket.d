@@ -46,7 +46,9 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        //sockted nonsupport
+        if (log.isDebugEnabled()) {
+            log.debug("Unsupported onMessage(String test)");
+        }
     }
 
     @Override
@@ -79,6 +81,6 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onStart() {
-        log.info("Server:Websocket onStart...");
+
     }
 }

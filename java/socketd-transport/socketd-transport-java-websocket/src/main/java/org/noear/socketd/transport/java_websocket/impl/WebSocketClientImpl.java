@@ -56,7 +56,9 @@ public class WebSocketClientImpl extends WebSocketClient {
 
     @Override
     public void onMessage(String test) {
-        //sockted nonsupport
+        if (log.isDebugEnabled()) {
+            log.debug("Unsupported onMessage(String test)");
+        }
     }
 
     @Override
@@ -67,7 +69,7 @@ public class WebSocketClientImpl extends WebSocketClient {
             if (frame != null) {
                 client.processor().onReceive(channel, frame);
 
-                if(frame.getFlag() == Flag.Connack){
+                if (frame.getFlag() == Flag.Connack) {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                 }
             }

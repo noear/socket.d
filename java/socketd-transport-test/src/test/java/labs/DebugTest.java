@@ -13,7 +13,7 @@ public class DebugTest {
      * 用于调试
      */
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[3];
+        String s1 = schemas[0];
         BaseTestCase testCase = new TestCase19_serverCloseReconnect(s1, 2100);
         try {
             testCase.start();

@@ -21,9 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author noear
  * @since 2.0
  */
-public class TestCase12_session_close extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase12_session_close.class);
-    public TestCase12_session_close(String schema, int port) {
+public class TestCase12_client_session_close extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase12_client_session_close.class);
+    public TestCase12_client_session_close(String schema, int port) {
         super(schema, port);
     }
 
@@ -31,6 +31,7 @@ public class TestCase12_session_close extends BaseTestCase {
     private Session clientSession;
 
     private AtomicInteger messageCounter = new AtomicInteger();
+    private AtomicInteger closeCounter = new AtomicInteger();
 
     @Override
     public void start() throws Exception {
@@ -46,6 +47,12 @@ public class TestCase12_session_close extends BaseTestCase {
                         messageCounter.incrementAndGet();
 
                         session.send("demo", new StringEntity("test"));
+                    }
+
+                    @Override
+                    public void onClose(Session session) {
+                        System.out.println("客户端主动关闭了");
+                        closeCounter.incrementAndGet();
                     }
                 })
                 .start();
@@ -81,6 +88,7 @@ public class TestCase12_session_close extends BaseTestCase {
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
+        Assertions.assertEquals(closeCounter.get(), 1, getSchema() + ":client 关闭次数对不上");
 
     }
 

@@ -79,7 +79,7 @@ public class TestCase14_file extends BaseTestCase {
         clientSession.send("/user/upload", new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov")));
 
 
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");

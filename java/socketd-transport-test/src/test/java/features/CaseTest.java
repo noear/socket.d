@@ -49,7 +49,7 @@ public class CaseTest {
     public void TestCase12_session_close() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            BaseTestCase testCase = new TestCase12_session_close(s1, 1200 + i);
+            BaseTestCase testCase = new TestCase12_client_session_close(s1, 1200 + i);
             try {
                 testCase.start();
                 testCase.stop();

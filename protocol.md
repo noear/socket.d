@@ -63,7 +63,7 @@ frame: {flag, message: {sid, topic, entity: { meta, data}}}
 [len:int][flag:int]
 ```
 
-### 3、指令流详解
+### 3、指令流
 
 | Flag         | Value | Server                               | Client                                                | 
 |--------------|-------|--------------------------------------|-------------------------------------------------------|
@@ -83,7 +83,7 @@ frame: {flag, message: {sid, topic, entity: { meta, data}}}
 //The reply acceptor registration in the channel is removed after the reply is completed
 ```
 
-## 二、指令流
+## 二、指令流详解
 
 ### 1、连接与握手流
 

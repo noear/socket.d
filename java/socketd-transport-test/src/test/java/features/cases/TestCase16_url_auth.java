@@ -42,7 +42,7 @@ public class TestCase16_url_auth extends BaseTestCase {
                 .listen(new SimpleListener() {
                     @Override
                     public void onOpen(Session session) throws IOException {
-                        String user = session.getHandshake().getParam("u");
+                        String user = session.getParam("u");
                         if ("noear".equals(user) == false) { //如果不是 noear，关闭会话
                             session.close();
                         }

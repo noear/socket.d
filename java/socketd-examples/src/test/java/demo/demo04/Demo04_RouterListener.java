@@ -23,7 +23,7 @@ public class Demo04_RouterListener {
                         }))
                         .of("/admin", new BuilderListener().onOpen(s -> {
                             //管理员频道
-                            if ("admin".equals(s.getHandshake().getParam("u")) == false) {
+                            if ("admin".equals(s.getParam("u")) == false) {
                                 s.close();
                             }
                         }).onMessage((s, m) -> {

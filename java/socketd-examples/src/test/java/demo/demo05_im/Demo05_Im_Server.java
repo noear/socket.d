@@ -24,7 +24,7 @@ public class Demo05_Im_Server {
                         .of("/", new BuilderListener()
                                 .onOpen(s -> {
                                     //用户连接
-                                    String user = s.getHandshake().getParam("u");
+                                    String user = s.getParam("u");
                                     if (Utils.isNotEmpty(user)) {
                                         //有用户名，才登录成功
                                         userList.put(s.getSessionId(), s);
@@ -65,8 +65,8 @@ public class Demo05_Im_Server {
                         .of("/admin", new BuilderListener()
                                 .onOpen((session) -> {
                                     //管理员签权
-                                    String user = session.getHandshake().getParam("u");
-                                    String token = session.getHandshake().getParam("t");
+                                    String user = session.getParam("u");
+                                    String token = session.getParam("t");
 
                                     if ("admin".equals(user) && "mahuateng".equals(token)) {
 

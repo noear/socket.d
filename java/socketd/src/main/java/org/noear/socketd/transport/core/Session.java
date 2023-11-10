@@ -34,6 +34,31 @@ public interface Session extends Closeable {
     Handshake getHandshake();
 
     /**
+     * 获取握手参数
+     *
+     * @param name 名字
+     */
+    String getParam(String name);
+
+    /**
+     * 获取握手参数或默认值
+     *
+     * @param name 名字
+     * @param def  默认值
+     */
+    String getParamOrDefault(String name, String def);
+
+    /**
+     * 获取握手路径
+     */
+    String getPath();
+
+    /**
+     * 设置握手新路径
+     */
+    void setPathNew(String pathNew);
+
+    /**
      * 获取所有属性
      */
     Map<String, Object> getAttrMap();

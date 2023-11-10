@@ -18,6 +18,8 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public class SessionDefault extends SessionBase {
+    private String pathNew;
+
     public SessionDefault(Channel channel) {
         super(channel);
     }
@@ -52,6 +54,45 @@ public class SessionDefault extends SessionBase {
     @Override
     public Handshake getHandshake() {
         return channel.getHandshake();
+    }
+
+    /**
+     * 获取握手参数
+     *
+     * @param name 名字
+     */
+    public String getParam(String name) {
+        return getHandshake().getParam(name);
+    }
+
+    /**
+     * 获取握手参数或默认值
+     *
+     * @param name 名字
+     * @param def  默认值
+     */
+    public String getParamOrDefault(String name, String def) {
+        return getHandshake().getParamOrDefault(name, def);
+    }
+
+    /**
+     * 获取路径
+     */
+    @Override
+    public String getPath() {
+        if (pathNew == null) {
+            return getHandshake().getPath();
+        } else {
+            return pathNew;
+        }
+    }
+
+    /**
+     * 设置新路径
+     */
+    @Override
+    public void setPathNew(String pathNew) {
+        this.pathNew = pathNew;
     }
 
     /**

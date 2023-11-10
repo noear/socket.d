@@ -22,8 +22,6 @@
         <module>java/socketd-examples</module>
 
         <module>java/socketd-transport-test</module>
-        <module>java/socketd-solon-plugin</module>
-        <module>java/socketd-springboot-starter</module>
     </modules>
 
 </project>

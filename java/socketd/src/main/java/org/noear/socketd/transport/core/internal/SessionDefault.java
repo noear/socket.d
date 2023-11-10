@@ -157,7 +157,7 @@ public class SessionDefault extends SessionBase {
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
             } catch (TimeoutException e) {
-                throw new SocketdTimeoutException("Request reply timeout, topic=" + topic);
+                throw new SocketdTimeoutException("Request reply timeout>" + timeout + ", topic=" + topic);
             } catch (Throwable e) {
                 throw new SocketdException(e);
             }

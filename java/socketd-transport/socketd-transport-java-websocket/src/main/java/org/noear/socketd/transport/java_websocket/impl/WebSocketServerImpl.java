@@ -32,15 +32,28 @@ public class WebSocketServerImpl extends WebSocketServer {
         this.server = server;
     }
 
+
+    private Channel getChannel(WebSocket conn) {
+        Channel channel = conn.getAttachment();
+
+        if (channel == null) {
+            //直接从附件拿，不一定可靠
+            channel = new ChannelDefault<>(conn, server.config(), server.assistant());
+            conn.setAttachment(channel);
+        }
+
+        return channel;
+    }
+
+
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        Channel channel = new ChannelDefault<>(conn, server.config(), server.assistant());
-        conn.setAttachment(channel);
+        getChannel(conn);
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        Channel channel = conn.getAttachment();
+        Channel channel = getChannel(conn);
         server.processor().onClose(channel);
     }
 
@@ -54,7 +67,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onMessage(WebSocket conn, ByteBuffer message) {
         try {
-            Channel channel = conn.getAttachment();
+            Channel channel = getChannel(conn);
             Frame frame = server.assistant().read(message);
 
             if(frame != null) {
@@ -68,7 +81,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onError(WebSocket conn, Exception ex) {
         try {
-            Channel channel = conn.getAttachment();
+            Channel channel = getChannel(conn);
 
             if (channel != null) {
                 //有可能未 onOpen，就 onError 了；此时通道未成

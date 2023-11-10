@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.java_udp;
 
+import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.core.Channel;
@@ -37,6 +38,11 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
     private DatagramSocket createServer() throws IOException {
         return new DatagramSocket(config().getPort());
+    }
+
+    @Override
+    public String title() {
+        return "udp/bio/java-udp/" + SocketD.version();
     }
 
     @Override

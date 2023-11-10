@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.java_websocket;
 
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
+import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketServerImpl;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
@@ -22,6 +23,11 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> {
 
     public WsNioServer(ServerConfig config) {
         super(config, new WsNioChannelAssistant(config));
+    }
+
+    @Override
+    public String title() {
+        return "ws/nio/java-websocket 1.5/v" + SocketD.version();
     }
 
     @Override

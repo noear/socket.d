@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyServerInboundHandler;
 import org.noear.socketd.transport.server.Server;
@@ -29,6 +30,11 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
 
     public TcpNioServer(ServerConfig config) {
         super(config, new TcpNioChannelAssistant());
+    }
+
+    @Override
+    public String title() {
+        return "tcp/nio/netty 4.1/" + SocketD.version();
     }
 
     @Override

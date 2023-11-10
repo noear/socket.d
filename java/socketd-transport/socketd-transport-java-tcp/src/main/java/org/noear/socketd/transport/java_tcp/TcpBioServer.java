@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.java_tcp;
 
+import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -49,6 +50,11 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                 return config().getSslContext().getServerSocketFactory().createServerSocket(config().getPort(), 50, InetAddress.getByName(config().getHost()));
             }
         }
+    }
+
+    @Override
+    public String title() {
+        return "tcp/bio/java-tcp/" + SocketD.version();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.smartsocket;
 
+import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
@@ -24,6 +25,11 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
 
     public TcpAioServer(ServerConfig config) {
         super(config, new TcpAioChannelAssistant(config));
+    }
+
+    @Override
+    public String title() {
+        return "tcp/aio/smart-socket 1.5/" + SocketD.version();
     }
 
     @Override

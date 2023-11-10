@@ -33,6 +33,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     /**
      * 获取配置
      */
+    @Override
     public ServerConfig config() {
         return config;
     }

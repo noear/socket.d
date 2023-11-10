@@ -16,9 +16,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * Tcp-Bio 客户端连接器实现（支持 ssl）
@@ -30,7 +28,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioClientConnector.class);
 
     private Socket real;
-    private Thread socketThread;
+    private ExecutorService serverExecutor;
 
     public TcpBioClientConnector(TcpBioClient client) {
         super(client);
@@ -39,6 +37,14 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     @Override
     public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
+
+        if (serverExecutor == null) {
+            serverExecutor = client.config().getExecutor();
+            if (serverExecutor == null) {
+                serverExecutor = Executors.newFixedThreadPool(client.config().getMaxThreads());
+            }
+        }
+
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
 
@@ -66,15 +72,13 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         try {
             ChannelInternal channel = new ChannelDefault<>(real, client.config(), client.assistant());
 
-            socketThread = new Thread(() -> {
+            serverExecutor.submit(() -> {
                 try {
                     receive(channel, real, handshakeFuture);
                 } catch (Throwable e) {
                     throw new IllegalStateException(e);
                 }
             });
-
-            socketThread.start();
 
             channel.sendConnect(client.config().getUrl());
         } catch (Throwable e) {
@@ -109,11 +113,22 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
                 Frame frame = client.assistant().read(socket);
                 if (frame != null) {
-                    client.processor().onReceive(channel, frame);
+                    serverExecutor.submit(() -> {
+                        try {
+                            client.processor().onReceive(channel, frame);
 
-                    if (frame.getFlag() == Flag.Connack) {
-                        handshakeFuture.complete(new ClientHandshakeResult(channel, null));
-                    }
+                            if (frame.getFlag() == Flag.Connack) {
+                                handshakeFuture.complete(new ClientHandshakeResult(channel, null));
+                            }
+                        } catch (Exception e) {
+                            if (e instanceof SocketdConnectionException) {
+                                //说明握手失败了
+                                handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                            }
+
+                            client.processor().onError(channel, e);
+                        }
+                    });
                 }
             } catch (Exception e) {
                 if (e instanceof SocketdConnectionException) {
@@ -138,7 +153,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         try {
-            socketThread.interrupt();
+            serverExecutor.shutdown();
             real.close();
         } catch (Throwable e) {
             log.debug("{}", e);

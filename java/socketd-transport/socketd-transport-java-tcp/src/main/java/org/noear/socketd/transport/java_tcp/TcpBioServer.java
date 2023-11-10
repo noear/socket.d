@@ -26,7 +26,6 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioServer.class);
 
     private ServerSocket server;
-    private Thread serverThread;
     private ExecutorService serverExecutor;
 
     public TcpBioServer(ServerConfig config) {
@@ -80,38 +79,46 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             server.setSoTimeout((int) config().getIdleTimeout());
         }
 
-        serverThread = new Thread(() -> {
-            while (true) {
-                try {
-                    Socket socket = server.accept();
-
-                    serverExecutor.submit(() -> {
-                        try {
-                            Channel channel = new ChannelDefault<>(socket, config(), assistant());
-                            receive(channel, socket);
-                        } catch (Throwable e) {
-                            log.debug("{}", e);
-                            close(socket);
-                        }
-                    });
-                } catch (Throwable e) {
-                    if (server.isClosed()) {
-                        //说明被手动关掉了
-                        return;
-                    }
-
-                    log.debug("{}", e);
-                }
-            }
+        serverExecutor.submit(()->{
+            accept();
         });
-
-        serverThread.start();
 
         log.info("Server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
     }
 
+    /**
+     * 接受请求
+     * */
+    private void accept(){
+        while (true) {
+            try {
+                Socket socket = server.accept();
+
+                serverExecutor.submit(() -> {
+                    try {
+                        Channel channel = new ChannelDefault<>(socket, config(), assistant());
+                        receive(channel, socket);
+                    } catch (Throwable e) {
+                        log.debug("{}", e);
+                        close(socket);
+                    }
+                });
+            } catch (Throwable e) {
+                if (server.isClosed()) {
+                    //说明被手动关掉了
+                    return;
+                }
+
+                log.debug("{}", e);
+            }
+        }
+    }
+
+    /**
+     * 接收数据
+     * */
     private void receive(Channel channel, Socket socket) {
         while (true) {
             try {
@@ -156,7 +163,6 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
         try {
             server.close();
-            serverThread.interrupt();
             serverExecutor.shutdown();
         } catch (Exception e) {
             log.debug("{}", e);

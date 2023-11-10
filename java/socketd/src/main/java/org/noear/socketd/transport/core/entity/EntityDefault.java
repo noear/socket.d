@@ -81,11 +81,9 @@ public class EntityDefault implements Entity {
             //此处要优化
             if (Utils.isNotEmpty(metaString)) {
                 for (String kvStr : metaString.split("&")) {
-                    String[] kv = kvStr.split("=");
-                    if (kv.length > 1) {
-                        metaMap.put(kv[0], kv[1]);
-                    } else {
-                        metaMap.put(kv[0], "");
+                    int idx = kvStr.indexOf('=');
+                    if (idx > 1) {
+                        metaMap.put(kvStr.substring(0, idx), kvStr.substring(idx + 1));
                     }
                 }
             }

@@ -3,6 +3,7 @@ package org.noear.socketd.transport.core.internal;
 import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Handshake;
 import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.utils.Utils;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -34,13 +35,11 @@ public class HandshakeInternal implements Handshake {
         this.paramMap = new HashMap<>();
 
         String queryString = uri.getQuery();
-        if (queryString != null) {
+        if (Utils.isNotEmpty(queryString)) {
             for (String kvStr : queryString.split("&")) {
-                String[] kv = kvStr.split("=");
-                if (kv.length > 1) {
-                    paramMap.put(kv[0], kv[1]);
-                } else {
-                    paramMap.put(kv[0], "");
+                int idx = kvStr.indexOf('=');
+                if (idx > 1) {
+                    paramMap.put(kvStr.substring(0, idx), kvStr.substring(idx + 1));
                 }
             }
         }

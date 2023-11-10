@@ -214,6 +214,10 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void close() throws IOException {
+        if (log.isDebugEnabled()) {
+            log.debug("The session will be closed, sessionId={}", getSessionId());
+        }
+
         if (channel.isValid()) {
             try {
                 channel.sendClose();

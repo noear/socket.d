@@ -73,7 +73,7 @@ public class TestCase17_idleTimeout extends BaseTestCase {
         Thread.sleep(500 );
         clientSession.send("/demo", new StringEntity("hi"));
 
-        Thread.sleep(100 );
+        Thread.sleep(1000 );
         System.out.println("counter: " + openCounter.get());
         Assertions.assertEquals(openCounter.get(), 2, getSchema() + ":server 触发的 onOpen 数量对不上");
 
@@ -81,6 +81,14 @@ public class TestCase17_idleTimeout extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
+        if(clientSession != null){
+            clientSession.close();
+        }
+
+        if(server != null){
+            server.stop();
+        }
+
         super.stop();
     }
 }

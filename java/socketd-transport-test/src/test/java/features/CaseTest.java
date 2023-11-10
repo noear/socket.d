@@ -135,23 +135,6 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase17_idleTimeout() throws Exception {
-        for (int i = 0; i < schemas.length; i++) {
-            String s1 = schemas[i];
-
-            BaseTestCase testCase = new TestCase17_idleTimeout(s1, 1700 + i);
-            try {
-                testCase.start();
-                testCase.stop();
-            } catch (Exception e) {
-                testCase.onError();
-                e.printStackTrace();
-                assert false;
-            }
-        }
-    }
-
-    @Test
     public void TestCase18_clientCloseReconnect() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];

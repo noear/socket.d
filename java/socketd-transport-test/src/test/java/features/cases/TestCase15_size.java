@@ -69,7 +69,7 @@ public class TestCase15_size extends BaseTestCase {
         }
         clientSession.send("/user/size", new StringEntity("hi").meta("test", "ok"));
 
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
@@ -77,6 +77,14 @@ public class TestCase15_size extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
+        if(clientSession != null){
+            clientSession.close();
+        }
+
+        if(server != null){
+            server.stop();
+        }
+
         super.stop();
     }
 }

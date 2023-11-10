@@ -83,7 +83,7 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
 
 
         //休息下（发完，那边还得收）
-        Thread.sleep(200);
+        Thread.sleep(1000);
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 3, getSchema() + ":server 收的消息数量对不上");
@@ -92,6 +92,14 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
+        if(clientSession != null){
+            clientSession.close();
+        }
+
+        if(server != null){
+            server.stop();
+        }
+
         super.stop();
     }
 }

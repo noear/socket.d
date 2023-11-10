@@ -64,11 +64,10 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             isStarted = true;
         }
 
+        //不要复用旧的对象
+        serverExecutor = config().getExecutor();
         if (serverExecutor == null) {
-            serverExecutor = config().getExecutor();
-            if (serverExecutor == null) {
-                serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
-            }
+            serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         }
 
         server = createServer();

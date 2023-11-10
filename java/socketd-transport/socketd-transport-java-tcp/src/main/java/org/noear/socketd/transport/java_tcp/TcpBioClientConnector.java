@@ -38,13 +38,11 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
+        //不要复用旧的对象
+        serverExecutor = client.config().getExecutor();
         if (serverExecutor == null) {
-            serverExecutor = client.config().getExecutor();
-            if (serverExecutor == null) {
-                serverExecutor = Executors.newFixedThreadPool(client.config().getMaxThreads());
-            }
+            serverExecutor = Executors.newFixedThreadPool(client.config().getCoreThreads());
         }
-
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
 
@@ -138,8 +136,8 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         try {
-            serverExecutor.shutdown();
             real.close();
+            serverExecutor.shutdown();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

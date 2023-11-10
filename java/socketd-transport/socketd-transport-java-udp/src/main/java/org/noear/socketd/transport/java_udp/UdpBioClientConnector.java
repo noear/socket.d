@@ -6,16 +6,13 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * Udp 客户端连接器实现（支持 ssl）
@@ -27,7 +24,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
     private static final Logger log = LoggerFactory.getLogger(UdpBioClientConnector.class);
 
     private DatagramSocket real;
-    private Thread receiveThread;
+    private ExecutorService serverExecutor;
 
     public UdpBioClientConnector(UdpBioClient client) {
         super(client);
@@ -36,6 +33,12 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
     @Override
     public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
+
+        //不要复用旧的对象
+        serverExecutor = client.config().getExecutor();
+        if (serverExecutor == null) {
+            serverExecutor = Executors.newFixedThreadPool(client.config().getCoreThreads());
+        }
 
         real = new DatagramSocket();
 
@@ -48,15 +51,13 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
         //定义接收线程
-        receiveThread = new Thread(() -> {
+        serverExecutor.submit(() -> {
             try {
                 receive(channel, real, handshakeFuture);
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
         });
-
-        receiveThread.start();
 
         //开始发连接包
         channel.sendConnect(client.config().getUrl());
@@ -119,7 +120,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
         try {
             real.close();
-            receiveThread.interrupt();
+            serverExecutor.shutdown();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

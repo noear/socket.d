@@ -33,8 +33,8 @@ public class ProcessorDefault implements Processor {
      * 接收处理
      */
     public void onReceive(Channel channel, Frame frame) throws IOException {
-        if (log.isTraceEnabled()) {
-            log.trace("{}", frame);
+        if (log.isDebugEnabled()) {
+            log.debug("{}", frame);
         }
 
         if (frame.getFlag() == Flag.Connect) {

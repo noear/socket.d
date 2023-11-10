@@ -3,6 +3,8 @@ package org.noear.socketd.transport.core.internal;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,6 +20,7 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public class SessionDefault extends SessionBase {
+    private static final Logger log = LoggerFactory.getLogger(SessionDefault.class);
     private String pathNew;
 
     public SessionDefault(Channel channel) {
@@ -212,7 +215,13 @@ public class SessionDefault extends SessionBase {
     @Override
     public void close() throws IOException {
         if (channel.isValid()) {
-            channel.sendClose();
+            try {
+                channel.sendClose();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("{}", e);
+                }
+            }
         }
 
         channel.close();

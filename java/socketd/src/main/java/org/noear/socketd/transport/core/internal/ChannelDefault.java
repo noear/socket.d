@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -138,7 +139,15 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 acceptorMap.remove(frame.getMessage().getSid());
             }
 
-            acceptor.accept(frame.getMessage());
+            if (acceptor.isSingle()) {
+                //单收时，本就是 CompletableFuture
+                acceptor.accept(frame.getMessage());
+            } else {
+                //异步处理，避免卡死
+                CompletableFuture.runAsync(() -> {
+                    acceptor.accept(frame.getMessage());
+                });
+            }
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Acceptor not found, sid={}", frame.getMessage().getSid());
@@ -176,6 +185,10 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void close() throws IOException {
+        if (log.isDebugEnabled()) {
+            log.debug("The channel will be closed, sessionId={}", getSession().getSessionId());
+        }
+
         super.close();
         acceptorMap.clear();
         assistant.close(source);

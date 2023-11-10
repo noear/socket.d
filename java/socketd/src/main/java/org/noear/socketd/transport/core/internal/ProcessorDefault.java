@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 处理器默认实现
@@ -150,7 +151,15 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onMessage(Channel channel, Message message) throws IOException {
-        listener.onMessage(channel.getSession(), message);
+        CompletableFuture.runAsync(() -> {
+            try {
+                listener.onMessage(channel.getSession(), message);
+            } catch (Exception e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("{}", e);
+                }
+            }
+        });
     }
 
     /**

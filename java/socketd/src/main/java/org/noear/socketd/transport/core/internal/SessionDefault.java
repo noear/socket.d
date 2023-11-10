@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
+import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
@@ -164,7 +165,16 @@ public class SessionDefault extends SessionBase {
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
             } catch (TimeoutException e) {
-                throw new SocketdTimeoutException("Request reply timeout>" + timeout + ", topic=" + topic);
+                StringBuilder hint = new StringBuilder();
+                hint.append(", sessionId=").append(channel.getSession().getSessionId());
+                hint.append(", topic=").append(topic);
+                hint.append(", sid=").append(message.getSid());
+
+                if (channel.isValid()) {
+                    throw new SocketdTimeoutException("Request reply timeout>" + timeout + hint);
+                } else {
+                    throw new SocketdChannelException("This channel is closed" + hint);
+                }
             } catch (Throwable e) {
                 throw new SocketdException(e);
             }

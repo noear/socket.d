@@ -41,9 +41,9 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void removeAcceptor(String sid) {
-        acceptorMap.remove(sid);
+        Acceptor acceptor = acceptorMap.remove(sid);
 
-        if (log.isDebugEnabled()) {
+        if (acceptor != null && log.isDebugEnabled()) {
             log.debug("The acceptor is actively removed, sid={}", sid);
         }
     }

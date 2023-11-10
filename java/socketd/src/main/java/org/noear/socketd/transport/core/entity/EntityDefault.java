@@ -82,7 +82,7 @@ public class EntityDefault implements Entity {
             if (Utils.isNotEmpty(metaString)) {
                 for (String kvStr : metaString.split("&")) {
                     int idx = kvStr.indexOf('=');
-                    if (idx > 1) {
+                    if (idx > 0) {
                         metaMap.put(kvStr.substring(0, idx), kvStr.substring(idx + 1));
                     }
                 }

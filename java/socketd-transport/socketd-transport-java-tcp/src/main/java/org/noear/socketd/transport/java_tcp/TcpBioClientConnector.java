@@ -73,11 +73,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             ChannelInternal channel = new ChannelDefault<>(real, client.config(), client.assistant());
 
             serverExecutor.submit(() -> {
-                try {
-                    receive(channel, real, handshakeFuture);
-                } catch (Throwable e) {
-                    throw new IllegalStateException(e);
-                }
+                receive(channel, real, handshakeFuture);
             });
 
             channel.sendConnect(client.config().getUrl());
@@ -113,22 +109,11 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
                 Frame frame = client.assistant().read(socket);
                 if (frame != null) {
-                    serverExecutor.submit(() -> {
-                        try {
-                            client.processor().onReceive(channel, frame);
+                    client.processor().onReceive(channel, frame);
 
-                            if (frame.getFlag() == Flag.Connack) {
-                                handshakeFuture.complete(new ClientHandshakeResult(channel, null));
-                            }
-                        } catch (Exception e) {
-                            if (e instanceof SocketdConnectionException) {
-                                //说明握手失败了
-                                handshakeFuture.complete(new ClientHandshakeResult(channel, e));
-                            }
-
-                            client.processor().onError(channel, e);
-                        }
-                    });
+                    if (frame.getFlag() == Flag.Connack) {
+                        handshakeFuture.complete(new ClientHandshakeResult(channel, null));
+                    }
                 }
             } catch (Exception e) {
                 if (e instanceof SocketdConnectionException) {

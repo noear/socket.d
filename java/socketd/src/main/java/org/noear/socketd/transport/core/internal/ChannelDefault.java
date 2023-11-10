@@ -1,6 +1,8 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 2.0
  */
 public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
+    private static Logger log = LoggerFactory.getLogger(ProcessorDefault.class);
+
     private final S source;
 
     //答复接收器字典（管理）
@@ -38,6 +42,10 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     @Override
     public void removeAcceptor(String sid) {
         acceptorMap.remove(sid);
+
+        if (log.isDebugEnabled()) {
+            log.debug("The acceptor is actively removed, sid={}", sid);
+        }
     }
 
     /**
@@ -131,6 +139,10 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
 
             acceptor.accept(frame.getMessage());
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Acceptor not found, sid={}", frame.getMessage().getSid());
+            }
         }
     }
 

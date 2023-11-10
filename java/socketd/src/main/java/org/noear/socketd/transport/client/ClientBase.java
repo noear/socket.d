@@ -114,9 +114,12 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
 
         //连接
         ChannelInternal channel0 = connector.connect();
-        //构建新会话
-        Session session = new SessionDefault(new ClientChannel(channel0, connector));
-        //切换 session
+        //新建客户端通道
+        ClientChannel clientChannel = new ClientChannel(channel0, connector);
+        //同步握手信息
+        clientChannel.setHandshake(channel0.getHandshake());
+        Session session = new SessionDefault(clientChannel);
+        //原始通道切换为带壳的 session
         channel0.setSession(session);
 
         return session;

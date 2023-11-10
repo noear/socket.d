@@ -141,6 +141,10 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException {
+        if (timeout < 100) {
+            timeout = channel.getConfig().getReplyTimeout();
+        }
+
         //背压控制
         if (channel.getRequests().get() > channel.getConfig().getMaxRequests()) {
             throw new SocketdException("Sending too many requests: " + channel.getRequests().get());

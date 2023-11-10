@@ -6,6 +6,8 @@ import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.entity.StringEntity;
+import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.transport.java_websocket.WsNioClient;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -33,15 +35,6 @@ public class WebSocketClientImpl extends WebSocketClient {
     }
 
     @Override
-    public void onOpen(ServerHandshake serverHandshake) {
-        try {
-            channel.sendConnect(client.config().getUrl());
-        } catch (Throwable e) {
-            log.warn(e.getMessage(), e);
-        }
-    }
-
-    @Override
     public void connect() {
         this.handshakeFuture = new CompletableFuture<>();
         super.connect();
@@ -54,9 +47,27 @@ public class WebSocketClientImpl extends WebSocketClient {
     }
 
     @Override
+    public void onOpen(ServerHandshake serverHandshake) {
+        try {
+            channel.sendConnect(client.config().getUrl());
+        } catch (Throwable e) {
+            log.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public void onMessage(String test) {
-        if (log.isDebugEnabled()) {
-            log.debug("Unsupported onMessage(String test)");
+        try {
+            //转为标准消息
+            Frame frame = new Frame(Flag.Message, new MessageDefault()
+                    .topic(getResourceDescriptor())
+                    .entity(new StringEntity(test)));
+
+            if(frame != null) {
+                client.processor().onReceive(channel, frame);
+            }
+        } catch (Throwable e) {
+            log.warn(e.getMessage(), e);
         }
     }
 

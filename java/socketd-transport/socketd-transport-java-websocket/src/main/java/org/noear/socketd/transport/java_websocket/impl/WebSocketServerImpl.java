@@ -3,6 +3,9 @@ package org.noear.socketd.transport.java_websocket.impl;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.entity.StringEntity;
+import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.transport.java_websocket.WsNioServer;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
@@ -59,8 +62,18 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        if (log.isDebugEnabled()) {
-            log.debug("Unsupported onMessage(String test)");
+        try {
+            //转为标准消息
+            Channel channel = getChannel(conn);
+            Frame frame = new Frame(Flag.Message, new MessageDefault()
+                    .topic(conn.getResourceDescriptor())
+                    .entity(new StringEntity(message)));
+
+            if(frame != null) {
+                server.processor().onReceive(channel, frame);
+            }
+        } catch (Throwable e) {
+            log.warn(e.getMessage(), e);
         }
     }
 

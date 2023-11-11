@@ -12,7 +12,6 @@ import org.noear.socketd.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class Demo05_Im_Server {

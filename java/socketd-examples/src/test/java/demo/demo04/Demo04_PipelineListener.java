@@ -1,16 +1,11 @@
 package demo.demo04;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
 import org.noear.socketd.transport.core.listener.PipelineListener;
-import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.ServerConfig;
-
-import java.io.IOException;
 
 public class Demo04_PipelineListener {
     public static void main(String[] args) throws Throwable {

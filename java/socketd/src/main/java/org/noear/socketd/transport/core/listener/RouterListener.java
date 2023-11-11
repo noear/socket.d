@@ -3,8 +3,6 @@ package org.noear.socketd.transport.core.listener;
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.router.Router;
-import org.noear.socketd.transport.core.router.RouterHashMap;
 
 import java.io.IOException;
 

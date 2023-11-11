@@ -3,10 +3,10 @@ package org.noear.socketd.transport.core.listener;
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.router.Router;
+import org.noear.socketd.transport.core.router.RouterHashMap;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 路由监听器（根据握手地址路由，一般用于服务端）
@@ -15,13 +15,21 @@ import java.util.Map;
  * @since 2.0
  */
 public class RouterListener implements Listener {
-    protected final Map<String, Listener> routingTable = new HashMap<>();
+    protected final Router router;
+
+    public RouterListener() {
+        this.router = new RouterHashMap();
+    }
+
+    public RouterListener(Router router) {
+        this.router = router;
+    }
 
     /**
      * 路由
      */
     public RouterListener of(String path, Listener listener) {
-        routingTable.put(path, listener);
+        router.add(path, listener);
         return this;
     }
 
@@ -29,51 +37,51 @@ public class RouterListener implements Listener {
      * 路由
      */
     public BuilderListener of(String path) {
-        BuilderListener listener = new BuilderListener();
-        routingTable.put(path, listener);
-        return listener;
+        BuilderListener l1 = new BuilderListener();
+        router.add(path, l1);
+        return l1;
     }
 
     /**
-     * 匹配
+     * 数量
      */
-    protected Listener matching(Session session) {
-        return routingTable.get(session.getPath());
+    public int count() {
+        return router.count();
     }
 
     @Override
     public void onOpen(Session session) throws IOException {
-        Listener listener = matching(session);
+        Listener l1 = router.matching(session.getPath());
 
-        if (listener != null) {
-            listener.onOpen(session);
+        if (l1 != null) {
+            l1.onOpen(session);
         }
     }
 
     @Override
     public void onMessage(Session session, Message message) throws IOException {
-        Listener listener = matching(session);
+        Listener l1 = router.matching(session.getPath());
 
-        if (listener != null) {
-            listener.onMessage(session, message);
+        if (l1 != null) {
+            l1.onMessage(session, message);
         }
     }
 
     @Override
     public void onClose(Session session) {
-        Listener listener = matching(session);
+        Listener l1 = router.matching(session.getPath());
 
-        if (listener != null) {
-            listener.onClose(session);
+        if (l1 != null) {
+            l1.onClose(session);
         }
     }
 
     @Override
     public void onError(Session session, Throwable error) {
-        Listener listener = matching(session);
+        Listener l1 = router.matching(session.getPath());
 
-        if (listener != null) {
-            listener.onError(session, error);
+        if (l1 != null) {
+            l1.onError(session, error);
         }
     }
 }

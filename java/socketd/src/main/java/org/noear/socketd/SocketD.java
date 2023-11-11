@@ -45,9 +45,12 @@ public class SocketD {
         });
     }
 
-    public static String getConnSchema(String schema){
+    /**
+     * 获取连接架构
+     */
+    public static String getConnSchema(String schema) {
         //支持 sd: 开头的架构
-        if(schema.startsWith("sd:")){
+        if (schema.startsWith("sd:")) {
             schema = schema.substring(3);
         }
         return schema;
@@ -56,26 +59,26 @@ public class SocketD {
     /**
      * 获取客户端工厂
      */
-    public static ServerFactory getServerFactory(String schema) {
-        Asserts.assertNull(schema,"schema");
+    public static ClientFactory getClientFactory(String schema) {
+        Asserts.assertNull(schema, "schema");
 
-        return serverFactoryMap.get(getConnSchema(schema));
+        return clientFactoryMap.get(getConnSchema(schema));
     }
 
     /**
      * 获取服务端工厂
      */
-    public static ClientFactory getClientFactory(String schema) {
-        Asserts.assertNull(schema,"schema");
+    public static ServerFactory getServerFactory(String schema) {
+        Asserts.assertNull(schema, "schema");
 
-        return clientFactoryMap.get(getConnSchema(schema));
+        return serverFactoryMap.get(getConnSchema(schema));
     }
 
     /**
      * 创建服务端
      */
     public static Server createServer(ServerConfig serverConfig) {
-        Asserts.assertNull(serverConfig,"serverConfig");
+        Asserts.assertNull(serverConfig, "serverConfig");
 
         ServerFactory factory = serverFactoryMap.get(serverConfig.getSchema());
         if (factory == null) {
@@ -91,7 +94,7 @@ public class SocketD {
      * @param serverUrl 服务器地址
      */
     public static Client createClient(String serverUrl) {
-        Asserts.assertNull(serverUrl,"serverUrl");
+        Asserts.assertNull(serverUrl, "serverUrl");
 
         ClientConfig clientConfig = new ClientConfig(serverUrl);
 

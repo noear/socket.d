@@ -143,10 +143,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 //单收时，本就是 CompletableFuture
                 acceptor.accept(frame.getMessage());
             } else {
-                //异步处理，避免卡死
-                CompletableFuture.runAsync(() -> {
-                    acceptor.accept(frame.getMessage());
-                });
+                //异步处理，避免卡死?
+                acceptor.accept(frame.getMessage());
             }
         } else {
             if (log.isDebugEnabled()) {

@@ -3,7 +3,6 @@ package org.noear.socketd.transport.java_tcp;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
@@ -28,7 +27,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioClientConnector.class);
 
     private Socket real;
-    private ExecutorService serverExecutor;
+    private Thread clientThread;
 
     public TcpBioClientConnector(TcpBioClient client) {
         super(client);
@@ -37,12 +36,6 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     @Override
     public ChannelInternal connect() throws Exception {
         log.debug("Start connecting to: {}", client.config().getUrl());
-
-        //不要复用旧的对象
-        serverExecutor = client.config().getExecutor();
-        if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(client.config().getCoreThreads());
-        }
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
 
@@ -70,9 +63,10 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         try {
             ChannelInternal channel = new ChannelDefault<>(real, client.config(), client.assistant());
 
-            serverExecutor.submit(() -> {
+            clientThread = new Thread(() -> {
                 receive(channel, real, handshakeFuture);
             });
+            clientThread.start();
 
             channel.sendConnect(client.config().getUrl());
         } catch (Throwable e) {
@@ -137,7 +131,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
         try {
             real.close();
-            serverExecutor.shutdown();
+            clientThread.interrupt();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

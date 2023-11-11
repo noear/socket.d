@@ -9,6 +9,7 @@ import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author noear
@@ -31,7 +32,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     //ssl 上下文
     protected SSLContext sslContext;
     //执行器（如果有且能用，则优先用。如 netty 没法用）
-    protected ExecutorService executor;
+    protected ExecutorService ioExecutor;
+    protected ExecutorService dispatcherExecutor;
 
     //内核线程数
     protected int coreThreads;
@@ -61,7 +63,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.idGenerator = new GuidGenerator();
         this.fragmentHandler = new FragmentHandlerDefault();
 
-        this.coreThreads = Runtime.getRuntime().availableProcessors() * 2;
+        this.coreThreads = Math.max(Runtime.getRuntime().availableProcessors(), 2);
         this.maxThreads = coreThreads * 8;
 
         this.readBufferSize = 512;
@@ -170,15 +172,52 @@ public abstract class ConfigBase<T extends Config> implements Config {
     /**
      * 获取执行器（如果有且能用，则优先用）
      */
-    public ExecutorService getExecutor() {
-        return executor;
+    public ExecutorService getIoExecutor() {
+        if (ioExecutor == null) {
+            synchronized (this) {
+                if (ioExecutor == null) {
+                    if (clientMode()) {
+                        ioExecutor = Executors.newFixedThreadPool(coreThreads);
+                    } else {
+                        ioExecutor = Executors.newFixedThreadPool(coreThreads);
+                    }
+                }
+            }
+        }
+
+        return ioExecutor;
     }
 
     /**
-     * 配置执行器
+     * 配置Io执行器
      */
-    public T executor(ExecutorService executor) {
-        this.executor = executor;
+    public T ioExecutor(ExecutorService executor) {
+        this.ioExecutor = executor;
+        return (T) this;
+    }
+
+    @Override
+    public ExecutorService getDispatcherExecutor() {
+        if (dispatcherExecutor == null) {
+            synchronized (this) {
+                if (dispatcherExecutor == null) {
+                    if (clientMode()) {
+                        dispatcherExecutor = Executors.newFixedThreadPool(coreThreads);
+                    } else {
+                        dispatcherExecutor = Executors.newFixedThreadPool(maxThreads);
+                    }
+                }
+            }
+        }
+
+        return dispatcherExecutor;
+    }
+
+    /**
+     * 配置调试执行器
+     * */
+    public T dispatcherExecutor(ExecutorService dispatcherExecutor) {
+        this.dispatcherExecutor = dispatcherExecutor;
         return (T) this;
     }
 
@@ -227,7 +266,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
      */
     public T readBufferSize(int readBufferSize) {
         this.readBufferSize = readBufferSize;
-        return (T)this;
+        return (T) this;
     }
 
     /**
@@ -242,23 +281,23 @@ public abstract class ConfigBase<T extends Config> implements Config {
      */
     public T writeBufferSize(int writeBufferSize) {
         this.writeBufferSize = writeBufferSize;
-        return (T)this;
+        return (T) this;
     }
 
 
     /**
      * 获取连接空闲超时
-     * */
+     */
     public long getIdleTimeout() {
         return idleTimeout;
     }
 
     /**
      * 配置连接空闲超时
-     * */
+     */
     public T idleTimeout(int idleTimeout) {
         this.idleTimeout = idleTimeout;
-        return (T)this;
+        return (T) this;
     }
 
     /**

@@ -7,14 +7,14 @@ import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Tcp-Bio 服务端实现（支持 ssl, host）
@@ -26,7 +26,6 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioServer.class);
 
     private ServerSocket server;
-    private ExecutorService serverExecutor;
 
     public TcpBioServer(ServerConfig config) {
         super(config, new TcpBioChannelAssistant(config));
@@ -64,21 +63,15 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             isStarted = true;
         }
 
-        //不要复用旧的对象
-        serverExecutor = config().getExecutor();
-        if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
-        }
-
         server = createServer();
 
         //闲置超时
-        if(config().getIdleTimeout() > 0L) {
+        if (config().getIdleTimeout() > 0L) {
             //单位：毫秒
             server.setSoTimeout((int) config().getIdleTimeout());
         }
 
-        serverExecutor.submit(()->{
+        config().getIoExecutor().submit(() -> {
             accept();
         });
 
@@ -89,13 +82,14 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
     /**
      * 接受请求
-     * */
-    private void accept(){
+     */
+    private void accept() {
         while (true) {
+            Socket socketTmp = null;
             try {
-                Socket socket = server.accept();
+                Socket socket = socketTmp = server.accept();
 
-                serverExecutor.submit(() -> {
+                config().getIoExecutor().submit(() -> {
                     try {
                         Channel channel = new ChannelDefault<>(socket, config(), assistant());
                         receive(channel, socket);
@@ -104,6 +98,11 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                         close(socket);
                     }
                 });
+            } catch (RejectedExecutionException e) {
+                if (socketTmp != null) {
+                    log.warn("Server thread pool is full", e);
+                    RunUtils.runAnTry(socketTmp::close);
+                }
             } catch (Throwable e) {
                 if (server.isClosed()) {
                     //说明被手动关掉了
@@ -117,7 +116,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
     /**
      * 接收数据
-     * */
+     */
     private void receive(Channel channel, Socket socket) {
         while (true) {
             try {
@@ -130,8 +129,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                 if (frame != null) {
                     processor().onReceive(channel, frame);
                 }
-            }
-            catch (SocketException e) {
+            } catch (SocketException e) {
                 //如果是 java.net.ConnectException，说明 idleTimeout
                 processor().onError(channel, e);
                 processor().onClose(channel);
@@ -162,7 +160,6 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
         try {
             server.close();
-            serverExecutor.shutdown();
         } catch (Exception e) {
             log.debug("{}", e);
         }

@@ -24,7 +24,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
     private static final Logger log = LoggerFactory.getLogger(UdpBioClientConnector.class);
 
     private DatagramSocket real;
-    private ExecutorService serverExecutor;
+    private Thread clientThread;
 
     public UdpBioClientConnector(UdpBioClient client) {
         super(client);
@@ -35,10 +35,6 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         //不要复用旧的对象
-        serverExecutor = client.config().getExecutor();
-        if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(client.config().getCoreThreads());
-        }
 
         real = new DatagramSocket();
 
@@ -51,13 +47,14 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
         //定义接收线程
-        serverExecutor.submit(() -> {
+        clientThread = new Thread(() -> {
             try {
                 receive(channel, real, handshakeFuture);
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
         });
+        clientThread.start();
 
         //开始发连接包
         channel.sendConnect(client.config().getUrl());
@@ -120,7 +117,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
         try {
             real.close();
-            serverExecutor.shutdown();
+            clientThread.interrupt();
         } catch (Throwable e) {
             log.debug("{}", e);
         }

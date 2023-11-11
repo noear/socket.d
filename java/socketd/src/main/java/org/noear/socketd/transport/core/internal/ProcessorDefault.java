@@ -159,7 +159,7 @@ public class ProcessorDefault implements Processor {
                     log.warn("{}", e);
                 }
             }
-        });
+        }, channel.getConfig().getDispatcherExecutor());
     }
 
     /**

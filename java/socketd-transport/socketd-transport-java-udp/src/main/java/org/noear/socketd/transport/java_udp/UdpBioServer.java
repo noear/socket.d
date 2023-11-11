@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Udp-Bio 服务端实现（支持 ssl, host）
@@ -29,8 +28,6 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
     private Map<String, Channel> channelMap = new HashMap<>();
     private DatagramSocket server;
-    private Thread serverThread;
-    private ExecutorService serverExecutor;
 
     public UdpBioServer(ServerConfig config) {
         super(config, new UdpBioChannelAssistant(config));
@@ -49,19 +46,13 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
     public Server start() throws IOException {
         if (isStarted) {
             throw new IllegalStateException("Server started");
-        }else {
+        } else {
             isStarted = true;
-        }
-
-        //不要复用旧的对象
-        serverExecutor = config().getExecutor();
-        if (serverExecutor == null) {
-            serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         }
 
         server = createServer();
 
-        serverThread = new Thread(() -> {
+        config().getIoExecutor().submit(() -> {
             while (true) {
                 try {
                     DatagramFrame datagramFrame = assistant().read(server);
@@ -72,13 +63,15 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
                     Channel channel = getChannel(datagramFrame);
 
                     try {
-                        serverExecutor.submit(() -> {
+                        config().getIoExecutor().submit(() -> {
                             try {
                                 processor().onReceive(channel, datagramFrame.getFrame());
                             } catch (Throwable e) {
                                 log.debug("{}", e);
                             }
                         });
+                    } catch (RejectedExecutionException e) {
+                        log.warn("Server thread pool is full", e);
                     } catch (Throwable e) {
                         log.debug("{}", e);
                     }
@@ -92,7 +85,6 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
                 }
             }
         });
-        serverThread.start();
 
         log.info("Server started: {server=" + config().getLocalUrl() + "}");
 
@@ -123,7 +115,6 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
         try {
             server.close();
-            serverThread.interrupt();
         } catch (Exception e) {
             log.debug("{}", e);
         }

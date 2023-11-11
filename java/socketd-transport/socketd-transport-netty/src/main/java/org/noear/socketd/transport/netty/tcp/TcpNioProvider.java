@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.netty.tcp;
 
-import org.noear.socketd.transport.client.ClientFactory;
-import org.noear.socketd.transport.server.ServerFactory;
+import org.noear.socketd.transport.client.ClientProvider;
+import org.noear.socketd.transport.server.ServerProvider;
 import org.noear.socketd.transport.client.Client;
 import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.server.Server;
@@ -13,9 +13,9 @@ import org.noear.socketd.transport.server.ServerConfig;
  * @author noear
  * @since 2.0
  */
-public class TcpNioFactory implements ClientFactory, ServerFactory {
+public class TcpNioProvider implements ClientProvider, ServerProvider {
     @Override
-    public String[] schema() {
+    public String[] schemas() {
         return new String[]{"tcp", "tcps", "tcp-netty", "sd:tcp", "sd:tcps", "sd:tcp-netty"};
     }
 

@@ -6,11 +6,11 @@ package org.noear.socketd.transport.client;
  * @author noear
  * @since 2.0
  */
-public interface ClientFactory {
+public interface ClientProvider {
     /**
      * 协议架构
      */
-    String[] schema();
+    String[] schemas();
 
     /**
      * 创建客户端

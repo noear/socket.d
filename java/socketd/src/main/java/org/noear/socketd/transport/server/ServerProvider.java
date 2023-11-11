@@ -6,11 +6,11 @@ package org.noear.socketd.transport.server;
  * @author noear
  * @since 2.0
  */
-public interface ServerFactory {
+public interface ServerProvider {
     /**
      * 协议架构
      */
-    String[] schema();
+    String[] schemas();
 
     /**
      * 创建服务端

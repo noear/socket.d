@@ -11,13 +11,13 @@
 
 ## 一、适配情况
 
-| transport                                  | schema    | 支持端 | 安全  | 备注         |
-|--------------------------------------------|-----------|-----|-----|------------|
-| org.noear:socketd-transport-java-tcp       | tcp, tcps | c,s | ssl | bio（86kb）  |
-| org.noear:socketd-transport-java-udp       | udp       | c,s | /   | bio（86kb）  |
+| 适配                                        | 基础传输协议      | 支持端 | 安全  | 备注         |
+|-------------------------------------------|-----------|-----|-----|------------|
+| org.noear:socketd-transport-java-tcp      | tcp, tcps | c,s | ssl | bio（86kb）  |
+| org.noear:socketd-transport-java-udp      | udp       | c,s | /   | bio（86kb）  |
 | org.noear:socketd-transport-java-websocket | ws, wss   | c,s | ssl | nio（217kb） |
-| org.noear:socketd-transport-netty          | tcp, tcps | c,s | ssl | nio（2.5mb） |
-| org.noear:socketd-transport-smartsocket    | tcp, tcps | c,s | ssl | aio（254kb） |
+| org.noear:socketd-transport-netty         | tcp, tcps | c,s | ssl | nio（2.5mb） |
+| org.noear:socketd-transport-smartsocket   | tcp, tcps | c,s | ssl | aio（254kb） |
 
 项目中引入任何 “一个” 或 “多个” 传输适配包即可，例用：
 
@@ -25,7 +25,7 @@
 <dependency>
     <groupId>org.noear</groupId>
     <artifactId>socketd-transport-java-tcp</artifactId>
-    <version>2.0.12</version>
+    <version>2.0.13</version>
 </dependency>
 ```
 
@@ -54,7 +54,8 @@
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
+        SocketD.createServer("sd:ws")
+                .config(c -> c.port(8602))
                 .start();
 
         Thread.sleep(1000); //等会儿，确保服务端启动完成
@@ -75,7 +76,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
+        SocketD.createServer("sd:ws")
+                .config(c -> c.port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -104,7 +106,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
+        SocketD.createServer("sd:ws")
+                .config(c -> c.port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -138,8 +141,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:ws").port(8602))
-                .config(sc->sc.maxThreads(128).sslContext(null))
+        SocketD.createServer("sd:ws")
+                .config(c -> c.port(8602).maxThreads(128).sslContext(null))
                 .start();
 
         Thread.sleep(1000); //等会儿，确保服务端启动完成
@@ -158,7 +161,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:udp").port(8602))
+        SocketD.createServer("sd:udp")
+                .config(c -> c.port(8602))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -208,7 +212,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
+        SocketD.createServer("sd:tcp")
+                .config(c -> c.port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -249,7 +254,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
+        SocketD.createServer("sd:tcp")
+                .config(c -> c.port(8602))
                 .listen(new SimpleListener() {
                     @Override
                     public void onOpen(Session session) throws IOException {
@@ -294,7 +300,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
+        SocketD.createServer("sd:tcp")
+                .config(c -> c.port(8602))
                 .listen(new BuilderListener().onMessage((s,m)->{
                     System.out.println(m);
                     s.send("/demo", new StringEntity("Me too!"));
@@ -324,7 +331,8 @@ public class Demo {
 public class Demo {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:udp").port(8602))
+        SocketD.createServer("sd:udp")
+                .config(c -> c.port(8602))
                 .listen(new PipelineListener().next(new BuilderListener().onMessage((s, m) -> {
                     //这里可以做拦截
                     System.out.println("拦截打印::" + m);
@@ -352,7 +360,8 @@ public class Demo {
 public class Demo04_Router {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:tcp").port(8602))
+        SocketD.createServer("sd:tcp")
+                .config(c -> c.port(8602))
                 .listen(new RouterListener()
                         .of("/", new BuilderListener().onMessage((s, m) -> {
                             //用户频道

@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.java_udp;
 
-import org.noear.socketd.transport.client.ClientFactory;
-import org.noear.socketd.transport.server.ServerFactory;
+import org.noear.socketd.transport.client.ClientProvider;
+import org.noear.socketd.transport.server.ServerProvider;
 import org.noear.socketd.transport.client.Client;
 import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.server.Server;
@@ -13,10 +13,10 @@ import org.noear.socketd.transport.server.ServerConfig;
  * @author Urara
  * @since 2.0
  */
-public class UdpBioFactory implements ClientFactory, ServerFactory {
+public class UdpBioProvider implements ClientProvider, ServerProvider {
 
     @Override
-    public String[] schema() {
+    public String[] schemas() {
         return new String[]{"udp", "udp-java", "sd:udp", "sd:udp-java"};
     }
 

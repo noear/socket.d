@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.utils.IoConsumer;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -133,7 +135,7 @@ public interface Session extends Closeable {
      * @param content  内容
      * @param consumer 回调消费者
      */
-    void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException;
+    void sendAndSubscribe(String topic, Entity content, IoConsumer<Entity> consumer) throws IOException;
 
     /**
      * 答复

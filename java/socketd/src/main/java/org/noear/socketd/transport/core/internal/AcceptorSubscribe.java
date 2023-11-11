@@ -4,8 +4,9 @@ package org.noear.socketd.transport.core.internal;
 import org.noear.socketd.transport.core.Acceptor;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.utils.IoConsumer;
 
-import java.util.function.Consumer;
+import java.io.IOException;
 
 /**
  * 订阅答复接收器
@@ -14,8 +15,8 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public class AcceptorSubscribe implements Acceptor {
-    private final Consumer<Entity> future;
-    public AcceptorSubscribe(Consumer<Entity> future){
+    private final IoConsumer<Entity> future;
+    public AcceptorSubscribe(IoConsumer<Entity> future){
         this.future = future;
     }
 
@@ -47,7 +48,7 @@ public class AcceptorSubscribe implements Acceptor {
      * 接收答复
      * */
     @Override
-    public void accept(Message message) {
+    public void accept(Message message) throws IOException {
         future.accept(message);
     }
 }

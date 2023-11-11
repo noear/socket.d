@@ -4,6 +4,7 @@ import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.utils.IoConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,7 +193,7 @@ public class SessionDefault extends SessionBase {
      * @param consumer 回调消费者
      */
     @Override
-    public void sendAndSubscribe(String topic, Entity content, Consumer<Entity> consumer) throws IOException {
+    public void sendAndSubscribe(String topic, Entity content, IoConsumer<Entity> consumer) throws IOException {
         Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
         channel.send(new Frame(Flag.Subscribe, message), new AcceptorSubscribe(consumer));
     }

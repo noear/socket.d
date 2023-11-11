@@ -10,7 +10,8 @@ import org.noear.socketd.transport.server.ServerConfig;
 public class Demo04_PipelineListener {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
-        SocketD.createServer(new ServerConfig("sd:udp").port(8602))
+        SocketD.createServer("sd:udp")
+                .config(c -> c.port(8602))
                 .listen(new PipelineListener().next(new BuilderListener().onMessage((s, m) -> {
                     //这里可以做拦截
                     System.out.println("拦截打印::" + m);

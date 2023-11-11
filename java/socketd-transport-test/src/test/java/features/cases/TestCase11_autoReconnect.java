@@ -7,7 +7,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TestCase11_autoReconnect extends BaseTestCase {
     private static Logger log = LoggerFactory.getLogger(TestCase11_autoReconnect.class);
+
     public TestCase11_autoReconnect(String schema, int port) {
         super(schema, port);
     }
@@ -37,7 +37,8 @@ public class TestCase11_autoReconnect extends BaseTestCase {
 
         super.start();
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -108,11 +109,11 @@ public class TestCase11_autoReconnect extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

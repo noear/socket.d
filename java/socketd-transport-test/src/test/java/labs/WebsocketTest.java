@@ -23,7 +23,7 @@ public class WebsocketTest {
     }
 
     private static void server() throws Exception {
-        SocketD.createServer(new ServerConfig("sd:ws"))
+        SocketD.createServer("sd:ws")
                 .listen(new BuilderListener().onMessage((s, m) -> {
                     System.out.println(m);
                     s.send(m.getTopic(), new StringEntity("test"));

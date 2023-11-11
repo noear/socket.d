@@ -16,7 +16,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 public class TcpNioFactory implements ClientFactory, ServerFactory {
     @Override
     public String[] schema() {
-        return new String[]{"tcp", "tcps", "tcp-netty"};
+        return new String[]{"tcp", "tcps", "tcp-netty", "sd:tcp", "sd:tcps", "sd:tcp-netty"};
     }
 
     @Override

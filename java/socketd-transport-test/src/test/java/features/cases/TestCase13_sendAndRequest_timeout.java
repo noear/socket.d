@@ -8,7 +8,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TestCase13_sendAndRequest_timeout extends BaseTestCase {
     private static Logger log = LoggerFactory.getLogger(TestCase13_sendAndRequest_timeout.class);
+
     public TestCase13_sendAndRequest_timeout(String schema, int port) {
         super(schema, port);
     }
@@ -38,12 +38,13 @@ public class TestCase13_sendAndRequest_timeout extends BaseTestCase {
 
         super.start();
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
                         System.out.println("::" + message);
-                        if(message.isRequest()){
+                        if (message.isRequest()) {
                             messageCounter.incrementAndGet();
                         }
                     }
@@ -63,7 +64,7 @@ public class TestCase13_sendAndRequest_timeout extends BaseTestCase {
         try {
             clientSession.sendAndRequest("/user/get", new StringEntity("hi"), 100);
             assert false;
-        }catch (SocketdTimeoutException e){
+        } catch (SocketdTimeoutException e) {
             assert true;
         }
 
@@ -75,11 +76,11 @@ public class TestCase13_sendAndRequest_timeout extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

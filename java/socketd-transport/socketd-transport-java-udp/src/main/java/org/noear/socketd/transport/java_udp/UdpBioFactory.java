@@ -17,7 +17,7 @@ public class UdpBioFactory implements ClientFactory, ServerFactory {
 
     @Override
     public String[] schema() {
-        return new String[]{"udp", "udp-java"};
+        return new String[]{"udp", "udp-java", "sd:udp", "sd:udp-java"};
     }
 
     @Override

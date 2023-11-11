@@ -38,8 +38,8 @@ public class TestCase01 extends BaseTestCase {
         super.start();
 
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
-                .config(config -> config.idGenerator(new TimeidGenerator()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()).idGenerator(new TimeidGenerator()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {

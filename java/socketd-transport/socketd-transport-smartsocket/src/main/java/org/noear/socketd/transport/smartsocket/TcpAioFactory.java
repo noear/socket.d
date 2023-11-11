@@ -16,7 +16,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 public class TcpAioFactory implements ClientFactory, ServerFactory {
     @Override
     public String[] schema() {
-        return new String[]{"tcp", "tcps", "tcp-smartsocket"};
+        return new String[]{"tcp", "tcps", "tcp-smartsocket", "sd:tcp", "sd:tcps", "sd:tcp-smartsocket"};
     }
 
     @Override

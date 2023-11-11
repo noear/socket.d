@@ -16,7 +16,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 public class WsNioFactory implements ClientFactory, ServerFactory {
     @Override
     public String[] schema() {
-        return new String[]{"ws", "wss", "ws-java"};
+        return new String[]{"ws", "wss", "ws-java", "sd:ws", "sd:wss", "sd:ws-java"};
     }
 
     @Override

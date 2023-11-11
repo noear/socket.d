@@ -17,7 +17,7 @@ public class TcpBioFactory implements ClientFactory, ServerFactory {
 
     @Override
     public String[] schema() {
-        return new String[]{"tcp", "tcps", "tcp-java"};
+        return new String[]{"tcp", "tcps", "tcp-java", "sd:tcp", "sd:tcps", "sd:tcp-java"};
     }
 
     @Override

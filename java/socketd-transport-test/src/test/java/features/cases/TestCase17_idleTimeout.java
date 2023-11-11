@@ -7,7 +7,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TestCase17_idleTimeout extends BaseTestCase {
     private static Logger log = LoggerFactory.getLogger(TestCase17_idleTimeout.class);
+
     public TestCase17_idleTimeout(String schema, int port) {
         super(schema, port);
     }
@@ -37,7 +37,8 @@ public class TestCase17_idleTimeout extends BaseTestCase {
 
         super.start();
         //server //把 idleTimeout 设成比 pinPong 短
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()).idleTimeout(1*1000))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()).idleTimeout(1 * 1000))
                 .listen(new SimpleListener() {
                     @Override
                     public void onOpen(Session session) throws IOException {
@@ -59,21 +60,21 @@ public class TestCase17_idleTimeout extends BaseTestCase {
         //::打开客户端会话
         //会成功
         clientSession = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=noear&p=2")
-                .config(c-> c.autoReconnect(false))
-                .listen(new SimpleListener(){
+                .config(c -> c.autoReconnect(false))
+                .listen(new SimpleListener() {
                     @Override
                     public void onError(Session session, Throwable error) {
                         error.printStackTrace();
                     }
                 }).open();
 
-        Thread.sleep(5 * 1000 );
+        Thread.sleep(5 * 1000);
 
         clientSession.send("/demo", new StringEntity("hi"));
-        Thread.sleep(500 );
+        Thread.sleep(500);
         clientSession.send("/demo", new StringEntity("hi"));
 
-        Thread.sleep(1000 );
+        Thread.sleep(1000);
         System.out.println("counter: " + openCounter.get());
         Assertions.assertEquals(openCounter.get(), 2, getSchema() + ":server 触发的 onOpen 数量对不上");
 
@@ -81,11 +82,11 @@ public class TestCase17_idleTimeout extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

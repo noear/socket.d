@@ -46,46 +46,29 @@ public class SocketD {
     }
 
     /**
-     * 获取连接架构
+     * 创建服务端
      */
-    public static String getConnSchema(String schema) {
-        //支持 sd: 开头的架构
-        if (schema.startsWith("sd:")) {
-            schema = schema.substring(3);
+    public static Server createServer(String schema) {
+        Server server = createServerOrNull(schema);
+        if (server == null) {
+            throw new IllegalStateException("No socketd server providers were found.");
+        } else {
+            return server;
         }
-        return schema;
-    }
-
-    /**
-     * 获取客户端工厂
-     */
-    public static ClientFactory getClientFactory(String schema) {
-        Asserts.assertNull(schema, "schema");
-
-        return clientFactoryMap.get(getConnSchema(schema));
-    }
-
-    /**
-     * 获取服务端工厂
-     */
-    public static ServerFactory getServerFactory(String schema) {
-        Asserts.assertNull(schema, "schema");
-
-        return serverFactoryMap.get(getConnSchema(schema));
     }
 
     /**
      * 创建服务端
      */
-    public static Server createServer(ServerConfig serverConfig) {
-        Asserts.assertNull(serverConfig, "serverConfig");
+    public static Server createServerOrNull(String schema) {
+        Asserts.assertNull(schema, "schema");
 
-        ServerFactory factory = serverFactoryMap.get(serverConfig.getSchema());
+        ServerFactory factory = serverFactoryMap.get(schema);
         if (factory == null) {
-            throw new IllegalStateException("No socketd server providers were found.");
+            return null;
+        } else {
+            return factory.createServer(new ServerConfig(schema));
         }
-
-        return factory.createServer(serverConfig);
     }
 
     /**
@@ -94,15 +77,35 @@ public class SocketD {
      * @param serverUrl 服务器地址
      */
     public static Client createClient(String serverUrl) {
+        Client client = createClientOrNull(serverUrl);
+        if (client == null) {
+            throw new IllegalStateException("No socketd client providers were found.");
+        } else {
+            return client;
+        }
+    }
+
+    /**
+     * 创建客户端（支持 url 自动识别）
+     *
+     * @param serverUrl 服务器地址
+     */
+    public static Client createClientOrNull(String serverUrl) {
         Asserts.assertNull(serverUrl, "serverUrl");
 
-        ClientConfig clientConfig = new ClientConfig(serverUrl);
-
-        ClientFactory factory = clientFactoryMap.get(clientConfig.getSchema());
-        if (factory == null) {
-            throw new IllegalStateException("No socketd client providers were found.");
+        int idx = serverUrl.indexOf("://");
+        if (idx < 2) {
+            throw new IllegalArgumentException("The serverUrl invalid: " + serverUrl);
         }
 
-        return factory.createClient(clientConfig);
+        String schema = serverUrl.substring(0, idx);
+
+        ClientFactory factory = clientFactoryMap.get(schema);
+        if (factory == null) {
+            return null;
+        } else {
+            ClientConfig clientConfig = new ClientConfig(serverUrl);
+            return factory.createClient(clientConfig);
+        }
     }
 }

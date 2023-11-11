@@ -40,7 +40,8 @@ public class TestCase01_client_send extends BaseTestCase {
 
         super.start();
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -104,11 +105,11 @@ public class TestCase01_client_send extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

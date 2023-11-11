@@ -6,7 +6,6 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.utils.IoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TestCase14_file extends BaseTestCase {
     private static Logger log = LoggerFactory.getLogger(TestCase14_file.class);
+
     public TestCase14_file(String schema, int port) {
         super(schema, port);
     }
@@ -40,7 +40,8 @@ public class TestCase14_file extends BaseTestCase {
 
         super.start();
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -60,7 +61,7 @@ public class TestCase14_file extends BaseTestCase {
                                 try (OutputStream outputStream = new FileOutputStream(fileNew)) {
                                     IoUtils.transferTo(message.getData(), outputStream);
                                 }
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -90,11 +91,11 @@ public class TestCase14_file extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

@@ -5,7 +5,6 @@ import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.Utils;
 
@@ -16,7 +15,8 @@ public class Demo05_Mq_Server {
     public static void main(String[] args) throws Exception {
         Map<String, Session> userList = new HashMap<>();
 
-        SocketD.createServer(new ServerConfig("sd:udp").port(8602))
+        SocketD.createServer("sd:udp")
+                .config(c -> c.port(8602))
                 .listen(new BuilderListener()
                         .on("mq.sub", (s, m) -> {
                             //::订阅指令

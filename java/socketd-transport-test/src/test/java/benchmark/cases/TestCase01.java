@@ -7,7 +7,6 @@ import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.identifier.TimeidGenerator;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ public class TestCase01 extends BaseTestCase {
     public TestCase01(String schema, int timeout, int count, int port) {
         super(schema, port);
 
-        this.timeout =timeout;
+        this.timeout = timeout;
         this.count = count;
         this.sendLatch = new CountDownLatch(count + 10);
         this.sendAndRequestLatch = new CountDownLatch(count + 10);
@@ -40,9 +39,9 @@ public class TestCase01 extends BaseTestCase {
     private final int count;
     private final int timeout;
 
-    private  CountDownLatch sendLatch;
-    private  CountDownLatch sendAndRequestLatch;
-    private  CountDownLatch sendAndSubscribeLatch;
+    private CountDownLatch sendLatch;
+    private CountDownLatch sendAndRequestLatch;
+    private CountDownLatch sendAndSubscribeLatch;
 
     @Override
     public void start() throws Exception {
@@ -51,8 +50,8 @@ public class TestCase01 extends BaseTestCase {
         super.start();
 
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
-                .config(config -> config.idGenerator(new TimeidGenerator()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()).idGenerator(new TimeidGenerator()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {

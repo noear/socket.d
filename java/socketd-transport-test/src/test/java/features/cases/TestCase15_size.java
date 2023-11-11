@@ -8,7 +8,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TestCase15_size extends BaseTestCase {
     private static Logger log = LoggerFactory.getLogger(TestCase15_size.class);
+
     public TestCase15_size(String schema, int port) {
         super(schema, port);
     }
@@ -38,7 +38,8 @@ public class TestCase15_size extends BaseTestCase {
 
         super.start();
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -58,13 +59,13 @@ public class TestCase15_size extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl).open();
 
         StringBuilder meta = new StringBuilder(4000);
-        while (meta.length() < 50000){
+        while (meta.length() < 50000) {
             meta.append("asdfqjwoefjasdfkqowefijqowefjqowefjoqwiefjqoweifjqowef");
         }
 
         try {
             clientSession.send("/user/size", new StringEntity("hi").meta("test", meta.toString()));
-        }catch (SocketdException e){
+        } catch (SocketdException e) {
             e.printStackTrace();
         }
         clientSession.send("/user/size", new StringEntity("hi").meta("test", "ok"));
@@ -77,11 +78,11 @@ public class TestCase15_size extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

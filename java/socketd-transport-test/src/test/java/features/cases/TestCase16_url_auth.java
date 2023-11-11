@@ -8,7 +8,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TestCase16_url_auth extends BaseTestCase {
     private static Logger log = LoggerFactory.getLogger(TestCase16_url_auth.class);
+
     public TestCase16_url_auth(String schema, int port) {
         super(schema, port);
     }
@@ -38,7 +38,8 @@ public class TestCase16_url_auth extends BaseTestCase {
 
         super.start();
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onOpen(Session session) throws IOException {
@@ -88,11 +89,11 @@ public class TestCase16_url_auth extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

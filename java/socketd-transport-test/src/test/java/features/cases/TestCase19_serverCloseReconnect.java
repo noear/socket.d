@@ -8,7 +8,6 @@ import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +39,15 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
 
         super.start();
         //server
-        server = SocketD.createServer(new ServerConfig(getSchema()).port(getPort()))
+        server = SocketD.createServer(getSchema())
+                .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
                         System.out.println("::" + message);
 
                         //避免与客户端死循环
-                        if(messageCounter.incrementAndGet() == 1) {
+                        if (messageCounter.incrementAndGet() == 1) {
                             session.close();
                         }
                     }
@@ -63,7 +63,7 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl)
                 .listen(new BuilderListener().onClose(s -> {
                     //避免与服务端死循环
-                    if(messageCounter.get() == 1) {
+                    if (messageCounter.get() == 1) {
                         RunUtils.runAnTry(() -> {
                             System.out.println("被关闭了");
                             //要用外部这个会话；事件里的 s 没有重连功能
@@ -92,11 +92,11 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
 
     @Override
     public void stop() throws Exception {
-        if(clientSession != null){
+        if (clientSession != null) {
             clientSession.close();
         }
 
-        if(server != null){
+        if (server != null) {
             server.stop();
         }
 

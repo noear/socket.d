@@ -1,4 +1,23 @@
 
+### 2.0.13
+
+* 添加 Entity::getDataAsString 缓存处理，读一次可以复用
+* 添加 Server::title 接口。用于第三方集成时打印
+* 添加 Session 获取路径和参数的接口。缩短获取路径
+* 添加 通道与会话关键点的 debug 日志
+* 添加 双向 sendAndRequest 二重循环互调支持
+* 添加 config::channelExecutor，取消原有执行器概念
+* 优化 bio 在重启时，弃用之前已停的线程池。避免重启时还不能用
+* 优化 queryString, metaString 解码实现
+* 优化 SocketdTimeoutException 时，添加时间信息
+* 优化 Client::open，打开时同步原始通道与客户通道的握手信息
+* 优化 签复接收改为异步模式，避免卡住Io线程
+* 优化 onMessage 事件转发改为异步模式，避免卡住Io线程
+* 优化 sendAndRequest 失败时的异常提示
+* 优化 websocket 附件获取通道的方式，避免出现通道为 null 的可能
+* 调整 原接口工厂概念改为接口提供者概念
+* 调整 SocketD.createServer 参数改为 string。调整配置的方式，改成为 client 相同
+
 ### 2.0.12
 
 * 实现 客户端监听器内的 session 手动重连能力（用户可控制关闭时，是否马上重连）

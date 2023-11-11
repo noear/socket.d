@@ -62,18 +62,9 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        try {
-            //转为标准消息
-            Channel channel = getChannel(conn);
-            Frame frame = new Frame(Flag.Message, new MessageDefault()
-                    .topic(conn.getResourceDescriptor())
-                    .entity(new StringEntity(message)));
-
-            if(frame != null) {
-                server.processor().onReceive(channel, frame);
-            }
-        } catch (Throwable e) {
-            log.warn(e.getMessage(), e);
+        //普通 websocket 握手都通不过
+        if (log.isWarnEnabled()) {
+            log.warn("Unsupported onMessage(String test)");
         }
     }
 

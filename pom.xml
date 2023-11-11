@@ -23,5 +23,4 @@
 
         <module>java/socketd-transport-test</module>
     </modules>
-
 </project>

@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -28,6 +30,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
     private Map<String, Channel> channelMap = new HashMap<>();
     private DatagramSocket server;
+    private ExecutorService serverExecutor;
 
     public UdpBioServer(ServerConfig config) {
         super(config, new UdpBioChannelAssistant(config));
@@ -50,9 +53,10 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
             isStarted = true;
         }
 
+        serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         server = createServer();
 
-        config().getIoExecutor().submit(() -> {
+        serverExecutor.submit(() -> {
             while (true) {
                 try {
                     DatagramFrame datagramFrame = assistant().read(server);
@@ -63,7 +67,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
                     Channel channel = getChannel(datagramFrame);
 
                     try {
-                        config().getIoExecutor().submit(() -> {
+                        serverExecutor.submit(() -> {
                             try {
                                 processor().onReceive(channel, datagramFrame.getFrame());
                             } catch (Throwable e) {
@@ -115,6 +119,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
         try {
             server.close();
+            serverExecutor.shutdown();
         } catch (Exception e) {
             log.debug("{}", e);
         }

@@ -3,7 +3,6 @@ package org.noear.socketd.transport.smartsocket;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.impl.ClientMessageProcessor;
@@ -54,7 +53,6 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
 
         real = new AioQuickClient(client.config().getHost(), client.config().getPort(), client.assistant(), processor);
-
 
         if (client.config().getReadBufferSize() > 0) {
             real.setReadBufferSize(client.config().getReadBufferSize());

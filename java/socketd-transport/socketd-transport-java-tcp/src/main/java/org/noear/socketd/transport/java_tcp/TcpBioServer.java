@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -26,6 +28,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioServer.class);
 
     private ServerSocket server;
+    private ExecutorService serverExecutor;
 
     public TcpBioServer(ServerConfig config) {
         super(config, new TcpBioChannelAssistant(config));
@@ -63,6 +66,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             isStarted = true;
         }
 
+        serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         server = createServer();
 
         //闲置超时
@@ -71,7 +75,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             server.setSoTimeout((int) config().getIdleTimeout());
         }
 
-        config().getIoExecutor().submit(() -> {
+        serverExecutor.submit(() -> {
             accept();
         });
 
@@ -89,7 +93,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             try {
                 Socket socket = socketTmp = server.accept();
 
-                config().getIoExecutor().submit(() -> {
+                serverExecutor.submit(() -> {
                     try {
                         Channel channel = new ChannelDefault<>(socket, config(), assistant());
                         receive(channel, socket);
@@ -160,6 +164,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
         try {
             server.close();
+            serverExecutor.shutdown();
         } catch (Exception e) {
             log.debug("{}", e);
         }

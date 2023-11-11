@@ -31,9 +31,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     //ssl 上下文
     protected SSLContext sslContext;
-    //执行器（如果有且能用，则优先用。如 netty 没法用）
-    protected ExecutorService ioExecutor;
-    protected ExecutorService dispatcherExecutor;
+    //通道执行器
+    protected ExecutorService channelExecutor;
 
     //内核线程数
     protected int coreThreads;
@@ -169,55 +168,28 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
-    /**
-     * 获取执行器（如果有且能用，则优先用）
-     */
-    public ExecutorService getIoExecutor() {
-        if (ioExecutor == null) {
-            synchronized (this) {
-                if (ioExecutor == null) {
-                    if (clientMode()) {
-                        ioExecutor = Executors.newFixedThreadPool(coreThreads);
-                    } else {
-                        ioExecutor = Executors.newFixedThreadPool(coreThreads);
-                    }
-                }
-            }
-        }
-
-        return ioExecutor;
-    }
-
-    /**
-     * 配置Io执行器
-     */
-    public T ioExecutor(ExecutorService executor) {
-        this.ioExecutor = executor;
-        return (T) this;
-    }
-
     @Override
-    public ExecutorService getDispatcherExecutor() {
-        if (dispatcherExecutor == null) {
+    public ExecutorService getChannelExecutor() {
+        if (channelExecutor == null) {
             synchronized (this) {
-                if (dispatcherExecutor == null) {
+                if (channelExecutor == null) {
                     if (clientMode()) {
-                        dispatcherExecutor = Executors.newFixedThreadPool(coreThreads);
+                        channelExecutor = Executors.newFixedThreadPool(coreThreads);
                     } else {
-                        dispatcherExecutor = Executors.newFixedThreadPool(maxThreads);
+                        channelExecutor = Executors.newFixedThreadPool(maxThreads);
                     }
                 }
             }
         }
 
-        return dispatcherExecutor;
+        return channelExecutor;
     }
 
     /**
      * 配置调试执行器
      * */
-    public T dispatcherExecutor(ExecutorService dispatcherExecutor) {
-        this.dispatcherExecutor = dispatcherExecutor;
+    public T channelExecutor(ExecutorService channelExecutor) {
+        this.channelExecutor = channelExecutor;
         return (T) this;
     }
 

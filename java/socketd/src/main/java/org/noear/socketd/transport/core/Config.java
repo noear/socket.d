@@ -68,14 +68,9 @@ public interface Config {
     SSLContext getSslContext();
 
     /**
-     * Io执行器
+     * 通道执行器
      * */
-    ExecutorService getIoExecutor();
-
-    /**
-     * 调度执行器
-     * */
-    ExecutorService getDispatcherExecutor();
+    ExecutorService getChannelExecutor();
 
     /**
      * 核心线程数（第二优先）

@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.core;
 
 
-import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * 答复接收器
@@ -28,5 +28,5 @@ public interface Acceptor {
     /**
      * 接收答复
      * */
-    void accept(Message message) throws IOException;
+    void accept(Message message, Consumer<Throwable> onError);
 }

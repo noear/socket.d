@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
  * 通道默认实现（每个连接都会建立一个或多个通道）
@@ -130,7 +130,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * @param frame 帧
      */
     @Override
-    public void retrieve(Frame frame) throws IOException {
+    public void retrieve(Frame frame, Consumer<Throwable> onError) {
         Acceptor acceptor = acceptorMap.get(frame.getMessage().getSid());
 
         if (acceptor != null) {
@@ -140,11 +140,13 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
 
             if (acceptor.isSingle()) {
-                //单收时，本就是 CompletableFuture
-                acceptor.accept(frame.getMessage());
+                //单收时，内部已经是异步机制
+                acceptor.accept(frame.getMessage(), onError);
             } else {
-                //异步处理，避免卡死?
-                acceptor.accept(frame.getMessage());
+                //改为异步处理，避免卡死Io线程
+                getConfig().getChannelExecutor().submit(()->{
+                    acceptor.accept(frame.getMessage(), onError);
+                });
             }
         } else {
             if (log.isDebugEnabled()) {

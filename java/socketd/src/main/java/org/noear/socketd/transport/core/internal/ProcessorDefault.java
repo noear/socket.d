@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 处理器默认实现
@@ -126,7 +125,9 @@ public class ProcessorDefault implements Processor {
 
         //执行接收处理
         if (isReply) {
-            channel.retrieve(frame);
+            channel.retrieve(frame, error -> {
+                onError(channel, error);
+            });
         } else {
             onMessage(channel, frame.getMessage());
         }
@@ -151,15 +152,15 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onMessage(Channel channel, Message message) throws IOException {
-        CompletableFuture.runAsync(() -> {
+        channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onMessage(channel.getSession(), message);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if (log.isWarnEnabled()) {
                     log.warn("{}", e);
                 }
             }
-        }, channel.getConfig().getChannelExecutor());
+        });
     }
 
     /**

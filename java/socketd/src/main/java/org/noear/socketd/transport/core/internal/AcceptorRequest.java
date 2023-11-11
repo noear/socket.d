@@ -5,6 +5,7 @@ import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * 请求答复接收器
@@ -49,7 +50,7 @@ public class AcceptorRequest implements Acceptor {
      * 接收答复
      * */
     @Override
-    public void accept(Message message) {
+    public void accept(Message message, Consumer<Throwable> onError) {
         future.complete(message);
     }
 }

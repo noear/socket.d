@@ -6,7 +6,7 @@ import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.utils.IoConsumer;
 
-import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * 订阅答复接收器
@@ -16,13 +16,14 @@ import java.io.IOException;
  */
 public class AcceptorSubscribe implements Acceptor {
     private final IoConsumer<Entity> future;
-    public AcceptorSubscribe(IoConsumer<Entity> future){
+
+    public AcceptorSubscribe(IoConsumer<Entity> future) {
         this.future = future;
     }
 
     /**
      * 是否单发接收
-     * */
+     */
     @Override
     public boolean isSingle() {
         return false;
@@ -30,7 +31,7 @@ public class AcceptorSubscribe implements Acceptor {
 
     /**
      * 是否结束接收
-     * */
+     */
     @Override
     public boolean isDone() {
         return false;
@@ -38,7 +39,7 @@ public class AcceptorSubscribe implements Acceptor {
 
     /**
      * 超时设定（单位：毫秒）
-     * */
+     */
     @Override
     public long timeout() {
         return 0;
@@ -46,9 +47,13 @@ public class AcceptorSubscribe implements Acceptor {
 
     /**
      * 接收答复
-     * */
+     */
     @Override
-    public void accept(Message message) throws IOException {
-        future.accept(message);
+    public void accept(Message message, Consumer<Throwable> onError) {
+        try {
+            future.accept(message);
+        } catch (Throwable e) {
+            onError.accept(e);
+        }
     }
 }

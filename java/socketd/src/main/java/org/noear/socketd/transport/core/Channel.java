@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * 通道
@@ -125,7 +126,7 @@ public interface Channel extends Closeable {
      *
      * @param frame 帧
      */
-    void retrieve(Frame frame) throws IOException;
+    void retrieve(Frame frame, Consumer<Throwable> onError);
 
     /**
      * 手动重连（一般是自动）

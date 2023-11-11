@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ScheduledFuture;
+import java.util.function.Consumer;
 
 /**
  * 客户端通道
@@ -45,7 +46,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     /**
      * 初始化心跳（关闭后，手动重链时也会用到）
-     * */
+     */
     private void initHeartbeat() {
         if (connector.autoReconnect()) {
             if (heartbeatScheduledFuture == null || heartbeatScheduledFuture.isCancelled()) {
@@ -153,7 +154,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     /**
      * 发送
      *
-     * @param frame 帧
+     * @param frame    帧
      * @param acceptor 答复接收器（没有则为 null）
      */
     @Override
@@ -183,8 +184,8 @@ public class ClientChannel extends ChannelBase implements Channel {
      * @param frame 帧
      */
     @Override
-    public void retrieve(Frame frame) throws IOException {
-        real.retrieve(frame);
+    public void retrieve(Frame frame, Consumer<Throwable> onError) {
+        real.retrieve(frame, onError);
     }
 
     /**
@@ -194,7 +195,6 @@ public class ClientChannel extends ChannelBase implements Channel {
     public Session getSession() {
         return real.getSession();
     }
-
 
 
     @Override

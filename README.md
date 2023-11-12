@@ -158,7 +158,7 @@ public class Demo {
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
-                        if(message.isRequest()){
+                        if(message.isRequest() || message.isSubscribe()){
                             session.replyEnd(message, new StringEntity("And you too."));
                         }
                     }
@@ -176,10 +176,8 @@ public class Demo {
         
         //发送
         session.send("/demo", message);
-        
         //发送并请求（且，等待答复）
-        Entity reply = session.sendAndRequest("/demo", message);
-        
+        Entity response = session.sendAndRequest("/demo", message);
         //发送并订阅（且，接收答复流）
         session.sendAndSubscribe("/demo", message, stream->{
             

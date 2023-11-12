@@ -4,12 +4,12 @@ import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
+import org.noear.socketd.utils.NamedThreadFactory;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * @author noear
@@ -173,11 +173,12 @@ public abstract class ConfigBase<T extends Config> implements Config {
         if (channelExecutor == null) {
             synchronized (this) {
                 if (channelExecutor == null) {
-                    if (clientMode()) {
-                        channelExecutor = Executors.newFixedThreadPool(coreThreads);
-                    } else {
-                        channelExecutor = Executors.newFixedThreadPool(maxThreads);
-                    }
+                    int nThreads = clientMode() ? coreThreads : maxThreads;
+
+                    channelExecutor = new ThreadPoolExecutor(nThreads, nThreads,
+                            0L, TimeUnit.MILLISECONDS,
+                            new LinkedBlockingQueue<Runnable>(),
+                            new NamedThreadFactory("Socketd-channelExecutor"));
                 }
             }
         }

@@ -80,6 +80,14 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     public synchronized void send(Frame frame, Acceptor acceptor) throws IOException {
         Asserts.assertClosed(this);
 
+        if (log.isDebugEnabled()) {
+            if (getConfig().clientMode()) {
+                log.debug("C-SEN-{}", frame);
+            } else {
+                log.debug("S-SEN-{}", frame);
+            }
+        }
+
         if (frame.getMessage() != null) {
             Message message = frame.getMessage();
 

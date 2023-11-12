@@ -5,6 +5,7 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 
@@ -35,9 +36,9 @@ public class ProcessorDefault implements Processor {
     public void onReceive(Channel channel, Frame frame) throws IOException {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
-                log.debug("C-{}", frame);
+                log.debug("C-REV-{}", frame);
             } else {
-                log.debug("S-{}", frame);
+                log.debug("S-REV-{}", frame);
             }
         }
 

@@ -38,11 +38,6 @@ public interface Config {
     boolean clientMode();
 
     /**
-     * 获取协议架构
-     */
-    String getSchema();
-
-    /**
      * 获取字符集
      */
     Charset getCharset();

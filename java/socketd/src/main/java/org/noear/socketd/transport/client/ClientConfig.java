@@ -56,7 +56,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     /**
      * 获取通讯架构（tcp, ws, udp）
      */
-    @Override
     public String getSchema() {
         return schema;
     }

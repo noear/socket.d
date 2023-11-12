@@ -16,6 +16,10 @@ public interface EntityMetas {
      */
     String META_DATA_LENGTH = "Data-Length";
     /**
+     * 数据类型
+     */
+    String META_DATA_TYPE = "Data-Type";
+    /**
      * 数据分片索引
      */
     String META_DATA_FRAGMENT_IDX = "Data-Fragment-Idx";

@@ -69,7 +69,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.writeBufferSize = 512;
 
         this.idleTimeout = 0L; //默认不关（提供用户特殊场景选择）
-        this.replyTimeout = 3_000L;
+        this.replyTimeout = 10_000L;
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
     }

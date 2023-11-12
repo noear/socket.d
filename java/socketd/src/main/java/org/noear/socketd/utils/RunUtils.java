@@ -22,10 +22,10 @@ public class RunUtils {
         asyncExecutor = new ThreadPoolExecutor(asyncPoolSize, asyncPoolSize,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(),
-                new NamedThreadFactory("Solon-asyncExecutor-"));
+                new NamedThreadFactory("Socketd-asyncExecutor-"));
 
         scheduledExecutor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
-                new NamedThreadFactory("Solon-echeduledExecutor-"));
+                new NamedThreadFactory("Socketd-echeduledExecutor-"));
     }
 
     public static void setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {

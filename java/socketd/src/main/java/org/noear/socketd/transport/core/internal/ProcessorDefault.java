@@ -34,7 +34,11 @@ public class ProcessorDefault implements Processor {
      */
     public void onReceive(Channel channel, Frame frame) throws IOException {
         if (log.isDebugEnabled()) {
-            log.debug("{}", frame);
+            if (channel.getConfig().clientMode()) {
+                log.debug("C-{}", frame);
+            } else {
+                log.debug("S-{}", frame);
+            }
         }
 
         if (frame.getFlag() == Flag.Connect) {

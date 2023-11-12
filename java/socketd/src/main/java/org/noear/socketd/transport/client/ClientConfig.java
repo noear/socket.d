@@ -46,8 +46,8 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
             this.port = 8602;
         }
 
-        this.connectTimeout = 3000;
-        this.heartbeatInterval = 20 * 1000;
+        this.connectTimeout = 10_000;
+        this.heartbeatInterval = 20_000;
 
         this.autoReconnect = true;
     }

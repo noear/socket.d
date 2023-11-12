@@ -40,8 +40,8 @@
 | session                   | 会话       | （可双向互发）                |
 |                           |          |                        |
 | session::send             | 发送       | （Qos0）                 |
-| session::sendAndRequest   | 发送并请求    | 要求一次答复并等待结果（Qos1）      |
-| session::sendAndSubscribe | 发送并订阅（流） | 答复结束之前，不限答复次数（Streams） |
+| session::sendAndRequest   | 发送并请求（且，等待答复）    | 要求一次答复（Qos1）      |
+| session::sendAndSubscribe | 发送并订阅（且，接收答复流） | 答复结束之前，不限答复次数（Streams） |
 | session::reply            | 答复       |                        |
 | session::replyEnd         | 答复结束     |                        |
 
@@ -94,7 +94,7 @@ public class Demo {
         Session session = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
                 .open();
         
-        //发送并请求
+        //发送并请求（且，等待答复）
         Entity reply = session.sendAndRequest("/demo", new StringEntity("hello wrold!"));
     }
 }
@@ -125,7 +125,7 @@ public class Demo {
         Session session = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
                 .open();
         
-        //发送并订阅
+        //发送并订阅（且，接收答复流）
         session.sendAndSubscribe("/demo", new StringEntity("hello wrold!"), reply->{
             
         });
@@ -200,7 +200,7 @@ public class Demo {
                 })
                 .open();
 
-        //发送并请求
+        //发送并请求（且，等待答复）
         session.sendAndRequest("/demo", new StringEntity("hello wrold!"));
     }
 }

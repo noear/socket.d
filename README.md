@@ -170,9 +170,20 @@ public class Demo {
         //::打开客户端会话
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
                 .open();
+
+
+        Entity message = new StringEntity("Hello wrold!").meta("user","noear");
         
-        //发送并请求（且，收回答复）
-        Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!").meta("user","noear"));
+        //发送
+        session.send("/demo", message);
+        
+        //发送并请求（且，等待答复）
+        Entity reply = session.sendAndRequest("/demo", message);
+        
+        //发送并订阅（且，接收答复流）
+        session.sendAndSubscribe("/demo", message, stream->{
+            
+        });
     }
 }
 ```

@@ -36,9 +36,9 @@ public class ProcessorDefault implements Processor {
     public void onReceive(Channel channel, Frame frame) throws IOException {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
-                log.debug("C-REV-{}", frame);
+                log.debug("C-REV:{}", frame);
             } else {
-                log.debug("S-REV-{}", frame);
+                log.debug("S-REV:{}", frame);
             }
         }
 

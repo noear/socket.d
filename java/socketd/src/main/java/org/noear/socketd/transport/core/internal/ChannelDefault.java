@@ -82,9 +82,9 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
         if (log.isDebugEnabled()) {
             if (getConfig().clientMode()) {
-                log.debug("C-SEN-{}", frame);
+                log.debug("C-SEN:{}", frame);
             } else {
-                log.debug("S-SEN-{}", frame);
+                log.debug("S-SEN:{}", frame);
             }
         }
 

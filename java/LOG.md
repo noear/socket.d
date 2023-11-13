@@ -1,4 +1,14 @@
 
+### 2.0.15
+
+* 调整 通道线程池前缀名
+* 调整 默认请求答复的超时为10s
+* 调整 onReceive 的 debug 日志打印
+* 调整 replyTimeout 更名为 requestTimeout
+* 调整 简化主接口的方法名（session, message, entity, handshake）
+* 添加 send 的 debug 日志打印。完善输出输入链
+* 添加 META_DATA_TYPE 常量
+
 ### 2.0.14
 
 * 添加 Router 接口，为 RouterListener 扩展提供机制。方便第三方适配时协议转换使用

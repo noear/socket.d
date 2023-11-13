@@ -126,11 +126,19 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 心跳处理
      */
     private void heartbeatHandle() throws IOException {
-        if (real != null && real.isClosed()) {
-            if (log.isDebugEnabled()) {
-                log.debug("The channel is closed, sessionId={}", getSession().getSessionId());
+        if (real != null) {
+            //说明握手未成
+            if(real.getHandshake() == null) {
+                return;
             }
-            return;
+
+            //手明手动关闭或被控制性关闭
+            if (real.isClosed()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("The channel is closed, sessionId={}", getSession().getSessionId());
+                }
+                return;
+            }
         }
 
         synchronized (this) {

@@ -66,7 +66,7 @@ public class SessionDefault extends SessionBase {
      * @param name 名字
      */
     public String param(String name) {
-        return handshake().getParam(name);
+        return handshake().param(name);
     }
 
     /**
@@ -76,7 +76,7 @@ public class SessionDefault extends SessionBase {
      * @param def  默认值
      */
     public String paramOrDefault(String name, String def) {
-        return handshake().getParamOrDefault(name, def);
+        return handshake().paramOrDefault(name, def);
     }
 
     /**
@@ -85,7 +85,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public String path() {
         if (pathNew == null) {
-            return handshake().getPath();
+            return handshake().uri().getPath();
         } else {
             return pathNew;
         }

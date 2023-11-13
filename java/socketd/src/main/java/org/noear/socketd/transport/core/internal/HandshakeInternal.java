@@ -46,32 +46,25 @@ public class HandshakeInternal implements Handshake {
     }
 
     /**
+     * 版本
+     */
+    public String version() {
+        return version;
+    }
+
+    /**
      * 获请地址
      *
      * @return tcp://192.168.0.1/path?user=1&path=2
      */
-    public URI getUri() {
+    public URI uri() {
         return uri;
-    }
-
-    /**
-     * 获取传输协议
-     */
-    public String getScheme() {
-        return uri.getScheme();
-    }
-
-    /**
-     * 获取路径
-     */
-    public String getPath() {
-        return uri.getPath();
     }
 
     /**
      * 获取参数集合
      */
-    public Map<String, String> getParamMap() {
+    public Map<String, String> paramMap() {
         return paramMap;
     }
 
@@ -80,7 +73,7 @@ public class HandshakeInternal implements Handshake {
      *
      * @param name 名字
      */
-    public String getParam(String name) {
+    public String param(String name) {
         return paramMap.get(name);
     }
 
@@ -91,7 +84,7 @@ public class HandshakeInternal implements Handshake {
      * @param def  默认值
      */
     @Override
-    public String getParamOrDefault(String name, String def) {
+    public String paramOrDefault(String name, String def) {
         return paramMap.getOrDefault(name, def);
     }
 
@@ -102,14 +95,7 @@ public class HandshakeInternal implements Handshake {
      * @param value 值
      */
     @Override
-    public String putParam(String name, String value) {
-        return paramMap.put(name, value);
-    }
-
-    /**
-     * 版本
-     */
-    public String getVersion() {
-        return version;
+    public void param(String name, String value) {
+        paramMap.put(name, value);
     }
 }

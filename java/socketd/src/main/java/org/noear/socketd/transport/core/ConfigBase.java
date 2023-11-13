@@ -46,8 +46,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     //连接空闲超时
     protected long idleTimeout;
-    //答复默认超时
-    protected long replyTimeout;
+    //请求默认超时
+    protected long requestTimeout;
     //最大同时请求数
     protected int maxRequests;
     //最大udp包大小
@@ -69,7 +69,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.writeBufferSize = 512;
 
         this.idleTimeout = 0L; //默认不关（提供用户特殊场景选择）
-        this.replyTimeout = 10_000L; //10秒（默认与连接超时同）
+        this.requestTimeout = 10_000L; //10秒（默认与连接超时同）
         this.maxRequests = 10;
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
     }
@@ -277,15 +277,15 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 获取答复默认超时
      */
     @Override
-    public long getReplyTimeout() {
-        return replyTimeout;
+    public long getRequestTimeout() {
+        return requestTimeout;
     }
 
     /**
-     * 配置答复默认超时
+     * 配置请求默认超时
      */
-    public T replyTimeout(long replyTimeout) {
-        this.replyTimeout = replyTimeout;
+    public T requestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
         return (T) this;
     }
 

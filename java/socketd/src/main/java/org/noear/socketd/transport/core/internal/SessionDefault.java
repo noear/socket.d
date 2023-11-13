@@ -133,7 +133,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public Entity sendAndRequest(String topic, Entity content) throws IOException {
-        return sendAndRequest(topic, content, channel.getConfig().getReplyTimeout());
+        return sendAndRequest(topic, content, channel.getConfig().getRequestTimeout());
     }
 
     /**
@@ -146,7 +146,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException {
         if (timeout < 100) {
-            timeout = channel.getConfig().getReplyTimeout();
+            timeout = channel.getConfig().getRequestTimeout();
         }
 
         //背压控制

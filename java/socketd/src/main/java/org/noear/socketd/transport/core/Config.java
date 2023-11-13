@@ -92,9 +92,9 @@ public interface Config {
     long getIdleTimeout();
 
     /**
-     * 答复超时（单位：毫秒）
+     * 请求超时（单位：毫秒）
      */
-    long getReplyTimeout();
+    long getRequestTimeout();
 
     /**
      * 允许最大请求数

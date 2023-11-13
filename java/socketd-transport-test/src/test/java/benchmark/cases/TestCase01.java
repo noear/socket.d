@@ -75,7 +75,7 @@ public class TestCase01 extends BaseTestCase {
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
                 .config(config -> config.idGenerator(new TimeidGenerator())
-                        .replyTimeout(5000))
+                        .requestTimeout(5000))
                 .open();
 
         //单预热

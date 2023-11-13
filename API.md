@@ -23,17 +23,31 @@ public interface Session {
     //是否有效
     boolean isValid();
     //获取远程地址
-    InetAddress getRemoteAddress() throws IOException;
+    InetAddress remoteAddress() throws IOException;
     //获取本地地址
-    InetAddress getLocalAddress() throws IOException;
+    InetAddress localAddress() throws IOException;
     //获取握手信息
-    Handshake getHandshake();
-    //获取附件
-    <T> T getAttachment(Class<T> type);
-    //设置附件
-    <T> void setAttachment(Class<T> type, T value);
-   //获取会话Id
-    String getSessionId();
+    Handshake handshake();
+    //获取握手参数
+    String param(String name);
+    //获取握手参数或默认值
+    String paramOrDefault(String name, String def);
+    //获取握手路径
+    String path();
+    //设置握手新路径
+    void pathNew(String pathNew);
+    //获取所有属性
+    Map<String, Object> attrMap();
+    //获取属性
+    <T> T attr(String name);
+    //获取属性或默认值
+    <T> T attrOrDefault(String name, T def);
+    //设置属性
+    <T> void attr(String name, T value);
+    //获取会话Id
+    String sessionId();
+    //手动重连（一般是自动）
+    void reconnect() throws Exception;
     //发送 Ping
     void sendPing() throws IOException;
     //发送
@@ -61,11 +75,11 @@ public interface Message {
     //是否为订阅
     boolean isSubscribe();
     //获取消息流Id（用于消息交互、分片）
-    String getSid();
+    String sid();
     //获取消息主题
-    String getTopic();
+    String topic();
     //获取消息实体
-    Entity getEntity();
+    Entity entity();
 }
 ```
 
@@ -76,14 +90,20 @@ public interface Message {
 ```java
 public interface Entity {
     //获取元信息字符串（queryString style）
-    String getMetaString();
+    String metaString();
     //获取元信息
-    Map<String, String> getMetaMap();
+    Map<String, String> metaMap();
     //获取元信息
-    String getMeta(String name);
+    String meta(String name);
+    //获取元信息或默认
+    String metaOrDefault(String name, String def);
     //获取数据
-    InputStream getData();
+    InputStream data();
     //获取数据并转为字符串
-    String getDataAsString();
+    String dataAsString();
+    //获取数据并转为字节数组
+    byte[] dataAsBytes();
+    //获取数据长度
+    int dataSize();
 }
 ```

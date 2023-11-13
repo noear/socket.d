@@ -47,22 +47,22 @@ public class Demo05_Mq_Client {
                     .config(c -> c.heartbeatInterval(5)) //心跳频率调高，确保不断连
                     .listen(new BuilderListener()
                             .on("mq.broadcast", (s, m) -> {
-                                String topic = m.getMeta("topic");
+                                String topic = m.meta("topic");
                                 Consumer<String> listener = listenerMap.get(topic);
                                 if (listener != null) {
                                     if (m.isRequest() || m.isSubscribe()) {
                                         //Qos1
-                                        String id = m.getMeta("id");
+                                        String id = m.meta("id");
 
                                         try {
-                                            listener.accept(m.getDataAsString());
+                                            listener.accept(m.dataAsString());
                                             s.replyEnd(m, new StringEntity("Y").meta("id", id));
                                         } catch (Throwable e) {
                                             s.replyEnd(m, new StringEntity("N").meta("id", id).meta("error", e.getMessage()));
                                         }
                                     } else {
                                         //Qos0
-                                        listener.accept(m.getDataAsString());
+                                        listener.accept(m.dataAsString());
                                     }
                                 }
                             }))

@@ -4,7 +4,6 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
-import org.noear.socketd.transport.server.ServerConfig;
 
 public class Demo04_BuilderListener {
     public static void main(String[] args) throws Throwable {
@@ -25,7 +24,7 @@ public class Demo04_BuilderListener {
                 .listen(new BuilderListener().onMessage((s, m) -> {
                     System.out.println("client::" + m);
                 }).on("/demo", (s, m) -> { //带了主题路由的功能
-                    System.out.println("on::" + m.getTopic() + "::" + m);
+                    System.out.println("on::" + m.topic() + "::" + m);
                 }).on("/demo2", (s,m)->{
 
                 }))

@@ -5,7 +5,6 @@ import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
-import org.noear.socketd.transport.server.ServerConfig;
 
 import java.io.IOException;
 
@@ -20,7 +19,7 @@ public class Demo03_Send2 {
                         System.out.println("server::"+message);
 
                         if (message.isRequest() || message.isSubscribe()) {
-                            session.replyEnd(message, new StringEntity("Server receive: " + message.getEntity()));
+                            session.replyEnd(message, new StringEntity("Server receive: " + message.entity()));
                         }
 
                         session.send("/demo2", new StringEntity("Hi!"));
@@ -42,8 +41,8 @@ public class Demo03_Send2 {
                         }
 
                         //加个附件计数
-                        Integer count = session.getAttrOrDefault("count", 0);
-                        session.setAttr("count", ++count);
+                        Integer count = session.attrOrDefault("count", 0);
+                        session.attr("count", ++count);
 
                         if (count > 5) {
                             //超过5次后，不玩了

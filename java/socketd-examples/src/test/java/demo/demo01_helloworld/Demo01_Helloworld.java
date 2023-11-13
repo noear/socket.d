@@ -6,7 +6,6 @@ import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
-import org.noear.socketd.transport.server.ServerConfig;
 
 import java.io.IOException;
 
@@ -36,6 +35,6 @@ public class Demo01_Helloworld {
         //发送并请求（且，收回答复）
         Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!").meta("user","noear"));
         System.out.println(reply);
-        System.out.println(reply.getDataAsString());
+        System.out.println(reply.dataAsString());
     }
 }

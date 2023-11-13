@@ -5,7 +5,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
 import org.noear.socketd.transport.core.listener.RouterListener;
-import org.noear.socketd.transport.server.ServerConfig;
 
 public class Demo04_RouterListener {
     public static void main(String[] args) throws Throwable {
@@ -19,7 +18,7 @@ public class Demo04_RouterListener {
                         }))
                         .of("/admin", new BuilderListener().onOpen(s -> {
                             //管理员频道
-                            if ("admin".equals(s.getParam("u")) == false) {
+                            if ("admin".equals(s.param("u")) == false) {
                                 s.close();
                             }
                         }).onMessage((s, m) -> {

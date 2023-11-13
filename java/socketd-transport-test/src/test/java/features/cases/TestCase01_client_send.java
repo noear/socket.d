@@ -8,7 +8,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +97,7 @@ public class TestCase01_client_send extends BaseTestCase {
         System.out.println("counter: " + serverOnMessageCounter.get() + ", " + clientSubscribeReplyCounter.get());
 
         Assertions.assertNotNull(response, getSchema() + ":sendAndRequest 返回不对");
-        Assertions.assertEquals("hi reply", response.getDataAsString(), getSchema() + ":sendAndRequest 返回不对");
+        Assertions.assertEquals("hi reply", response.dataAsString(), getSchema() + ":sendAndRequest 返回不对");
         Assertions.assertEquals(serverOnMessageCounter.get(), 6, getSchema() + ":server 收的消息数量对不上");
         Assertions.assertEquals(clientSubscribeReplyCounter.get(), 3, getSchema() + ":client 订阅回收数量对不上");
     }

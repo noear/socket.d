@@ -5,7 +5,6 @@ import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
-import org.noear.socketd.transport.server.ServerConfig;
 
 import java.io.IOException;
 
@@ -17,7 +16,7 @@ public class Demo03_UrlAuth {
                 .listen(new SimpleListener() {
                     @Override
                     public void onOpen(Session session) throws IOException {
-                        String user = session.getParam("u");
+                        String user = session.param("u");
                         if ("noear".equals(user) == false) { //如果不是 noear，关闭会话
                             session.close();
                         }

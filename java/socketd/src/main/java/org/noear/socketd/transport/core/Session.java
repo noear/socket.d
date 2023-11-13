@@ -85,7 +85,7 @@ public interface Session extends Closeable {
      * @param name  名字
      * @param value 值
      */
-    <T> void attrSet(String name, T value);
+    <T> void attr(String name, T value);
 
     /**
      * 获取会话Id

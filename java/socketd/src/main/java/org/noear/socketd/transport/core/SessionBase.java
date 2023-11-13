@@ -65,7 +65,7 @@ public abstract class SessionBase implements Session {
      * 设置附件
      */
     @Override
-    public <T> void attrSet(String name, T value) {
+    public <T> void attr(String name, T value) {
         if (attrMap == null) {
             attrMap = new HashMap<>();
         }

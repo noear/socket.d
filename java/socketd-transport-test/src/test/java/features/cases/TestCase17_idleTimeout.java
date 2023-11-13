@@ -43,7 +43,7 @@ public class TestCase17_idleTimeout extends BaseTestCase {
                     @Override
                     public void onOpen(Session session) throws IOException {
                         openCounter.incrementAndGet();
-                        System.out.println(session.getSessionId());
+                        System.out.println(session.sessionId());
                     }
 
                     @Override

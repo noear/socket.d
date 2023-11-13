@@ -32,7 +32,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
         if (fragmentIndex.get() == 1) {
             fragmentEntity.metaMap(entity.metaMap());
         }
-        fragmentEntity.metaSet(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+        fragmentEntity.meta(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
         return fragmentEntity;
     }
 

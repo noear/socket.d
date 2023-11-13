@@ -98,7 +98,7 @@ public class EntityDefault implements Entity {
      * @param name 名字
      * @param val  值
      */
-    public EntityDefault metaSet(String name, String val) {
+    public EntityDefault meta(String name, String val) {
         metaMap().put(name, val);
         metaStringChanged = true;
         return this;
@@ -144,7 +144,7 @@ public class EntityDefault implements Entity {
     public EntityDefault data(InputStream data) throws IOException {
         this.data = data;
         this.dataSize = data.available();
-        metaSet(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
+        meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
         return this;
     }
 

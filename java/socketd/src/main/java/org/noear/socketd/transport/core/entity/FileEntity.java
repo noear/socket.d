@@ -15,6 +15,6 @@ import java.io.IOException;
 public class FileEntity extends EntityDefault {
     public FileEntity(File file) throws IOException {
         data(new FileInputStream(file));
-        metaSet(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
+        meta(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
     }
 }

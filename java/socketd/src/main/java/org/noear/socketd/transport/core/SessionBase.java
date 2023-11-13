@@ -25,7 +25,7 @@ public abstract class SessionBase implements Session {
     private Map<String, Object> attrMap;
 
     @Override
-    public Map<String, Object> getAttrMap() {
+    public Map<String, Object> attrMap() {
         if (attrMap == null) {
             attrMap = new HashMap<>();
         }
@@ -37,7 +37,7 @@ public abstract class SessionBase implements Session {
      * 获取附件
      */
     @Override
-    public <T> T getAttr(String name) {
+    public <T> T attr(String name) {
         if (attrMap == null) {
             return null;
         }
@@ -52,8 +52,8 @@ public abstract class SessionBase implements Session {
      * @param def  默认值
      */
     @Override
-    public  <T> T getAttrOrDefault(String name, T def) {
-        T tmp = getAttr(name);
+    public  <T> T attrOrDefault(String name, T def) {
+        T tmp = attr(name);
         if (tmp == null) {
             return def;
         } else {
@@ -65,7 +65,7 @@ public abstract class SessionBase implements Session {
      * 设置附件
      */
     @Override
-    public <T> void setAttr(String name, T value) {
+    public <T> void attrSet(String name, T value) {
         if (attrMap == null) {
             attrMap = new HashMap<>();
         }
@@ -73,7 +73,7 @@ public abstract class SessionBase implements Session {
     }
 
     @Override
-    public String getSessionId() {
+    public String sessionId() {
         return sessionId;
     }
 
@@ -82,12 +82,12 @@ public abstract class SessionBase implements Session {
         if (this == o) return true;
         if (!(o instanceof Session)) return false;
         Session that = (Session) o;
-        return Objects.equals(getSessionId(), that.getSessionId());
+        return Objects.equals(sessionId(), that.sessionId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSessionId());
+        return Objects.hash(sessionId());
     }
 
     protected String generateId(){

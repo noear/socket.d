@@ -22,15 +22,15 @@ public interface Message extends Entity{
     /**
      * 获取消息流Id（用于消息交互、分片）
      */
-    String getSid();
+    String sid();
 
     /**
      * 获取消息主题
      */
-    String getTopic();
+    String topic();
 
     /**
      * 获取消息实体（有时需要获取实体）
      */
-    Entity getEntity();
+    Entity entity();
 }

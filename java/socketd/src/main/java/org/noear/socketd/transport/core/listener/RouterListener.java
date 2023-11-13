@@ -49,7 +49,7 @@ public class RouterListener implements Listener {
 
     @Override
     public void onOpen(Session session) throws IOException {
-        Listener l1 = router.matching(session.getPath());
+        Listener l1 = router.matching(session.path());
 
         if (l1 != null) {
             l1.onOpen(session);
@@ -58,7 +58,7 @@ public class RouterListener implements Listener {
 
     @Override
     public void onMessage(Session session, Message message) throws IOException {
-        Listener l1 = router.matching(session.getPath());
+        Listener l1 = router.matching(session.path());
 
         if (l1 != null) {
             l1.onMessage(session, message);
@@ -67,7 +67,7 @@ public class RouterListener implements Listener {
 
     @Override
     public void onClose(Session session) {
-        Listener l1 = router.matching(session.getPath());
+        Listener l1 = router.matching(session.path());
 
         if (l1 != null) {
             l1.onClose(session);
@@ -76,7 +76,7 @@ public class RouterListener implements Listener {
 
     @Override
     public void onError(Session session, Throwable error) {
-        Listener l1 = router.matching(session.getPath());
+        Listener l1 = router.matching(session.path());
 
         if (l1 != null) {
             l1.onError(session, error);

@@ -14,7 +14,7 @@ public class Asserts {
      */
     public static void assertClosed(Channel channel) {
         if (channel != null && channel.isClosed()) {
-            throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().getSessionId());
+            throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }
 

@@ -23,16 +23,16 @@ public class FragmentHandlerDefault implements FragmentHandler {
         fragmentIndex.set(fragmentIndex.get() + 1);
 
         ByteArrayOutputStream fragmentBuf = new ByteArrayOutputStream();
-        IoUtils.transferTo(entity.getData(), fragmentBuf, 0, Config.MAX_SIZE_FRAGMENT);
+        IoUtils.transferTo(entity.data(), fragmentBuf, 0, Config.MAX_SIZE_FRAGMENT);
         byte[] fragmentBytes = fragmentBuf.toByteArray();
         if (fragmentBytes.length == 0) {
             return null;
         }
         EntityDefault fragmentEntity = new EntityDefault().data(fragmentBytes);
         if (fragmentIndex.get() == 1) {
-            fragmentEntity.metaMap(entity.getMetaMap());
+            fragmentEntity.metaMap(entity.metaMap());
         }
-        fragmentEntity.putMeta(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+        fragmentEntity.metaSet(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
         return fragmentEntity;
     }
 
@@ -41,7 +41,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
      */
     @Override
     public Frame aggrFragment(Channel channel, int index, Frame frame) throws IOException {
-        FragmentAggregator aggregator = channel.getAttachment(frame.getMessage().getSid());
+        FragmentAggregator aggregator = channel.getAttachment(frame.getMessage().sid());
         if (aggregator == null) {
             aggregator = new FragmentAggregator(frame);
             channel.setAttachment(aggregator.getSid(), aggregator);

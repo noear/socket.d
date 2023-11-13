@@ -78,14 +78,14 @@ public class MessageDefault implements Message {
     /**
      * 获取消息流Id（用于消息交互、分片）
      */
-    public String getSid() {
+    public String sid() {
         return sid;
     }
 
     /**
      * 获取消息主题
      */
-    public String getTopic() {
+    public String topic() {
         return topic;
     }
 
@@ -93,7 +93,7 @@ public class MessageDefault implements Message {
      * 获取消息实体
      */
     @Override
-    public Entity getEntity() {
+    public Entity entity() {
         return entity;
     }
 
@@ -107,42 +107,42 @@ public class MessageDefault implements Message {
     }
 
     @Override
-    public String getMetaString() {
-        return entity.getMetaString();
+    public String metaString() {
+        return entity.metaString();
     }
 
     @Override
-    public Map<String, String> getMetaMap() {
-        return entity.getMetaMap();
+    public Map<String, String> metaMap() {
+        return entity.metaMap();
     }
 
     @Override
-    public String getMeta(String name) {
-        return entity.getMeta(name);
+    public String meta(String name) {
+        return entity.meta(name);
     }
 
     @Override
-    public String getMetaOrDefault(String name, String def) {
-        return entity.getMetaOrDefault(name, def);
+    public String metaOrDefault(String name, String def) {
+        return entity.metaOrDefault(name, def);
     }
 
     @Override
-    public InputStream getData() {
-        return entity.getData();
+    public InputStream data() {
+        return entity.data();
     }
 
     @Override
-    public String getDataAsString() {
-        return entity.getDataAsString();
+    public String dataAsString() {
+        return entity.dataAsString();
     }
 
     @Override
-    public byte[] getDataAsBytes() {
-        return entity.getDataAsBytes();
+    public byte[] dataAsBytes() {
+        return entity.dataAsBytes();
     }
 
     @Override
-    public int getDataSize() {
-        return entity.getDataSize();
+    public int dataSize() {
+        return entity.dataSize();
     }
 }

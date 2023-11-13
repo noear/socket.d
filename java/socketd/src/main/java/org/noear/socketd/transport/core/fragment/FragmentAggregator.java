@@ -33,10 +33,10 @@ public class FragmentAggregator {
 
     public FragmentAggregator(Frame main) {
         this.main = main;
-        String dataLengthStr = main.getMessage().getMeta(EntityMetas.META_DATA_LENGTH);
+        String dataLengthStr = main.getMessage().meta(EntityMetas.META_DATA_LENGTH);
 
         if (Utils.isEmpty(dataLengthStr)) {
-            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, topic=" + main.getMessage().getTopic());
+            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, topic=" + main.getMessage().topic());
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);
@@ -46,7 +46,7 @@ public class FragmentAggregator {
      * 获取消息流Id（用于消息交互、分片）
      */
     public String getSid() {
-        return main.getMessage().getSid();
+        return main.getMessage().sid();
     }
 
     /**
@@ -75,7 +75,7 @@ public class FragmentAggregator {
 
         //添加分片数据
         for (FragmentHolder fh : fragmentHolders) {
-            IoUtils.transferTo(fh.getFrame().getMessage().getData(), dataStream);
+            IoUtils.transferTo(fh.getFrame().getMessage().data(), dataStream);
         }
 
         //转为输入流
@@ -84,9 +84,9 @@ public class FragmentAggregator {
         //返回
         return new Frame(main.getFlag(), new MessageDefault()
                 .flag(main.getFlag())
-                .sid(main.getMessage().getSid())
-                .topic(main.getMessage().getTopic())
-                .entity(new EntityDefault().metaMap(main.getMessage().getMetaMap()).data(inputStream)));
+                .sid(main.getMessage().sid())
+                .topic(main.getMessage().topic())
+                .entity(new EntityDefault().metaMap(main.getMessage().metaMap()).data(inputStream)));
     }
 
     /**
@@ -96,6 +96,6 @@ public class FragmentAggregator {
         //添加分片
         fragmentHolders.add(new FragmentHolder(index, frame));
         //添加计数
-        dataStreamSize = dataStreamSize + frame.getMessage().getDataSize();
+        dataStreamSize = dataStreamSize + frame.getMessage().dataSize();
     }
 }

@@ -93,25 +93,25 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
             //注册接收器
             if (acceptor != null) {
-                acceptorMap.put(message.getSid(), acceptor);
+                acceptorMap.put(message.sid(), acceptor);
             }
 
             //如果有实体（尝试分片）
-            if (message.getEntity() != null) {
+            if (message.entity() != null) {
                 //确保用完自动关闭
-                try (InputStream ins = message.getData()) {
-                    if (message.getDataSize() > Config.MAX_SIZE_FRAGMENT) {
+                try (InputStream ins = message.data()) {
+                    if (message.dataSize() > Config.MAX_SIZE_FRAGMENT) {
                         //满足分片条件
                         AtomicReference<Integer> fragmentIndex = new AtomicReference<>(0);
                         while (true) {
                             //获取分片
-                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(getConfig(), fragmentIndex, message.getEntity());
+                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(getConfig(), fragmentIndex, message.entity());
 
                             if (fragmentEntity != null) {
                                 //主要是 sid 和 entity
                                 Frame fragmentFrame = new Frame(frame.getFlag(), new MessageDefault()
                                         .flag(frame.getFlag())
-                                        .sid(message.getSid())
+                                        .sid(message.sid())
                                         .entity(fragmentEntity));
 
                                 assistant.write(source, fragmentFrame);
@@ -139,12 +139,12 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void retrieve(Frame frame, Consumer<Throwable> onError) {
-        Acceptor acceptor = acceptorMap.get(frame.getMessage().getSid());
+        Acceptor acceptor = acceptorMap.get(frame.getMessage().sid());
 
         if (acceptor != null) {
             if (acceptor.isSingle() || frame.getFlag() == Flag.ReplyEnd) {
                 //如果是单收或者答复结束，则移除接收器
-                acceptorMap.remove(frame.getMessage().getSid());
+                acceptorMap.remove(frame.getMessage().sid());
             }
 
             if (acceptor.isSingle()) {
@@ -158,7 +158,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Acceptor not found, sid={}", frame.getMessage().getSid());
+                log.debug("Acceptor not found, sid={}", frame.getMessage().sid());
             }
         }
     }
@@ -194,7 +194,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     @Override
     public void close() throws IOException {
         if (log.isDebugEnabled()) {
-            log.debug("The channel will be closed, sessionId={}", getSession().getSessionId());
+            log.debug("The channel will be closed, sessionId={}", getSession().sessionId());
         }
 
         super.close();

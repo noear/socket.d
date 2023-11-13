@@ -5,7 +5,6 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.io.IOException;
 
@@ -70,12 +69,10 @@ public class ProcessorDefault implements Processor {
                 }
 
                 if (log.isWarnEnabled()) {
-                    log.warn("Channel andshake is null, sessionId={}", channel.getSession().getSessionId());
+                    log.warn("Channel andshake is null, sessionId={}", channel.getSession().sessionId());
                 }
                 return;
             }
-
-            channel.setLiveTime();
 
             try {
                 switch (frame.getFlag()) {
@@ -115,7 +112,7 @@ public class ProcessorDefault implements Processor {
 
     private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
         //尝试分片处理
-        String fragmentIdxStr = frame.getMessage().getMeta(EntityMetas.META_DATA_FRAGMENT_IDX);
+        String fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
         if (fragmentIdxStr != null) {
             //解析分片索引
             int index = Integer.parseInt(fragmentIdxStr);

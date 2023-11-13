@@ -67,16 +67,6 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void setLiveTime() {
-        liveTime = System.currentTimeMillis();
-    }
-
-    @Override
-    public long getLiveTime() {
-        return liveTime;
-    }
-
-    @Override
     public void sendConnect(String uri) throws IOException {
         send(Frames.connectFrame(getConfig().getIdGenerator().generate(), uri), null);
     }

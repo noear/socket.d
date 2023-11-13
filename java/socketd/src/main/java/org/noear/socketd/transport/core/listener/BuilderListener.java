@@ -67,7 +67,7 @@ public class BuilderListener implements Listener {
             onMessageHandler.accept(session, message);
         }
 
-        IoBiConsumer<Session, Message> messageHandler = onMessageRouting.get(message.getTopic());
+        IoBiConsumer<Session, Message> messageHandler = onMessageRouting.get(message.topic());
         if (messageHandler != null) {
             messageHandler.accept(session, message);
         }

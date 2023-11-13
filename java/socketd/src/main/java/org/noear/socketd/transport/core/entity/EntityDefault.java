@@ -38,11 +38,11 @@ public class EntityDefault implements Entity {
      * 获取元信息字符串（queryString style）
      */
     @Override
-    public String getMetaString() {
+    public String metaString() {
         if (metaStringChanged) {
             StringBuilder buf = new StringBuilder();
 
-            getMetaMap().forEach((name, val) -> {
+            metaMap().forEach((name, val) -> {
                 buf.append(name).append("=").append(val).append("&");
             });
 
@@ -73,7 +73,7 @@ public class EntityDefault implements Entity {
      * 获取元信息字典
      */
     @Override
-    public Map<String, String> getMetaMap() {
+    public Map<String, String> metaMap() {
         if (metaMap == null) {
             metaMap = new LinkedHashMap<>();
             metaStringChanged = false;
@@ -98,20 +98,10 @@ public class EntityDefault implements Entity {
      * @param name 名字
      * @param val  值
      */
-    public EntityDefault meta(String name, String val) {
-        putMeta(name, val);
-        return this;
-    }
-
-    /**
-     * 设置元信息
-     *
-     * @param name 名字
-     * @param val  值
-     */
-    public void putMeta(String name, String val) {
-        getMetaMap().put(name, val);
+    public EntityDefault metaSet(String name, String val) {
+        metaMap().put(name, val);
         metaStringChanged = true;
+        return this;
     }
 
     /**
@@ -120,8 +110,8 @@ public class EntityDefault implements Entity {
      * @param name 名字
      */
     @Override
-    public String getMeta(String name) {
-        return getMetaMap().get(name);
+    public String meta(String name) {
+        return metaMap().get(name);
     }
 
     /**
@@ -131,8 +121,8 @@ public class EntityDefault implements Entity {
      * @param def  默认值
      */
     @Override
-    public String getMetaOrDefault(String name, String def) {
-        return getMetaMap().getOrDefault(name, def);
+    public String metaOrDefault(String name, String def) {
+        return metaMap().getOrDefault(name, def);
     }
 
     /**
@@ -154,7 +144,7 @@ public class EntityDefault implements Entity {
     public EntityDefault data(InputStream data) throws IOException {
         this.data = data;
         this.dataSize = data.available();
-        putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
+        metaSet(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
         return this;
     }
 
@@ -162,7 +152,7 @@ public class EntityDefault implements Entity {
      * 获取数据（若多次复用，需要reset）
      */
     @Override
-    public InputStream getData() {
+    public InputStream data() {
         return data;
     }
 
@@ -170,10 +160,10 @@ public class EntityDefault implements Entity {
      * 获取数据并转成字符串
      */
     @Override
-    public String getDataAsString() {
+    public String dataAsString() {
         try {
             if (dataAsString == null) {
-                dataAsString = IoUtils.transferToString(getData());
+                dataAsString = IoUtils.transferToString(data());
             }
 
             return dataAsString;
@@ -185,9 +175,9 @@ public class EntityDefault implements Entity {
     private String dataAsString;
 
     @Override
-    public byte[] getDataAsBytes() {
+    public byte[] dataAsBytes() {
         try {
-            return IoUtils.transferToBytes(getData());
+            return IoUtils.transferToBytes(data());
         } catch (IOException e) {
             throw new SocketdCodecException(e);
         }
@@ -197,14 +187,14 @@ public class EntityDefault implements Entity {
      * 获取数据长度
      */
     @Override
-    public int getDataSize() {
+    public int dataSize() {
         return dataSize;
     }
 
     @Override
     public String toString() {
         return "Entity{" +
-                "meta='" + getMetaString() + '\'' +
+                "meta='" + metaString() + '\'' +
                 ", data=byte[" + dataSize + ']' + //避免内容太大，影响打印
                 '}';
     }

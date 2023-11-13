@@ -72,18 +72,6 @@ public interface Channel extends Closeable {
      */
     InetSocketAddress getLocalAddress() throws IOException;
 
-
-    /**
-     * 设置活动时间
-     */
-    void setLiveTime();
-
-    /**
-     * 获取活动时间
-     */
-    long getLiveTime();
-
-
     /**
      * 发送连接（握手）
      *

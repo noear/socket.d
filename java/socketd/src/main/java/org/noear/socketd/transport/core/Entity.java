@@ -13,40 +13,40 @@ public interface Entity {
     /**
      * 获取元信息字符串（queryString style）
      */
-    String getMetaString();
+    String metaString();
 
     /**
      * 获取元信息字典
      */
-    Map<String, String> getMetaMap();
+    Map<String, String> metaMap();
 
     /**
      * 获取元信息
      */
-    String getMeta(String name);
+    String meta(String name);
 
     /**
      * 获取元信息或默认
      */
-    String getMetaOrDefault(String name, String def);
+    String metaOrDefault(String name, String def);
 
     /**
      * 获取数据
      */
-    InputStream getData();
+    InputStream data();
 
     /**
      * 获取数据并转为字符串
      */
-    String getDataAsString();
+    String dataAsString();
 
     /**
      * 获取数据并转为字节数组
      */
-    byte[] getDataAsBytes();
+    byte[] dataAsBytes();
 
     /**
      * 获取数据长度
      */
-    int getDataSize();
+    int dataSize();
 }

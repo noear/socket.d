@@ -4,7 +4,6 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.server.ServerConfig;
 
 /**
  * @author noear
@@ -22,7 +21,7 @@ public class Demo {
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
                 .open();
 
-        session.send("demo", new StringEntity("Hi").meta("Content-Type","text/json"));
+        session.send("demo", new StringEntity("Hi").metaSet("Content-Type","text/json"));
         Entity response = session.sendAndRequest("demo", new StringEntity("Hi"));
         session.sendAndSubscribe("demo", new StringEntity("Hi"), entity -> {
         });

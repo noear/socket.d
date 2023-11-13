@@ -40,7 +40,7 @@ public class SessionDefault extends SessionBase {
      * 获取远程地址
      */
     @Override
-    public InetSocketAddress getRemoteAddress() throws IOException {
+    public InetSocketAddress remoteAddress() throws IOException {
         return channel.getRemoteAddress();
     }
 
@@ -48,7 +48,7 @@ public class SessionDefault extends SessionBase {
      * 获取本地地址
      */
     @Override
-    public InetSocketAddress getLocalAddress() throws IOException {
+    public InetSocketAddress localAddress() throws IOException {
         return channel.getLocalAddress();
     }
 
@@ -56,7 +56,7 @@ public class SessionDefault extends SessionBase {
      * 获取握手信息
      */
     @Override
-    public Handshake getHandshake() {
+    public Handshake handshake() {
         return channel.getHandshake();
     }
 
@@ -65,8 +65,8 @@ public class SessionDefault extends SessionBase {
      *
      * @param name 名字
      */
-    public String getParam(String name) {
-        return getHandshake().getParam(name);
+    public String param(String name) {
+        return handshake().getParam(name);
     }
 
     /**
@@ -75,17 +75,17 @@ public class SessionDefault extends SessionBase {
      * @param name 名字
      * @param def  默认值
      */
-    public String getParamOrDefault(String name, String def) {
-        return getHandshake().getParamOrDefault(name, def);
+    public String paramOrDefault(String name, String def) {
+        return handshake().getParamOrDefault(name, def);
     }
 
     /**
      * 获取路径
      */
     @Override
-    public String getPath() {
+    public String path() {
         if (pathNew == null) {
-            return getHandshake().getPath();
+            return handshake().getPath();
         } else {
             return pathNew;
         }
@@ -95,7 +95,7 @@ public class SessionDefault extends SessionBase {
      * 设置新路径
      */
     @Override
-    public void setPathNew(String pathNew) {
+    public void pathNew(String pathNew) {
         this.pathNew = pathNew;
     }
 
@@ -166,9 +166,9 @@ public class SessionDefault extends SessionBase {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
             } catch (TimeoutException e) {
                 StringBuilder hint = new StringBuilder();
-                hint.append(", sessionId=").append(channel.getSession().getSessionId());
+                hint.append(", sessionId=").append(channel.getSession().sessionId());
                 hint.append(", topic=").append(topic);
-                hint.append(", sid=").append(message.getSid());
+                hint.append(", sid=").append(message.sid());
 
                 if (channel.isValid()) {
                     throw new SocketdTimeoutException("Request reply timeout>" + timeout + hint);
@@ -179,7 +179,7 @@ public class SessionDefault extends SessionBase {
                 throw new SocketdException(e);
             }
         } finally {
-            channel.removeAcceptor(message.getSid());
+            channel.removeAcceptor(message.sid());
             channel.getRequests().decrementAndGet();
         }
     }
@@ -205,7 +205,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void reply(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flag.Reply, new MessageDefault().sid(from.getSid()).entity(content)), null);
+        channel.send(new Frame(Flag.Reply, new MessageDefault().sid(from.sid()).entity(content)), null);
     }
 
     /**
@@ -216,7 +216,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void replyEnd(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().sid(from.getSid()).entity(content)), null);
+        channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().sid(from.sid()).entity(content)), null);
     }
 
     /**
@@ -225,7 +225,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public void close() throws IOException {
         if (log.isDebugEnabled()) {
-            log.debug("The session will be closed, sessionId={}", getSessionId());
+            log.debug("The session will be closed, sessionId={}", sessionId());
         }
 
         if (channel.isValid()) {

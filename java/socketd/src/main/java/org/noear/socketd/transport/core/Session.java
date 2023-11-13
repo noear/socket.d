@@ -6,7 +6,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * 会话
@@ -23,24 +22,24 @@ public interface Session extends Closeable {
     /**
      * 获取远程地址
      */
-    InetSocketAddress getRemoteAddress() throws IOException;
+    InetSocketAddress remoteAddress() throws IOException;
 
     /**
      * 获取本地地址
      */
-    InetSocketAddress getLocalAddress() throws IOException;
+    InetSocketAddress localAddress() throws IOException;
 
     /**
      * 获取握手信息
      */
-    Handshake getHandshake();
+    Handshake handshake();
 
     /**
      * 获取握手参数
      *
      * @param name 名字
      */
-    String getParam(String name);
+    String param(String name);
 
     /**
      * 获取握手参数或默认值
@@ -48,29 +47,29 @@ public interface Session extends Closeable {
      * @param name 名字
      * @param def  默认值
      */
-    String getParamOrDefault(String name, String def);
+    String paramOrDefault(String name, String def);
 
     /**
      * 获取握手路径
      */
-    String getPath();
+    String path();
 
     /**
      * 设置握手新路径
      */
-    void setPathNew(String pathNew);
+    void pathNew(String pathNew);
 
     /**
      * 获取所有属性
      */
-    Map<String, Object> getAttrMap();
+    Map<String, Object> attrMap();
 
     /**
      * 获取属性
      *
      * @param name 名字
      */
-    <T> T getAttr(String name);
+    <T> T attr(String name);
 
     /**
      * 获取属性或默认值
@@ -78,7 +77,7 @@ public interface Session extends Closeable {
      * @param name 名字
      * @param def  默认值
      */
-    <T> T getAttrOrDefault(String name, T def);
+    <T> T attrOrDefault(String name, T def);
 
     /**
      * 设置属性
@@ -86,12 +85,12 @@ public interface Session extends Closeable {
      * @param name  名字
      * @param value 值
      */
-    <T> void setAttr(String name, T value);
+    <T> void attrSet(String name, T value);
 
     /**
      * 获取会话Id
      */
-    String getSessionId();
+    String sessionId();
 
     /**
      * 手动重连（一般是自动）

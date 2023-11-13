@@ -6,7 +6,6 @@ import org.noear.socketd.transport.core.Flag;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.entity.EntityDefault;
-import org.noear.socketd.transport.core.internal.MessageDefault;
 
 /**
  * 帧工厂
@@ -23,7 +22,7 @@ public class Frames {
     public static final Frame connectFrame(String sid, String url) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
-        entity.putMeta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
+        entity.metaSet(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
         return new Frame(Flag.Connect, new MessageDefault().sid(sid).topic(url).entity(entity));
     }
 
@@ -35,8 +34,8 @@ public class Frames {
     public static final Frame connackFrame(Message connectMessage) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
-        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
-        return new Frame(Flag.Connack, new MessageDefault().sid(connectMessage.getSid()).topic(connectMessage.getTopic()).entity(entity));
+        entity.metaSet(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
+        return new Frame(Flag.Connack, new MessageDefault().sid(connectMessage.sid()).topic(connectMessage.topic()).entity(entity));
     }
 
     /**

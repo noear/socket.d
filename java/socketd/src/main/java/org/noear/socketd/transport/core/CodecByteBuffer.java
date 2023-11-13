@@ -45,19 +45,19 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             return target;
         } else {
             //sid
-            byte[] sidB = frame.getMessage().getSid().getBytes(config.getCharset());
+            byte[] sidB = frame.getMessage().sid().getBytes(config.getCharset());
             //topic
-            byte[] topicB = frame.getMessage().getTopic().getBytes(config.getCharset());
+            byte[] topicB = frame.getMessage().topic().getBytes(config.getCharset());
             //metaString
-            byte[] metaStringB = frame.getMessage().getMetaString().getBytes(config.getCharset());
+            byte[] metaStringB = frame.getMessage().metaString().getBytes(config.getCharset());
 
             //length (int.bytes + flag + sid + topic + metaString + data + \n*3)
-            int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + topicB.length + metaStringB.length + frame.getMessage().getDataSize() + Short.BYTES * 3;
+            int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + topicB.length + metaStringB.length + frame.getMessage().dataSize() + Short.BYTES * 3;
 
             assertSize("sid", sidB.length, Config.MAX_SIZE_SID);
             assertSize("topic", topicB.length, Config.MAX_SIZE_TOPIC);
             assertSize("metaString", metaStringB.length, Config.MAX_SIZE_META_STRING);
-            assertSize("data", frame.getMessage().getDataSize(), Config.MAX_SIZE_FRAGMENT);
+            assertSize("data", frame.getMessage().dataSize(), Config.MAX_SIZE_FRAGMENT);
 
             T target = factory.apply(frameSize);
 
@@ -80,7 +80,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             target.putChar('\n');
 
             //data
-            IoUtils.writeTo(frame.getMessage().getData(), target);
+            IoUtils.writeTo(frame.getMessage().data(), target);
             target.flush();
 
             return target;

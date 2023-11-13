@@ -30,8 +30,8 @@ public class HandshakeInternal implements Handshake {
 
     public HandshakeInternal(Message source) {
         this.source = source;
-        this.uri = URI.create(source.getTopic());
-        this.version = source.getMeta(EntityMetas.META_SOCKETD_VERSION);
+        this.uri = URI.create(source.topic());
+        this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this.paramMap = new HashMap<>();
 
         String queryString = uri.getQuery();

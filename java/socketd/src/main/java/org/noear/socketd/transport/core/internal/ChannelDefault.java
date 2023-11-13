@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
-    private static Logger log = LoggerFactory.getLogger(ProcessorDefault.class);
+    private static Logger log = LoggerFactory.getLogger(ChannelDefault.class);
 
     private final S source;
 

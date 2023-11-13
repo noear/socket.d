@@ -25,7 +25,7 @@
 <dependency>
     <groupId>org.noear</groupId>
     <artifactId>socketd-transport-java-tcp</artifactId>
-    <version>2.0.14</version>
+    <version>2.0.15</version>
 </dependency>
 ```
 
@@ -167,7 +167,7 @@ public class Demo {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
                         if (message.isRequest() || message.isSubscribe()) {
-                            session.replyEnd(message, new StringEntity("Server receive: " + message.getEntity()));
+                            session.replyEnd(message, new StringEntity("Server receive: " + message.entity()));
                         }
 
                         session.send("/demo2", new StringEntity("Hi!"));
@@ -187,8 +187,8 @@ public class Demo {
                         }
                         
                         //加个附件计数
-                        Integer count = session.getAttrOrDefault("count", 0);
-                        session.setAttr("count", ++count);
+                        Integer count = session.attrOrDefault("count", 0);
+                        session.attr("count", ++count);
 
                         if (count > 5) {
                             //超过5次后，不玩了
@@ -217,14 +217,14 @@ public class Demo {
                 .listen(new SimpleListener(){
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
-                        String fileName = message.getMeta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+                        String fileName = message.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
 
                         if (fileName != null) {
                             File fileNew = new File("/data/upload/user.jpg");
                             fileNew.createNewFile();
 
                             try (OutputStream outputStream = new FileOutputStream(fileNew)) {
-                                IoUtils.transferTo(message.getData(), outputStream);
+                                IoUtils.transferTo(message.data(), outputStream);
                             }
                         }else{
                             System.out.println(message);
@@ -259,7 +259,7 @@ public class Demo {
                 .listen(new SimpleListener() {
                     @Override
                     public void onOpen(Session session) throws IOException {
-                        String user = session.getParam("u");
+                        String user = session.param("u");
                         if ("noear".equals(user) == false) { //如果不是 noear，关闭会话
                             session.close();
                         }

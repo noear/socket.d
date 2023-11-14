@@ -1,3 +1,3 @@
-# socketd for rust
+# socketD for rust
 
 

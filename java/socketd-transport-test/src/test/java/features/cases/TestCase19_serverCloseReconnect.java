@@ -64,7 +64,7 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
                 .listen(new BuilderListener().onClose(s -> {
                     //避免与服务端死循环
                     if (messageCounter.get() == 1) {
-                        RunUtils.runAnTry(() -> {
+                        RunUtils.runAndTry(() -> {
                             System.out.println("被关闭了");
                             //要用外部这个会话；事件里的 s 没有重连功能
                             s.reconnect();

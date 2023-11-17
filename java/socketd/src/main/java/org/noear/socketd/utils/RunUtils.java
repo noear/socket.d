@@ -61,7 +61,7 @@ public class RunUtils {
         }
     }
 
-    public static void runAnTry(RunnableEx task){
+    public static void runAndTry(RunnableEx task){
         try {
             task.run();
         } catch (Throwable e) {
@@ -89,7 +89,7 @@ public class RunUtils {
      */
     public static CompletableFuture<Void> asyncAndTry(RunnableEx task) {
         return CompletableFuture.runAsync(()->{
-            runAnTry(task);
+            runAndTry(task);
         }, asyncExecutor);
     }
 

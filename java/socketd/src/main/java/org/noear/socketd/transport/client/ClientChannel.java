@@ -217,9 +217,9 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     @Override
     public void close() throws IOException {
-        RunUtils.runAnTry(() -> heartbeatScheduledFuture.cancel(true));
-        RunUtils.runAnTry(() -> connector.close());
-        RunUtils.runAnTry(() -> real.close());
+        RunUtils.runAndTry(() -> heartbeatScheduledFuture.cancel(true));
+        RunUtils.runAndTry(() -> connector.close());
+        RunUtils.runAndTry(() -> real.close());
     }
 
 

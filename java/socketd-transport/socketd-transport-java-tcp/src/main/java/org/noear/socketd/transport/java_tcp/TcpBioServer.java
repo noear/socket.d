@@ -105,7 +105,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             } catch (RejectedExecutionException e) {
                 if (socketTmp != null) {
                     log.warn("Server thread pool is full", e);
-                    RunUtils.runAnTry(socketTmp::close);
+                    RunUtils.runAndTry(socketTmp::close);
                 }
             } catch (Throwable e) {
                 if (server.isClosed()) {

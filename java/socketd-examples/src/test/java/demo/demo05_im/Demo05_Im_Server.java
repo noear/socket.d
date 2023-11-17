@@ -89,7 +89,7 @@ public class Demo05_Im_Server {
     static void pushToRoom(String room, Entity message) {
         userList.values().parallelStream().filter(s1 -> room.equals(s1.attr("room")))
                 .forEach(s1 -> {
-                    RunUtils.runAnTry(() -> {
+                    RunUtils.runAndTry(() -> {
                         s1.send("cmd.chat", message); //给房间的每个人转发消息
                     });
                 });

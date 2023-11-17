@@ -49,7 +49,7 @@ public class Demo05_Mq_Server {
                                 //开始给订阅用户广播
                                 userList.values().parallelStream().filter(s1 -> "1".equals(s.attr(topic)))
                                         .forEach(s1 -> {
-                                            RunUtils.runAnTry(() -> {
+                                            RunUtils.runAndTry(() -> {
                                                 //发送广播（如果要 Ack，可改用 sendAndSubscribe ）//服务端支持 ACK 有点复杂，就不搞了
                                                 s1.send("mq.broadcast", tmp);
                                             });

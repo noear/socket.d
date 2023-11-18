@@ -61,7 +61,7 @@ public class ProcessorDefault implements Processor {
             onOpen(channel);
         } else {
             if (channel.getHandshake() == null) {
-                channel.close();
+                channel.close(Constants.CLOSE1_PROTOCOL);
 
                 if(frame.getFlag() == Flag.Close){
                     //说明握手失败了
@@ -74,9 +74,6 @@ public class ProcessorDefault implements Processor {
                 return;
             }
 
-            //更新活动时间
-            channel.liveTimeUpdate();
-
             try {
                 switch (frame.getFlag()) {
                     case Ping: {
@@ -87,7 +84,7 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     case Close: {
-                        channel.close();
+                        channel.close(Constants.CLOSE1_PROTOCOL);
                         onCloseInternal(channel);
                         break;
                     }
@@ -103,7 +100,7 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close();
+                        channel.close(Constants.CLOSE1_PROTOCOL);
                         onClose(channel);
                     }
                 }
@@ -175,7 +172,7 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onClose(Channel channel) {
-        if (channel.isClosed() == false) {
+        if (channel.isClosed() == 0) {
             onCloseInternal(channel);
         }
     }

@@ -14,17 +14,7 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.0
  */
-public interface Channel extends Closeable {
-    /**
-     * 获取活动时间
-     * */
-    long liveTime();
-
-    /**
-     * 更新活动时间
-     * */
-    void liveTimeUpdate();
-
+public interface Channel {
     /**
      * 获取附件
      */
@@ -48,7 +38,12 @@ public interface Channel extends Closeable {
     /**
      * 是否已关闭
      */
-    boolean isClosed();
+    int isClosed();
+
+    /**
+     * 关闭（1协议关，2用户关）
+     * */
+    void close(int code);
 
     /**
      * 获取配置

@@ -63,22 +63,6 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
-
-    @Override
-    public long liveTime() {
-        if(real != null){
-            return real.liveTime();
-        }
-        return 0;
-    }
-
-    @Override
-    public void liveTimeUpdate() {
-        if (real != null) {
-            real.liveTimeUpdate();
-        }
-    }
-
     /**
      * 移除接收器（答复接收器）
      */
@@ -105,9 +89,9 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 是否已关闭
      */
     @Override
-    public boolean isClosed() {
+    public int isClosed() {
         if (real == null) {
-            return false;
+            return 0;
         } else {
             return real.isClosed();
         }
@@ -147,10 +131,10 @@ public class ClientChannel extends ChannelBase implements Channel {
                 return;
             }
 
-            //手明手动关闭或被控制性关闭
-            if (real.isClosed()) {
+            //手动关闭或被控制性关闭
+            if (real.isClosed() > 0) {
                 if (log.isDebugEnabled()) {
-                    log.debug("The channel is closed, sessionId={}", getSession().sessionId());
+                    log.debug("The channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }
                 return;
             }
@@ -165,7 +149,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 throw e;
             } catch (Throwable e) {
                 if (connector.autoReconnect()) {
-                    real.close();
+                    real.close(Constants.CLOSE2_ERROR);
                     real = null;
                 }
 
@@ -182,6 +166,8 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     @Override
     public void send(Frame frame, Acceptor acceptor) throws IOException {
+        Asserts.assertClosedByUser(real);
+
         synchronized (this) {
             try {
                 prepareCheck();
@@ -191,7 +177,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 throw e;
             } catch (Throwable e) {
                 if (connector.autoReconnect()) {
-                    real.close();
+                    real.close(Constants.CLOSE2_ERROR);
                     real = null;
                 }
                 throw new SocketdChannelException(e);
@@ -229,10 +215,10 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 关闭
      */
     @Override
-    public void close() throws IOException {
+    public void close(int code) {
         RunUtils.runAndTry(() -> heartbeatScheduledFuture.cancel(true));
         RunUtils.runAndTry(() -> connector.close());
-        RunUtils.runAndTry(() -> real.close());
+        RunUtils.runAndTry(() -> real.close(code));
     }
 
 

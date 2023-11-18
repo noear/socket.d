@@ -21,9 +21,8 @@ public abstract class ChannelBase implements Channel {
     private final AtomicInteger requests = new AtomicInteger();
     private final Map<String, Object> attachments = new ConcurrentHashMap<>();
     private HandshakeInternal handshake;
-    private long liveTime;
-    //是否已关闭（用于做关闭异常提醒）
-    private boolean isClosed;
+    //是否已关闭（用于做关闭异常提醒）//可能协议关；可能用户关
+    private int isClosed;
 
     public Config getConfig() {
         return config;
@@ -46,8 +45,14 @@ public abstract class ChannelBase implements Channel {
 
 
     @Override
-    public boolean isClosed() {
+    public int isClosed() {
         return isClosed;
+    }
+
+    @Override
+    public void close(int code){
+        isClosed = code;
+        attachments.clear();
     }
 
     @Override
@@ -89,11 +94,5 @@ public abstract class ChannelBase implements Channel {
     @Override
     public void sendClose() throws IOException {
         send(Frames.closeFrame(), null);
-    }
-
-    @Override
-    public void close() throws IOException {
-        isClosed = true;
-        attachments.clear();
     }
 }

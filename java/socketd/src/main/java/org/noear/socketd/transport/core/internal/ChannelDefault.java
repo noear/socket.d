@@ -29,23 +29,12 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final ChannelAssistant<S> assistant;
     //会话（懒加载）
     private Session session;
-    private long liveTime;
 
     public ChannelDefault(S source, Config config, ChannelAssistant<S> assistant) {
         super(config);
         this.source = source;
         this.assistant = assistant;
         this.acceptorMap = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public long liveTime() {
-        return liveTime;
-    }
-
-    @Override
-    public void liveTimeUpdate() {
-        liveTime = System.currentTimeMillis();
     }
 
     /**
@@ -65,7 +54,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public boolean isValid() {
-        return isClosed() == false && assistant.isValid(source);
+        return isClosed() == 0 && assistant.isValid(source);
     }
 
     /**
@@ -163,7 +152,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 acceptor.accept(frame.getMessage(), onError);
             } else {
                 //改为异步处理，避免卡死Io线程
-                getConfig().getChannelExecutor().submit(()->{
+                getConfig().getChannelExecutor().submit(() -> {
                     acceptor.accept(frame.getMessage(), onError);
                 });
             }
@@ -203,13 +192,19 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * 关闭
      */
     @Override
-    public void close() throws IOException {
+    public void close(int code) {
         if (log.isDebugEnabled()) {
             log.debug("The channel will be closed, sessionId={}", getSession().sessionId());
         }
 
-        super.close();
+        super.close(code);
         acceptorMap.clear();
-        assistant.close(source);
+        try {
+            assistant.close(source);
+        } catch (IOException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("{}", e);
+            }
+        }
     }
 }

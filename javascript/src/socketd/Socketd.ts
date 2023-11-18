@@ -4,7 +4,6 @@
  * */
 import {Client} from "./transport/client/Client";
 import {ClientConfig} from "./transport/client/ClientConfig";
-import {Entity} from "./transport/core/Entity";
 import {WsClient} from "./impl_ws/WsClient";
 
 

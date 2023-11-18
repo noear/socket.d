@@ -68,7 +68,7 @@ public class TestCase17_idleTimeout extends BaseTestCase {
                     }
                 }).open();
 
-        Thread.sleep(5 * 1000);
+        Thread.sleep(2 * 1000);
 
         clientSession.send("/demo", new StringEntity("hi"));
         Thread.sleep(500);

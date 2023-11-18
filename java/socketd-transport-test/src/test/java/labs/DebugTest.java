@@ -13,8 +13,8 @@ public class DebugTest {
      * 用于调试
      */
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[0];
-        BaseTestCase testCase = new TestCase22_ssl(s1, 2100);
+        String s1 = schemas[3];
+        BaseTestCase testCase = new TestCase17_idleTimeout(s1, 2100);
         try {
             testCase.start();
             testCase.stop();

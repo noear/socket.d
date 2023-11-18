@@ -69,12 +69,6 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         server = createServer();
 
-        //闲置超时
-        if (config().getIdleTimeout() > 0L) {
-            //单位：毫秒
-            server.setSoTimeout((int) config().getIdleTimeout());
-        }
-
         serverExecutor.submit(() -> {
             accept();
         });
@@ -92,6 +86,12 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
             Socket socketTmp = null;
             try {
                 Socket socket = socketTmp = server.accept();
+
+                //闲置超时
+                if (config().getIdleTimeout() > 0L) {
+                    //单位：毫秒
+                    socket.setSoTimeout((int) config().getIdleTimeout());
+                }
 
                 serverExecutor.submit(() -> {
                     try {

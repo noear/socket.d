@@ -78,6 +78,8 @@ public class TestCase12_client_session_close extends BaseTestCase {
 
         Thread.sleep(200);
 
+        assert clientSession.isValid() == false;
+
         try {
             clientSession.send("/user/created", new StringEntity("hi"));
         } catch (SocketdChannelException e) {

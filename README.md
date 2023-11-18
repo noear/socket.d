@@ -157,8 +157,19 @@ public class Demo {
                 .config(c -> c.port(8602))
                 .listen(new SimpleListener(){
                     @Override
+                    public void onOpen(Session session) throws IOException {
+                        //签权
+                        if("1b0VsGusEkddgr3d".equals(session.param("token")) == false){
+                            session.close();
+                        }
+                    }
+                    @Override
                     public void onMessage(Session session, Message message) throws IOException {
+                        //打印
+                        System.out.println(message);
+                        
                         if(message.isRequest() || message.isSubscribe()){
+                            //答复
                             session.replyEnd(message, new StringEntity("And you too."));
                         }
                     }

@@ -29,12 +29,23 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final ChannelAssistant<S> assistant;
     //会话（懒加载）
     private Session session;
+    private long liveTime;
 
     public ChannelDefault(S source, Config config, ChannelAssistant<S> assistant) {
         super(config);
         this.source = source;
         this.assistant = assistant;
         this.acceptorMap = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public long liveTime() {
+        return liveTime;
+    }
+
+    @Override
+    public void liveTimeUpdate() {
+        liveTime = System.currentTimeMillis();
     }
 
     /**

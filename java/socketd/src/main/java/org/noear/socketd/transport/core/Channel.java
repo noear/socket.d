@@ -16,6 +16,16 @@ import java.util.function.Consumer;
  */
 public interface Channel extends Closeable {
     /**
+     * 获取活动时间
+     * */
+    long liveTime();
+
+    /**
+     * 更新活动时间
+     * */
+    void liveTimeUpdate();
+
+    /**
      * 获取附件
      */
     <T> T getAttachment(String name);

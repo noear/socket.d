@@ -64,6 +64,21 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
 
+    @Override
+    public long liveTime() {
+        if(real != null){
+            return real.liveTime();
+        }
+        return 0;
+    }
+
+    @Override
+    public void liveTimeUpdate() {
+        if (real != null) {
+            real.liveTimeUpdate();
+        }
+    }
+
     /**
      * 移除接收器（答复接收器）
      */

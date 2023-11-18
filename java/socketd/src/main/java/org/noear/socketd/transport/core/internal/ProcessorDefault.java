@@ -74,6 +74,9 @@ public class ProcessorDefault implements Processor {
                 return;
             }
 
+            //更新活动时间
+            channel.liveTimeUpdate();
+
             try {
                 switch (frame.getFlag()) {
                     case Ping: {

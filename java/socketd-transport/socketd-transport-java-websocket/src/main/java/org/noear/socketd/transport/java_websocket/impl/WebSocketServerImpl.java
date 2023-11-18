@@ -70,7 +70,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     public void onMessage(WebSocket conn, ByteBuffer message) {
         try {
             //用于支持 socket.d 控制 idleTimeout //前端也可能会关闭自动 pingPong
-            ((WebSocketImpl)conn).updateLastPong();
+            ((WebSocketImpl) conn).updateLastPong();
 
             Channel channel = getChannel(conn);
             Frame frame = server.assistant().read(message);
@@ -103,6 +103,8 @@ public class WebSocketServerImpl extends WebSocketServer {
         if (server.config().getIdleTimeout() > 0L) {
             //单位：秒
             setConnectionLostTimeout((int) (server.config().getIdleTimeout() / 1000L));
+        } else {
+            setConnectionLostTimeout(0);
         }
     }
 }

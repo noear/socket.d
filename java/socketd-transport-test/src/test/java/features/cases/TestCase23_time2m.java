@@ -29,6 +29,7 @@ public class TestCase23_time2m extends BaseTestCase {
     private Server server;
     private Session clientSession;
 
+    private AtomicInteger messageCounter = new AtomicInteger();
     private AtomicInteger openCounter = new AtomicInteger();
 
     @Override
@@ -43,11 +44,11 @@ public class TestCase23_time2m extends BaseTestCase {
                     @Override
                     public void onOpen(Session session) throws IOException {
                         openCounter.incrementAndGet();
-                        System.out.println(session.sessionId());
                     }
 
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
+                        messageCounter.incrementAndGet();
                         System.out.println(message);
                     }
                 })
@@ -75,9 +76,8 @@ public class TestCase23_time2m extends BaseTestCase {
         clientSession.send("/demo", new StringEntity("hi"));
 
         Thread.sleep(1000);
-        System.out.println("counter: " + openCounter.get());
-        Assertions.assertEquals(openCounter.get(), 1, getSchema() + ":server 触发的 onOpen 数量对不上");
-
+        System.out.println("counter: message=" + messageCounter.get() + ", open=" + openCounter.get());
+        Assertions.assertEquals(messageCounter.get(), 2, getSchema() + getSchema() + ":server 收的消息数量对不上");
     }
 
     @Override

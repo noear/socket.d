@@ -146,6 +146,10 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                     }
                 } catch (SocketTimeoutException e) {
                     //说明 idleTimeout
+                    if(log.isDebugEnabled()) {
+                        log.debug("Channel idle timeout");
+                    }
+                    //注意：socket 客户端无法感知关闭，需要发消息通知
                     channel.sendClose();
                     throw e;
                 }

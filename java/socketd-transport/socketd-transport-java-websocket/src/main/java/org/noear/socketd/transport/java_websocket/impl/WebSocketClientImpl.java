@@ -1,6 +1,8 @@
 package org.noear.socketd.transport.java_websocket.impl;
 
+import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ServerHandshake;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
@@ -30,6 +32,12 @@ public class WebSocketClientImpl extends WebSocketClient {
 
     public CompletableFuture<ClientHandshakeResult> getHandshakeFuture() {
         return handshakeFuture;
+    }
+
+    @Override
+    public void onWebsocketPing(WebSocket conn, Framedata f) {
+        //用于支持 socket.d 控制 idleTimeout //关闭自动 ping->Pong
+        //super.onWebsocketPing(conn, f);
     }
 
     @Override

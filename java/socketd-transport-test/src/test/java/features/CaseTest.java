@@ -211,7 +211,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            BaseTestCase testCase = new TestCase21_sendAndSubscribe2rep(s1, 2000 + i);
+            BaseTestCase testCase = new TestCase21_sendAndSubscribe2rep(s1, 2100 + i);
             try {
                 testCase.start();
                 testCase.stop();

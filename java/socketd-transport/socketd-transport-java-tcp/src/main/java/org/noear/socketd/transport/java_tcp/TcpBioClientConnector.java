@@ -52,6 +52,16 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             real.setSoTimeout((int) client.config().getIdleTimeout());
         }
 
+        //读缓冲大小
+        if(client.config().getReadBufferSize() > 0){
+            real.setReceiveBufferSize(client.config().getReadBufferSize());
+        }
+
+        //写缓冲大小
+        if(client.config().getWriteBufferSize() > 0){
+            real.setSendBufferSize(client.config().getWriteBufferSize());
+        }
+
         if (client.config().getConnectTimeout() > 0) {
             real.connect(socketAddress, (int) client.config().getConnectTimeout());
         } else {

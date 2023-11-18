@@ -182,8 +182,6 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     @Override
     public void send(Frame frame, Acceptor acceptor) throws IOException {
-        Asserts.assertClosed(real);
-
         synchronized (this) {
             try {
                 prepareCheck();

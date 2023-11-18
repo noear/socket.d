@@ -93,6 +93,16 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                     socket.setSoTimeout((int) config().getIdleTimeout());
                 }
 
+                //读缓冲
+                if(config().getReadBufferSize() > 0){
+                    socket.setReceiveBufferSize(config().getReadBufferSize());
+                }
+
+                //写缓冲
+                if(config().getWriteBufferSize() > 0){
+                    socket.setSendBufferSize(config().getWriteBufferSize());
+                }
+
                 serverExecutor.submit(() -> {
                     try {
                         Channel channel = new ChannelDefault<>(socket, config(), assistant());
@@ -124,17 +134,23 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     private void receive(Channel channel, Socket socket) {
         while (true) {
             try {
-                if (socket.isClosed()) {
-                    processor().onClose(channel);
-                    break;
-                }
+                try {
+                    if (socket.isClosed()) {
+                        processor().onClose(channel);
+                        break;
+                    }
 
-                Frame frame = assistant().read(socket);
-                if (frame != null) {
-                    processor().onReceive(channel, frame);
+                    Frame frame = assistant().read(socket);
+                    if (frame != null) {
+                        processor().onReceive(channel, frame);
+                    }
+                } catch (SocketTimeoutException e) {
+                    //说明 idleTimeout
+                    channel.sendClose();
+                    throw e;
                 }
-            } catch (SocketException e) {
-                //如果是 java.net.ConnectException，说明 idleTimeout
+            } catch (IOException e) {
+                //如果是 SocketTimeoutException，说明 idleTimeout
                 processor().onError(channel, e);
                 processor().onClose(channel);
                 close(socket);

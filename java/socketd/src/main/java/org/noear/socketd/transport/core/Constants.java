@@ -11,19 +11,19 @@ import java.io.InputStream;
  */
 public interface Constants {
     /**
-     * 默认流id
+     * 默认流id（占位）
      */
     String DEF_SID = "";
     /**
-     * 默认主题
+     * 默认主题（占位）
      */
     String DEF_TOPIC = "";
     /**
-     * 默认元信息字符串
+     * 默认元信息字符串（占位）
      */
     String DEF_META_STRING = "";
     /**
-     * 默认数据
+     * 默认数据（占位）
      */
     InputStream DEF_DATA = new ByteArrayInputStream(new byte[]{});
 

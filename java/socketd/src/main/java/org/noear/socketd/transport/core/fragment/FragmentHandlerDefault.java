@@ -23,7 +23,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
     public Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
 
         ByteArrayOutputStream fragmentBuf = new ByteArrayOutputStream();
-        IoUtils.transferTo(message.data(), fragmentBuf, 0, Config.MAX_SIZE_FRAGMENT);
+        IoUtils.transferTo(message.data(), fragmentBuf, 0, Constants.MAX_SIZE_FRAGMENT);
         byte[] fragmentBytes = fragmentBuf.toByteArray();
         if (fragmentBytes.length == 0) {
             return null;

@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.core;
 
-
 import org.noear.socketd.exception.SocketdSizeLimitException;
 import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
@@ -54,10 +53,10 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             //length (int.bytes + flag + sid + topic + metaString + data + \n*3)
             int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + topicB.length + metaStringB.length + frame.getMessage().dataSize() + Short.BYTES * 3;
 
-            assertSize("sid", sidB.length, Config.MAX_SIZE_SID);
-            assertSize("topic", topicB.length, Config.MAX_SIZE_TOPIC);
-            assertSize("metaString", metaStringB.length, Config.MAX_SIZE_META_STRING);
-            assertSize("data", frame.getMessage().dataSize(), Config.MAX_SIZE_FRAGMENT);
+            assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
+            assertSize("topic", topicB.length, Constants.MAX_SIZE_TOPIC);
+            assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
+            assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_FRAGMENT);
 
             T target = factory.apply(frameSize);
 
@@ -105,28 +104,28 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             return new Frame(Flags.Of(flag), null);
         } else {
 
-            int metaBufSize = Math.min(Config.MAX_SIZE_META_STRING, buffer.remaining());
+            int metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, buffer.remaining());
 
             //1.解码 sid and topic
             ByteBuffer sb = ByteBuffer.allocate(metaBufSize);
 
             //sid
-            String sid = decodeString(buffer, sb, Config.MAX_SIZE_SID);
+            String sid = decodeString(buffer, sb, Constants.MAX_SIZE_SID);
 
             //topic
-            String topic = decodeString(buffer, sb, Config.MAX_SIZE_TOPIC);
+            String topic = decodeString(buffer, sb, Constants.MAX_SIZE_TOPIC);
 
             //metaString
-            String metaString = decodeString(buffer, sb, Config.MAX_SIZE_META_STRING);
+            String metaString = decodeString(buffer, sb, Constants.MAX_SIZE_META_STRING);
 
             //2.解码 body
             int dataRealSize = frameSize - buffer.position();
             byte[] data;
-            if (dataRealSize > Config.MAX_SIZE_FRAGMENT) {
+            if (dataRealSize > Constants.MAX_SIZE_FRAGMENT) {
                 //超界了，空读。必须读，不然协议流会坏掉
-                data = new byte[Config.MAX_SIZE_FRAGMENT];
-                buffer.get(data, 0, Config.MAX_SIZE_FRAGMENT);
-                for (int i = dataRealSize - Config.MAX_SIZE_FRAGMENT; i > 0; i--) {
+                data = new byte[Constants.MAX_SIZE_FRAGMENT];
+                buffer.get(data, 0, Constants.MAX_SIZE_FRAGMENT);
+                for (int i = dataRealSize - Constants.MAX_SIZE_FRAGMENT; i > 0; i--) {
                     buffer.get();
                 }
             } else {

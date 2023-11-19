@@ -1,4 +1,11 @@
 
+### 2.0.16
+* 调整 ChannelDefault 日志记录器的归属类
+* 添加 java-tcp 服务端对 idleTimeout 配置的支持
+* 添加 netty-tcp 服务端对 idleTimeout 配置的支持
+* 添加 java-ws 服务端对 idleTimeout 配置的支持
+* 优化 channel 关闭机制，基于代码分为：协议关，异常关，用户关。方便识别原因
+
 ### 2.0.15
 
 * 调整 通道线程池前缀名

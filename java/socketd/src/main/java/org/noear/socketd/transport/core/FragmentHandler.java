@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 数据分片处理
@@ -12,11 +11,19 @@ import java.util.concurrent.atomic.AtomicReference;
 public interface FragmentHandler {
     /**
      * 获取下个分片
+     *
+     * @param channel       通道
+     * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
+     * @param message       总包消息
      */
-    Entity nextFragment(Config config, AtomicReference<Integer> fragmentIndex, Entity entity) throws IOException;
+    Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException;
 
     /**
      * 聚合所有分片
+     *
+     * @param channel       通道
+     * @param fragmentIndex 分片索引（传过来信息，不一定有顺序）
+     * @param message       分片消息
      */
-    Frame aggrFragment(Channel channel, int fragmentIndex, Frame frame) throws IOException;
+    Frame aggrFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException;
 }

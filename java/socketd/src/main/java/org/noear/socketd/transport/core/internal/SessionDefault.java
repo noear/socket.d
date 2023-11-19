@@ -120,7 +120,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void send(String topic, Entity content) throws IOException {
-        Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
+        MessageInternal message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
 
         channel.send(new Frame(Flags.Message, message), null);
     }
@@ -156,7 +156,7 @@ public class SessionDefault extends SessionBase {
             channel.getRequests().incrementAndGet();
         }
 
-        Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
+        MessageInternal message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
@@ -193,7 +193,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void sendAndSubscribe(String topic, Entity content, IoConsumer<Entity> consumer) throws IOException {
-        Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
+        MessageInternal message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
         channel.send(new Frame(Flags.Subscribe, message), new AcceptorSubscribe(consumer));
     }
 

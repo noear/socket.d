@@ -8,9 +8,9 @@ package org.noear.socketd.transport.core;
  */
 public class Frame {
     private int flag;
-    private Message message;
+    private MessageInternal message;
 
-    public Frame(int flag, Message message) {
+    public Frame(int flag, MessageInternal message) {
         this.flag = flag;
         this.message = message;
     }
@@ -25,7 +25,7 @@ public class Frame {
     /**
      * 消息
      * */
-    public Message getMessage() {
+    public MessageInternal getMessage() {
         return message;
     }
 

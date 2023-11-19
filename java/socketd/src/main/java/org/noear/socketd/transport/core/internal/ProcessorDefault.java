@@ -116,7 +116,7 @@ public class ProcessorDefault implements Processor {
         if (fragmentIdxStr != null) {
             //解析分片索引
             int index = Integer.parseInt(fragmentIdxStr);
-            Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame);
+            Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
 
             if (frameNew == null) {
                 return;

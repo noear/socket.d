@@ -6,7 +6,6 @@ import org.noear.socketd.utils.IoUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 数据分片默认实现（可以重写，把大流先缓存到磁盘以节省内存）
@@ -17,20 +16,21 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FragmentHandlerDefault implements FragmentHandler {
     /**
      * 获取一个分片
+     *
+     * @param fragmentIndex 从1开始
      */
     @Override
-    public Entity nextFragment(Config config, AtomicReference<Integer> fragmentIndex, Entity entity) throws IOException {
-        fragmentIndex.set(fragmentIndex.get() + 1);
+    public Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
 
         ByteArrayOutputStream fragmentBuf = new ByteArrayOutputStream();
-        IoUtils.transferTo(entity.data(), fragmentBuf, 0, Config.MAX_SIZE_FRAGMENT);
+        IoUtils.transferTo(message.data(), fragmentBuf, 0, Config.MAX_SIZE_FRAGMENT);
         byte[] fragmentBytes = fragmentBuf.toByteArray();
         if (fragmentBytes.length == 0) {
             return null;
         }
         EntityDefault fragmentEntity = new EntityDefault().data(fragmentBytes);
-        if (fragmentIndex.get() == 1) {
-            fragmentEntity.metaMap(entity.metaMap());
+        if (fragmentIndex == 1) {
+            fragmentEntity.metaMap(message.metaMap());
         }
         fragmentEntity.meta(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
         return fragmentEntity;
@@ -40,14 +40,14 @@ public class FragmentHandlerDefault implements FragmentHandler {
      * 聚合分片（可以重写，把大流先缓存到磁盘以节省内存）
      */
     @Override
-    public Frame aggrFragment(Channel channel, int index, Frame frame) throws IOException {
-        FragmentAggregator aggregator = channel.getAttachment(frame.getMessage().sid());
+    public Frame aggrFragment(Channel channel, int index, MessageInternal message) throws IOException {
+        FragmentAggregator aggregator = channel.getAttachment(message.sid());
         if (aggregator == null) {
-            aggregator = new FragmentAggregator(frame);
+            aggregator = new FragmentAggregator(message);
             channel.setAttachment(aggregator.getSid(), aggregator);
         }
 
-        aggregator.add(index, frame);
+        aggregator.add(index, message);
 
         if (aggregator.getDataLength() > aggregator.getDataStreamSize()) {
             //长度不够，等下一个分片包

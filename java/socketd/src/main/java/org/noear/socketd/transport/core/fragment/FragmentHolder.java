@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core.fragment;
 
-import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.MessageInternal;
 
 /**
  * 分片持有人
@@ -10,11 +10,11 @@ import org.noear.socketd.transport.core.Frame;
  */
 public class FragmentHolder {
     private int index;
-    private Frame frame;
+    private MessageInternal message;
 
-    public FragmentHolder(int index, Frame frame) {
+    public FragmentHolder(int index, MessageInternal message) {
         this.index = index;
-        this.frame = frame;
+        this.message = message;
     }
 
     /**
@@ -27,7 +27,7 @@ public class FragmentHolder {
     /**
      * 获取分片帧
      */
-    public Frame getFrame() {
-        return frame;
+    public MessageInternal getMessage() {
+        return message;
     }
 }

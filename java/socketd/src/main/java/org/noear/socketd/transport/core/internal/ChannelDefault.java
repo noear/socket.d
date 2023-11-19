@@ -89,7 +89,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         if (frame.getMessage() != null) {
-            Message message = frame.getMessage();
+            MessageInternal message = frame.getMessage();
 
             //注册接收器
             if (acceptor != null) {
@@ -102,10 +102,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 try (InputStream ins = message.data()) {
                     if (message.dataSize() > Config.MAX_SIZE_FRAGMENT) {
                         //满足分片条件
-                        AtomicReference<Integer> fragmentIndex = new AtomicReference<>(0);
+                        int fragmentIndex = 0;
                         while (true) {
                             //获取分片
-                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(getConfig(), fragmentIndex, message.entity());
+                            fragmentIndex++;
+                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
 
                             if (fragmentEntity != null) {
                                 //主要是 sid 和 entity

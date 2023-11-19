@@ -1,9 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
-import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.transport.core.Flags;
-import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.*;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -15,19 +12,12 @@ import java.util.Map;
  * @author noear
  * @since 2.0
  */
-public class MessageDefault implements Message {
+public class MessageDefault implements MessageInternal {
     private String sid = Constants.DEF_SID;
     private String topic = Constants.DEF_TOPIC;
     private Entity entity = null;
 
     private int flag = Flags.Unknown;
-
-    /**
-     * 获取标记
-     */
-    public int getFlag() {
-        return flag;
-    }
 
     /**
      * 设置标记
@@ -62,8 +52,17 @@ public class MessageDefault implements Message {
     }
 
     /**
+     * 获取标记
+     */
+    @Override
+    public int flag() {
+        return flag;
+    }
+
+    /**
      * 是否为请求
      */
+    @Override
     public boolean isRequest() {
         return flag == Flags.Request;
     }
@@ -71,6 +70,7 @@ public class MessageDefault implements Message {
     /**
      * 是否为订阅
      */
+    @Override
     public boolean isSubscribe() {
         return flag == Flags.Subscribe;
     }
@@ -78,6 +78,7 @@ public class MessageDefault implements Message {
     /**
      * 获取消息流Id（用于消息交互、分片）
      */
+    @Override
     public String sid() {
         return sid;
     }
@@ -85,6 +86,7 @@ public class MessageDefault implements Message {
     /**
      * 获取消息主题
      */
+    @Override
     public String topic() {
         return topic;
     }

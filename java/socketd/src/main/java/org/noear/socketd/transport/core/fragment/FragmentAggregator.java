@@ -3,6 +3,7 @@ package org.noear.socketd.transport.core.fragment;
 import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.exception.SocketdCodecException;
+import org.noear.socketd.transport.core.MessageInternal;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.IoUtils;
@@ -22,8 +23,8 @@ import java.util.List;
  * @since 2.0
  */
 public class FragmentAggregator {
-    //主帧
-    private Frame main;
+    //主导消息
+    private MessageInternal main;
     //分片列表
     private List<FragmentHolder> fragmentHolders = new ArrayList<>();
     //数据流大小
@@ -31,12 +32,12 @@ public class FragmentAggregator {
     //数据总长度
     private int dataLength;
 
-    public FragmentAggregator(Frame main) {
+    public FragmentAggregator(MessageInternal main) {
         this.main = main;
-        String dataLengthStr = main.getMessage().meta(EntityMetas.META_DATA_LENGTH);
+        String dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
 
         if (Utils.isEmpty(dataLengthStr)) {
-            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, topic=" + main.getMessage().topic());
+            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, topic=" + main.topic());
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);
@@ -46,7 +47,7 @@ public class FragmentAggregator {
      * 获取消息流Id（用于消息交互、分片）
      */
     public String getSid() {
-        return main.getMessage().sid();
+        return main.sid();
     }
 
     /**
@@ -75,27 +76,27 @@ public class FragmentAggregator {
 
         //添加分片数据
         for (FragmentHolder fh : fragmentHolders) {
-            IoUtils.transferTo(fh.getFrame().getMessage().data(), dataStream);
+            IoUtils.transferTo(fh.getMessage().data(), dataStream);
         }
 
         //转为输入流
         ByteArrayInputStream inputStream = new ByteArrayInputStream(dataStream.toByteArray());
 
         //返回
-        return new Frame(main.getFlag(), new MessageDefault()
-                .flag(main.getFlag())
-                .sid(main.getMessage().sid())
-                .topic(main.getMessage().topic())
-                .entity(new EntityDefault().metaMap(main.getMessage().metaMap()).data(inputStream)));
+        return new Frame(main.flag(), new MessageDefault()
+                .flag(main.flag())
+                .sid(main.sid())
+                .topic(main.topic())
+                .entity(new EntityDefault().metaMap(main.metaMap()).data(inputStream)));
     }
 
     /**
      * 添加帧
      */
-    public void add(int index, Frame frame) throws IOException {
+    public void add(int index, MessageInternal message) throws IOException {
         //添加分片
-        fragmentHolders.add(new FragmentHolder(index, frame));
+        fragmentHolders.add(new FragmentHolder(index, message));
         //添加计数
-        dataStreamSize = dataStreamSize + frame.getMessage().dataSize();
+        dataStreamSize = dataStreamSize + message.dataSize();
     }
 }

@@ -1,30 +1,23 @@
-/* Generated from Java with JSweet 3.1.0 - http://www.jsweet.org */
-namespace org.noear.socketd.transport.core {
+import {Entity} from "./Entity";
+import {Channel} from "./Channel";
+import {Frame} from "./Frame";
+import {MessageInternal} from "./MessageInternal";
+
+/**
+ * 数据分片处理
+ *
+ * @author noear
+ * @since 2.0
+ * @class
+ */
+export interface FragmentHandler {
     /**
-     * 数据分片处理
-     * 
-     * @author noear
-     * @since 2.0
-     * @class
+     * 获取下个分片
      */
-    export interface FragmentHandler {
-        /**
-         * 获取下个分片
-         * @param {*} config
-         * @param {java.util.concurrent.atomic.AtomicReference} fragmentIndex
-         * @param {*} entity
-         * @return {*}
-         */
-        nextFragment(config: org.noear.socketd.transport.core.Config, fragmentIndex: java.util.concurrent.atomic.AtomicReference<number>, entity: org.noear.socketd.transport.core.Entity): org.noear.socketd.transport.core.Entity;
+    nextFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Entity;
 
-        /**
-         * 聚合所有分片
-         * @param {*} channel
-         * @param {number} fragmentIndex
-         * @param {org.noear.socketd.transport.core.Frame} frame
-         * @return {org.noear.socketd.transport.core.Frame}
-         */
-        aggrFragment(channel: org.noear.socketd.transport.core.Channel, fragmentIndex: number, frame: org.noear.socketd.transport.core.Frame): org.noear.socketd.transport.core.Frame;
-    }
+    /**
+     * 聚合所有分片
+     */
+    aggrFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Frame;
 }
-

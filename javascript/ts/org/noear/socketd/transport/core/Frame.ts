@@ -1,53 +1,49 @@
-/* Generated from Java with JSweet 3.1.0 - http://www.jsweet.org */
-namespace org.noear.socketd.transport.core {
-    /**
-     * 帧（帧[消息[实体]]）
-     * 
-     * @author noear
-     * @since 2.0
-     * @param {org.noear.socketd.transport.core.Flag} flag
-     * @param {*} message
-     * @class
-     */
-    export class Frame {
-        /*private*/ flag: org.noear.socketd.transport.core.Flag;
+import {MessageInternal} from "./MessageInternal";
 
-        /*private*/ message: org.noear.socketd.transport.core.Message;
+/**
+ * 帧（帧[消息[实体]]）
+ *
+ * @author noear
+ * @since 2.0
+ * @param {org.noear.socketd.transport.core.Flag} flag
+ * @param {*} message
+ * @class
+ */
+export class Frame {
+    /*private*/
+    flag: number;
 
-        public constructor(flag: org.noear.socketd.transport.core.Flag, message: org.noear.socketd.transport.core.Message) {
-            if (this.flag === undefined) { this.flag = null; }
-            if (this.message === undefined) { this.message = null; }
-            this.flag = flag;
-            this.message = message;
-        }
+    /*private*/
+    message: MessageInternal;
 
-        /**
-         * 标志
-         * 
-         * @return {org.noear.socketd.transport.core.Flag}
-         */
-        public getFlag(): org.noear.socketd.transport.core.Flag {
-            return this.flag;
-        }
-
-        /**
-         * 消息
-         * 
-         * @return {*}
-         */
-        public getMessage(): org.noear.socketd.transport.core.Message {
-            return this.message;
-        }
-
-        /**
-         * 
-         * @return {string}
-         */
-        public toString(): string {
-            return "Frame{flag=" + this.flag + ", message=" + this.message + '}';
-        }
+    public constructor(flag: number, message: MessageInternal) {
+        this.flag = flag;
+        this.message = message;
     }
-    Frame["__class"] = "org.noear.socketd.transport.core.Frame";
 
+    /**
+     * 标志
+     *
+     * @return number
+     */
+    public getFlag(): number {
+        return this.flag;
+    }
+
+    /**
+     * 消息
+     *
+     * @return {*}
+     */
+    public getMessage(): MessageInternal {
+        return this.message;
+    }
+
+    /**
+     *
+     * @return {string}
+     */
+    public toString(): string {
+        return "Frame{flag=" + this.flag + ", message=" + this.message + '}';
+    }
 }
-

@@ -7,7 +7,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
-import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.java_websocket.WsNioClient;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -77,7 +77,7 @@ public class WebSocketClientImpl extends WebSocketClient {
             if (frame != null) {
                 client.processor().onReceive(channel, frame);
 
-                if (frame.getFlag() == Flag.Connack) {
+                if (frame.getFlag() == Flags.Connack) {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                 }
             }

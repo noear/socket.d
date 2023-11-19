@@ -122,7 +122,7 @@ public class SessionDefault extends SessionBase {
     public void send(String topic, Entity content) throws IOException {
         Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
 
-        channel.send(new Frame(Flag.Message, message), null);
+        channel.send(new Frame(Flags.Message, message), null);
     }
 
     /**
@@ -160,7 +160,7 @@ public class SessionDefault extends SessionBase {
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
-            channel.send(new Frame(Flag.Request, message), new AcceptorRequest(future, timeout));
+            channel.send(new Frame(Flags.Request, message), new AcceptorRequest(future, timeout));
 
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
@@ -194,7 +194,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public void sendAndSubscribe(String topic, Entity content, IoConsumer<Entity> consumer) throws IOException {
         Message message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
-        channel.send(new Frame(Flag.Subscribe, message), new AcceptorSubscribe(consumer));
+        channel.send(new Frame(Flags.Subscribe, message), new AcceptorSubscribe(consumer));
     }
 
     /**
@@ -205,7 +205,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void reply(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flag.Reply, new MessageDefault().sid(from.sid()).entity(content)), null);
+        channel.send(new Frame(Flags.Reply, new MessageDefault().sid(from.sid()).entity(content)), null);
     }
 
     /**
@@ -216,7 +216,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void replyEnd(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flag.ReplyEnd, new MessageDefault().sid(from.sid()).entity(content)), null);
+        channel.send(new Frame(Flags.ReplyEnd, new MessageDefault().sid(from.sid()).entity(content)), null);
     }
 
     /**

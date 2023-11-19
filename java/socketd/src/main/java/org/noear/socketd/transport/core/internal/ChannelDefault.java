@@ -142,7 +142,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         Acceptor acceptor = acceptorMap.get(frame.getMessage().sid());
 
         if (acceptor != null) {
-            if (acceptor.isSingle() || frame.getFlag() == Flag.ReplyEnd) {
+            if (acceptor.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除接收器
                 acceptorMap.remove(frame.getMessage().sid());
             }

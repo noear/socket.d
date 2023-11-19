@@ -6,62 +6,53 @@ package org.noear.socketd.transport.core;
  * @author noear
  * @since 2.0
  */
-public enum Flag {
+public interface Flags {
     /**
      * 未知
      */
-    Unknown(0),
+    int Unknown = 0;
     /**
      * 链接
      */
-    Connect(10), //握手：连接(c->s)，提交客户端握手信息，请求服务端握手信息
+    int Connect = 10; //握手：连接(c->s)，提交客户端握手信息，请求服务端握手信息
     /**
      * 链接确认
      */
-    Connack(11),//握手：确认(c<-s)，响应服务端握手信息
+    int Connack = 11; //握手：确认(c<-s)，响应服务端握手信息
     /**
      * Ping
      */
-    Ping(20), //心跳:ping(c<->s)
+    int Ping = 20; //心跳:ping(c<->s)
     /**
      * Pong
      */
-    Pong(21), //心跳:pong(c<->s)
+    int Pong = 21; //心跳:pong(c<->s)
     /**
      * 关闭（Udp 没有断链的概念，需要发消息）
      */
-    Close(30),
+    int Close = 30;
     /**
      * 消息
      */
-    Message(40), //消息(c<->s)
+    int Message = 40; //消息(c<->s)
     /**
      * 请求
      */
-    Request(41), //请求(c<->s)
+    int Request = 41; //请求(c<->s)
     /**
      * 订阅
      */
-    Subscribe(42),
+    int Subscribe = 42;
     /**
      * 回复
      */
-    Reply(48),/**
+    int Reply = 48;
+    /**
      * 回复结束（结束订阅接收）
      */
-    ReplyEnd(49),
-    ;
-    int code;
+    int ReplyEnd = 49;
 
-    public int getCode() {
-        return code;
-    }
-
-    Flag(int code) {
-        this.code = code;
-    }
-
-    public static Flag Of(int code) {
+    static int Of(int code) {
         switch (code) {
             case 10:
                 return Connect;

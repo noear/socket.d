@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Handshake;
+import org.noear.socketd.transport.core.HandshakeInternal;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.utils.Utils;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * @author noear
  * @since 2.0
  */
-public class HandshakeInternal implements Handshake {
+public class HandshakeDefault implements HandshakeInternal {
     private final Message source;
     private final URI uri;
     private final String version;
@@ -28,7 +29,7 @@ public class HandshakeInternal implements Handshake {
         return source;
     }
 
-    public HandshakeInternal(Message source) {
+    public HandshakeDefault(Message source) {
         this.source = source;
         this.uri = URI.create(source.topic());
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
@@ -48,6 +49,7 @@ public class HandshakeInternal implements Handshake {
     /**
      * 版本
      */
+    @Override
     public String version() {
         return version;
     }
@@ -57,6 +59,7 @@ public class HandshakeInternal implements Handshake {
      *
      * @return tcp://192.168.0.1/path?user=1&path=2
      */
+    @Override
     public URI uri() {
         return uri;
     }
@@ -64,6 +67,7 @@ public class HandshakeInternal implements Handshake {
     /**
      * 获取参数集合
      */
+    @Override
     public Map<String, String> paramMap() {
         return paramMap;
     }
@@ -73,6 +77,7 @@ public class HandshakeInternal implements Handshake {
      *
      * @param name 名字
      */
+    @Override
     public String param(String name) {
         return paramMap.get(name);
     }

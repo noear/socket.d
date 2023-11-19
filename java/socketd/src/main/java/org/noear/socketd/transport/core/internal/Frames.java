@@ -2,7 +2,7 @@ package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.EntityMetas;
-import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.entity.EntityDefault;
@@ -23,7 +23,7 @@ public class Frames {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
         entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
-        return new Frame(Flag.Connect, new MessageDefault().sid(sid).topic(url).entity(entity));
+        return new Frame(Flags.Connect, new MessageDefault().sid(sid).topic(url).entity(entity));
     }
 
     /**
@@ -35,27 +35,27 @@ public class Frames {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
         entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
-        return new Frame(Flag.Connack, new MessageDefault().sid(connectMessage.sid()).topic(connectMessage.topic()).entity(entity));
+        return new Frame(Flags.Connack, new MessageDefault().sid(connectMessage.sid()).topic(connectMessage.topic()).entity(entity));
     }
 
     /**
      * 构建 ping 帧
      */
     public static final Frame pingFrame() {
-        return new Frame(Flag.Ping, null);
+        return new Frame(Flags.Ping, null);
     }
 
     /**
      * 构建 pong 帧
      */
     public static final Frame pongFrame() {
-        return new Frame(Flag.Pong, null);
+        return new Frame(Flags.Pong, null);
     }
 
     /**
      * 构建关闭帧（一般用不到）
      */
     public static final Frame closeFrame() {
-        return new Frame(Flag.Close, null);
+        return new Frame(Flags.Close, null);
     }
 }

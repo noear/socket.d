@@ -39,7 +39,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             target.putInt(frameSize);
 
             //flag
-            target.putInt(frame.getFlag().getCode());
+            target.putInt(frame.getFlag());
             target.flush();
 
             return target;
@@ -65,7 +65,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             target.putInt(frameSize);
 
             //flag
-            target.putInt(frame.getFlag().getCode());
+            target.putInt(frame.getFlag());
 
             //sid
             target.putBytes(sidB);
@@ -102,7 +102,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
 
         if (frameSize == 8) {
             //len + flag
-            return new Frame(Flag.Of(flag), null);
+            return new Frame(Flags.Of(flag), null);
         } else {
 
             int metaBufSize = Math.min(Config.MAX_SIZE_META_STRING, buffer.remaining());
@@ -137,7 +137,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             }
 
             MessageDefault message = new MessageDefault().sid(sid).topic(topic).entity(new EntityDefault().metaString(metaString).data(data));
-            message.flag(Flag.Of(flag));
+            message.flag(Flags.Of(flag));
             return new Frame(message.getFlag(), message);
         }
     }

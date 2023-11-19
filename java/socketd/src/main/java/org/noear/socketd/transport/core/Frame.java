@@ -7,10 +7,10 @@ package org.noear.socketd.transport.core;
  * @since 2.0
  */
 public class Frame {
-    private Flag flag;
+    private int flag;
     private Message message;
 
-    public Frame(Flag flag, Message message) {
+    public Frame(int flag, Message message) {
         this.flag = flag;
         this.message = message;
     }
@@ -18,7 +18,7 @@ public class Frame {
     /**
      * 标志
      * */
-    public Flag getFlag(){
+    public int getFlag(){
         return flag;
     }
 

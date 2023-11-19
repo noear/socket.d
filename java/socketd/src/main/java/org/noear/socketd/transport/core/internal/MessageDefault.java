@@ -2,7 +2,7 @@ package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Message;
 
 import java.io.InputStream;
@@ -20,19 +20,19 @@ public class MessageDefault implements Message {
     private String topic = Constants.DEF_TOPIC;
     private Entity entity = null;
 
-    private Flag flag = Flag.Unknown;
+    private int flag = Flags.Unknown;
 
     /**
      * 获取标记
      */
-    public Flag getFlag() {
+    public int getFlag() {
         return flag;
     }
 
     /**
      * 设置标记
      */
-    public MessageDefault flag(Flag flag) {
+    public MessageDefault flag(int flag) {
         this.flag = flag;
         return this;
     }
@@ -65,14 +65,14 @@ public class MessageDefault implements Message {
      * 是否为请求
      */
     public boolean isRequest() {
-        return flag == Flag.Request;
+        return flag == Flags.Request;
     }
 
     /**
      * 是否为订阅
      */
     public boolean isSubscribe() {
-        return flag == Flag.Subscribe;
+        return flag == Flags.Subscribe;
     }
 
     /**

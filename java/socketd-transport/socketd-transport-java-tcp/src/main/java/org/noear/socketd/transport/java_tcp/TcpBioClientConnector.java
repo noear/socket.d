@@ -4,7 +4,7 @@ import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
-import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
@@ -113,7 +113,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                 if (frame != null) {
                     client.processor().onReceive(channel, frame);
 
-                    if (frame.getFlag() == Flag.Connack) {
+                    if (frame.getFlag() == Flags.Connack) {
                         handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                     }
                 }

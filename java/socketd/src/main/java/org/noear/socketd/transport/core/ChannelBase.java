@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.core.internal.Frames;
-import org.noear.socketd.transport.core.internal.HandshakeInternal;
+import org.noear.socketd.transport.core.internal.HandshakeDefault;
 
 import java.io.IOException;
 import java.util.Map;

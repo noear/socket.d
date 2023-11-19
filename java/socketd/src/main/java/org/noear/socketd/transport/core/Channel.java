@@ -1,8 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.core.internal.HandshakeInternal;
-
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -6,7 +6,7 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.transport.core.Flag;
+import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                 if (frame != null) {
                     client.processor().onReceive(channel, frame.getFrame());
 
-                    if(frame.getFrame().getFlag() == Flag.Connack){
+                    if(frame.getFrame().getFlag() == Flags.Connack){
                         handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                     }
                 }

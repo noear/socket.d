@@ -41,9 +41,9 @@ public class ProcessorDefault implements Processor {
             }
         }
 
-        if (frame.getFlag() == Flag.Connect) {
+        if (frame.getFlag() == Flags.Connect) {
             //if server
-            HandshakeInternal handshake = new HandshakeInternal(frame.getMessage());
+            HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
@@ -53,9 +53,9 @@ public class ProcessorDefault implements Processor {
                 //如果还有效，则发送链接确认
                 channel.sendConnack(frame.getMessage()); //->Connack
             }
-        } else if (frame.getFlag() == Flag.Connack) {
+        } else if (frame.getFlag() == Flags.Connack) {
             //if client
-            HandshakeInternal handshake = new HandshakeInternal(frame.getMessage());
+            HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
             channel.setHandshake(handshake);
 
             onOpen(channel);
@@ -63,7 +63,7 @@ public class ProcessorDefault implements Processor {
             if (channel.getHandshake() == null) {
                 channel.close(Constants.CLOSE1_PROTOCOL);
 
-                if(frame.getFlag() == Flag.Close){
+                if(frame.getFlag() == Flags.Close){
                     //说明握手失败了
                     throw new SocketdConnectionException("Connection request was rejected");
                 }
@@ -76,26 +76,26 @@ public class ProcessorDefault implements Processor {
 
             try {
                 switch (frame.getFlag()) {
-                    case Ping: {
+                    case Flags.Ping: {
                         channel.sendPong();
                         break;
                     }
-                    case Pong: {
+                    case Flags.Pong: {
                         break;
                     }
-                    case Close: {
+                    case Flags.Close: {
                         channel.close(Constants.CLOSE1_PROTOCOL);
                         onCloseInternal(channel);
                         break;
                     }
-                    case Message:
-                    case Request:
-                    case Subscribe: {
+                    case Flags.Message:
+                    case Flags.Request:
+                    case Flags.Subscribe: {
                         onReceiveDo(channel, frame, false);
                         break;
                     }
-                    case Reply:
-                    case ReplyEnd: {
+                    case Flags.Reply:
+                    case Flags.ReplyEnd: {
                         onReceiveDo(channel, frame, true);
                         break;
                     }

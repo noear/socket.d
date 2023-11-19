@@ -5,10 +5,10 @@ import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.transport.smartsocket.impl.IdleStatePluginEx;
 import org.noear.socketd.transport.smartsocket.impl.ServerMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.smartboot.socket.extension.plugins.IdleStatePlugin;
 import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickServer;
 
@@ -52,7 +52,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
 
         //闲置超时
         if(config().getIdleTimeout() > 0){
-            processor.addPlugin(new IdleStatePlugin<>((int)config().getIdleTimeout(), true, false));
+            processor.addPlugin(new IdleStatePluginEx<>((int)config().getIdleTimeout(), true, false));
         }
 
         if (config().getHost() != null) {

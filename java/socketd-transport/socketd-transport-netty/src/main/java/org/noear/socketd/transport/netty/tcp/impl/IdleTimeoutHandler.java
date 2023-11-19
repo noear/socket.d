@@ -15,14 +15,15 @@ import org.slf4j.LoggerFactory;
  */
 public class IdleTimeoutHandler extends ChannelDuplexHandler {
     private static final Logger log = LoggerFactory.getLogger(IdleTimeoutHandler.class);
+
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         //支持 idleTimeout
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
             if (e.state() == IdleState.READER_IDLE) {
-                if(log.isDebugEnabled()) {
-                    log.debug("Channel idle timeout");
+                if (log.isDebugEnabled()) {
+                    log.debug("Channel idle timeout, remoteIp={}", ctx.channel().remoteAddress());
                 }
 
                 ctx.close();

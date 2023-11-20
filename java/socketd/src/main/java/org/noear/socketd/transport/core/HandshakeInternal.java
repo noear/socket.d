@@ -8,5 +8,5 @@ public interface HandshakeInternal extends Handshake {
     /**
      * 获取消息源
      */
-    Message getSource();
+    MessageInternal getSource();
 }

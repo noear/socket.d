@@ -3,21 +3,21 @@ package org.noear.socketd.transport.core.listener;
 import org.noear.socketd.transport.core.Listener;
 
 /**
- * 路由器
+ * 路径映射器
  *
  * @author noear
  * @since 2.0
  */
-public interface Router {
+public interface PathMapper {
     /**
-     * 匹配
+     * 获取
      */
-    Listener matching(String path);
+    Listener get(String path);
 
     /**
-     * 添加
+     * 放置
      */
-    void add(String path, Listener listener);
+    void put(String path, Listener listener);
 
     /**
      * 移除
@@ -27,5 +27,5 @@ public interface Router {
     /**
      * 数量
      */
-    int count();
+    int size();
 }

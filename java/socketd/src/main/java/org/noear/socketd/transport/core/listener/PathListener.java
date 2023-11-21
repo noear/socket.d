@@ -7,49 +7,49 @@ import org.noear.socketd.transport.core.Session;
 import java.io.IOException;
 
 /**
- * 路由监听器（根据握手地址路由，一般用于服务端）
+ * 路径监听器（根据握手地址映射，一般用于服务端）
  *
  * @author noear
  * @since 2.0
  */
-public class RouterListener implements Listener {
-    protected final Router router;
+public class PathListener implements Listener {
+    protected final PathMapper mapper;
 
-    public RouterListener() {
-        this.router = new RouterHashMap();
+    public PathListener() {
+        this.mapper = new PathMapperDefault();
     }
 
-    public RouterListener(Router router) {
-        this.router = router;
+    public PathListener(PathMapper mapper) {
+        this.mapper = mapper;
     }
 
     /**
-     * 路由
+     * 映射
      */
-    public RouterListener of(String path, Listener listener) {
-        router.add(path, listener);
+    public PathListener of(String path, Listener listener) {
+        mapper.put(path, listener);
         return this;
     }
 
     /**
-     * 路由
+     * 映射
      */
     public BuilderListener of(String path) {
         BuilderListener l1 = new BuilderListener();
-        router.add(path, l1);
+        mapper.put(path, l1);
         return l1;
     }
 
     /**
-     * 数量
+     * 数量（二级监听器的数据）
      */
-    public int count() {
-        return router.count();
+    public int size() {
+        return mapper.size();
     }
 
     @Override
     public void onOpen(Session session) throws IOException {
-        Listener l1 = router.matching(session.path());
+        Listener l1 = mapper.get(session.path());
 
         if (l1 != null) {
             l1.onOpen(session);
@@ -58,7 +58,7 @@ public class RouterListener implements Listener {
 
     @Override
     public void onMessage(Session session, Message message) throws IOException {
-        Listener l1 = router.matching(session.path());
+        Listener l1 = mapper.get(session.path());
 
         if (l1 != null) {
             l1.onMessage(session, message);
@@ -67,7 +67,7 @@ public class RouterListener implements Listener {
 
     @Override
     public void onClose(Session session) {
-        Listener l1 = router.matching(session.path());
+        Listener l1 = mapper.get(session.path());
 
         if (l1 != null) {
             l1.onClose(session);
@@ -76,7 +76,7 @@ public class RouterListener implements Listener {
 
     @Override
     public void onError(Session session, Throwable error) {
-        Listener l1 = router.matching(session.path());
+        Listener l1 = mapper.get(session.path());
 
         if (l1 != null) {
             l1.onError(session, error);

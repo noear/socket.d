@@ -61,7 +61,7 @@ public class SocketD {
      * 创建服务端，如果没有则为 null
      */
     public static Server createServerOrNull(String schema) {
-        Asserts.assertNull(schema, "schema");
+        Asserts.assertNull("schema", schema);
 
         ServerProvider factory = serverProviderMap.get(schema);
         if (factory == null) {
@@ -91,7 +91,7 @@ public class SocketD {
      * @param serverUrl 服务器地址
      */
     public static Client createClientOrNull(String serverUrl) {
-        Asserts.assertNull(serverUrl, "serverUrl");
+        Asserts.assertNull("serverUrl", serverUrl);
 
         int idx = serverUrl.indexOf("://");
         if (idx < 2) {

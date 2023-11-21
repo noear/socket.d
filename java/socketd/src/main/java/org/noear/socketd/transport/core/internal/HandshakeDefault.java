@@ -1,9 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
-import org.noear.socketd.transport.core.EntityMetas;
-import org.noear.socketd.transport.core.Handshake;
-import org.noear.socketd.transport.core.HandshakeInternal;
-import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.Utils;
 
 import java.net.URI;
@@ -17,7 +14,7 @@ import java.util.Map;
  * @since 2.0
  */
 public class HandshakeDefault implements HandshakeInternal {
-    private final Message source;
+    private final MessageInternal source;
     private final URI uri;
     private final String version;
     private final Map<String, String> paramMap;
@@ -25,11 +22,11 @@ public class HandshakeDefault implements HandshakeInternal {
     /**
      * 消息源
      */
-    public Message getSource() {
+    public MessageInternal getSource() {
         return source;
     }
 
-    public HandshakeDefault(Message source) {
+    public HandshakeDefault(MessageInternal source) {
         this.source = source;
         this.uri = URI.create(source.topic());
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);

@@ -5,7 +5,7 @@ import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
-import org.noear.socketd.transport.core.listener.RouterListener;
+import org.noear.socketd.transport.core.listener.PathListener;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.Utils;
 
@@ -18,7 +18,7 @@ public class Demo06_Im_Server {
     public static void main(String[] args) throws Exception {
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
-                .listen(new RouterListener()
+                .listen(new PathListener()
                         //::::::::::用户频道处理
                         .of("/", new BuilderListener()
                                 .onOpen(s -> {

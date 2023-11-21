@@ -25,7 +25,7 @@
 <dependency>
     <groupId>org.noear</groupId>
     <artifactId>socketd-transport-java-tcp</artifactId>
-    <version>2.0.16</version>
+    <version>2.0.17</version>
 </dependency>
 ```
 
@@ -314,7 +314,7 @@ public class Demo {
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
                 .listen(new BuilderListener().onMessage((s, m) -> {
                     System.out.println(m);
-                }).on("/demo", (s, m) -> { //带了主题路由的功能
+                }).on("/demo", (s, m) -> { //带了路由的功能
                     System.out.println(m);
                 }))
                 .open();

@@ -1,4 +1,14 @@
 
+### 2.0.17
+* 调整 主题概念改成路由概念
+* 调整 Flag 改为 int 类型常量，方便跨语言迁移代码
+* 调整 普通常量统一转到 Constants，方便跨语言迁移
+* 调整 断言接口
+* 调整 RouterListener 更名为 PathListener，避免与 route 概念相冲
+* 添加 HandshakeInternal 接口，方便内存提供扩展内部用函数
+* 优化 FragmentHandler 接口规范
+* 优化 idle timeout 日志打印
+
 ### 2.0.16
 * 调整 ChannelDefault 日志记录器的归属类
 * 添加 java-tcp 服务端对 idleTimeout 配置的支持
@@ -69,7 +79,7 @@
 * 添加 三个附助监听器 RouterListener,BuilderListener,RouterListener（简化开发）
 * 添加 url 鉴权支持
 * 优化 通道有效检测，增加是否关闭条件
-* 取消 Session::sendAndRequest(topic,entity,callback) 请求异步回调模式接口（感觉，宜少不宜多）
+* 取消 Session::sendAndRequest(route,entity,callback) 请求异步回调模式接口（感觉，宜少不宜多）
 
 ### 2.0.7
 
@@ -77,5 +87,5 @@
 * 调整 服务帧流先 s::onOpen() 后 s(Connack)，以增加 url 签权支持
 * 调整 SocketD.createServer, SocketD.createClient 失败提示语
 * 调整 Config::peplyTimeout() 改名为 replyTimeout（之前名字写错了）
-* 添加 Session::sendAndRequest(topic,entity,callback) 请求异步回调模式接口
+* 添加 Session::sendAndRequest(route,entity,callback) 请求异步回调模式接口
 * 优化 通道附件的线程安全问题

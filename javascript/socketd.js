@@ -32,7 +32,7 @@ Client.prototype.sendConnect = function (url){
 }
 
 Client.prototype.readFrame = function (e:MessageEvent) {
-    return {flag: 1, sid: '', topic: '', metaString: '', data: []}
+    return {flag: 1, sid: '', route: '', metaString: '', data: []}
 }
 
 Client.prototype.onReceive = function (e){

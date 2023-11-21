@@ -4,14 +4,14 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
-import org.noear.socketd.transport.core.listener.RouterListener;
+import org.noear.socketd.transport.core.listener.PathListener;
 
 public class Demo04_RouterListener {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
-                .listen(new RouterListener()
+                .listen(new PathListener()
                         .of("/", new BuilderListener().onMessage((s, m) -> {
                             //用户频道
                             System.out.println("user::" + m);

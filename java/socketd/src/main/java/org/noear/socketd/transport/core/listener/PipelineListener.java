@@ -34,6 +34,13 @@ public class PipelineListener implements Listener {
     }
 
     /**
+     * 数量（二级监听器的数据）
+     * */
+    public int size(){
+        return deque.size();
+    }
+
+    /**
      * 打开时
      *
      * @param session 会话

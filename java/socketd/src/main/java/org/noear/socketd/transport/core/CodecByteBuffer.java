@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.exception.SocketdSizeLimitException;
 import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.entity.EntityDefault;
@@ -30,7 +29,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
     @Override
     public <T extends BufferWriter> T write(Frame frame, Function<Integer, T> factory) throws IOException {
         if (frame.getMessage() == null) {
-            //length (flag + int.bytes)
+            //length (len[int] + flag[int])
             int frameSize = Integer.BYTES + Integer.BYTES;
             T target = factory.apply(frameSize);
 
@@ -50,13 +49,13 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             //metaString
             byte[] metaStringB = frame.getMessage().metaString().getBytes(config.getCharset());
 
-            //length (int.bytes + flag + sid + topic + metaString + data + \n*3)
+            //length (len[int] + flag[int] + sid + topic + metaString + data + \n*3)
             int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + topicB.length + metaStringB.length + frame.getMessage().dataSize() + Short.BYTES * 3;
 
-            assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
-            assertSize("topic", topicB.length, Constants.MAX_SIZE_TOPIC);
-            assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
-            assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_FRAGMENT);
+            Asserts.assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
+            Asserts.assertSize("topic", topicB.length, Constants.MAX_SIZE_TOPIC);
+            Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
+            Asserts.assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_FRAGMENT);
 
             T target = factory.apply(frameSize);
 
@@ -100,7 +99,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
         int flag = buffer.getInt();
 
         if (frameSize == 8) {
-            //len + flag
+            //len[int] + flag[int]
             return new Frame(Flags.Of(flag), null);
         } else {
 
@@ -141,6 +140,13 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
         }
     }
 
+    /**
+     * 解码时，以换行符为间隔
+     *
+     * @param reader 读取器
+     * @param buf    复用缓冲
+     * @param maxLen 最大长度
+     */
     protected String decodeString(BufferReader reader, ByteBuffer buf, int maxLen) {
         buf.clear();
 
@@ -166,14 +172,5 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
         }
 
         return new String(buf.array(), 0, buf.limit(), config.getCharset());
-    }
-
-    private void assertSize(String name, int size, int limitSize) {
-        if (size > limitSize) {
-            StringBuilder buf = new StringBuilder();
-            buf.append("This message ").append(name).append(" size is out of limit ").append(limitSize)
-                    .append(" (").append(size).append(")");
-            throw new SocketdSizeLimitException(buf.toString());
-        }
     }
 }

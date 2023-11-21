@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core;
 
 import org.noear.socketd.exception.SocketdChannelException;
+import org.noear.socketd.exception.SocketdSizeLimitException;
 
 /**
  * 断言
@@ -29,10 +30,23 @@ public class Asserts {
 
     /**
      * 断言null
-     * */
-    public static void assertNull(Object val, String name) {
+     */
+    public static void assertNull(String name, Object val) {
         if (val == null) {
             throw new IllegalArgumentException("The argument cannot be null: " + name);
+        }
+    }
+
+
+    /**
+     * 断言长度
+     */
+    public static void assertSize(String name, int size, int limitSize) {
+        if (size > limitSize) {
+            StringBuilder buf = new StringBuilder();
+            buf.append("This message ").append(name).append(" size is out of limit ").append(limitSize)
+                    .append(" (").append(size).append(")");
+            throw new SocketdSizeLimitException(buf.toString());
         }
     }
 }

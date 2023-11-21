@@ -110,7 +110,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 配置编解码器
      */
     public T codec(Codec<BufferReader, BufferWriter> codec) {
-        Asserts.assertNull(codec, "codec");
+        Asserts.assertNull("codec", codec);
 
         this.codec = codec;
         return (T) this;
@@ -128,7 +128,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 配置分片处理
      */
     public T fragmentHandler(FragmentHandler fragmentHandler) {
-        Asserts.assertNull(fragmentHandler, "fragmentHandler");
+        Asserts.assertNull("fragmentHandler", fragmentHandler);
 
         this.fragmentHandler = fragmentHandler;
         return (T) this;
@@ -146,7 +146,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 配置标识生成器
      */
     public T idGenerator(IdGenerator idGenerator) {
-        Asserts.assertNull(idGenerator, "idGenerator");
+        Asserts.assertNull("idGenerator", idGenerator);
 
         this.idGenerator = idGenerator;
         return (T) this;

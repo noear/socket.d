@@ -119,8 +119,8 @@ public class SessionDefault extends SessionBase {
      * 发送
      */
     @Override
-    public void send(String topic, Entity content) throws IOException {
-        MessageInternal message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
+    public void send(String route, Entity content) throws IOException {
+        MessageInternal message = new MessageDefault().sid(generateId()).route(route).entity(content);
 
         channel.send(new Frame(Flags.Message, message), null);
     }
@@ -128,23 +128,23 @@ public class SessionDefault extends SessionBase {
     /**
      * 发送并请求
      *
-     * @param topic   主题
+     * @param route   路由
      * @param content 内容
      */
     @Override
-    public Entity sendAndRequest(String topic, Entity content) throws IOException {
-        return sendAndRequest(topic, content, channel.getConfig().getRequestTimeout());
+    public Entity sendAndRequest(String route, Entity content) throws IOException {
+        return sendAndRequest(route, content, channel.getConfig().getRequestTimeout());
     }
 
     /**
      * 发送并请求（限为一次答复；指定超时）
      *
-     * @param topic   主题
+     * @param route   路由
      * @param content 内容
      * @param timeout 超时（毫秒）
      */
     @Override
-    public Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException {
+    public Entity sendAndRequest(String route, Entity content, long timeout) throws IOException {
         if (timeout < 100) {
             timeout = channel.getConfig().getRequestTimeout();
         }
@@ -156,7 +156,7 @@ public class SessionDefault extends SessionBase {
             channel.getRequests().incrementAndGet();
         }
 
-        MessageInternal message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
+        MessageInternal message = new MessageDefault().sid(generateId()).route(route).entity(content);
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
@@ -167,7 +167,7 @@ public class SessionDefault extends SessionBase {
             } catch (TimeoutException e) {
                 StringBuilder hint = new StringBuilder();
                 hint.append(", sessionId=").append(channel.getSession().sessionId());
-                hint.append(", topic=").append(topic);
+                hint.append(", route=").append(route);
                 hint.append(", sid=").append(message.sid());
 
                 if (channel.isValid()) {
@@ -187,13 +187,13 @@ public class SessionDefault extends SessionBase {
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
-     * @param topic    主题
+     * @param route    路由
      * @param content  内容
      * @param consumer 回调消费者
      */
     @Override
-    public void sendAndSubscribe(String topic, Entity content, IoConsumer<Entity> consumer) throws IOException {
-        MessageInternal message = new MessageDefault().sid(generateId()).topic(topic).entity(content);
+    public void sendAndSubscribe(String route, Entity content, IoConsumer<Entity> consumer) throws IOException {
+        MessageInternal message = new MessageDefault().sid(generateId()).route(route).entity(content);
         channel.send(new Frame(Flags.Subscribe, message), new AcceptorSubscribe(consumer));
     }
 

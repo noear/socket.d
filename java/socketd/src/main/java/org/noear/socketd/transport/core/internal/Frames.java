@@ -23,7 +23,7 @@ public class Frames {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
         entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
-        return new Frame(Flags.Connect, new MessageDefault().sid(sid).topic(url).entity(entity));
+        return new Frame(Flags.Connect, new MessageDefault().sid(sid).route(url).entity(entity));
     }
 
     /**
@@ -35,7 +35,7 @@ public class Frames {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
         entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
-        return new Frame(Flags.Connack, new MessageDefault().sid(connectMessage.sid()).topic(connectMessage.topic()).entity(entity));
+        return new Frame(Flags.Connack, new MessageDefault().sid(connectMessage.sid()).route(connectMessage.route()).entity(entity));
     }
 
     /**

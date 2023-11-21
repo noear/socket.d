@@ -46,8 +46,8 @@ public class BuilderListener implements Listener {
         return this;
     }
 
-    public BuilderListener on(String topic, IoBiConsumer<Session, Message> handler) {
-        onMessageRouting.put(topic, handler);
+    public BuilderListener on(String route, IoBiConsumer<Session, Message> handler) {
+        onMessageRouting.put(route, handler);
         return this;
     }
 
@@ -67,7 +67,7 @@ public class BuilderListener implements Listener {
             onMessageHandler.accept(session, message);
         }
 
-        IoBiConsumer<Session, Message> messageHandler = onMessageRouting.get(message.topic());
+        IoBiConsumer<Session, Message> messageHandler = onMessageRouting.get(message.route());
         if (messageHandler != null) {
             messageHandler.accept(session, message);
         }

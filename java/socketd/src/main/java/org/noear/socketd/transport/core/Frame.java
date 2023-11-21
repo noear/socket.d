@@ -32,7 +32,7 @@ public class Frame {
     @Override
     public String toString() {
         return "Frame{" +
-                "flag=" + flag +
+                "flag=" + Flags.name(flag) +
                 ", message=" + message +
                 '}';
     }

@@ -105,36 +105,36 @@ public interface Session extends Closeable {
     /**
      * 发送
      *
-     * @param topic   主题
+     * @param route   路由
      * @param content 内容
      */
-    void send(String topic, Entity content) throws IOException;
+    void send(String route, Entity content) throws IOException;
 
     /**
      * 发送并请求
      *
-     * @param topic   主题
+     * @param route   路由
      * @param content 内容
      */
-    Entity sendAndRequest(String topic, Entity content) throws IOException;
+    Entity sendAndRequest(String route, Entity content) throws IOException;
 
     /**
      * 发送并请求（限为一次答复；指定超时）
      *
-     * @param topic   主题
+     * @param route   路由
      * @param content 内容
      * @param timeout 超时（毫秒）
      */
-    Entity sendAndRequest(String topic, Entity content, long timeout) throws IOException;
+    Entity sendAndRequest(String route, Entity content, long timeout) throws IOException;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
-     * @param topic    主题
+     * @param route    路由
      * @param content  内容
      * @param consumer 回调消费者
      */
-    void sendAndSubscribe(String topic, Entity content, IoConsumer<Entity> consumer) throws IOException;
+    void sendAndSubscribe(String route, Entity content, IoConsumer<Entity> consumer) throws IOException;
 
     /**
      * 答复

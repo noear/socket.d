@@ -23,8 +23,8 @@ public class Demo04_BuilderListener {
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
                 .listen(new BuilderListener().onMessage((s, m) -> {
                     System.out.println("client::" + m);
-                }).on("/demo", (s, m) -> { //带了主题路由的功能
-                    System.out.println("on::" + m.topic() + "::" + m);
+                }).on("/demo", (s, m) -> { //带了路由的功能
+                    System.out.println("on::" + m.route() + "::" + m);
                 }).on("/demo2", (s,m)->{
 
                 }))

@@ -52,7 +52,7 @@ public interface Flags {
      */
     int ReplyEnd = 49;
 
-    static int Of(int code) {
+    static int of(int code) {
         switch (code) {
             case 10:
                 return Connect;
@@ -76,6 +76,33 @@ public interface Flags {
                 return ReplyEnd;
             default:
                 return Unknown;
+        }
+    }
+
+    static String name(int code) {
+        switch (code) {
+            case 10:
+                return "Connect";
+            case 11:
+                return "Connack";
+            case 20:
+                return "Ping";
+            case 21:
+                return "Pong";
+            case 30:
+                return "Close";
+            case 40:
+                return "Message";
+            case 41:
+                return "Request";
+            case 42:
+                return "Subscribe";
+            case 48:
+                return "Reply";
+            case 49:
+                return "ReplyEnd";
+            default:
+                return "Unknown";
         }
     }
 }

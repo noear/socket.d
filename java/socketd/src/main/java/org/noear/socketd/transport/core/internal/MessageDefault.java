@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class MessageDefault implements MessageInternal {
     private String sid = Constants.DEF_SID;
-    private String topic = Constants.DEF_TOPIC;
+    private String route = Constants.DEF_ROUTE;
     private Entity entity = null;
 
     private int flag = Flags.Unknown;
@@ -36,10 +36,10 @@ public class MessageDefault implements MessageInternal {
     }
 
     /**
-     * 设置主题
+     * 设置路由
      */
-    public MessageDefault topic(String topic) {
-        this.topic = topic;
+    public MessageDefault route(String route) {
+        this.route = route;
         return this;
     }
 
@@ -84,11 +84,11 @@ public class MessageDefault implements MessageInternal {
     }
 
     /**
-     * 获取消息主题
+     * 获取消息路由
      */
     @Override
-    public String topic() {
-        return topic;
+    public String route() {
+        return route;
     }
 
     /**
@@ -103,7 +103,7 @@ public class MessageDefault implements MessageInternal {
     public String toString() {
         return "Message{" +
                 "sid='" + sid + '\'' +
-                ", topic='" + topic + '\'' +
+                ", route='" + route + '\'' +
                 ", entity=" + entity +
                 '}';
     }

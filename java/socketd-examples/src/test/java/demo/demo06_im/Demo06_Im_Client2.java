@@ -1,12 +1,12 @@
-package demo.demo05_im;
+package demo.demo06_im;
 
 /**
  * 多客户端模拟
  */
-public class Demo05_Im_Client2 {
+public class Demo06_Im_Client2 {
 
     public static void main(String[] args) throws Exception {
-        Demo05_Im_Client.main(args);
+        Demo06_Im_Client.main(args);
     }
 
 }

@@ -25,7 +25,7 @@ public class Demo05_Mq_Client {
             System.out.println(message);
         });
 
-        client.publish("user.created", "test", 0);
+        client.publish("user.created", "test");
     }
 
     public static class MqClient {
@@ -50,20 +50,8 @@ public class Demo05_Mq_Client {
                                 String topic = m.meta("topic");
                                 Consumer<String> listener = listenerMap.get(topic);
                                 if (listener != null) {
-                                    if (m.isRequest() || m.isSubscribe()) {
-                                        //Qos1
-                                        String id = m.meta("id");
-
-                                        try {
-                                            listener.accept(m.dataAsString());
-                                            s.replyEnd(m, new StringEntity("Y").meta("id", id));
-                                        } catch (Throwable e) {
-                                            s.replyEnd(m, new StringEntity("N").meta("id", id).meta("error", e.getMessage()));
-                                        }
-                                    } else {
-                                        //Qos0
-                                        listener.accept(m.dataAsString());
-                                    }
+                                    //Qos0
+                                    listener.accept(m.dataAsString());
                                 }
                             }))
                     .open();
@@ -74,23 +62,20 @@ public class Demo05_Mq_Client {
          */
         public void subscribe(String topic, Consumer<String> listener) throws IOException {
             listenerMap.put(topic, listener);
-            //Qos1，确保订阅成功了
-            session.sendAndRequest("mq.sub", new StringEntity("").meta("topic", topic));
+            //Qos0
+            session.send("mq.sub", new StringEntity("").meta("topic", topic));
         }
 
         /**
          * 发布消息
          */
-        public void publish(String topic, String message, int qos) throws IOException {
+        public void publish(String topic, String message) throws IOException {
             Entity entity = new StringEntity(message)
                     .meta("topic", topic)
                     .meta("id", UUID.randomUUID().toString());
 
-            if (qos > 0) {
-                session.sendAndRequest("mq.push", entity);
-            } else {
-                session.send("mq.push", entity);
-            }
+            //Qos0
+            session.send("mq.push", entity);
         }
     }
 }

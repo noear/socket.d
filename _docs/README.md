@@ -393,7 +393,337 @@ public class Demo04_Router {
 
 ## 六、实战训练
 
-* 开发一个简单的 im 程序（基于 cmd 界面）//已完成
-  * https://gitee.com/noear/socketd/tree/main/java/socketd-examples/src/test/java/demo/demo05_im  
-* 开发一个简单的分布式消息队列 mq （支持 sub/pub ）//已完成
-  * https://gitee.com/noear/socketd/tree/main/java/socketd-examples/src/test/java/demo/demo05_mq
+### 1、简单的消息队列（订阅 + 发布 + 广播）
+
+* 服务端
+
+```java
+
+public class Demo05_Mq_Server {
+    public static void main(String[] args) throws Exception {
+        Set<Session> userList = new HashSet<>();
+
+        SocketD.createServer("sd:udp")
+                .config(c -> c.port(8602))
+                .listen(new BuilderListener()
+                        .onOpen(s -> {
+                            userList.add(s);
+                        })
+                        .onClose(s -> {
+                            userList.remove(s);
+                        })
+                        .on("mq.sub", (s, m) -> {
+                            //::订阅指令
+                            String topic = m.meta("topic");
+                            if (Utils.isNotEmpty(topic)) {
+                                //标记订阅关系
+                                s.attr(topic, "1");
+                            }
+                        }).on("mq.push", (s, m) -> {
+                            //::推送指令
+                            String topic = m.meta("topic");
+                            String id = m.meta("id");
+
+                            if (Utils.isNotEmpty(topic) && Utils.isNotEmpty(id)) {
+                                //开始给订阅用户广播
+                                for (Session s1 : userList.stream().filter(s1 -> s.attrMap().containsKey(topic)).collect(Collectors.toList())) {
+                                    //Qos0 发送广播
+                                    s1.send("mq.broadcast", m);
+                                }
+                            }
+                        })
+                ).start();
+    }
+}
+```
+
+* 客户端
+
+```java
+public class Demo05_Mq_Client {
+    public static void main(String[] args) throws Exception {
+        MqClient client = new MqClient("127.0.0.1", 8602);
+        client.connect();
+
+        client.subscribe("user.created", (message) -> {
+            System.out.println(message);
+        });
+
+        client.subscribe("user.updated", (message) -> {
+            System.out.println(message);
+        });
+
+        client.publish("user.created", "test");
+    }
+
+    public static class MqClient {
+        private Map<String, Consumer<String>> listenerMap = new HashMap<>();
+        private String server;
+        private int port;
+        private Session session;
+
+        public MqClient(String server, int port) {
+            this.server = server;
+            this.port = port;
+        }
+
+        /**
+         * 连接
+         */
+        public void connect() throws Exception {
+            session = SocketD.createClient("sd:udp://" + server + ":" + port)
+                    .config(c -> c.heartbeatInterval(5)) //心跳频率调高，确保不断连
+                    .listen(new BuilderListener()
+                            .on("mq.broadcast", (s, m) -> {
+                                String topic = m.meta("topic");
+                                Consumer<String> listener = listenerMap.get(topic);
+                                if (listener != null) {
+                                    //Qos0
+                                    listener.accept(m.dataAsString());
+                                }
+                            }))
+                    .open();
+        }
+
+        /**
+         * 订阅消息
+         */
+        public void subscribe(String topic, Consumer<String> listener) throws IOException {
+            listenerMap.put(topic, listener);
+            //Qos0
+            session.send("mq.sub", new StringEntity("").meta("topic", topic));
+        }
+
+        /**
+         * 发布消息
+         */
+        public void publish(String topic, String message) throws IOException {
+            Entity entity = new StringEntity(message)
+                    .meta("topic", topic)
+                    .meta("id", UUID.randomUUID().toString());
+
+            //Qos0
+            session.send("mq.push", entity);
+        }
+    }
+}
+```
+
+
+### 2、简单的聊天（聊天室 +  上下线 + 管理）
+
+* 服务端
+
+```java
+public class Demo06_Im_Server {
+    static Map<String, Session> userList = new HashMap<>();
+    public static void main(String[] args) throws Exception {
+        SocketD.createServer("sd:udp")
+                .config(c -> c.port(8602))
+                .listen(new RouterListener()
+                        //::::::::::用户频道处理
+                        .of("/", new BuilderListener()
+                                .onOpen(s -> {
+                                    //用户连接
+                                    String user = s.param("u");
+                                    if (Utils.isNotEmpty(user)) {
+                                        //有用户名，才登录成功
+                                        userList.put(s.sessionId(), s);
+                                        s.attr("user", user);
+                                    } else {
+                                        //否则说明是非法的
+                                        s.close();
+                                    }
+                                }).onClose(s -> {
+                                    userList.remove(s.sessionId());
+
+                                    String room = s.attr("room");
+
+                                    if (Utils.isNotEmpty(room)) {
+                                        pushToRoom(room, new StringEntity("有人退出聊天室：" + s.attr("user")));
+                                    }
+                                }).on("cmd.join", (s, m) -> {
+                                    //::加入房间指令
+                                    String room = m.meta("room");
+
+                                    if (Utils.isNotEmpty(room)) {
+                                        s.attr("room", room);
+
+                                        pushToRoom(room, new StringEntity("新人加入聊天室：" + s.attr("user")));
+                                    }
+                                }).on("cmd.chat", (s, m) -> {
+                                    //::聊天指令
+                                    String room = m.meta("room");
+
+                                    if (Utils.isNotEmpty(room)) {
+                                        StringBuilder buf = new StringBuilder();
+                                        buf.append(m.meta("sender")).append(": ").append(m.dataAsString());
+
+                                        pushToRoom(room, new StringEntity(buf.toString()));
+                                    }
+                                }))
+                        //::::::::::管理频道处理
+                        .of("/admin", new BuilderListener()
+                                .onOpen((session) -> {
+                                    //管理员签权
+                                    String user = session.param("u");
+                                    String token = session.param("t");
+
+                                    if ("admin".equals(user) && "admin".equals(token)) {
+
+                                    } else {
+                                        session.close();
+                                    }
+                                }).on("cmd.t", (s, m) -> {
+                                    String user = m.meta("u");
+                                    String room = m.meta("room");
+
+                                    Session s2 = userList.values().parallelStream().filter(s1 -> user.equals(s1.attr("user"))).findFirst().get();
+                                    if (s2 != null) {
+                                        s2.attr("room", null);
+                                        s2.send("cmd.t", new StringEntity("你被T出聊天室: " + room));
+                                    }
+                                })
+                        )
+                ).start();
+    }
+
+    static void pushToRoom(String room, Entity message) {
+        userList.values().parallelStream().filter(s1 -> room.equals(s1.attr("room")))
+                .forEach(s1 -> {
+                    RunUtils.runAndTry(() -> {
+                        s1.send("cmd.chat", message); //给房间的每个人转发消息
+                    });
+                });
+    }
+}
+```
+
+* 客户端
+
+```java
+public class Demo06_Im_Client {
+    private static String ADMIN_TOKEN = "admin";// 方便demo测试输入
+
+    private static BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+    private static String user = null;
+    private static String token = null;
+    private static Session session = null;
+    private static String room;
+
+    public static void main(String[] args) throws Exception {
+        //登录
+        login();
+
+        while (true) {
+            //加入聊天室
+            joinRoom();
+
+            //聊天开始
+            chatStart();
+        }
+    }
+
+    /**
+     * 开始聊天
+     * */
+    private static void chatStart() throws Exception {
+        if (token == null) {
+            System.out.println("开始聊天：");
+
+            while (true) {
+                String msg = console.readLine();
+
+                if(room == null){
+                    System.out.println("被T出聊天室，需要重新选择聊天室！");
+                    return;
+                }
+
+                session.send("cmd.chat", new StringEntity(msg)
+                        .meta("room", room)
+                        .meta("sender", user));
+            }
+        }
+    }
+
+    /**
+     * 加入聊天室
+     * */
+    private static void joinRoom() throws Exception {
+        if (token == null) {
+            System.out.println("请选择聊天室进入: c1 或 c2");
+            room = console.readLine();
+
+            while ("c1".equals(room) == false && "c2".equals(room) == false) {
+                System.out.println("错，请重新选择聊天室进入: c1 或 c2");
+                room = console.readLine();
+            }
+
+            //加入聊天室
+            session.send("cmd.join", new StringEntity("").meta("room", room));
+        }
+    }
+
+    /**
+     * 登录
+     * */
+    private static void login() throws Exception {
+        System.out.println("输入用户名：");
+        user = console.readLine();
+
+        if ("admin".equals(user)) {
+            System.out.println("请输入管理令牌：");
+            token = console.readLine();
+
+            while (ADMIN_TOKEN.equals(token) == false) {
+                System.out.println("错，请重新输入管理令牌：");
+                token = console.readLine();
+            }
+        }
+
+        System.out.println("开始登录服务器...");
+
+        if (token == null) {
+            //进入用户频道
+            session = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new BuilderListener().onMessage((s, m) -> {
+                System.err.println("聊到室：" + m.dataAsString());
+            }).on("cmd.t", (s,m)->{
+                //把房间置空
+                room = null;
+            })).open();
+        } else {
+            System.out.println("进入管理频道");
+            //进入管理频道
+            session = SocketD.createClient("sd:udp://127.0.0.1:8602/admin?u=" + user + "&t=" + token).open();
+            // 群主上身
+            adminStart();
+        }
+
+        System.out.println("登录服务器成功!");
+    }
+
+    /**
+     * 群主上身
+     * @throws Exception
+     */
+    private static void adminStart() throws Exception {
+        System.out.println("群管理T人模式：");
+        while (true) {
+            System.out.println("请输入你想踢的人昵称:");
+            String id = console.readLine();
+
+            if(id == null){
+                System.err.println("请输入正确的昵称:");
+                return;
+            }
+
+            session.send("cmd.t", new StringEntity("")
+                    .meta("room", "当前聊天室")
+                    .meta("u", id));
+
+            System.err.println("用户已下线:" + id);
+        }
+    }
+}
+
+```

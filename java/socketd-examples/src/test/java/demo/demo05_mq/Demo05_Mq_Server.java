@@ -1,38 +1,33 @@
 package demo.demo05_mq;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.BuilderListener;
-import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.Utils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Demo05_Mq_Server {
     public static void main(String[] args) throws Exception {
-        Map<String, Session> userList = new HashMap<>();
+        Set<Session> userList = new HashSet<>();
 
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
                 .listen(new BuilderListener()
+                        .onOpen(s -> {
+                            userList.add(s);
+                        })
+                        .onClose(s -> {
+                            userList.remove(s);
+                        })
                         .on("mq.sub", (s, m) -> {
                             //::订阅指令
                             String topic = m.meta("topic");
-
                             if (Utils.isNotEmpty(topic)) {
-                                System.out.println("有新的订阅：s=" + s.sessionId() + ",t=" + topic);
-
                                 //标记订阅关系
                                 s.attr(topic, "1");
-                                userList.put(s.sessionId(), s);
-
-                                if (m.isRequest() || m.isSubscribe()) {
-                                    //如果有 qos1 要求，签复一下
-                                    s.replyEnd(m, new StringEntity(""));
-                                }
                             }
                         }).on("mq.push", (s, m) -> {
                             //::推送指令
@@ -40,20 +35,11 @@ public class Demo05_Mq_Server {
                             String id = m.meta("id");
 
                             if (Utils.isNotEmpty(topic) && Utils.isNotEmpty(id)) {
-                                System.out.println("有新的消息推送：from=" + s.sessionId() + ",t=" + topic);
-
-                                Entity tmp = new StringEntity(m.dataAsString())
-                                        .meta("topic", topic)
-                                        .meta("id", id);
-
                                 //开始给订阅用户广播
-                                userList.values().parallelStream().filter(s1 -> "1".equals(s.attr(topic)))
-                                        .forEach(s1 -> {
-                                            RunUtils.runAndTry(() -> {
-                                                //发送广播（如果要 Ack，可改用 sendAndSubscribe ）//服务端支持 ACK 有点复杂，就不搞了
-                                                s1.send("mq.broadcast", tmp);
-                                            });
-                                        });
+                                for (Session s1 : userList.stream().filter(s1 -> s.attrMap().containsKey(topic)).collect(Collectors.toList())) {
+                                    //Qos0 发送广播
+                                    s1.send("mq.broadcast", m);
+                                }
                             }
                         })
                 ).start();

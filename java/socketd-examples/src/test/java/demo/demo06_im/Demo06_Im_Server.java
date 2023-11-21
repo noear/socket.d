@@ -1,4 +1,4 @@
-package demo.demo05_im;
+package demo.demo06_im;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Entity;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Demo05_Im_Server {
+public class Demo06_Im_Server {
     static Map<String, Session> userList = new HashMap<>();
     public static void main(String[] args) throws Exception {
         SocketD.createServer("sd:udp")
@@ -67,7 +67,7 @@ public class Demo05_Im_Server {
                                     String user = session.param("u");
                                     String token = session.param("t");
 
-                                    if ("admin".equals(user) && "mahuateng".equals(token)) {
+                                    if ("admin".equals(user) && "admin".equals(token)) {
 
                                     } else {
                                         session.close();

@@ -1,4 +1,4 @@
-package demo.demo05_im;
+package demo.demo06_im;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
@@ -8,8 +8,8 @@ import org.noear.socketd.transport.core.listener.BuilderListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class Demo05_Im_Client {
-    private static String ADMIN_TOKEN = "mahuateng";// 方便demo测试输入
+public class Demo06_Im_Client {
+    private static String ADMIN_TOKEN = "admin";// 方便demo测试输入
 
     private static BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     private static String user = null;

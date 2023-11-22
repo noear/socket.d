@@ -65,4 +65,4 @@ var wsuri = "ws://127.0.0.1:18080/demoe/websocket/13?guid=2";
 function send() {
     var msg = document.getElementById('message').value;
     sock.send(msg);
-};
+}

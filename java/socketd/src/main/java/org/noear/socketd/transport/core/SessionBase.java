@@ -34,6 +34,16 @@ public abstract class SessionBase implements Session {
     }
 
     /**
+     * 是有属性
+     *
+     * @param name 名字
+     */
+    @Override
+    public boolean attrHas(String name) {
+        return attrMap.containsKey(name);
+    }
+
+    /**
      * 获取附件
      */
     @Override

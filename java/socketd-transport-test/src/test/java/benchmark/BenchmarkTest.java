@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class BenchmarkTest {
     static final String[] schemas = new String[]{
-//            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
+            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
             "sd:ws-java",
             "sd:udp-java"};
 

@@ -57,19 +57,6 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession>, Pro
 
     @Override
     public Frame decode(ByteBuffer buffer, AioSession aioSession){
-//        if (buffer.remaining() < Integer.BYTES) {
-//            return null;
-//        }
-//        buffer.mark();
-//        int length = buffer.getInt() - Integer.BYTES;
-//        if (length > buffer.remaining()) {
-//            buffer.reset();
-//            return null;
-//        }
-//        buffer.reset();
-//
-//        return config.getCodec().read(new ByteBufferReader(buffer));
-
         FixedLengthFrameDecoder decoder = getChannel(aioSession).getDecoder();
 
         if (decoder == null) {

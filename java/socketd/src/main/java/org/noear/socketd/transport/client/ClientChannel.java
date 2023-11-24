@@ -48,18 +48,20 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 初始化心跳（关闭后，手动重链时也会用到）
      */
     private void initHeartbeat() {
+        if (heartbeatScheduledFuture != null) {
+            heartbeatScheduledFuture.cancel(true);
+        }
+
         if (connector.autoReconnect()) {
-            if (heartbeatScheduledFuture == null || heartbeatScheduledFuture.isCancelled()) {
-                heartbeatScheduledFuture = RunUtils.delayAndRepeat(() -> {
-                    try {
-                        heartbeatHandle();
-                    } catch (Exception e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("{}", e);
-                        }
+            heartbeatScheduledFuture = RunUtils.delayAndRepeat(() -> {
+                try {
+                    heartbeatHandle();
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("{}", e);
                     }
-                }, connector.heartbeatInterval());
-            }
+                }
+            }, connector.heartbeatInterval());
         }
     }
 

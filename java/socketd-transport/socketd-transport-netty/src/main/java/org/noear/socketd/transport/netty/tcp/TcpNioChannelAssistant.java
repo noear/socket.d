@@ -18,7 +18,8 @@ public class TcpNioChannelAssistant implements ChannelAssistant<Channel> {
     @Override
     public void write(Channel target, Frame frame) throws IOException {
         if (target.isActive()) {
-            target.writeAndFlush(frame);
+            target.write(frame);
+            target.flush();
         } else {
             //触发自动重链
             throw new NotActiveException();

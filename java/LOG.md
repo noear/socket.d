@@ -1,4 +1,10 @@
 
+
+### 2.0.19
+* 添加 Utils::guid 接口
+* 调整 ClientChannel 心跳策略（仅手动关闭，才不跳）!!!
+* 调整 netty flush 处理
+
 ### 2.0.18
 * 添加 BytesInputStream 接口，减少 buf copy
 * 添加 Session::attrHas

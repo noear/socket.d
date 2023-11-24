@@ -9,7 +9,7 @@ import java.util.function.Supplier;
  */
 public class RunUtils {
     /**
-     * 异步执行器（一般用于执行 @Async 注解任务）
+     * 异步执行器（一般用于异步任务）
      */
     private static ExecutorService asyncExecutor;
     /**
@@ -24,7 +24,8 @@ public class RunUtils {
                 new LinkedBlockingQueue<Runnable>(),
                 new NamedThreadFactory("Socketd-asyncExecutor-"));
 
-        scheduledExecutor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
+        int scheduledPoolSize = Runtime.getRuntime().availableProcessors() * 2;
+        scheduledExecutor = new ScheduledThreadPoolExecutor(scheduledPoolSize,
                 new NamedThreadFactory("Socketd-echeduledExecutor-"));
     }
 

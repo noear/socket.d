@@ -131,8 +131,8 @@ public class ClientChannel extends ChannelBase implements Channel {
                 return;
             }
 
-            //手动关闭或被控制性关闭
-            if (real.isClosed() > 0) {
+            //手动关闭
+            if (real.isClosed() == Constants.CLOSE3_USER) {
                 if (log.isDebugEnabled()) {
                     log.debug("The channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }

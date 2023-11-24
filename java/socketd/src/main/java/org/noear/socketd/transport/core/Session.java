@@ -102,7 +102,7 @@ public interface Session extends Closeable {
     /**
      * 手动重连（一般是自动）
      */
-    void reconnect() throws Exception;
+    void reconnect() throws IOException;
 
     /**
      * 手动发送 Ping（一般是自动）

@@ -4,6 +4,8 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.internal.ProcessorDefault;
 import org.noear.socketd.transport.core.internal.SessionDefault;
 
+import java.io.IOException;
+
 /**
  * 客户端基类
  *
@@ -109,7 +111,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
      * 打开会话
      */
     @Override
-    public Session open() throws Exception {
+    public Session open() throws IOException {
         ClientConnector connector = createConnector();
 
         //连接

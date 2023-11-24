@@ -5,6 +5,7 @@ import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Processor;
 import org.noear.socketd.transport.core.Session;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
@@ -37,5 +38,5 @@ public interface Client {
     /**
      * 打开会话
      */
-    Session open() throws Exception;
+    Session open() throws IOException;
 }

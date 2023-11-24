@@ -121,7 +121,7 @@ public interface Channel {
     /**
      * 手动重连（一般是自动）
      */
-    void reconnect() throws Exception;
+    void reconnect() throws IOException;
 
     /**
      * 获取会话

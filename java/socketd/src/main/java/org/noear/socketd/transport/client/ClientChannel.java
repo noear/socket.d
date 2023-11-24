@@ -207,7 +207,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
 
     @Override
-    public void reconnect() throws Exception {
+    public void reconnect() throws IOException {
         initHeartbeat();
 
         prepareCheck();
@@ -229,7 +229,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      *
      * @return 是否为新链接
      */
-    private boolean prepareCheck() throws Exception {
+    private boolean prepareCheck() throws IOException {
         if (real == null || real.isValid() == false) {
             real = connector.connect();
 

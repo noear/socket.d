@@ -103,7 +103,7 @@ public class SessionDefault extends SessionBase {
      * 手动重连（一般是自动）
      */
     @Override
-    public void reconnect() throws Exception {
+    public void reconnect() throws IOException {
         channel.reconnect();
     }
 

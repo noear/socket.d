@@ -36,7 +36,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
     }
 
     @Override
-    public ChannelInternal connect() throws Exception {
+    public ChannelInternal connect() throws IOException {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         eventLoopGroup = new NioEventLoopGroup(client.config().getCoreThreads());
@@ -66,12 +66,17 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             close();
-            throw e;
+
+            if (e instanceof IOException) {
+                throw (IOException) e;
+            } else {
+                throw new SocketdConnectionException(e);
+            }
         }
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (real == null) {
             return;
         }

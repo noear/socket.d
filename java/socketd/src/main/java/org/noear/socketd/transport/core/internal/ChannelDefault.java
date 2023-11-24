@@ -168,7 +168,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * 手动重连（一般是自动）
      */
     @Override
-    public void reconnect() throws Exception {
+    public void reconnect() throws IOException {
         //由 ClientChannel 实现
     }
 

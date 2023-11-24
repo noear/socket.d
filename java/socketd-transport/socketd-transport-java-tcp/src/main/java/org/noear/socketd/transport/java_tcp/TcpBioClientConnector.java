@@ -34,7 +34,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     }
 
     @Override
-    public ChannelInternal connect() throws Exception {
+    public ChannelInternal connect() throws IOException {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
@@ -53,12 +53,12 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         //读缓冲大小
-        if(client.config().getReadBufferSize() > 0){
+        if (client.config().getReadBufferSize() > 0) {
             real.setReceiveBufferSize(client.config().getReadBufferSize());
         }
 
         //写缓冲大小
-        if(client.config().getWriteBufferSize() > 0){
+        if (client.config().getWriteBufferSize() > 0) {
             real.setSendBufferSize(client.config().getWriteBufferSize());
         }
 
@@ -97,12 +97,17 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             close();
-            throw e;
+
+            if (e instanceof IOException) {
+                throw (IOException) e;
+            } else {
+                throw new SocketdConnectionException(e);
+            }
         }
     }
 
     private void receive(ChannelInternal channel, Socket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
-        while (true) {
+        while (!clientThread.isInterrupted()) {
             try {
                 if (socket.isClosed()) {
                     client.processor().onClose(channel);
@@ -134,7 +139,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (real == null) {
             return;
         }

@@ -7,6 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.noear.socketd.SocketD;
+import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyServerInboundHandler;
 import org.noear.socketd.transport.server.Server;
@@ -15,6 +16,8 @@ import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * Tcp-Nio 服务端实现（支持 ssl）
@@ -38,7 +41,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
     }
 
     @Override
-    public Server start() throws Exception {
+    public Server start() throws IOException {
         if (isStarted) {
             throw new IllegalStateException("Server started");
         } else {
@@ -66,7 +69,11 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
 
-            throw e;
+            if (e instanceof IOException) {
+                throw (IOException) e;
+            } else {
+                throw new SocketdException(e);
+            }
         }
 
         log.info("Server started: {server=" + config().getLocalUrl() + "}");

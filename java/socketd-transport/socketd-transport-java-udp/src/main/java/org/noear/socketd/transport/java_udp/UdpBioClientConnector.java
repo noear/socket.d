@@ -11,6 +11,7 @@ import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.*;
 
@@ -31,7 +32,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
     }
 
     @Override
-    public ChannelInternal connect() throws Exception {
+    public ChannelInternal connect() throws IOException {
         log.debug("Start connecting to: {}", client.config().getUrl());
 
         //不要复用旧的对象
@@ -72,12 +73,17 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
             throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
         } catch (Exception e) {
             close();
-            throw e;
+
+            if (e instanceof IOException) {
+                throw (IOException) e;
+            } else {
+                throw new SocketdConnectionException(e);
+            }
         }
     }
 
     private void receive(ChannelInternal channel, DatagramSocket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
-        while (true) {
+        while (!clientThread.isInterrupted()) {
             try {
                 if (socket.isClosed()) {
                     client.processor().onClose(channel);
@@ -88,12 +94,12 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                 if (frame != null) {
                     client.processor().onReceive(channel, frame.getFrame());
 
-                    if(frame.getFrame().getFlag() == Flags.Connack){
+                    if (frame.getFrame().getFlag() == Flags.Connack) {
                         handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                     }
                 }
 
-            }  catch (Exception e) {
+            } catch (Exception e) {
                 if (e instanceof SocketdConnectionException) {
                     //说明握手失败了
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));

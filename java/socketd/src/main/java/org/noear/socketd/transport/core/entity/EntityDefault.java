@@ -4,12 +4,13 @@ import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.transport.core.EntityMetas;
+import org.noear.socketd.transport.core.buffer.BytesInputStream;
 import org.noear.socketd.utils.IoUtils;
 import org.noear.socketd.utils.Utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ public class EntityDefault implements Entity {
      * @param metaMap 元信息字典
      */
     public EntityDefault metaMap(Map<String, String> metaMap) {
-        this.metaMap = metaMap;
+        this.metaMap().putAll(metaMap);
         this.metaString = null;
         this.metaStringChanged = true;
         return this;
@@ -131,7 +132,7 @@ public class EntityDefault implements Entity {
      * @param data 数据
      */
     public EntityDefault data(byte[] data) {
-        this.data = new ByteArrayInputStream(data);
+        this.data = new BytesInputStream(data);
         this.dataSize = data.length;
         return this;
     }
@@ -163,7 +164,11 @@ public class EntityDefault implements Entity {
     public String dataAsString() {
         try {
             if (dataAsString == null) {
-                dataAsString = IoUtils.transferToString(data());
+                if (data() instanceof BytesInputStream) {
+                    dataAsString = new String(((BytesInputStream) data()).bytes(), StandardCharsets.UTF_8);
+                } else {
+                    dataAsString = IoUtils.transferToString(data());
+                }
             }
 
             return dataAsString;
@@ -177,7 +182,11 @@ public class EntityDefault implements Entity {
     @Override
     public byte[] dataAsBytes() {
         try {
-            return IoUtils.transferToBytes(data());
+            if (data() instanceof BytesInputStream) {
+                return ((BytesInputStream) data()).bytes();
+            } else {
+                return IoUtils.transferToBytes(data());
+            }
         } catch (IOException e) {
             throw new SocketdCodecException(e);
         }

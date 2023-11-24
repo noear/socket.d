@@ -9,7 +9,6 @@ import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.IoUtils;
 import org.noear.socketd.utils.Utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,15 +78,12 @@ public class FragmentAggregator {
             IoUtils.transferTo(fh.getMessage().data(), dataStream);
         }
 
-        //转为输入流
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(dataStream.toByteArray());
-
         //返回
         return new Frame(main.flag(), new MessageDefault()
                 .flag(main.flag())
                 .sid(main.sid())
                 .route(main.route())
-                .entity(new EntityDefault().metaMap(main.metaMap()).data(inputStream)));
+                .entity(new EntityDefault().metaMap(main.metaMap()).data(dataStream.toByteArray())));
     }
 
     /**

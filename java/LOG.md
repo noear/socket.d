@@ -1,4 +1,8 @@
 
+### 2.0.18
+* 添加 BytesInputStream 接口，减少 buf copy
+* 添加 Session::attrHas
+
 ### 2.0.17
 * 调整 主题概念改成路由概念
 * 调整 Flag 改为 int 类型常量，方便跨语言迁移代码

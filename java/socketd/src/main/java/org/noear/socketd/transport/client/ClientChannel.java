@@ -49,7 +49,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     private void initHeartbeat() {
         if (heartbeatScheduledFuture != null) {
-            heartbeatScheduledFuture.cancel(true);
+            heartbeatScheduledFuture.cancel(false);
         }
 
         if (connector.autoReconnect()) {

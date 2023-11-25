@@ -56,43 +56,50 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
         serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         server = createServer();
 
-        serverExecutor.submit(() -> {
-            while (true) {
-                try {
-                    DatagramFrame datagramFrame = assistant().read(server);
-                    if (datagramFrame == null) {
-                        continue;
-                    }
-
-                    Channel channel = getChannel(datagramFrame);
-
-                    try {
-                        serverExecutor.submit(() -> {
-                            try {
-                                processor().onReceive(channel, datagramFrame.getFrame());
-                            } catch (Throwable e) {
-                                log.debug("{}", e);
-                            }
-                        });
-                    } catch (RejectedExecutionException e) {
-                        log.warn("Server thread pool is full", e);
-                    } catch (Throwable e) {
-                        log.debug("{}", e);
-                    }
-                } catch (Throwable e) {
-                    if (server.isClosed()) {
-                        //说明被手动关掉了
-                        return;
-                    }
-
-                    log.debug("{}", e);
-                }
-            }
-        });
+        serverExecutor.submit(this::accept);
 
         log.info("Server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
+    }
+
+    /**
+     * 接受请求
+     */
+    private void accept() {
+        while (true) {
+            try {
+                DatagramFrame datagramFrame = assistant().read(server);
+                if (datagramFrame == null) {
+                    continue;
+                }
+
+                Channel channel = getChannel(datagramFrame);
+
+                try {
+                    serverExecutor.submit(() -> {
+                        try {
+                            processor().onReceive(channel, datagramFrame.getFrame());
+                        } catch (Throwable e) {
+                            if (log.isWarnEnabled()) {
+                                log.warn("Server receive error", e);
+                            }
+                        }
+                    });
+                } catch (RejectedExecutionException e) {
+                    log.warn("Server thread pool is full", e);
+                } catch (Throwable e) {
+                    log.warn("Server thread pool error", e);
+                }
+            } catch (Throwable e) {
+                if (server.isClosed()) {
+                    //说明被手动关掉了
+                    return;
+                }
+
+                log.warn("Server accept error", e);
+            }
+        }
     }
 
     private Channel getChannel(DatagramFrame datagramFrame) {
@@ -118,10 +125,15 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
         }
 
         try {
-            server.close();
-            serverExecutor.shutdown();
+            if (server != null) {
+                server.close();
+            }
+
+            if (serverExecutor != null) {
+                serverExecutor.shutdown();
+            }
         } catch (Exception e) {
-            log.debug("{}", e);
+            log.debug("Server stop error", e);
         }
     }
 }

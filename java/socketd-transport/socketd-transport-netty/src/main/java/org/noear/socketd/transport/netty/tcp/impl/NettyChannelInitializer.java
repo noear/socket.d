@@ -44,7 +44,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new NettyMessageDecoder(config));
         if (config.getIdleTimeout() > 0) {
             pipeline.addLast(new IdleStateHandler(config.getIdleTimeout(), 0, 0, TimeUnit.MILLISECONDS));
-            pipeline.addLast(new IdleTimeoutHandler());
+            pipeline.addLast(new IdleTimeoutHandler(config));
         }
         pipeline.addLast(processor);
     }

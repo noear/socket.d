@@ -34,7 +34,7 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> {
     public Server start() throws IOException {
         if (isStarted) {
             throw new IllegalStateException("Server started");
-        }else {
+        } else {
             isStarted = true;
         }
 
@@ -65,9 +65,11 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> {
         }
 
         try {
-            server.stop();
+            if (server != null) {
+                server.stop();
+            }
         } catch (Exception e) {
-            log.debug("{}", e);
+            log.debug("Server stop error", e);
         }
     }
 }

@@ -69,9 +69,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
         server = createServer();
 
-        serverExecutor.submit(() -> {
-            accept();
-        });
+        serverExecutor.submit(this::accept);
 
         log.info("Server started: {server=" + config().getLocalUrl() + "}");
 
@@ -94,12 +92,12 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                 }
 
                 //读缓冲
-                if(config().getReadBufferSize() > 0){
+                if (config().getReadBufferSize() > 0) {
                     socket.setReceiveBufferSize(config().getReadBufferSize());
                 }
 
                 //写缓冲
-                if(config().getWriteBufferSize() > 0){
+                if (config().getWriteBufferSize() > 0) {
                     socket.setSendBufferSize(config().getWriteBufferSize());
                 }
 
@@ -108,7 +106,9 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                         Channel channel = new ChannelDefault<>(socket, config(), assistant());
                         receive(channel, socket);
                     } catch (Throwable e) {
-                        log.debug("{}", e);
+                        if (log.isWarnEnabled()) {
+                            log.warn("Server receive error", e);
+                        }
                         close(socket);
                     }
                 });
@@ -123,7 +123,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                     return;
                 }
 
-                log.debug("{}", e);
+                log.warn("Server accept error", e);
             }
         }
     }
@@ -146,8 +146,8 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
                     }
                 } catch (SocketTimeoutException e) {
                     //说明 idleTimeout
-                    if(log.isDebugEnabled()) {
-                        log.debug("Channel idle timeout, remoteIp={}", socket.getRemoteSocketAddress());
+                    if (log.isDebugEnabled()) {
+                        log.debug("Server channel idle timeout, remoteIp={}", socket.getRemoteSocketAddress());
                     }
                     //注意：socket 客户端无法感知关闭，需要发消息通知
                     channel.sendClose();
@@ -170,7 +170,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         try {
             socket.close();
         } catch (Throwable e) {
-            log.debug("{}", e);
+            log.debug("Server socket close error", e);
         }
     }
 
@@ -183,10 +183,15 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
         }
 
         try {
-            server.close();
-            serverExecutor.shutdown();
+            if (server != null) {
+                server.close();
+            }
+
+            if (serverExecutor != null) {
+                serverExecutor.shutdown();
+            }
         } catch (Exception e) {
-            log.debug("{}", e);
+            log.debug("Server stop error", e);
         }
     }
 }

@@ -90,11 +90,19 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
         }
 
         try {
-            server.channel().close();
-            bossGroup.shutdownGracefully();
-            workGroup.shutdownGracefully();
+            if (server != null) {
+                server.channel().close();
+            }
+
+            if (bossGroup != null) {
+                bossGroup.shutdownGracefully();
+            }
+
+            if (workGroup != null) {
+                workGroup.shutdownGracefully();
+            }
         } catch (Exception e) {
-            log.debug("{}", e);
+            log.debug("Server stop error", e);
         }
     }
 }

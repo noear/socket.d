@@ -45,7 +45,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         Acceptor acceptor = acceptorMap.remove(sid);
 
         if (acceptor != null && log.isDebugEnabled()) {
-            log.debug("The acceptor is actively removed, sid={}", sid);
+            log.debug("{} acceptor is actively removed, sid={}", getRole(), sid);
         }
     }
 
@@ -159,7 +159,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Acceptor not found, sid={}", frame.getMessage().sid());
+                log.debug("{} acceptor not found, sid={}", getRole(), frame.getMessage().sid());
             }
         }
     }

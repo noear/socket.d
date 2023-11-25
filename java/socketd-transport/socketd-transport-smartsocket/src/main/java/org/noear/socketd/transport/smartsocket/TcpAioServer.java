@@ -106,9 +106,11 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
         }
 
         try {
-            server.shutdown();
+            if (server != null) {
+                server.shutdown();
+            }
         } catch (Exception e) {
-            log.debug("{}", e);
+            log.debug("Server stop error", e);
         }
     }
 }

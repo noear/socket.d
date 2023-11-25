@@ -1,7 +1,7 @@
 
 # 《快速入门与学习》
 
-视频：
+学习视频：
 
 * [《(1) Helloworld》](https://www.ixigua.com/7298180531219497484)
 * [《(2) 入门与基础接口使用》](https://www.ixigua.com/7298326774386164276)
@@ -25,7 +25,7 @@
 <dependency>
     <groupId>org.noear</groupId>
     <artifactId>socketd-transport-java-tcp</artifactId>
-    <version>2.0.19</version>
+    <version>2.0.20</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@
 
 ## 三、基础接口使用
 
-### 1、发送
+### 1、发送（像 websocket）
 
 ```java
 public class Demo {
@@ -70,7 +70,7 @@ public class Demo {
 }
 ```
 
-### 2、发送并请求（就像 http 那样）
+### 2、发送并请求（像 http）
 
 ```java
 public class Demo {
@@ -100,7 +100,7 @@ public class Demo {
 }
 ```
 
-### 3、发送并订阅（就像 reactive stream 那样）
+### 3、发送并订阅（像 reactive stream）
 
 ```java
 public class Demo {
@@ -135,7 +135,7 @@ public class Demo {
 
 ## 四、进阶使用
 
-### 1、配置
+### 1、配置接口
 
 ```java
 public class Demo {
@@ -289,12 +289,20 @@ public class Demo {
 
 ## 五、辅助增强监听器（可以相互组合）
 
-* SimpleListener
+| 增强监听器            |                              |                  |
+|------------------|------------------------------|------------------|
+| SimpleListener   | 简单监听器                        | Listener 的空实现    |
+| PipelineListener | 管道监听器                        | Listener 的链式组织实现 |
+| EventListener    | 事件监听器，根据消息事件路由（message::event） | 相当于消息的路由器        |
+| PathListener     | 路径监听器，根据握手地址路由（session::path）  | 相当于路径（频道）的路由器    |
 
-这是经典接口，上面已经有大量的使用示例。下面的都是链式写法，有些小伙伴可能不喜欢。
+
+* SimpleListener（简单监听器）
+
+就是一个空实现，上面已经有大量的使用示例。下面的都是链式写法，有些小伙伴可能不喜欢。
 
 
-* BuilderListener
+* EventListener（事件监听器，根据消息事件路由）
 
 ```java
 public class Demo {
@@ -302,9 +310,11 @@ public class Demo {
         //::启动服务端
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
-                .listen(new BuilderListener().onMessage((s,m)->{
+                .listen(new EventListener().onMessage((s,m)->{
                     System.out.println(m);
                     s.send("/demo", new StringEntity("Me too!"));
+                }).on("/order", (s,m)->{ //根据消息事件路由
+                    System.out.println(m); //在 onMessage 时已打印一次，这算第二次打印
                 }))
                 .start();
 
@@ -312,9 +322,9 @@ public class Demo {
 
         //::打开客户端会话
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
-                .listen(new BuilderListener().onMessage((s, m) -> {
+                .listen(new EventListener().onMessage((s, m) -> {
                     System.out.println(m);
-                }).on("/demo", (s, m) -> { //带了路由的功能
+                }).on("/demo", (s, m) -> { //根据消息事件路由
                     System.out.println(m);
                 }))
                 .open();
@@ -325,7 +335,7 @@ public class Demo {
 }
 ```
 
-* PipelineListener（提供监听管道功能）
+* PipelineListener（管道监听器）
 
 ```java
 public class Demo {
@@ -333,10 +343,10 @@ public class Demo {
         //::启动服务端
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
-                .listen(new PipelineListener().next(new BuilderListener().onMessage((s, m) -> {
+                .listen(new PipelineListener().next(new EventListener().onMessage((s, m) -> {
                     //这里可以做拦截
                     System.out.println("拦截打印::" + m);
-                })).next(new BuilderListener().onMessage((s, m) -> {
+                })).next(new EventListener().onMessage((s, m) -> {
                     //这里可以做业务处理
                     System.out.println(m);
                 })))
@@ -354,7 +364,7 @@ public class Demo {
 ```
 
 
-* RouterListener（路由监听器）
+* PathListener（路径监听器，根据握手地址路由）
 
 ```java
 public class Demo04_Router {
@@ -362,12 +372,12 @@ public class Demo04_Router {
         //::启动服务端
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
-                .listen(new RouterListener()
-                        .of("/", new BuilderListener().onMessage((s, m) -> {
+                .listen(new PathListener()
+                        .of("/", new EventListener().onMessage((s, m) -> {
                             //用户频道
                             System.out.println("user::" + m);
                         }))
-                        .of("/admin", new BuilderListener().onOpen(s -> {
+                        .of("/admin", new EventListener().onOpen(s -> {
                             //管理员频道
                             if ("admin".equals(s.getParam("u")) == false) {
                                 s.close();
@@ -405,7 +415,7 @@ public class Demo05_Mq_Server {
 
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
-                .listen(new BuilderListener()
+                .listen(new EventListener()
                         .onOpen(s -> {
                             userList.add(s);
                         })
@@ -473,7 +483,7 @@ public class Demo05_Mq_Client {
         public void connect() throws Exception {
             session = SocketD.createClient("sd:udp://" + server + ":" + port)
                     .config(c -> c.heartbeatInterval(5)) //心跳频率调高，确保不断连
-                    .listen(new BuilderListener()
+                    .listen(new EventListener()
                             .on("mq.broadcast", (s, m) -> {
                                 String topic = m.meta("topic");
                                 Consumer<String> listener = listenerMap.get(topic);
@@ -520,9 +530,9 @@ public class Demo06_Im_Server {
     public static void main(String[] args) throws Exception {
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
-                .listen(new RouterListener()
+                .listen(new PathListener()
                         //::::::::::用户频道处理
-                        .of("/", new BuilderListener()
+                        .of("/", new EventListener()
                                 .onOpen(s -> {
                                     //用户连接
                                     String user = s.param("u");
@@ -563,7 +573,7 @@ public class Demo06_Im_Server {
                                     }
                                 }))
                         //::::::::::管理频道处理
-                        .of("/admin", new BuilderListener()
+                        .of("/admin", new EventListener()
                                 .onOpen((session) -> {
                                     //管理员签权
                                     String user = session.param("u");
@@ -685,7 +695,7 @@ public class Demo06_Im_Client {
 
         if (token == null) {
             //进入用户频道
-            session = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new BuilderListener().onMessage((s, m) -> {
+            session = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new EventListener().onMessage((s, m) -> {
                 System.err.println("聊到室：" + m.dataAsString());
             }).on("cmd.t", (s,m)->{
                 //把房间置空

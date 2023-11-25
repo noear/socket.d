@@ -7,7 +7,7 @@ import org.noear.socketd.transport.core.Session;
 import java.io.IOException;
 
 /**
- * 路径监听器（根据握手地址映射，一般用于服务端）
+ * 路径监听器（根据握手地址路由，一般用于服务端）
  *
  * @author noear
  * @since 2.0
@@ -24,7 +24,7 @@ public class PathListener implements Listener {
     }
 
     /**
-     * 映射
+     * 路由
      */
     public PathListener of(String path, Listener listener) {
         mapper.put(path, listener);
@@ -32,7 +32,7 @@ public class PathListener implements Listener {
     }
 
     /**
-     * 映射
+     * 路由
      */
     public EventListener of(String path) {
         EventListener l1 = new EventListener();

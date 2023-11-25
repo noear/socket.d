@@ -232,8 +232,8 @@ public class SessionDefault extends SessionBase {
             try {
                 channel.sendClose();
             } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("{}", e);
+                if (log.isWarnEnabled()) {
+                    log.warn("Channel sendClose error", e);
                 }
             }
         }

@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * 事件监听器（根据消息事件映射）
+ * 事件监听器（根据消息事件路由）
  *
  * @author noear
  * @since 2.0

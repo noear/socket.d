@@ -69,7 +69,7 @@ public class ProcessorDefault implements Processor {
                 }
 
                 if (log.isWarnEnabled()) {
-                    log.warn("Channel andshake is null, sessionId={}", channel.getSession().sessionId());
+                    log.warn("Channel handshake is null, sessionId={}", channel.getSession().sessionId());
                 }
                 return;
             }
@@ -159,7 +159,7 @@ public class ProcessorDefault implements Processor {
                 listener.onMessage(channel.getSession(), message);
             } catch (Throwable e) {
                 if (log.isWarnEnabled()) {
-                    log.warn("{}", e);
+                    log.warn("Channel listener onMessage error", e);
                 }
             }
         });

@@ -203,8 +203,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         try {
             assistant.close(source);
         } catch (IOException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("{}", e);
+            if (log.isWarnEnabled()) {
+                log.warn("Channel close error", e);
             }
         }
     }

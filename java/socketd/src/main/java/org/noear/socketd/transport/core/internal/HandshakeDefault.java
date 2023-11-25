@@ -28,7 +28,7 @@ public class HandshakeDefault implements HandshakeInternal {
 
     public HandshakeDefault(MessageInternal source) {
         this.source = source;
-        this.uri = URI.create(source.route());
+        this.uri = URI.create(source.event());
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this.paramMap = new HashMap<>();
 

@@ -44,16 +44,16 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
         } else {
             //sid
             byte[] sidB = frame.getMessage().sid().getBytes(config.getCharset());
-            //route
-            byte[] routeB = frame.getMessage().route().getBytes(config.getCharset());
+            //event
+            byte[] eventB = frame.getMessage().event().getBytes(config.getCharset());
             //metaString
             byte[] metaStringB = frame.getMessage().metaString().getBytes(config.getCharset());
 
-            //length (len[int] + flag[int] + sid + route + metaString + data + \n*3)
-            int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + routeB.length + metaStringB.length + frame.getMessage().dataSize() + Short.BYTES * 3;
+            //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
+            int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + eventB.length + metaStringB.length + frame.getMessage().dataSize() + Short.BYTES * 3;
 
             Asserts.assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
-            Asserts.assertSize("route", routeB.length, Constants.MAX_SIZE_ROUTE);
+            Asserts.assertSize("event", eventB.length, Constants.MAX_SIZE_EVENT);
             Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
             Asserts.assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_FRAGMENT);
 
@@ -69,8 +69,8 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             target.putBytes(sidB);
             target.putChar('\n');
 
-            //route
-            target.putBytes(routeB);
+            //event
+            target.putBytes(eventB);
             target.putChar('\n');
 
             //metaString
@@ -105,14 +105,14 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
 
             int metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, buffer.remaining());
 
-            //1.解码 sid and route
+            //1.解码 sid and event
             ByteBuffer sb = ByteBuffer.allocate(metaBufSize);
 
             //sid
             String sid = decodeString(buffer, sb, Constants.MAX_SIZE_SID);
 
-            //route
-            String route = decodeString(buffer, sb, Constants.MAX_SIZE_ROUTE);
+            //event
+            String event = decodeString(buffer, sb, Constants.MAX_SIZE_EVENT);
 
             //metaString
             String metaString = decodeString(buffer, sb, Constants.MAX_SIZE_META_STRING);
@@ -134,7 +134,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
                 }
             }
 
-            MessageDefault message = new MessageDefault().sid(sid).route(route).entity(new EntityDefault().metaString(metaString).data(data));
+            MessageDefault message = new MessageDefault().sid(sid).event(event).entity(new EntityDefault().metaString(metaString).data(data));
             message.flag(Flags.of(flag));
             return new Frame(message.flag(), message);
         }

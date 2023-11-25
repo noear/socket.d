@@ -13,12 +13,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * 路由监听器（根据消息路由映射）
+ * 事件监听器（根据消息事件映射）
  *
  * @author noear
  * @since 2.0
  */
-public class RouteListener implements Listener {
+public class EventListener implements Listener {
     private IoConsumer<Session> onOpenHandler;
     private IoBiConsumer<Session, Message> onMessageHandler;
     private Consumer<Session> onCloseHandler;
@@ -26,28 +26,28 @@ public class RouteListener implements Listener {
     private Map<String, IoBiConsumer<Session, Message>> onMessageRouting = new ConcurrentHashMap<>();
 
     //for builder
-    public RouteListener onOpen(IoConsumer<Session> onOpen) {
+    public EventListener onOpen(IoConsumer<Session> onOpen) {
         this.onOpenHandler = onOpen;
         return this;
     }
 
-    public RouteListener onMessage(IoBiConsumer<Session, Message> onMessage) {
+    public EventListener onMessage(IoBiConsumer<Session, Message> onMessage) {
         this.onMessageHandler = onMessage;
         return this;
     }
 
-    public RouteListener onClose(Consumer<Session> onClose) {
+    public EventListener onClose(Consumer<Session> onClose) {
         this.onCloseHandler = onClose;
         return this;
     }
 
-    public RouteListener onError(BiConsumer<Session, Throwable> onError) {
+    public EventListener onError(BiConsumer<Session, Throwable> onError) {
         this.onErrorHandler = onError;
         return this;
     }
 
-    public RouteListener on(String route, IoBiConsumer<Session, Message> handler) {
-        onMessageRouting.put(route, handler);
+    public EventListener on(String event, IoBiConsumer<Session, Message> handler) {
+        onMessageRouting.put(event, handler);
         return this;
     }
 
@@ -67,7 +67,7 @@ public class RouteListener implements Listener {
             onMessageHandler.accept(session, message);
         }
 
-        IoBiConsumer<Session, Message> messageHandler = onMessageRouting.get(message.route());
+        IoBiConsumer<Session, Message> messageHandler = onMessageRouting.get(message.event());
         if (messageHandler != null) {
             messageHandler.accept(session, message);
         }

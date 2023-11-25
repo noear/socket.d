@@ -36,7 +36,7 @@ public class FragmentAggregator {
         String dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
 
         if (Utils.isEmpty(dataLengthStr)) {
-            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, route=" + main.route());
+            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);
@@ -82,7 +82,7 @@ public class FragmentAggregator {
         return new Frame(main.flag(), new MessageDefault()
                 .flag(main.flag())
                 .sid(main.sid())
-                .route(main.route())
+                .event(main.event())
                 .entity(new EntityDefault().metaMap(main.metaMap()).data(dataStream.toByteArray())));
     }
 

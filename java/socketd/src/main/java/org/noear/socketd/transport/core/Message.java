@@ -25,9 +25,9 @@ public interface Message extends Entity{
     String sid();
 
     /**
-     * 获取消息路由
+     * 获取消息事件
      */
-    String route();
+    String event();
 
     /**
      * 获取消息实体（有时需要获取实体）

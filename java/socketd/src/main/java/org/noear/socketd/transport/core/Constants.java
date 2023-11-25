@@ -15,9 +15,9 @@ public interface Constants {
      */
     String DEF_SID = "";
     /**
-     * 默认路由（占位）
+     * 默认事件（占位）
      */
-    String DEF_ROUTE = "";
+    String DEF_EVENT = "";
     /**
      * 默认元信息字符串（占位）
      */
@@ -47,9 +47,9 @@ public interface Constants {
      */
     int MAX_SIZE_SID = 64;
     /**
-     * 路由大小限制
+     * 事件大小限制
      */
-    int MAX_SIZE_ROUTE = 512;
+    int MAX_SIZE_EVENT = 512;
     /**
      * 元信息串大小限制
      */

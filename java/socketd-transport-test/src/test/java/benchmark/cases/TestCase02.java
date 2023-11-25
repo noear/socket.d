@@ -4,7 +4,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.identifier.TimeidGenerator;
-import org.noear.socketd.transport.core.listener.RouteListener;
+import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.transport.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,7 @@ public class TestCase02 extends BaseTestCase {
         //server
         server = SocketD.createServer(getSchema())
                 .config(c -> c.port(getPort()).idGenerator(new TimeidGenerator()))
-                .listen(new RouteListener().on("demo", (session, message) -> {
+                .listen(new EventListener().on("demo", (session, message) -> {
                     if (message.isRequest()) {
                         session.replyEnd(message, new StringEntity("test"));
                         sendAndRequestLatch.countDown();

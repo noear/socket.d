@@ -3,14 +3,14 @@ package demo.demo04;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.RouteListener;
+import org.noear.socketd.transport.core.listener.EventListener;
 
-public class Demo04_RouteListener {
+public class Demo04_EventListener {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
-                .listen(new RouteListener().onMessage((session, message) -> {
+                .listen(new EventListener().onMessage((session, message) -> {
                     System.out.println("server::" + message);
                     session.send("/demo", new StringEntity("Me too!"));
                     session.send("/demo2", new StringEntity("Me too!"));
@@ -21,10 +21,10 @@ public class Demo04_RouteListener {
 
         //::打开客户端会话
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
-                .listen(new RouteListener().onMessage((s, m) -> {
+                .listen(new EventListener().onMessage((s, m) -> {
                     System.out.println("client::" + m);
-                }).on("/demo", (s, m) -> { //带了路由的功能
-                    System.out.println("on::" + m.route() + "::" + m);
+                }).on("/demo", (s, m) -> { //带了事件路由的功能
+                    System.out.println("on::" + m.event() + "::" + m);
                 }).on("/demo2", (s,m)->{
 
                 }))

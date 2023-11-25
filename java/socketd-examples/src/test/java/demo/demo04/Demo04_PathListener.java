@@ -3,7 +3,7 @@ package demo.demo04;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.RouteListener;
+import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.transport.core.listener.PathListener;
 
 public class Demo04_PathListener {
@@ -12,11 +12,11 @@ public class Demo04_PathListener {
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
                 .listen(new PathListener()
-                        .of("/", new RouteListener().onMessage((s, m) -> {
+                        .of("/", new EventListener().onMessage((s, m) -> {
                             //用户频道
                             System.out.println("user::" + m);
                         }))
-                        .of("/admin", new RouteListener().onOpen(s -> {
+                        .of("/admin", new EventListener().onOpen(s -> {
                             //管理员频道
                             if ("admin".equals(s.param("u")) == false) {
                                 s.close();

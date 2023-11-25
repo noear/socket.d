@@ -30,7 +30,9 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        log.debug("Start connecting to: {}", client.config().getUrl());
+        if(log.isDebugEnabled()) {
+            log.debug("Client connector start connecting to: {}", client.config().getUrl());
+        }
 
 
         //处理自定义架构的影响（重连时，新建实例比原生重链接口靠谱）
@@ -51,6 +53,7 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
         real.connect();
 
         try {
+            //等待握手结果
             ClientHandshakeResult handshakeResult = real.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getException() != null) {
@@ -79,9 +82,13 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
         }
 
         try {
-            real.closeBlocking();
+            if(real != null) {
+                real.closeBlocking();
+            }
         } catch (Throwable e) {
-            log.debug("{}", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Client connector close error", e);
+            }
         }
     }
 }

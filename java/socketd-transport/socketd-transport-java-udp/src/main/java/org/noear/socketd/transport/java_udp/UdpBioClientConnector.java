@@ -33,7 +33,9 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        log.debug("Start connecting to: {}", client.config().getUrl());
+        if(log.isDebugEnabled()) {
+            log.debug("Client connector start connecting to: {}", client.config().getUrl());
+        }
 
         //不要复用旧的对象
 
@@ -57,10 +59,11 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         });
         clientThread.start();
 
-        //开始发连接包
-        channel.sendConnect(client.config().getUrl());
-
         try {
+            //开始发连接包
+            channel.sendConnect(client.config().getUrl());
+
+            //等待握手结果
             ClientHandshakeResult handshakeResult = handshakeFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getException() != null) {
@@ -122,10 +125,17 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         }
 
         try {
-            real.close();
-            clientThread.interrupt();
+            if (real != null) {
+                real.close();
+            }
+
+            if (clientThread != null) {
+                clientThread.interrupt();
+            }
         } catch (Throwable e) {
-            log.debug("{}", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Client connector close error", e);
+            }
         }
     }
 }

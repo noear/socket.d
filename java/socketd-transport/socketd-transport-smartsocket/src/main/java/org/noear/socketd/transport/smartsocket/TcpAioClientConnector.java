@@ -33,14 +33,16 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        log.debug("Start connecting to: {}", client.config().getUrl());
+        if (log.isDebugEnabled()) {
+            log.debug("Client connector start connecting to: {}", client.config().getUrl());
+        }
 
         ClientMessageProcessor processor = new ClientMessageProcessor(client);
 
         try {
             //支持 ssl
             if (client.config().getSslContext() != null) {
-                SslPlugin<Frame>  sslPlugin = new SslPlugin<>(client.config()::getSslContext, sslEngine -> {
+                SslPlugin<Frame> sslPlugin = new SslPlugin<>(client.config()::getSslContext, sslEngine -> {
                     sslEngine.setUseClientMode(true);
                 });
 
@@ -48,7 +50,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             }
 
             //闲置超时
-            if(client.config().getIdleTimeout() > 0) {
+            if (client.config().getIdleTimeout() > 0) {
                 processor.addPlugin(new IdleStatePlugin<>((int) client.config().getIdleTimeout(), true, false));
             }
 
@@ -69,8 +71,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
             real.start();
 
-
-
+            //等待握手结果
             ClientHandshakeResult handshakeResult = processor.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getException() != null) {
@@ -99,9 +100,13 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         }
 
         try {
-            real.shutdown();
+            if (real != null) {
+                real.shutdown();
+            }
         } catch (Throwable e) {
-            log.debug("{}", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Client connector close error", e);
+            }
         }
     }
 }

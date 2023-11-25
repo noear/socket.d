@@ -35,7 +35,9 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        log.debug("Start connecting to: {}", client.config().getUrl());
+        if (log.isDebugEnabled()) {
+            log.debug("Client connector start connecting to: {}", client.config().getUrl());
+        }
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
 
@@ -69,22 +71,18 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
+        ChannelInternal channel = new ChannelDefault<>(real, client.config(), client.assistant());
+
+        clientThread = new Thread(() -> {
+            receive(channel, real, handshakeFuture);
+        });
+        clientThread.start();
 
         try {
-            ChannelInternal channel = new ChannelDefault<>(real, client.config(), client.assistant());
-
-            clientThread = new Thread(() -> {
-                receive(channel, real, handshakeFuture);
-            });
-            clientThread.start();
-
+            //开始发连接包
             channel.sendConnect(client.config().getUrl());
-        } catch (Throwable e) {
-            log.debug("{}", e);
-            close();
-        }
 
-        try {
+            //等待握手结果
             ClientHandshakeResult handshakeResult = handshakeFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getException() != null) {
@@ -145,10 +143,17 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         try {
-            real.close();
-            clientThread.interrupt();
+            if (real != null) {
+                real.close();
+            }
+
+            if (clientThread != null) {
+                clientThread.interrupt();
+            }
         } catch (Throwable e) {
-            log.debug("{}", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Client connector close error", e);
+            }
         }
     }
 }

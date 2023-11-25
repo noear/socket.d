@@ -194,8 +194,9 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void close(int code) {
+
         if (log.isDebugEnabled()) {
-            log.debug("The channel will be closed, sessionId={}", getSession().sessionId());
+            log.debug("{} channel will be closed, sessionId={}", getRole(), getSession().sessionId());
         }
 
         super.close(code);
@@ -204,7 +205,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             assistant.close(source);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Channel close error", e);
+                log.warn("{} channel close error", getRole(), e);
             }
         }
     }

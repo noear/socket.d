@@ -48,6 +48,11 @@ public interface Channel {
     Config getConfig();
 
     /**
+     * 获取角色
+     * */
+    String getRole();
+
+    /**
      * 获取请求计数（用于背压控制）
      */
     AtomicInteger getRequests();

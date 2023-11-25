@@ -36,7 +36,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
             server.processor().onReceive(channel, frame);
         } catch (Throwable e) {
             if (channel == null) {
-                log.warn(e.getMessage(), e);
+                log.warn("Server process0 error", e);
             } else {
                 server.processor().onError(channel, e);
             }

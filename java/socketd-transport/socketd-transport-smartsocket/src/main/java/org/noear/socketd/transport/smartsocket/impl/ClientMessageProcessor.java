@@ -56,7 +56,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             }
 
             if (channel == null) {
-                log.warn(e.getMessage(), e);
+                log.warn("Client process0 error", e);
             } else {
                 client.processor().onError(channel, e);
             }

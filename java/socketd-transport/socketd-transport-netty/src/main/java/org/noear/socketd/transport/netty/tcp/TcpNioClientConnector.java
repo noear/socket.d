@@ -37,7 +37,9 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        log.debug("Start connecting to: {}", client.config().getUrl());
+        if (log.isDebugEnabled()) {
+            log.debug("Client connector start connecting to: {}", client.config().getUrl());
+        }
 
         eventLoopGroup = new NioEventLoopGroup(client.config().getCoreThreads());
 
@@ -54,6 +56,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
                             client.config().getPort())
                     .await();
 
+            //等待握手结果
             ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getException() != null) {
@@ -82,10 +85,17 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
         }
 
         try {
-            real.channel().close();
-            eventLoopGroup.shutdownGracefully();
+            if (real != null) {
+                real.channel().close();
+            }
+
+            if (eventLoopGroup != null) {
+                eventLoopGroup.shutdownGracefully();
+            }
         } catch (Throwable e) {
-            log.debug("{}", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Client connector close error", e);
+            }
         }
     }
 }

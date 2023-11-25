@@ -58,7 +58,7 @@ public class WebSocketClientImpl extends WebSocketClient {
             channel.sendConnect(client.config().getUrl());
         } catch (Throwable e) {
             if (log.isWarnEnabled()) {
-                log.warn("Channel sendConnect error", e);
+                log.warn("Client channel sendConnect error", e);
             }
         }
     }
@@ -67,7 +67,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     public void onMessage(String test) {
         //普通 websocket 握手都通不过
         if (log.isWarnEnabled()) {
-            log.warn("Channel unsupported onMessage(String test)");
+            log.warn("Client channel unsupported onMessage(String test)");
         }
     }
 
@@ -91,7 +91,7 @@ public class WebSocketClientImpl extends WebSocketClient {
             }
 
             if (log.isWarnEnabled()) {
-                log.warn("WebSocket onMessage error", e);
+                log.warn("WebSocket client onMessage error", e);
             }
         }
     }

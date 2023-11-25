@@ -62,7 +62,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     public void onMessage(WebSocket conn, String message) {
         //普通 websocket 握手都通不过
         if (log.isWarnEnabled()) {
-            log.warn("Channel unsupported onMessage(String test)");
+            log.warn("Server channel unsupported onMessage(String test)");
         }
     }
 
@@ -79,7 +79,7 @@ public class WebSocketServerImpl extends WebSocketServer {
                 server.processor().onReceive(channel, frame);
             }
         } catch (Throwable e) {
-            log.warn("WebSocket onMessage error", e);
+            log.warn("WebSocket server onMessage error", e);
         }
     }
 
@@ -93,7 +93,7 @@ public class WebSocketServerImpl extends WebSocketServer {
                 server.processor().onError(channel, ex);
             }
         } catch (Throwable e) {
-            log.warn("WebSocket onError error", e);
+            log.warn("WebSocket server onError error", e);
         }
     }
 

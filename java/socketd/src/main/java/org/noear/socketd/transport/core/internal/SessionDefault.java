@@ -225,7 +225,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public void close() throws IOException {
         if (log.isDebugEnabled()) {
-            log.debug("The session will be closed, sessionId={}", sessionId());
+            log.debug("{} session will be closed, sessionId={}", channel.getRole(), sessionId());
         }
 
         if (channel.isValid()) {
@@ -233,7 +233,7 @@ public class SessionDefault extends SessionBase {
                 channel.sendClose();
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
-                    log.warn("Channel sendClose error", e);
+                    log.warn("{} channel sendClose error", channel.getRole(), e);
                 }
             }
         }

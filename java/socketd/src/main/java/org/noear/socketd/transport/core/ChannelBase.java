@@ -23,15 +23,24 @@ public abstract class ChannelBase implements Channel {
     private HandshakeInternal handshake;
     //是否已关闭（用于做关闭异常提醒）//可能协议关；可能用户关
     private int isClosed;
+    private String role;
 
+
+    public ChannelBase(Config config) {
+        this.config = config;
+        this.role = config.clientMode() ? "Client" : "Server";
+    }
+
+
+    @Override
     public Config getConfig() {
         return config;
     }
 
-    public ChannelBase(Config config) {
-        this.config = config;
+    @Override
+    public String getRole() {
+        return role;
     }
-
 
     @Override
     public <T> T getAttachment(String name) {

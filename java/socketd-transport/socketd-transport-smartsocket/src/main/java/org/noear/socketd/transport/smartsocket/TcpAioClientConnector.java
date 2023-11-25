@@ -33,9 +33,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("Client connector start connecting to: {}", client.config().getUrl());
-        }
+        log.info("Client connector start connecting to: {}", client.config().getUrl());
 
         ClientMessageProcessor processor = new ClientMessageProcessor(client);
 

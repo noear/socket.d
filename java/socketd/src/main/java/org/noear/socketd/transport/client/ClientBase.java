@@ -3,6 +3,8 @@ package org.noear.socketd.transport.client;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.internal.ProcessorDefault;
 import org.noear.socketd.transport.core.internal.SessionDefault;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -13,6 +15,8 @@ import java.io.IOException;
  * @since 2.0
  */
 public abstract class ClientBase<T extends ChannelAssistant> implements Client {
+    private static final Logger log = LoggerFactory.getLogger(ClientBase.class);
+
     //协议处理器
     protected Processor processor = new ProcessorDefault();
     //心跳处理
@@ -123,6 +127,8 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
         Session session = new SessionDefault(clientChannel);
         //原始通道切换为带壳的 session
         channel0.setSession(session);
+
+        log.info("Client successfully connected: {}", config().getUrl());
 
         return session;
     }

@@ -33,10 +33,6 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        if(log.isDebugEnabled()) {
-            log.debug("Client connector start connecting to: {}", client.config().getUrl());
-        }
-
         //不要复用旧的对象
 
         real = new DatagramSocket();

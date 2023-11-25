@@ -102,7 +102,9 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
                 workGroup.shutdownGracefully();
             }
         } catch (Exception e) {
-            log.debug("Server stop error", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Server stop error", e);
+            }
         }
     }
 }

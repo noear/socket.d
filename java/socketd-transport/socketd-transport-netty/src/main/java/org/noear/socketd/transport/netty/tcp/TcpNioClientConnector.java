@@ -37,10 +37,6 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("Client connector start connecting to: {}", client.config().getUrl());
-        }
-
         eventLoopGroup = new NioEventLoopGroup(client.config().getCoreThreads());
 
         try {

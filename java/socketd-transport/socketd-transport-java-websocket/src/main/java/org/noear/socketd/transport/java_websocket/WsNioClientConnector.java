@@ -30,11 +30,6 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        if(log.isDebugEnabled()) {
-            log.debug("Client connector start connecting to: {}", client.config().getUrl());
-        }
-
-
         //处理自定义架构的影响（重连时，新建实例比原生重链接口靠谱）
         String wsUrl = client.config().getUrl().replace("-java://", "://");
         real = new WebSocketClientImpl(URI.create(wsUrl), client);

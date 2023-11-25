@@ -35,10 +35,6 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("Client connector start connecting to: {}", client.config().getUrl());
-        }
-
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
 
         //支持 ssl

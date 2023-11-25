@@ -51,13 +51,13 @@ public interface Session {
     //发送 Ping
     void sendPing() throws IOException;
     //发送
-    void send(String route, Entity content) throws IOException;
+    void send(String event, Entity content) throws IOException;
     //发送并请求（限为一次答复）
-    Entity sendAndRequest(String route, Entity content) throws IOException;
+    Entity sendAndRequest(String event, Entity content) throws IOException;
     //发送并请求（限为一次答复；指定超时）
-    Entity sendAndRequest(String route, Entity content, long timeout) throws IOException;
+    Entity sendAndRequest(String event, Entity content, long timeout) throws IOException;
     //发送并订阅（答复结束之前，不限答复次数）
-    void sendAndSubscribe(String route, Entity content, Consumer<Entity> consumer) throws IOException;
+    void sendAndSubscribe(String event, Entity content, Consumer<Entity> consumer) throws IOException;
     //答复
     void reply(Message from, Entity content) throws IOException;
     //答复并结束（即最后一次答复）
@@ -76,8 +76,8 @@ public interface Message {
     boolean isSubscribe();
     //获取消息流Id（用于消息交互、分片）
     String sid();
-    //获取消息路由
-    String route();
+    //获取消息事件
+    String event();
     //获取消息实体
     Entity entity();
 }

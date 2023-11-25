@@ -3,20 +3,20 @@ package demo.demo04;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.BuilderListener;
+import org.noear.socketd.transport.core.listener.RouteListener;
 import org.noear.socketd.transport.core.listener.PathListener;
 
-public class Demo04_RouterListener {
+public class Demo04_PathListener {
     public static void main(String[] args) throws Throwable {
         //::启动服务端
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
                 .listen(new PathListener()
-                        .of("/", new BuilderListener().onMessage((s, m) -> {
+                        .of("/", new RouteListener().onMessage((s, m) -> {
                             //用户频道
                             System.out.println("user::" + m);
                         }))
-                        .of("/admin", new BuilderListener().onOpen(s -> {
+                        .of("/admin", new RouteListener().onOpen(s -> {
                             //管理员频道
                             if ("admin".equals(s.param("u")) == false) {
                                 s.close();

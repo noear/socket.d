@@ -13,12 +13,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * 构建监听器
+ * 路由监听器（根据消息路由映射）
  *
  * @author noear
  * @since 2.0
  */
-public class BuilderListener implements Listener {
+public class RouteListener implements Listener {
     private IoConsumer<Session> onOpenHandler;
     private IoBiConsumer<Session, Message> onMessageHandler;
     private Consumer<Session> onCloseHandler;
@@ -26,27 +26,27 @@ public class BuilderListener implements Listener {
     private Map<String, IoBiConsumer<Session, Message>> onMessageRouting = new ConcurrentHashMap<>();
 
     //for builder
-    public BuilderListener onOpen(IoConsumer<Session> onOpen) {
+    public RouteListener onOpen(IoConsumer<Session> onOpen) {
         this.onOpenHandler = onOpen;
         return this;
     }
 
-    public BuilderListener onMessage(IoBiConsumer<Session, Message> onMessage) {
+    public RouteListener onMessage(IoBiConsumer<Session, Message> onMessage) {
         this.onMessageHandler = onMessage;
         return this;
     }
 
-    public BuilderListener onClose(Consumer<Session> onClose) {
+    public RouteListener onClose(Consumer<Session> onClose) {
         this.onCloseHandler = onClose;
         return this;
     }
 
-    public BuilderListener onError(BiConsumer<Session, Throwable> onError) {
+    public RouteListener onError(BiConsumer<Session, Throwable> onError) {
         this.onErrorHandler = onError;
         return this;
     }
 
-    public BuilderListener on(String route, IoBiConsumer<Session, Message> handler) {
+    public RouteListener on(String route, IoBiConsumer<Session, Message> handler) {
         onMessageRouting.put(route, handler);
         return this;
     }

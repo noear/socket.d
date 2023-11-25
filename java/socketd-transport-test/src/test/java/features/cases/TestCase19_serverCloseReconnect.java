@@ -5,7 +5,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.BuilderListener;
+import org.noear.socketd.transport.core.listener.RouteListener;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.utils.RunUtils;
@@ -61,7 +61,7 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
-                .listen(new BuilderListener().onClose(s -> {
+                .listen(new RouteListener().onClose(s -> {
                     //避免与服务端死循环
                     if (messageCounter.get() == 1) {
                         RunUtils.runAndTry(() -> {

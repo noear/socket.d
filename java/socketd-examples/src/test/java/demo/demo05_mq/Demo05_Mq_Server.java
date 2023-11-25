@@ -2,7 +2,7 @@ package demo.demo05_mq;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.listener.BuilderListener;
+import org.noear.socketd.transport.core.listener.RouteListener;
 import org.noear.socketd.utils.Utils;
 
 import java.util.HashSet;
@@ -15,7 +15,7 @@ public class Demo05_Mq_Server {
 
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
-                .listen(new BuilderListener()
+                .listen(new RouteListener()
                         .onOpen(s -> {
                             userList.add(s);
                         })

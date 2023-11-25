@@ -3,7 +3,7 @@ package demo.demo04;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.BuilderListener;
+import org.noear.socketd.transport.core.listener.RouteListener;
 import org.noear.socketd.transport.core.listener.PipelineListener;
 import org.noear.socketd.transport.server.ServerConfig;
 
@@ -12,10 +12,10 @@ public class Demo04_PipelineListener {
         //::启动服务端
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
-                .listen(new PipelineListener().next(new BuilderListener().onMessage((s, m) -> {
+                .listen(new PipelineListener().next(new RouteListener().onMessage((s, m) -> {
                     //这里可以做拦截
                     System.out.println("拦截打印::" + m);
-                })).next(new BuilderListener().onMessage((s, m) -> {
+                })).next(new RouteListener().onMessage((s, m) -> {
                     //这里可以做业务处理
                     System.out.println(m);
                 })))

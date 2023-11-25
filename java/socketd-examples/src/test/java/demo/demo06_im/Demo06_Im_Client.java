@@ -3,7 +3,7 @@ package demo.demo06_im;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.BuilderListener;
+import org.noear.socketd.transport.core.listener.RouteListener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -91,7 +91,7 @@ public class Demo06_Im_Client {
 
         if (token == null) {
             //进入用户频道
-            session = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new BuilderListener().onMessage((s, m) -> {
+            session = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new RouteListener().onMessage((s, m) -> {
                 System.err.println("聊到室：" + m.dataAsString());
             }).on("cmd.t", (s,m)->{
                 //把房间置空

@@ -34,8 +34,8 @@ public class PathListener implements Listener {
     /**
      * 映射
      */
-    public BuilderListener of(String path) {
-        BuilderListener l1 = new BuilderListener();
+    public RouteListener of(String path) {
+        RouteListener l1 = new RouteListener();
         mapper.put(path, l1);
         return l1;
     }

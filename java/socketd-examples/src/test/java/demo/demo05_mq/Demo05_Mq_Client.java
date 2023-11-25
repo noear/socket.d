@@ -4,7 +4,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.BuilderListener;
+import org.noear.socketd.transport.core.listener.RouteListener;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class Demo05_Mq_Client {
         public void connect() throws Exception {
             session = SocketD.createClient("sd:udp://" + server + ":" + port)
                     .config(c -> c.heartbeatInterval(5)) //心跳频率调高，确保不断连
-                    .listen(new BuilderListener()
+                    .listen(new RouteListener()
                             .on("mq.broadcast", (s, m) -> {
                                 String topic = m.meta("topic");
                                 Consumer<String> listener = listenerMap.get(topic);

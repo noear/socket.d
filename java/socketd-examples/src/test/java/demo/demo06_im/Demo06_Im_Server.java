@@ -4,7 +4,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.listener.BuilderListener;
+import org.noear.socketd.transport.core.listener.RouteListener;
 import org.noear.socketd.transport.core.listener.PathListener;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.Utils;
@@ -20,7 +20,7 @@ public class Demo06_Im_Server {
                 .config(c -> c.port(8602))
                 .listen(new PathListener()
                         //::::::::::用户频道处理
-                        .of("/", new BuilderListener()
+                        .of("/", new RouteListener()
                                 .onOpen(s -> {
                                     //用户连接
                                     String user = s.param("u");
@@ -61,7 +61,7 @@ public class Demo06_Im_Server {
                                     }
                                 }))
                         //::::::::::管理频道处理
-                        .of("/admin", new BuilderListener()
+                        .of("/admin", new RouteListener()
                                 .onOpen((session) -> {
                                     //管理员签权
                                     String user = session.param("u");

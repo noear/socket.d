@@ -11,4 +11,10 @@
 | org.noear:socketd-transport-netty         | tcp, tcps | c,s | ssl | nio（2.5mb） |
 | org.noear:socketd-transport-smartsocket   | tcp, tcps | c,s | ssl | aio（254kb） |
 
+### 日志规范
+
+* 运行时中的异常用 warn
+* 关闭、停止时的异常用 debug
+* 启动与连接成功用 info
+
 

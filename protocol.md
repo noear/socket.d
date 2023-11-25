@@ -34,26 +34,26 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 * 帧的逻辑结构
 
 ```
-frame: {flag, message: {sid, route, entity: { meta, data}}}
+frame: {flag, message: {sid, event, entity: { meta, data}}}
 ```
 
-帧的数据逻辑结构：帧里有标志和消息；消息里有流标识、路由、实体；实体里有元信息和数据。
+帧的数据逻辑结构：帧里有标志和消息；消息里有流标识、事件、实体；实体里有元信息和数据。
 
 * 完整的标准帧码
 
 ```
 //udp only <2k
-[len:int][flag:int][sid:str(<64)][\n][route:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
+[len:int][flag:int][sid:str(<64)][\n][event:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
-| 字段         | 类型     | 大小  | 说明                                      |
-|------------|--------|-----|-----------------------------------------|
-| len        | int    | 4字节 | 帧长度（包括它自己的 4字节）                         |
-| flag       | int    | 4字节 | 标志（相当于指令）                               |
-| sid        | String | 64字节以内 | 流标识（做为帧的交互关联。如，握手、分片、答复）                |
-| route      | String | 512字节以内 | 路由（也可理解为路径、命令）                          |
+| 字段         | 类型     | 大小  | 说明                                        |
+|------------|--------|-----|-------------------------------------------|
+| len        | int    | 4字节 | 帧长度（包括它自己的 4字节）                           |
+| flag       | int    | 4字节 | 标志（相当于指令）                                 |
+| sid        | String | 64字节以内 | 流标识（做为帧的交互关联。如，握手、分片、答复）                  |
+| event      | String | 512字节以内 | 事件（也可理解为路径、命令）                            |
 | metaString | String | 4Kb以内 | 元信息字符串（使用 uri queryString 编码格式。例：u=a&n=1） |
-| data       | byte[] | 16Mb以内 | 数据                                      |
+| data       | byte[] | 16Mb以内 | 数据                                        |
 
 注意：当使用 udp 传输时，帧长度不能超过 2k （实际不能超过 1.4k ）
 

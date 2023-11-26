@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdSizeLimitException;
+import org.noear.socketd.utils.Utils;
 
 /**
  * 断言
@@ -29,7 +30,7 @@ public class Asserts {
     }
 
     /**
-     * 断言null
+     * 断言 null
      */
     public static void assertNull(String name, Object val) {
         if (val == null) {
@@ -37,9 +38,18 @@ public class Asserts {
         }
     }
 
+    /**
+     * 断言 empty
+     */
+    public static void assertEmpty(String name, String val) {
+        if (Utils.isEmpty(val)) {
+            throw new IllegalArgumentException("The argument cannot be empty: " + name);
+        }
+    }
+
 
     /**
-     * 断言长度
+     * 断言 size
      */
     public static void assertSize(String name, int size, int limitSize) {
         if (size > limitSize) {

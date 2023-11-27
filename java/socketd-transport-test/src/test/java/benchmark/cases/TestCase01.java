@@ -57,10 +57,8 @@ public class TestCase01 extends BaseTestCase {
                     public void onMessage(Session session, Message message) throws IOException {
                         if (message.isRequest()) {
                             session.replyEnd(message, new StringEntity("test"));
-                            sendAndRequestLatch.countDown();
                         } else if (message.isSubscribe()) {
                             session.replyEnd(message, new StringEntity("test"));
-                            sendAndSubscribeLatch.countDown();
                         } else {
                             sendLatch.countDown();
                         }
@@ -82,8 +80,9 @@ public class TestCase01 extends BaseTestCase {
         for (int i = 0; i < 10; i++) {
             clientSession.send("demo", new StringEntity("test"));
             clientSession.sendAndRequest("demo", new StringEntity("test"));
+            sendAndRequestLatch.countDown();
             clientSession.sendAndSubscribe("demo", new StringEntity("test"), e -> {
-
+                sendAndSubscribeLatch.countDown();
             });
         }
 
@@ -125,6 +124,7 @@ public class TestCase01 extends BaseTestCase {
 
         for (int i = 0; i < count; i++) {
             clientSession.sendAndRequest("demo", new StringEntity("test"));
+            sendAndRequestLatch.countDown();
         }
 
         long timeSpan = System.currentTimeMillis() - startTime;
@@ -149,7 +149,7 @@ public class TestCase01 extends BaseTestCase {
 
         for (int i = 0; i < count; i++) {
             clientSession.sendAndSubscribe("demo", new StringEntity("test"), e -> {
-
+                sendAndSubscribeLatch.countDown();
             });
         }
 

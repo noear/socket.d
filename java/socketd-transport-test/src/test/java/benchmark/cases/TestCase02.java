@@ -53,10 +53,8 @@ public class TestCase02 extends BaseTestCase {
                 .listen(new EventListener().on("demo", (session, message) -> {
                     if (message.isRequest()) {
                         session.replyEnd(message, new StringEntity("test"));
-                        sendAndRequestLatch.countDown();
                     } else if (message.isSubscribe()) {
                         session.replyEnd(message, new StringEntity("test"));
-                        sendAndSubscribeLatch.countDown();
                     } else {
                         sendLatch.countDown();
                     }
@@ -83,8 +81,9 @@ public class TestCase02 extends BaseTestCase {
         for (int i = 0; i < 10; i++) {
             clientSession.send("hot", new StringEntity("test"));
             clientSession.sendAndRequest("hot", new StringEntity("test"));
+            sendAndRequestLatch.countDown();
             clientSession.sendAndSubscribe("hot", new StringEntity("test"), e -> {
-
+                sendAndSubscribeLatch.countDown();
             });
         }
 
@@ -126,6 +125,7 @@ public class TestCase02 extends BaseTestCase {
 
         for (int i = 0; i < count; i++) {
             clientSession.sendAndRequest("demo", new StringEntity("test"));
+            sendAndRequestLatch.countDown();
         }
 
         long timeSpan = System.currentTimeMillis() - startTime;
@@ -150,7 +150,7 @@ public class TestCase02 extends BaseTestCase {
 
         for (int i = 0; i < count; i++) {
             clientSession.sendAndSubscribe("demo", new StringEntity("test"), e -> {
-
+                sendAndSubscribeLatch.countDown();
             });
         }
 

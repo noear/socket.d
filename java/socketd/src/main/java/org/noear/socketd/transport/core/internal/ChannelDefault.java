@@ -159,7 +159,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("{} acceptor not found, sid={}", getRole(), frame.getMessage().sid());
+                log.debug("{} acceptor not found, sid={}, sessionId={}",
+                        getRole(), frame.getMessage().sid(), getSession().sessionId());
             }
         }
     }
@@ -205,7 +206,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             assistant.close(source);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
-                log.warn("{} channel close error", getRole(), e);
+                log.warn("{} channel close error, sessionId={}",
+                        getRole(), getSession().sessionId(), e);
             }
         }
     }

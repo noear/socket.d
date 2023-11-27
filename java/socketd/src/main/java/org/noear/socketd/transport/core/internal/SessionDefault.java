@@ -205,7 +205,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void reply(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flags.Reply, new MessageDefault().sid(from.sid()).entity(content)), null);
+        channel.send(new Frame(Flags.Reply, new MessageDefault().sid(from.sid()).event(from.event()).entity(content)), null);
     }
 
     /**
@@ -216,7 +216,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void replyEnd(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flags.ReplyEnd, new MessageDefault().sid(from.sid()).entity(content)), null);
+        channel.send(new Frame(Flags.ReplyEnd, new MessageDefault().sid(from.sid()).event(from.event()).entity(content)), null);
     }
 
     /**

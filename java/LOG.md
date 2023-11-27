@@ -1,4 +1,9 @@
 
+### 2.0.21
+* 取消 SessionBase hashCode 重写，可提升 Set<Session> 性能
+* 优化 日志
+* 添加 Asserts::assertEmpty
+
 ### 2.0.20
 * 优化 心跳的中断处理
 * 优化 告警日志提示

@@ -62,7 +62,7 @@ public abstract class SessionBase implements Session {
      * @param def  默认值
      */
     @Override
-    public  <T> T attrOrDefault(String name, T def) {
+    public <T> T attrOrDefault(String name, T def) {
         T tmp = attr(name);
         if (tmp == null) {
             return def;
@@ -87,20 +87,9 @@ public abstract class SessionBase implements Session {
         return sessionId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Session)) return false;
-        Session that = (Session) o;
-        return Objects.equals(sessionId(), that.sessionId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(sessionId());
-    }
-
-    protected String generateId(){
+    protected String generateId() {
         return channel.getConfig().getIdGenerator().generate();
     }
+
+    //不要加 hashCode, equals 重写！
 }

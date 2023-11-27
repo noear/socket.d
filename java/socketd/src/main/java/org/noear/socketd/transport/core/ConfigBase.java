@@ -4,6 +4,7 @@ import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
+import org.noear.socketd.transport.core.internal.AcceptorMangerDefault;
 import org.noear.socketd.utils.NamedThreadFactory;
 
 import javax.net.ssl.SSLContext;
@@ -18,6 +19,8 @@ import java.util.concurrent.*;
 public abstract class ConfigBase<T extends Config> implements Config {
     //是否客户端模式
     private final boolean clientMode;
+    //答复接收管理器
+    private final AcceptorManger acceptorManger;
 
     //字符集
     protected Charset charset;
@@ -48,13 +51,14 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected long idleTimeout;
     //请求默认超时
     protected long requestTimeout;
-    //最大同时请求数
-    protected int maxRequests;
+    //接收器超时
+    protected long acceptorTimeout;
     //最大udp包大小
     protected int maxUdpSize;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
+        this.acceptorManger = new AcceptorMangerDefault(this);
 
         this.charset = StandardCharsets.UTF_8;
 
@@ -70,7 +74,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
         this.idleTimeout = 0L; //默认不关（提供用户特殊场景选择）
         this.requestTimeout = 10_000L; //10秒（默认与连接超时同）
-        this.maxRequests = 10;
+        this.acceptorTimeout = 1000 * 60 * 60 * 2;//2小时 //避免永不回调时，不能释放
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
     }
 
@@ -80,6 +84,19 @@ public abstract class ConfigBase<T extends Config> implements Config {
     @Override
     public boolean clientMode() {
         return clientMode;
+    }
+
+    @Override
+    public AcceptorManger getAcceptorManger() {
+        return acceptorManger;
+    }
+
+    /**
+     * 获取角色名
+     * */
+    @Override
+    public String getRoleName() {
+        return clientMode() ? "Client" : "Server";
     }
 
     /**
@@ -290,18 +307,18 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 允许最大同时请求数
-     */
+     * 获取答复接收器超时（单位：毫秒）
+     * */
     @Override
-    public int getMaxRequests() {
-        return maxRequests;
+    public long getAcceptorTimeout() {
+        return acceptorTimeout;
     }
 
     /**
-     * 配置最大同时请求数
-     */
-    public T maxRequests(int maxRequests) {
-        this.maxRequests = maxRequests;
+     * 配置答复接收器超时（单位：毫秒）
+     * */
+    public T acceptorTimeout(long acceptorTimeout) {
+        this.acceptorTimeout = acceptorTimeout;
         return (T) this;
     }
 

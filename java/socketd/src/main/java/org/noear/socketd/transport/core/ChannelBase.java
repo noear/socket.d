@@ -18,28 +18,20 @@ public abstract class ChannelBase implements Channel {
     //最大请求数（根据请求、响应加减计数）
     private final Config config;
 
-    private final AtomicInteger requests = new AtomicInteger();
     private final Map<String, Object> attachments = new ConcurrentHashMap<>();
     private HandshakeInternal handshake;
     //是否已关闭（用于做关闭异常提醒）//可能协议关；可能用户关
     private int isClosed;
-    private String role;
 
 
     public ChannelBase(Config config) {
         this.config = config;
-        this.role = config.clientMode() ? "Client" : "Server";
     }
 
 
     @Override
     public Config getConfig() {
         return config;
-    }
-
-    @Override
-    public String getRole() {
-        return role;
     }
 
     @Override
@@ -62,11 +54,6 @@ public abstract class ChannelBase implements Channel {
     public void close(int code){
         isClosed = code;
         attachments.clear();
-    }
-
-    @Override
-    public AtomicInteger getRequests() {
-        return requests;
     }
 
     @Override

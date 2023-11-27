@@ -149,13 +149,6 @@ public class SessionDefault extends SessionBase {
             timeout = channel.getConfig().getRequestTimeout();
         }
 
-        //背压控制
-        if (channel.getRequests().get() > channel.getConfig().getMaxRequests()) {
-            throw new SocketdException("Sending too many requests: " + channel.getRequests().get());
-        } else {
-            channel.getRequests().incrementAndGet();
-        }
-
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
 
         try {
@@ -179,8 +172,7 @@ public class SessionDefault extends SessionBase {
                 throw new SocketdException(e);
             }
         } finally {
-            channel.removeAcceptor(message.sid());
-            channel.getRequests().decrementAndGet();
+            channel.getConfig().getAcceptorManger().removeAcceptor(message.sid());
         }
     }
 
@@ -225,7 +217,8 @@ public class SessionDefault extends SessionBase {
     @Override
     public void close() throws IOException {
         if (log.isDebugEnabled()) {
-            log.debug("{} session will be closed, sessionId={}", channel.getRole(), sessionId());
+            log.debug("{} session will be closed, sessionId={}",
+                    channel.getConfig().getRoleName(), sessionId());
         }
 
         if (channel.isValid()) {
@@ -233,7 +226,8 @@ public class SessionDefault extends SessionBase {
                 channel.sendClose();
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
-                    log.warn("{} channel sendClose error", channel.getRole(), e);
+                    log.warn("{} channel sendClose error",
+                            channel.getConfig().getRoleName(), e);
                 }
             }
         }

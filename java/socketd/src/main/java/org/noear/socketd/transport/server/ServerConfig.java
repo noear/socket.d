@@ -93,7 +93,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
                 ", replyTimeout=" + requestTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
-                ", maxRequests=" + maxRequests +
                 ", maxUdpSize=" + maxUdpSize +
                 '}';
     }

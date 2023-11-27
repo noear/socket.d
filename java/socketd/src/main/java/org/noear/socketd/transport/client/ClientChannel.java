@@ -66,16 +66,6 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
-     * 移除接收器（答复接收器）
-     */
-    @Override
-    public void removeAcceptor(String sid) {
-        if (real != null) {
-            real.removeAcceptor(sid);
-        }
-    }
-
-    /**
      * 是否有效
      */
     @Override
@@ -167,7 +157,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      * @param acceptor 答复接收器（没有则为 null）
      */
     @Override
-    public void send(Frame frame, Acceptor acceptor) throws IOException {
+    public void send(Frame frame, AcceptorBase acceptor) throws IOException {
         Asserts.assertClosedByUser(real);
 
         synchronized (this) {

@@ -23,11 +23,6 @@ public interface Channel {
     void setAttachment(String name, Object val);
 
     /**
-     * 移除接收器（答复接收器）
-     */
-    void removeAcceptor(String sid);
-
-    /**
      * 是否有效
      */
     boolean isValid();
@@ -46,16 +41,6 @@ public interface Channel {
      * 获取配置
      */
     Config getConfig();
-
-    /**
-     * 获取角色
-     * */
-    String getRole();
-
-    /**
-     * 获取请求计数（用于背压控制）
-     */
-    AtomicInteger getRequests();
 
     /**
      * 设置握手信息
@@ -114,7 +99,7 @@ public interface Channel {
      * @param frame    帧
      * @param acceptor 答复接收器（没有则为 null）
      */
-    void send(Frame frame, Acceptor acceptor) throws IOException;
+    void send(Frame frame, AcceptorBase acceptor) throws IOException;
 
     /**
      * 接收（接收答复帧）

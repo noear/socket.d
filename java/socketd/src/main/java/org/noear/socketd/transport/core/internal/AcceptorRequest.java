@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
-import org.noear.socketd.transport.core.Acceptor;
+import org.noear.socketd.transport.core.AcceptorBase;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 
@@ -13,11 +13,12 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.0
  */
-public class AcceptorRequest implements Acceptor {
+public class AcceptorRequest extends AcceptorBase {
     private final CompletableFuture<Entity> future;
     private final long timeout;
 
     public AcceptorRequest(CompletableFuture<Entity> future, long timeout) {
+
         this.future = future;
         this.timeout = timeout;
     }

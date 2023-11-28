@@ -65,7 +65,7 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
         }
 
         byte[] lenBts = new byte[4];
-        if (input.read(lenBts) < -1) {
+        if (input.read(lenBts) == -1) {
             return null;
         }
 

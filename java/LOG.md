@@ -1,4 +1,11 @@
 
+### 2.0.25
+* 新增 告警指令
+* 添加 Broker 方案实现
+* 添加 Session::sendAndRequest 回调模式（支持 Broker 开发）
+* 添加 `@` 概念功能（支持 Broker 开发）
+* 添加 Alarm 控制指令（用于传递异步信息，发到对方的 onError 事件）
+
 ### 2.0.24
 * 添加 RunUtils::scheduleAtFixedRate, scheduleWithFixedDelay 方法
 * 添加 Server::start，Client::open() 添加 Socket.D 标识

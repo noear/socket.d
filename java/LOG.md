@@ -1,6 +1,8 @@
 
 ### 2.0.24
 * 添加 RunUtils::scheduleAtFixedRate, scheduleWithFixedDelay 方法
+* 添加 Server::start，Client::open() 添加 Socket.D 标识
+* 添加 Config::getStreamTimeout 流超时配置（从发起到答复结束为一个消息流）
 
 ### 2.0.23
 * 修复 用 bytes 传时自动分片失败的问题

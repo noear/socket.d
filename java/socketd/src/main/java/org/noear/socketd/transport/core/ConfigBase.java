@@ -51,8 +51,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected long idleTimeout;
     //请求默认超时
     protected long requestTimeout;
-    //接收器超时
-    protected long acceptorTimeout;
+    //消息流超时（从发起到应答结束）
+    protected long streamTimeout;
     //最大udp包大小
     protected int maxUdpSize;
 
@@ -74,7 +74,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
         this.idleTimeout = 0L; //默认不关（提供用户特殊场景选择）
         this.requestTimeout = 10_000L; //10秒（默认与连接超时同）
-        this.acceptorTimeout = 1000 * 60 * 60 * 2;//2小时 //避免永不回调时，不能释放
+        this.streamTimeout = 1000 * 60 * 60 * 2;//2小时 //避免永不回调时，不能释放
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
     }
 
@@ -307,18 +307,18 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 获取答复接收器超时（单位：毫秒）
+     * 获取消息流超时（单位：毫秒）
      * */
     @Override
-    public long getAcceptorTimeout() {
-        return acceptorTimeout;
+    public long getStreamTimeout() {
+        return streamTimeout;
     }
 
     /**
-     * 配置答复接收器超时（单位：毫秒）
+     * 配置消息流超时（单位：毫秒）
      * */
-    public T acceptorTimeout(long acceptorTimeout) {
-        this.acceptorTimeout = acceptorTimeout;
+    public T streamTimeout(long streamTimeout) {
+        this.streamTimeout = streamTimeout;
         return (T) this;
     }
 

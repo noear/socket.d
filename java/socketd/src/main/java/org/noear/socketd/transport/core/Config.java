@@ -89,9 +89,9 @@ public interface Config {
     long getRequestTimeout();
 
     /**
-     * 获取答复接收器超时（单位：毫秒）
+     * 获取消息流超时（单位：毫秒）
      * */
-    long getAcceptorTimeout();
+    long getStreamTimeout();
 
     /**
      * 允许最大UDP包大小

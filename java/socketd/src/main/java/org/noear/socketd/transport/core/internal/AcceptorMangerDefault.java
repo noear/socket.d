@@ -40,11 +40,11 @@ public class AcceptorMangerDefault implements AcceptorManger {
     public void addAcceptor(String sid, AcceptorBase acceptor) {
         acceptorMap.put(sid, acceptor);
 
-        //增加超时处理
-        if (config.getAcceptorTimeout() > 0) {
+        //增加流超时处理（做为后备保险）
+        if (config.getStreamTimeout() > 0) {
             acceptor.insuranceFuture = RunUtils.delay(() -> {
                 acceptorMap.remove(sid);
-            }, config.getAcceptorTimeout());
+            }, config.getStreamTimeout());
         }
     }
 

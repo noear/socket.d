@@ -6,6 +6,7 @@ import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.entity.StringEntity;
 
 /**
  * 帧工厂
@@ -57,5 +58,23 @@ public class Frames {
      */
     public static final Frame closeFrame() {
         return new Frame(Flags.Close, null);
+    }
+
+    /**
+     * 构建告警帧（一般用不到）
+     */
+    public static final Frame alarmFrame(Message from, String alarm) {
+        MessageDefault message = new MessageDefault();
+
+        if (from != null) {
+            //如果有来源消息，则回传元信息
+            message.sid(from.sid());
+            message.event(from.event());
+            message.entity(new StringEntity(alarm).metaString(from.metaString()));
+        } else {
+            message.entity(new StringEntity(alarm));
+        }
+
+        return new Frame(Flags.Alarm, message);
     }
 }

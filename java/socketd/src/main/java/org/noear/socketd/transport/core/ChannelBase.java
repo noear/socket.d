@@ -51,7 +51,7 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void close(int code){
+    public void close(int code) {
         isClosed = code;
         attachments.clear();
     }
@@ -90,5 +90,10 @@ public abstract class ChannelBase implements Channel {
     @Override
     public void sendClose() throws IOException {
         send(Frames.closeFrame(), null);
+    }
+
+    @Override
+    public void sendAlarm(Message from, String alarm) throws IOException {
+        send(Frames.alarmFrame(from, alarm), null);
     }
 }

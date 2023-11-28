@@ -93,6 +93,11 @@ public interface Channel {
     void sendClose() throws IOException;
 
     /**
+     * 发送告警
+     * */
+    void sendAlarm(Message from, String alarm) throws IOException;
+
+    /**
      * 发送
      *
      * @param frame    帧

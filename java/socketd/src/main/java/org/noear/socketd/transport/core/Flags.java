@@ -32,6 +32,10 @@ public interface Flags {
      */
     int Close = 30;
     /**
+     * 告警
+     */
+    int Alarm = 31;
+    /**
      * 消息
      */
     int Message = 40; //消息(c<->s)
@@ -64,6 +68,8 @@ public interface Flags {
                 return Pong;
             case 30:
                 return Close;
+            case 31:
+                return Alarm;
             case 40:
                 return Message;
             case 41:
@@ -81,25 +87,27 @@ public interface Flags {
 
     static String name(int code) {
         switch (code) {
-            case 10:
+            case Connect:
                 return "Connect";
-            case 11:
+            case Connack:
                 return "Connack";
-            case 20:
+            case Ping:
                 return "Ping";
-            case 21:
+            case Pong:
                 return "Pong";
-            case 30:
+            case Close:
                 return "Close";
-            case 40:
+            case Alarm:
+                return "Alarm";
+            case Message:
                 return "Message";
-            case 41:
+            case Request:
                 return "Request";
-            case 42:
+            case Subscribe:
                 return "Subscribe";
-            case 48:
+            case Reply:
                 return "Reply";
-            case 49:
+            case ReplyEnd:
                 return "ReplyEnd";
             default:
                 return "Unknown";

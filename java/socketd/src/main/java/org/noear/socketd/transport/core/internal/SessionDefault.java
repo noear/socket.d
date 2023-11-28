@@ -115,6 +115,11 @@ public class SessionDefault extends SessionBase {
         channel.sendPing();
     }
 
+    @Override
+    public void sendAlarm(Message from, String alarm) throws IOException {
+        channel.sendAlarm(from, alarm);
+    }
+
     /**
      * 发送
      */
@@ -174,6 +179,27 @@ public class SessionDefault extends SessionBase {
         } finally {
             channel.getConfig().getStreamManger().removeAcceptor(message.sid());
         }
+    }
+
+    /**
+     * 发送并请求（限为一次答复；指定超时）
+     *
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     */
+    @Override
+    public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+        MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
+        CompletableFuture<Entity> future = new CompletableFuture<>();
+        future.whenComplete((entity,err)->{
+            try {
+                consumer.accept(entity);
+            }catch (Exception e){
+                //
+            }
+        });
+        channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, 0));
     }
 
     /**

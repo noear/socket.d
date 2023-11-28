@@ -35,6 +35,13 @@ public interface Session extends Closeable {
     Handshake handshake();
 
     /**
+     * at
+     * */
+    default String at(){
+        return param("@");
+    }
+
+    /**
      * 获取握手参数
      *
      * @param name 名字
@@ -110,6 +117,11 @@ public interface Session extends Closeable {
     void sendPing() throws IOException;
 
     /**
+     * 发送告警
+     * */
+    void sendAlarm(Message from, String alarm) throws IOException;
+
+    /**
      * 发送
      *
      * @param event   事件
@@ -133,6 +145,15 @@ public interface Session extends Closeable {
      * @param timeout 超时（毫秒）
      */
     Entity sendAndRequest(String event, Entity content, long timeout) throws IOException;
+
+    /**
+     * 发送并请求（限为一次答复；指定超时）
+     *
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     */
+    void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）

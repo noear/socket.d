@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.entity.EndEntity;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -47,7 +48,13 @@ public class MessageDefault implements MessageInternal {
      * 设置实体
      */
     public MessageDefault entity(Entity entity) {
-        this.entity = entity;
+        if (flag == Flags.ReplyEnd) {
+            //在 Broker 开发时，用于识别是不是最后的答复
+            this.entity = new EndEntity(entity);
+        } else {
+            this.entity = entity;
+        }
+
         return this;
     }
 

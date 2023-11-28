@@ -28,6 +28,11 @@ public class EntityDefault implements Entity {
     private InputStream data = Constants.DEF_DATA;
     private int dataSize = 0;
 
+    public EntityDefault at(String name) {
+        meta("@", name);
+        return this;
+    }
+
     public EntityDefault metaString(String metaString) {
         this.metaMap = null;
         this.metaString = metaString;

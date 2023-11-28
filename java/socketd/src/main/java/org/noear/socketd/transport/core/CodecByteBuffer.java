@@ -134,8 +134,12 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
                 }
             }
 
-            MessageDefault message = new MessageDefault().sid(sid).event(event).entity(new EntityDefault().metaString(metaString).data(data));
-            message.flag(Flags.of(flag));
+            MessageDefault message = new MessageDefault()
+                    .flag(Flags.of(flag))
+                    .sid(sid)
+                    .event(event)
+                    .entity(new EntityDefault().metaString(metaString).data(data));
+
             return new Frame(message.flag(), message);
         }
     }

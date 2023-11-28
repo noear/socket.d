@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
+import org.noear.socketd.exception.SocketdAlarmException;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
@@ -88,6 +89,10 @@ public class ProcessorDefault implements Processor {
                     case Flags.Close: {
                         channel.close(Constants.CLOSE1_PROTOCOL);
                         onCloseInternal(channel);
+                        break;
+                    }
+                    case Flags.Alarm:{
+                        onError(channel, new SocketdAlarmException(frame.getMessage()));
                         break;
                     }
                     case Flags.Message:

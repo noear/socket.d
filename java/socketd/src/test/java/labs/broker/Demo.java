@@ -1,7 +1,7 @@
 package labs.broker;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.broker.ToBrokerListener;
+import org.noear.socketd.broker.BrokerListener;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
@@ -10,7 +10,7 @@ public class Demo {
     public void borker() throws Exception{
         SocketD.createServer("sd:tcp")
                 .config(c->c.port(5001))
-                .listen(new ToBrokerListener())
+                .listen(new BrokerListener())
                 .start();
     }
 

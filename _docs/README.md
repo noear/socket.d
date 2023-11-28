@@ -25,7 +25,7 @@
 <dependency>
     <groupId>org.noear</groupId>
     <artifactId>socketd-transport-java-tcp</artifactId>
-    <version>2.0.23</version>
+    <version>2.0.24</version>
 </dependency>
 ```
 

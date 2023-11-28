@@ -243,4 +243,25 @@ public class CaseTest {
             }
         }
     }
+
+    @Test
+    public void TestCase25_bigString() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            if("sd:udp-java".equals(s1)){
+                continue;
+            }
+
+            BaseTestCase testCase = new TestCase25_bigString(s1, 2400 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
 }

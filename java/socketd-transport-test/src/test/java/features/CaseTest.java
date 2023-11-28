@@ -253,7 +253,7 @@ public class CaseTest {
                 continue;
             }
 
-            BaseTestCase testCase = new TestCase25_bigString(s1, 2400 + i);
+            BaseTestCase testCase = new TestCase25_bigString(s1, 2500 + i);
             try {
                 testCase.start();
                 testCase.stop();

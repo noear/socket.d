@@ -1,4 +1,7 @@
 
+### 2.0.24
+* 添加 RunUtils::scheduleAtFixedRate, scheduleWithFixedDelay 方法
+
 ### 2.0.23
 * 修复 用 bytes 传时自动分片失败的问题
 

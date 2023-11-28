@@ -62,7 +62,7 @@ public class RunUtils {
         }
     }
 
-    public static void runAndTry(RunnableEx task){
+    public static void runAndTry(RunnableEx task) {
         try {
             task.run();
         } catch (Throwable e) {
@@ -89,7 +89,7 @@ public class RunUtils {
      * 尝试异步执行
      */
     public static CompletableFuture<Void> asyncAndTry(RunnableEx task) {
-        return CompletableFuture.runAsync(()->{
+        return CompletableFuture.runAsync(() -> {
             runAndTry(task);
         }, asyncExecutor);
     }
@@ -106,5 +106,19 @@ public class RunUtils {
      */
     public static ScheduledFuture<?> delayAndRepeat(Runnable task, long millis) {
         return scheduledExecutor.scheduleWithFixedDelay(task, 1000, millis, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 定时任务
+     */
+    public static ScheduledFuture<?> scheduleAtFixedRate(Runnable task, long initialDelay, long millisPeriod) {
+        return scheduledExecutor.scheduleAtFixedRate(task, initialDelay, millisPeriod, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 定时任务
+     */
+    public static ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, long initialDelay, long millisDelay) {
+        return scheduledExecutor.scheduleWithFixedDelay(task, initialDelay, millisDelay, TimeUnit.MILLISECONDS);
     }
 }

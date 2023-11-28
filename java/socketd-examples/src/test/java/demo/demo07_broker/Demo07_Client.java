@@ -16,6 +16,20 @@ public class Demo07_Client {
                 }))
                 .open();
 
+
+        //at * 号结尾，表示群发
+        session.send("hello", new StringEntity("world0").at("server*"));
+
+        sendDo(session);
+
+        for(int i=0; i< 100000; i++){
+            sendDo(session);
+        }
+    }
+
+    private static void sendDo(Session session) throws IOException{
+        //发消息时带了 at ，就像在社交群里聊天一样
+        //
         session.send("hello", new StringEntity("world0").at("server"));
 
         Entity entity = session.sendAndRequest("hello", new StringEntity("world1").at("server"));

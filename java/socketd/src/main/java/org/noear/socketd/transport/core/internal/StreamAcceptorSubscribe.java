@@ -1,57 +1,58 @@
 package org.noear.socketd.transport.core.internal;
 
-import org.noear.socketd.transport.core.AcceptorBase;
+import org.noear.socketd.transport.core.StreamAcceptorBase;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.utils.IoConsumer;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
- * 请求答复接收器
+ * 订阅流接收器
  *
  * @author noear
  * @since 2.0
  */
-public class AcceptorRequest extends AcceptorBase {
-    private final CompletableFuture<Entity> future;
-    private final long timeout;
+public class StreamAcceptorSubscribe extends StreamAcceptorBase {
+    private final IoConsumer<Entity> future;
 
-    public AcceptorRequest(CompletableFuture<Entity> future, long timeout) {
-
+    public StreamAcceptorSubscribe(IoConsumer<Entity> future) {
         this.future = future;
-        this.timeout = timeout;
     }
 
     /**
      * 是否单发接收
-     * */
+     */
     @Override
     public boolean isSingle() {
-        return true;
+        return false;
     }
 
     /**
      * 是否结束接收
-     * */
+     */
     @Override
     public boolean isDone() {
-        return future.isDone();
+        return false;
     }
 
     /**
      * 超时设定（单位：毫秒）
-     * */
+     */
     @Override
     public long timeout() {
-        return timeout;
+        return 0;
     }
 
     /**
-     * 接收答复
-     * */
+     * 接收答复流
+     */
     @Override
     public void accept(Message message, Consumer<Throwable> onError) {
-        future.complete(message);
+        try {
+            future.accept(message);
+        } catch (Throwable e) {
+            onError.accept(e);
+        }
     }
 }

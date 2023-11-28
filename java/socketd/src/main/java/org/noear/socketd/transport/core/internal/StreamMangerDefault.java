@@ -1,8 +1,8 @@
 package org.noear.socketd.transport.core.internal;
 
-import org.noear.socketd.transport.core.Acceptor;
-import org.noear.socketd.transport.core.AcceptorBase;
-import org.noear.socketd.transport.core.AcceptorManger;
+import org.noear.socketd.transport.core.StreamAcceptor;
+import org.noear.socketd.transport.core.StreamAcceptorBase;
+import org.noear.socketd.transport.core.StreamManger;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
@@ -12,32 +12,32 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 答复接收管理器
+ * 流管理器
  *
  * @author noear
  * @since 1.0
  */
-public class AcceptorMangerDefault implements AcceptorManger {
+public class StreamMangerDefault implements StreamManger {
     private static Logger log = LoggerFactory.getLogger(ChannelDefault.class);
 
     //配置
     private final Config config;
-    //答复接收器字典（管理）
-    private final Map<String, AcceptorBase> acceptorMap;
+    //流接收器字典（管理）
+    private final Map<String, StreamAcceptorBase> acceptorMap;
 
-    public AcceptorMangerDefault(Config config) {
+    public StreamMangerDefault(Config config) {
         this.acceptorMap = new ConcurrentHashMap<>();
         this.config = config;
     }
 
     /**
-     * 添加接收器
+     * 添加流接收器
      *
      * @param sid      流Id
-     * @param acceptor 答复接收器
+     * @param acceptor 流接收器
      */
     @Override
-    public void addAcceptor(String sid, AcceptorBase acceptor) {
+    public void addAcceptor(String sid, StreamAcceptorBase acceptor) {
         acceptorMap.put(sid, acceptor);
 
         //增加流超时处理（做为后备保险）
@@ -49,23 +49,23 @@ public class AcceptorMangerDefault implements AcceptorManger {
     }
 
     /**
-     * 获取接收器
+     * 获取流接收器
      *
      * @param sid 流Id
      */
     @Override
-    public Acceptor getAcceptor(String sid) {
+    public StreamAcceptor getAcceptor(String sid) {
         return acceptorMap.get(sid);
     }
 
     /**
-     * 移除接收器
+     * 移除流接收器
      *
      * @param sid 流Id
      */
     @Override
     public void removeAcceptor(String sid) {
-        AcceptorBase acceptor = acceptorMap.remove(sid);
+        StreamAcceptorBase acceptor = acceptorMap.remove(sid);
 
         if (acceptor != null) {
             if (acceptor.insuranceFuture != null) {

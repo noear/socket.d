@@ -153,7 +153,7 @@ public class SessionDefault extends SessionBase {
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
-            channel.send(new Frame(Flags.Request, message), new AcceptorRequest(future, timeout));
+            channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout));
 
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
@@ -172,7 +172,7 @@ public class SessionDefault extends SessionBase {
                 throw new SocketdException(e);
             }
         } finally {
-            channel.getConfig().getAcceptorManger().removeAcceptor(message.sid());
+            channel.getConfig().getStreamManger().removeAcceptor(message.sid());
         }
     }
 
@@ -186,7 +186,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
-        channel.send(new Frame(Flags.Subscribe, message), new AcceptorSubscribe(consumer));
+        channel.send(new Frame(Flags.Subscribe, message), new StreamAcceptorSubscribe(consumer));
     }
 
     /**

@@ -2,7 +2,6 @@ package org.noear.socketd.transport.core;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -97,9 +96,9 @@ public interface Channel {
      * 发送
      *
      * @param frame    帧
-     * @param acceptor 答复接收器（没有则为 null）
+     * @param acceptor 流接收器（没有则为 null）
      */
-    void send(Frame frame, AcceptorBase acceptor) throws IOException;
+    void send(Frame frame, StreamAcceptorBase acceptor) throws IOException;
 
     /**
      * 接收（接收答复帧）

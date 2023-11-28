@@ -4,7 +4,7 @@ import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
-import org.noear.socketd.transport.core.internal.AcceptorMangerDefault;
+import org.noear.socketd.transport.core.internal.StreamMangerDefault;
 import org.noear.socketd.utils.NamedThreadFactory;
 
 import javax.net.ssl.SSLContext;
@@ -19,8 +19,8 @@ import java.util.concurrent.*;
 public abstract class ConfigBase<T extends Config> implements Config {
     //是否客户端模式
     private final boolean clientMode;
-    //答复接收管理器
-    private final AcceptorManger acceptorManger;
+    //流管理器
+    private final StreamManger streamManger;
 
     //字符集
     protected Charset charset;
@@ -58,7 +58,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
-        this.acceptorManger = new AcceptorMangerDefault(this);
+        this.streamManger = new StreamMangerDefault(this);
 
         this.charset = StandardCharsets.UTF_8;
 
@@ -87,8 +87,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     @Override
-    public AcceptorManger getAcceptorManger() {
-        return acceptorManger;
+    public StreamManger getStreamManger() {
+        return streamManger;
     }
 
     /**
@@ -291,7 +291,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 获取答复默认超时
+     * 获取请求默认超时
      */
     @Override
     public long getRequestTimeout() {

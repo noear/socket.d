@@ -20,9 +20,9 @@ public interface Config {
     boolean clientMode();
 
     /**
-     * 获取加调管理器
+     * 获取流管理器
      * */
-    AcceptorManger getAcceptorManger();
+    StreamManger getStreamManger();
 
     /**
      * 获取角色名

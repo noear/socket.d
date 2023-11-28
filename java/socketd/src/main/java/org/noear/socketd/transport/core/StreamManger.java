@@ -1,29 +1,29 @@
 package org.noear.socketd.transport.core;
 
 /**
- * 答复接收管理器
+ * 流管理器
  *
  * @author noear
  * @since 2.0
  */
-public interface AcceptorManger {
+public interface StreamManger {
     /**
-     * 添加接收器
+     * 添加流接收器
      *
      * @param sid      流Id
-     * @param acceptor 答复接收器
+     * @param acceptor 流接收器
      */
-    void addAcceptor(String sid, AcceptorBase acceptor);
+    void addAcceptor(String sid, StreamAcceptorBase acceptor);
 
     /**
-     * 获取接收器
+     * 获取流接收器
      *
      * @param sid 流Id
      */
-    Acceptor getAcceptor(String sid);
+    StreamAcceptor getAcceptor(String sid);
 
     /**
-     * 移除接收器
+     * 移除流接收器
      *
      * @param sid 流Id
      */

@@ -154,10 +154,10 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 发送
      *
      * @param frame    帧
-     * @param acceptor 答复接收器（没有则为 null）
+     * @param acceptor 流接收器（没有则为 null）
      */
     @Override
-    public void send(Frame frame, AcceptorBase acceptor) throws IOException {
+    public void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
         Asserts.assertClosedByUser(real);
 
         synchronized (this) {

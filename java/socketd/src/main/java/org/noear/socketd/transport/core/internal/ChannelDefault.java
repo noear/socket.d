@@ -7,9 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -25,8 +22,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     //助理
     private final ChannelAssistant<S> assistant;
-    //答复接收管理器
-    private final AcceptorManger acceptorManger;
+    //流管理器
+    private final StreamManger acceptorManger;
     //会话（懒加载）
     private Session session;
 
@@ -34,7 +31,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         super(config);
         this.source = source;
         this.assistant = assistant;
-        this.acceptorManger = config.getAcceptorManger();
+        this.acceptorManger = config.getStreamManger();
     }
 
     /**
@@ -65,7 +62,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * 发送
      */
     @Override
-    public synchronized void send(Frame frame, AcceptorBase acceptor) throws IOException {
+    public synchronized void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
         Asserts.assertClosed(this);
 
         if (log.isDebugEnabled()) {
@@ -79,7 +76,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         if (frame.getMessage() != null) {
             MessageInternal message = frame.getMessage();
 
-            //注册接收器
+            //注册流接收器
             if (acceptor != null) {
                 acceptorManger.addAcceptor(message.sid(), acceptor);
             }
@@ -128,11 +125,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void retrieve(Frame frame, Consumer<Throwable> onError) {
-        Acceptor acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
+        StreamAcceptor acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
 
         if (acceptor != null) {
             if (acceptor.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
-                //如果是单收或者答复结束，则移除接收器
+                //如果是单收或者答复结束，则移除流接收器
                 acceptorManger.removeAcceptor(frame.getMessage().sid());
             }
 

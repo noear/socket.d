@@ -3,6 +3,7 @@
 * 添加 RunUtils::scheduleAtFixedRate, scheduleWithFixedDelay 方法
 * 添加 Server::start，Client::open() 添加 Socket.D 标识
 * 添加 Config::getStreamTimeout 流超时配置（从发起到答复结束为一个消息流）
+* 添加 GzipUtils 工具类
 * 强化 流的概念（原接收器，改为流接收器）
 
 ### 2.0.23

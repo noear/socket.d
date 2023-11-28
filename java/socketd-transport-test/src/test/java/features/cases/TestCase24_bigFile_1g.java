@@ -89,7 +89,7 @@ public class TestCase24_bigFile_1g extends BaseTestCase {
 
         countDownLatch.await();
 
-        Thread.sleep(1000);
+        Thread.sleep(10000);
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");

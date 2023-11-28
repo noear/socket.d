@@ -134,6 +134,9 @@ public class EntityDefault implements Entity {
     public EntityDefault data(byte[] data) {
         this.data = new BytesInputStream(data);
         this.dataSize = data.length;
+        if (dataSize > Constants.MAX_SIZE_FRAGMENT) {
+            meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
+        }
         return this;
     }
 

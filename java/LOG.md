@@ -1,10 +1,10 @@
 
-### 2.0.25
-* 新增 告警指令
-* 添加 Broker 方案实现
+### 2.1.0
+* 完成 Broker 方案实现（支持单发，群发）
+* 添加 Alarm 告警控制指令（用于传递异步信息，发到对方的 onError 事件）
 * 添加 Session::sendAndRequest 回调模式（支持 Broker 开发）
+* 添加 FragmentHandler::aggrEnable 分片聚合启用开关（支持 Broker 开发）
 * 添加 `@` 概念功能（支持 Broker 开发）
-* 添加 Alarm 控制指令（用于传递异步信息，发到对方的 onError 事件）
 
 ### 2.0.24
 * 添加 RunUtils::scheduleAtFixedRate, scheduleWithFixedDelay 方法

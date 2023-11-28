@@ -22,7 +22,7 @@ public class SocketD {
      * 版本版本号
      */
     public static String version() {
-        return "2.0";
+        return "2.1";
     }
 
     static Map<String, ClientProvider> clientProviderMap;

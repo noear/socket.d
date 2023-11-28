@@ -87,11 +87,14 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     case Flags.Close: {
+                        //关闭通道
                         channel.close(Constants.CLOSE1_PROTOCOL);
                         onCloseInternal(channel);
                         break;
                     }
                     case Flags.Alarm:{
+                        //结束流，并异常通知
+                        channel.getConfig().getStreamManger().removeAcceptor(frame.getMessage().sid());
                         onError(channel, new SocketdAlarmException(frame.getMessage()));
                         break;
                     }
@@ -118,17 +121,20 @@ public class ProcessorDefault implements Processor {
     }
 
     private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
-        //尝试分片处理
-        String fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
-        if (fragmentIdxStr != null) {
-            //解析分片索引
-            int index = Integer.parseInt(fragmentIdxStr);
-            Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+        //如果启用了聚合!
+        if(channel.getConfig().getFragmentHandler().aggrEnable()) {
+            //尝试聚合分片处理
+            String fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            if (fragmentIdxStr != null) {
+                //解析分片索引
+                int index = Integer.parseInt(fragmentIdxStr);
+                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
 
-            if (frameNew == null) {
-                return;
-            } else {
-                frame = frameNew;
+                if (frameNew == null) {
+                    return;
+                } else {
+                    frame = frameNew;
+                }
             }
         }
 

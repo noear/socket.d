@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 经纪人监听器基类（实现 server 封闭管理）
  *
  * @author noear
- * @since 2.0
+ * @since 2.1
  */
 public class BrokerListenerBase {
     //服务端会话

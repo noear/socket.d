@@ -36,6 +36,8 @@ public interface Session extends Closeable {
 
     /**
      * at
+     *
+     * @since 2.1
      * */
     default String at(){
         return param("@");

@@ -16,7 +16,7 @@ import java.util.Collection;
  * 经纪人监听器
  *
  * @author noear
- * @since 2.0
+ * @since 2.1
  */
 public class BrokerListener extends BrokerListenerBase implements Listener {
     private static final Logger log = LoggerFactory.getLogger(BrokerListener.class);

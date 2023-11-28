@@ -1,15 +1,16 @@
 package labs.broker;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.broker.BrokerFragmentHandler;
 import org.noear.socketd.broker.BrokerListener;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 
 public class Demo {
-    public void borker() throws Exception{
+    public void borker() throws Exception {
         SocketD.createServer("sd:tcp")
-                .config(c->c.port(5001))
+                .config(c -> c.port(5001).fragmentHandler(new BrokerFragmentHandler()))
                 .listen(new BrokerListener())
                 .start();
     }
@@ -23,7 +24,7 @@ public class Demo {
                 .open();
     }
 
-    public void client() throws Exception{
+    public void client() throws Exception {
         //演客户端，不需要带 @
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:5001")
                 .open();

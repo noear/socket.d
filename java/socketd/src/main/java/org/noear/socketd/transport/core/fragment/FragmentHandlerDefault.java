@@ -21,18 +21,19 @@ public class FragmentHandlerDefault implements FragmentHandler {
      */
     @Override
     public Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
-
         ByteArrayOutputStream fragmentBuf = new ByteArrayOutputStream();
         IoUtils.transferTo(message.data(), fragmentBuf, 0, Constants.MAX_SIZE_FRAGMENT);
         byte[] fragmentBytes = fragmentBuf.toByteArray();
         if (fragmentBytes.length == 0) {
             return null;
         }
+
         EntityDefault fragmentEntity = new EntityDefault().data(fragmentBytes);
         if (fragmentIndex == 1) {
             fragmentEntity.metaMap(message.metaMap());
         }
         fragmentEntity.meta(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+
         return fragmentEntity;
     }
 
@@ -56,5 +57,10 @@ public class FragmentHandlerDefault implements FragmentHandler {
             //重置为聚合帖
             return aggregator.get();
         }
+    }
+
+    @Override
+    public boolean aggrEnable() {
+        return true;
     }
 }

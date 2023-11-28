@@ -48,7 +48,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
     @Override
     public Server start() throws IOException {
         if (isStarted) {
-            throw new IllegalStateException("Server started");
+            throw new IllegalStateException("Socket.D server started");
         } else {
             isStarted = true;
         }
@@ -58,7 +58,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
         serverExecutor.submit(this::accept);
 
-        log.info("Server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
     }

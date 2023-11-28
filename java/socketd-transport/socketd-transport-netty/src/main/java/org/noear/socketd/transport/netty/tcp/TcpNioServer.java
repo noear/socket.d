@@ -43,7 +43,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
     @Override
     public Server start() throws IOException {
         if (isStarted) {
-            throw new IllegalStateException("Server started");
+            throw new IllegalStateException("Socket.D server started");
         } else {
             isStarted = true;
         }
@@ -76,7 +76,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
             }
         }
 
-        log.info("Server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
     }

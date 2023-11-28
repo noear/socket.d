@@ -23,7 +23,7 @@ class WsAioServer(ServerBase):
 
     def start(self) -> 'Serve':
         if self.isStarted:
-            raise Exception("Server started")
+            raise Exception("Socket.D server started")
         else:
             self.isStarted = True
         if self._config.getHost() is not None:
@@ -39,7 +39,7 @@ class WsAioServer(ServerBase):
                                    ws_aio_server=self,
                                    ssl=self._config.get_ssl_context())
         self.__loop.run_until_complete(self.server)
-        log.info("Server started: {server=" + self._config.getLocalUrl() + "}")
+        log.info("Socket.D server started: {server=" + self._config.getLocalUrl() + "}")
         return self.server
 
     def message_all(self, message: str):

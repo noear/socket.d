@@ -61,7 +61,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
     @Override
     public Server start() throws IOException {
         if (isStarted) {
-            throw new IllegalStateException("Server started");
+            throw new IllegalStateException("Socket.D server started");
         } else {
             isStarted = true;
         }
@@ -71,7 +71,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> {
 
         serverExecutor.submit(this::accept);
 
-        log.info("Server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
 
         return this;
     }

@@ -112,6 +112,7 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 | Ping      | /                                    | c(Ping)->s(Pong)->c                                   | 
 | Pong      | ->s(Pong)->c                         | /                                                     | 
 | Close     | s(Close)->c                          | c(Close)->s                                           | 
+| Alarm     | s(Alarm)->c                          | c(Alarm)->s                                           | 
 | Message   | s(Message)->c                        | c(Message)->s                                         | 
 | Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c                   |  
 | Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c                  | 

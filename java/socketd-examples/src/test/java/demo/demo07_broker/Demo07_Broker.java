@@ -15,9 +15,9 @@ public class Demo07_Broker {
                 .start();
 
         //可以创建多个协议
-        SocketD.createServer("sd:udp")
-                .config(c -> c.port(8603).fragmentHandler(new BrokerFragmentHandler()))
-                .listen(new BrokerListener())
-                .start();
+//        SocketD.createServer("sd:udp")
+//                .config(c -> c.port(8603).fragmentHandler(new BrokerFragmentHandler()))
+//                .listen(new BrokerListener())
+//                .start();
     }
 }

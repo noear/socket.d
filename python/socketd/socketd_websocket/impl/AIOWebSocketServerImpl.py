@@ -1,5 +1,4 @@
 import asyncio
-
 from websockets import ConnectionClosedError
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
@@ -64,6 +63,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                     await self.ws_aio_server.get_process().on_receive(self.attachment, frame)
                     if frame.get_flag() == Flag.Close:
                         """客户端主动关闭"""
+                        await conn.close()
                         log.debug("{sessionId} 主动退出", sessionId=conn.get_attachment().get_session().get_session_id())
                         break
         except ConnectionClosedError as e:

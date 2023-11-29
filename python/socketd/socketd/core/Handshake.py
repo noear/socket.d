@@ -4,6 +4,7 @@ from urllib.parse import urlparse, parse_qsl
 from .module.Entity import EntityMetas
 from .module.Message import Message
 
+
 class Handshake:
     def __init__(self, message: Message):
         self.uri = urlparse(message.get_topic())

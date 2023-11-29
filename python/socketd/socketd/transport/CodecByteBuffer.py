@@ -90,7 +90,7 @@ class CodecByteBuffer(Codec):
 
             # 2. decode body
             dataRealSize = len0 - buffer.tell()
-            data: bytearray = bytearray()
+            data: bytearray = None
             if dataRealSize > Config.MAX_SIZE_FRAGMENT:
                 # exceeded the limit, read and discard the bytes
                 data = bytearray(Config.MAX_SIZE_FRAGMENT)

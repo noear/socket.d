@@ -64,19 +64,20 @@ class ClientChannel(ChannelBase, ABC):
 
     async def send(self, frame, acceptor):
         AssertsUtil.assert_closed(self.real)
-        try:
-            self.prepare_send()
-            await self.real.send(frame, acceptor)
-        except Exception as e:
-            if self.connector.autoReconnect():
-                await self.real.close()
-                self.real = None
-            raise e
+        async with self:
+            try:
+                self.prepare_send()
+                await self.real.send(frame, acceptor)
+            except Exception as e:
+                if self.connector.autoReconnect():
+                    await self.real.close()
+                    self.real = None
+                raise e
 
     def retrieve(self, frame):
         self.real.retrieve(frame)
 
-    def getSession(self):
+    def get_session(self):
         return self.real.get_session()
 
     async def close(self, code: int = 1000,

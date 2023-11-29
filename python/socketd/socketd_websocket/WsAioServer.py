@@ -27,13 +27,13 @@ class WsAioServer(ServerBase):
         else:
             self.isStarted = True
         if self._config.getHost() is not None:
-            self.server = AIOServe(ws_handler=AIOWebSocketServerImpl.on_message,
+            self.server = AIOServe(ws_handler=None,
                                    host="0.0.0.0", port=self._config.getPort(),
                                    create_protocol=AIOWebSocketServerImpl,
                                    ws_aio_server=self,
                                    ssl=self._config.get_ssl_context())
         else:
-            self.server = AIOServe(ws_handler=AIOWebSocketServerImpl.on_message,
+            self.server = AIOServe(ws_handler=None,
                                    host=self._config.getHost(), port=self._config.getPort(),
                                    create_protocol=AIOWebSocketServerImpl,
                                    ws_aio_server=self,

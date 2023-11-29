@@ -21,8 +21,7 @@ class ProcessorDefault(Processor, ABC):
             self.listener = listener
 
     async def on_receive(self, channel: Channel, frame):
-        self.log.info("on_receive {frame}", frame=frame)
-
+        self.log.debug("on_receive {frame}", frame=frame)
         if frame.get_flag() == Flag.Connect:
             connectMessage = frame.get_message()
             channel.set_handshake(Handshake(connectMessage))
@@ -71,13 +70,15 @@ class ProcessorDefault(Processor, ABC):
         if isReply:
             channel.retrieve(frame)
         else:
-            self.on_message(channel.get_session(), frame.get_message())
+            self.on_message(channel, frame.get_message())
 
     def on_open(self, session):
         self.listener.on_open(session)
 
-    def on_message(self, session, message):
-        self.listener.on_message(session, message)
+    def on_message(self, channel: Channel, message):
+        # self.listener.on_message(channel.get_session(), message)
+        channel.get_config().get_executor() \
+            .submit(lambda _message: self.listener.on_message(channel.get_session(), _message), message)
 
     def on_close(self, session):
         self.listener.on_close(session)

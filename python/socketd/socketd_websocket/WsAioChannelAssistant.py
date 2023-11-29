@@ -1,8 +1,9 @@
+import asyncio
 
 from socketd.core.Buffer import Buffer
 from socketd.core.config.Config import Config
 from socketd.core.module.Frame import Frame
-from websockets.server import WebSocketServer, WebSocketServerProtocol
+from websockets.server import  WebSocketServerProtocol
 from websockets.protocol import State
 from socketd.transport.ChannelAssistant import ChannelAssistant
 
@@ -10,9 +11,10 @@ from socketd.transport.ChannelAssistant import ChannelAssistant
 class WsAioChannelAssistant(ChannelAssistant):
     def __init__(self, config: Config):
         self.config = config
+        self._loop = asyncio.get_event_loop()
 
     async def write(self, source: WebSocketServerProtocol, frame: Frame) -> None:
-        writer: Buffer = self.config.get_codec().write(frame, lambda l: Buffer())
+        writer: Buffer = self.config.get_codec().write(frame, lambda size: Buffer(limit=size))
         await source.send(writer.getbuffer())
 
     def is_valid(self, target: WebSocketServerProtocol) -> bool:

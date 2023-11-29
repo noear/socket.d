@@ -8,15 +8,12 @@ from socketd.core.ChannelBase import ChannelBase
 from socketd.core.Costants import Function, Flag
 from socketd.core.Session import Session
 from socketd.core.SessionDefault import SessionDefault
-from socketd.core.ThreadSafeDict import ThreadSafeDict
 from socketd.core.config.Config import Config
 from socketd.core.module.Frame import Frame
 from socketd.core.module.MessageDefault import MessageDefault
 from socketd.transport.ChannelAssistant import ChannelAssistant
 
 S = TypeVar("S", bound=WebSocketCommonProtocol)
-
-thread_safe_dict = ThreadSafeDict()
 
 
 class ChannelDefault(ChannelBase):
@@ -50,8 +47,9 @@ class ChannelDefault(ChannelBase):
 
             if message.get_entity() is not None:
                 if message.get_entity().get_data_size() > Config.MAX_SIZE_FRAGMENT:
-                    fragmentIndex = thread_safe_dict.set("AtomicReference", 0)
+                    fragmentIndex = 0
                     while True:
+                        fragmentIndex += 1
                         fragmentEntity = self.get_config().get_fragment_handler().nextFragment(self.get_config(),
                                                                                                fragmentIndex,
                                                                                                message.get_entity())

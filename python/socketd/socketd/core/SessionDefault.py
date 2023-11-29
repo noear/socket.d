@@ -1,7 +1,6 @@
 import asyncio
 
 from abc import ABC
-from typing import Callable, Any, Dict
 
 from .SessionBase import SessionBase
 from .Channel import Channel
@@ -43,15 +42,16 @@ class SessionDefault(SessionBase, ABC):
 
     async def send_and_request(self, topic: str, content: Entity, timeout: int) -> Entity:
         # todo 不可用
-        if self.channel.get_requests().get() > self.channel.get_config().getMaxRequests():
-            raise Exception("Sending too many requests: " + str(self.channel.get_requests().get()))
-        else:
-            self.channel.get_requests().incrementAndGet()
+        with self.channel.get_requests() as num:
+            if num > self.channel.get_config().get_max_requests():
+                raise Exception("Sending too many requests: " + str(num))
+            else:
+                await self.channel.get_requests().set(num + 1)
 
         message = MessageDefault().sid(self.generate_id()).topic(topic).entity(content)
 
         try:
-            self.__loop.run_in_executor(None, lambda: self.channel.send(Frame(Flag.Request, message)))
+           await self.channel.send(Frame(Flag.Request, message))
         except Exception as e:
             raise Exception(e)
         finally:
@@ -70,3 +70,4 @@ class SessionDefault(SessionBase, ABC):
 
     async def close(self):
         await self.channel.send_close()
+        await self.channel.close()

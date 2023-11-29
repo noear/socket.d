@@ -1,9 +1,11 @@
 from typing import Any
 
+from socketd.core.async_api.AtomicRefer import AtomicRefer
 from .Session import Session
+from .config.Config import Config
 from .module.Frame import Frame
 from .module.Message import Message
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 
 class Channel:
@@ -28,11 +30,11 @@ class Channel:
         pass
 
     @abstractmethod
-    def get_config(self) -> 'Config':
+    def get_config(self) -> Config:
         pass
 
     @abstractmethod
-    def get_requests(self) -> int:
+    def get_requests(self) -> AtomicRefer:
         pass
 
     @abstractmethod

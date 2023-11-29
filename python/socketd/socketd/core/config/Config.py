@@ -1,3 +1,6 @@
+from concurrent.futures import Executor
+
+from socketd.core.ThreadSafeDict import ThreadSafeDict
 
 
 class Config:
@@ -10,6 +13,7 @@ class Config:
     # 分片大小限制
     MAX_SIZE_FRAGMENT = 1024 * 1024 * 16
 
+    THEAD_POOL_SIZE = 10
 
     def client_mode(self):
         """
@@ -53,7 +57,7 @@ class Config:
         """
         pass
 
-    def get_executor(self):
+    def get_executor(self) -> Executor:
         """
         返回执行器（第一优先级，某些底层可能不支持）。
         """
@@ -87,4 +91,7 @@ class Config:
         """
         返回允许的最大_uDP包大小。
         """
+        pass
+
+    def get_thread_local_map(self) -> ThreadSafeDict:
         pass

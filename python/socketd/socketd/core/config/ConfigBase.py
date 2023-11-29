@@ -2,10 +2,13 @@ import os
 import ssl
 
 from typing import Callable
+from concurrent.futures import ThreadPoolExecutor
+
 from .Config import Config
 from socketd.core.handler.FragmentHandlerDefault import FragmentHandlerDefault
 from socketd.transport.Codec import Codec
 from socketd.transport.CodecByteBuffer import CodecByteBuffer
+from ..ThreadSafeDict import ThreadSafeDict
 
 
 class ConfigBase(Config):
@@ -67,43 +70,51 @@ class ConfigBase(Config):
         return self
 
     def get_executor(self):
+        if self._executor is None:
+            nThreads = self._core_threads if self.client_mode() else self._max_threads
+            self._executor = ThreadPoolExecutor(max_workers=nThreads, thread_name_prefix="socketd-channelExecutor-")
         return self._executor
 
-    def executor(self, executor):
+    def set_executor(self, executor):
         self._executor = executor
         return self
 
     def get_core_threads(self):
         return self._core_threads
 
-    def core_threads(self, core_threads):
+    def set_core_threads(self, core_threads):
         self._core_threads = core_threads
         return self
 
     def get_max_threads(self):
         return self._max_threads
 
-    def max_threads(self, max_threads):
+    def set_max_threads(self, max_threads):
         self._max_threads = max_threads
         return self
 
     def get_reply_timeout(self):
         return self._reply_timeout
 
-    def reply_timeout(self, reply_timeout):
+    def set_reply_timeout(self, reply_timeout):
         self._reply_timeout = reply_timeout
         return self
 
     def get_max_requests(self):
         return self._max_requests
 
-    def max_requests(self, max_requests):
+    def set_max_requests(self, max_requests):
         self._max_requests = max_requests
         return self
 
     def get_max_udp_size(self):
         return self._maxUdpSize
 
-    def max_udp_size(self, maxUdpSize):
+    def set_max_udp_size(self, maxUdpSize):
         self._maxUdpSize = maxUdpSize
         return self
+
+
+    def get_thread_local_map(self) -> ThreadSafeDict:
+        return super().get_thread_local_map()
+

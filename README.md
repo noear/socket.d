@@ -48,6 +48,7 @@ Socket.D 是一种新的通讯应用协议，也是开发框架。可以在客�
 
 * 很快：大约 150万 TPS（使用 MacBook pro 2020 + JDK8 本机测试，单客户端发与收）
 * 简单：“Socket.D 之于 Socket，尤如 Vue 之于 Js、Mvc 之于 Http”
+* 集群：“Socket.D Broker”
 
 ### 主要特性
 

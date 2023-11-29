@@ -73,6 +73,7 @@ frame: {flag, message: {sid, event, entity: { meta, data}}}
 | Ping         | 20    | /                                    | c(Ping)->s(Pong)->c                                   | 
 | Pong         | 21    | ->s(Pong)->c                         | /                                                     | 
 | Close        | 30    | s(Close)->c                          | c(Close)->s                                           | 
+| Alarm        | 31    | s(Alarm)->c                          | c(Alarm)->s                                           | 
 | Message      | 40    | s(Message)->c                        | c(Message)->s                                         | 
 | Request      | 41    | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c                   |  
 | Subscribe    | 42    | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c                  | 

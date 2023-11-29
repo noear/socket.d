@@ -19,7 +19,7 @@ import java.util.Collection;
  * @since 2.1
  */
 public class BrokerListener extends BrokerListenerBase implements Listener {
-    private static final Logger log = LoggerFactory.getLogger(BrokerListener.class);
+    protected static final Logger log = LoggerFactory.getLogger(BrokerListener.class);
 
     @Override
     public void onOpen(Session session) throws IOException {

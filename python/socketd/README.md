@@ -116,4 +116,20 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 | python | 开发中 | /  | 支持 ws 通讯架构           |
 | 其它     | 计划中 | 计划中  |                      |
 
+- 快速入手
+```python
+async def appliction_test():
+    server = SocketD.create_server(ServerConfig("ws").setPort(9999))
+    server_session: Serve = server.config(idGenerator).listen(
+        SimpleListenerTest()).start()
 
+    await asyncio.sleep(3)
+
+    client_session: Session = SocketD.create_client("ws://127.0.0.1:9999") \
+        .config(idGenerator).open()
+
+    for _ in range(100000):
+        await client_session.send("demo", StringEntity("test"))
+    await client_session.close()
+    asyncio.get_event_loop().run_forever()
+```

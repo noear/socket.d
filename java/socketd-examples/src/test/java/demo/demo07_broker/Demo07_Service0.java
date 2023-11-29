@@ -6,8 +6,9 @@ import org.noear.socketd.transport.core.listener.EventListener;
 
 import java.io.IOException;
 
-public class Demo07_Server0 {
+public class Demo07_Service0 {
     public static void main(String[] args) throws IOException {
+        //原来的服务端，也用客户端形式监听（并通过 @ 取个服务名）
         SocketD.createClient("sd:tcp://127.0.0.1:8602/?@=server")
                 .listen(new EventListener().on("hello", (s, m) -> {
                     System.out.println("Server0: " + m);

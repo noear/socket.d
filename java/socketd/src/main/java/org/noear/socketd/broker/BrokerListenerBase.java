@@ -14,28 +14,28 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BrokerListenerBase {
     //服务端会话
-    private Map<String, Set<Session>> serverSessions = new ConcurrentHashMap<>();
+    private Map<String, Set<Session>> serviceSessions = new ConcurrentHashMap<>();
 
     /**
-     * 获取所有服务端
+     * 获取所有服务
      *
-     * @param name 名字
+     * @param name 服务名
      */
-    protected Collection<Session> getServerAll(String name) {
-        return serverSessions.get(name);
+    public Collection<Session> getServiceAll(String name) {
+        return serviceSessions.get(name);
     }
 
     /**
-     * 获取一个服务端
+     * 获取一个服务
      *
-     * @param name 名字
+     * @param name 服务名
      */
-    protected Session getServerOne(String name) {
+    public Session getServiceOne(String name) {
         if (Utils.isEmpty(name)) {
             return null;
         }
 
-        Set<Session> tmp = serverSessions.get(name);
+        Set<Session> tmp = serviceSessions.get(name);
         if (tmp == null) {
             return null;
         }
@@ -52,20 +52,32 @@ public class BrokerListenerBase {
         }
     }
 
-    protected synchronized void addServer(String name, Session session) {
+    /**
+     * 添加服务
+     *
+     * @param name    服务名
+     * @param session 服务会话
+     */
+    public synchronized void addService(String name, Session session) {
         //注册服务端
-        Set<Session> sessions = serverSessions.get(name);
+        Set<Session> sessions = serviceSessions.get(name);
         if (sessions == null) {
             sessions = new HashSet<>();
-            serverSessions.put(name, sessions);
+            serviceSessions.put(name, sessions);
         }
 
         sessions.add(session);
     }
 
-    protected synchronized void removeServer(String name, Session session) {
+    /**
+     * 移除服务
+     *
+     * @param name    服务名
+     * @param session 服务会话
+     */
+    public synchronized void removeService(String name, Session session) {
         //注销服务端
-        Set<Session> sessions = serverSessions.get(name);
+        Set<Session> sessions = serviceSessions.get(name);
         if (sessions != null) {
             sessions.remove(session);
         }

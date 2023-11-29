@@ -7,6 +7,9 @@ import org.noear.socketd.broker.BrokerListener;
 import java.io.IOException;
 
 public class Demo07_Broker {
+    //
+    // 整个体系，就像是所有参与者在一个社交群聊天。给谁发就 at 谁
+    //
     public static void main(String[] args) throws IOException {
         //主要是两处不同：1，专属分片处理；2，专属监听器
         SocketD.createServer("sd:tcp")

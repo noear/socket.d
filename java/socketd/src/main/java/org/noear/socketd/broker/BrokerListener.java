@@ -26,7 +26,8 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         String name = session.at();
 
         if (Utils.isNotEmpty(name)) {
-            addServer(name, session);
+            //注册服务
+            addService(name, session);
         }
     }
 
@@ -35,16 +36,17 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         String name = session.at();
 
         if (Utils.isNotEmpty(name)) {
-            removeServer(name, session);
+            //注销服务
+            removeService(name, session);
         }
     }
 
     @Override
-    public void onMessage(Session client, Message message) throws IOException {
+    public void onMessage(Session requester, Message message) throws IOException {
         String atName = message.at();
 
         if (atName == null) {
-            client.sendAlarm(message, "Broker service require '@' meta");
+            requester.sendAlarm(message, "Broker service require '@' meta");
             return;
         }
 
@@ -52,43 +54,43 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
             //广播模式
             atName = atName.substring(0, atName.length() - 1);
 
-            Collection<Session> serverAll = getServerAll(atName);
-            if (serverAll != null && serverAll.size() > 0) {
-                for (Session server : new ArrayList<>(serverAll)) {
-                    if (server != client) {
+            Collection<Session> serviceAll = getServiceAll(atName);
+            if (serviceAll != null && serviceAll.size() > 0) {
+                for (Session service : new ArrayList<>(serviceAll)) {
+                    if (service != requester) {
                         //如果不是自己，则发
-                        onMessageOne(server, client, message);
+                        onMessageOne(service, requester, message);
                     }
                 }
             } else {
-                client.sendAlarm(message, "Broker don't have '@" + atName + "' session");
+                requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
             }
         } else {
             //单发模式
-            Session server = getServerOne(atName);
-            if (server != null) {
-                onMessageOne(server, client, message);
+            Session service = getServiceOne(atName);
+            if (service != null) {
+                onMessageOne(service, requester, message);
             } else {
-                client.sendAlarm(message, "Broker don't have '@" + atName + "' session");
+                requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
             }
         }
     }
 
-    private void onMessageOne(Session server, Session client, Message message) throws IOException {
+    private void onMessageOne(Session service, Session requester, Message message) throws IOException {
         if (message.isRequest()) {
-            server.sendAndRequest(message.event(), message, reply -> {
-                client.reply(message, reply);
+            service.sendAndRequest(message.event(), message, reply -> {
+                requester.reply(message, reply);
             });
         } else if (message.isSubscribe()) {
-            server.sendAndSubscribe(message.event(), message, reply -> {
+            service.sendAndSubscribe(message.event(), message, reply -> {
                 if (reply instanceof EndEntity) {
-                    client.replyEnd(message, reply);
+                    requester.replyEnd(message, reply);
                 } else {
-                    client.reply(message, reply);
+                    requester.reply(message, reply);
                 }
             });
         } else {
-            server.send(message.event(), message);
+            service.send(message.event(), message);
         }
     }
 

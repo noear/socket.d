@@ -10,6 +10,7 @@ import java.io.IOException;
 
 public class Demo07_Client {
     public static void main(String[] args) throws IOException {
+        //客户端，如果也想提供服务，也通过 @ 取个名字
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?@=client")
                 .listen(new EventListener().on("hello", (s, m) -> {
                     System.out.println("Client: " + m);

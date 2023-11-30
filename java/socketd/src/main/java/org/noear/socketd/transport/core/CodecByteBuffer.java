@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
+import org.noear.socketd.transport.core.buffer.BytesInputStream;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.IoUtils;
@@ -78,7 +79,12 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             target.putChar('\n');
 
             //data
-            IoUtils.writeTo(frame.getMessage().data(), target);
+            if (frame.getMessage().data() instanceof BytesInputStream) {
+                target.putBytes(((BytesInputStream) frame.getMessage().data()).bytes());
+            } else {
+                IoUtils.writeTo(frame.getMessage().data(), target);
+            }
+
             target.flush();
 
             return target;

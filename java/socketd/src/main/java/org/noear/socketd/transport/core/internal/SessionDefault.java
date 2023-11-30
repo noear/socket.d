@@ -258,6 +258,6 @@ public class SessionDefault extends SessionBase {
             }
         }
 
-        channel.close(Constants.CLOSE3_USER);
+        channel.close(Constants.CLOSE4_USER);
     }
 }

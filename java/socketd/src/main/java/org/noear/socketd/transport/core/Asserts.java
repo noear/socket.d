@@ -24,7 +24,7 @@ public class Asserts {
      * 断言关闭
      */
     public static void assertClosedByUser(Channel channel) {
-        if (channel != null && channel.isClosed() == Constants.CLOSE3_USER) {
+        if (channel != null && channel.isClosed() == Constants.CLOSE4_USER) {
             throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }

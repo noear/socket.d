@@ -28,17 +28,21 @@ public interface Constants {
 
 
     /**
-     * 因协议关闭
+     * 因协议指令关闭
      */
     int CLOSE1_PROTOCOL = 1;
     /**
+     * 因协议非法关闭
+     */
+    int CLOSE2_PROTOCOL_ILLEGAL = 2;
+    /**
      * 因异常关闭
      */
-    int CLOSE2_ERROR = 2;
+    int CLOSE3_ERROR = 3;
     /**
      * 因用户主动关闭
      */
-    int CLOSE3_USER = 3;
+    int CLOSE4_USER = 4;
 
 
     /**

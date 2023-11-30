@@ -110,8 +110,8 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close(Constants.CLOSE1_PROTOCOL);
-                        onClose(channel);
+                        channel.close(Constants.CLOSE2_PROTOCOL_ILLEGAL);
+                        onCloseInternal(channel);
                     }
                 }
             } catch (Throwable e) {

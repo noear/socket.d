@@ -124,7 +124,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             }
 
             //手动关闭
-            if (real.isClosed() == Constants.CLOSE3_USER) {
+            if (real.isClosed() == Constants.CLOSE4_USER) {
                 if (log.isDebugEnabled()) {
                     log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }
@@ -140,7 +140,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             throw e;
         } catch (Throwable e) {
             if (connector.autoReconnect()) {
-                real.close(Constants.CLOSE2_ERROR);
+                real.close(Constants.CLOSE3_ERROR);
                 real = null;
             }
 
@@ -166,7 +166,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             throw e;
         } catch (Throwable e) {
             if (connector.autoReconnect()) {
-                real.close(Constants.CLOSE2_ERROR);
+                real.close(Constants.CLOSE3_ERROR);
                 real = null;
             }
             throw new SocketdChannelException(e);

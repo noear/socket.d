@@ -6,11 +6,9 @@ import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.transport.core.MessageInternal;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
-import org.noear.socketd.utils.IoUtils;
 import org.noear.socketd.utils.Utils;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -71,19 +69,22 @@ public class FragmentAggregator {
         fragmentHolders.sort(Comparator.comparing(fh -> fh.getIndex()));
 
         //创建聚合流
-        ByteArrayOutputStream dataStream = new ByteArrayOutputStream(dataLength);
+        ByteBuffer dataBuffer = ByteBuffer.allocate(dataLength);
 
         //添加分片数据
         for (FragmentHolder fh : fragmentHolders) {
-            IoUtils.transferTo(fh.getMessage().data(), dataStream);
+            dataBuffer.put(fh.getMessage().data().array());
         }
+
+        //索引番转
+        dataBuffer.flip();
 
         //返回
         return new Frame(main.flag(), new MessageDefault()
                 .flag(main.flag())
                 .sid(main.sid())
                 .event(main.event())
-                .entity(new EntityDefault().metaMap(main.metaMap()).data(dataStream.toByteArray())));
+                .entity(new EntityDefault().metaMap(main.metaMap()).data(dataBuffer)));
     }
 
     /**

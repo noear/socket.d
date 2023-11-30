@@ -4,6 +4,7 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EndEntity;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 
@@ -136,7 +137,7 @@ public class MessageDefault implements MessageInternal {
     }
 
     @Override
-    public InputStream data() {
+    public ByteBuffer data() {
         return entity.data();
     }
 

@@ -2,10 +2,9 @@ package org.noear.socketd.transport.core.fragment;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
-import org.noear.socketd.utils.IoUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * 数据分片默认实现（可以重写，把大流先缓存到磁盘以节省内存）
@@ -21,14 +20,12 @@ public class FragmentHandlerDefault implements FragmentHandler {
      */
     @Override
     public Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
-        ByteArrayOutputStream fragmentBuf = new ByteArrayOutputStream();
-        IoUtils.transferTo(message.data(), fragmentBuf, 0, Constants.MAX_SIZE_FRAGMENT);
-        byte[] fragmentBytes = fragmentBuf.toByteArray();
-        if (fragmentBytes.length == 0) {
+        ByteBuffer dataBuffer = readFragmentData(message.data(), Constants.MAX_SIZE_FRAGMENT);
+        if (dataBuffer.limit() == 0) {
             return null;
         }
 
-        EntityDefault fragmentEntity = new EntityDefault().data(fragmentBytes);
+        EntityDefault fragmentEntity = new EntityDefault().data(dataBuffer);
         if (fragmentIndex == 1) {
             fragmentEntity.metaMap(message.metaMap());
         }
@@ -62,5 +59,19 @@ public class FragmentHandlerDefault implements FragmentHandler {
     @Override
     public boolean aggrEnable() {
         return true;
+    }
+
+    private ByteBuffer readFragmentData(ByteBuffer ins, int maxSize) {
+        int size = 0;
+        if (ins.remaining() > maxSize) {
+            size = maxSize;
+        } else {
+            size = ins.remaining();
+        }
+
+        byte[] bytes = new byte[size];
+        ins.get(bytes);
+
+        return ByteBuffer.wrap(bytes);
     }
 }

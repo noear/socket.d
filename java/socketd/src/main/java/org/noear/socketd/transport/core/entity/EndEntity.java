@@ -2,7 +2,7 @@ package org.noear.socketd.transport.core.entity;
 
 import org.noear.socketd.transport.core.Entity;
 
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 /**
@@ -37,7 +37,7 @@ public class EndEntity implements Entity {
     }
 
     @Override
-    public InputStream data() {
+    public ByteBuffer data() {
         return entity.data();
     }
 

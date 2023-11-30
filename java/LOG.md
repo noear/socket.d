@@ -1,4 +1,7 @@
 
+### 2.1.1
+* 调整 Entity::data 类型为 ByteBuffer（原为 InputStream）
+
 ### 2.1.0
 * 完成 Broker 方案实现（支持单发，群发）
 * 添加 Alarm 告警控制指令（用于传递异步信息，发到对方的 onError 事件）

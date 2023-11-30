@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 /**
  * 常量
@@ -25,7 +24,7 @@ public interface Constants {
     /**
      * 默认数据（占位）
      */
-    InputStream DEF_DATA = new ByteArrayInputStream(new byte[]{});
+    ByteBuffer DEF_DATA = ByteBuffer.wrap(new byte[]{});
 
 
     /**

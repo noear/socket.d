@@ -2,14 +2,10 @@ package org.noear.socketd.transport.core.entity;
 
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.transport.core.EntityMetas;
-import org.noear.socketd.transport.core.buffer.BytesInputStream;
-import org.noear.socketd.utils.IoUtils;
 import org.noear.socketd.utils.Utils;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,7 +21,7 @@ public class EntityDefault implements Entity {
     private Map<String, String> metaMap;
     private String metaString = Constants.DEF_META_STRING;
     private boolean metaStringChanged = false;
-    private InputStream data = Constants.DEF_DATA;
+    private ByteBuffer data = Constants.DEF_DATA;
     private int dataSize = 0;
 
     public EntityDefault at(String name) {
@@ -137,7 +133,7 @@ public class EntityDefault implements Entity {
      * @param data 数据
      */
     public EntityDefault data(byte[] data) {
-        this.data = new BytesInputStream(data);
+        this.data = ByteBuffer.wrap(data);
         this.dataSize = data.length;
         if (dataSize > Constants.MAX_SIZE_FRAGMENT) {
             meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
@@ -150,10 +146,12 @@ public class EntityDefault implements Entity {
      *
      * @param data 数据
      */
-    public EntityDefault data(InputStream data) throws IOException {
+    public EntityDefault data(ByteBuffer data) {
         this.data = data;
-        this.dataSize = data.available();
-        meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
+        this.dataSize = data.limit();
+        if (dataSize > Constants.MAX_SIZE_FRAGMENT) {
+            meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
+        }
         return this;
     }
 
@@ -161,7 +159,7 @@ public class EntityDefault implements Entity {
      * 获取数据（若多次复用，需要reset）
      */
     @Override
-    public InputStream data() {
+    public ByteBuffer data() {
         return data;
     }
 
@@ -170,34 +168,18 @@ public class EntityDefault implements Entity {
      */
     @Override
     public String dataAsString() {
-        try {
-            if (dataAsString == null) {
-                if (data() instanceof BytesInputStream) {
-                    dataAsString = new String(((BytesInputStream) data()).bytes(), StandardCharsets.UTF_8);
-                } else {
-                    dataAsString = IoUtils.transferToString(data());
-                }
-            }
-
-            return dataAsString;
-        } catch (IOException e) {
-            throw new SocketdCodecException(e);
+        if (dataAsString == null) {
+            dataAsString = new String(data.array(), StandardCharsets.UTF_8);
         }
+
+        return dataAsString;
     }
 
     private String dataAsString;
 
     @Override
     public byte[] dataAsBytes() {
-        try {
-            if (data() instanceof BytesInputStream) {
-                return ((BytesInputStream) data()).bytes();
-            } else {
-                return IoUtils.transferToBytes(data());
-            }
-        } catch (IOException e) {
-            throw new SocketdCodecException(e);
-        }
+        return data.array();
     }
 
     /**

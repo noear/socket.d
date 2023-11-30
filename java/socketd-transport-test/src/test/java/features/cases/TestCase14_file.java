@@ -6,7 +6,6 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
-import org.noear.socketd.utils.IoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public class TestCase14_file extends BaseTestCase {
 
                             try {
                                 try (OutputStream outputStream = new FileOutputStream(fileNew)) {
-                                    IoUtils.transferTo(message.data(), outputStream);
+                                    outputStream.write(message.dataAsBytes());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();

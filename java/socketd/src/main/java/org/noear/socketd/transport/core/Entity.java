@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core;
 
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 /**
@@ -42,7 +42,7 @@ public interface Entity {
     /**
      * 获取数据
      */
-    InputStream data();
+    ByteBuffer data();
 
     /**
      * 获取数据并转为字符串

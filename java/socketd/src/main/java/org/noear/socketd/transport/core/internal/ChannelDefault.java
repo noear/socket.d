@@ -84,34 +84,34 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             //如果有实体（尝试分片）
             if (message.entity() != null) {
                 //确保用完自动关闭
-                try (InputStream ins = message.data()) {
-                    if (message.dataSize() > Constants.MAX_SIZE_FRAGMENT) {
-                        //满足分片条件
-                        int fragmentIndex = 0;
-                        while (true) {
-                            //获取分片
-                            fragmentIndex++;
-                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
 
-                            if (fragmentEntity != null) {
-                                //主要是 sid 和 entity
-                                Frame fragmentFrame = new Frame(frame.getFlag(), new MessageDefault()
-                                        .flag(frame.getFlag())
-                                        .sid(message.sid())
-                                        .entity(fragmentEntity));
+                if (message.dataSize() > Constants.MAX_SIZE_FRAGMENT) {
+                    //满足分片条件
+                    int fragmentIndex = 0;
+                    while (true) {
+                        //获取分片
+                        fragmentIndex++;
+                        Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
 
-                                assistant.write(source, fragmentFrame);
-                            } else {
-                                //没有分片，说明发完了
-                                return;
-                            }
+                        if (fragmentEntity != null) {
+                            //主要是 sid 和 entity
+                            Frame fragmentFrame = new Frame(frame.getFlag(), new MessageDefault()
+                                    .flag(frame.getFlag())
+                                    .sid(message.sid())
+                                    .entity(fragmentEntity));
+
+                            assistant.write(source, fragmentFrame);
+                        } else {
+                            //没有分片，说明发完了
+                            return;
                         }
-                    } else {
-                        //不满足分片条件，直接发
-                        assistant.write(source, frame);
-                        return;
                     }
+                } else {
+                    //不满足分片条件，直接发
+                    assistant.write(source, frame);
+                    return;
                 }
+
             }
         }
 

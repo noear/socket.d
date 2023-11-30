@@ -7,7 +7,9 @@ import org.noear.socketd.utils.Utils;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,9 +46,12 @@ public class EntityDefault implements Entity {
         if (metaStringChanged) {
             StringBuilder buf = new StringBuilder();
 
-            metaMap().forEach((name, val) -> {
+            List<String> metaKeys = new ArrayList<>(metaMap().keySet());
+
+            for (String name : metaKeys) {
+                String val = metaMap().get(name);
                 buf.append(name).append("=").append(val).append("&");
-            });
+            }
 
             if (buf.length() > 0) {
                 buf.setLength(buf.length() - 1);

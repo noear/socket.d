@@ -23,7 +23,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     private static final Logger log = LoggerFactory.getLogger(ClientChannel.class);
 
     //连接器
-    private ClientConnector connector;
+    private final ClientConnector connector;
     //真实通道
     private Channel real;
     //心跳处理
@@ -33,8 +33,8 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     public ClientChannel(Channel real, ClientConnector connector) {
         super(real.getConfig());
-        this.real = real;
         this.connector = connector;
+        this.real = real;
         this.heartbeatHandler = connector.heartbeatHandler();
 
         if (heartbeatHandler == null) {
@@ -119,7 +119,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     private void heartbeatHandle() throws IOException {
         if (real != null) {
             //说明握手未成
-            if(real.getHandshake() == null) {
+            if (real.getHandshake() == null) {
                 return;
             }
 
@@ -132,21 +132,19 @@ public class ClientChannel extends ChannelBase implements Channel {
             }
         }
 
-        synchronized (this) {
-            try {
-                prepareCheck();
+        try {
+            prepareCheck();
 
-                heartbeatHandler.heartbeat(getSession());
-            } catch (SocketdException e) {
-                throw e;
-            } catch (Throwable e) {
-                if (connector.autoReconnect()) {
-                    real.close(Constants.CLOSE2_ERROR);
-                    real = null;
-                }
-
-                throw new SocketdChannelException(e);
+            heartbeatHandler.heartbeat(getSession());
+        } catch (SocketdException e) {
+            throw e;
+        } catch (Throwable e) {
+            if (connector.autoReconnect()) {
+                real.close(Constants.CLOSE2_ERROR);
+                real = null;
             }
+
+            throw new SocketdChannelException(e);
         }
     }
 
@@ -160,20 +158,18 @@ public class ClientChannel extends ChannelBase implements Channel {
     public void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
         Asserts.assertClosedByUser(real);
 
-        synchronized (this) {
-            try {
-                prepareCheck();
+        try {
+            prepareCheck();
 
-                real.send(frame, acceptor);
-            } catch (SocketdException e) {
-                throw e;
-            } catch (Throwable e) {
-                if (connector.autoReconnect()) {
-                    real.close(Constants.CLOSE2_ERROR);
-                    real = null;
-                }
-                throw new SocketdChannelException(e);
+            real.send(frame, acceptor);
+        } catch (SocketdException e) {
+            throw e;
+        } catch (Throwable e) {
+            if (connector.autoReconnect()) {
+                real.close(Constants.CLOSE2_ERROR);
+                real = null;
             }
+            throw new SocketdChannelException(e);
         }
     }
 

@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
@@ -58,11 +57,13 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return assistant.getLocalAddress(source);
     }
 
+    private Object SEND_LOCK  = new Object();
+
     /**
      * 发送
      */
     @Override
-    public synchronized void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
+    public void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
         Asserts.assertClosed(this);
 
         if (log.isDebugEnabled()) {
@@ -73,49 +74,51 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        if (frame.getMessage() != null) {
-            MessageInternal message = frame.getMessage();
+        synchronized (SEND_LOCK) {
+            if (frame.getMessage() != null) {
+                MessageInternal message = frame.getMessage();
 
-            //注册流接收器
-            if (acceptor != null) {
-                acceptorManger.addAcceptor(message.sid(), acceptor);
-            }
-
-            //如果有实体（尝试分片）
-            if (message.entity() != null) {
-                //确保用完自动关闭
-
-                if (message.dataSize() > Constants.MAX_SIZE_FRAGMENT) {
-                    //满足分片条件
-                    int fragmentIndex = 0;
-                    while (true) {
-                        //获取分片
-                        fragmentIndex++;
-                        Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
-
-                        if (fragmentEntity != null) {
-                            //主要是 sid 和 entity
-                            Frame fragmentFrame = new Frame(frame.getFlag(), new MessageDefault()
-                                    .flag(frame.getFlag())
-                                    .sid(message.sid())
-                                    .entity(fragmentEntity));
-
-                            assistant.write(source, fragmentFrame);
-                        } else {
-                            //没有分片，说明发完了
-                            return;
-                        }
-                    }
-                } else {
-                    //不满足分片条件，直接发
-                    assistant.write(source, frame);
-                    return;
+                //注册流接收器
+                if (acceptor != null) {
+                    acceptorManger.addAcceptor(message.sid(), acceptor);
                 }
 
-            }
-        }
+                //如果有实体（尝试分片）
+                if (message.entity() != null) {
+                    //确保用完自动关闭
 
-        assistant.write(source, frame);
+                    if (message.dataSize() > Constants.MAX_SIZE_FRAGMENT) {
+                        //满足分片条件
+                        int fragmentIndex = 0;
+                        while (true) {
+                            //获取分片
+                            fragmentIndex++;
+                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
+
+                            if (fragmentEntity != null) {
+                                //主要是 sid 和 entity
+                                Frame fragmentFrame = new Frame(frame.getFlag(), new MessageDefault()
+                                        .flag(frame.getFlag())
+                                        .sid(message.sid())
+                                        .entity(fragmentEntity));
+
+                                assistant.write(source, fragmentFrame);
+                            } else {
+                                //没有分片，说明发完了
+                                return;
+                            }
+                        }
+                    } else {
+                        //不满足分片条件，直接发
+                        assistant.write(source, frame);
+                        return;
+                    }
+
+                }
+            }
+
+            assistant.write(source, frame);
+        }
     }
 
     /**

@@ -185,10 +185,12 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
+    private Object EXECUTOR_LOCK = new Object();
+
     @Override
     public ExecutorService getChannelExecutor() {
         if (channelExecutor == null) {
-            synchronized (this) {
+            synchronized (EXECUTOR_LOCK) {
                 if (channelExecutor == null) {
                     int nThreads = clientMode() ? coreThreads : maxThreads;
 
@@ -207,7 +209,13 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 配置调试执行器
      * */
     public T channelExecutor(ExecutorService channelExecutor) {
+        ExecutorService odl = this.channelExecutor;
         this.channelExecutor = channelExecutor;
+
+        if (odl != null) {
+            odl.shutdown();
+        }
+
         return (T) this;
     }
 

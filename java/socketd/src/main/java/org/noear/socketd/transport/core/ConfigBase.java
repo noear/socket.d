@@ -67,7 +67,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.fragmentHandler = new FragmentHandlerDefault();
 
         this.coreThreads = Math.max(Runtime.getRuntime().availableProcessors(), 2);
-        this.maxThreads = coreThreads * 8;
+        this.maxThreads = coreThreads * 4;
 
         this.readBufferSize = 512;
         this.writeBufferSize = 512;

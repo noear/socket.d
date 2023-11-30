@@ -1,6 +1,7 @@
 
 ### 2.1.1
 * 调整 Entity::data 类型为 ByteBuffer（原为 InputStream）
+* 调整 maxThreads 默认为 coreThreads * 4
 
 ### 2.1.0
 * 完成 Broker 方案实现（支持单发，群发）

@@ -1,7 +1,7 @@
 
 ### 2.1.1
 * 调整 Entity::data 类型为 ByteBuffer（原为 InputStream）
-* 调整 maxThreads 默认为 coreThreads * 4
+* 调整 maxThreads 默认为 coreThreads * 4（原为 8）
 * 优化 线程安全
 * netty 升为 4.1.101.Final
 

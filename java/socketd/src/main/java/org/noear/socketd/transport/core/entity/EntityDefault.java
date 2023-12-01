@@ -8,9 +8,9 @@ import org.noear.socketd.utils.Utils;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 实体默认实现
@@ -82,7 +82,7 @@ public class EntityDefault implements Entity {
     @Override
     public Map<String, String> metaMap() {
         if (metaMap == null) {
-            metaMap = new LinkedHashMap<>();
+            metaMap = new ConcurrentHashMap<>();
             metaStringChanged = false;
 
             //此处要优化

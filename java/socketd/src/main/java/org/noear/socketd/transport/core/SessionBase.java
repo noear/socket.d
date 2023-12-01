@@ -1,8 +1,7 @@
 package org.noear.socketd.transport.core;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 会话基类
@@ -27,7 +26,7 @@ public abstract class SessionBase implements Session {
     @Override
     public Map<String, Object> attrMap() {
         if (attrMap == null) {
-            attrMap = new HashMap<>();
+            attrMap = new ConcurrentHashMap<>();
         }
 
         return attrMap;
@@ -77,7 +76,7 @@ public abstract class SessionBase implements Session {
     @Override
     public <T> void attr(String name, T value) {
         if (attrMap == null) {
-            attrMap = new HashMap<>();
+            attrMap = new ConcurrentHashMap<>();
         }
         attrMap.put(name, value);
     }

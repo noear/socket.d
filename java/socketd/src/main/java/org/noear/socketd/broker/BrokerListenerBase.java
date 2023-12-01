@@ -4,6 +4,8 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.utils.Utils;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 经纪人监听器基类（实现 server 封闭管理）
@@ -12,9 +14,10 @@ import java.util.*;
  * @since 2.1
  */
 public class BrokerListenerBase {
-    private Object UPDATE_LOCK = new Object();
     //服务端会话
-    private Map<String, Set<Session>> serviceSessions = new HashMap<>();
+    private Map<String, Set<Session>> serviceSessions = new ConcurrentHashMap<>();
+    //轮询计数
+    private AtomicInteger serviceRoundCounter = new AtomicInteger(0);
 
     /**
      * 获取所有服务
@@ -40,6 +43,7 @@ public class BrokerListenerBase {
             return null;
         }
 
+        //线程安全处理（避免别处有增减）
         List<Session> sessions = new ArrayList<>(tmp);
 
         if (sessions.size() == 0) {
@@ -47,7 +51,12 @@ public class BrokerListenerBase {
         } else if (sessions.size() == 1) {
             return sessions.get(0);
         } else {
-            int idx = new Random().nextInt(sessions.size());
+            //论询处理
+            int counter = serviceRoundCounter.incrementAndGet();
+            int idx = counter % sessions.size();
+            if (counter > 999_999_999) {
+                serviceRoundCounter.set(0);
+            }
             return sessions.get(idx);
         }
     }
@@ -59,11 +68,9 @@ public class BrokerListenerBase {
      * @param session 服务会话
      */
     public void addService(String name, Session session) {
-        synchronized (UPDATE_LOCK) {
-            //注册服务端
-            Set<Session> sessions = serviceSessions.computeIfAbsent(name, n -> new HashSet<>());
-            sessions.add(session);
-        }
+        //注册服务端
+        Set<Session> sessions = serviceSessions.computeIfAbsent(name, n -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
+        sessions.add(session);
     }
 
     /**
@@ -73,12 +80,10 @@ public class BrokerListenerBase {
      * @param session 服务会话
      */
     public void removeService(String name, Session session) {
-        synchronized (UPDATE_LOCK) {
-            //注销服务端
-            Set<Session> sessions = serviceSessions.get(name);
-            if (sessions != null) {
-                sessions.remove(session);
-            }
+        //注销服务端
+        Set<Session> sessions = serviceSessions.get(name);
+        if (sessions != null) {
+            sessions.remove(session);
         }
     }
 }

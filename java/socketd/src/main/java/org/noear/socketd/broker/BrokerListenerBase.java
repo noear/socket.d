@@ -19,6 +19,10 @@ public class BrokerListenerBase {
     //轮询计数
     private AtomicInteger playerRoundCounter = new AtomicInteger(0);
 
+    public Collection<String> getNameAll(){
+        return playerSessions.keySet();
+    }
+
     /**
      * 获取所有玩家会话
      *

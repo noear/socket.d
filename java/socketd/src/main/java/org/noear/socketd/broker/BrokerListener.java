@@ -54,30 +54,53 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
             return;
         }
 
-        if (atName.endsWith("*")) {
-            //群发模式（给所有同名的玩家都发）
+        if (atName.equals("*")) {
+            //广播模式（给所有玩家）
+            Collection<String> nameAll = getNameAll();
+            if (nameAll != null && nameAll.size() > 0) {
+                for (String name : new ArrayList<>(nameAll)) {
+                    forwardToName(requester, message, name);
+                }
+            }
+        } else if (atName.endsWith("*")) {
+            //群发模式（给同名的所有玩家）
             atName = atName.substring(0, atName.length() - 1);
 
-            Collection<Session> playerAll = getPlayerAll(atName);
-            if (playerAll != null && playerAll.size() > 0) {
-                for (Session responder : new ArrayList<>(playerAll)) {
-                    if (responder != requester) {
-                        //转发消息（过滤自己）
-                        forwardDo(requester, message, responder);
-                    }
-                }
-            } else {
+            if (forwardToName(requester, message, atName) == false) {
                 requester.sendAlarm(message, "Broker don't have '@" + atName + "' player");
             }
         } else {
-            //单发模式（轮询负截均衡，给同名的某个玩家发）
+            //单发模式（给同名的某个玩家，轮询负截均衡）
             Session responder = getPlayerOne(atName);
             if (responder != null) {
                 //转发消息
-                forwardDo(requester, message, responder);
+                forwardToSession(requester, message, responder);
             } else {
                 requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
             }
+        }
+    }
+
+    /**
+     * 批量转发消息
+     *
+     * @param requester 请求玩家
+     * @param message   消息
+     * @param name      目标玩家名字
+     */
+    private boolean forwardToName(Session requester, Message message, String name) throws IOException {
+        Collection<Session> playerAll = getPlayerAll(name);
+        if (playerAll != null && playerAll.size() > 0) {
+            for (Session responder : new ArrayList<>(playerAll)) {
+                if (responder != requester) {
+                    //转发消息（过滤自己）
+                    forwardToSession(requester, message, responder);
+                }
+            }
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -86,9 +109,9 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
      *
      * @param requester 请求玩家
      * @param message   消息
-     * @param responder 响应玩家
+     * @param responder 目标玩家会话
      */
-    private void forwardDo(Session requester, Message message, Session responder) throws IOException {
+    private void forwardToSession(Session requester, Message message, Session responder) throws IOException {
         if (message.isRequest()) {
             responder.sendAndRequest(message.event(), message, reply -> {
                 requester.reply(message, reply);

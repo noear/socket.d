@@ -2,7 +2,7 @@
   Socket.D
 </h1>
 <p align="center">
-	<strong>Network application development framework based on connection and semantic message flow</strong>
+	<strong>Network application protocol based on event and semantic message streams</strong>
 </p>
 
 <p align="center">

@@ -2,7 +2,7 @@
   Socket.D
 </h1>
 <p align="center">
-	<strong>基于连接和语义消息流的网络应用开发框架</strong>
+	<strong>Network application development framework based on connection and semantic message flow</strong>
 </p>
 
 <p align="center">
@@ -42,51 +42,51 @@
 
 <hr />
 
-Socket.D 是一种新的通讯应用协议，也是开发框架。可以在客户端和服务端之间“简单”、“快速”的流式通讯。
+Socket.D is a new communication application protocol and development framework. Facilitate "pleasant" communication between client and server.
 
-### 体验效果
+### Experience effect
 
-* 很快：大约 150万 TPS（使用 MacBook pro 2020 + JDK8 本机测试，单客户端发与收）
-* 简单：“Socket.D 之于 Socket，尤如 Vue 之于 Js、Mvc 之于 Http”
-* 集群：“Socket.D Broker”（所有参与者，就像在一个社交群里聊天。想发谁 at 谁）
+* Fast: ~ 1.5 million TPS (using MacBook pro 2020 + JDK8 native test, single client sending and receiving)
+* Simple: "Socket.D is to Sockets what Vue is to Js and Mvc is to Http"
+* Cluster: "Socket.D Broker" (all participants, like chatting in a social group. Who want to send at who)
 
-### 主要特性
+### Main Features
 
-* 所谓语义，每个消息都是事件，每个事件都有元信息描述
-* 语言无关，使用二进制通信协议（支持 tcp, ws, udp）。支持多语言、多平台
-* 断线重连，自动连接恢复
-* 多路复用
-* 双向通讯，单链接双向互听互发
-* 自动分片，数据超出 16Mb，会自动分片、自动重组（udp 除外）
-* 接口简单
-
-
-### 与 http、websocket 的简单对比
-
-| 对比项目        | socket.d     | http | websocket(ws) | 备注               |
-|-------------|--------------|------|---------------|------------------|
-| 发消息（Qos0）   | 有            | 无    | 有             | 适合监听埋点，日志上报      |
-| 发送并请求（Qos1） | 有            | 有    | 无             | 适合马上答复确认         |
-| 发送并订阅（流）    | 有            | 无    | 无             | 适合视频播放之类的，分块流式获取 |
-| 答复或响应       | 有            | 有    | 无             |                  |
-| 单连接双向通讯     | 有            | 无    | 有（不便）         | 双向互发、互听。适合反向调服务  |
-| 数据分片        | 有            | /    | 无             | 适合大文件上传               |
-| 断线自动重连      | 有            | /    | 无             |                  |
-| 有元信息或头信息    | 有            | 有    | 无             |                  |
-| 基础传输协议      | tcp, udp, ws | tcp  | http          |                  |
+* Semantically, every message is an event, and every event has meta-information
+* Language independent, binary communication protocol (tcp, ws, udp supported). Support multi-language, multi-platform
+* Disconnection reconnection, automatic connection restoration
+* Multiplexing
+* Two-way communication, single link two-way listening and sending
+* Auto-split, data over 16Mb will be automatically split and reassemble (except udp)
+* Simple interface
 
 
+### Simple comparison with http and websocket
+
+| comparison               | socket.d | http | websocket(ws) | remarks          |
+|--------------------------|-------|------|-------------|------------------|
+| Send (Qos0)              | Yes   | No   | Yes            | Suitable for monitoring buried point, log report      |
+| SendAndRequest (Qos1)    | Yes      | Yes  | No           | Suitable for immediate reply confirmation         |
+| sendAndSubscribe (stream) | Yes      | No   | No           | Suitable for video playback and so on, block streaming acquisition |
+| Reply or respond         | Yes      | Yes  | No           |                  |
+| Single connection two-way communication                 | Yes      | No   | Yes（Inconvenient to use）        | Send and listen to each other. Suitable for reverse call service  |
+| Data sharding                     | Yes      | /    | No           | Suitable for large file upload          |
+| Disconnection automatically reconnect                  | Yes      | /    | No           |                  |
+| There is meta or header information                 | Yes      | Yes  | No           |                  |
+| Basic transport protocol                   | tcp, udp, ws | tcp  | http        |                  |
 
 
-### 适用场景
-
-可用于 MSG、RPC、IM、MQ 等一些的场景开发，可替代 Http, Websocket, gRpc 等一些协议。比如移动设备与服务器的连接，比如一些微服务场景等等。
 
 
-### 简单的协议说明（ 详见：[《协议文档》](protocol.md) ）
+### Applicable scene
+
+It can be used for MSG, RPC, IM, MQ and other scenarios, and can replace Http, Websocket, gRpc and other protocols. Such as the connection between the mobile device and the server, such as some microservice scenarios, etc.
 
 
-* 连接地址风格
+### Simple protocol description（ See more here：[《Protocol documentation》](protocol.md) ）
+
+
+* Connection address style
 
 ```
 sd:tcp://19.10.2.3:9812/path?u=noear&t=1234
@@ -95,14 +95,14 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 ```
 
 
-* 帧码结构
+* Frame code structure
 
 ```
 //udp only <2k
 [len:int][flag:int][sid:str(<64)][\n][event:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
-* 指令流
+* Instruction stream
 
 | Flag      | Server                               | Client                                                | 
 |-----------|--------------------------------------|-------------------------------------------------------|
@@ -126,75 +126,75 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 
 
 
-### 快速入门与学习
+### Get started and learn quickly
 
-* 学习
+* Learning
 
-请点击：[《快速入门与学习》](_docs/)。Java 之外的语言与平台会尽快跟进（欢迎有兴趣的同学加入社区）
+Please click：[《快速入门与学习》](_docs/)。Languages and platforms other than Java will follow soon (interested students are welcome to join the community)
 
-* 规划情况了解
+* Understanding of planning situation
 
-| 语言或平台  | 客户端 | 服务端 | 备注                   |
+| Language or platform  | Client side | Server side | Remarks                   |
 |--------|-----|----|----------------------|
-| java   | 已完成 | 已完成  | 支持 tcp, udp, ws 通讯架构 |
-| js     | 开发中 | /  | 支持 ws 通讯架构           |
-| python | 开发中 | /  | 支持 ws 通讯架构           |
-| 其它     | 计划中 | 计划中  |                      |
+| java   | Completed | Completed  | Support tcp, udp, ws communication architecture |
+| js     | Under development | /  | Supports ws communication architecture           |
+| python | Under development | /  | Supports ws communication architecture           |
+| Other     | On the plan | On the plan  |                      |
 
 
 
 
-### 加入到社区交流群
+### Join a community exchange group
 
-| QQ交流群：870505482                       | 微信交流群（申请时输入：SocketD）                   |
+| QQ communication group：870505482                       | Wechat Communication group (input: SocketD when applying)                   |
 |---------------------------|----------------------------------------|
 |        | <img src="group_wx.png" width="120" /> 
 
-交流群里，会提供 "保姆级" 支持和帮助。如有需要，也可提供技术培训和顾问服务
+In the communication group, "nanny level" support and help are provided. Technical training and consultancy services are also available if required
 
-### 第一个程序：你好世界！
+### The first program: Hello World!
 
 ```java
 public class Demo {
     public static void main(String[] args) throws Throwable {
-        //::启动服务端
+        //::Starting the server
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
                 .listen(new SimpleListener(){
                     @Override
                     public void onOpen(Session session) throws IOException {
-                        //签权
+                        //authentication
                         if("1b0VsGusEkddgr3d".equals(session.param("token")) == false){
                             session.close();
                         }
                     }
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
-                        //打印
+                        //print
                         System.out.println(message);
                         
                         if(message.isRequest() || message.isSubscribe()){
-                            //答复
+                            //Reply
                             session.replyEnd(message, new StringEntity("And you too."));
                         }
                     }
                 })
                 .start();
 
-        Thread.sleep(1000); //等会儿，确保服务端启动完成
+        Thread.sleep(1000); //Let's make sure the server starts up
         
-        //::打开客户端会话
+        //::Open the client session
         Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
                 .open();
 
 
         Entity message = new StringEntity("Hello wrold!").meta("user","noear");
         
-        //发送
+        //send
         session.send("/demo", message);
-        //发送并请求（且，等待答复）
+        //Send and request (and, wait for a reply)
         Entity response = session.sendAndRequest("/demo", message);
-        //发送并订阅（且，接收答复流）
+        //Send and subscribe (and, receive a stream of replies)
         session.sendAndSubscribe("/demo", message, stream->{
             
         });

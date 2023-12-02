@@ -202,4 +202,8 @@ public class Demo {
 }
 ```
 
+### Diagram of Socket.D Broker cluster architecture
+
+<img src="socketd_broker_schema.png" width="500">
+
 

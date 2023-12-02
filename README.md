@@ -6,6 +6,10 @@
 </p>
 
 <p align="center">
+	<a href="https://socketd.noear.org/">https://socketd.noear.org</a>
+</p>
+
+<p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/org.noear/socketd">
         <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Maven%20Central" alt="Maven" />
     </a>
@@ -39,6 +43,7 @@
 	<img src="https://img.shields.io/badge/QQ交流群-870505482-orange"/></a>
 </p>
 
+##### Language: English | [中文](README_CN.md) 
 
 <hr />
 

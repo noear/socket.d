@@ -35,11 +35,11 @@ public interface Session extends Closeable {
     Handshake handshake();
 
     /**
-     * at
+     * broker player name
      *
      * @since 2.1
      * */
-    default String at(){
+    default String name(){
         return param("@");
     }
 

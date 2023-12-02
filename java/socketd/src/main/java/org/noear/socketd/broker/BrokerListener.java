@@ -23,7 +23,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
 
     @Override
     public void onOpen(Session session) throws IOException {
-        String name = session.at();
+        String name = session.name();
 
         if (Utils.isNotEmpty(name)) {
             //注册服务
@@ -33,7 +33,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
 
     @Override
     public void onClose(Session session) {
-        String name = session.at();
+        String name = session.name();
 
         if (Utils.isNotEmpty(name)) {
             //注销服务

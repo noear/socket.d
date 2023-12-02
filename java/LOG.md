@@ -1,3 +1,6 @@
+### 2.1.3
+* 添加 Broker 广播模式（单发，群发，广播）
+* 调整 server, client-link 日志打印
 
 ### 2.1.2
 * 调整 Session::at 改不 Session::name

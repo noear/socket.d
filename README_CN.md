@@ -202,9 +202,15 @@ public class Demo {
 }
 ```
 
-### Socket.D Broker 集群架构图
+### Socket.D Broker 集群架构
 
-<img src="socketd_broker_schema.png" width="500">
+* 结构图
+
+<img src="broker-structure.png" width="500">
+
+* 时序图
+
+<img src="broker-sequence.png" width="500">
 
 
 

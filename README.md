@@ -42,17 +42,12 @@
 
 <hr />
 
-Socket.D is a new communication application protocol and development framework. Facilitate "pleasant" communication between client and server.
-
-### Experience effect
-
-* Fast: ~ 1.5 million TPS (using MacBook pro 2020 + JDK8 native test, single client sending and receiving)
-* Simple: "Socket.D is to Sockets what Vue is to Js and Mvc is to Http"
-* Cluster: "Socket.D Broker" (all participants, like chatting in a social group. Who want to send at who)
+One user said, "Socket.D is to Socket what Vue is to Js and Mvc is to Http."
 
 ### Main Features
 
-* Semantically, every message is an event, and every event has meta-information
+* Event-based, where each message is an event (or instruction)
+* Semantically, each message has meta-information
 * Language independent, binary communication protocol (tcp, ws, udp supported). Support multi-language, multi-platform
 * Disconnection reconnection, automatic connection restoration
 * Multiplexing

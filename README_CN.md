@@ -2,7 +2,7 @@
   Socket.D
 </h1>
 <p align="center">
-	<strong>基于连接和语义消息流的网络应用开发框架</strong>
+	<strong>基于事件和语义消息流的网络应用协议</strong>
 </p>
 
 <p align="center">

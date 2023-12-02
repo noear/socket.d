@@ -1,4 +1,8 @@
 
+### 2.1.2
+* 调整 Session::at 改不 Session::name
+* 调整 Broker 集群的参与者概念统一为：Player
+
 ### 2.1.1
 * 调整 Entity::data 类型为 ByteBuffer（原为 InputStream）
 * 调整 maxThreads 默认为 coreThreads * 4（原为 8）

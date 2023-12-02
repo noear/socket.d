@@ -204,6 +204,13 @@ public class Demo {
 
 ### Diagram of Socket.D Broker cluster architecture
 
-<img src="socketd_broker_schema.png" width="500">
+* Structure
+
+<img src="broker-structure.png" width="500">
+
+* Sequence
+
+<img src="broker-sequence.png" width="500">
+
 
 

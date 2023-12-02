@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * 经纪人监听器
+ * 经纪人监听器（为不同的玩家转发消息）
  *
  * @author noear
  * @since 2.1
@@ -26,8 +26,10 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         String name = session.name();
 
         if (Utils.isNotEmpty(name)) {
-            //注册服务
-            addService(name, session);
+            //注册玩家会话
+            addPlayer(name, session);
+        } else {
+            //否则算游客（别人只能被动回它消息）
         }
     }
 
@@ -36,8 +38,10 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         String name = session.name();
 
         if (Utils.isNotEmpty(name)) {
-            //注销服务
-            removeService(name, session);
+            //注销玩家会话
+            removePlayer(name, session);
+        } else {
+            //否则算游客（别人只能被动回它消息）
         }
     }
 
@@ -46,43 +50,51 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         String atName = message.at();
 
         if (atName == null) {
-            requester.sendAlarm(message, "Broker service require '@' meta");
+            requester.sendAlarm(message, "Broker message require '@' meta");
             return;
         }
 
         if (atName.endsWith("*")) {
-            //广播模式
+            //群发模式（给所有同名的玩家都发）
             atName = atName.substring(0, atName.length() - 1);
 
-            Collection<Session> serviceAll = getServiceAll(atName);
-            if (serviceAll != null && serviceAll.size() > 0) {
-                for (Session service : new ArrayList<>(serviceAll)) {
-                    if (service != requester) {
-                        //如果不是自己，则发
-                        onMessageOne(service, requester, message);
+            Collection<Session> playerAll = getPlayerAll(atName);
+            if (playerAll != null && playerAll.size() > 0) {
+                for (Session responder : new ArrayList<>(playerAll)) {
+                    if (responder != requester) {
+                        //转发消息（过滤自己）
+                        forwardDo(requester, message, responder);
                     }
                 }
             } else {
-                requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
+                requester.sendAlarm(message, "Broker don't have '@" + atName + "' player");
             }
         } else {
-            //单发模式
-            Session service = getServiceOne(atName);
-            if (service != null) {
-                onMessageOne(service, requester, message);
+            //单发模式（轮询负截均衡，给同名的某个玩家发）
+            Session responder = getPlayerOne(atName);
+            if (responder != null) {
+                //转发消息
+                forwardDo(requester, message, responder);
             } else {
                 requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
             }
         }
     }
 
-    private void onMessageOne(Session service, Session requester, Message message) throws IOException {
+    /**
+     * 转发消息
+     *
+     * @param requester 请求玩家
+     * @param message   消息
+     * @param responder 响应玩家
+     */
+    private void forwardDo(Session requester, Message message, Session responder) throws IOException {
         if (message.isRequest()) {
-            service.sendAndRequest(message.event(), message, reply -> {
+            responder.sendAndRequest(message.event(), message, reply -> {
                 requester.reply(message, reply);
             });
         } else if (message.isSubscribe()) {
-            service.sendAndSubscribe(message.event(), message, reply -> {
+            responder.sendAndSubscribe(message.event(), message, reply -> {
                 if (reply instanceof EndEntity) {
                     requester.replyEnd(message, reply);
                 } else {
@@ -90,7 +102,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
                 }
             });
         } else {
-            service.send(message.event(), message);
+            responder.send(message.event(), message);
         }
     }
 

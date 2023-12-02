@@ -8,37 +8,37 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 经纪人监听器基类（实现 server 封闭管理）
+ * 经纪人监听器基类（实现玩家封闭管理）
  *
  * @author noear
  * @since 2.1
  */
 public class BrokerListenerBase {
-    //服务端会话
-    private Map<String, Set<Session>> serviceSessions = new ConcurrentHashMap<>();
+    //玩家会话
+    private Map<String, Set<Session>> playerSessions = new ConcurrentHashMap<>();
     //轮询计数
-    private AtomicInteger serviceRoundCounter = new AtomicInteger(0);
+    private AtomicInteger playerRoundCounter = new AtomicInteger(0);
 
     /**
-     * 获取所有服务
+     * 获取所有玩家会话
      *
-     * @param name 服务名
+     * @param name 名字
      */
-    public Collection<Session> getServiceAll(String name) {
-        return serviceSessions.get(name);
+    public Collection<Session> getPlayerAll(String name) {
+        return playerSessions.get(name);
     }
 
     /**
-     * 获取一个服务
+     * 获取一个玩家会话
      *
-     * @param name 服务名
+     * @param name 名字
      */
-    public Session getServiceOne(String name) {
+    public Session getPlayerOne(String name) {
         if (Utils.isEmpty(name)) {
             return null;
         }
 
-        Set<Session> tmp = serviceSessions.get(name);
+        Set<Session> tmp = playerSessions.get(name);
         if (tmp == null) {
             return null;
         }
@@ -52,36 +52,36 @@ public class BrokerListenerBase {
             return sessions.get(0);
         } else {
             //论询处理
-            int counter = serviceRoundCounter.incrementAndGet();
+            int counter = playerRoundCounter.incrementAndGet();
             int idx = counter % sessions.size();
             if (counter > 999_999_999) {
-                serviceRoundCounter.set(0);
+                playerRoundCounter.set(0);
             }
             return sessions.get(idx);
         }
     }
 
     /**
-     * 添加服务
+     * 添加玩家会话
      *
-     * @param name    服务名
-     * @param session 服务会话
+     * @param name    名字
+     * @param session 玩家会话
      */
-    public void addService(String name, Session session) {
-        //注册服务端
-        Set<Session> sessions = serviceSessions.computeIfAbsent(name, n -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
+    public void addPlayer(String name, Session session) {
+        //注册玩家会话
+        Set<Session> sessions = playerSessions.computeIfAbsent(name, n -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
         sessions.add(session);
     }
 
     /**
-     * 移除服务
+     * 移除玩家会话
      *
-     * @param name    服务名
-     * @param session 服务会话
+     * @param name    名字
+     * @param session 玩家会话
      */
-    public void removeService(String name, Session session) {
-        //注销服务端
-        Set<Session> sessions = serviceSessions.get(name);
+    public void removePlayer(String name, Session session) {
+        //注销玩家会话
+        Set<Session> sessions = playerSessions.get(name);
         if (sessions != null) {
             sessions.remove(session);
         }

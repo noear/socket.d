@@ -3,7 +3,7 @@
 * 调整 server, client-link 日志打印
 
 ### 2.1.2
-* 调整 Session::at 改不 Session::name
+* 调整 Session::at 改为 Session::name
 * 调整 Broker 集群的参与者概念统一为：Player
 
 ### 2.1.1

@@ -52,13 +52,13 @@ One user said, "Socket.D is to Socket what Vue is to Js and Mvc is to Http."
 ### Main Features
 
 * Event-based, where each message is an event (or instruction)
-* Semantically, each message has meta-information
+* The so-called semantics is described by the meta-information
 * Language independent, binary communication protocol (tcp, ws, udp supported). Support multi-language, multi-platform
 * Disconnection reconnection, automatic connection restoration
-* Multiplexing
+* Multiplexing, allowing multiple request and response messages to run simultaneously on a single connection
 * Two-way communication, single link two-way listening and sending
 * Auto-split, data over 16Mb will be automatically split and reassemble (except udp)
-* Simple interface
+* Simple interface, reactive but with callback interface
 
 ### Simple comparison with other protocols
 

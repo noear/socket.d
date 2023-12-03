@@ -149,7 +149,7 @@ public interface Session extends Closeable {
     Entity sendAndRequest(String event, Entity content, long timeout) throws IOException;
 
     /**
-     * 发送并请求（限为一次答复；指定超时）
+     * 发送并请求（限为一次答复；指定回调）
      *
      * @param event    事件
      * @param content  内容

@@ -62,22 +62,22 @@ One user said, "Socket.D is to Socket what Vue is to Js and Mvc is to Http."
 
 ### Simple comparison with other protocols
 
-| comparison                              | socket.d     | http | websocket | rsocket      | socket.io | remarks   |
-|-----------------------------------------|--------------|------|-----------|--------------|-----------|-----------|
-| Send (Qos0)                             | Yes          | No   | Yes        | Yes            | Yes         | Suitable for reporting      |
-| SendAndRequest (Qos1)                   | Yes          | Yes  | No        | Yes            | No         | Suitable for immediate reply confirmation  |
-| SendAndSubscribe (stream)               | Yes          | No   | No        | Yes            | No         | Suitable for block stream acquisition  |
-| Reply or respond                        | Yes          | Yes  | No        | Yes            | No         |           |
-| Single connection two-way communication | Yes          | No   | Yes（trouble）   | Yes            | Yes（trouble）     | Suitable for reverse service    |
-| Data sharding                           | Yes          | /    | No         | Yes            | Yes         | Suitable for large file upload   |
-| Disconnection automatically reconnect   | Yes          | /    | No         | Yes            | Yes         |           |
-| Meta information                        | Yes          | Yes  | No        | Yes            | No         |           |
-| Event（or path）                         | Yes          | Yes  | No        | No            | Yes         |           |
-| StreamId                                | Yes          | No   | No        | Yes            | No         | Suitable for Broker cluster |
-| Broker pattern cluster                  | Yes          | No   | No        | Yes            | No         |           |
-| Asynchronous                            | Async        | Sync | Async        | Async           | Async        |           |
-| Interface experience                    | Classic      | Classic   | Classic        | Reactive(trouble)      | Classic        |           |
-| Basic transport protocol                | tcp, udp, ws | tcp  | http      | tcp, udp, ws | ws        |           |
+| comparison                              | socket.d     | http | websocket | rsocket      | socket.io |
+|-----------------------------------------|--------------|------|-----------|--------------|-----------|
+| Send (Qos0)                             | Yes          | No   | Yes        | Yes            | Yes         |
+| SendAndRequest (Qos1)                   | Yes          | Yes  | No        | Yes            | No         | 
+| SendAndSubscribe (stream)               | Yes          | No   | No        | Yes            | No         | 
+| Reply or respond                        | Yes          | Yes  | No        | Yes            | No         |      
+| Single connection two-way communication | Yes          | No   | Yes（trouble）   | Yes            | Yes（trouble）     | 
+| Data sharding                           | Yes          | /    | No         | Yes            | Yes         | 
+| Disconnection automatically reconnect   | Yes          | /    | No         | Yes            | Yes         |        
+| Meta information                        | Yes          | Yes  | No        | Yes            | No         |       
+| Event（or path）                          | Yes          | Yes  | No        | No            | Yes         |         
+| StreamId (or message correlation)       | Yes          | No   | No        | Yes            | No         | 
+| Broker pattern cluster                  | Yes          | No   | No        | Yes            | No         |         
+| Asynchronous                            | Async        | Sync | Async        | Async           | Async        |         
+| Interface experience                    | Classic      | Classic   | Classic        | Reactive(trouble)      | Classic        |        
+| Basic transport protocol                | tcp, udp, ws | tcp  | http      | tcp, udp, ws | ws        |        
 
 
 

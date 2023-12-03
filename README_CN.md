@@ -61,29 +61,29 @@
 * 接口简单
 
 
-### 与 http、websocket 的简单对比
+### 与其它协议的简单对比
 
-| 对比项目        | socket.d     | http | websocket(ws) | 备注               |
-|-------------|--------------|------|---------------|------------------|
-| 发消息（Qos0）   | 有            | 无    | 有             | 适合监听埋点，日志上报      |
-| 发送并请求（Qos1） | 有            | 有    | 无             | 适合马上答复确认         |
-| 发送并订阅（流）    | 有            | 无    | 无             | 适合视频播放之类的，分块流式获取 |
-| 答复或响应       | 有            | 有    | 无             |                  |
-| 单连接双向通讯     | 有            | 无    | 有（不便）         | 双向互发、互听。适合反向调服务  |
-| 数据分片        | 有            | /    | 无             | 适合大文件上传               |
-| 断线自动重连      | 有            | /    | 无             |                  |
-| 有元信息或头信息    | 有            | 有    | 无             |                  |
-| 基础传输协议      | tcp, udp, ws | tcp  | http          |                  |
-
-
-
-
-### 适用场景
-
-可用于 MSG、RPC、IM、MQ 等一些的场景开发，可替代 Http, Websocket, gRpc 等一些协议。比如移动设备与服务器的连接，比如一些微服务场景等等。
+| 对比项目        | socket.d    | http | websocket | rsocket      | socket.io | 备注        |
+|-------------|-------------|------|-----------|--------------|-----------|-----------|
+| 发消息（Qos0）   | 有           | 无    | 有         | 有            | 有         | 适合埋点      |
+| 发送并请求（Qos1） | 有           | 有    | 无         | 有            | 无         | 适合马上答复确认  |
+| 发送并订阅（流）    | 有           | 无    | 无         | 有            | 无         | 适合分块流式获取  |
+| 答复或响应       | 有           | 有    | 无         | 有            | 无         |           |
+| 单连接双向通讯     | 有           | 无    | 有（麻烦）     | 有            | 有（麻烦）     | 适合反向服务    |
+| 数据分片        | 有           | /    | 无         | 有            | 有         | 适合大文件上传   |
+| 断线自动重连      | 有           | /    | 无         | 有            | 有         |           |
+| 有元信息（或头信息）  | 有           | 有    | 无         | 有            | 无         |           |
+| 有事件（或路径）    | 有           | 有    | 无         | 无            | 有         |           |
+| 有流标识        | 有           | 无    | 无         | 有            | 无         | 适合 Broker 集群 |
+| Broker 模式集群   | 有           | 无    | 无         | 有            | 无         |  |
+| 异步      | 异步            | 同步   | 异步        | 异步           | 异步        |           |
+| 接口体验        | 经典          | 经典   | 经典        | 响应式(复杂)      | 经典        |           |
+| 基础传输协议      | tcp, udp, ws | tcp  | http      | tcp, udp, ws | ws        |           |
 
 
-### 简单的协议说明（ 详见：[《协议文档》](protocol.md) ）
+
+
+### 简单的协议说明（详见：官网）
 
 
 * 连接地址风格
@@ -102,115 +102,23 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 [len:int][flag:int][sid:str(<64)][\n][event:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
-* 指令流
-
-| Flag      | Server                               | Client                                                | 
-|-----------|--------------------------------------|-------------------------------------------------------|
-| Unknown   | ::close()                            | ::close()                                             | 
-| Connect   | /                                    | c(Connect)->s::onOpen(),s(Connack?)->c::onOpen() | 
-| Connack   | ->s::onOpen(),s(Connack?)->c         | /                                                     | 
-| Ping      | /                                    | c(Ping)->s(Pong)->c                                   | 
-| Pong      | ->s(Pong)->c                         | /                                                     | 
-| Close     | s(Close)->c                          | c(Close)->s                                           | 
-| Alarm     | s(Alarm)->c                          | c(Alarm)->s                                           | 
-| Message   | s(Message)->c                        | c(Message)->s                                         | 
-| Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c                   |  
-| Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c                  | 
-| Reply     | ->s(Reply)->c                        | ->c(Reply)->s                                         | 
-| ReplyEnd  | ->s(ReplyEnd)->c                     | ->c(ReplyEnd)->s                                      | 
-
-```
-//The reply acceptor registration in the channel is removed after the reply is completed
-```
-
-
-
-
-### 快速入门与学习
-
-* 学习
-
-请点击：[《快速入门与学习》](_docs/)。Java 之外的语言与平台会尽快跟进（欢迎有兴趣的同学加入社区）
-
-* 规划情况了解
-
-| 语言或平台  | 客户端 | 服务端 | 备注                   |
-|--------|-----|----|----------------------|
-| java   | 已完成 | 已完成  | 支持 tcp, udp, ws 通讯架构 |
-| js     | 开发中 | /  | 支持 ws 通讯架构           |
-| python | 开发中 | /  | 支持 ws 通讯架构           |
-| 其它     | 计划中 | 计划中  |                      |
-
-
-
-
 ### 加入到社区交流群
 
 | QQ交流群：870505482                       | 微信交流群（申请时输入：SocketD）                   |
 |---------------------------|----------------------------------------|
 |        | <img src="group_wx.png" width="120" /> 
 
-交流群里，会提供 "保姆级" 支持和帮助。如有需要，也可提供技术培训和顾问服务
 
-### 第一个程序：你好世界！
+### 官网
 
-```java
-public class Demo {
-    public static void main(String[] args) throws Throwable {
-        //::启动服务端
-        SocketD.createServer("sd:tcp")
-                .config(c -> c.port(8602))
-                .listen(new SimpleListener(){
-                    @Override
-                    public void onOpen(Session session) throws IOException {
-                        //鉴权
-                        if("1b0VsGusEkddgr3d".equals(session.param("token")) == false){
-                            session.close();
-                        }
-                    }
-                    @Override
-                    public void onMessage(Session session, Message message) throws IOException {
-                        //打印
-                        System.out.println(message);
-                        
-                        if(message.isRequest() || message.isSubscribe()){
-                            //答复
-                            session.replyEnd(message, new StringEntity("And you too."));
-                        }
-                    }
-                })
-                .start();
+https://socketd.noear.org
 
-        Thread.sleep(1000); //等会儿，确保服务端启动完成
-        
-        //::打开客户端会话
-        Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
-                .open();
+### 特别感谢JetBrains对开源项目支持
 
+<a href="https://jb.gg/OpenSourceSupport">
+  <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="100" width="100"  alt="JetBrains">
+</a>
 
-        Entity message = new StringEntity("Hello wrold!").meta("user","noear");
-        
-        //发送
-        session.send("/demo", message);
-        //发送并请求（且，等待答复）
-        Entity response = session.sendAndRequest("/demo", message);
-        //发送并订阅（且，接收答复流）
-        session.sendAndSubscribe("/demo", message, stream->{
-            
-        });
-    }
-}
-```
-
-### Socket.D Broker 集群架构
-
-* 结构图
-
-<img src="broker-structure.png" width="500">
-
-* 时序图
-
-<img src="broker-sequence.png" width="500">
 
 
 

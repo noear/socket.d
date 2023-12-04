@@ -16,7 +16,7 @@ import org.noear.socketd.transport.server.ServerProvider;
 public class UdpNioProvider implements ClientProvider, ServerProvider {
     @Override
     public String[] schemas() {
-        return new String[]{"udp", "udp-netty"};
+        return new String[]{"udp", "udps", "udp-netty", "sd:udp", "sd:udps", "sd:udp-netty"};
     }
 
     @Override

@@ -19,10 +19,17 @@ import java.util.ServiceLoader;
 public class SocketD {
 
     /**
-     * 版本版本号
+     * 框架版本号
      */
     public static String version() {
         return "2.1";
+    }
+
+    /**
+     * 协议版本号
+     */
+    public static String protocolVersion() {
+        return "1.0";
     }
 
     static Map<String, ClientProvider> clientProviderMap;

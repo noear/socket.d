@@ -23,7 +23,7 @@ public class Frames {
     public static final Frame connectFrame(String sid, String url) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
-        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
+        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connect, new MessageDefault().sid(sid).event(url).entity(entity));
     }
 
@@ -35,7 +35,7 @@ public class Frames {
     public static final Frame connackFrame(Message connectMessage) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
-        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version());
+        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connack, new MessageDefault().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity));
     }
 

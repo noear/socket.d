@@ -1,1 +1,2 @@
 org.noear.socketd.transport.netty.tcp.TcpNioProvider
+org.noear.socketd.transport.netty.udp.UdpNioProvider

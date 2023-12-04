@@ -1,3 +1,7 @@
+### 2.1.5
+* 添加 SessionWrapper 包装类（便于监视会话的支行）
+
+
 ### 2.1.4
 * 开放 FragmentSize 可配置
 * 添加 Channel::onError 方法（属于内部调整）

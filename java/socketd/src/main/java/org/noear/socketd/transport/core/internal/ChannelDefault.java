@@ -89,7 +89,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 if (message.entity() != null) {
                     //确保用完自动关闭
 
-                    if (message.dataSize() > Constants.MAX_SIZE_FRAGMENT) {
+                    if (message.dataSize() > Constants.MAX_SIZE_DATA) {
                         //满足分片条件
                         int fragmentIndex = 0;
                         while (true) {

@@ -140,7 +140,7 @@ public class EntityDefault implements Entity {
     public EntityDefault data(byte[] data) {
         this.data = ByteBuffer.wrap(data);
         this.dataSize = data.length;
-        if (dataSize > Constants.MAX_SIZE_FRAGMENT) {
+        if (dataSize > Constants.MAX_SIZE_DATA) {
             meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
         }
         return this;
@@ -154,7 +154,7 @@ public class EntityDefault implements Entity {
     public EntityDefault data(ByteBuffer data) {
         this.data = data;
         this.dataSize = data.limit();
-        if (dataSize > Constants.MAX_SIZE_FRAGMENT) {
+        if (dataSize > Constants.MAX_SIZE_DATA) {
             meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
         }
         return this;

@@ -1,3 +1,8 @@
+### 2.1.4
+* 开放 FragmentSize 可配置
+* 添加 Channel::onError 方法（属于内部调整）
+* 添加 ChannelSupporter 接口，并简化 Channel 构造函数（属于内部调整）
+
 ### 2.1.3
 * 添加 Broker 广播模式（现在有：单发，群发，广播）
 * 调整 server, client-link 日志打印

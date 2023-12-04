@@ -20,7 +20,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
      */
     @Override
     public Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
-        ByteBuffer dataBuffer = readFragmentData(message.data(), Constants.MAX_SIZE_FRAGMENT);
+        ByteBuffer dataBuffer = readFragmentData(message.data(), channel.getConfig().getFragmentSize());
         if (dataBuffer.limit() == 0) {
             return null;
         }

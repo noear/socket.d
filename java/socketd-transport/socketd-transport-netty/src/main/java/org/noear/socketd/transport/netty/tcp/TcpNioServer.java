@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.netty.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
@@ -8,6 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyServerInboundHandler;
 import org.noear.socketd.transport.server.Server;
@@ -25,7 +27,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> {
+public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements ChannelSupporter<Channel> {
     private static final Logger log = LoggerFactory.getLogger(TcpNioServer.class);
     private ChannelFuture server;
     private EventLoopGroup bossGroup;

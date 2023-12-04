@@ -33,7 +33,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        ClientMessageProcessor processor = new ClientMessageProcessor(client);
+        ClientMessageProcessor messageProcessor = new ClientMessageProcessor(client);
 
         try {
             //支持 ssl
@@ -42,16 +42,16 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
                     sslEngine.setUseClientMode(true);
                 });
 
-                processor.addPlugin(sslPlugin);
+                messageProcessor.addPlugin(sslPlugin);
             }
 
             //闲置超时
             if (client.config().getIdleTimeout() > 0) {
-                processor.addPlugin(new IdleStatePlugin<>((int) client.config().getIdleTimeout(), true, false));
+                messageProcessor.addPlugin(new IdleStatePlugin<>((int) client.config().getIdleTimeout(), true, false));
             }
 
 
-            real = new AioQuickClient(client.config().getHost(), client.config().getPort(), client.assistant(), processor);
+            real = new AioQuickClient(client.config().getHost(), client.config().getPort(), client.frameProtocol(), messageProcessor);
 
             if (client.config().getReadBufferSize() > 0) {
                 real.setReadBufferSize(client.config().getReadBufferSize());
@@ -68,7 +68,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             real.start();
 
             //等待握手结果
-            ClientHandshakeResult handshakeResult = processor.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = messageProcessor.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getException() != null) {
                 throw handshakeResult.getException();

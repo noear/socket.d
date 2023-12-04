@@ -1,11 +1,10 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.stream;
 
+import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.StreamAcceptorBase;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.utils.IoConsumer;
-
-import java.util.function.Consumer;
 
 /**
  * 订阅流接收器
@@ -48,11 +47,11 @@ public class StreamAcceptorSubscribe extends StreamAcceptorBase {
      * 接收答复流
      */
     @Override
-    public void accept(Message message, Consumer<Throwable> onError) {
+    public void accept(Message message, Channel channel) {
         try {
             future.accept(message);
         } catch (Throwable e) {
-            onError.accept(e);
+            channel.onError(e);
         }
     }
 }

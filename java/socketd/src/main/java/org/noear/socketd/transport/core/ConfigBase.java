@@ -4,7 +4,7 @@ import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
-import org.noear.socketd.transport.core.internal.StreamMangerDefault;
+import org.noear.socketd.transport.core.stream.StreamMangerDefault;
 import org.noear.socketd.utils.NamedThreadFactory;
 
 import javax.net.ssl.SSLContext;

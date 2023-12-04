@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.java_udp;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.core.Channel;
@@ -25,7 +26,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @author Urara
  * @since 2.0
  */
-public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
+public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements ChannelSupporter<DatagramTagert> {
     private static final Logger log = LoggerFactory.getLogger(UdpBioServer.class);
 
     private Map<String, Channel> channelMap = new HashMap<>();
@@ -108,7 +109,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> {
 
         if (channel0 == null) {
             DatagramTagert tagert = new DatagramTagert(server, datagramFrame.getPacket(), false);
-            channel0 = new ChannelDefault<>(tagert, config(), assistant());
+            channel0 = new ChannelDefault<>(tagert, this);
             channelMap.put(addressAndPort, channel0);
         }
 

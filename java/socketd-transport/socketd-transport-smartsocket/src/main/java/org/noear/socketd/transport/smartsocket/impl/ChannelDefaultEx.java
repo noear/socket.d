@@ -1,7 +1,9 @@
 package org.noear.socketd.transport.smartsocket.impl;
 
 import org.noear.socketd.transport.core.ChannelAssistant;
+import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.Processor;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.transport.smartsocket.TcpAioChannelAssistant;
 import org.smartboot.socket.extension.decoder.FixedLengthFrameDecoder;
@@ -15,8 +17,8 @@ import org.smartboot.socket.transport.AioSession;
  * */
 public class ChannelDefaultEx<S> extends ChannelDefault<S> {
 
-    public ChannelDefaultEx(S source, Config config, ChannelAssistant<S> assistant) {
-        super(source, config, assistant);
+    public ChannelDefaultEx(S source, ChannelSupporter<S> channelSupporter) {
+        super(source, channelSupporter);
     }
 
 
@@ -40,11 +42,11 @@ public class ChannelDefaultEx<S> extends ChannelDefault<S> {
     /**
      * 通过原始会话附件获取
      */
-    public static ChannelDefaultEx get(AioSession aioSession, Config config, TcpAioChannelAssistant exchanger) {
+    public static ChannelDefaultEx get(AioSession aioSession, ChannelSupporter<AioSession> channelSupporter) {
         ChannelDefaultEx tmp = aioSession.getAttachment();
 
         if (tmp == null) {
-            tmp = new ChannelDefaultEx<>(aioSession, config, exchanger);
+            tmp = new ChannelDefaultEx<>(aioSession, channelSupporter);
             aioSession.setAttachment(tmp);
         }
 

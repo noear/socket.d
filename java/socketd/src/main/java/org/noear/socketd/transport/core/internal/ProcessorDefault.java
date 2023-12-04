@@ -140,9 +140,7 @@ public class ProcessorDefault implements Processor {
 
         //执行接收处理
         if (isReply) {
-            channel.retrieve(frame, error -> {
-                onError(channel, error);
-            });
+            channel.retrieve(frame);
         } else {
             onMessage(channel, frame.getMessage());
         }

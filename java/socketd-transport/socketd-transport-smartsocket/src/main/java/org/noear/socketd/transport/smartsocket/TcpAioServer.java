@@ -2,16 +2,19 @@ package org.noear.socketd.transport.smartsocket;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.transport.smartsocket.impl.FrameProtocol;
 import org.noear.socketd.transport.smartsocket.impl.IdleStatePluginEx;
 import org.noear.socketd.transport.smartsocket.impl.ServerMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickServer;
+import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
 
@@ -21,13 +24,16 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
+public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements ChannelSupporter<AioSession> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioServer.class);
 
     private AioQuickServer server;
 
+    private final FrameProtocol frameProtocol;
+
     public TcpAioServer(ServerConfig config) {
         super(config, new TcpAioChannelAssistant(config));
+        this.frameProtocol = new FrameProtocol(this);
     }
 
     @Override
@@ -43,7 +49,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
             isStarted = true;
         }
 
-        ServerMessageProcessor processor = new ServerMessageProcessor(this);
+        ServerMessageProcessor messageProcessor = new ServerMessageProcessor(this);
 
         try {
             //支持 ssl
@@ -51,20 +57,20 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> {
                 SslPlugin<Frame> sslPlugin = new SslPlugin<>(config()::getSslContext, sslEngine -> {
                     sslEngine.setUseClientMode(false);
                 });
-                processor.addPlugin(sslPlugin);
+                messageProcessor.addPlugin(sslPlugin);
             }
 
             //闲置超时
             if (config().getIdleTimeout() > 0) {
-                processor.addPlugin(new IdleStatePluginEx<>((int) config().getIdleTimeout(), true, false));
+                messageProcessor.addPlugin(new IdleStatePluginEx<>((int) config().getIdleTimeout(), true, false));
             }
 
             if (config().getHost() != null) {
                 server = new AioQuickServer(config().getPort(),
-                        assistant(), processor);
+                        frameProtocol, messageProcessor);
             } else {
                 server = new AioQuickServer(config().getHost(), config().getPort(),
-                        assistant(), processor);
+                        frameProtocol, messageProcessor);
             }
 
 

@@ -179,8 +179,8 @@ public class ClientChannel extends ChannelBase implements Channel {
      * @param frame 帧
      */
     @Override
-    public void retrieve(Frame frame, Consumer<Throwable> onError) {
-        real.retrieve(frame, onError);
+    public void retrieve(Frame frame) {
+        real.retrieve(frame);
     }
 
     /**
@@ -197,6 +197,11 @@ public class ClientChannel extends ChannelBase implements Channel {
         initHeartbeat();
 
         prepareCheck();
+    }
+
+    @Override
+    public void onError(Throwable error) {
+        real.onError(error);
     }
 
     /**

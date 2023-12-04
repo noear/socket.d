@@ -67,7 +67,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         }
 
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
-        ChannelInternal channel = new ChannelDefault<>(real, client.config(), client.assistant());
+        ChannelInternal channel = new ChannelDefault<>(real, client);
 
         clientThread = new Thread(() -> {
             receive(channel, real, handshakeFuture);

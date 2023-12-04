@@ -27,7 +27,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     public WebSocketClientImpl(URI serverUri, WsNioClient client) {
         super(serverUri);
         this.client = client;
-        this.channel = new ChannelDefault<>(this, client.config(), client.assistant());
+        this.channel = new ChannelDefault<>(this, client);
     }
 
     public CompletableFuture<ClientHandshakeResult> getHandshakeFuture() {

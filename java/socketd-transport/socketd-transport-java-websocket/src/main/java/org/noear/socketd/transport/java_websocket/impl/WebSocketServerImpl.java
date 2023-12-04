@@ -2,7 +2,6 @@ package org.noear.socketd.transport.java_websocket.impl;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
-import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.noear.socketd.transport.java_websocket.WsNioServer;
@@ -40,7 +39,7 @@ public class WebSocketServerImpl extends WebSocketServer {
 
         if (channel == null) {
             //直接从附件拿，不一定可靠
-            channel = new ChannelDefault<>(conn, server.config(), server.assistant());
+            channel = new ChannelDefault<>(conn, server);
             conn.setAttachment(channel);
         }
 

@@ -41,7 +41,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         real.connect(socketAddress);
 
         DatagramTagert tagert = new DatagramTagert(real, null, true);
-        ChannelInternal channel = new ChannelDefault<>(tagert, client.config(), client.assistant());
+        ChannelInternal channel = new ChannelDefault<>(tagert, client);
 
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 

@@ -2,7 +2,11 @@
   Socket.D
 </h1>
 <p align="center">
-	<strong>基于连接和语义消息流的网络应用开发框架</strong>
+	<strong>Network application protocol based on event and semantic message streams</strong>
+</p>
+
+<p align="center">
+	<a href="https://socketd.noear.org/">https://socketd.noear.org</a>
 </p>
 
 <p align="center">
@@ -39,54 +43,54 @@
 	<img src="https://img.shields.io/badge/QQ交流群-870505482-orange"/></a>
 </p>
 
+##### Language: English | [中文](README_CN.md) 
 
 <hr />
 
-Socket.D 是一种新的通讯应用协议，也是一个开发框架。可以在客户端和服务端之间“简单”、“快速”、“高质”的流式通讯。
+One user said, "Socket.D is to Socket what Vue is to Js and Mvc is to Http."
 
-### 体验效果
+### Main Features
 
-有用户说：“Socket.D 之于 Socket，尤如 Vue 之于 Js、Mvc 之于 Http”。极大简化了 Socket 的开发体验。
+* Event-based, where each message is an event (or instruction)
+* Semantically, each message has meta-information
+* Language independent, binary communication protocol (tcp, ws, udp supported). Support multi-language, multi-platform
+* Disconnection reconnection, automatic connection restoration
+* Multiplexing
+* Two-way communication, single link two-way listening and sending
+* Auto-split, data over 16Mb will be automatically split and reassemble (except udp)
+* Simple interface
 
-### 主要特性
+### Simple comparison with other protocols
 
-* 异步通讯，由带语义的事件消息驱动
-* 语言无关，使用二进制通信协议（支持 tcp, ws, udp）。支持多语言、多平台
-* 背压流控，请求时不让你把服务端发死了
-* 断线重连，自动连接恢复
-* 多路复用
-* 双向通讯，单链接双向互听互发
-* 自动分片，数据超出 16Mb，会自动分片、自动重组（udp 除外）
-* 扩展定制，可为数据添加 meta 语义标注（就像 http header）
-* 接口简单
-
-
-### 与 http、websocket 的简单对比
-
-| 对比项目        | socket.d     | http | websocket(ws) | 备注               |
-|-------------|--------------|------|---------------|------------------|
-| 发消息（Qos0）   | 有            | 无    | 有             | 适合监听埋点，日志上报      |
-| 发送并请求（Qos1） | 有            | 有    | 无             | 适合马上答复确认         |
-| 发送并订阅（流）    | 有            | 无    | 无             | 适合视频播放之类的，分块流式获取 |
-| 答复或响应       | 有            | 有    | 无             |                  |
-| 单连接双向通讯     | 有            | 无    | 有（不便）         | 双向互发、互听。适合反向调服务  |
-| 数据分片        | 有            | /    | 无             | 适合大文件上传               |
-| 断线自动重连      | 有            | /    | 无             |                  |
-| 有元信息或头信息    | 有            | 有    | 无             |                  |
-| 基础传输协议      | tcp, udp, ws | tcp  | http          |                  |
-
+| comparison                              | socket.d     | http | websocket | rsocket      | socket.io |
+|-----------------------------------------|--------------|------|-----------|--------------|-----------|
+| Send (Qos0)                             | Yes          | No   | Yes        | Yes            | Yes         |
+| SendAndRequest (Qos1)                   | Yes          | Yes  | No        | Yes            | No         | 
+| SendAndSubscribe (stream)               | Yes          | No   | No        | Yes            | No         | 
+| Reply or respond                        | Yes          | Yes  | No        | Yes            | No         |      
+| Single connection two-way communication | Yes          | No   | Yes（trouble）   | Yes            | Yes（trouble）     | 
+| Data sharding                           | Yes          | /    | No         | Yes            | Yes         | 
+| Disconnection automatically reconnect   | Yes          | /    | No         | Yes            | Yes         |        
+| Meta information                        | Yes          | Yes  | No        | Yes            | No         |       
+| Event（or path）                          | Yes          | Yes  | No        | No            | Yes         |         
+| StreamId (or message correlation)       | Yes          | No   | No        | Yes            | No         | 
+| Broker pattern cluster                  | Yes          | No   | No        | Yes            | No         |         
+| Asynchronous                            | Async        | Sync | Async        | Async           | Async        |         
+| Interface experience                    | Classic      | Classic   | Classic        | Reactive(trouble)      | Classic        |        
+| Basic transport protocol                | tcp, udp, ws | tcp  | http      | tcp, udp, ws | ws        |        
 
 
 
-### 适用场景
 
-可用于 MSG、RPC、IM、MQ 等一些的场景开发，可替代 Http, Websocket, gRpc 等一些协议。比如移动设备与服务器的连接，比如一些微服务场景等等。
+### Applicable scene
 
-
-### 简单的协议说明（ 详见：[《协议文档》](protocol.md) ）
+It can be used for MSG, RPC, IM, MQ and other scenarios, and can replace Http, Websocket, gRpc and other protocols. Such as the connection between the mobile device and the server, such as some microservice scenarios, etc.
 
 
-* 连接地址风格
+### Simple protocol description（ See more here：official website ）
+
+
+* Connection address style
 
 ```
 sd:tcp://19.10.2.3:9812/path?u=noear&t=1234
@@ -95,110 +99,32 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 ```
 
 
-* 帧码结构
+* Frame code structure
 
 ```
 //udp only <2k
 [len:int][flag:int][sid:str(<64)][\n][event:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
-* 指令流
 
-| Flag      | Server                               | Client                                                | 
-|-----------|--------------------------------------|-------------------------------------------------------|
-| Unknown   | ::close()                            | ::close()                                             | 
-| Connect   | /                                    | c(Connect)->s::onOpen(),s(Connack?)->c::onOpen() | 
-| Connack   | ->s::onOpen(),s(Connack?)->c         | /                                                     | 
-| Ping      | /                                    | c(Ping)->s(Pong)->c                                   | 
-| Pong      | ->s(Pong)->c                         | /                                                     | 
-| Close     | s(Close)->c                          | c(Close)->s                                           | 
-| Message   | s(Message)->c                        | c(Message)->s                                         | 
-| Request   | s(Request)->c(Reply or ReplyEnd)->s  | c(Request)->s(Reply or ReplyEnd)->c                   |  
-| Subscribe | s(Subscribe)->c(Reply...ReplyEnd)->s | c(Subscribe)->s(Reply...ReplyEnd)->c                  | 
-| Reply     | ->s(Reply)->c                        | ->c(Reply)->s                                         | 
-| ReplyEnd  | ->s(ReplyEnd)->c                     | ->c(ReplyEnd)->s                                      | 
+### Join a community exchange group
 
-```
-//The reply acceptor registration in the channel is removed after the reply is completed
-```
-
-
-
-
-### 快速入门与学习
-
-* 学习
-
-请点击：[《快速入门与学习》](_docs/)。Java 之外的语言与平台会尽快跟进（欢迎有兴趣的同学加入社区）
-
-* 规划情况了解
-
-| 语言或平台  | 客户端 | 服务端 | 备注                   |
-|--------|-----|----|----------------------|
-| java   | 已完成 | 已完成  | 支持 tcp, udp, ws 通讯架构 |
-| js     | 开发中 | /  | 支持 ws 通讯架构           |
-| python | 开发中 | /  | 支持 ws 通讯架构           |
-| 其它     | 计划中 | 计划中  |                      |
-
-
-
-
-### 加入到社区交流群
-
-| QQ交流群：870505482                       | 微信交流群（申请时输入：SocketD）                   |
+| QQ communication group：870505482                       | Wechat Communication group (input: SocketD when applying)                   |
 |---------------------------|----------------------------------------|
 |        | <img src="group_wx.png" width="120" /> 
 
-交流群里，会提供 "保姆级" 支持和帮助。如有需要，也可提供技术培训和顾问服务
+In the communication group, "nanny level" support and help are provided. Technical training and consultancy services are also available if required
 
-### 第一个程序：你好世界！
+### Official website
 
-```java
-public class Demo {
-    public static void main(String[] args) throws Throwable {
-        //::启动服务端
-        SocketD.createServer("sd:tcp")
-                .config(c -> c.port(8602))
-                .listen(new SimpleListener(){
-                    @Override
-                    public void onOpen(Session session) throws IOException {
-                        //签权
-                        if("1b0VsGusEkddgr3d".equals(session.param("token")) == false){
-                            session.close();
-                        }
-                    }
-                    @Override
-                    public void onMessage(Session session, Message message) throws IOException {
-                        //打印
-                        System.out.println(message);
-                        
-                        if(message.isRequest() || message.isSubscribe()){
-                            //答复
-                            session.replyEnd(message, new StringEntity("And you too."));
-                        }
-                    }
-                })
-                .start();
+https://socketd.noear.org
 
-        Thread.sleep(1000); //等会儿，确保服务端启动完成
-        
-        //::打开客户端会话
-        Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
-                .open();
+### Special thanks to JetBrains for supporting the open source project
+
+<a href="https://jb.gg/OpenSourceSupport">
+  <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="100" width="100"  alt="JetBrains">
+</a>
 
 
-        Entity message = new StringEntity("Hello wrold!").meta("user","noear");
-        
-        //发送
-        session.send("/demo", message);
-        //发送并请求（且，等待答复）
-        Entity response = session.sendAndRequest("/demo", message);
-        //发送并订阅（且，接收答复流）
-        session.sendAndSubscribe("/demo", message, stream->{
-            
-        });
-    }
-}
-```
 
 

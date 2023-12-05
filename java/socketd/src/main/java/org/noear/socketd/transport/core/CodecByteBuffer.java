@@ -4,7 +4,6 @@ import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
-import org.noear.socketd.utils.IoUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -78,7 +77,8 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             target.putChar('\n');
 
             //data
-            IoUtils.writeTo(frame.getMessage().data(), target);
+            target.putBytes(frame.getMessage().dataAsBytes());
+
             target.flush();
 
             return target;
@@ -134,8 +134,12 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
                 }
             }
 
-            MessageDefault message = new MessageDefault().sid(sid).event(event).entity(new EntityDefault().metaString(metaString).data(data));
-            message.flag(Flags.of(flag));
+            MessageDefault message = new MessageDefault()
+                    .flag(Flags.of(flag))
+                    .sid(sid)
+                    .event(event)
+                    .entity(new EntityDefault().metaString(metaString).data(data));
+
             return new Frame(message.flag(), message);
         }
     }

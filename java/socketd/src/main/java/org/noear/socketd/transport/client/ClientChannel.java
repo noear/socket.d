@@ -23,7 +23,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     private static final Logger log = LoggerFactory.getLogger(ClientChannel.class);
 
     //连接器
-    private ClientConnector connector;
+    private final ClientConnector connector;
     //真实通道
     private Channel real;
     //心跳处理
@@ -33,8 +33,8 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     public ClientChannel(Channel real, ClientConnector connector) {
         super(real.getConfig());
-        this.real = real;
         this.connector = connector;
+        this.real = real;
         this.heartbeatHandler = connector.heartbeatHandler();
 
         if (heartbeatHandler == null) {
@@ -62,16 +62,6 @@ public class ClientChannel extends ChannelBase implements Channel {
                     }
                 }
             }, connector.heartbeatInterval());
-        }
-    }
-
-    /**
-     * 移除接收器（答复接收器）
-     */
-    @Override
-    public void removeAcceptor(String sid) {
-        if (real != null) {
-            real.removeAcceptor(sid);
         }
     }
 
@@ -129,12 +119,12 @@ public class ClientChannel extends ChannelBase implements Channel {
     private void heartbeatHandle() throws IOException {
         if (real != null) {
             //说明握手未成
-            if(real.getHandshake() == null) {
+            if (real.getHandshake() == null) {
                 return;
             }
 
             //手动关闭
-            if (real.isClosed() == Constants.CLOSE3_USER) {
+            if (real.isClosed() == Constants.CLOSE4_USER) {
                 if (log.isDebugEnabled()) {
                     log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }
@@ -142,21 +132,19 @@ public class ClientChannel extends ChannelBase implements Channel {
             }
         }
 
-        synchronized (this) {
-            try {
-                prepareCheck();
+        try {
+            prepareCheck();
 
-                heartbeatHandler.heartbeat(getSession());
-            } catch (SocketdException e) {
-                throw e;
-            } catch (Throwable e) {
-                if (connector.autoReconnect()) {
-                    real.close(Constants.CLOSE2_ERROR);
-                    real = null;
-                }
-
-                throw new SocketdChannelException(e);
+            heartbeatHandler.heartbeat(getSession());
+        } catch (SocketdException e) {
+            throw e;
+        } catch (Throwable e) {
+            if (connector.autoReconnect()) {
+                real.close(Constants.CLOSE3_ERROR);
+                real = null;
             }
+
+            throw new SocketdChannelException(e);
         }
     }
 
@@ -164,26 +152,24 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 发送
      *
      * @param frame    帧
-     * @param acceptor 答复接收器（没有则为 null）
+     * @param acceptor 流接收器（没有则为 null）
      */
     @Override
-    public void send(Frame frame, Acceptor acceptor) throws IOException {
+    public void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
         Asserts.assertClosedByUser(real);
 
-        synchronized (this) {
-            try {
-                prepareCheck();
+        try {
+            prepareCheck();
 
-                real.send(frame, acceptor);
-            } catch (SocketdException e) {
-                throw e;
-            } catch (Throwable e) {
-                if (connector.autoReconnect()) {
-                    real.close(Constants.CLOSE2_ERROR);
-                    real = null;
-                }
-                throw new SocketdChannelException(e);
+            real.send(frame, acceptor);
+        } catch (SocketdException e) {
+            throw e;
+        } catch (Throwable e) {
+            if (connector.autoReconnect()) {
+                real.close(Constants.CLOSE3_ERROR);
+                real = null;
             }
+            throw new SocketdChannelException(e);
         }
     }
 

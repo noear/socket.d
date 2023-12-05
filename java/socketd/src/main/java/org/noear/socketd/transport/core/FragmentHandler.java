@@ -3,7 +3,7 @@ package org.noear.socketd.transport.core;
 import java.io.IOException;
 
 /**
- * 数据分片处理
+ * 数据分片处理（分片必须做，聚合可开关）
  *
  * @author noear
  * @since 2.0
@@ -26,4 +26,9 @@ public interface FragmentHandler {
      * @param message       分片消息
      */
     Frame aggrFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException;
+
+    /**
+     * 聚合启用
+     */
+    boolean aggrEnable();
 }

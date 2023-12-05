@@ -1,3 +1,37 @@
+### 2.1.3
+* 添加 Broker 广播模式（现在有：单发，群发，广播）
+* 调整 server, client-link 日志打印
+
+### 2.1.2
+* 调整 Session::at 改为 Session::name
+* 调整 Broker 集群的参与者概念统一为：Player
+
+### 2.1.1
+* 调整 Entity::data 类型为 ByteBuffer（原为 InputStream）
+* 调整 maxThreads 默认为 coreThreads * 4（原为 8）
+* 优化 线程安全
+* netty 升为 4.1.101.Final
+
+### 2.1.0
+* 完成 Broker 方案实现（支持单发，群发）
+* 添加 Alarm 告警控制指令（用于传递异步信息，发到对方的 onError 事件）
+* 添加 Session::sendAndRequest 回调模式（支持 Broker 开发）
+* 添加 FragmentHandler::aggrEnable 分片聚合启用开关（支持 Broker 开发）
+* 添加 `@` 概念功能（支持 Broker 开发）
+
+### 2.0.24
+* 添加 RunUtils::scheduleAtFixedRate, scheduleWithFixedDelay 方法
+* 添加 Server::start，Client::open() 添加 Socket.D 标识
+* 添加 Config::getStreamTimeout 流超时配置（从发起到答复结束为一个消息流）
+* 添加 GzipUtils 工具类
+* 强化 流的概念（原接收器，改为流接收器）
+
+### 2.0.23
+* 修复 用 bytes 传时自动分片失败的问题
+
+### 2.0.22
+* 优化 答复接收器管理策略（可：断连，不断流）
+* 取消 原限流处理，交由用户层面控制
 
 ### 2.0.21
 * 取消 SessionBase hashCode 重写，可提升 Set<Session> 性能

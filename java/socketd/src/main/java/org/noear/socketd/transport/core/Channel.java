@@ -2,7 +2,6 @@ package org.noear.socketd.transport.core;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -23,11 +22,6 @@ public interface Channel {
     void setAttachment(String name, Object val);
 
     /**
-     * 移除接收器（答复接收器）
-     */
-    void removeAcceptor(String sid);
-
-    /**
      * 是否有效
      */
     boolean isValid();
@@ -46,16 +40,6 @@ public interface Channel {
      * 获取配置
      */
     Config getConfig();
-
-    /**
-     * 获取角色
-     * */
-    String getRole();
-
-    /**
-     * 获取请求计数（用于背压控制）
-     */
-    AtomicInteger getRequests();
 
     /**
      * 设置握手信息
@@ -109,12 +93,17 @@ public interface Channel {
     void sendClose() throws IOException;
 
     /**
+     * 发送告警
+     * */
+    void sendAlarm(Message from, String alarm) throws IOException;
+
+    /**
      * 发送
      *
      * @param frame    帧
-     * @param acceptor 答复接收器（没有则为 null）
+     * @param acceptor 流接收器（没有则为 null）
      */
-    void send(Frame frame, Acceptor acceptor) throws IOException;
+    void send(Frame frame, StreamAcceptorBase acceptor) throws IOException;
 
     /**
      * 接收（接收答复帧）

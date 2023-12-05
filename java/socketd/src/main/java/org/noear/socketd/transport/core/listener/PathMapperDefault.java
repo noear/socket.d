@@ -2,8 +2,8 @@ package org.noear.socketd.transport.core.listener;
 
 import org.noear.socketd.transport.core.Listener;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 路径映射器默认实现（哈希）
@@ -12,7 +12,7 @@ import java.util.Map;
  * @since 2.0
  */
 public class PathMapperDefault implements PathMapper {
-    private final Map<String, Listener> inner = new HashMap<>();
+    private final Map<String, Listener> inner = new ConcurrentHashMap<>();
 
     /**
      * 获取

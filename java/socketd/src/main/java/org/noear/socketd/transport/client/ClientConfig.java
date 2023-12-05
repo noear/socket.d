@@ -157,7 +157,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
                 ", autoReconnect=" + autoReconnect +
-                ", maxRequests=" + maxRequests +
                 ", maxUdpSize=" + maxUdpSize +
                 '}';
     }

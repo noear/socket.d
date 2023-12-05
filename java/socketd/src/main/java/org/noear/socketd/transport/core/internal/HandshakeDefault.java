@@ -4,8 +4,8 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.Utils;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 握手信息内部实现类
@@ -30,7 +30,7 @@ public class HandshakeDefault implements HandshakeInternal {
         this.source = source;
         this.uri = URI.create(source.event());
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
-        this.paramMap = new HashMap<>();
+        this.paramMap = new ConcurrentHashMap<>();
 
         String queryString = uri.getQuery();
         if (Utils.isNotEmpty(queryString)) {

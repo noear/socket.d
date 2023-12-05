@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core;
 
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 /**
@@ -10,6 +10,15 @@ import java.util.Map;
  * @since 2.0
  */
 public interface Entity {
+    /**
+     * at
+     *
+     * @since 2.1
+     */
+    default String at() {
+        return meta("@");
+    }
+
     /**
      * 获取元信息字符串（queryString style）
      */
@@ -33,7 +42,7 @@ public interface Entity {
     /**
      * 获取数据
      */
-    InputStream data();
+    ByteBuffer data();
 
     /**
      * 获取数据并转为字符串

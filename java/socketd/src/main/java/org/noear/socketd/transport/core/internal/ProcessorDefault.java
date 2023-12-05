@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
+import org.noear.socketd.exception.SocketdAlarmException;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
@@ -69,7 +70,9 @@ public class ProcessorDefault implements Processor {
                 }
 
                 if (log.isWarnEnabled()) {
-                    log.warn("{} channel handshake is null, sessionId={}", channel.getRole(), channel.getSession().sessionId());
+                    log.warn("{} channel handshake is null, sessionId={}",
+                            channel.getConfig().getRoleName(),
+                            channel.getSession().sessionId());
                 }
                 return;
             }
@@ -84,8 +87,15 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     case Flags.Close: {
+                        //关闭通道
                         channel.close(Constants.CLOSE1_PROTOCOL);
                         onCloseInternal(channel);
+                        break;
+                    }
+                    case Flags.Alarm:{
+                        //结束流，并异常通知
+                        channel.getConfig().getStreamManger().removeAcceptor(frame.getMessage().sid());
+                        onError(channel, new SocketdAlarmException(frame.getMessage()));
                         break;
                     }
                     case Flags.Message:
@@ -100,8 +110,8 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close(Constants.CLOSE1_PROTOCOL);
-                        onClose(channel);
+                        channel.close(Constants.CLOSE2_PROTOCOL_ILLEGAL);
+                        onCloseInternal(channel);
                     }
                 }
             } catch (Throwable e) {
@@ -111,17 +121,20 @@ public class ProcessorDefault implements Processor {
     }
 
     private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
-        //尝试分片处理
-        String fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
-        if (fragmentIdxStr != null) {
-            //解析分片索引
-            int index = Integer.parseInt(fragmentIdxStr);
-            Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+        //如果启用了聚合!
+        if(channel.getConfig().getFragmentHandler().aggrEnable()) {
+            //尝试聚合分片处理
+            String fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            if (fragmentIdxStr != null) {
+                //解析分片索引
+                int index = Integer.parseInt(fragmentIdxStr);
+                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
 
-            if (frameNew == null) {
-                return;
-            } else {
-                frame = frameNew;
+                if (frameNew == null) {
+                    return;
+                } else {
+                    frame = frameNew;
+                }
             }
         }
 
@@ -159,7 +172,8 @@ public class ProcessorDefault implements Processor {
                 listener.onMessage(channel.getSession(), message);
             } catch (Throwable e) {
                 if (log.isWarnEnabled()) {
-                    log.warn("{} channel listener onMessage error", channel.getRole(), e);
+                    log.warn("{} channel listener onMessage error",
+                            channel.getConfig().getRoleName(), e);
                 }
             }
         });

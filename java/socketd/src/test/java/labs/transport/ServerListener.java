@@ -1,4 +1,4 @@
-package labs;
+package labs.transport;
 
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Message;

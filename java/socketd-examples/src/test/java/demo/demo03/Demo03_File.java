@@ -7,7 +7,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
-import org.noear.socketd.utils.IoUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,7 +29,7 @@ public class Demo03_File {
                             fileNew.createNewFile();
 
                             try (OutputStream outputStream = new FileOutputStream(fileNew)) {
-                                IoUtils.transferTo(message.data(), outputStream);
+                                outputStream.write(message.dataAsBytes());
                             }
                         }else{
                             System.out.println(message);

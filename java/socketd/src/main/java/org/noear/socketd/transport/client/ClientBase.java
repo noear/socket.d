@@ -128,7 +128,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
         //原始通道切换为带壳的 session
         channel0.setSession(session);
 
-        log.info("Client successfully connected: {}", config().getUrl());
+        log.info("Socket.D client successfully connected: {link=sd:{}}", config().getUrl());
 
         return session;
     }

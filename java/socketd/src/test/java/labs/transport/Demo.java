@@ -1,4 +1,4 @@
-package labs;
+package labs.transport;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Entity;

@@ -20,6 +20,16 @@ public interface Config {
     boolean clientMode();
 
     /**
+     * 获取流管理器
+     * */
+    StreamManger getStreamManger();
+
+    /**
+     * 获取角色名
+     * */
+    String getRoleName();
+
+    /**
      * 获取字符集
      */
     Charset getCharset();
@@ -69,19 +79,19 @@ public interface Config {
     int getWriteBufferSize();
 
     /**
-     * 获取连接空闲超时
+     * 获取连接空闲超时（单位：毫秒）
      * */
     long getIdleTimeout();
 
     /**
-     * 请求超时（单位：毫秒）
+     * 获取请求超时（单位：毫秒）
      */
     long getRequestTimeout();
 
     /**
-     * 允许最大请求数
-     */
-    int getMaxRequests();
+     * 获取消息流超时（单位：毫秒）
+     * */
+    long getStreamTimeout();
 
     /**
      * 允许最大UDP包大小

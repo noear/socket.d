@@ -5,11 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -23,10 +19,10 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     private final S source;
 
-    //答复接收器字典（管理）
-    private final Map<String, Acceptor> acceptorMap;
     //助理
     private final ChannelAssistant<S> assistant;
+    //流管理器
+    private final StreamManger acceptorManger;
     //会话（懒加载）
     private Session session;
 
@@ -34,19 +30,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         super(config);
         this.source = source;
         this.assistant = assistant;
-        this.acceptorMap = new ConcurrentHashMap<>();
-    }
-
-    /**
-     * 移除接收器（答复接收器）
-     */
-    @Override
-    public void removeAcceptor(String sid) {
-        Acceptor acceptor = acceptorMap.remove(sid);
-
-        if (acceptor != null && log.isDebugEnabled()) {
-            log.debug("{} acceptor is actively removed, sid={}", getRole(), sid);
-        }
+        this.acceptorManger = config.getStreamManger();
     }
 
     /**
@@ -73,11 +57,13 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return assistant.getLocalAddress(source);
     }
 
+    private Object SEND_LOCK  = new Object();
+
     /**
      * 发送
      */
     @Override
-    public synchronized void send(Frame frame, Acceptor acceptor) throws IOException {
+    public void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
         Asserts.assertClosed(this);
 
         if (log.isDebugEnabled()) {
@@ -88,18 +74,19 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        if (frame.getMessage() != null) {
-            MessageInternal message = frame.getMessage();
+        synchronized (SEND_LOCK) {
+            if (frame.getMessage() != null) {
+                MessageInternal message = frame.getMessage();
 
-            //注册接收器
-            if (acceptor != null) {
-                acceptorMap.put(message.sid(), acceptor);
-            }
+                //注册流接收器
+                if (acceptor != null) {
+                    acceptorManger.addAcceptor(message.sid(), acceptor);
+                }
 
-            //如果有实体（尝试分片）
-            if (message.entity() != null) {
-                //确保用完自动关闭
-                try (InputStream ins = message.data()) {
+                //如果有实体（尝试分片）
+                if (message.entity() != null) {
+                    //确保用完自动关闭
+
                     if (message.dataSize() > Constants.MAX_SIZE_FRAGMENT) {
                         //满足分片条件
                         int fragmentIndex = 0;
@@ -126,11 +113,12 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                         assistant.write(source, frame);
                         return;
                     }
+
                 }
             }
-        }
 
-        assistant.write(source, frame);
+            assistant.write(source, frame);
+        }
     }
 
     /**
@@ -140,12 +128,12 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void retrieve(Frame frame, Consumer<Throwable> onError) {
-        Acceptor acceptor = acceptorMap.get(frame.getMessage().sid());
+        StreamAcceptor acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
 
         if (acceptor != null) {
             if (acceptor.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
-                //如果是单收或者答复结束，则移除接收器
-                acceptorMap.remove(frame.getMessage().sid());
+                //如果是单收或者答复结束，则移除流接收器
+                acceptorManger.removeAcceptor(frame.getMessage().sid());
             }
 
             if (acceptor.isSingle()) {
@@ -160,7 +148,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("{} acceptor not found, sid={}, sessionId={}",
-                        getRole(), frame.getMessage().sid(), getSession().sessionId());
+                        getConfig().getRoleName(), frame.getMessage().sid(), getSession().sessionId());
             }
         }
     }
@@ -197,17 +185,17 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     public void close(int code) {
 
         if (log.isDebugEnabled()) {
-            log.debug("{} channel will be closed, sessionId={}", getRole(), getSession().sessionId());
+            log.debug("{} channel will be closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
         }
 
         super.close(code);
-        acceptorMap.clear();
+
         try {
             assistant.close(source);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("{} channel close error, sessionId={}",
-                        getRole(), getSession().sessionId(), e);
+                        getConfig().getRoleName(), getSession().sessionId(), e);
             }
         }
     }

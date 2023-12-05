@@ -74,9 +74,9 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
      */
     public String getLocalUrl() {
         if (Utils.isEmpty(host)) {
-            return schema + "://127.0.0.1:" + port;
+            return "sd:" + schema + "://127.0.0.1:" + port;
         } else {
-            return schema + "://" + host + ":" + port;
+            return "sd:" + schema + "://" + host + ":" + port;
         }
     }
 
@@ -93,7 +93,6 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
                 ", replyTimeout=" + requestTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
-                ", maxRequests=" + maxRequests +
                 ", maxUdpSize=" + maxUdpSize +
                 '}';
     }

@@ -115,6 +115,11 @@ public class SessionDefault extends SessionBase {
         channel.sendPing();
     }
 
+    @Override
+    public void sendAlarm(Message from, String alarm) throws IOException {
+        channel.sendAlarm(from, alarm);
+    }
+
     /**
      * 发送
      */
@@ -149,18 +154,11 @@ public class SessionDefault extends SessionBase {
             timeout = channel.getConfig().getRequestTimeout();
         }
 
-        //背压控制
-        if (channel.getRequests().get() > channel.getConfig().getMaxRequests()) {
-            throw new SocketdException("Sending too many requests: " + channel.getRequests().get());
-        } else {
-            channel.getRequests().incrementAndGet();
-        }
-
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
-            channel.send(new Frame(Flags.Request, message), new AcceptorRequest(future, timeout));
+            channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout));
 
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
@@ -179,9 +177,29 @@ public class SessionDefault extends SessionBase {
                 throw new SocketdException(e);
             }
         } finally {
-            channel.removeAcceptor(message.sid());
-            channel.getRequests().decrementAndGet();
+            channel.getConfig().getStreamManger().removeAcceptor(message.sid());
         }
+    }
+
+    /**
+     * 发送并请求（限为一次答复；指定超时）
+     *
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     */
+    @Override
+    public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+        MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
+        CompletableFuture<Entity> future = new CompletableFuture<>();
+        future.whenComplete((entity,err)->{
+            try {
+                consumer.accept(entity);
+            }catch (Exception e){
+                //
+            }
+        });
+        channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, 0));
     }
 
     /**
@@ -194,7 +212,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
-        channel.send(new Frame(Flags.Subscribe, message), new AcceptorSubscribe(consumer));
+        channel.send(new Frame(Flags.Subscribe, message), new StreamAcceptorSubscribe(consumer));
     }
 
     /**
@@ -225,7 +243,8 @@ public class SessionDefault extends SessionBase {
     @Override
     public void close() throws IOException {
         if (log.isDebugEnabled()) {
-            log.debug("{} session will be closed, sessionId={}", channel.getRole(), sessionId());
+            log.debug("{} session will be closed, sessionId={}",
+                    channel.getConfig().getRoleName(), sessionId());
         }
 
         if (channel.isValid()) {
@@ -233,11 +252,12 @@ public class SessionDefault extends SessionBase {
                 channel.sendClose();
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
-                    log.warn("{} channel sendClose error", channel.getRole(), e);
+                    log.warn("{} channel sendClose error",
+                            channel.getConfig().getRoleName(), e);
                 }
             }
         }
 
-        channel.close(Constants.CLOSE3_USER);
+        channel.close(Constants.CLOSE4_USER);
     }
 }

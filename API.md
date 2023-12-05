@@ -28,6 +28,8 @@ public interface Session {
     InetAddress localAddress() throws IOException;
     //获取握手信息
     Handshake handshake();
+    //broker player name
+    String name();
     //获取握手参数
     String param(String name);
     //获取握手参数或默认值
@@ -98,7 +100,7 @@ public interface Entity {
     //获取元信息或默认
     String metaOrDefault(String name, String def);
     //获取数据
-    InputStream data();
+    ByteBuffer data();
     //获取数据并转为字符串
     String dataAsString();
     //获取数据并转为字节数组

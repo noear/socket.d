@@ -25,7 +25,7 @@ public interface Server {
     /**
      * 配置
      */
-    Server config(ServerConfigHandler consumer);
+    Server config(ServerConfigHandler configHandler);
 
     /**
      * 监听

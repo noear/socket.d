@@ -11,6 +11,7 @@ import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerConfig;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -125,5 +126,14 @@ public class SocketD {
      */
     public static ClusterClient createClusterClient(String... serverUrls) {
         return new ClusterClientImpl(serverUrls);
+    }
+
+    /**
+     * 创建集群客户端
+     *
+     * @param serverUrls 服务端地址
+     */
+    public static ClusterClient createClusterClient(List<String> serverUrls) {
+        return new ClusterClientImpl(serverUrls.toArray(new String[serverUrls.size()]));
     }
 }

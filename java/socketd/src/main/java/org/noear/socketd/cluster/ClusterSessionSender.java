@@ -143,5 +143,7 @@ public class ClusterSessionSender implements SessionSender {
             //某个关闭出错，不影响别的关闭
             RunUtils.runAndTry(session::close);
         }
+
+        sessionSet.clear();
     }
 }

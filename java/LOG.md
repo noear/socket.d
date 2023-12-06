@@ -1,3 +1,6 @@
+### 2.1.6
+*  添加 集群客户端接口及创建方式 SocketD.createClusterClient()
+
 ### 2.1.5
 * 添加 SessionWrapper 包装类（便于监视会话的支行）
 

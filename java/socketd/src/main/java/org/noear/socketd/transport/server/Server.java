@@ -28,11 +28,6 @@ public interface Server {
     Server config(ServerConfigHandler consumer);
 
     /**
-     * 处理
-     */
-    Server process(Processor processor);
-
-    /**
      * 监听
      */
     Server listen(Listener listener);

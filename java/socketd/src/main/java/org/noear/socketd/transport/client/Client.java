@@ -23,12 +23,7 @@ public interface Client {
     /**
      * 配置
      */
-    Client config(ClientConfigHandler consumer);
-
-    /**
-     * 处理
-     */
-    Client process(Processor processor);
+    Client config(ClientConfigHandler configHandler);
 
     /**
      * 监听

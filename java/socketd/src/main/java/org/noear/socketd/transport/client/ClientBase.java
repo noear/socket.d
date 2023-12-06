@@ -89,19 +89,6 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
         return this;
     }
 
-
-    /**
-     * 设置处理器
-     */
-    @Override
-    public Client process(Processor processor) {
-        if (processor != null) {
-            this.processor = processor;
-        }
-
-        return this;
-    }
-
     /**
      * 设置监听器
      */

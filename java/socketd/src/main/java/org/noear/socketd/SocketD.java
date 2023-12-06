@@ -1,5 +1,7 @@
 package org.noear.socketd;
 
+import org.noear.socketd.cluster.ClusterClient;
+import org.noear.socketd.cluster.ClusterClientImpl;
 import org.noear.socketd.transport.client.ClientProvider;
 import org.noear.socketd.transport.core.Asserts;
 import org.noear.socketd.transport.server.ServerProvider;
@@ -114,5 +116,14 @@ public class SocketD {
             ClientConfig clientConfig = new ClientConfig(serverUrl);
             return factory.createClient(clientConfig);
         }
+    }
+
+    /**
+     * 创建集群客户端
+     *
+     * @param serverUrls 服务端地址
+     */
+    public static ClusterClient createClusterClient(String... serverUrls) {
+        return new ClusterClientImpl(serverUrls);
     }
 }

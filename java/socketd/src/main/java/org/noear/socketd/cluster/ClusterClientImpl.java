@@ -7,20 +7,29 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 集群客户端实现
  *
  * @author noear
  */
-public class ClusterClientImpl implements ClusterClient{
+public class ClusterClientImpl implements ClusterClient {
     private final String[] serverUrls;
 
+    private HeartbeatHandler heartbeatHandler;
     private ClientConfigHandler configHandler;
     private Listener listener;
 
     public ClusterClientImpl(String... serverUrls) {
         this.serverUrls = serverUrls;
+    }
+
+    @Override
+    public ClusterClient heartbeatHandler(HeartbeatHandler heartbeatHandler) {
+        this.heartbeatHandler = heartbeatHandler;
+        return this;
     }
 
     /**
@@ -46,7 +55,7 @@ public class ClusterClientImpl implements ClusterClient{
      */
     @Override
     public SessionSender open() throws IOException {
-        ClusterSessionSender clusterSender = new ClusterSessionSender();
+        List<Session> sessionList = new ArrayList<>();
 
         for (String urls : serverUrls) {
             for (String url : urls.split(",")) {
@@ -56,17 +65,23 @@ public class ClusterClientImpl implements ClusterClient{
                 }
 
                 Client client = SocketD.createClient(url);
+
                 if (listener != null) {
                     client.listen(listener);
                 }
+
                 if (configHandler != null) {
                     client.config(configHandler);
                 }
 
-                clusterSender.addSession(client.open());
+                if (heartbeatHandler != null) {
+                    client.heartbeatHandler(heartbeatHandler);
+                }
+
+                sessionList.add(client.open());
             }
         }
 
-        return clusterSender;
+        return new ClusterSessionSender(sessionList);
     }
 }

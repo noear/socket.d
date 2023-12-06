@@ -7,7 +7,6 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,29 +20,20 @@ import java.util.stream.Collectors;
  */
 public class ClusterSessionSender implements SessionSender {
     //会话集合
-    private final List<Session> sessionSet = new ArrayList<>();
+    private final List<Session> sessionSet;
     //轮询计数
-    private final AtomicInteger sessionRoundCounter = new AtomicInteger(0);
+    private final AtomicInteger sessionRoundCounter;
 
-    /**
-     * 添加会话
-     */
-    public void addSession(Session sender) {
-        sessionSet.add(sender);
-    }
-
-    /**
-     * 移除会话
-     */
-    public void removeSessoin(Session sender) {
-        sessionSet.remove(sender);
+    public ClusterSessionSender(List<Session> sessions) {
+        this.sessionSet = sessions;
+        this.sessionRoundCounter = new AtomicInteger(0);
     }
 
     /**
      * 获取所有会话
      */
     public List<Session> getSessionAll() {
-        return sessionSet;
+        return Collections.unmodifiableList(sessionSet);
     }
 
     /**

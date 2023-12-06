@@ -13,7 +13,7 @@ import java.util.Map;
  * @author noear
  * @since 2.0
  */
-public interface Session extends SessionSender, Closeable {
+public interface Session extends ClientSession, Closeable {
     /**
      * 是否有效
      */

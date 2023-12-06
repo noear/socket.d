@@ -1,6 +1,7 @@
 package demo.demo06_im;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
@@ -14,7 +15,7 @@ public class Demo06_Im_Client {
     private static BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     private static String user = null;
     private static String token = null;
-    private static Session session = null;
+    private static ClientSession session = null;
     private static String room;
 
     public static void main(String[] args) throws Exception {

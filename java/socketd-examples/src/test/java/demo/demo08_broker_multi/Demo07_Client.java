@@ -3,8 +3,7 @@ package demo.demo08_broker_multi;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.SessionSender;
-import org.noear.socketd.cluster.ClusterSessionSender;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 
@@ -20,7 +19,7 @@ public class Demo07_Client {
         });
 
         //新式写法
-        SessionSender session = SocketD.createClusterClient(
+        ClientSession session = SocketD.createClusterClient(
                 "sd:tcp://127.0.0.1:8601/?@=client",
                         "sd:tcp://127.0.0.1:8602/?@=client")
                 .listen(listener)
@@ -37,7 +36,7 @@ public class Demo07_Client {
         }
     }
 
-    private static void sendDo(SessionSender sender) throws IOException{
+    private static void sendDo(ClientSession sender) throws IOException{
         //发消息时带了 at ，就像在社交群里聊天一样
         //
         sender.send("hello", new StringEntity("world0").at("server"));

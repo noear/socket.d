@@ -2,8 +2,7 @@ package org.noear.socketd.cluster;
 
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.transport.core.SessionSender;
-import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
 
@@ -13,18 +12,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
- * 集群会话发送器
+ * 集群客户端会话
  *
  * @author noear
  * @since 2.1
  */
-public class ClusterSessionSender implements SessionSender {
+public class ClusterClientSession implements ClientSession {
     //会话集合
-    private final List<Session> sessionSet;
+    private final List<ClientSession> sessionSet;
     //轮询计数
     private final AtomicInteger sessionRoundCounter;
 
-    public ClusterSessionSender(List<Session> sessions) {
+    public ClusterClientSession(List<ClientSession> sessions) {
         this.sessionSet = sessions;
         this.sessionRoundCounter = new AtomicInteger(0);
     }
@@ -32,14 +31,14 @@ public class ClusterSessionSender implements SessionSender {
     /**
      * 获取所有会话
      */
-    public List<Session> getSessionAll() {
+    public List<ClientSession> getSessionAll() {
         return Collections.unmodifiableList(sessionSet);
     }
 
     /**
      * 获取一个会话（轮询负栽均衡）
      */
-    public SessionSender getSessionOne() {
+    public ClientSession getSessionOne() {
         if (sessionSet.size() == 0) {
             //没有会话
             throw new SocketdException("No session!");
@@ -48,7 +47,7 @@ public class ClusterSessionSender implements SessionSender {
             return sessionSet.get(0);
         } else {
             //查找可用的会话
-            List<Session> sessions = sessionSet.stream()
+            List<ClientSession> sessions = sessionSet.stream()
                     .filter(s -> s.isValid())
                     .collect(Collectors.toList());
 
@@ -71,6 +70,26 @@ public class ClusterSessionSender implements SessionSender {
         }
     }
 
+    @Override
+    public boolean isValid() {
+        for(ClientSession session : sessionSet){
+            if(session.isValid()){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void reconnect() throws IOException {
+        for(ClientSession session : sessionSet){
+            if(session.isValid() == false){
+                session.reconnect();
+            }
+        }
+    }
+
     /**
      * 发送
      *
@@ -78,7 +97,7 @@ public class ClusterSessionSender implements SessionSender {
      * @param content 内容
      */
     public void send(String event, Entity content) throws IOException {
-        SessionSender sender = getSessionOne();
+        ClientSession sender = getSessionOne();
 
         sender.send(event, content);
     }
@@ -90,7 +109,7 @@ public class ClusterSessionSender implements SessionSender {
      * @param content 内容
      */
     public Entity sendAndRequest(String event, Entity content) throws IOException {
-        SessionSender sender = getSessionOne();
+        ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content);
     }
@@ -103,7 +122,7 @@ public class ClusterSessionSender implements SessionSender {
      * @param timeout 超时（毫秒）
      */
     public Entity sendAndRequest(String event, Entity content, long timeout) throws IOException {
-        SessionSender sender = getSessionOne();
+        ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content, timeout);
     }
@@ -116,7 +135,7 @@ public class ClusterSessionSender implements SessionSender {
      * @param consumer 回调消费者
      */
     public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
-        SessionSender sender = getSessionOne();
+        ClientSession sender = getSessionOne();
 
         sender.sendAndRequest(event, content, consumer);
     }
@@ -129,7 +148,7 @@ public class ClusterSessionSender implements SessionSender {
      * @param consumer 回调消费者
      */
     public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
-        SessionSender sender = getSessionOne();
+        ClientSession sender = getSessionOne();
 
         sender.sendAndSubscribe(event, content, consumer);
     }
@@ -139,11 +158,9 @@ public class ClusterSessionSender implements SessionSender {
      */
     @Override
     public void close() throws IOException {
-        for (Session session : sessionSet) {
+        for (ClientSession session : sessionSet) {
             //某个关闭出错，不影响别的关闭
             RunUtils.runAndTry(session::close);
         }
-
-        sessionSet.clear();
     }
 }

@@ -29,7 +29,7 @@ public class TestCase14_file extends BaseTestCase {
     }
 
     private Server server;
-    private Session clientSession;
+    private ClientSession clientSession;
 
     private AtomicInteger messageCounter = new AtomicInteger();
 

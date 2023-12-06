@@ -3,6 +3,7 @@ package features.cases;
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
@@ -28,7 +29,7 @@ public class TestCase13_sendAndRequest_timeout extends BaseTestCase {
     }
 
     private Server server;
-    private Session clientSession;
+    private ClientSession clientSession;
 
     private AtomicInteger messageCounter = new AtomicInteger();
 

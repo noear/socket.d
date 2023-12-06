@@ -1,6 +1,7 @@
 package demo.demo03;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
@@ -41,7 +42,7 @@ public class Demo03_File {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
+        ClientSession session  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
                 .open();
 
         //发送 + 元信息

@@ -1,6 +1,7 @@
 package benchmark.cases;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.identifier.TimeidGenerator;
@@ -32,7 +33,7 @@ public class TestCase02 extends BaseTestCase {
     }
 
     private Server server;
-    private Session clientSession;
+    private ClientSession clientSession;
 
     private final int count;
     private final int timeout;

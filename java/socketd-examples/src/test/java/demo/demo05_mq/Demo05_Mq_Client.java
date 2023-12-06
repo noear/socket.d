@@ -1,6 +1,7 @@
 package demo.demo05_mq;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
@@ -32,7 +33,7 @@ public class Demo05_Mq_Client {
         private Map<String, Consumer<String>> listenerMap = new HashMap<>();
         private String server;
         private int port;
-        private Session session;
+        private ClientSession session;
 
         public MqClient(String server, int port) {
             this.server = server;

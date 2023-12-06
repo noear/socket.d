@@ -6,11 +6,20 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * 会话发送器
+ * 客户会话
  *
  * @author noear
  */
-public interface SessionSender extends Closeable {
+public interface ClientSession extends Closeable {
+    /**
+     * 是否有效
+     */
+    boolean isValid();
+
+    /**
+     * 手动重连（一般是自动）
+     */
+    void reconnect() throws IOException;
 
     /**
      * 发送

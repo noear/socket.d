@@ -2,6 +2,7 @@ package benchmark2.cases;
 
 import benchmark.cases.BaseTestCase;
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ClientSession;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
@@ -28,7 +29,7 @@ public class TestCase01 extends BaseTestCase {
     }
 
     private Server server;
-    private Session clientSession;
+    private ClientSession clientSession;
 
 
     @Override

@@ -3,7 +3,7 @@ package demo.demo08_broker_multi;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.ClientSession;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 

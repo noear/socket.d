@@ -3,6 +3,7 @@ package org.noear.socketd.cluster;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.Client;
 import org.noear.socketd.transport.client.ClientConfigHandler;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.Utils;
 

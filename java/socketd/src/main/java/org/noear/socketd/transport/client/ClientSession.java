@@ -1,5 +1,6 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.client;
 
+import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.utils.IoConsumer;
 
 import java.io.Closeable;
@@ -15,6 +16,11 @@ public interface ClientSession extends Closeable {
      * 是否有效
      */
     boolean isValid();
+
+    /**
+     * 获取会话Id
+     */
+    String sessionId();
 
     /**
      * 手动重连（一般是自动）

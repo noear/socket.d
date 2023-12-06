@@ -1,7 +1,7 @@
 package benchmark.cases;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.ClientSession;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;

@@ -2,6 +2,7 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;

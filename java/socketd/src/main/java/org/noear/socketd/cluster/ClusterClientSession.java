@@ -2,9 +2,10 @@ package org.noear.socketd.cluster;
 
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.transport.core.ClientSession;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
+import org.noear.socketd.utils.Utils;
 
 import java.io.IOException;
 import java.util.*;
@@ -22,9 +23,12 @@ public class ClusterClientSession implements ClientSession {
     private final List<ClientSession> sessionSet;
     //轮询计数
     private final AtomicInteger sessionRoundCounter;
+    //会话id
+    private final String sessionId;
 
     public ClusterClientSession(List<ClientSession> sessions) {
         this.sessionSet = sessions;
+        this.sessionId = Utils.guid();
         this.sessionRoundCounter = new AtomicInteger(0);
     }
 
@@ -79,6 +83,11 @@ public class ClusterClientSession implements ClientSession {
         }
 
         return false;
+    }
+
+    @Override
+    public String sessionId() {
+        return sessionId;
     }
 
     @Override

@@ -3,7 +3,6 @@ package org.noear.socketd.transport.client;
 import org.noear.socketd.transport.core.*;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 /**
  * 客户端（用于构建会话）

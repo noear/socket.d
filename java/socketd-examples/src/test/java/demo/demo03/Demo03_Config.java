@@ -2,9 +2,7 @@ package demo.demo03;
 
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.ClientSession;
-import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.transport.client.ClientSession;
 
 public class Demo03_Config {
     public static void main(String[] args) throws Throwable {

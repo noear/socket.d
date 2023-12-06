@@ -11,7 +11,7 @@ import java.io.IOException;
 public class Demo07_Client {
     public static void main(String[] args) throws IOException {
         //客户端，如果也想提供服务，也通过 @ 取个名字
-        ClientSession session  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?@=client")
+        ClientSession clientSession  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?@=client")
                 .listen(new EventListener().on("hello", (s, m) -> {
                     System.out.println("Client: " + m);
                 }))
@@ -19,12 +19,12 @@ public class Demo07_Client {
 
 
         //at * 号结尾，表示群发
-        session.send("hello", new StringEntity("world0").at("server*"));
+        clientSession.send("hello", new StringEntity("world0").at("server*"));
 
-        sendDo(session);
+        sendDo(clientSession);
 
         for(int i=0; i< 100000; i++){
-            sendDo(session);
+            sendDo(clientSession);
         }
     }
 

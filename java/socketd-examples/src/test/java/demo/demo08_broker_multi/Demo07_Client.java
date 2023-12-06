@@ -19,7 +19,7 @@ public class Demo07_Client {
         });
 
         //新式写法
-        ClientSession session = SocketD.createClusterClient(
+        ClientSession clientSession = SocketD.createClusterClient(
                 "sd:tcp://127.0.0.1:8601/?@=client",
                         "sd:tcp://127.0.0.1:8602/?@=client")
                 .listen(listener)
@@ -27,12 +27,12 @@ public class Demo07_Client {
 
 
         //at * 号结尾，表示群发
-        session.send("hello", new StringEntity("world0").at("server*"));
+        clientSession.send("hello", new StringEntity("world0").at("server*"));
 
-        sendDo(session);
+        sendDo(clientSession);
 
         for(int i=0; i< 100000; i++){
-            sendDo(session);
+            sendDo(clientSession);
         }
     }
 

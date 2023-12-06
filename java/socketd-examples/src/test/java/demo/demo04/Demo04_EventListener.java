@@ -20,7 +20,7 @@ public class Demo04_EventListener {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        ClientSession session  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
+        ClientSession clientSession  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
                 .listen(new EventListener().onMessage((s, m) -> {
                     System.out.println("client::" + m);
                 }).on("/demo", (s, m) -> { //带了事件路由的功能
@@ -30,7 +30,7 @@ public class Demo04_EventListener {
                 }))
                 .open();
 
-        session.send("/order", new StringEntity("Hi"));
-        session.send("/user", new StringEntity("Hi"));
+        clientSession.send("/order", new StringEntity("Hi"));
+        clientSession.send("/user", new StringEntity("Hi"));
     }
 }

@@ -14,7 +14,7 @@ public class Demo06_Im_Client {
     private static BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     private static String user = null;
     private static String token = null;
-    private static ClientSession session = null;
+    private static ClientSession clientSession = null;
     private static String room;
 
     public static void main(String[] args) throws Exception {
@@ -45,7 +45,7 @@ public class Demo06_Im_Client {
                     return;
                 }
 
-                session.send("cmd.chat", new StringEntity(msg)
+                clientSession.send("cmd.chat", new StringEntity(msg)
                         .meta("room", room)
                         .meta("sender", user));
             }
@@ -66,7 +66,7 @@ public class Demo06_Im_Client {
             }
 
             //加入聊天室
-            session.send("cmd.join", new StringEntity("").meta("room", room));
+            clientSession.send("cmd.join", new StringEntity("").meta("room", room));
         }
     }
 
@@ -91,7 +91,7 @@ public class Demo06_Im_Client {
 
         if (token == null) {
             //进入用户频道
-            session = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new EventListener().onMessage((s, m) -> {
+            clientSession = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new EventListener().onMessage((s, m) -> {
                 System.err.println("聊到室：" + m.dataAsString());
             }).on("cmd.t", (s,m)->{
                 //把房间置空
@@ -100,7 +100,7 @@ public class Demo06_Im_Client {
         } else {
             System.out.println("进入管理频道");
             //进入管理频道
-            session = SocketD.createClient("sd:udp://127.0.0.1:8602/admin?u=" + user + "&t=" + token).open();
+            clientSession = SocketD.createClient("sd:udp://127.0.0.1:8602/admin?u=" + user + "&t=" + token).open();
             // 群主上身
             adminStart();
         }
@@ -123,7 +123,7 @@ public class Demo06_Im_Client {
                 return;
             }
 
-            session.send("cmd.t", new StringEntity("")
+            clientSession.send("cmd.t", new StringEntity("")
                     .meta("room", "当前聊天室")
                     .meta("u", id));
 

@@ -31,7 +31,7 @@ public class Demo03_Send2 {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        ClientSession session  = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=a&p=2")
+        ClientSession clientSession  = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=a&p=2")
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -56,6 +56,6 @@ public class Demo03_Send2 {
                 .open();
 
         //发送并请求
-        session.sendAndRequest("/demo", new StringEntity("hello wrold!"));
+        clientSession.sendAndRequest("/demo", new StringEntity("hello wrold!"));
     }
 }

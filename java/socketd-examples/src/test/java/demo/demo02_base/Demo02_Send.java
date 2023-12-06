@@ -25,10 +25,10 @@ public class Demo02_Send {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        ClientSession session  = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
+        ClientSession clientSession  = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
                 .open();
 
         //发送（单线程约为 200万/秒 的速率，2020年的 macbook。新电脑估计会更快）
-        session.send("/demo", new StringEntity("hello wrold!"));
+        clientSession.send("/demo", new StringEntity("hello wrold!"));
     }
 }

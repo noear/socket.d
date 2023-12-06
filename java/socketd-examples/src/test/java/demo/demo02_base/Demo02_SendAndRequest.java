@@ -30,11 +30,11 @@ public class Demo02_SendAndRequest {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        ClientSession session  = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
+        ClientSession clientSession  = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
                 .open();
 
         //发送并请求
-        Entity reply = session.sendAndRequest("/demo", new StringEntity("hello wrold!"));
+        Entity reply = clientSession.sendAndRequest("/demo", new StringEntity("hello wrold!"));
         System.out.println(reply);
         System.out.println(reply.dataAsString());
     }

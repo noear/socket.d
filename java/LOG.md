@@ -1,7 +1,11 @@
+### 2.1.6
+* 调整 Client::open() 返回类型为 ClientSession
+* 统一客户端与集群客户端接口
+* 统一客户端会话与集群客户端会话接口
+
 ### 2.1.5
 * 添加 SessionWrapper 包装类（便于监视会话的支行）
 * 添加 集群客户端接口及创建方式 SocketD.createClusterClient()
-
 
 ### 2.1.4
 * 开放 FragmentSize 可配置

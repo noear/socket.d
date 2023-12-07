@@ -1,3 +1,6 @@
+### 2.1.7
+* 开放 BrokerListener 的两私有函数级别
+
 ### 2.1.6
 * 调整 Client::open() 返回类型为 ClientSession
 * 统一客户端与集群客户端接口

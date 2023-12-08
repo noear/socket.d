@@ -1,7 +1,9 @@
 package org.noear.socketd.transport.java_websocket;
 
+import org.java_websocket.WebSocket;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketServerImpl;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
@@ -17,7 +19,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class WsNioServer extends ServerBase<WsNioChannelAssistant> {
+public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements ChannelSupporter<WebSocket> {
     private static final Logger log = LoggerFactory.getLogger(WsNioServer.class);
     private WebSocketServerImpl server;
 

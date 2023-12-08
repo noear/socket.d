@@ -4,6 +4,8 @@ import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.stream.StreamAcceptorRequest;
+import org.noear.socketd.transport.core.stream.StreamAcceptorSubscribe;
 import org.noear.socketd.utils.IoConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,11 +194,11 @@ public class SessionDefault extends SessionBase {
     public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
         CompletableFuture<Entity> future = new CompletableFuture<>();
-        future.whenComplete((entity,err)->{
+        future.thenAccept((entity) -> {
             try {
                 consumer.accept(entity);
-            }catch (Exception e){
-                //
+            } catch (Throwable e) {
+                channel.onError(e);
             }
         });
         channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, 0));

@@ -110,12 +110,17 @@ public interface Channel {
      *
      * @param frame 帧
      */
-    void retrieve(Frame frame, Consumer<Throwable> onError);
+    void retrieve(Frame frame);
 
     /**
      * 手动重连（一般是自动）
      */
     void reconnect() throws IOException;
+
+    /**
+     * 出错时
+     * */
+    void onError(Throwable error);
 
     /**
      * 获取会话

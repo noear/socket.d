@@ -2,6 +2,7 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
@@ -29,7 +30,7 @@ public class TestCase14_file extends BaseTestCase {
     }
 
     private Server server;
-    private Session clientSession;
+    private ClientSession clientSession;
 
     private AtomicInteger messageCounter = new AtomicInteger();
 
@@ -74,7 +75,9 @@ public class TestCase14_file extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl)
+                .config(c -> c.fragmentSize(1024 * 1024))
+                .open();
 
         clientSession.send("/user/upload", new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov")));
 

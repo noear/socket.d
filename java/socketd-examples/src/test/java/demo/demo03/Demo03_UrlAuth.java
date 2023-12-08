@@ -1,6 +1,7 @@
 package demo.demo03;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
@@ -33,11 +34,11 @@ public class Demo03_UrlAuth {
 
         //::打开客户端会话
         //会成功
-        Session session1 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=noear&p=2").open();
-        session1.send("/demo", new StringEntity("hi"));
+        ClientSession clientSession1 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=noear&p=2").open();
+        clientSession1.send("/demo", new StringEntity("hi"));
 
         //会失败
-        Session session2 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=solon&p=1").open();
-        session2.send("/demo2", new StringEntity("hi"));
+        ClientSession clientSession2 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=solon&p=1").open();
+        clientSession2.send("/demo2", new StringEntity("hi"));
     }
 }

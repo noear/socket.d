@@ -54,7 +54,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             Asserts.assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
             Asserts.assertSize("event", eventB.length, Constants.MAX_SIZE_EVENT);
             Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
-            Asserts.assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_FRAGMENT);
+            Asserts.assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_DATA);
 
             T target = factory.apply(frameSize);
 
@@ -120,11 +120,11 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             //2.解码 body
             int dataRealSize = frameSize - buffer.position();
             byte[] data;
-            if (dataRealSize > Constants.MAX_SIZE_FRAGMENT) {
+            if (dataRealSize > Constants.MAX_SIZE_DATA) {
                 //超界了，空读。必须读，不然协议流会坏掉
-                data = new byte[Constants.MAX_SIZE_FRAGMENT];
-                buffer.get(data, 0, Constants.MAX_SIZE_FRAGMENT);
-                for (int i = dataRealSize - Constants.MAX_SIZE_FRAGMENT; i > 0; i--) {
+                data = new byte[Constants.MAX_SIZE_DATA];
+                buffer.get(data, 0, Constants.MAX_SIZE_DATA);
+                for (int i = dataRealSize - Constants.MAX_SIZE_DATA; i > 0; i--) {
                     buffer.get();
                 }
             } else {

@@ -1,5 +1,6 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.stream;
 
+import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.StreamAcceptorBase;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
@@ -51,7 +52,7 @@ public class StreamAcceptorRequest extends StreamAcceptorBase {
      * 接收答复流
      * */
     @Override
-    public void accept(Message message, Consumer<Throwable> onError) {
+    public void accept(Message message, Channel channel) {
         future.complete(message);
     }
 }

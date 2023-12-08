@@ -3,6 +3,7 @@ package features.cases;
 import features.utils.SslContextFactory;
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
@@ -30,7 +31,7 @@ public class TestCase22_ssl extends BaseTestCase {
     }
 
     private Server server;
-    private Session clientSession;
+    private ClientSession clientSession;
 
     private AtomicInteger serverOnMessageCounter = new AtomicInteger();
     private AtomicInteger clientSubscribeReplyCounter = new AtomicInteger();

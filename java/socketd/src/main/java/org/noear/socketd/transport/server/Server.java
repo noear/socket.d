@@ -25,12 +25,7 @@ public interface Server {
     /**
      * 配置
      */
-    Server config(ServerConfigHandler consumer);
-
-    /**
-     * 处理
-     */
-    Server process(Processor processor);
+    Server config(ServerConfigHandler configHandler);
 
     /**
      * 监听

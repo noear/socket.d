@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.function.Consumer;
 
 /**
  * 通道默认实现（每个连接都会建立一个或多个通道）
@@ -19,6 +18,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     private final S source;
 
+    //处理器
+    private final Processor processor;
     //助理
     private final ChannelAssistant<S> assistant;
     //流管理器
@@ -26,11 +27,12 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     //会话（懒加载）
     private Session session;
 
-    public ChannelDefault(S source, Config config, ChannelAssistant<S> assistant) {
-        super(config);
+    public ChannelDefault(S source, ChannelSupporter<S> supporter) {
+        super(supporter.config());
         this.source = source;
-        this.assistant = assistant;
-        this.acceptorManger = config.getStreamManger();
+        this.processor = supporter.processor();
+        this.assistant = supporter.assistant();
+        this.acceptorManger = supporter.config().getStreamManger();
     }
 
     /**
@@ -87,7 +89,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 if (message.entity() != null) {
                     //确保用完自动关闭
 
-                    if (message.dataSize() > Constants.MAX_SIZE_FRAGMENT) {
+                    if (message.dataSize() > Constants.MAX_SIZE_DATA) {
                         //满足分片条件
                         int fragmentIndex = 0;
                         while (true) {
@@ -127,7 +129,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * @param frame 帧
      */
     @Override
-    public void retrieve(Frame frame, Consumer<Throwable> onError) {
+    public void retrieve(Frame frame) {
         StreamAcceptor acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
 
         if (acceptor != null) {
@@ -138,11 +140,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
             if (acceptor.isSingle()) {
                 //单收时，内部已经是异步机制
-                acceptor.accept(frame.getMessage(), onError);
+                acceptor.accept(frame.getMessage(), this);
             } else {
                 //改为异步处理，避免卡死Io线程
                 getConfig().getChannelExecutor().submit(() -> {
-                    acceptor.accept(frame.getMessage(), onError);
+                    acceptor.accept(frame.getMessage(), this);
                 });
             }
         } else {
@@ -159,6 +161,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     @Override
     public void reconnect() throws IOException {
         //由 ClientChannel 实现
+    }
+
+    @Override
+    public void onError(Throwable error) {
+        processor.onError(this, error);
     }
 
     /**

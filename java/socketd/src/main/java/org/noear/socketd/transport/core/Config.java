@@ -21,12 +21,12 @@ public interface Config {
 
     /**
      * 获取流管理器
-     * */
+     */
     StreamManger getStreamManger();
 
     /**
      * 获取角色名
-     * */
+     */
     String getRoleName();
 
     /**
@@ -50,13 +50,18 @@ public interface Config {
     FragmentHandler getFragmentHandler();
 
     /**
+     * 获取分片大小
+     */
+    int getFragmentSize();
+
+    /**
      * 获取 ssl 上下文
      */
     SSLContext getSslContext();
 
     /**
      * 通道执行器
-     * */
+     */
     ExecutorService getChannelExecutor();
 
     /**
@@ -73,6 +78,7 @@ public interface Config {
      * 获取读缓冲大小
      */
     int getReadBufferSize();
+
     /**
      * 配置读缓冲大小
      */
@@ -80,7 +86,7 @@ public interface Config {
 
     /**
      * 获取连接空闲超时（单位：毫秒）
-     * */
+     */
     long getIdleTimeout();
 
     /**
@@ -90,7 +96,7 @@ public interface Config {
 
     /**
      * 获取消息流超时（单位：毫秒）
-     * */
+     */
     long getStreamTimeout();
 
     /**

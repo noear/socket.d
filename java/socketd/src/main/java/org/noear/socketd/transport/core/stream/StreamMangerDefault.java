@@ -1,9 +1,10 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.stream;
 
 import org.noear.socketd.transport.core.StreamAcceptor;
 import org.noear.socketd.transport.core.StreamAcceptorBase;
 import org.noear.socketd.transport.core.StreamManger;
 import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

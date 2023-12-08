@@ -13,7 +13,7 @@
     <a target="_blank" href="https://search.maven.org/artifact/org.noear/socketd">
         <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Maven%20Central" alt="Maven" />
     </a>
-    <a target="_blank" href="https://www.apache.org/licenses/LICENSE-2.0.txt">
+    <a target="_blank" href="LICENSE">
 		<img src="https://img.shields.io/:license-Apache2-blue.svg" alt="Apache 2" />
 	</a>
    <a target="_blank" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
@@ -51,14 +51,15 @@
 
 ### 主要特性
 
-* 基于事件，每个消息都是一个事件（或指令）
-* 所谓语义，每个消息都有元信息描述
-* 语言无关，使用二进制通信协议（支持 tcp, ws, udp）。支持多语言、多平台
+* 基于事件，每个消息都可事件路由
+* 所谓语义，通过元信息进行语义描述
+* 流关联性，有相关的消息会串成一个流
+* 语言无关，使用二进制输传数据（支持 tcp, ws, udp）。支持多语言、多平台
 * 断线重连，自动连接恢复
-* 多路复用
+* 多路复用，一个连接便可允许多个请求和响应消息同时运行
 * 双向通讯，单链接双向互听互发
 * 自动分片，数据超出 16Mb，会自动分片、自动重组（udp 除外）
-* 接口简单
+* 接口简单，是响应式但用回调接口
 
 
 ### 与其它协议的简单对比

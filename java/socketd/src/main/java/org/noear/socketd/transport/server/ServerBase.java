@@ -54,17 +54,6 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
         return processor;
     }
 
-    /**
-     * 设置处理器
-     */
-    @Override
-    public Server process(Processor processor) {
-        if (processor != null) {
-            this.processor = processor;
-        }
-
-        return this;
-    }
 
     /**
      * 设置监听器

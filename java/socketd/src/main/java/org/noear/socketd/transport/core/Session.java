@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.utils.IoConsumer;
 
 import java.io.Closeable;
@@ -13,7 +14,7 @@ import java.util.Map;
  * @author noear
  * @since 2.0
  */
-public interface Session extends Closeable {
+public interface Session extends ClientSession, Closeable {
     /**
      * 是否有效
      */
@@ -149,7 +150,7 @@ public interface Session extends Closeable {
     Entity sendAndRequest(String event, Entity content, long timeout) throws IOException;
 
     /**
-     * 发送并请求（限为一次答复；指定超时）
+     * 发送并请求（限为一次答复；指定回调）
      *
      * @param event    事件
      * @param content  内容

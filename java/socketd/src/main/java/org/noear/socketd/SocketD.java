@@ -1,5 +1,6 @@
 package org.noear.socketd;
 
+import org.noear.socketd.cluster.ClusterClient;
 import org.noear.socketd.transport.client.ClientProvider;
 import org.noear.socketd.transport.core.Asserts;
 import org.noear.socketd.transport.server.ServerProvider;
@@ -9,6 +10,7 @@ import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerConfig;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -19,10 +21,17 @@ import java.util.ServiceLoader;
 public class SocketD {
 
     /**
-     * 版本版本号
+     * 框架版本号
      */
     public static String version() {
         return "2.1";
+    }
+
+    /**
+     * 协议版本号
+     */
+    public static String protocolVersion() {
+        return "1.0";
     }
 
     static Map<String, ClientProvider> clientProviderMap;
@@ -107,5 +116,23 @@ public class SocketD {
             ClientConfig clientConfig = new ClientConfig(serverUrl);
             return factory.createClient(clientConfig);
         }
+    }
+
+    /**
+     * 创建集群客户端
+     *
+     * @param serverUrls 服务端地址
+     */
+    public static ClusterClient createClusterClient(String... serverUrls) {
+        return new ClusterClient(serverUrls);
+    }
+
+    /**
+     * 创建集群客户端
+     *
+     * @param serverUrls 服务端地址
+     */
+    public static ClusterClient createClusterClient(List<String> serverUrls) {
+        return new ClusterClient(serverUrls.toArray(new String[serverUrls.size()]));
     }
 }

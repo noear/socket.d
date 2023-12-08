@@ -4,7 +4,7 @@ import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
-import org.noear.socketd.transport.core.internal.StreamMangerDefault;
+import org.noear.socketd.transport.core.stream.StreamMangerDefault;
 import org.noear.socketd.utils.NamedThreadFactory;
 
 import javax.net.ssl.SSLContext;
@@ -22,20 +22,22 @@ public abstract class ConfigBase<T extends Config> implements Config {
     //流管理器
     private final StreamManger streamManger;
 
-    //字符集
-    protected Charset charset;
-
     //编解码器
-    protected Codec<BufferReader, BufferWriter> codec;
+    private Codec<BufferReader, BufferWriter> codec;
     //id生成器
-    protected IdGenerator idGenerator;
+    private IdGenerator idGenerator;
     //分片处理
-    protected FragmentHandler fragmentHandler;
+    private FragmentHandler fragmentHandler;
+    //分片大小
+    private int fragmentSize;
 
     //ssl 上下文
-    protected SSLContext sslContext;
+    private SSLContext sslContext;
     //通道执行器
-    protected ExecutorService channelExecutor;
+    private ExecutorService channelExecutor;
+
+    //字符集
+    protected Charset charset;
 
     //内核线程数
     protected int coreThreads;
@@ -65,6 +67,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.codec = new CodecByteBuffer(this);
         this.idGenerator = new GuidGenerator();
         this.fragmentHandler = new FragmentHandlerDefault();
+        this.fragmentSize = Constants.MAX_SIZE_DATA;
 
         this.coreThreads = Math.max(Runtime.getRuntime().availableProcessors(), 2);
         this.maxThreads = coreThreads * 4;
@@ -148,6 +151,30 @@ public abstract class ConfigBase<T extends Config> implements Config {
         Asserts.assertNull("fragmentHandler", fragmentHandler);
 
         this.fragmentHandler = fragmentHandler;
+        return (T) this;
+    }
+
+    /**
+     * 获取分片大小
+     */
+    @Override
+    public int getFragmentSize() {
+        return fragmentSize;
+    }
+
+    /**
+     * 配置分片大小
+     */
+    public T fragmentSize(int fragmentSize) {
+        if (fragmentSize > Constants.MAX_SIZE_DATA) {
+            throw new IllegalArgumentException("The parameter fragmentSize cannot > 16m");
+        }
+
+        if (fragmentSize < Constants.MIN_FRAGMENT_SIZE) {
+            throw new IllegalArgumentException("The parameter fragmentSize cannot < 1m");
+        }
+
+        this.fragmentSize = fragmentSize;
         return (T) this;
     }
 

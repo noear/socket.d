@@ -46,19 +46,24 @@ public interface Constants {
 
 
     /**
-     * 流ID大小限制
+     * 流ID长度最大限制
      */
     int MAX_SIZE_SID = 64;
     /**
-     * 事件大小限制
+     * 事件长度最大限制
      */
     int MAX_SIZE_EVENT = 512;
     /**
-     * 元信息串大小限制
+     * 元信息串长度最大限制
      */
     int MAX_SIZE_META_STRING = 4096;
     /**
-     * 分片大小限制
+     * 数据长度最大限制（也是分片长度最大限制）
      */
-    int MAX_SIZE_FRAGMENT = 1024 * 1024 * 16; //16m
+    int MAX_SIZE_DATA = 1024 * 1024 * 16; //16m
+
+    /**
+     * 分片长度最小限制
+     */
+    int MIN_FRAGMENT_SIZE = 1024 * 1024; //1m
 }

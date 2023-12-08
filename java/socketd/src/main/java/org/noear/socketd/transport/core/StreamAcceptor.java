@@ -1,7 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import java.util.function.Consumer;
-
 /**
  * 流接收器
  *
@@ -26,6 +24,9 @@ public interface StreamAcceptor {
 
     /**
      * 接收答复流
+     *
+     * @param message 消息
+     * @param channel 通道
      */
-    void accept(Message message, Consumer<Throwable> onError);
+    void accept(Message message, Channel channel);
 }

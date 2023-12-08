@@ -1,6 +1,7 @@
 package demo.demo01_helloworld;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
@@ -29,11 +30,11 @@ public class Demo01_Helloworld {
         Thread.sleep(1000); //等会儿，确保服务端启动完成
 
         //::打开客户端会话
-        Session session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
+        ClientSession clientSession  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
                 .open();
 
         //发送并请求（且，收回答复）
-        Entity reply = session.sendAndRequest("/demo", new StringEntity("Hello wrold!").meta("user","noear"));
+        Entity reply = clientSession.sendAndRequest("/demo", new StringEntity("Hello wrold!").meta("user","noear"));
         System.out.println(reply);
         System.out.println(reply.dataAsString());
     }

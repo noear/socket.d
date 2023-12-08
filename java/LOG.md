@@ -1,3 +1,20 @@
+### 2.1.7
+* 开放 BrokerListener 的两私有函数级别
+
+### 2.1.6
+* 调整 Client::open() 返回类型为 ClientSession
+* 统一客户端与集群客户端接口
+* 统一客户端会话与集群客户端会话接口
+
+### 2.1.5
+* 添加 SessionWrapper 包装类（便于监视会话的支行）
+* 添加 集群客户端接口及创建方式 SocketD.createClusterClient()
+
+### 2.1.4
+* 开放 FragmentSize 可配置
+* 添加 Channel::onError 方法（属于内部调整）
+* 添加 ChannelSupporter 接口，并简化 Channel 构造函数（属于内部调整）
+
 ### 2.1.3
 * 添加 Broker 广播模式（现在有：单发，群发，广播）
 * 调整 server, client-link 日志打印

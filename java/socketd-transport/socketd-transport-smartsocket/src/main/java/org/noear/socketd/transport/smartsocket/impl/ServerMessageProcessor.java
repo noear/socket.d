@@ -25,7 +25,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
     }
 
     private ChannelDefaultEx getChannel(AioSession s) {
-        return ChannelDefaultEx.get(s, server.config(), server.assistant());
+        return ChannelDefaultEx.get(s, server);
     }
 
     @Override

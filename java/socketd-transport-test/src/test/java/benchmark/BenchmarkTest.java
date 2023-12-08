@@ -14,10 +14,9 @@ import java.util.List;
  */
 public class BenchmarkTest {
     static final String[] schemas = new String[]{
-//            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
+            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
             "sd:ws-java",
-//            "sd:udp-java"
-    };
+            "sd:udp-java"};
 
     int count = 100_000;
     int timeout = 30;

@@ -55,4 +55,9 @@ public class EndEntity implements Entity {
     public int dataSize() {
         return entity.dataSize();
     }
+
+    @Override
+    public void release() {
+        entity.release();
+    }
 }

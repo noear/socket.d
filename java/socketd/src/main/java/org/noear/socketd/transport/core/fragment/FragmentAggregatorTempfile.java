@@ -5,7 +5,7 @@ import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.FragmentAggregator;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.MessageInternal;
-import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.entity.TempfileEntity;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.Utils;
 
@@ -75,12 +75,13 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
             MappedByteBuffer dataBuffer = tmpfileChannel
                     .map(FileChannel.MapMode.READ_ONLY, 0, dataLength);
 
+
             //返回
             return new Frame(main.flag(), new MessageDefault()
                     .flag(main.flag())
                     .sid(main.sid())
                     .event(main.event())
-                    .entity(new EntityDefault().metaMap(main.metaMap()).data(dataBuffer)));
+                    .entity(new TempfileEntity(tmpfile, dataBuffer, main.metaMap())));
         } finally {
             tmpfileChannel.close();
         }

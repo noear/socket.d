@@ -58,4 +58,9 @@ public interface Entity {
      * 获取数据长度
      */
     int dataSize();
+
+    /**
+     * 释放资源
+     */
+    void release();
 }

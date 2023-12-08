@@ -195,6 +195,14 @@ public class EntityDefault implements Entity {
         return dataSize;
     }
 
+    /**
+     * 释放资源
+     */
+    @Override
+    public void release() {
+
+    }
+
     @Override
     public String toString() {
         return "Entity{" +

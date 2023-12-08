@@ -58,7 +58,7 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
         } catch (Exception e) {
             close();
 

@@ -69,7 +69,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
         } catch (Exception e) {
             close();
 

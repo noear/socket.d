@@ -52,7 +52,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
 
             return inboundHandler.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            throw new SocketdTimeoutException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdTimeoutException("Connection timeout: " + client.config().getLinkUrl());
         } catch (Exception e) {
             eventLoopGroup.shutdownGracefully();
 

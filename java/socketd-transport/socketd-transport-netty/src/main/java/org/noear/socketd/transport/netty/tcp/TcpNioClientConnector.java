@@ -62,7 +62,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
         } catch (Exception e) {
             close();
 

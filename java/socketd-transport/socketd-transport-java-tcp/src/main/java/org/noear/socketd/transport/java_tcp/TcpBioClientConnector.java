@@ -88,7 +88,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
         } catch (Exception e) {
             close();
 

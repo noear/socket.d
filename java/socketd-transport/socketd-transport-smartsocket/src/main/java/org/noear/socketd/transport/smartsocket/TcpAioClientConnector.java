@@ -77,7 +77,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
         } catch (Exception e) {
             close();
 

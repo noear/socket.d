@@ -12,7 +12,7 @@ class ClientConnectorBase(ClientConnector, ABC):
         return self.client.get_heartbeatHandler()
 
     def heartbeatInterval(self):
-        return self.client.heartbeatInterval()
+        return self.client.get_heartbeatInterval()
 
     def autoReconnect(self):
         return self.client.get_config().is_auto_reconnect()

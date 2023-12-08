@@ -1,8 +1,7 @@
 import asyncio
 import logging
 import nest_asyncio
-
-from websockets.client import connect as Connect
+from websockets.client import connect as Connect, WebSocketClientProtocol
 
 from socketd.core.Channel import Channel
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
@@ -13,15 +12,14 @@ logger = logging.getLogger(__name__)
 
 
 class WsAioClientConnector(ClientConnectorBase):
-    def __init__(self, client: 'WsAioClient'):
-        self.client: 'WsAioClient' = client
-        self.real: Connect = None
+    def __init__(self, client):
+        self.real: AIOWebSocketClientImpl = None
         self.__loop = asyncio.get_event_loop()
         self.__stop = asyncio.Future()
         super().__init__(client)
-        nest_asyncio.apply()
+        # nest_asyncio.apply()
 
-    def connect(self) -> Channel:
+    async def connect(self) -> Channel:
         logger.debug('Start connecting to: {}'.format(self.client.get_config().url))
 
         # 处理自定义架构的影响
@@ -31,9 +29,9 @@ class WsAioClientConnector(ClientConnectorBase):
         if self.client.get_config().get_ssl_context() is not None:
             ws_url = ws_url.replace("ws", "wss")
         try:
-            con = AIOConnect(ws_url, client=self.client, ssl=self.client.get_config().get_ssl_context(),
-                             create_protocol=AIOWebSocketClientImpl)
-            self.real: AIOConnect = self.__loop.run_until_complete(con)
+            con = await AIOConnect(ws_url, client=self.client, ssl=self.client.get_config().get_ssl_context(),
+                                   create_protocol=AIOWebSocketClientImpl)
+            self.real: AIOWebSocketClientImpl | WebSocketClientProtocol = con
             return self.real.get_channel()
         except RuntimeError as e:
             raise e
@@ -45,5 +43,6 @@ class WsAioClientConnector(ClientConnectorBase):
             return
         try:
             await self.__stop
+            pass
         except Exception as e:
-            logger.debug('{}'.format(e))
+            logger.debug(e)

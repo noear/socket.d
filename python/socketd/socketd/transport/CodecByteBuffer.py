@@ -1,4 +1,3 @@
-
 from typing import Callable
 from .Codec import Codec
 from socketd.core.module.Frame import Frame
@@ -7,6 +6,7 @@ from socketd.core.module.EntityDefault import EntityDefault
 from socketd.core.Costants import Flag
 from socketd.core.config.Config import Config
 from ..core.Buffer import Buffer
+
 
 class CodecByteBuffer(Codec):
     def __init__(self, config: 'ConfigBase'):
@@ -28,17 +28,17 @@ class CodecByteBuffer(Codec):
         else:
             # sid
             sidB = frame.message.get_sid().encode(self.config.get_charset())
-            # topic
-            topicB = frame.message.get_topic().encode(self.config.get_charset())
+            # event
+            topicB = frame.message.get_event().encode(self.config.get_charset())
             # metaString
             metaStringB = frame.message.get_entity().get_meta_string().encode(self.config.get_charset())
 
-            # length (flag + sid + topic + metaString + data + int.bytes + \n*3)
+            # length (flag + sid + event + metaString + data + int.bytes + \n*3)
             len1 = len(sidB) + len(topicB) + len(
                 metaStringB) + frame.message.get_entity().get_data_size() + 1 * 3 + 2 * 4
 
             self.assertSize("sid", len(sidB), Config.MAX_SIZE_SID)
-            self.assertSize("topic", len(topicB), Config.MAX_SIZE_TOPIC)
+            self.assertSize("event", len(topicB), Config.MAX_SIZE_TOPIC)
             self.assertSize("metaString", len(metaStringB), Config.MAX_SIZE_META_STRING)
             self.assertSize("data", frame.message.get_entity().get_data_size(), Config.MAX_SIZE_FRAGMENT)
 
@@ -54,7 +54,7 @@ class CodecByteBuffer(Codec):
             target.write(sidB)
             target.write(b'\n')
 
-            # topic
+            # event
             target.write(topicB)
             target.write(b'\n')
 
@@ -82,7 +82,7 @@ class CodecByteBuffer(Codec):
             return Frame(Flag.of(flag), None)
         else:
             metaBufSize = min(Config.MAX_SIZE_META_STRING, buffer.remaining())
-            # 1. decode sid and topic
+            # 1. decode sid and event
             by = Buffer(limit=metaBufSize)
             sid = self.decodeString(buffer, by, Config.MAX_SIZE_SID)
             topic = self.decodeString(buffer, by, Config.MAX_SIZE_TOPIC)
@@ -100,7 +100,7 @@ class CodecByteBuffer(Codec):
             else:
                 data = buffer.read(dataRealSize)
 
-            message = MessageDefault().set_sid(sid).set_topic(topic).set_entity(
+            message = MessageDefault().set_sid(sid).set_event(topic).set_entity(
                 EntityDefault().set_meta_string(metaString).set_data(data)
             )
             message.flag = Flag.of(flag)

@@ -8,12 +8,13 @@ from .Config import Config
 from socketd.core.handler.FragmentHandlerDefault import FragmentHandlerDefault
 from socketd.transport.Codec import Codec
 from socketd.transport.CodecByteBuffer import CodecByteBuffer
-from ..ThreadSafeDict import ThreadSafeDict
 
 
 class ConfigBase(Config):
 
     def __init__(self, client_mode: bool):
+        self._stream_timeout = 1000 * 60 * 60 * 2
+        self._request_timeout = 10_000
         self._client_mode = client_mode
         self._charset = "utf-8"
         self._codec: Codec = CodecByteBuffer(self)
@@ -71,8 +72,8 @@ class ConfigBase(Config):
 
     def get_executor(self):
         if self._executor is None:
-            nThreads = self._core_threads if self.client_mode() else self._max_threads
-            self._executor = ThreadPoolExecutor(max_workers=nThreads, thread_name_prefix="socketd-channelExecutor-")
+            __nThreads = self._core_threads if self.client_mode() else self._max_threads
+            self._executor = ThreadPoolExecutor(max_workers=__nThreads, thread_name_prefix="socketd-channelExecutor-")
         return self._executor
 
     def set_executor(self, executor):
@@ -114,7 +115,16 @@ class ConfigBase(Config):
         self._maxUdpSize = maxUdpSize
         return self
 
+    def get_request_timeout(self) -> float:
+        return self._request_timeout
 
-    def get_thread_local_map(self) -> ThreadSafeDict:
-        return super().get_thread_local_map()
+    def set_request_timeout(self, _request_time_out):
+        self._request_timeout = _request_time_out
+        return self
 
+    def get_stream_timeout(self) -> float:
+        return self._stream_timeout
+
+    def set_stream_timeout(self, _stream_timeout):
+        self._stream_timeout = _stream_timeout
+        return self

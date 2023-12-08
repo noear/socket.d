@@ -52,7 +52,7 @@ class Session(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def send_and_request(self, topic: str, content: Entity, timeout: int) -> Entity:
+    async def send_and_request(self, topic: str, content: Entity, timeout: int) -> Entity:
         pass
 
     @abc.abstractmethod

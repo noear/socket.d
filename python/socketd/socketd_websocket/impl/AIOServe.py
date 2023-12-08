@@ -1,5 +1,6 @@
 import asyncio
 import functools
+from concurrent.futures import Executor
 from types import TracebackType
 from typing import Callable, Union, Awaitable, Any, Optional, Sequence, Type, Generator
 from wsgiref.headers import Headers
@@ -31,8 +32,8 @@ class AIOServe(Serve):
             ] = None, open_timeout: Optional[float] = 10, ping_interval: Optional[float] = 20,
                  ping_timeout: Optional[float] = 20, close_timeout: Optional[float] = None,
                  max_size: Optional[int] = 2 ** 20, max_queue: Optional[int] = 2 ** 5, read_limit: int = 2 ** 16,
-                 write_limit: int = 2 ** 16, **kwargs: Any) -> None:
-
+                 write_limit: int = 2 ** 16, executor: Executor = None, **kwargs: Any) -> None:
+        _loop: Optional[asyncio.AbstractEventLoop] = asyncio.get_event_loop()
         super().__init__(ws_handler, host, port, create_protocol=create_protocol, logger=logger,
                          compression=compression, origins=origins, extensions=extensions, subprotocols=subprotocols,
                          extra_headers=extra_headers, server_header=server_header, process_request=process_request,
@@ -42,7 +43,6 @@ class AIOServe(Serve):
         legacy_recv: bool = kwargs.pop("legacy_recv", False)
 
         # Backwards compatibility: the loop parameter used to be supported.
-        _loop: Optional[asyncio.AbstractEventLoop] = asyncio.get_event_loop()
 
         ws_server = WebSocketServer(logger=logger)
 

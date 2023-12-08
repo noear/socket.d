@@ -66,7 +66,7 @@ class ClientChannel(ChannelBase, ABC):
         AssertsUtil.assert_closed(self.real)
         async with self:
             try:
-                self.prepare_send()
+                await self.prepare_send()
                 await self.real.send(frame, acceptor)
             except Exception as e:
                 if self.connector.autoReconnect():
@@ -89,9 +89,12 @@ class ClientChannel(ChannelBase, ABC):
         except Exception as e:
             logger.error(e)
 
-    def prepare_send(self):
+    async def prepare_send(self):
         if self.real is None or not self.real.is_valid():
-            self.real = self.connector.connect()
+            self.real = await self.connector.connect()
             return True
         else:
             return False
+
+    def get_real(self):
+        return self.real

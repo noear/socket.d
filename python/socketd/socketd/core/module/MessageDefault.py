@@ -6,7 +6,7 @@ from ..Costants import Constants, Flag
 class MessageDefault(Message):
     def __init__(self):
         self.sid = Constants.DEF_SID
-        self.topic = Constants.DEF_TOPIC
+        self.event = Constants.DEF_EVENT
         self.entity: Entity = None
         self.flag = Flag.Unknown
 
@@ -21,8 +21,8 @@ class MessageDefault(Message):
         self.sid = sid
         return self
 
-    def set_topic(self, topic):
-        self.topic = topic
+    def set_event(self, event):
+        self.event = event
         return self
 
     def set_entity(self, entity):
@@ -41,11 +41,11 @@ class MessageDefault(Message):
     def get_sid(self):
         return self.sid
 
-    def get_topic(self):
-        return self.topic
+    def get_event(self):
+        return self.event
 
     def get_entity(self):
         return self.entity
 
     def __str__(self):
-        return f"Message{{sid='{self.sid}', topic='{self.topic}', entity={self.entity}}}"
+        return f"Message{{sid='{self.sid}', event='{self.event}', entity={self.entity}}}"

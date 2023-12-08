@@ -3,22 +3,23 @@ import sys
 
 from loguru import logger
 
-from websockets.legacy.server import Serve
+from websockets.legacy.server import Serve, WebSocketServer
 from socketd.core.SocketD import SocketD
 from socketd.core.config.ServerConfig import ServerConfig
 
 from test.SimpleListenerTest import idGenerator, SimpleListenerTest
 
 logger.remove()
-logger.add(sys.stderr, level="ERROR")
+logger.add(sys.stderr, level="INFO")
 
 
-def main():
-    server = SocketD.create_server(ServerConfig("ws").setPort(7779))
-    server_session: Serve = server.config(idGenerator).listen(
+async def main():
+    server = SocketD.create_server(ServerConfig("ws").set_port(7779))
+    server_session: WebSocketServer = await server.config(idGenerator).listen(
         SimpleListenerTest()).start()
-    asyncio.get_event_loop().run_forever()
+    await asyncio.Future()
+    server_session.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

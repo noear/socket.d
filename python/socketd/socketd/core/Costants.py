@@ -49,6 +49,6 @@ class Flag(Enum):
 
 class Constants:
     DEF_SID = ""
-    DEF_TOPIC = ""
+    DEF_EVENT = ""
     DEF_META_STRING = ""
     DEF_DATA = BytesIO()

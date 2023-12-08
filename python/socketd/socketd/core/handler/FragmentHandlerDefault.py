@@ -25,7 +25,7 @@ class FragmentHandlerDefault(FragmentHandler):
         fragmentBytes = fragmentBuf.getbuffer()
         if len(fragmentBytes) == 0:
             return None
-        fragmentEntity = EntityDefault().data(fragmentBytes)
+        fragmentEntity = EntityDefault().set_data(fragmentBytes)
         if fragmentIndex == 1:
             fragmentEntity.metaMap(entity.get_meta_map())
         fragmentEntity.putMeta(EntityMetas.META_DATA_FRAGMENT_IDX, str(fragmentIndex))
@@ -84,6 +84,6 @@ class FragmentAggregator():
                      MessageDefault()
                      .set_flag(self.main.flag)
                      .set_sid(self.message.get_sid())
-                     .set_entity(EntityDefault().set_metaMap(self.main.get_message().get_entity().get_meta_map())
+                     .set_entity(EntityDefault().set_meta_map(self.main.get_message().get_entity().get_meta_map())
                                  .set_data(entityBytes))
                      )

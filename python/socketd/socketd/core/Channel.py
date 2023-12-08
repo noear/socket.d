@@ -1,6 +1,7 @@
 from typing import Any
 
 from socketd.core.async_api.AtomicRefer import AtomicRefer
+from .Costants import Function
 from .Session import Session
 from .config.Config import Config
 from .module.Frame import Frame
@@ -86,7 +87,7 @@ class Channel:
         pass
 
     @abstractmethod
-    def retrieve(self, frame: Frame) -> None:
+    def retrieve(self, frame: Frame, on_error: Function) -> None:
         pass
 
     @abstractmethod

@@ -7,7 +7,7 @@ from .module.Message import Message
 
 class Handshake:
     def __init__(self, message: Message):
-        self.uri = urlparse(message.get_topic())
+        self.uri = urlparse(message.get_event())
         self.entity = message.get_entity()
         self.version = self.entity.get_meta(EntityMetas.META_SOCKETD_VERSION)
         self.param_map = self._parse_query_string(self.uri.query)

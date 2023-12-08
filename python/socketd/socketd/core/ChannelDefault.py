@@ -1,5 +1,7 @@
+import asyncio
 from abc import ABC
 from typing import Dict, Union, Generator, TypeVar
+from loguru import logger
 
 from websockets import WebSocketCommonProtocol
 
@@ -12,8 +14,11 @@ from socketd.core.config.Config import Config
 from socketd.core.module.Frame import Frame
 from socketd.core.module.MessageDefault import MessageDefault
 from socketd.transport.ChannelAssistant import ChannelAssistant
+from socketd.transport.core.StreamAcceptorBase import StreamAcceptorBase
 
 S = TypeVar("S", bound=WebSocketCommonProtocol)
+
+_acceptorMap = {}
 
 
 class ChannelDefault(ChannelBase):
@@ -22,11 +27,13 @@ class ChannelDefault(ChannelBase):
         ChannelBase.__init__(self, config)
         self.source: WebSocketCommonProtocol = source
         self.assistant = assistant
-        self.acceptorMap = {}
+        self.acceptorMap: dict[str:StreamAcceptorBase] = dict()
         self.session: Session = None
+        self._lock = asyncio.Lock()
 
     def remove_acceptor(self, sid: str):
-        self.acceptorMap.pop(sid)
+        if sid in self.acceptorMap:
+            self.acceptorMap.pop(sid)
 
     def is_valid(self) -> bool:
         return self.assistant.is_valid(self.source)
@@ -37,44 +44,46 @@ class ChannelDefault(ChannelBase):
     def get_local_address(self) -> str:
         return self.assistant.get_local_address(self.source)
 
-    async def send(self, frame: Frame, acceptor: Function) -> None:
+    async def send(self, frame: Frame, acceptor: StreamAcceptorBase) -> None:
         AssertsUtil.assert_closed(self)
         if frame.get_message() is not None:
             message = frame.get_message()
+            async with self._lock:
+                if acceptor is not None:
+                    self.acceptorMap[message.get_sid()] = acceptor
+                    logger.debug("set={acceptor}", acceptor=message.get_sid())
 
-            if acceptor is not None:
-                self.acceptorMap[message.get_sid()] = acceptor
-
-            if message.get_entity() is not None:
-                if message.get_entity().get_data_size() > Config.MAX_SIZE_FRAGMENT:
-                    fragmentIndex = 0
-                    while True:
-                        fragmentIndex += 1
-                        fragmentEntity = self.get_config().get_fragment_handler().nextFragment(self.get_config(),
-                                                                                               fragmentIndex,
-                                                                                               message.get_entity())
-                        if fragmentEntity is not None:
-                            fragmentFrame = Frame(frame.get_flag(), MessageDefault()
-                                                  .flag(frame.get_flag())
-                                                  .sid(message.get_sid())
-                                                  .entity(fragmentEntity))
-                            await self.assistant.write(self.source, fragmentFrame)
-                        else:
-                            return
-                else:
-                    await self.assistant.write(self.source, frame)
-                    return
+                if message.get_entity() is not None:
+                    if message.get_entity().get_data_size() > Config.MAX_SIZE_FRAGMENT:
+                        fragmentIndex = 0
+                        while True:
+                            fragmentIndex += 1
+                            fragmentEntity = self.get_config().get_fragment_handler().nextFragment(self.get_config(),
+                                                                                                   fragmentIndex,
+                                                                                                   message.get_entity())
+                            if fragmentEntity is not None:
+                                fragmentFrame = Frame(frame.get_flag(), MessageDefault()
+                                                      .flag(frame.get_flag())
+                                                      .sid(message.get_sid())
+                                                      .entity(fragmentEntity))
+                                await self.assistant.write(self.source, fragmentFrame)
+                            else:
+                                return
+                    else:
+                        await self.assistant.write(self.source, frame)
+                        return
 
         await self.assistant.write(self.source, frame)
 
-    def retrieve(self, frame: Frame) -> None:
-        acceptor = self.acceptorMap.get(frame.get_message().get_sid())
+    def retrieve(self, frame: Frame, onError: Function) -> None:
+        logger.debug("get={acceptor}", acceptor=frame.get_message().get_sid())
+        acceptor: StreamAcceptorBase = self.acceptorMap.get(frame.get_message().get_sid())
 
         if acceptor is not None:
-            if acceptor.isSingle() or frame.get_flag() == Flag.ReplyEnd:
+            if acceptor.is_single() or frame.get_flag() == Flag.ReplyEnd:
                 self.acceptorMap.pop(frame.get_message().get_sid())
 
-            acceptor.accept(frame.get_message())
+            acceptor.accept(frame.get_message(), onError)
 
     def get_session(self) -> Session:
         if self.session is None:

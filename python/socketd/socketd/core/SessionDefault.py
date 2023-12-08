@@ -10,6 +10,8 @@ from .module.Message import Message
 from .module.Frame import Frame
 from .Costants import Flag, Function
 from .module.MessageDefault import MessageDefault
+from ..transport.core.CompletableFuture import CompletableFuture
+from ..transport.core.StreamAcceptorRequest import StreamAcceptorRequest
 
 
 class SessionDefault(SessionBase, ABC):
@@ -37,36 +39,49 @@ class SessionDefault(SessionBase, ABC):
         self.channel.send_ping()
 
     async def send(self, topic: str, content: Entity):
-        message = MessageDefault().set_sid(self.generate_id()).set_topic(topic).set_entity(content)
+        message = MessageDefault().set_sid(self.generate_id()).set_event(topic).set_entity(content)
         await self.channel.send(Frame(Flag.Message, message), None)
 
-    async def send_and_request(self, topic: str, content: Entity, timeout: int) -> Entity:
-        # todo 不可用
-        with self.channel.get_requests() as num:
-            if num > self.channel.get_config().get_max_requests():
-                raise Exception("Sending too many requests: " + str(num))
-            else:
-                await self.channel.get_requests().set(num + 1)
+    async def send_and_request(self, event: str, content: Entity, timeout: int) -> Entity:
 
-        message = MessageDefault().sid(self.generate_id()).topic(topic).entity(content)
-
+        # if timeout < 100:
+        #     timeout = self.channel.get_config().get_reply_timeout()
+        future: CompletableFuture[Entity] = CompletableFuture()
+        message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         try:
-           await self.channel.send(Frame(Flag.Request, message))
+            await self.channel.send(Frame(Flag.Request, message), StreamAcceptorRequest(future, timeout))
+            # await self.channel.real.source.on_message()
+            return await future.get(timeout)
+        except asyncio.TimeoutError as e:
+            if self.channel.is_valid():
+                raise Exception(f"Request reply timeout>{timeout} "
+                                f"sessionId={self.channel.get_session().get_session_id()} "
+                                f"event={event} sid={message.get_sid()}")
+            else:
+                raise Exception(f"This channel is closed sessionId={self.channel.get_session().get_session_id()} "
+                                f"event={event} sid={message.get_sid()}")
         except Exception as e:
-            raise Exception(e)
+            raise e
         finally:
-            self.channel.remove_acceptor(message.getSid())
-            # self.channel.get_requests().denominator()
+            self.channel.remove_acceptor(message.get_sid())
 
     async def send_and_subscribe(self, topic: str, content: Entity, consumer: Function):
-        message = MessageDefault().sid(self.generate_id()).topic(topic).entity(content)
+        message = MessageDefault().sid(self.generate_id()).event(topic).entity(content)
         await self.channel.send(Frame(Flag.Subscribe, message), None)
 
     async def reply(self, from_msg: Message, content: Entity):
-        await self.channel.send(Frame(Flag.Reply, MessageDefault().sid(from_msg.get_sid()).entity(content)), None)
+        await self.channel.send(Frame(Flag.Reply,
+                                      MessageDefault()
+                                      .set_sid(from_msg.get_sid())
+                                      .set_event(from_msg.get_event())
+                                      .set_entity(content)), None)
 
     async def reply_end(self, from_msg: Message, content: Entity):
-        await self.channel.send(Frame(Flag.ReplyEnd, MessageDefault().sid(from_msg.get_sid()).entity(content)), None)
+        await self.channel.send(Frame(Flag.ReplyEnd,
+                                      MessageDefault()
+                                      .set_sid(from_msg.get_sid())
+                                      .set_event(from_msg.get_event())
+                                      .set_entity(content)), None)
 
     async def close(self):
         await self.channel.send_close()

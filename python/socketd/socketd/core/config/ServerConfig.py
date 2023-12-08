@@ -4,45 +4,45 @@ from .ConfigBase import ConfigBase
 class ServerConfig(ConfigBase):
     def __init__(self, schema):
         super().__init__(False)
-        self.schema = schema
-        self.host = ""
-        self.port = 8602
-        self.readBufferSize = 512
-        self.writeBufferSize = 512
+        self.__schema = schema
+        self.__host = ""
+        self.__port = 8602
+        self.__read_buffer_size = 512
+        self.__write_buffer_size = 512
 
     def get_schema(self):
-        return self.schema
+        return self.__schema
 
-    def getHost(self):
-        return self.host
+    def get_host(self):
+        return self.__host
 
-    def setHost(self, host):
-        self.host = host
+    def set_host(self, host):
+        self.__host = host
 
-    def getPort(self):
-        return self.port
+    def get_port(self):
+        return self.__port
 
-    def setPort(self, port):
-        self.port = port
+    def set_port(self, port):
+        self.__port = port
         return self
 
-    def getLocalUrl(self):
-        if self.host:
-            return f"{self.schema}://{self.host}:{self.port}"
+    def get_local_url(self):
+        if self.__host:
+            return f"{self.__schema}://{self.__host}:{self.__port}"
         else:
-            return f"{self.schema}://127.0.0.1:{self.port}"
+            return f"{self.__schema}://127.0.0.1:{self.__port}"
 
-    def getReadBufferSize(self):
-        return self.readBufferSize
+    def get_read_buffer_size(self):
+        return self.__read_buffer_size
 
-    def setReadBufferSize(self, readBufferSize):
-        self.readBufferSize = readBufferSize
+    def set_read_buffer_size(self, _read_buffer_size):
+        self.__read_buffer_size = _read_buffer_size
 
-    def getWriteBufferSize(self):
-        return self.writeBufferSize
+    def get_write_buffer_size(self):
+        return self.__write_buffer_size
 
-    def setWriteBufferSize(self, writeBufferSize):
-        self.writeBufferSize = writeBufferSize
+    def set_write_buffer_size(self, _write_buffer_size):
+        self.__write_buffer_size = _write_buffer_size
 
     def __str__(self):
-        return f"ServerConfig{{schema='{self.schema}', host='{self.host}', port={self.port}, readBufferSize={self.readBufferSize}, writeBufferSize={self.writeBufferSize}}}"
+        return f"ServerConfig{{schema='{self.__schema}', host='{self.__host}', port={self.__port}, readBufferSize={self.__read_buffer_size}, writeBufferSize={self.__write_buffer_size}}}"

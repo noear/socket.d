@@ -9,6 +9,9 @@ class ChannelAssistant(ABC):
         pass
 
     @abstractmethod
+    def read(self, buffer: Any) -> Frame: ...
+
+    @abstractmethod
     def is_valid(self, target: Any) -> bool:
         pass
 

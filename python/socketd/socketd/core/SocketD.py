@@ -33,7 +33,7 @@ class SocketD:
 
     @staticmethod
     def create_server(server_config: ServerConfig) -> Server:
-        factory = SocketD.server_factory_map.get(server_config.schema)
+        factory = SocketD.server_factory_map.get(server_config.get_schema())
         if factory is None:
             raise RuntimeError("No ServerBroker providers were found.")
         return factory.create_server(server_config)
@@ -45,7 +45,7 @@ class SocketD:
             raise ValueError("Invalid server URL.")
 
         client_config = ClientConfig(server_url)
-        factory = SocketD.client_factory_map.get(client_config.schema)
+        factory = SocketD.client_factory_map.get(client_config.get_schema())
         if factory is None:
             raise RuntimeError("No ClientBroker providers were found.")
         return factory.create_client(client_config)

@@ -21,7 +21,7 @@ class Message(ABC):
         pass
 
     @abstractmethod
-    def get_topic(self) -> str:
+    def get_event(self) -> str:
         pass
 
     @abstractmethod

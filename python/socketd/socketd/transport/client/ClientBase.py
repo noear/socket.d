@@ -13,13 +13,13 @@ class ClientBase(Client, ABC):
         self._config: ClientConfig = client_config
         self._assistant = assistant
 
-    def assistant(self):
+    def get_assistant(self):
         return self._assistant
 
-    def heartbeatInterval(self):
+    def get_heartbeatInterval(self):
         return self._config.get_heartbeat_interval()
 
-    def processor(self):
+    def get_processor(self):
         return self._processor
 
     def heartbeatHandler(self, handler):

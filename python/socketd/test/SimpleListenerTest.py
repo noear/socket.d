@@ -4,7 +4,7 @@ from abc import ABC
 from socketd.core.Listener import Listener
 from socketd.core.module.Message import Message
 from socketd.core.module.StringEntity import StringEntity
-
+from loguru import logger
 
 class SimpleListenerTest(Listener, ABC):
 
@@ -12,12 +12,11 @@ class SimpleListenerTest(Listener, ABC):
         # print("open")
         pass
 
-    def on_message(self, session, message: Message):
+    async def on_message(self, session, message: Message):
         if message.is_request():
-            session.replyEnd(message, StringEntity("test"))
+            await session.reply_end(message, StringEntity("ok test"))
         elif message.is_subscribe():
-            session.replyEnd(message, StringEntity("test"))
-        # print("on_message")
+            await session.reply_end(message, StringEntity("ok test"))
 
     def on_close(self, session):
         pass

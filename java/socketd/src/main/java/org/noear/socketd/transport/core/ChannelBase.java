@@ -41,7 +41,11 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public void setAttachment(String name, Object val) {
-        attachments.put(name, val);
+        if (val == null) {
+            attachments.remove(name);
+        } else {
+            attachments.put(name, val);
+        }
     }
 
 

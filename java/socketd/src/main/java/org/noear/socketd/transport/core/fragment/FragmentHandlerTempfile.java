@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * 数据分片默认实现（可以重写，把大流先缓存到磁盘以节省内存）
+ * 数据分片监时文件实现
  *
  * @author noear
- * @since 2.0
+ * @since 2.1
  */
-public class FragmentHandlerDefault implements FragmentHandler {
+public class FragmentHandlerTempfile implements FragmentHandler {
     /**
      * 获取一个分片
      *
@@ -39,9 +39,9 @@ public class FragmentHandlerDefault implements FragmentHandler {
      */
     @Override
     public Frame aggrFragment(Channel channel, int index, MessageInternal message) throws IOException {
-        FragmentAggregatorDefault aggregator = channel.getAttachment(message.sid());
+        FragmentAggregatorTempfile aggregator = channel.getAttachment(message.sid());
         if (aggregator == null) {
-            aggregator = new FragmentAggregatorDefault(message);
+            aggregator = new FragmentAggregatorTempfile(message);
             channel.setAttachment(aggregator.getSid(), aggregator);
         }
 

@@ -1,17 +1,19 @@
 package org.noear.socketd.transport.core.fragment;
 
-import org.noear.socketd.transport.core.EntityMetas;
-import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.exception.SocketdCodecException;
+import org.noear.socketd.transport.core.EntityMetas;
+import org.noear.socketd.transport.core.FragmentAggregator;
+import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.MessageInternal;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.Utils;
+
+import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * 分片聚合器
@@ -19,17 +21,18 @@ import java.util.List;
  * @author noear
  * @since 2.0
  */
-public class FragmentAggregator {
+public class FragmentAggregatorTempfile implements FragmentAggregator {
     //主导消息
     private MessageInternal main;
-    //分片列表
-    private List<FragmentHolder> fragmentHolders = new ArrayList<>();
     //数据流大小
     private int dataStreamSize;
     //数据总长度
     private int dataLength;
+    //临时文件
+    private File tmpfile;
+    private FileChannel tmpfileChannel;
 
-    public FragmentAggregator(MessageInternal main) {
+    public FragmentAggregatorTempfile(MessageInternal main) throws IOException {
         this.main = main;
         String dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
 
@@ -38,6 +41,9 @@ public class FragmentAggregator {
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);
+
+        this.tmpfile = File.createTempFile(main.sid(), ".tmp");
+        this.tmpfileChannel = new RandomAccessFile(tmpfile, "rw").getChannel();
     }
 
     /**
@@ -65,26 +71,19 @@ public class FragmentAggregator {
      * 获取聚合后的帧
      */
     public Frame get() throws IOException {
-        //排序
-        fragmentHolders.sort(Comparator.comparing(fh -> fh.getIndex()));
+        try {
+            MappedByteBuffer dataBuffer = tmpfileChannel
+                    .map(FileChannel.MapMode.READ_ONLY, 0, dataLength);
 
-        //创建聚合流
-        ByteBuffer dataBuffer = ByteBuffer.allocate(dataLength);
-
-        //添加分片数据
-        for (FragmentHolder fh : fragmentHolders) {
-            dataBuffer.put(fh.getMessage().data().array());
+            //返回
+            return new Frame(main.flag(), new MessageDefault()
+                    .flag(main.flag())
+                    .sid(main.sid())
+                    .event(main.event())
+                    .entity(new EntityDefault().metaMap(main.metaMap()).data(dataBuffer)));
+        } finally {
+            tmpfileChannel.close();
         }
-
-        //索引番转
-        dataBuffer.flip();
-
-        //返回
-        return new Frame(main.flag(), new MessageDefault()
-                .flag(main.flag())
-                .sid(main.sid())
-                .event(main.event())
-                .entity(new EntityDefault().metaMap(main.metaMap()).data(dataBuffer)));
     }
 
     /**
@@ -92,7 +91,7 @@ public class FragmentAggregator {
      */
     public void add(int index, MessageInternal message) throws IOException {
         //添加分片
-        fragmentHolders.add(new FragmentHolder(index, message));
+        tmpfileChannel.write(message.data());
         //添加计数
         dataStreamSize = dataStreamSize + message.dataSize();
     }

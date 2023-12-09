@@ -84,8 +84,10 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
      * 配置
      */
     @Override
-    public Client config(ClientConfigHandler consumer) {
-        consumer.clientConfig(config);
+    public Client config(ClientConfigHandler configHandler) {
+        if (configHandler != null) {
+            configHandler.clientConfig(config);
+        }
         return this;
     }
 
@@ -94,7 +96,9 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
      */
     @Override
     public Client listen(Listener listener) {
-        processor.setListener(listener);
+        if (listener != null) {
+            processor.setListener(listener);
+        }
         return this;
     }
 

@@ -1,3 +1,6 @@
+### 2.1.8
+* 添加 分片处理临时方件方案实现（FragmentHandlerTempfile）
+
 ### 2.1.7
 * 开放 BrokerListener 的两私有函数级别
 

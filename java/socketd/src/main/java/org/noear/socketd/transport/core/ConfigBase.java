@@ -171,7 +171,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         }
 
         if (fragmentSize < Constants.MIN_FRAGMENT_SIZE) {
-            throw new IllegalArgumentException("The parameter fragmentSize cannot < 1m");
+            throw new IllegalArgumentException("The parameter fragmentSize cannot < 1k");
         }
 
         this.fragmentSize = fragmentSize;

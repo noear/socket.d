@@ -41,8 +41,10 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     /**
      * 配置
      */
-    public Server config(ServerConfigHandler consumer) {
-        consumer.serverConfig(config);
+    public Server config(ServerConfigHandler configHandler) {
+        if (configHandler != null) {
+            configHandler.serverConfig(config);
+        }
         return this;
     }
 
@@ -60,7 +62,9 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
      */
     @Override
     public Server listen(Listener listener) {
-        processor.setListener(listener);
+        if (listener != null) {
+            processor.setListener(listener);
+        }
         return this;
     }
 }

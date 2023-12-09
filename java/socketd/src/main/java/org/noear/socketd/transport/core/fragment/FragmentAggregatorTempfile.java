@@ -49,6 +49,7 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
     /**
      * 获取消息流Id（用于消息交互、分片）
      */
+    @Override
     public String getSid() {
         return main.sid();
     }
@@ -56,6 +57,7 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
     /**
      * 数据流大小
      */
+    @Override
     public int getDataStreamSize() {
         return dataStreamSize;
     }
@@ -63,18 +65,30 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
     /**
      * 数据总长度
      */
+    @Override
     public int getDataLength() {
         return dataLength;
     }
 
     /**
-     * 获取聚合后的帧
+     * 添加分片
      */
+    @Override
+    public void add(int index, MessageInternal message) throws IOException {
+        //添加分片
+        tmpfileChannel.write(message.data());
+        //添加计数
+        dataStreamSize = dataStreamSize + message.dataSize();
+    }
+
+    /**
+     * 获取聚合帧
+     */
+    @Override
     public Frame get() throws IOException {
         try {
             MappedByteBuffer dataBuffer = tmpfileChannel
                     .map(FileChannel.MapMode.READ_ONLY, 0, dataLength);
-
 
             //返回
             return new Frame(main.flag(), new MessageDefault()
@@ -85,15 +99,5 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
         } finally {
             tmpfileChannel.close();
         }
-    }
-
-    /**
-     * 添加帧
-     */
-    public void add(int index, MessageInternal message) throws IOException {
-        //添加分片
-        tmpfileChannel.write(message.data());
-        //添加计数
-        dataStreamSize = dataStreamSize + message.dataSize();
     }
 }

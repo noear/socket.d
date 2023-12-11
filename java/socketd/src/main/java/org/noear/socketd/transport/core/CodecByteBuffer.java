@@ -134,11 +134,12 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
                 }
             }
 
+            //先 data , 后 metaString (避免 data 时修改元信息)
             MessageDefault message = new MessageDefault()
                     .flag(Flags.of(flag))
                     .sid(sid)
                     .event(event)
-                    .entity(new EntityDefault().metaString(metaString).data(data));
+                    .entity(new EntityDefault().data(data).metaString(metaString));
 
             return new Frame(message.flag(), message);
         }

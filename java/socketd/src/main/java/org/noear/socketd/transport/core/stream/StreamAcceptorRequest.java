@@ -6,7 +6,6 @@ import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 /**
  * 请求流接收器
@@ -19,14 +18,13 @@ public class StreamAcceptorRequest extends StreamAcceptorBase {
     private final long timeout;
 
     public StreamAcceptorRequest(CompletableFuture<Entity> future, long timeout) {
-
         this.future = future;
         this.timeout = timeout;
     }
 
     /**
      * 是否单发接收
-     * */
+     */
     @Override
     public boolean isSingle() {
         return true;
@@ -34,7 +32,7 @@ public class StreamAcceptorRequest extends StreamAcceptorBase {
 
     /**
      * 是否结束接收
-     * */
+     */
     @Override
     public boolean isDone() {
         return future.isDone();
@@ -42,7 +40,7 @@ public class StreamAcceptorRequest extends StreamAcceptorBase {
 
     /**
      * 超时设定（单位：毫秒）
-     * */
+     */
     @Override
     public long timeout() {
         return timeout;
@@ -50,7 +48,7 @@ public class StreamAcceptorRequest extends StreamAcceptorBase {
 
     /**
      * 接收答复流
-     * */
+     */
     @Override
     public void accept(Message message, Channel channel) {
         future.complete(message);

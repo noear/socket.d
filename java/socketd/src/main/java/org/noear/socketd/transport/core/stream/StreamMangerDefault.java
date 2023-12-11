@@ -38,6 +38,7 @@ public class StreamMangerDefault implements StreamManger {
     public void addAcceptor(String sid, StreamAcceptorBase acceptor) {
         Asserts.assertNull("acceptor", acceptor);
         acceptorMap.put(sid, acceptor);
+
         //增加流超时处理（做为后备保险）
         long streamTimeout = acceptor.timeout() > 0 ? acceptor.timeout() : config.getStreamTimeout();
         if (streamTimeout > 0) {

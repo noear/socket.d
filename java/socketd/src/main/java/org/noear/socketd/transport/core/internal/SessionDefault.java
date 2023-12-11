@@ -160,7 +160,7 @@ public class SessionDefault extends SessionBase {
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
-            channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout + 1000));
+            channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout));
 
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
@@ -171,7 +171,7 @@ public class SessionDefault extends SessionBase {
                 hint.append(", sid=").append(message.sid());
 
                 if (channel.isValid()) {
-                    throw new SocketdTimeoutException("Request reply timeout>" + timeout + hint);
+                    throw new SocketdTimeoutException("Request reply timeout > " + timeout + hint);
                 } else {
                     throw new SocketdChannelException("This channel is closed" + hint);
                 }
@@ -192,11 +192,12 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
-        this.sendAndRequest(event, content, consumer , 0);
+        this.sendAndRequest(event, content, consumer, 0);
     }
 
     @Override
     public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+        //异步，用 streamTimeout
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
         CompletableFuture<Entity> future = new CompletableFuture<>();
         future.thenAccept((entity) -> {

@@ -39,8 +39,8 @@ public interface Session extends ClientSession, Closeable {
      * broker player name
      *
      * @since 2.1
-     * */
-    default String name(){
+     */
+    default String name() {
         return param("@");
     }
 
@@ -121,7 +121,7 @@ public interface Session extends ClientSession, Closeable {
 
     /**
      * 发送告警
-     * */
+     */
     void sendAlarm(Message from, String alarm) throws IOException;
 
     /**
@@ -164,7 +164,7 @@ public interface Session extends ClientSession, Closeable {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
-     * @param timeout 超时（毫秒）
+     * @param timeout  超时（毫秒）
      */
     void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
 
@@ -183,7 +183,7 @@ public interface Session extends ClientSession, Closeable {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
-     * @param timeout 超时（毫秒）
+     * @param timeout  超时（毫秒）
      */
     void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
 

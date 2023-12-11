@@ -31,7 +31,6 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
     private ChannelFuture server;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
-    private DefaultEventExecutorGroup defaultEventExecutorGroup;
     public TcpNioServer(ServerConfig config) {
         super(config, new TcpNioChannelAssistant());
     }
@@ -49,12 +48,11 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(2, new NamedThreadFactory("nettyServerBoss-"));
-        workGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("nettyServerWorker-"));
-        defaultEventExecutorGroup = new DefaultEventExecutorGroup(config().getMaxThreads(), new NamedThreadFactory("nettyServerEventThread-"));
+        bossGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("nettyServerBoss-"));
+        workGroup = new NioEventLoopGroup(config().getMaxThreads(), new NamedThreadFactory("nettyServerWork-"));
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
-            ChannelHandler channelHandler = new NettyChannelInitializer(config(), inboundHandler, defaultEventExecutorGroup);
+            ChannelHandler channelHandler = new NettyChannelInitializer(config(), inboundHandler);
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
@@ -105,9 +103,6 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
 
             if (workGroup != null) {
                 workGroup.shutdownGracefully();
-            }
-            if (defaultEventExecutorGroup != null) {
-                defaultEventExecutorGroup.shutdownGracefully();
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

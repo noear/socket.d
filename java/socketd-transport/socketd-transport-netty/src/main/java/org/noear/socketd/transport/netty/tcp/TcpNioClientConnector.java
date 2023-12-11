@@ -33,20 +33,18 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     private ChannelFuture real;
     private NioEventLoopGroup workerGroup;
-    private DefaultEventExecutorGroup defaultEventExecutorGroup;
     public TcpNioClientConnector(TcpNioClient client) {
         super(client);
     }
 
     @Override
     public ChannelInternal connect() throws IOException {
-        workerGroup = new NioEventLoopGroup(1, new NamedThreadFactory("nettyClientWorker-"));
-        defaultEventExecutorGroup = new DefaultEventExecutorGroup(client.config().getCoreThreads(), new NamedThreadFactory("nettyClientEventThread-"));
+        workerGroup = new NioEventLoopGroup(client.config().getCoreThreads(), new NamedThreadFactory("nettyClientWork-"));
         try {
             Bootstrap bootstrap = new Bootstrap();
 
             NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
-            ChannelHandler handler = new NettyChannelInitializer(client.config(), inboundHandler, defaultEventExecutorGroup);
+            ChannelHandler handler = new NettyChannelInitializer(client.config(), inboundHandler);
 
             real = bootstrap.group(workerGroup)
                     .channel(NioSocketChannel.class)
@@ -92,9 +90,6 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
             if (workerGroup != null) {
                 workerGroup.shutdownGracefully();
-            }
-            if (defaultEventExecutorGroup != null) {
-                defaultEventExecutorGroup.shutdownGracefully();
             }
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {

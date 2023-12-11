@@ -125,8 +125,18 @@ public class SessionWrapper implements Session {
     }
 
     @Override
+    public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+        real.sendAndRequest(event, content, consumer, timeout);
+    }
+
+    @Override
     public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         real.sendAndSubscribe(event, content, consumer);
+    }
+
+    @Override
+    public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+        real.sendAndSubscribe(event, content, consumer, timeout);
     }
 
     @Override

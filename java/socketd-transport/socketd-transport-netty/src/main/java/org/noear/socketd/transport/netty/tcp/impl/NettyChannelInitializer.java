@@ -7,8 +7,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.utils.NamedThreadFactory;
 
 import javax.net.ssl.SSLEngine;
 import java.util.concurrent.TimeUnit;
@@ -20,10 +22,12 @@ import java.util.concurrent.TimeUnit;
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final SimpleChannelInboundHandler<Frame> processor;
     private final Config config;
+    private final DefaultEventExecutorGroup defaultEventExecutorGroup;
 
-    public NettyChannelInitializer(Config config, SimpleChannelInboundHandler<Frame> processor) {
+    public NettyChannelInitializer(Config config, SimpleChannelInboundHandler<Frame> processor, DefaultEventExecutorGroup defaultEventExecutorGroup) {
         this.processor = processor;
         this.config = config;
+        this.defaultEventExecutorGroup = defaultEventExecutorGroup;
     }
 
     @Override
@@ -39,13 +43,15 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
             pipeline.addFirst(new SslHandler(engine));
         }
 
-        pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0));
-        pipeline.addLast(new NettyMessageEncoder(config));
-        pipeline.addLast(new NettyMessageDecoder(config));
+        pipeline.addLast(defaultEventExecutorGroup,
+                new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0),
+                new NettyMessageEncoder(config),
+                new NettyMessageDecoder(config));
         if (config.getIdleTimeout() > 0) {
-            pipeline.addLast(new IdleStateHandler(config.getIdleTimeout(), 0, 0, TimeUnit.MILLISECONDS));
-            pipeline.addLast(new IdleTimeoutHandler(config));
+            pipeline.addLast(defaultEventExecutorGroup,
+                    new IdleStateHandler(config.getIdleTimeout(), 0, 0, TimeUnit.MILLISECONDS),
+                    new IdleTimeoutHandler(config));
         }
-        pipeline.addLast(processor);
+        pipeline.addLast(defaultEventExecutorGroup, processor);
     }
 }

@@ -160,7 +160,7 @@ public class SessionDefault extends SessionBase {
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
-            channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout));
+            channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout + 1000));
 
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
@@ -192,6 +192,11 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+        this.sendAndRequest(event, content, consumer , 0);
+    }
+
+    @Override
+    public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
         CompletableFuture<Entity> future = new CompletableFuture<>();
         future.thenAccept((entity) -> {
@@ -201,7 +206,7 @@ public class SessionDefault extends SessionBase {
                 channel.onError(e);
             }
         });
-        channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, 0));
+        channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout));
     }
 
     /**
@@ -213,8 +218,13 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+        this.sendAndSubscribe(event, content, consumer, 0);
+    }
+
+    @Override
+    public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
-        channel.send(new Frame(Flags.Subscribe, message), new StreamAcceptorSubscribe(consumer));
+        channel.send(new Frame(Flags.Subscribe, message), new StreamAcceptorSubscribe(consumer, timeout));
     }
 
     /**

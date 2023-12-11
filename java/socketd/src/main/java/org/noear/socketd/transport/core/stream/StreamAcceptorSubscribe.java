@@ -14,9 +14,13 @@ import org.noear.socketd.utils.IoConsumer;
  */
 public class StreamAcceptorSubscribe extends StreamAcceptorBase {
     private final IoConsumer<Entity> future;
-
+    private final long timeout;
     public StreamAcceptorSubscribe(IoConsumer<Entity> future) {
+        this(future, 0);
+    }
+    public StreamAcceptorSubscribe(IoConsumer<Entity> future , long timeout) {
         this.future = future;
+        this.timeout = timeout;
     }
 
     /**
@@ -40,7 +44,7 @@ public class StreamAcceptorSubscribe extends StreamAcceptorBase {
      */
     @Override
     public long timeout() {
-        return 0;
+        return timeout;
     }
 
     /**

@@ -1,9 +1,6 @@
 package org.noear.socketd.transport.core.stream;
 
-import org.noear.socketd.transport.core.StreamAcceptor;
-import org.noear.socketd.transport.core.StreamAcceptorBase;
-import org.noear.socketd.transport.core.StreamManger;
-import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
@@ -39,13 +36,14 @@ public class StreamMangerDefault implements StreamManger {
      */
     @Override
     public void addAcceptor(String sid, StreamAcceptorBase acceptor) {
+        Asserts.assertNull("acceptor", acceptor);
         acceptorMap.put(sid, acceptor);
-
         //增加流超时处理（做为后备保险）
-        if (config.getStreamTimeout() > 0) {
+        long streamTimeout = acceptor.timeout() > 0 ? acceptor.timeout() : config.getStreamTimeout();
+        if (streamTimeout > 0) {
             acceptor.insuranceFuture = RunUtils.delay(() -> {
                 acceptorMap.remove(sid);
-            }, config.getStreamTimeout());
+            }, streamTimeout);
         }
     }
 

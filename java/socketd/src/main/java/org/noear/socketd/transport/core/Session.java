@@ -159,6 +159,16 @@ public interface Session extends ClientSession, Closeable {
     void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException;
 
     /**
+     * 发送并请求（限为一次答复；指定回调）
+     *
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     * @param timeout 超时（毫秒）
+     */
+    void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
+
+    /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
      * @param event    事件
@@ -166,6 +176,16 @@ public interface Session extends ClientSession, Closeable {
      * @param consumer 回调消费者
      */
     void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException;
+
+    /**
+     * 发送并订阅（答复结束之前，不限答复次数）
+     *
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     * @param timeout 超时（毫秒）
+     */
+    void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
 
     /**
      * 答复

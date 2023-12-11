@@ -2,10 +2,10 @@ package org.noear.socketd.transport.core.entity;
 
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.utils.Utils;
 
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,9 +140,6 @@ public class EntityDefault implements Entity {
     public EntityDefault data(byte[] data) {
         this.data = ByteBuffer.wrap(data);
         this.dataSize = data.length;
-        if (dataSize > Constants.MAX_SIZE_DATA) {
-            meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
-        }
         return this;
     }
 
@@ -154,9 +151,6 @@ public class EntityDefault implements Entity {
     public EntityDefault data(ByteBuffer data) {
         this.data = data;
         this.dataSize = data.limit();
-        if (dataSize > Constants.MAX_SIZE_DATA) {
-            meta(EntityMetas.META_DATA_LENGTH, String.valueOf(dataSize));
-        }
         return this;
     }
 
@@ -174,7 +168,7 @@ public class EntityDefault implements Entity {
     @Override
     public String dataAsString() {
         if (dataAsString == null) {
-            dataAsString = new String(data.array(), StandardCharsets.UTF_8);
+            dataAsString = new String(dataAsBytes(), StandardCharsets.UTF_8);
         }
 
         return dataAsString;
@@ -184,7 +178,15 @@ public class EntityDefault implements Entity {
 
     @Override
     public byte[] dataAsBytes() {
-        return data.array();
+        if (data instanceof MappedByteBuffer) {
+            byte[] tmp = new byte[dataSize];
+            data.mark();
+            data.get(tmp);
+            data.reset();
+            return tmp;
+        } else {
+            return data.array();
+        }
     }
 
     /**

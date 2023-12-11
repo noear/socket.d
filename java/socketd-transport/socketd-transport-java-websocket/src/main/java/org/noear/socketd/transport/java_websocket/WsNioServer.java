@@ -8,6 +8,7 @@ import org.noear.socketd.transport.java_websocket.impl.WebSocketServerImpl;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
             isStarted = true;
         }
 
-        if (config().getHost() != null) {
+        if (Utils.isEmpty(config().getHost())) {
             server = new WebSocketServerImpl(config().getPort(), this);
         } else {
             server = new WebSocketServerImpl(config().getHost(), config().getPort(), this);

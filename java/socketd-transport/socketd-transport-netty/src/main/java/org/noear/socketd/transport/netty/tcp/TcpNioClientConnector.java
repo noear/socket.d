@@ -40,8 +40,8 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        workerGroup = new NioEventLoopGroup(1, new NamedThreadFactory("NettyClientNIOWorker_"));
-        defaultEventExecutorGroup = new DefaultEventExecutorGroup(client.config().getCoreThreads(), new NamedThreadFactory("NettyClientEventThread_"));
+        workerGroup = new NioEventLoopGroup(1, new NamedThreadFactory("nettyClientWorker-"));
+        defaultEventExecutorGroup = new DefaultEventExecutorGroup(client.config().getCoreThreads(), new NamedThreadFactory("nettyClientEventThread-"));
         try {
             Bootstrap bootstrap = new Bootstrap();
 

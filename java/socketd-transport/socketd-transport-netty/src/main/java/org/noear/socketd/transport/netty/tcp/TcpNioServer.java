@@ -49,9 +49,9 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(2, new NamedThreadFactory("NettyNioBoss_"));
-        workGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("NettyServerNIOWorker_"));
-        defaultEventExecutorGroup = new DefaultEventExecutorGroup(config().getMaxThreads(), new NamedThreadFactory("NettyServerEventThread_"));
+        bossGroup = new NioEventLoopGroup(2, new NamedThreadFactory("nettyServerBoss-"));
+        workGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("nettyServerWorker-"));
+        defaultEventExecutorGroup = new DefaultEventExecutorGroup(config().getMaxThreads(), new NamedThreadFactory("nettyServerEventThread-"));
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
             ChannelHandler channelHandler = new NettyChannelInitializer(config(), inboundHandler, defaultEventExecutorGroup);

@@ -47,11 +47,13 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
                 new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0),
                 new NettyMessageEncoder(config),
                 new NettyMessageDecoder(config));
+
         if (config.getIdleTimeout() > 0) {
             pipeline.addLast(defaultEventExecutorGroup,
                     new IdleStateHandler(config.getIdleTimeout(), 0, 0, TimeUnit.MILLISECONDS),
                     new IdleTimeoutHandler(config));
         }
+
         pipeline.addLast(defaultEventExecutorGroup, processor);
     }
 }

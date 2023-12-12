@@ -61,6 +61,12 @@ public class TestCase28_timeout extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl).open();
         clientSession.send("/user/created", new StringEntity("hi"));
 
+        clientSession.sendAndRequest("/user/req", new StringEntity("hi"), (message -> {
+            ;
+        }), 100).thenError(e->{
+            clientTimeoutCounter.incrementAndGet();
+        });
+
         clientSession.sendAndSubscribe("/user/sub", new StringEntity("hi"), (message -> {
             ;
         }), 100).thenError(e->{
@@ -73,8 +79,8 @@ public class TestCase28_timeout extends BaseTestCase {
 
         System.out.println("counter: " + serverOnMessageCounter.get() + ", " + clientTimeoutCounter.get());
 
-        Assertions.assertEquals(serverOnMessageCounter.get(), 2, getSchema() + ":server 收的消息数量对不上");
-        Assertions.assertEquals(clientTimeoutCounter.get(), 1, getSchema() + ":client 超时数量对不上");
+        Assertions.assertEquals(serverOnMessageCounter.get(), 3, getSchema() + ":server 收的消息数量对不上");
+        Assertions.assertEquals(clientTimeoutCounter.get(), 2, getSchema() + ":client 超时数量对不上");
     }
 
     @Override

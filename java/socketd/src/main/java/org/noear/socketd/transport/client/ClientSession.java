@@ -59,7 +59,7 @@ public interface ClientSession extends Closeable {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
-     * @return 流接收器
+     * @return 流
      */
     default Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         return sendAndRequest(event, content, consumer, 0);
@@ -72,7 +72,7 @@ public interface ClientSession extends Closeable {
      * @param content  内容
      * @param consumer 回调消费者
      * @param timeout  超时（毫秒）
-     * @return 流接收器
+     * @return 流
      */
     Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
 
@@ -82,7 +82,7 @@ public interface ClientSession extends Closeable {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
-     * @return 流接收器
+     * @return 流
      */
     default Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         return sendAndSubscribe(event, content, consumer, 0);
@@ -95,7 +95,7 @@ public interface ClientSession extends Closeable {
      * @param content  内容
      * @param consumer 回调消费者
      * @param timeout  超时（毫秒）
-     * @return 流接收器
+     * @return 流
      */
     Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
 }

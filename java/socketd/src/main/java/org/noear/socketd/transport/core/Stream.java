@@ -15,12 +15,12 @@ public interface Stream {
     String sid();
 
     /**
-     * 是否单发接收
+     * 是否单收
      */
     boolean isSingle();
 
     /**
-     * 是否结束接收
+     * 是否完成
      */
     boolean isDone();
 

@@ -1,7 +1,6 @@
 import asyncio
 import logging
-import nest_asyncio
-from websockets.client import connect as Connect, WebSocketClientProtocol
+from websockets.client import  WebSocketClientProtocol
 
 from socketd.core.Channel import Channel
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
@@ -20,10 +19,10 @@ class WsAioClientConnector(ClientConnectorBase):
         # nest_asyncio.apply()
 
     async def connect(self) -> Channel:
-        logger.debug('Start connecting to: {}'.format(self.client.get_config().url))
+        logger.debug('Start connecting to: {}'.format(self.client.get_config().get_url()))
 
         # 处理自定义架构的影响
-        ws_url = self.client.get_config().url.replace('-python://', '://').replace("std:", "")
+        ws_url = self.client.get_config().get_url().replace('-python://', '://').replace("std:", "")
 
         # 支持 ssl
         if self.client.get_config().get_ssl_context() is not None:

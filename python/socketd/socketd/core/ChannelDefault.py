@@ -29,7 +29,6 @@ class ChannelDefault(ChannelBase):
         self.assistant = assistant
         self.acceptorMap: dict[str:StreamAcceptorBase] = dict()
         self.session: Session = None
-        self._lock = asyncio.Lock()
 
     def remove_acceptor(self, sid: str):
         if sid in self.acceptorMap:
@@ -48,7 +47,7 @@ class ChannelDefault(ChannelBase):
         AssertsUtil.assert_closed(self)
         if frame.get_message() is not None:
             message = frame.get_message()
-            async with self._lock:
+            with self:
                 if acceptor is not None:
                     self.acceptorMap[message.get_sid()] = acceptor
                     logger.debug("set={acceptor}", acceptor=message.get_sid())

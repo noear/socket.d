@@ -64,7 +64,7 @@ class ClientChannel(ChannelBase, ABC):
 
     async def send(self, frame, acceptor):
         AssertsUtil.assert_closed(self.real)
-        async with self:
+        with self:
             try:
                 await self.prepare_send()
                 await self.real.send(frame, acceptor)
@@ -74,8 +74,8 @@ class ClientChannel(ChannelBase, ABC):
                     self.real = None
                 raise e
 
-    def retrieve(self, frame):
-        self.real.retrieve(frame)
+    def retrieve(self, frame, on_error):
+        self.real.retrieve(frame, on_error)
 
     def get_session(self):
         return self.real.get_session()

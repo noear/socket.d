@@ -19,7 +19,7 @@ logger.add(sys.stderr, level="INFO")
 async def main():
     client_session: Session = await SocketD.create_client("ws://127.0.0.1:7779").config(idGenerator).open()
     start_time = time.monotonic()
-    for _ in range(10000):
+    for _ in range(100000):
         await client_session.send("demo", StringEntity("test"))
         # e = await client_session.send_and_request("demo", StringEntity("test"), 100)
         # logger.debug("send_and_request={e}", e=e)

@@ -44,13 +44,12 @@ class SessionDefault(SessionBase, ABC):
 
     async def send_and_request(self, event: str, content: Entity, timeout: int) -> Entity:
 
-        # if timeout < 100:
-        #     timeout = self.channel.get_config().get_reply_timeout()
+        if timeout < 100:
+            timeout = self.channel.get_config().get_reply_timeout()
         future: CompletableFuture[Entity] = CompletableFuture()
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         try:
             await self.channel.send(Frame(Flag.Request, message), StreamAcceptorRequest(future, timeout))
-            # await self.channel.real.source.on_message()
             return await future.get(timeout)
         except asyncio.TimeoutError as e:
             if self.channel.is_valid():

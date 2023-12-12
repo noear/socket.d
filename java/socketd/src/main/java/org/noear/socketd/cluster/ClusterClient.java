@@ -3,6 +3,7 @@ package org.noear.socketd.cluster;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.Client;
 import org.noear.socketd.transport.client.ClientConfigHandler;
+import org.noear.socketd.transport.client.ClientInternal;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.Utils;
@@ -10,6 +11,7 @@ import org.noear.socketd.utils.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 集群客户端
@@ -57,6 +59,7 @@ public class ClusterClient implements Client {
     @Override
     public ClientSession open() throws IOException {
         List<ClientSession> sessionList = new ArrayList<>();
+        ExecutorService channelExecutor = null;
 
         for (String urls : serverUrls) {
             for (String url : urls.split(",")) {
@@ -65,7 +68,7 @@ public class ClusterClient implements Client {
                     continue;
                 }
 
-                Client client = SocketD.createClient(url);
+                ClientInternal client = (ClientInternal) SocketD.createClient(url);
 
                 if (listener != null) {
                     client.listen(listener);
@@ -77,6 +80,13 @@ public class ClusterClient implements Client {
 
                 if (heartbeatHandler != null) {
                     client.heartbeatHandler(heartbeatHandler);
+                }
+
+                //复用通道执行器（省点线程数）
+                if (channelExecutor == null) {
+                    channelExecutor = client.config().getChannelExecutor();
+                } else {
+                    client.config().channelExecutor(channelExecutor);
                 }
 
                 sessionList.add(client.open());

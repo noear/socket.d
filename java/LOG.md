@@ -8,7 +8,7 @@
 
 
 ### 2.1.9
-* 调整 Broker 转发时，增加会话有效果检测
+* 调整 Broker 转发时，增加会话有效性检测
 
 ### 2.1.8
 * 添加 分片处理临时方件方案实现（FragmentHandlerTempfile）

@@ -18,13 +18,13 @@ public class RunUtils {
     private static ScheduledExecutorService scheduledExecutor;
 
     static {
-        int asyncPoolSize = Runtime.getRuntime().availableProcessors() * 2;
+        int asyncPoolSize = Math.max(Runtime.getRuntime().availableProcessors(), 2);
         asyncExecutor = new ThreadPoolExecutor(asyncPoolSize, asyncPoolSize,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 new NamedThreadFactory("Socketd-asyncExecutor-"));
 
-        int scheduledPoolSize = Runtime.getRuntime().availableProcessors() * 2;
+        int scheduledPoolSize = 2;
         scheduledExecutor = new ScheduledThreadPoolExecutor(scheduledPoolSize,
                 new NamedThreadFactory("Socketd-echeduledExecutor-"));
     }

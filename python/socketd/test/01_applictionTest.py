@@ -2,7 +2,7 @@ import asyncio
 import uuid
 import sys
 import time
-from websockets.legacy.server import Serve, WebSocketServer
+from websockets.legacy.server import WebSocketServer
 
 from socketd.core.Buffer import Buffer
 from socketd.core.Costants import Flag
@@ -14,8 +14,8 @@ from socketd.core.module.MessageDefault import MessageDefault
 from socketd.core.module.StringEntity import StringEntity
 from socketd.transport.CodecByteBuffer import CodecByteBuffer
 from socketd.transport.server.Server import Server
-from test.SimpleListenerTest import SimpleListenerTest
-from test.uitls import calc_time, calc_async_time
+from test.modelu.SimpleListenerTest import SimpleListenerTest
+from test.uitls import calc_async_time
 from loguru import logger
 
 
@@ -54,8 +54,10 @@ async def application_test():
         .config(idGenerator).open()
 
     start_time = time.monotonic()
-    for _ in range(100000):
+    for _ in range(100):
         await client_session.send("demo", StringEntity("test"))
+        await client_session.send_and_request("demo", StringEntity("test"), 100)
+        await client_session.send_and_subscribe("demo", StringEntity("test"), lambda e: print(e), 100)
     end_time = time.monotonic()
     logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
     await client_session.close()

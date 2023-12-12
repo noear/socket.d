@@ -95,3 +95,6 @@ class ChannelDefault(ChannelBase):
         await super().close()
         self.acceptorMap.clear()
         await self.assistant.close(self.source)
+
+    def on_error(self, error: Exception):
+        pass

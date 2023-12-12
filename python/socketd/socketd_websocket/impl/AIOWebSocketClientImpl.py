@@ -46,7 +46,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         async def _handler():
             while True:
                 await asyncio.sleep(0)
-                if self.closed:
+                if self.closed or self.status_state == Flag.Close:
                     break
                 if self.status_state != Flag.Unknown:
                     try:

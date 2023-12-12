@@ -6,7 +6,7 @@ from loguru import logger
 from socketd.core.Session import Session
 from socketd.core.SocketD import SocketD
 from socketd.core.module.StringEntity import StringEntity
-from test.SimpleListenerTest import idGenerator
+from test.modelu.SimpleListenerTest import idGenerator
 
 from uitls import calc_async_time
 

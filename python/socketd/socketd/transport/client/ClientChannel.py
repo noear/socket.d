@@ -98,3 +98,7 @@ class ClientChannel(ChannelBase, ABC):
 
     def get_real(self):
         return self.real
+
+    def on_error(self, error: Exception):
+        pass
+

@@ -1,6 +1,7 @@
 import asyncio
 
 from abc import ABC
+from typing import Callable, Awaitable, Any
 
 from .SessionBase import SessionBase
 from .Channel import Channel
@@ -32,9 +33,6 @@ class SessionDefault(SessionBase, ABC):
     def get_handshake(self) -> Handshake:
         return self.channel.get_handshake()
 
-    def send_and_request_with_timeout(self, topic: str, content: Entity, timeout: int) -> Entity:
-        pass
-
     def send_ping(self):
         self.channel.send_ping()
 
@@ -42,7 +40,8 @@ class SessionDefault(SessionBase, ABC):
         message = MessageDefault().set_sid(self.generate_id()).set_event(topic).set_entity(content)
         await self.channel.send(Frame(Flag.Message, message), None)
 
-    async def send_and_request(self, event: str, content: Entity, timeout: int) -> Entity:
+    async def send_and_request(self, event: str, content: Entity,
+                               timeout: int = 100) -> Entity:
 
         if timeout < 100:
             timeout = self.channel.get_config().get_reply_timeout()
@@ -64,9 +63,23 @@ class SessionDefault(SessionBase, ABC):
         finally:
             self.channel.remove_acceptor(message.get_sid())
 
-    async def send_and_subscribe(self, topic: str, content: Entity, consumer: Function):
-        message = MessageDefault().sid(self.generate_id()).event(topic).entity(content)
-        await self.channel.send(Frame(Flag.Subscribe, message), None)
+    async def send_stream_and_request(self, event: str, content: Entity, consumer: Callable[[Entity], Awaitable[Any]],
+                                      timeout: int):
+        message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
+        future: CompletableFuture[Entity] = CompletableFuture()
+        try:
+            consumer(content)
+        except Exception as e:
+            self.channel.on_error(e)
+        streamAcceptor = StreamAcceptorRequest(future, timeout)
+        await self.channel.send(Frame(Flag.Request, message), streamAcceptor)
+        return streamAcceptor
+
+    async def send_and_subscribe(self, event: str, content: Entity, consumer: Callable[[Entity], Any], timeout: int):
+        message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
+        streamAcceptor = StreamAcceptorRequest(consumer, timeout)
+        await self.channel.send(Frame(Flag.Subscribe, message), streamAcceptor)
+        return streamAcceptor
 
     async def reply(self, from_msg: Message, content: Entity):
         await self.channel.send(Frame(Flag.Reply,

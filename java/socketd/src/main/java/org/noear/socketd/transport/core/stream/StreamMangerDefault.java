@@ -56,7 +56,7 @@ public class StreamMangerDefault implements StreamManger {
      * @param sid 流Id
      */
     @Override
-    public StreamAcceptorInternal getAcceptor(String sid) {
+    public StreamAcceptor getAcceptor(String sid) {
         return acceptorMap.get(sid);
     }
 

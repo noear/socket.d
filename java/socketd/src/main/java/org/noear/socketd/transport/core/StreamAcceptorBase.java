@@ -9,7 +9,7 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.0
  */
-public abstract class StreamAcceptorBase implements StreamAcceptorInternal {
+public abstract class StreamAcceptorBase implements StreamAcceptor {
     public ScheduledFuture<?> insuranceFuture;
 
     private final String sid;
@@ -39,7 +39,7 @@ public abstract class StreamAcceptorBase implements StreamAcceptorInternal {
     }
 
     @Override
-    public StreamAcceptor thenError(Consumer<Throwable> onError) {
+    public Stream thenError(Consumer<Throwable> onError) {
         this.onError = onError;
         return this;
     }

@@ -120,22 +120,22 @@ public class SessionWrapper implements Session {
     }
 
     @Override
-    public StreamAcceptor sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+    public Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         return real.sendAndRequest(event, content, consumer);
     }
 
     @Override
-    public StreamAcceptor sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         return real.sendAndRequest(event, content, consumer, timeout);
     }
 
     @Override
-    public StreamAcceptor sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
         return real.sendAndSubscribe(event, content, consumer);
     }
 
     @Override
-    public StreamAcceptor sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         return real.sendAndSubscribe(event, content, consumer, timeout);
     }
 

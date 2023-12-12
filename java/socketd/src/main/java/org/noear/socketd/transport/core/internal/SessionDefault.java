@@ -193,7 +193,7 @@ public class SessionDefault extends SessionBase {
      * @param timeout 超时
      */
     @Override
-    public StreamAcceptor sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         //异步，用 streamTimeout
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
         CompletableFuture<Entity> future = new CompletableFuture<>();
@@ -218,7 +218,7 @@ public class SessionDefault extends SessionBase {
      * @param timeout 超时
      */
     @Override
-    public StreamAcceptor sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
         StreamAcceptorBase streamAcceptor = new StreamAcceptorSubscribe(message.sid(), timeout, consumer);
         channel.send(new Frame(Flags.Subscribe, message), streamAcceptor);

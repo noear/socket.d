@@ -1,36 +1,25 @@
 package org.noear.socketd.transport.core;
 
-import java.util.function.Consumer;
-
 /**
  * 流接收器
  *
  * @author noear
- * @since 2.1
+ * @since 2.0
  */
-public interface StreamAcceptor {
-    /**
-     * 流Id
-     */
-    String sid();
+public interface StreamAcceptor extends Stream {
 
     /**
-     * 是否单发接收
+     * 接收时
+     *
+     * @param message 消息
+     * @param channel 通道
      */
-    boolean isSingle();
+    void onAccept(Message message, Channel channel);
 
     /**
-     * 是否结束接收
+     * 异常时
+     *
+     * @param error 异常
      */
-    boolean isDone();
-
-    /**
-     * 超时设定（单位：毫秒）
-     */
-    long timeout();
-
-    /**
-     * 异常发生时
-     */
-    StreamAcceptor thenError(Consumer<Throwable> onError);
+    void onError(Throwable error);
 }

@@ -20,7 +20,7 @@ public interface StreamManger {
      *
      * @param sid 流Id
      */
-    StreamAcceptorInternal getAcceptor(String sid);
+    StreamAcceptor getAcceptor(String sid);
 
     /**
      * 移除流接收器

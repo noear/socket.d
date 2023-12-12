@@ -95,7 +95,7 @@ public class ProcessorDefault implements Processor {
                     case Flags.Alarm: {
                         //结束流，并异常通知
                         SocketdAlarmException exception = new SocketdAlarmException(frame.getMessage());
-                        StreamAcceptorInternal acceptor = channel.getConfig().getStreamManger().getAcceptor(frame.getMessage().sid());
+                        StreamAcceptor acceptor = channel.getConfig().getStreamManger().getAcceptor(frame.getMessage().sid());
                         if (acceptor == null) {
                             onError(channel, exception);
                         } else {

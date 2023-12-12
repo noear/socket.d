@@ -3,7 +3,7 @@ package org.noear.socketd.cluster;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.transport.core.StreamAcceptor;
+import org.noear.socketd.transport.core.Stream;
 import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.Utils;
@@ -145,7 +145,7 @@ public class ClusterClientSession implements ClientSession {
      * @param consumer 回调消费者
      * @param timeout  超时
      */
-    public StreamAcceptor sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content, consumer, timeout);
@@ -159,7 +159,7 @@ public class ClusterClientSession implements ClientSession {
      * @param consumer 回调消费者
      * @param timeout  超时
      */
-    public StreamAcceptor sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndSubscribe(event, content, consumer, timeout);

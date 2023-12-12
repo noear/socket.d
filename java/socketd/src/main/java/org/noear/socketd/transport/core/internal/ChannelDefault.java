@@ -133,7 +133,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void retrieve(Frame frame) {
-        StreamAcceptorInternal acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
+        StreamAcceptor acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
 
         if (acceptor != null) {
             if (acceptor.isSingle() || frame.getFlag() == Flags.ReplyEnd) {

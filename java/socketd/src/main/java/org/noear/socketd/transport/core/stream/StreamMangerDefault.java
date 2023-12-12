@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core.stream;
 
+import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.utils.RunUtils;
@@ -44,6 +45,7 @@ public class StreamMangerDefault implements StreamManger {
         if (streamTimeout > 0) {
             acceptor.insuranceFuture = RunUtils.delay(() -> {
                 acceptorMap.remove(sid);
+                acceptor.onError(new SocketdTimeoutException("The stream response timeout, sid=" + sid));
             }, streamTimeout);
         }
     }
@@ -54,7 +56,7 @@ public class StreamMangerDefault implements StreamManger {
      * @param sid 流Id
      */
     @Override
-    public StreamAcceptor getAcceptor(String sid) {
+    public StreamAcceptorInternal getAcceptor(String sid) {
         return acceptorMap.get(sid);
     }
 

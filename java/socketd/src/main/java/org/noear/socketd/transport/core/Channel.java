@@ -2,7 +2,6 @@ package org.noear.socketd.transport.core;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.function.Consumer;
 
 /**
  * 通道

@@ -160,7 +160,8 @@ public class SessionDefault extends SessionBase {
 
         try {
             CompletableFuture<Entity> future = new CompletableFuture<>();
-            channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout));
+            StreamAcceptorBase streamAcceptor = new StreamAcceptorRequest(message.sid(), timeout, future);
+            channel.send(new Frame(Flags.Request, message), streamAcceptor);
 
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
@@ -189,25 +190,23 @@ public class SessionDefault extends SessionBase {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
+     * @param timeout 超时
      */
     @Override
-    public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
-        this.sendAndRequest(event, content, consumer, 0);
-    }
-
-    @Override
-    public void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public StreamAcceptor sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         //异步，用 streamTimeout
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
         CompletableFuture<Entity> future = new CompletableFuture<>();
-        future.thenAccept((entity) -> {
+        future.thenAccept((r) -> {
             try {
-                consumer.accept(entity);
-            } catch (Throwable e) {
-                channel.onError(e);
+                consumer.accept(r);
+            } catch (Throwable eh) {
+                channel.onError(eh);
             }
         });
-        channel.send(new Frame(Flags.Request, message), new StreamAcceptorRequest(future, timeout));
+        StreamAcceptorBase streamAcceptor = new StreamAcceptorRequest(message.sid(), timeout, future);
+        channel.send(new Frame(Flags.Request, message), streamAcceptor);
+        return streamAcceptor;
     }
 
     /**
@@ -216,16 +215,14 @@ public class SessionDefault extends SessionBase {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
+     * @param timeout 超时
      */
     @Override
-    public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
-        this.sendAndSubscribe(event, content, consumer, 0);
-    }
-
-    @Override
-    public void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public StreamAcceptor sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
-        channel.send(new Frame(Flags.Subscribe, message), new StreamAcceptorSubscribe(consumer, timeout));
+        StreamAcceptorBase streamAcceptor = new StreamAcceptorSubscribe(message.sid(), timeout, consumer);
+        channel.send(new Frame(Flags.Subscribe, message), streamAcceptor);
+        return streamAcceptor;
     }
 
     /**

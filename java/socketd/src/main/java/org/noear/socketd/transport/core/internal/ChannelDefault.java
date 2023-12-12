@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.StreamAcceptorBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +133,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void retrieve(Frame frame) {
-        StreamAcceptor acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
+        StreamAcceptorInternal acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
 
         if (acceptor != null) {
             if (acceptor.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
@@ -142,11 +143,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
             if (acceptor.isSingle()) {
                 //单收时，内部已经是异步机制
-                acceptor.accept(frame.getMessage(), this);
+                acceptor.onAccept(frame.getMessage(), this);
             } else {
                 //改为异步处理，避免卡死Io线程
                 getConfig().getChannelExecutor().submit(() -> {
-                    acceptor.accept(frame.getMessage(), this);
+                    acceptor.onAccept(frame.getMessage(), this);
                 });
             }
         } else {

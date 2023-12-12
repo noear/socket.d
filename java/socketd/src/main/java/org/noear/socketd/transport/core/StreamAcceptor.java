@@ -4,29 +4,22 @@ package org.noear.socketd.transport.core;
  * 流接收器
  *
  * @author noear
- * @since 1.0
+ * @since 2.0
  */
-public interface StreamAcceptor {
-    /**
-     * 是否单发接收
-     */
-    boolean isSingle();
+public interface StreamAcceptor extends Stream {
 
     /**
-     * 是否结束接收
-     */
-    boolean isDone();
-
-    /**
-     * 超时设定（单位：毫秒）
-     */
-    long timeout();
-
-    /**
-     * 接收答复流
+     * 接收时
      *
      * @param message 消息
      * @param channel 通道
      */
-    void accept(Message message, Channel channel);
+    void onAccept(Message message, Channel channel);
+
+    /**
+     * 异常时
+     *
+     * @param error 异常
+     */
+    void onError(Throwable error);
 }

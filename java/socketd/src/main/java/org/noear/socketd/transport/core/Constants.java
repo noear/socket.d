@@ -65,5 +65,5 @@ public interface Constants {
     /**
      * 分片长度最小限制
      */
-    int MIN_FRAGMENT_SIZE = 1024 * 1024; //1m
+    int MIN_FRAGMENT_SIZE = 1024; //1k
 }

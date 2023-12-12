@@ -3,7 +3,6 @@ package org.noear.socketd.transport.core.internal;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EndEntity;
 
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -154,5 +153,10 @@ public class MessageDefault implements MessageInternal {
     @Override
     public int dataSize() {
         return entity.dataSize();
+    }
+
+    @Override
+    public void release() {
+        entity.release();
     }
 }

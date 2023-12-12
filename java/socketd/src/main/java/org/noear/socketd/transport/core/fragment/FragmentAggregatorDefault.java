@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.fragment;
 
 import org.noear.socketd.transport.core.EntityMetas;
+import org.noear.socketd.transport.core.FragmentAggregator;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.transport.core.MessageInternal;
@@ -19,7 +20,7 @@ import java.util.List;
  * @author noear
  * @since 2.0
  */
-public class FragmentAggregator {
+public class FragmentAggregatorDefault implements FragmentAggregator {
     //主导消息
     private MessageInternal main;
     //分片列表
@@ -29,7 +30,7 @@ public class FragmentAggregator {
     //数据总长度
     private int dataLength;
 
-    public FragmentAggregator(MessageInternal main) {
+    public FragmentAggregatorDefault(MessageInternal main) {
         this.main = main;
         String dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
 
@@ -43,6 +44,7 @@ public class FragmentAggregator {
     /**
      * 获取消息流Id（用于消息交互、分片）
      */
+    @Override
     public String getSid() {
         return main.sid();
     }
@@ -50,6 +52,7 @@ public class FragmentAggregator {
     /**
      * 数据流大小
      */
+    @Override
     public int getDataStreamSize() {
         return dataStreamSize;
     }
@@ -57,13 +60,26 @@ public class FragmentAggregator {
     /**
      * 数据总长度
      */
+    @Override
     public int getDataLength() {
         return dataLength;
     }
 
     /**
+     * 添加帧
+     */
+    @Override
+    public void add(int index, MessageInternal message) throws IOException {
+        //添加分片
+        fragmentHolders.add(new FragmentHolder(index, message));
+        //添加计数
+        dataStreamSize = dataStreamSize + message.dataSize();
+    }
+
+    /**
      * 获取聚合后的帧
      */
+    @Override
     public Frame get() throws IOException {
         //排序
         fragmentHolders.sort(Comparator.comparing(fh -> fh.getIndex()));
@@ -85,15 +101,5 @@ public class FragmentAggregator {
                 .sid(main.sid())
                 .event(main.event())
                 .entity(new EntityDefault().metaMap(main.metaMap()).data(dataBuffer)));
-    }
-
-    /**
-     * 添加帧
-     */
-    public void add(int index, MessageInternal message) throws IOException {
-        //添加分片
-        fragmentHolders.add(new FragmentHolder(index, message));
-        //添加计数
-        dataStreamSize = dataStreamSize + message.dataSize();
     }
 }

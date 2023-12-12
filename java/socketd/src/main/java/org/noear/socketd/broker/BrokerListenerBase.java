@@ -24,6 +24,20 @@ public class BrokerListenerBase {
     }
 
     /**
+     * 获取所有玩家数量
+     *
+     * @param name 名字
+     */
+    public int getPlayerNum(String name) {
+        Collection<Session> tmp = getPlayerAll(name);
+        if (tmp == null) {
+            return 0;
+        } else {
+            return tmp.size();
+        }
+    }
+
+    /**
      * 获取所有玩家会话
      *
      * @param name 名字

@@ -281,4 +281,46 @@ public class CaseTest {
             }
         }
     }
+
+    @Test
+    public void TestCase27_smallFile() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            if("sd:udp-java".equals(s1)){
+                continue;
+            }
+
+            BaseTestCase testCase = new TestCase27_smallFile(s1, 2700 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void TestCase28_timeout() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            if("sd:udp-java".equals(s1)){
+                continue;
+            }
+
+            BaseTestCase testCase = new TestCase28_timeout(s1, 2800 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
 }

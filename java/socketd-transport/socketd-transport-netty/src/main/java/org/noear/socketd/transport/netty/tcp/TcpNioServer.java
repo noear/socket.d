@@ -1,12 +1,10 @@
 package org.noear.socketd.transport.netty.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.ChannelSupporter;
@@ -15,6 +13,7 @@ import org.noear.socketd.transport.netty.tcp.impl.NettyServerInboundHandler;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.utils.NamedThreadFactory;
 import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
     private ChannelFuture server;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
-
     public TcpNioServer(ServerConfig config) {
         super(config, new TcpNioChannelAssistant());
     }
@@ -50,9 +48,8 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(config().getCoreThreads());
-        workGroup = new NioEventLoopGroup(config().getMaxThreads());
-
+        bossGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("nettyServerBoss-"));
+        workGroup = new NioEventLoopGroup(config().getMaxThreads(), new NamedThreadFactory("nettyServerWork-"));
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
             ChannelHandler channelHandler = new NettyChannelInitializer(config(), inboundHandler);
@@ -60,6 +57,10 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 1024)
+                    .option(ChannelOption.SO_REUSEADDR, true)
+                    .childOption(ChannelOption.SO_SNDBUF, config().getWriteBufferSize())
+                    .childOption(ChannelOption.SO_RCVBUF, config().getReadBufferSize())
                     .childHandler(channelHandler);
 
             if (Utils.isEmpty(config().getHost())) {

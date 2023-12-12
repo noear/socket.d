@@ -39,8 +39,8 @@ public interface Session extends ClientSession, Closeable {
      * broker player name
      *
      * @since 2.1
-     * */
-    default String name(){
+     */
+    default String name() {
         return param("@");
     }
 
@@ -121,7 +121,7 @@ public interface Session extends ClientSession, Closeable {
 
     /**
      * 发送告警
-     * */
+     */
     void sendAlarm(Message from, String alarm) throws IOException;
 
     /**
@@ -155,8 +155,22 @@ public interface Session extends ClientSession, Closeable {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
+     * @return 流
      */
-    void sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException;
+    default Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+        return sendAndRequest(event, content, consumer, 0);
+    }
+
+    /**
+     * 发送并请求（限为一次答复；指定回调）
+     *
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     * @param timeout  超时（毫秒）
+     * @return 流
+     */
+    Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
@@ -164,8 +178,22 @@ public interface Session extends ClientSession, Closeable {
      * @param event    事件
      * @param content  内容
      * @param consumer 回调消费者
+     * @return 流
      */
-    void sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException;
+    default Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer) throws IOException {
+        return sendAndSubscribe(event, content, consumer, 0);
+    }
+
+    /**
+     * 发送并订阅（答复结束之前，不限答复次数）
+     *
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     * @param timeout  超时（毫秒）
+     * @return 流
+     */
+    Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException;
 
     /**
      * 答复

@@ -15,6 +15,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     private final String schema;
 
     //连接地址
+    private final String linkUrl;
     private final String url;
     private final URI uri;
     private int port;
@@ -33,7 +34,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
         super(true);
 
         //支持 sd: 开头的架构
-        if(url.startsWith("sd:")){
+        if (url.startsWith("sd:")) {
             url = url.substring(3);
         }
 
@@ -41,6 +42,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
         this.uri = URI.create(url);
         this.port = uri.getPort();
         this.schema = uri.getScheme();
+        this.linkUrl = "sd:" + url;
 
         if (this.port < 0) {
             this.port = 8602;
@@ -73,6 +75,13 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
      */
     public URI getUri() {
         return uri;
+    }
+
+    /**
+     * 获取链接地址
+     */
+    public String getLinkUrl() {
+        return linkUrl;
     }
 
     /**

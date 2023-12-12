@@ -43,7 +43,7 @@
 	<img src="https://img.shields.io/badge/QQ交流群-870505482-orange"/></a>
 </p>
 
-##### Language: English | [中文](README_CN.md) 
+##### Language: English | [中文](README_CN.md)
 
 <hr />
 
@@ -58,7 +58,7 @@ One user said, "Socket.D is to Socket what Vue is to Js and Mvc is to Http."
 * Disconnection reconnection, automatic connection restoration
 * Multiplexing, allowing multiple request and response messages to run simultaneously on a single connection
 * Two-way communication, single link two-way listening and sending
-* Auto-split, data over 16Mb will be automatically split and reassemble (except udp)
+* Automatic sharding，Data over 16Mb (configurable) will be automatically split and reassembled (except udp)
 * Simple interface, reactive but with callback interface
 
 ### Simple comparison with other protocols

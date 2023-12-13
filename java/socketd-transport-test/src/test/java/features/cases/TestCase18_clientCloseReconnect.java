@@ -61,12 +61,13 @@ public class TestCase18_clientCloseReconnect extends BaseTestCase {
 
         clientSession.send("/demo", new StringEntity("hi"));
         clientSession.close();
+        Thread.sleep(100);
         clientSession.reconnect();
         clientSession.send("/demo", new StringEntity("hi"));
 
 
         //休息下（发完，那边还得收）
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 2, getSchema() + ":server 收的消息数量对不上");

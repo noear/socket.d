@@ -3,6 +3,7 @@ package org.noear.socketd.cluster;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.client.ClientSession;
+import org.noear.socketd.transport.core.Reply;
 import org.noear.socketd.transport.core.Stream;
 import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
@@ -118,7 +119,7 @@ public class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    public Entity sendAndRequest(String event, Entity content) throws IOException {
+    public Reply sendAndRequest(String event, Entity content) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content);
@@ -131,7 +132,7 @@ public class ClusterClientSession implements ClientSession {
      * @param content 内容
      * @param timeout 超时（毫秒）
      */
-    public Entity sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public Reply sendAndRequest(String event, Entity content, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content, timeout);
@@ -145,7 +146,7 @@ public class ClusterClientSession implements ClientSession {
      * @param consumer 回调消费者
      * @param timeout  超时
      */
-    public Stream sendAndRequest(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndRequest(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content, consumer, timeout);
@@ -159,7 +160,7 @@ public class ClusterClientSession implements ClientSession {
      * @param consumer 回调消费者
      * @param timeout  超时
      */
-    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Entity> consumer, long timeout) throws IOException {
+    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndSubscribe(event, content, consumer, timeout);

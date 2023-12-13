@@ -1,6 +1,7 @@
 
 ### 2.1.12
 * 添加 ClusterClient 通道线程池复用
+* 添加 Reply 接收到的答复实体（多了 isEnd 方法）
 * 减少 RunUtils 线程数使用
 
 ### 2.1.11

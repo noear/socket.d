@@ -10,9 +10,9 @@ import org.noear.socketd.utils.IoConsumer;
  * @since 2.0
  */
 public class StreamAcceptorSubscribe extends StreamAcceptorBase {
-    private final IoConsumer<Entity> future;
+    private final IoConsumer<Reply> future;
 
-    public StreamAcceptorSubscribe(String sid, long timeout, IoConsumer<Entity> future) {
+    public StreamAcceptorSubscribe(String sid, long timeout, IoConsumer<Reply> future) {
         super(sid, timeout);
         this.future = future;
     }
@@ -37,7 +37,7 @@ public class StreamAcceptorSubscribe extends StreamAcceptorBase {
      * 接收时
      */
     @Override
-    public void onAccept(Message message, Channel channel) {
+    public void onAccept(MessageInternal message, Channel channel) {
         try {
             future.accept(message);
         } catch (Throwable e) {

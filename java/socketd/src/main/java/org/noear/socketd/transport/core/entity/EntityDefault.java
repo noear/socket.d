@@ -71,7 +71,7 @@ public class EntityDefault implements Entity {
      */
     public EntityDefault metaMap(Map<String, String> metaMap) {
         this.metaMap().putAll(metaMap);
-        this.metaString = null;
+        this.metaString = null; //长期注留的话，可节省内存
         this.metaStringChanged = true;
         return this;
     }
@@ -107,7 +107,8 @@ public class EntityDefault implements Entity {
      */
     public EntityDefault meta(String name, String val) {
         metaMap().put(name, val);
-        metaStringChanged = true;
+        this.metaString = null; //长期注留的话，可节省内存
+        this.metaStringChanged = true;
         return this;
     }
 

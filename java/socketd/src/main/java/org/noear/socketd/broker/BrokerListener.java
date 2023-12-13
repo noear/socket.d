@@ -3,7 +3,6 @@ package org.noear.socketd.broker;
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.entity.EndEntity;
 import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +120,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         } else if (message.isSubscribe()) {
             responder.sendAndSubscribe(message.event(), message, reply -> {
                 if (requester.isValid()) {
-                    if (reply instanceof EndEntity) {
+                    if (reply.isEnd()) {
                         requester.replyEnd(message, reply);
                     } else {
                         requester.reply(message, reply);

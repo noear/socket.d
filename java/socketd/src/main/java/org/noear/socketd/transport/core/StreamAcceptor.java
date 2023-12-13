@@ -14,7 +14,7 @@ public interface StreamAcceptor extends Stream {
      * @param message 消息
      * @param channel 通道
      */
-    void onAccept(Message message, Channel channel);
+    void onAccept(MessageInternal message, Channel channel);
 
     /**
      * 异常时

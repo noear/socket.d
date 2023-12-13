@@ -57,10 +57,6 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 1024)
-                    .option(ChannelOption.SO_REUSEADDR, true)
-                    .childOption(ChannelOption.SO_SNDBUF, config().getWriteBufferSize())
-                    .childOption(ChannelOption.SO_RCVBUF, config().getReadBufferSize())
                     .childHandler(channelHandler);
 
             if (Utils.isEmpty(config().getHost())) {

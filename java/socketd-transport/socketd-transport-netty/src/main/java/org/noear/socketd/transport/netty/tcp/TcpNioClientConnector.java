@@ -49,8 +49,6 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             real = bootstrap.group(workerGroup)
                     .channel(NioSocketChannel.class)
                     .handler(handler)
-                    .option(ChannelOption.SO_SNDBUF, client.config().getWriteBufferSize())
-                    .option(ChannelOption.SO_RCVBUF, client.config().getReadBufferSize())
                     .connect(client.config().getHost(),
                             client.config().getPort())
                     .await();

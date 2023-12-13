@@ -9,6 +9,7 @@ from socketd.core.Costants import Flag
 from socketd.core.Session import Session
 from socketd.core.SocketD import SocketD
 from socketd.core.config.ServerConfig import ServerConfig
+from socketd.core.module.Entity import Entity
 from socketd.core.module.Frame import Frame
 from socketd.core.module.MessageDefault import MessageDefault
 from socketd.core.module.StringEntity import StringEntity
@@ -44,6 +45,10 @@ def idGenerator(config):
     return config.id_generator(uuid.uuid4)
 
 
+def send_and_subscribe_test(e: Entity):
+    print(e)
+
+
 @calc_async_time
 async def application_test():
     server: Server = SocketD.create_server(ServerConfig("ws").set_port(9999))
@@ -55,9 +60,9 @@ async def application_test():
 
     start_time = time.monotonic()
     for _ in range(100):
-        await client_session.send("demo", StringEntity("test"))
-        await client_session.send_and_request("demo", StringEntity("test"), 100)
-        await client_session.send_and_subscribe("demo", StringEntity("test"), lambda e: print(e), 100)
+        # await client_session.send("demo", StringEntity("test"))
+        # await client_session.send_and_request("demo", StringEntity("test"), 100)
+        await client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
     end_time = time.monotonic()
     logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
     await client_session.close()

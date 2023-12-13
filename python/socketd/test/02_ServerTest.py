@@ -9,8 +9,8 @@ from socketd.core.config.ServerConfig import ServerConfig
 
 from test.modelu.SimpleListenerTest import idGenerator, SimpleListenerTest
 
-logger.remove()
-logger.add(sys.stderr, level="INFO")
+# logger.remove()
+# logger.add(sys.stderr, level="INFO")
 
 
 async def main():

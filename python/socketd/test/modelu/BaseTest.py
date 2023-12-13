@@ -12,7 +12,7 @@ from test.modelu.SimpleListenerTest import SimpleListenerTest
 from test.uitls import calc_async_time
 
 
-class TestCase:
+class BaseTest:
 
     def __init__(self):
         self.__client_session: Session = None
@@ -59,3 +59,10 @@ class TestCase:
             await self.__client_session.send_and_subscribe("demo", StringEntity("test"), lambda e: print(e), 100)
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
+
+    async def close(self):
+        if self.__client_session:
+            await self.__client_session.close()
+        if self.__server_session:
+            self.__server_session.close()
+        await self.__server.stop()

@@ -18,8 +18,8 @@ public class BenchmarkTest {
             "sd:ws-java",
             "sd:udp-java"};
 
-    int count = 1000_000;
-    int timeout = 30;
+    int count = 100_000;
+    int timeout = 10;
 
     @Test
     public void testCase01() throws Exception {

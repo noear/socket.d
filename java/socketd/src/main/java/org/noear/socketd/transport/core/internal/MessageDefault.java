@@ -61,7 +61,7 @@ public class MessageDefault implements MessageInternal {
     }
 
     /**
-     * 是否最后的答复
+     * 是否答复结束
      * */
     @Override
     public boolean isEnd() {

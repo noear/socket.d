@@ -8,7 +8,7 @@ package org.noear.socketd.transport.core;
  */
 public interface Reply extends Entity {
     /**
-     * 是否最后的答复
+     * 是否答复结束
      */
     boolean isEnd();
 }

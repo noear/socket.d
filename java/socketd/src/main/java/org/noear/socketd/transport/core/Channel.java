@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 通道
@@ -125,4 +126,9 @@ public interface Channel {
      * 获取会话
      */
     Session getSession();
+
+    /**
+     * 打开前景
+     * */
+    CompletableFuture<Boolean> onOpenFuture();
 }

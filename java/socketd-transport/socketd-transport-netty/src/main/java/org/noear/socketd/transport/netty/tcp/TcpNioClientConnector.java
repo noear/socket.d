@@ -3,17 +3,14 @@ package org.noear.socketd.transport.netty.tcp;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyClientInboundHandler;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.utils.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,15 +53,15 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             //等待握手结果
             ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
-            if (handshakeResult.getException() != null) {
-                throw handshakeResult.getException();
+            if (handshakeResult.getThrowable() != null) {
+                throw handshakeResult.getThrowable();
             } else {
                 return handshakeResult.getChannel();
             }
         } catch (TimeoutException e) {
             close();
             throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             close();
 
             if (e instanceof IOException) {

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -189,6 +190,11 @@ public class ClientChannel extends ChannelBase implements Channel {
     @Override
     public Session getSession() {
         return real.getSession();
+    }
+
+    @Override
+    public CompletableFuture<Boolean> onOpenFuture() {
+        return real.onOpenFuture();
     }
 
 

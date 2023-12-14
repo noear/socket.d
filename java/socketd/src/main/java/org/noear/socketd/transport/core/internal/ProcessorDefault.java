@@ -48,12 +48,17 @@ public class ProcessorDefault implements Processor {
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
+            channel.onOpenFuture().whenComplete((r,e)->{
+                if (channel.isValid()) {
+                    //如果还有效，则发送链接确认
+                    try {
+                        channel.sendConnack(frame.getMessage()); //->Connack
+                    } catch (Throwable err) {
+                        onError(channel, err);
+                    }
+                }
+            });
             onOpen(channel);
-
-            if (channel.isValid()) {
-                //如果还有效，则发送链接确认
-                channel.sendConnack(frame.getMessage()); //->Connack
-            }
         } else if (frame.getFlag() == Flags.Connack) {
             //if client
             HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
@@ -160,7 +165,18 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onOpen(Channel channel) throws IOException {
-        listener.onOpen(channel.getSession());
+        channel.getConfig().getChannelExecutor().submit(() -> {
+            try {
+                listener.onOpen(channel.getSession());
+                channel.onOpenFuture().complete(true);
+            } catch (Throwable e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("{} channel listener onOpen error",
+                            channel.getConfig().getRoleName(), e);
+                }
+                channel.onOpenFuture().completeExceptionally(e);
+            }
+        });
     }
 
     /**

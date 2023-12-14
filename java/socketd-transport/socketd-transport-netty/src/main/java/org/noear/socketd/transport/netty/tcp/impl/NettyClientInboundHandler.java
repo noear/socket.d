@@ -49,12 +49,13 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
         ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
 
         try {
-            client.processor().onReceive(channel, frame);
-
             if (frame.getFlag() == Flags.Connack) {
-                //握手完成，通道可用了
-                handshakeFuture.complete(new ClientHandshakeResult(channel, null));
+                channel.onOpenFuture().whenComplete((r, e) -> {
+                    handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                });
             }
+
+            client.processor().onReceive(channel, frame);
         } catch (SocketdConnectionException e) {
             //说明握手失败了
             handshakeFuture.complete(new ClientHandshakeResult(channel, e));

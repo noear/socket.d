@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 通道默认实现（每个连接都会建立一个或多个通道）
@@ -27,6 +28,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final StreamManger acceptorManger;
     //会话（懒加载）
     private Session session;
+    //打开前景（用于构建 onOpen 异步处理）
+    private final CompletableFuture<Boolean> onOpenFuture = new CompletableFuture<>();
 
     public ChannelDefault(S source, ChannelSupporter<S> supporter) {
         super(supporter.config());
@@ -181,6 +184,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         return session;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> onOpenFuture() {
+        return onOpenFuture;
     }
 
     @Override

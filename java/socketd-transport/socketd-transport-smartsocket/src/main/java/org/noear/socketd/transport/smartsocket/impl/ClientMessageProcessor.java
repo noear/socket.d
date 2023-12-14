@@ -43,11 +43,13 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
         ChannelInternal channel = getChannel(s);
 
         try {
-            client.processor().onReceive(channel, frame);
-
             if (frame.getFlag() == Flags.Connack) {
-                handshakeFuture.complete(new ClientHandshakeResult(channel, null));
+                channel.onOpenFuture().whenComplete((r, e) -> {
+                    handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                });
             }
+
+            client.processor().onReceive(channel, frame);
         } catch (Exception e) {
             if (e instanceof SocketdConnectionException) {
                 //说明握手失败了

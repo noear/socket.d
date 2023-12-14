@@ -77,11 +77,17 @@ public class WebSocketClientImpl extends WebSocketClient {
             Frame frame = client.assistant().read(bytes);
 
             if (frame != null) {
-                client.processor().onReceive(channel, frame);
-
                 if (frame.getFlag() == Flags.Connack) {
-                    handshakeFuture.complete(new ClientHandshakeResult(channel, null));
+                    channel.onOpenFuture().whenComplete((r, e) -> {
+                        if (e == null) {
+                            handshakeFuture.complete(new ClientHandshakeResult(channel, null));
+                        } else {
+                            handshakeFuture.completeExceptionally(e);
+                        }
+                    });
                 }
+
+                client.processor().onReceive(channel, frame);
             }
         } catch (Exception e) {
             if (e instanceof SocketdConnectionException) {

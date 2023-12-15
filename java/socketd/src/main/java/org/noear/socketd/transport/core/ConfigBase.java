@@ -34,7 +34,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     //ssl 上下文
     private SSLContext sslContext;
     //通道执行器
-    private ExecutorService channelExecutor;
+    private volatile ExecutorService channelExecutor;
 
     //字符集
     protected Charset charset;

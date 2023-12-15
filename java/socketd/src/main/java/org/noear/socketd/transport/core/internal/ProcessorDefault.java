@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 处理器默认实现
@@ -49,6 +50,10 @@ public class ProcessorDefault implements Processor {
 
             //开始打开（可用于 url 签权）//禁止发消息
             channel.onOpenFuture().whenComplete((r,e)->{
+                if (Objects.nonNull(e)) {
+                    channel.close(Constants.CLOSE3_ERROR);
+                    return;
+                }
                 if (channel.isValid()) {
                     //如果还有效，则发送链接确认
                     try {
@@ -195,6 +200,7 @@ public class ProcessorDefault implements Processor {
                     log.warn("{} channel listener onMessage error",
                             channel.getConfig().getRoleName(), e);
                 }
+                onError(channel, e);
             }
         });
     }

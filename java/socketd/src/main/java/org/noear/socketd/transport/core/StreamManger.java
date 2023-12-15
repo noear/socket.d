@@ -8,24 +8,24 @@ package org.noear.socketd.transport.core;
  */
 public interface StreamManger {
     /**
-     * 添加流接收器
+     * 添加流
      *
      * @param sid      流Id
-     * @param acceptor 流接收器
+     * @param stream 流
      */
-    void addAcceptor(String sid, StreamAcceptorBase acceptor);
+    void addStream(String sid, StreamBase stream);
 
     /**
-     * 获取流接收器
+     * 获取流
      *
      * @param sid 流Id
      */
-    StreamAcceptor getAcceptor(String sid);
+    StreamInternal getStream(String sid);
 
     /**
-     * 移除流接收器
+     * 移除流
      *
      * @param sid 流Id
      */
-    void removeAcceptor(String sid);
+    void removeStream(String sid);
 }

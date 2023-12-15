@@ -4,8 +4,8 @@ import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.stream.StreamAcceptorRequest;
-import org.noear.socketd.transport.core.stream.StreamAcceptorSubscribe;
+import org.noear.socketd.transport.core.stream.StreamRequest;
+import org.noear.socketd.transport.core.stream.StreamSubscribe;
 import org.noear.socketd.utils.IoConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,8 +149,8 @@ public class SessionDefault extends SessionBase {
 
         try {
             CompletableFuture<Reply> future = new CompletableFuture<>();
-            StreamAcceptorBase streamAcceptor = new StreamAcceptorRequest(message.sid(), timeout, future);
-            channel.send(new Frame(Flags.Request, message), streamAcceptor);
+            StreamBase stream = new StreamRequest(message.sid(), timeout, future);
+            channel.send(new Frame(Flags.Request, message), stream);
 
             try {
                 return future.get(timeout, TimeUnit.MILLISECONDS);
@@ -169,7 +169,7 @@ public class SessionDefault extends SessionBase {
                 throw new SocketdException(e);
             }
         } finally {
-            channel.getConfig().getStreamManger().removeAcceptor(message.sid());
+            channel.getConfig().getStreamManger().removeStream(message.sid());
         }
     }
 
@@ -193,9 +193,9 @@ public class SessionDefault extends SessionBase {
                 channel.onError(eh);
             }
         });
-        StreamAcceptorBase streamAcceptor = new StreamAcceptorRequest(message.sid(), timeout, future);
-        channel.send(new Frame(Flags.Request, message), streamAcceptor);
-        return streamAcceptor;
+        StreamBase stream = new StreamRequest(message.sid(), timeout, future);
+        channel.send(new Frame(Flags.Request, message), stream);
+        return stream;
     }
 
     /**
@@ -209,9 +209,9 @@ public class SessionDefault extends SessionBase {
     @Override
     public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
         MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
-        StreamAcceptorBase streamAcceptor = new StreamAcceptorSubscribe(message.sid(), timeout, consumer);
-        channel.send(new Frame(Flags.Subscribe, message), streamAcceptor);
-        return streamAcceptor;
+        StreamBase stream = new StreamSubscribe(message.sid(), timeout, consumer);
+        channel.send(new Frame(Flags.Subscribe, message), stream);
+        return stream;
     }
 
     /**

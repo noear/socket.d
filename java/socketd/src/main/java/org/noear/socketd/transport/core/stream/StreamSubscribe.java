@@ -4,15 +4,15 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.IoConsumer;
 
 /**
- * 订阅流接收器
+ * 订阅流
  *
  * @author noear
  * @since 2.0
  */
-public class StreamAcceptorSubscribe extends StreamAcceptorBase {
+public class StreamSubscribe extends StreamBase {
     private final IoConsumer<Reply> future;
 
-    public StreamAcceptorSubscribe(String sid, long timeout, IoConsumer<Reply> future) {
+    public StreamSubscribe(String sid, long timeout, IoConsumer<Reply> future) {
         super(sid, timeout);
         this.future = future;
     }
@@ -37,9 +37,9 @@ public class StreamAcceptorSubscribe extends StreamAcceptorBase {
      * 接收时
      */
     @Override
-    public void onAccept(MessageInternal message, Channel channel) {
+    public void onAccept(MessageInternal reply, Channel channel) {
         try {
-            future.accept(message);
+            future.accept(reply);
         } catch (Throwable e) {
             channel.onError(e);
         }

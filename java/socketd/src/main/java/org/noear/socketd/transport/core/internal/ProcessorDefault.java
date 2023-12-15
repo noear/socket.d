@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * 处理器默认实现
@@ -49,17 +48,23 @@ public class ProcessorDefault implements Processor {
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
-            channel.onOpenFuture().whenComplete((r,e)->{
-                if (Objects.nonNull(e)) {
-                    channel.close(Constants.CLOSE3_ERROR);
-                    return;
-                }
-                if (channel.isValid()) {
-                    //如果还有效，则发送链接确认
-                    try {
-                        channel.sendConnack(frame.getMessage()); //->Connack
-                    } catch (Throwable err) {
-                        onError(channel, err);
+            channel.onOpenFuture().whenComplete((r,e)-> {
+                if (e == null) {
+                    //如果无异常
+                    if (channel.isValid()) {
+                        //如果还有效，则发送链接确认
+                        try {
+                            channel.sendConnack(frame.getMessage()); //->Connack
+                        } catch (Throwable err) {
+                            onError(channel, err);
+                        }
+                    }
+                } else {
+                    //如果有异常
+                    if (channel.isValid()) {
+                        //如果还有效，则关闭通道
+                        channel.close(Constants.CLOSE3_ERROR);
+                        onCloseInternal(channel);
                     }
                 }
             });

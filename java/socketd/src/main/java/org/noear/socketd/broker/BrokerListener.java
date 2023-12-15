@@ -3,7 +3,6 @@ package org.noear.socketd.broker;
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,9 +78,14 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         Collection<Session> playerAll = getPlayerAll(name);
         if (playerAll != null && playerAll.size() > 0) {
             for (Session responder : new ArrayList<>(playerAll)) {
-                if (responder != requester && responder.isValid()) {
-                    //转发消息（过滤自己）
-                    forwardToSession(requester, message, responder);
+                //转发消息（过滤自己）
+                if (responder != requester) {
+                    if (responder.isValid()) {
+                        forwardToSession(requester, message, responder);
+                    } else {
+                        //如果无效，做关闭处理
+                        onClose(responder);
+                    }
                 }
             }
 

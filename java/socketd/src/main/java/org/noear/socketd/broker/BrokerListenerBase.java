@@ -62,7 +62,7 @@ public abstract class BrokerListenerBase implements Listener {
 
         if (session != null) {
             if (session.isValid() == false) {
-                //如果有异外情况，产生了无效的会话则移除 //只尝试一次（避免浪费）
+                //如果无效，做关闭处理 //只试一次（避免性能浪费）
                 onClose(session);
                 session = getPlayerOneDo(name);
             }
@@ -72,7 +72,7 @@ public abstract class BrokerListenerBase implements Listener {
     }
 
     private Session getPlayerOneDo(String name) {
-        Set<Session> tmp = playerSessions.get(name);
+        Collection<Session> tmp = getPlayerAll(name);
         if (tmp == null || tmp.size() == 0) {
             return null;
         }
@@ -116,7 +116,7 @@ public abstract class BrokerListenerBase implements Listener {
     public void removePlayer(String name, Session session) {
         //注销玩家会话
         if (Utils.isNotEmpty(name)) {
-            Set<Session> sessions = playerSessions.get(name);
+            Collection<Session> sessions = getPlayerAll(name);
             if (sessions != null) {
                 sessions.remove(session);
             }

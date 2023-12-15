@@ -23,25 +23,13 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
     @Override
     public void onOpen(Session session) throws IOException {
         String name = session.name();
-
-        if (Utils.isNotEmpty(name)) {
-            //注册玩家会话
-            addPlayer(name, session);
-        } else {
-            //否则算游客（别人只能被动回它消息）
-        }
+        addPlayer(name, session);
     }
 
     @Override
     public void onClose(Session session) {
         String name = session.name();
-
-        if (Utils.isNotEmpty(name)) {
-            //注销玩家会话
-            removePlayer(name, session);
-        } else {
-            //否则算游客（别人只能被动回它消息）
-        }
+        removePlayer(name, session);
     }
 
     @Override
@@ -91,7 +79,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         Collection<Session> playerAll = getPlayerAll(name);
         if (playerAll != null && playerAll.size() > 0) {
             for (Session responder : new ArrayList<>(playerAll)) {
-                if (responder != requester) {
+                if (responder != requester && responder.isValid()) {
                     //转发消息（过滤自己）
                     forwardToSession(requester, message, responder);
                 }

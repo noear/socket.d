@@ -70,15 +70,15 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             //等待握手结果
             ClientHandshakeResult handshakeResult = messageProcessor.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
-            if (handshakeResult.getException() != null) {
-                throw handshakeResult.getException();
+            if (handshakeResult.getThrowable() != null) {
+                throw handshakeResult.getThrowable();
             } else {
                 return handshakeResult.getChannel();
             }
         } catch (TimeoutException e) {
             close();
             throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             close();
 
             if (e instanceof IOException) {

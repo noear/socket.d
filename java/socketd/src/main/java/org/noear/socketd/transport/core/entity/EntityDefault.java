@@ -71,7 +71,6 @@ public class EntityDefault implements Entity {
      */
     public EntityDefault metaMap(Map<String, String> metaMap) {
         this.metaMap().putAll(metaMap);
-        this.metaString = null;
         this.metaStringChanged = true;
         return this;
     }
@@ -107,7 +106,7 @@ public class EntityDefault implements Entity {
      */
     public EntityDefault meta(String name, String val) {
         metaMap().put(name, val);
-        metaStringChanged = true;
+        this.metaStringChanged = true;
         return this;
     }
 

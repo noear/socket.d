@@ -1,20 +1,20 @@
 package org.noear.socketd.transport.core;
 
 /**
- * 流接收器
+ * 流内部接口
  *
  * @author noear
  * @since 2.0
  */
-public interface StreamAcceptor extends Stream {
+public interface StreamInternal extends Stream {
 
     /**
      * 接收时
      *
-     * @param message 消息
+     * @param reply   答复
      * @param channel 通道
      */
-    void onAccept(Message message, Channel channel);
+    void onAccept(MessageInternal reply, Channel channel);
 
     /**
      * 异常时

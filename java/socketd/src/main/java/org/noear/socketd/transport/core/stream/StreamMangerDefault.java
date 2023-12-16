@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 流管理器
  *
  * @author noear
- * @since 1.0
+ * @since 2.0
  */
 public class StreamMangerDefault implements StreamManger {
     private static Logger log = LoggerFactory.getLogger(ChannelDefault.class);
@@ -22,30 +22,30 @@ public class StreamMangerDefault implements StreamManger {
     //配置
     private final Config config;
     //流接收器字典（管理）
-    private final Map<String, StreamAcceptorBase> acceptorMap;
+    private final Map<String, StreamBase> streamMap;
 
     public StreamMangerDefault(Config config) {
-        this.acceptorMap = new ConcurrentHashMap<>();
+        this.streamMap = new ConcurrentHashMap<>();
         this.config = config;
     }
 
     /**
      * 添加流接收器
      *
-     * @param sid      流Id
-     * @param acceptor 流接收器
+     * @param sid    流Id
+     * @param stream 流
      */
     @Override
-    public void addAcceptor(String sid, StreamAcceptorBase acceptor) {
-        Asserts.assertNull("acceptor", acceptor);
-        acceptorMap.put(sid, acceptor);
+    public void addStream(String sid, StreamBase stream) {
+        Asserts.assertNull("stream", stream);
+        streamMap.put(sid, stream);
 
         //增加流超时处理（做为后备保险）
-        long streamTimeout = acceptor.timeout() > 0 ? acceptor.timeout() : config.getStreamTimeout();
+        long streamTimeout = stream.timeout() > 0 ? stream.timeout() : config.getStreamTimeout();
         if (streamTimeout > 0) {
-            acceptor.insuranceFuture = RunUtils.delay(() -> {
-                acceptorMap.remove(sid);
-                acceptor.onError(new SocketdTimeoutException("The stream response timeout, sid=" + sid));
+            stream.insuranceFuture = RunUtils.delay(() -> {
+                streamMap.remove(sid);
+                stream.onError(new SocketdTimeoutException("The stream response timeout, sid=" + sid));
             }, streamTimeout);
         }
     }
@@ -56,8 +56,8 @@ public class StreamMangerDefault implements StreamManger {
      * @param sid 流Id
      */
     @Override
-    public StreamAcceptor getAcceptor(String sid) {
-        return acceptorMap.get(sid);
+    public StreamInternal getStream(String sid) {
+        return streamMap.get(sid);
     }
 
     /**
@@ -66,16 +66,16 @@ public class StreamMangerDefault implements StreamManger {
      * @param sid 流Id
      */
     @Override
-    public void removeAcceptor(String sid) {
-        StreamAcceptorBase acceptor = acceptorMap.remove(sid);
+    public void removeStream(String sid) {
+        StreamBase stream = streamMap.remove(sid);
 
-        if (acceptor != null) {
-            if (acceptor.insuranceFuture != null) {
-                acceptor.insuranceFuture.cancel(false);
+        if (stream != null) {
+            if (stream.insuranceFuture != null) {
+                stream.insuranceFuture.cancel(false);
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("{} acceptor removed, sid={}", config.getRoleName(), sid);
+                log.debug("{} stream removed, sid={}", config.getRoleName(), sid);
             }
         }
     }

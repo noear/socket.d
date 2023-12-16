@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 通道
@@ -32,7 +33,7 @@ public interface Channel {
 
     /**
      * 关闭（1协议关，2用户关）
-     * */
+     */
     void close(int code);
 
     /**
@@ -93,16 +94,16 @@ public interface Channel {
 
     /**
      * 发送告警
-     * */
+     */
     void sendAlarm(Message from, String alarm) throws IOException;
 
     /**
      * 发送
      *
-     * @param frame    帧
-     * @param acceptor 流接收器（没有则为 null）
+     * @param frame  帧
+     * @param stream 流（没有则为 null）
      */
-    void send(Frame frame, StreamAcceptorBase acceptor) throws IOException;
+    void send(Frame frame, StreamBase stream) throws IOException;
 
     /**
      * 接收（接收答复帧）
@@ -118,11 +119,16 @@ public interface Channel {
 
     /**
      * 出错时
-     * */
+     */
     void onError(Throwable error);
 
     /**
      * 获取会话
      */
     Session getSession();
+
+    /**
+     * 打开前景
+     */
+    CompletableFuture<Boolean> onOpenFuture();
 }

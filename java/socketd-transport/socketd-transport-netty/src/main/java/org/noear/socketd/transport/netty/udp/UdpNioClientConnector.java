@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.udp.impl.NettyClientInboundHandler;
 import org.noear.socketd.transport.client.ClientConnectorBase;
@@ -50,10 +51,18 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
                             client.config().getPort())
                     .await();
 
-            return inboundHandler.getChannel().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+
+            //等待握手结果
+            ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+
+            if (handshakeResult.getThrowable() != null) {
+                throw handshakeResult.getThrowable();
+            } else {
+                return handshakeResult.getChannel();
+            }
         } catch (TimeoutException e) {
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getLinkUrl());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             eventLoopGroup.shutdownGracefully();
 
             if (e instanceof IOException) {

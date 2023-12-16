@@ -10,18 +10,18 @@ import org.noear.socketd.transport.core.ChannelInternal;
  */
 public class ClientHandshakeResult {
     private final ChannelInternal channel;
-    private final Exception exception;
+    private final Throwable throwable;
 
     public ChannelInternal getChannel() {
         return channel;
     }
 
-    public Exception getException() {
-        return exception;
+    public Throwable getThrowable() {
+        return throwable;
     }
 
-    public ClientHandshakeResult(ChannelInternal channel, Exception exception) {
+    public ClientHandshakeResult(ChannelInternal channel, Throwable throwable) {
         this.channel = channel;
-        this.exception = exception;
+        this.throwable = throwable;
     }
 }

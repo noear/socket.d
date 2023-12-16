@@ -1,3 +1,13 @@
+### 2.1.14
+* 优化 BrokerListener 对无效会话的过滤
+
+### 2.1.13
+* 优化 onOpen 监听改造为异步模式（可以在 onOpen 时执行发送并等待）
+
+### 2.1.12
+* 添加 ClusterClient 通道线程池复用
+* 添加 Reply 接收到的答复实体（多了 isEnd 方法）
+* 减少 RunUtils 线程数使用
 
 ### 2.1.11
 * 添加 异步发送时错误接收机制
@@ -6,9 +16,8 @@
 * 修复 小文件上传时出现 MappedByteBuffer:array 异常
 * 优化 分片触发条件
 
-
 ### 2.1.9
-* 调整 Broker 转发时，增加会话有效果检测
+* 调整 Broker 转发时，增加会话有效性检测
 
 ### 2.1.8
 * 添加 分片处理临时方件方案实现（FragmentHandlerTempfile）

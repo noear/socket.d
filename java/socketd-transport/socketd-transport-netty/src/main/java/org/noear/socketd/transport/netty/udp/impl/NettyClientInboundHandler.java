@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.AttributeKey;
+import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -20,15 +21,15 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Datag
     private static AttributeKey<ChannelInternal> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
 
     private final UdpNioClient client;
-    private final CompletableFuture<ChannelInternal> channelFuture = new CompletableFuture<>();
+    private final CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
     private ChannelInternal channel;
 
     public NettyClientInboundHandler(UdpNioClient client) {
         this.client = client;
     }
 
-    public CompletableFuture<ChannelInternal> getChannel() {
-        return channelFuture;
+    public CompletableFuture<ClientHandshakeResult> getHandshakeFuture() {
+        return handshakeFuture;
     }
 
     @Override
@@ -49,12 +50,13 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Datag
         Frame frame = client.assistant().read(packet.content());
 
         if (frame != null) {
-            client.processor().onReceive(channel, frame);
-
             if (frame.getFlag() == Flags.Connack) {
-                //握手完成，通道可用了
-                channelFuture.complete(channel);
+                channel.onOpenFuture().whenComplete((r, e) -> {
+                    handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                });
             }
+
+            client.processor().onReceive(channel, frame);
         }
     }
 

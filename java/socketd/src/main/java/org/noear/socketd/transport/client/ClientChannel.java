@@ -4,13 +4,14 @@ import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.internal.HeartbeatHandlerDefault;
-import org.noear.socketd.transport.core.StreamAcceptorBase;
+import org.noear.socketd.transport.core.StreamBase;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -151,17 +152,17 @@ public class ClientChannel extends ChannelBase implements Channel {
     /**
      * 发送
      *
-     * @param frame    帧
-     * @param acceptor 流接收器（没有则为 null）
+     * @param frame  帧
+     * @param stream 流（没有则为 null）
      */
     @Override
-    public void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
+    public void send(Frame frame, StreamBase stream) throws IOException {
         Asserts.assertClosedByUser(real);
 
         try {
             prepareCheck();
 
-            real.send(frame, acceptor);
+            real.send(frame, stream);
         } catch (SocketdException e) {
             throw e;
         } catch (Throwable e) {
@@ -189,6 +190,11 @@ public class ClientChannel extends ChannelBase implements Channel {
     @Override
     public Session getSession() {
         return real.getSession();
+    }
+
+    @Override
+    public CompletableFuture<Boolean> onOpenFuture() {
+        return real.onOpenFuture();
     }
 
 

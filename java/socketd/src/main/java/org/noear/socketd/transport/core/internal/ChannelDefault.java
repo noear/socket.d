@@ -1,12 +1,13 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.StreamAcceptorBase;
+import org.noear.socketd.transport.core.StreamBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 通道默认实现（每个连接都会建立一个或多个通道）
@@ -24,16 +25,18 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     //助理
     private final ChannelAssistant<S> assistant;
     //流管理器
-    private final StreamManger acceptorManger;
+    private final StreamManger streamManger;
     //会话（懒加载）
     private Session session;
+    //打开前景（用于构建 onOpen 异步处理）
+    private final CompletableFuture<Boolean> onOpenFuture = new CompletableFuture<>();
 
     public ChannelDefault(S source, ChannelSupporter<S> supporter) {
         super(supporter.config());
         this.source = source;
         this.processor = supporter.processor();
         this.assistant = supporter.assistant();
-        this.acceptorManger = supporter.config().getStreamManger();
+        this.streamManger = supporter.config().getStreamManger();
     }
 
     /**
@@ -66,7 +69,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * 发送
      */
     @Override
-    public void send(Frame frame, StreamAcceptorBase acceptor) throws IOException {
+    public void send(Frame frame, StreamBase stream) throws IOException {
         Asserts.assertClosed(this);
 
         if (log.isDebugEnabled()) {
@@ -82,8 +85,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 MessageInternal message = frame.getMessage();
 
                 //注册流接收器
-                if (acceptor != null) {
-                    acceptorManger.addAcceptor(message.sid(), acceptor);
+                if (stream != null) {
+                    streamManger.addStream(message.sid(), stream);
                 }
 
                 //如果有实体（尝试分片）
@@ -133,26 +136,26 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void retrieve(Frame frame) {
-        StreamAcceptor acceptor = acceptorManger.getAcceptor(frame.getMessage().sid());
+        final StreamInternal stream = streamManger.getStream(frame.getMessage().sid());
 
-        if (acceptor != null) {
-            if (acceptor.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
+        if (stream != null) {
+            if (stream.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
-                acceptorManger.removeAcceptor(frame.getMessage().sid());
+                streamManger.removeStream(frame.getMessage().sid());
             }
 
-            if (acceptor.isSingle()) {
+            if (stream.isSingle()) {
                 //单收时，内部已经是异步机制
-                acceptor.onAccept(frame.getMessage(), this);
+                stream.onAccept(frame.getMessage(), this);
             } else {
                 //改为异步处理，避免卡死Io线程
                 getConfig().getChannelExecutor().submit(() -> {
-                    acceptor.onAccept(frame.getMessage(), this);
+                    stream.onAccept(frame.getMessage(), this);
                 });
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("{} acceptor not found, sid={}, sessionId={}",
+                log.debug("{} stream not found, sid={}, sessionId={}",
                         getConfig().getRoleName(), frame.getMessage().sid(), getSession().sessionId());
             }
         }
@@ -181,6 +184,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         return session;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> onOpenFuture() {
+        return onOpenFuture;
     }
 
     @Override

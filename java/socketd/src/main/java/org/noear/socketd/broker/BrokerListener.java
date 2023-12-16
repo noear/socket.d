@@ -3,8 +3,6 @@ package org.noear.socketd.broker;
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.entity.EndEntity;
-import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,25 +22,13 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
     @Override
     public void onOpen(Session session) throws IOException {
         String name = session.name();
-
-        if (Utils.isNotEmpty(name)) {
-            //注册玩家会话
-            addPlayer(name, session);
-        } else {
-            //否则算游客（别人只能被动回它消息）
-        }
+        addPlayer(name, session);
     }
 
     @Override
     public void onClose(Session session) {
         String name = session.name();
-
-        if (Utils.isNotEmpty(name)) {
-            //注销玩家会话
-            removePlayer(name, session);
-        } else {
-            //否则算游客（别人只能被动回它消息）
-        }
+        removePlayer(name, session);
     }
 
     @Override
@@ -92,9 +78,14 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         Collection<Session> playerAll = getPlayerAll(name);
         if (playerAll != null && playerAll.size() > 0) {
             for (Session responder : new ArrayList<>(playerAll)) {
+                //转发消息（过滤自己）
                 if (responder != requester) {
-                    //转发消息（过滤自己）
-                    forwardToSession(requester, message, responder);
+                    if (responder.isValid()) {
+                        forwardToSession(requester, message, responder);
+                    } else {
+                        //如果无效，做关闭处理
+                        onClose(responder);
+                    }
                 }
             }
 
@@ -121,7 +112,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
         } else if (message.isSubscribe()) {
             responder.sendAndSubscribe(message.event(), message, reply -> {
                 if (requester.isValid()) {
-                    if (reply instanceof EndEntity) {
+                    if (reply.isEnd()) {
                         requester.replyEnd(message, reply);
                     } else {
                         requester.reply(message, reply);

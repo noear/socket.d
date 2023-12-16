@@ -48,12 +48,27 @@ public class ProcessorDefault implements Processor {
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
+            channel.onOpenFuture().whenComplete((r,e)-> {
+                if (e == null) {
+                    //如果无异常
+                    if (channel.isValid()) {
+                        //如果还有效，则发送链接确认
+                        try {
+                            channel.sendConnack(frame.getMessage()); //->Connack
+                        } catch (Throwable err) {
+                            onError(channel, err);
+                        }
+                    }
+                } else {
+                    //如果有异常
+                    if (channel.isValid()) {
+                        //如果还有效，则关闭通道
+                        channel.close(Constants.CLOSE3_ERROR);
+                        onCloseInternal(channel);
+                    }
+                }
+            });
             onOpen(channel);
-
-            if (channel.isValid()) {
-                //如果还有效，则发送链接确认
-                channel.sendConnack(frame.getMessage()); //->Connack
-            }
         } else if (frame.getFlag() == Flags.Connack) {
             //if client
             HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
@@ -95,12 +110,12 @@ public class ProcessorDefault implements Processor {
                     case Flags.Alarm: {
                         //结束流，并异常通知
                         SocketdAlarmException exception = new SocketdAlarmException(frame.getMessage());
-                        StreamAcceptor acceptor = channel.getConfig().getStreamManger().getAcceptor(frame.getMessage().sid());
-                        if (acceptor == null) {
+                        StreamInternal stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
+                        if (stream == null) {
                             onError(channel, exception);
                         } else {
-                            channel.getConfig().getStreamManger().removeAcceptor(frame.getMessage().sid());
-                            acceptor.onError(exception);
+                            channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
+                            stream.onError(exception);
                         }
                         break;
                     }
@@ -160,7 +175,18 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onOpen(Channel channel) throws IOException {
-        listener.onOpen(channel.getSession());
+        channel.getConfig().getChannelExecutor().submit(() -> {
+            try {
+                listener.onOpen(channel.getSession());
+                channel.onOpenFuture().complete(true);
+            } catch (Throwable e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("{} channel listener onOpen error",
+                            channel.getConfig().getRoleName(), e);
+                }
+                channel.onOpenFuture().completeExceptionally(e);
+            }
+        });
     }
 
     /**
@@ -179,6 +205,7 @@ public class ProcessorDefault implements Processor {
                     log.warn("{} channel listener onMessage error",
                             channel.getConfig().getRoleName(), e);
                 }
+                onError(channel, e);
             }
         });
     }

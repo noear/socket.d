@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public abstract class ClientBase<T extends ChannelAssistant> implements Client {
+public abstract class ClientBase<T extends ChannelAssistant> implements ClientInternal {
     private static final Logger log = LoggerFactory.getLogger(ClientBase.class);
 
     //协议处理器
@@ -42,6 +42,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
     /**
      * 获取心跳处理
      */
+    @Override
     public HeartbeatHandler heartbeatHandler() {
         return heartbeatHandler;
     }
@@ -49,6 +50,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
     /**
      * 获取心跳间隔（毫秒）
      */
+    @Override
     public long heartbeatInterval() {
         return config.getHeartbeatInterval();
     }
@@ -57,6 +59,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
     /**
      * 获取配置
      */
+    @Override
     public ClientConfig config() {
         return config;
     }
@@ -64,6 +67,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements Client {
     /**
      * 获取处理器
      */
+    @Override
     public Processor processor() {
         return processor;
     }

@@ -9,10 +9,11 @@ from .Handshake import Handshake
 from .module.Entity import Entity
 from .module.Message import Message
 from .module.Frame import Frame
-from .Costants import Flag, Function
+from .Costants import Flag
 from .module.MessageDefault import MessageDefault
 from ..transport.core.CompletableFuture import CompletableFuture
-from ..transport.core.StreamAcceptorRequest import StreamAcceptorRequest
+from ..transport.core.StreamRequest import StreamRequest
+from ..transport.core.StreamSubscribe import StreamSubscribe
 
 
 class SessionDefault(SessionBase, ABC):
@@ -48,7 +49,8 @@ class SessionDefault(SessionBase, ABC):
         future: CompletableFuture[Entity] = CompletableFuture()
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         try:
-            await self.channel.send(Frame(Flag.Request, message), StreamAcceptorRequest(future, timeout))
+            await self.channel.send(Frame(Flag.Request, message),
+                                    StreamRequest(message.get_sid(), timeout, future))
             return await future.get(timeout)
         except asyncio.TimeoutError as e:
             if self.channel.is_valid():
@@ -71,13 +73,13 @@ class SessionDefault(SessionBase, ABC):
             consumer(content)
         except Exception as e:
             self.channel.on_error(e)
-        streamAcceptor = StreamAcceptorRequest(future, timeout)
+        streamAcceptor = StreamRequest(message.get_sid(), timeout, future)
         await self.channel.send(Frame(Flag.Request, message), streamAcceptor)
         return streamAcceptor
 
     async def send_and_subscribe(self, event: str, content: Entity, consumer: Callable[[Entity], Any], timeout: int):
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
-        streamAcceptor = StreamAcceptorRequest(consumer, timeout)
+        streamAcceptor = StreamSubscribe(message.get_sid(), timeout, consumer)
         await self.channel.send(Frame(Flag.Subscribe, message), streamAcceptor)
         return streamAcceptor
 

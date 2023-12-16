@@ -22,7 +22,7 @@ class WsAioClientConnector(ClientConnectorBase):
         logger.debug('Start connecting to: {}'.format(self.client.get_config().get_url()))
 
         # 处理自定义架构的影响
-        ws_url = self.client.get_config().get_url().replace('-python://', '://').replace("std:", "")
+        ws_url = self.client.get_config().get_url().replace("std:", "")
 
         # 支持 ssl
         if self.client.get_config().get_ssl_context() is not None:
@@ -32,8 +32,6 @@ class WsAioClientConnector(ClientConnectorBase):
                                    create_protocol=AIOWebSocketClientImpl)
             self.real: AIOWebSocketClientImpl | WebSocketClientProtocol = con
             return self.real.get_channel()
-        except RuntimeError as e:
-            raise e
         except Exception as e:
             raise e
 

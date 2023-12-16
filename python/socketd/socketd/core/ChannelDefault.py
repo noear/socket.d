@@ -14,7 +14,7 @@ from socketd.core.config.Config import Config
 from socketd.core.module.Frame import Frame
 from socketd.core.module.MessageDefault import MessageDefault
 from socketd.transport.ChannelAssistant import ChannelAssistant
-from socketd.transport.core.StreamAcceptorBase import StreamAcceptorBase
+from socketd.transport.core.StreamBase import StreamBase
 
 S = TypeVar("S", bound=WebSocketCommonProtocol)
 
@@ -27,7 +27,7 @@ class ChannelDefault(ChannelBase):
         ChannelBase.__init__(self, config)
         self.source: WebSocketCommonProtocol = source
         self.assistant = assistant
-        self.acceptorMap: dict[str:StreamAcceptorBase] = dict()
+        self.acceptorMap: dict[str:StreamBase] = dict()
         self.session: Session = None
 
     def remove_acceptor(self, sid: str):
@@ -43,15 +43,13 @@ class ChannelDefault(ChannelBase):
     def get_local_address(self) -> str:
         return self.assistant.get_local_address(self.source)
 
-    async def send(self, frame: Frame, acceptor: StreamAcceptorBase) -> None:
+    async def send(self, frame: Frame, acceptor: StreamBase) -> None:
         AssertsUtil.assert_closed(self)
         if frame.get_message() is not None:
             message = frame.get_message()
             with self:
                 if acceptor is not None:
                     self.acceptorMap[message.get_sid()] = acceptor
-                    logger.debug("set={acceptor}", acceptor=message.get_sid())
-
                 if message.get_entity() is not None:
                     if message.get_entity().get_data_size() > Config.MAX_SIZE_FRAGMENT:
                         fragmentIndex = 0
@@ -74,15 +72,17 @@ class ChannelDefault(ChannelBase):
 
         await self.assistant.write(self.source, frame)
 
-    def retrieve(self, frame: Frame, onError: Function) -> None:
-        logger.debug("get={acceptor}", acceptor=frame.get_message().get_sid())
-        acceptor: StreamAcceptorBase = self.acceptorMap.get(frame.get_message().get_sid())
+    async def retrieve(self, frame: Frame, onError: Function) -> None:
+        acceptor: StreamBase = self.acceptorMap.get(frame.get_message().get_sid())
 
         if acceptor is not None:
             if acceptor.is_single() or frame.get_flag() == Flag.ReplyEnd:
                 self.acceptorMap.pop(frame.get_message().get_sid())
+            await asyncio.get_event_loop().run_in_executor(self.get_config().get_executor(),
+                                                     lambda _m: acceptor.on_accept(_m, onError), frame.get_message())
+        else:
+            logger.debug(f"{self.get_config().getRoleName()} stream not found, sid={frame.get_message().get_sid()}, sessionId={self.get_session().get_session_id()}")
 
-            acceptor.accept(frame.get_message(), onError)
 
     def get_session(self) -> Session:
         if self.session is None:

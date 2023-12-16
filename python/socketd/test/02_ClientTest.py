@@ -24,11 +24,10 @@ def send_and_subscribe_test(e: Entity):
 async def main():
     client_session: Session = await SocketD.create_client("ws://127.0.0.1:7779").config(idGenerator).open()
     start_time = time.monotonic()
-    for _ in range(10):
+    for _ in range(10000):
         # await client_session.send("demo", StringEntity("test"))
-        # e = await client_session.send_and_request("demo", StringEntity("test"), 100)
-        await client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
-        await asyncio.sleep(1)
+        e = await client_session.send_and_request("demo", StringEntity("test"), 100)
+        # await client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
         # logger.debug("send_and_request={e}", e=e)
     # await asyncio.gather(*[client_session.send("demo", StringEntity("test")) for _ in range(10000)])
     end_time = time.monotonic()

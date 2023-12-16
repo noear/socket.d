@@ -87,7 +87,7 @@ class Channel:
         ...
 
     @abstractmethod
-    def retrieve(self, frame: Frame, on_error: Function) -> None:
+    async def retrieve(self, frame: Frame, on_error: Function) -> None:
         ...
 
     @abstractmethod

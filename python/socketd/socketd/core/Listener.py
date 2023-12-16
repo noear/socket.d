@@ -7,7 +7,7 @@ class Listener(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def on_message(self, session, message):
+    async def on_message(self, session, message):
         pass
 
     @abc.abstractmethod

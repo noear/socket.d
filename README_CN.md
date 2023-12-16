@@ -1,5 +1,5 @@
 <h1 align="center" style="text-align:center;">
-  Socket.D
+<img src="socketd_icon.png" width="100" />
 </h1>
 <p align="center">
 	<strong>基于事件和语义消息流的网络应用协议</strong>

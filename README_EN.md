@@ -1,5 +1,5 @@
 <h1 align="center" style="text-align:center;">
-  Socket.D
+<img src="socketd_icon.png" width="100" />
 </h1>
 <p align="center">
 	<strong>Network application protocol based on event and semantic message streams</strong>

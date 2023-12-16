@@ -26,6 +26,10 @@ const Constants = {
 }
 
 
+type IoConsumer<T> = (t:T) => void
+type IoBiConsumer<T1,T2> = (t1:T1, t2:T2 )=> void
+
+
 class CodecUtils{
     static strToBuf(str:string){
         const encoder = new TextEncoder(); // 使用 UTF-8 编码器进行编码
@@ -207,16 +211,29 @@ class Frame {
     }
 }
 
-interface ClientSession{
+interface ClientSession {
+    send(event: string, entity: Entity);
 
+    sendAndRequest(event: string, entity: Entity, callback: IoConsumer<Reply>);
+
+    sendAndSubscribe(event: string, entity: Entity, callback: IoConsumer<Reply>);
 }
 
-interface Session extends ClientSession{
+interface Session extends ClientSession {
+    reply(from: Message, entity: Entity);
 
+    replyEnd(from: Message, entity: Entity);
 }
 
-class CodecByteBuffer {
-    write(frame:Frame, factory) {
+
+interface Codec {
+    write(frame: Frame, factory);
+
+    read(buffer): Frame;
+}
+
+class CodecByteBuffer implements Codec {
+    write(frame: Frame, factory) {
         if (frame.message()) {
             //sid
             let sidB = CodecUtils.strToBuf(frame.message().sid());
@@ -275,31 +292,200 @@ class CodecByteBuffer {
         }
     }
 
-    read(buffer) { //=>Frame
-
+    read(buffer): Frame { //=>Frame
+        return null;
     }
+}
+
+interface Stream {
+    sid(): string;
+
+    isSingle(): boolean;
+
+    isDone(): boolean;
+
+    timeout(): number;
+
+    thenError(): Stream;
+}
+
+interface SteamInternal extends Stream {
+    onAccept(reply: MessageInternal, channel: Channel);
+
+    onError(error: Error);
 }
 
 class StreamManger {
-    _acceptorMap: Map<string, any>
+    _streamMap: Map<string, SteamInternal>
 
     constructor() {
-        this._acceptorMap = new Map<string, any>();
+        this._streamMap = new Map<string, SteamInternal>();
     }
 
-    getAcceptor(sid) {
-        return this._acceptorMap.get(sid);
+    getSteam(sid) {
+        return this._streamMap.get(sid);
     }
 
-    addAcceptor(sid, acceptor) {
-        this._acceptorMap.set(sid, acceptor);
+    addSteam(sid, stream: SteamInternal) {
+        this._streamMap.set(sid, stream);
     }
 
-    removeAcceptor(sid) {
-        this._acceptorMap.delete(sid);
+    removeSteam(sid) {
+        this._streamMap.delete(sid);
     }
 }
 
+class Config {
+    _codec: Codec;
+    _streamManger: StreamManger;
 
-function SessoinConsumer(session:Session){}
-function MessageConsumer(session:Session, message:Message){}
+    constructor() {
+        this._codec = new CodecByteBuffer();
+        this._streamManger = new StreamManger();
+    }
+
+    codec(): Codec {
+        return this._codec;
+    }
+
+    streamManger(): StreamManger {
+        return this._streamManger;
+    }
+}
+
+interface Channel {
+    config(): Config;
+
+    sendPing();
+
+    sendPong();
+
+    sendConnect(url: string);
+
+    send(frame: Frame);
+
+    close(code);
+}
+
+class Processor{
+    constructor(client: Client) {
+        this.client = client;
+    }
+
+
+    onOpen(channel: Channel) {
+        if (this.client.onOpenFun) {
+            this.client.onOpenFun(channel.getSession());
+        }
+    }
+
+    onMessage(channel: Channel, message) {
+        if (this.client.onMessageFun) {
+            this.client.onMessageFun(channel.getSession(), message);
+        }
+
+        let onFun = this.client.onFun[message.event];
+        if (onFun) {
+            onFun(channel.getSession(), message);
+        }
+    }
+
+    onCloseInternal(channel: Channel) {
+
+    }
+
+    onClose(channel: Channel) {
+        if (this.client.onCloseFun) {
+            this.client.onCloseFun(channel.getSession());
+        }
+    }
+
+    onError(channel: Channel, error: Error) {
+        if (this.client.onErrorFun) {
+            this.client.onErrorFun(channel.getSession(), error);
+        }
+    }
+
+    onReceive(channel: Channel, frame) {
+        if (frame.flag == Flags.Connect) {
+            channel.setHandshake(frame.message);
+            channel.onError = this.onError;
+            channel.onOpenFuture = function () {
+                if (channel.isValid()) {
+                    //如果还有效，则发送链接确认
+                    try {
+                        channel.sendConnack(frame.getMessage()); //->Connack
+                    } catch (err) {
+                        this.onError(channel, err);
+                    }
+                }
+            }
+            this.onOpen(channel);
+        } else if (frame.flag == Flags.Connack) {
+            //if client
+            channel.setHandshake(frame.message);
+            this.onOpen(channel);
+        } else {
+            if (channel.handshake == null) {
+                channel.close(Constants.CLOSE1_PROTOCOL);
+
+                if (frame.flag == Flags.Close) {
+                    throw new Error("Connection request was rejected");
+                }
+                return
+            }
+
+            try {
+                switch (frame.flag) {
+                    case Flags.Ping: {
+                        channel.sendPong();
+                        break;
+                    }
+                    case Flags.Pong: {
+                        break;
+                    }
+                    case Flags.Close: {
+                        //关闭通道
+                        channel.close(Constants.CLOSE1_PROTOCOL);
+                        this.onCloseInternal(channel);
+                        break;
+                    }
+                    case Flags.Alarm: {
+                        //结束流，并异常通知
+                        let exception = new Error(frame.getMessage());
+                        let acceptor = channel.config.streamManger.getAcceptor(frame.getMessage().sid());
+                        if (acceptor == null) {
+                            this.onError(channel, exception);
+                        } else {
+                            channel.config.streamManger.removeAcceptor(frame.getMessage().sid());
+                            acceptor.onError(exception);
+                        }
+                        break;
+                    }
+                    case Flags.Message:
+                    case Flags.Request:
+                    case Flags.Subscribe: {
+                        this.onReceiveDo(channel, frame, false);
+                        break;
+                    }
+                    case Flags.Reply:
+                    case Flags.ReplyEnd: {
+                        this.onReceiveDo(channel, frame, true);
+                        break;
+                    }
+                    default: {
+                        channel.close(Constants.CLOSE2_PROTOCOL_ILLEGAL);
+                        this.onCloseInternal(channel);
+                    }
+                }
+            } catch (e) {
+                this.onError(channel, e);
+            }
+        }
+    }
+
+    onReceiveDo(channel: Channel, frame, isReply) {
+
+    }
+}
+

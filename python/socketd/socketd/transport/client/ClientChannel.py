@@ -10,7 +10,7 @@ from loguru import logger
 class ClientChannel(ChannelBase, ABC):
     def __init__(self, real: Channel, connector: ClientConnector):
         super().__init__(real.get_config())
-        self.real = real
+        self.real: Channel = real
         self.connector: ClientConnector = connector
         self.heartbeatHandler = connector.heartbeatHandler()
 
@@ -64,7 +64,7 @@ class ClientChannel(ChannelBase, ABC):
 
     async def send(self, frame, acceptor):
         AssertsUtil.assert_closed(self.real)
-        async with self:
+        with self:
             try:
                 await self.prepare_send()
                 await self.real.send(frame, acceptor)
@@ -74,8 +74,8 @@ class ClientChannel(ChannelBase, ABC):
                     self.real = None
                 raise e
 
-    def retrieve(self, frame):
-        self.real.retrieve(frame)
+    async def retrieve(self, frame, on_error):
+        self.real.retrieve(frame, on_error)
 
     def get_session(self):
         return self.real.get_session()
@@ -98,3 +98,7 @@ class ClientChannel(ChannelBase, ABC):
 
     def get_real(self):
         return self.real
+
+    def on_error(self, error: Exception):
+        pass
+

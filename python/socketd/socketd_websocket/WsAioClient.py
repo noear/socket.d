@@ -22,7 +22,7 @@ class WsAioClient(ClientBase):
 
     async def open(self) -> Session:
         client = WsAioClientConnector(self)
-        self.log.info(f"open {self._config.url}")
+        self.log.info(f"open {self._config.get_url()}")
         self.client = await client.connect()
         channel: Channel = ClientChannel(self.client, client)
         return SessionDefault(channel)

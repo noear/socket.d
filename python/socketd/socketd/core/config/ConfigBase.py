@@ -26,7 +26,7 @@ class ConfigBase(Config):
         self._max_threads = self._core_threads * 8
         self._reply_timeout = 3000
         self._max_requests = 10
-        self._maxUdpSize = 2048
+        self._max_udp_size = 2048
 
     def client_mode(self):
         return self._client_mode
@@ -109,10 +109,10 @@ class ConfigBase(Config):
         return self
 
     def get_max_udp_size(self):
-        return self._maxUdpSize
+        return self._max_udp_size
 
     def set_max_udp_size(self, maxUdpSize):
-        self._maxUdpSize = maxUdpSize
+        self._max_udp_size = maxUdpSize
         return self
 
     def get_request_timeout(self) -> float:

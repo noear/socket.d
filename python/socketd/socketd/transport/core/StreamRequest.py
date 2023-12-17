@@ -1,12 +1,12 @@
-
+from socketd.core.module.Message import Message
 from socketd.transport.core.CompletableFuture import CompletableFuture
-from socketd.transport.core.StreamAcceptorBase import StreamAcceptorBase
+from socketd.transport.core.StreamBase import StreamBase
 
 
-class StreamAcceptorRequest(StreamAcceptorBase):
-    def __init__(self, future, timeout):
+class StreamRequest(StreamBase):
+    def __init__(self, sid, timeout, future):
         self.future: CompletableFuture = future
-        self.timeout = timeout
+        super().__init__(sid, timeout)
 
     def is_single(self):
         return True
@@ -17,5 +17,5 @@ class StreamAcceptorRequest(StreamAcceptorBase):
     def timeout(self):
         return self.timeout
 
-    def accept(self, message, onError):
+    def on_accept(self, message: Message, onError):
         self.future.set_result(message)

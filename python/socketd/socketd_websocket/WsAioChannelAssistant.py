@@ -16,8 +16,13 @@ class WsAioChannelAssistant(ChannelAssistant):
     async def write(self, source: WebSocketServerProtocol, frame: Frame) -> None:
         # writer: Buffer = await self.__loop.run_in_executor(self.config.get_executor(), lambda _frame:
         # self.config.get_codec().write(frame, lambda size: Buffer(limit=size)), frame)
+        # 这里使用了异步方式调用self.__loop.run_in_executor()来执行一个匿名函数，
+        # 该匿名函数的参数是一个帧（frame），然后调用self.config.get_codec().write()方法来将帧（frame）写入缓冲区，
+        # 其中lambda size: Buffer(limit=size)是一个匿名函数，用于创建一个容量为size的缓冲区。将得到的缓冲区对象赋值给writer变量。
         writer: Buffer = self.config.get_codec().write(frame, lambda size: Buffer(limit=size))
-        await source.send(writer.getbuffer())
+        # 如果writer不为None，说明写入成功，通过调用source.send()方法将writer.getbuffer()发送给客户端。
+        if writer is not None:
+            await source.send(writer.getbuffer())
 
     def is_valid(self, target: WebSocketServerProtocol) -> bool:
         return target.state == State.OPEN

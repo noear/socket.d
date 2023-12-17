@@ -30,6 +30,11 @@ class Demo:
         with a:
             a.set(a.get() + 1)
 
+    @staticmethod
+    async def add5(a: AtomicRefer_):
+        with a:
+            a.set(a.get() + 1)
+
 
 @calc_time
 async def main():
@@ -55,7 +60,7 @@ class Test(unittest.TestCase):
     def test_thread_lock(self):
         with ThreadPoolExecutor(max_workers=10) as t:
             a = AtomicRefer_(10)
-            futures = [t.submit(Demo.add4, a) for _ in range(10000)]
+            futures = [t.submit(Demo.add4, a) for _ in range(100000)]
             for i in futures:
                 result = i.result()
             logger.debug(a.get())
@@ -64,7 +69,7 @@ class Test(unittest.TestCase):
     def test_async_lock(self):
         async def _test_async_lock():
             a = AtomicRefer(10)
-            await asyncio.gather(*[Demo.add(a) for _ in range(10000)])
+            await asyncio.gather(*[Demo.add(a) for _ in range(100000)])
             logger.debug(await a.get())
         asyncio.run(_test_async_lock())
 
@@ -74,7 +79,16 @@ class Test(unittest.TestCase):
         loop = asyncio.get_event_loop()
         with ThreadPoolExecutor(max_workers=10) as t:
             a = AtomicRefer(10)
-            futures = [t.submit(lambda x:asyncio.run(Demo.add(x)), a) for _ in range(10000)]
+            futures = [t.submit(lambda x:asyncio.run(Demo.add(x)), a) for _ in range(100000)]
             for i in futures:
                 result = i.result()
             logger.debug(loop.run_until_complete(a.get()))
+
+    @calc_time
+    def test_thread_async_lock(self):
+        async def _test_async_lock():
+            a = AtomicRefer_(10)
+            await asyncio.gather(*[Demo.add5(a) for _ in range(100000)])
+            logger.debug(a.get())
+
+        asyncio.run(_test_async_lock())

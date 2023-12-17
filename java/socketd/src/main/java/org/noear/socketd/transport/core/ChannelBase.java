@@ -1,12 +1,10 @@
 package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.core.internal.Frames;
-import org.noear.socketd.transport.core.internal.HandshakeDefault;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 通道基类

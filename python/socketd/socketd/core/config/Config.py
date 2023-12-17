@@ -101,3 +101,7 @@ class Config:
     def get_stream_timeout(self) -> float:
         """获取消息流超时（单位：毫秒）"""
         pass
+
+    def get_role_name(self) -> str:
+        """获取角色名"""
+        pass

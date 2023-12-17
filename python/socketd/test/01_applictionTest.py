@@ -2,20 +2,21 @@ import asyncio
 import uuid
 import sys
 import time
-from websockets.legacy.server import Serve, WebSocketServer
+from websockets.legacy.server import WebSocketServer
 
 from socketd.core.Buffer import Buffer
 from socketd.core.Costants import Flag
 from socketd.core.Session import Session
 from socketd.core.SocketD import SocketD
 from socketd.core.config.ServerConfig import ServerConfig
+from socketd.core.module.Entity import Entity
 from socketd.core.module.Frame import Frame
 from socketd.core.module.MessageDefault import MessageDefault
 from socketd.core.module.StringEntity import StringEntity
 from socketd.transport.CodecByteBuffer import CodecByteBuffer
 from socketd.transport.server.Server import Server
-from test.SimpleListenerTest import SimpleListenerTest
-from test.uitls import calc_time, calc_async_time
+from test.modelu.SimpleListenerTest import SimpleListenerTest
+from test.uitls import calc_async_time
 from loguru import logger
 
 
@@ -44,6 +45,10 @@ def idGenerator(config):
     return config.id_generator(uuid.uuid4)
 
 
+def send_and_subscribe_test(e: Entity):
+    print(e)
+
+
 @calc_async_time
 async def application_test():
     server: Server = SocketD.create_server(ServerConfig("ws").set_port(9999))
@@ -54,8 +59,10 @@ async def application_test():
         .config(idGenerator).open()
 
     start_time = time.monotonic()
-    for _ in range(100000):
-        await client_session.send("demo", StringEntity("test"))
+    for _ in range(100):
+        # await client_session.send("demo", StringEntity("test"))
+        # await client_session.send_and_request("demo", StringEntity("test"), 100)
+        await client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
     end_time = time.monotonic()
     logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
     await client_session.close()
@@ -65,5 +72,5 @@ async def application_test():
 
 if __name__ == "__main__":
     logger.remove()
-    logger.add(sys.stderr, level="ERROR")
+    logger.add(sys.stderr, level="INFO")
     asyncio.get_event_loop().run_until_complete(application_test())

@@ -1,5 +1,7 @@
 import asyncio
 from abc import ABC
+from typing import Coroutine
+
 from loguru import logger
 
 from .Channel import Channel
@@ -49,17 +51,17 @@ class ProcessorDefault(Processor, ABC):
                     await channel.close()
                     self.on_close(channel.get_session())
                 elif frame.get_flag() in [Flag.Message, Flag.Request, Flag.Subscribe]:
-                    self.on_receive_do(channel, frame, False)
+                    await self.on_receive_do(channel, frame, False)
                 elif frame.get_flag() in [Flag.Reply, Flag.ReplyEnd]:
-                    self.on_receive_do(channel, frame, True)
+                    await self.on_receive_do(channel, frame, True)
                 else:
                     await channel.close()
                     self.on_close(channel.get_session())
             except Exception as e:
-                logger.warning(e)
+                logger.error(e)
                 self.on_error(channel.get_session(), e)
 
-    def on_receive_do(self, channel: Channel, frame: Frame, isReply):
+    async def on_receive_do(self, channel: Channel, frame: Frame, isReply):
         fragmentIdxStr = frame.get_message().get_entity().get_meta(EntityMetas.META_DATA_FRAGMENT_IDX)
         if fragmentIdxStr is not None:
             index = int(fragmentIdxStr)
@@ -70,16 +72,17 @@ class ProcessorDefault(Processor, ABC):
                 frame = frameNew
 
         if isReply:
-            channel.retrieve(frame, lambda error:self.on_error(channel, error))
+            await channel.retrieve(frame, lambda error: self.on_error(channel, error))
         else:
-            self.on_message(channel, frame.get_message())
+            await self.on_message(channel, frame.get_message())
 
     def on_open(self, session):
         self.listener.on_open(session)
 
-    def on_message(self, channel: Channel, message):
-        # self.listener.on_message(channel.get_session(), message)
-        channel.get_config().get_executor().submit(lambda _message: asyncio.run(self.listener.on_message(channel.get_session(), _message)), message)
+    async def on_message(self, channel: Channel, message):
+        await asyncio.get_running_loop().run_in_executor(channel.get_config().get_executor(),
+                                                   lambda: asyncio.run(self.listener.on_message(
+                                                       channel.get_session(), message)))
 
     def on_close(self, session):
         self.listener.on_close(session)

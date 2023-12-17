@@ -36,7 +36,6 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                                               extra_headers)
         log.debug("AIOWebSocketClientImpl handshake")
         await self.on_open()
-        # await self.on_message()
         return return_data
 
     def connection_open(self) -> None:
@@ -44,23 +43,28 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         super().connection_open()
         log.debug("AIOWebSocketClientImpl connection_open")
 
-        # t = Thread(target=lambda : asyncio.run(self.on_message()))
-        # t.start()
         async def _handler():
             while True:
-                if self.closed:
-                    break
                 await asyncio.sleep(0)
+                if self.closed or self.status_state == Flag.Close:
+                    break
                 if self.status_state != Flag.Unknown:
                     try:
                         await self.on_message()
                     except Exception as e:
                         break
 
-        # if self.connect_read_thread is None:
-        # self.connect_read_thread = Thread(target=lambda : asyncio.run(_handler()))
-        # self.connect_read_thread.start()
-        asyncio.run_coroutine_threadsafe(_handler(), asyncio.get_event_loop())
+        def thread__handler(_loop):
+            asyncio.set_event_loop(_loop)
+            _loop.run_until_complete(_handler())
+
+        if self.client.get_config().get_is_thread():
+            loop = asyncio.new_event_loop()
+            if self.connect_read_thread is None:
+                self.connect_read_thread = Thread(target=thread__handler, args=(loop,))
+                self.connect_read_thread.start()
+        else:
+            asyncio.run_coroutine_threadsafe(_handler(), asyncio.get_event_loop())
 
     async def on_open(self):
         log.info("Client:Websocket onOpen...")

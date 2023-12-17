@@ -1,5 +1,8 @@
 import asyncio
+from asyncio.coroutines import iscoroutine
 from typing import Generic, TypeVar
+
+from loguru import logger
 
 T = TypeVar('T')
 
@@ -7,7 +10,10 @@ T = TypeVar('T')
 class CompletableFuture(Generic[T]):
 
     def __init__(self, _future=None):
-        self._future: asyncio.Future = _future if _future else asyncio.Future()
+        if _future and not asyncio.iscoroutine(_future):
+            logger.warning("{name}对象不是协程对象", name=_future.__name__)
+            return
+        self._future: asyncio.Task = asyncio.create_task(_future) if _future else asyncio.Future()
 
     def get(self, timeout):
         async def _get():

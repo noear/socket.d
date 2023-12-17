@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from .Entity import Entity
 
 
-class Message(ABC):
+class Message(Entity):
     @abstractmethod
     def is_request(self) -> bool:
         pass

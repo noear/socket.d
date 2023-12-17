@@ -3,11 +3,11 @@ import sys
 
 from loguru import logger
 
-from websockets.legacy.server import Serve, WebSocketServer
+from websockets.legacy.server import WebSocketServer
 from socketd.core.SocketD import SocketD
 from socketd.core.config.ServerConfig import ServerConfig
 
-from test.SimpleListenerTest import idGenerator, SimpleListenerTest
+from test.modelu.SimpleListenerTest import idGenerator, SimpleListenerTest
 
 logger.remove()
 logger.add(sys.stderr, level="INFO")

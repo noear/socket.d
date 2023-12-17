@@ -4,12 +4,11 @@ from abc import ABC
 from socketd.core.Listener import Listener
 from socketd.core.module.Message import Message
 from socketd.core.module.StringEntity import StringEntity
-from loguru import logger
+
 
 class SimpleListenerTest(Listener, ABC):
 
     def on_open(self, session):
-        # print("open")
         pass
 
     async def on_message(self, session, message: Message):
@@ -23,6 +22,7 @@ class SimpleListenerTest(Listener, ABC):
 
     def on_error(self, session, error):
         pass
+
 
 def idGenerator(config):
     return config.id_generator(uuid.uuid4)

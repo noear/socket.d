@@ -1,11 +1,9 @@
 from io import BytesIO
 from enum import Enum
+from typing import Callable
 
 
-def t(): ...
-
-
-Function = type(t)
+Function = Callable
 
 
 class Flag(Enum):

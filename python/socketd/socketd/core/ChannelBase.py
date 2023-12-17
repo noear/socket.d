@@ -7,6 +7,8 @@ from socketd.core.Channel import Channel
 from socketd.core.Frames import Frames
 from socketd.core.config.Config import Config
 
+import threading
+
 
 class ChannelBase(Channel, ABC):
     def __init__(self, config: Config):
@@ -16,12 +18,12 @@ class ChannelBase(Channel, ABC):
         self.live_time = 0
         self.attachments = {}
         self._is_closed = False
-        self.__lock: asyncio.Lock = asyncio.Lock()
+        self.__lock: threading.Lock = threading.Lock()
 
-    async def __aenter__(self):
-        return await self.__lock.acquire()
+    def __enter__(self):
+        return self.__lock.acquire()
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         return self.__lock.release()
 
     def get_attachment(self, name):
@@ -70,4 +72,3 @@ class ChannelBase(Channel, ABC):
 
     def get_config(self) -> 'Config':
         return self.config
-

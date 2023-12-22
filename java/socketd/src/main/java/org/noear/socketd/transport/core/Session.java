@@ -16,11 +16,6 @@ import java.util.Map;
  */
 public interface Session extends ClientSession, Closeable {
     /**
-     * 是否有效
-     */
-    boolean isValid();
-
-    /**
      * 获取远程地址
      */
     InetSocketAddress remoteAddress() throws IOException;

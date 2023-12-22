@@ -23,7 +23,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     //心跳间隔（毫秒）
     private long heartbeatInterval;
 
-    //连接越时
+    //连接越时（毫秒）
     private long connectTimeout;
 
     //是否自动重链

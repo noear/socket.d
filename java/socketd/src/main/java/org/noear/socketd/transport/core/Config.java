@@ -1,8 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.core.buffer.BufferReader;
-import org.noear.socketd.transport.core.buffer.BufferWriter;
-
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +34,7 @@ public interface Config {
     /**
      * 获取编解码器
      */
-    Codec<BufferReader, BufferWriter> getCodec();
+    Codec getCodec();
 
     /**
      * 获取Id生成器

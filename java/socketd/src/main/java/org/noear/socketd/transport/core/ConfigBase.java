@@ -1,7 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.core.buffer.BufferReader;
-import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
 import org.noear.socketd.transport.core.stream.StreamMangerDefault;
@@ -21,9 +19,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
     private final boolean clientMode;
     //流管理器
     private final StreamManger streamManger;
-
     //编解码器
-    private Codec<BufferReader, BufferWriter> codec;
+    private final Codec codec;
+
     //id生成器
     private IdGenerator idGenerator;
     //分片处理
@@ -61,10 +59,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
         this.streamManger = new StreamMangerDefault(this);
+        this.codec = new CodecByteBuffer(this);
 
         this.charset = StandardCharsets.UTF_8;
 
-        this.codec = new CodecByteBuffer(this);
         this.idGenerator = new GuidGenerator();
         this.fragmentHandler = new FragmentHandlerDefault();
         this.fragmentSize = Constants.MAX_SIZE_DATA;
@@ -122,19 +120,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 获取编解码器
      */
     @Override
-    public Codec<BufferReader, BufferWriter> getCodec() {
+    public Codec getCodec() {
         return codec;
     }
 
-    /**
-     * 配置编解码器
-     */
-    public T codec(Codec<BufferReader, BufferWriter> codec) {
-        Asserts.assertNull("codec", codec);
-
-        this.codec = codec;
-        return (T) this;
-    }
 
     /**
      * 获取分片处理

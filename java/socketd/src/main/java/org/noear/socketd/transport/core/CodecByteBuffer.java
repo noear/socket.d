@@ -15,7 +15,7 @@ import java.util.function.Function;
  * @author noear
  * @since 2.0
  */
-public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
+public class CodecByteBuffer implements Codec {
     private final Config config;
 
     public CodecByteBuffer(Config config) {
@@ -26,11 +26,11 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
      * 编码
      */
     @Override
-    public <T extends BufferWriter> T write(Frame frame, Function<Integer, T> factory) throws IOException {
+    public <T extends BufferWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException {
         if (frame.getMessage() == null) {
             //length (len[int] + flag[int])
             int frameSize = Integer.BYTES + Integer.BYTES;
-            T target = factory.apply(frameSize);
+            T target = targetFactory.apply(frameSize);
 
             //长度
             target.putInt(frameSize);
@@ -56,7 +56,7 @@ public class CodecByteBuffer implements Codec<BufferReader, BufferWriter> {
             Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
             Asserts.assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_DATA);
 
-            T target = factory.apply(frameSize);
+            T target = targetFactory.apply(frameSize);
 
             //长度
             target.putInt(frameSize);

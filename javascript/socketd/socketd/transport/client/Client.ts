@@ -1,27 +1,114 @@
-import {Listener} from "../core/Listener";
-import {Session} from "../core/Session";
-import {IoBiConsumer, IoConsumer} from "../core/Types";
-import {Message} from "../core/Message";
+import {Listener, SimpleListener} from "../core/Listener";
+import {IoConsumer} from "../core/Types";
 import {ClientSession} from "./ClientSession";
 import {ClientConfig} from "./ClientConfig";
+import {Processor, ProcessorDefault} from "../core/Processor";
+import {HeartbeatHandler} from "../core/HeartbeatHandler";
+import {ChannelAssistant} from "../core/ChannelAssistant";
 
 export interface Client {
-    heartbeatHandler()
+    /**
+     * 心跳
+     */
+    heartbeatHandler(handler: HeartbeatHandler)
+
+    /**
+     * 配置
+     */
     config(configHandler: IoConsumer<ClientConfig>)
 
+    /**
+     * 监听
+     */
     listen(listener: Listener): Client;
 
+    /**
+     * 打开会话
+     */
     open(): ClientSession;
+}
 
-    //监听扩展
+export interface ClientInternal extends Client {
+    /**
+     * 获取心跳处理
+     */
+    getHeartbeatHandler(): HeartbeatHandler;
 
-    onOpen(consumer: IoConsumer<Session>): Client;
+    /**
+     * 获取心跳间隔（毫秒）
+     */
+    getHeartbeatInterval(): number;
 
-    onMessage(consumer: IoBiConsumer<Session, Message>): Client;
+    /**
+     * 获取配置
+     */
+    getConfig(): ClientConfig;
 
-    on(event, consumer: IoBiConsumer<Session, Message>): Client;
+    /**
+     * 获取处理器
+     */
+    getProcessor(): Processor;
+}
 
-    onClose(consumer: IoConsumer<Session>): Client;
+export abstract class ClientBase<T extends ChannelAssistant<T>> implements ClientInternal {
+    _config: ClientConfig;
+    _heartbeatHandler: HeartbeatHandler;
+    _processor: Processor;
+    _listener: Listener;
+    _assistant: T;
 
-    onError(consumer: IoBiConsumer<Session, Error>): Client;
+    constructor(clientConfig: ClientConfig, assistant: T) {
+        this._config = clientConfig;
+        this._assistant = assistant;
+        this._processor = new ProcessorDefault();
+        this._listener = new SimpleListener();
+    }
+
+    getAssistant(): T {
+        return this._assistant;
+    }
+
+    getHeartbeatHandler(): HeartbeatHandler {
+        return this._heartbeatHandler;
+    }
+
+    getHeartbeatInterval(): number {
+        return this.getConfig().getHeartbeatInterval();
+    }
+
+    getConfig(): ClientConfig {
+        return this._config;
+    }
+
+    getProcessor(): Processor {
+        return this._processor;
+    }
+
+    heartbeatHandler(handler: HeartbeatHandler) {
+        if (handler != null) {
+            this._heartbeatHandler = handler;
+        }
+
+        return this;
+    }
+
+    config(configHandler: IoConsumer<ClientConfig>) {
+        if (configHandler != null) {
+            configHandler(this._config);
+        }
+
+        return this;
+    }
+
+    listen(listener: Listener): Client {
+        if (listener != null) {
+            this._listener = listener;
+        }
+
+        return this;
+    }
+
+    open(): ClientSession {
+        throw new Error("Method not implemented.");
+    }
 }

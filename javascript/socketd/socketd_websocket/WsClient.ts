@@ -6,19 +6,17 @@ import {Session, SessionDefault} from "../socketd/transport/core/Session";
 import {Message} from "../socketd/transport/core/Message";
 import {ClientSession} from "../socketd/transport/client/ClientSession";
 import {ChannelDefault} from "../socketd/transport/core/Channel";
-import {Client} from "../socketd/transport/client/Client";
+import {Client, ClientBase} from "../socketd/transport/client/Client";
+import {ClientConfig} from "../socketd/transport/client/ClientConfig";
+import {WsChannelAssistant} from "./WsChannelAssistant";
 
-export class ClientDefault implements Client {
+export class WsClient extends ClientBase<WsChannelAssistant> {
     _serverUrl: string;
-    _config: Config;
-    _processor: Processor;
     _listener: EventListener;
 
-    constructor(serverUrl: string) {
-        this._serverUrl = serverUrl;
+    constructor(clientConfig:ClientConfig) {
+        super(clientConfig, new WsChannelAssistant());
         this._listener = new EventListener();
-        this._config = new Config();
-        this._processor = new Processor(this._listener);
     }
 
     onOpen(consumer: IoConsumer<Session>): Client {

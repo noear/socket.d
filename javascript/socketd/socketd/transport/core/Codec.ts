@@ -1,7 +1,8 @@
-import {Frame} from "./Frame";
+
 import {CodecUtils} from "./CodecUtils";
 import {Asserts} from "./Asserts";
 import {Constants} from "./Constants";
+import {Frame} from "./Message";
 
 export interface Codec {
     write(frame: Frame, factory);

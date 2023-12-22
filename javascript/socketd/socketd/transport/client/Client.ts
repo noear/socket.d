@@ -6,6 +6,12 @@ import {Processor, ProcessorDefault} from "../core/Processor";
 import {HeartbeatHandler} from "../core/HeartbeatHandler";
 import {ChannelAssistant} from "../core/ChannelAssistant";
 
+/**
+ * 客户端（用于构建会话）
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface Client {
     /**
      * 心跳
@@ -50,6 +56,12 @@ export interface ClientInternal extends Client {
     getProcessor(): Processor;
 }
 
+/**
+ * 客户端基类
+ *
+ * @author noear
+ * @since 2.0
+ */
 export abstract class ClientBase<T extends ChannelAssistant<T>> implements ClientInternal {
     _config: ClientConfig;
     _heartbeatHandler: HeartbeatHandler;

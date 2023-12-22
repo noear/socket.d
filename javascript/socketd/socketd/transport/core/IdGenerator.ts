@@ -9,10 +9,11 @@ export interface IdGenerator {
 
 export class GuidGenerator implements IdGenerator {
     generate(): string {
-        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.floor(Math.random() * 16);
-            var v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
+        let guid = "";
+        for (let i = 1; i <= 32; i++) {
+            let n = Math.floor(Math.random() * 16.0).toString(16);
+            guid += n;
+        }
+        return guid;
     }
 }

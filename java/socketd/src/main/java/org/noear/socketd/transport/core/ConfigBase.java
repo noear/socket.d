@@ -248,6 +248,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
      */
     public T coreThreads(int coreThreads) {
         this.coreThreads = coreThreads;
+        this.maxThreads = coreThreads * 4;
         return (T) this;
     }
 

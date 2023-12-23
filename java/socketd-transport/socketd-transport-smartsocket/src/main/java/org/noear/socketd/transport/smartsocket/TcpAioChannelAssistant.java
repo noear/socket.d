@@ -5,6 +5,7 @@ import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.channels.ClosedChannelException;
 
 /**
  * Tcp-Aio 通道助理实现
@@ -31,7 +32,9 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession> {
 
     @Override
     public void close(AioSession target) throws IOException {
-        target.close();
+        if (target.isInvalid() == false) {
+            target.close();
+        }
     }
 
     @Override

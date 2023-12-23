@@ -63,7 +63,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return assistant.getLocalAddress(source);
     }
 
-    private Object SEND_LOCK  = new Object();
+    private Object SEND_LOCK = new Object();
 
     /**
      * 发送
@@ -201,16 +201,14 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void close(int code) {
-
         if (log.isDebugEnabled()) {
             log.debug("{} channel will be closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
         }
 
-        super.close(code);
-
         try {
+            super.close(code);
             assistant.close(source);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             if (log.isWarnEnabled()) {
                 log.warn("{} channel close error, sessionId={}",
                         getConfig().getRoleName(), getSession().sessionId(), e);

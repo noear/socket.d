@@ -35,6 +35,9 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
+        //关闭之前的资源
+        close();
+
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
 
         //支持 ssl
@@ -136,10 +139,6 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
     @Override
     public void close() {
-        if (real == null) {
-            return;
-        }
-
         try {
             if (real != null) {
                 real.close();

@@ -33,8 +33,10 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        //不要复用旧的对象
+        //关闭之前的资源
+        close();
 
+        //不要复用旧的对象
         real = new DatagramSocket();
 
         SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
@@ -118,10 +120,6 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
     @Override
     public void close() {
-        if (real == null) {
-            return;
-        }
-
         try {
             if (real != null) {
                 real.close();

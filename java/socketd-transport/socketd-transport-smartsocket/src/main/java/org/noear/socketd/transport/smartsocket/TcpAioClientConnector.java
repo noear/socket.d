@@ -33,6 +33,9 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
+        //关闭之前的资源
+        close();
+
         ClientMessageProcessor messageProcessor = new ClientMessageProcessor(client);
 
         try {
@@ -91,10 +94,6 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
     @Override
     public void close() {
-        if (real == null) {
-            return;
-        }
-
         try {
             if (real != null) {
                 real.shutdown();

@@ -26,7 +26,8 @@ import java.util.concurrent.TimeoutException;
 public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
     private static final Logger log = LoggerFactory.getLogger(UdpNioClientConnector.class);
 
-    ChannelFuture real;
+    private ChannelFuture real;
+    private NioEventLoopGroup workerGroup;
 
     public UdpNioClientConnector(UdpNioClient client) {
         super(client);
@@ -34,16 +35,17 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
-        log.info("Start connecting to: {}", client.config().getUrl());
+        //关闭之前的资源
+        close();
 
-        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
 
         try {
             Bootstrap bootstrap = new Bootstrap();
 
             NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
 
-            real = bootstrap.group(eventLoopGroup)
+            real = bootstrap.group(workerGroup)
                     .channel(NioDatagramChannel.class)
                     //.option(ChannelOption.SO_BROADCAST,true)
                     .handler(inboundHandler)
@@ -61,9 +63,10 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
                 return handshakeResult.getChannel();
             }
         } catch (TimeoutException e) {
+            close();
             throw new SocketdTimeoutException("Connection timeout: " + client.config().getLinkUrl());
         } catch (Throwable e) {
-            eventLoopGroup.shutdownGracefully();
+            close();
 
             if (e instanceof IOException) {
                 throw (IOException) e;
@@ -75,12 +78,14 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
 
     @Override
     public void close() {
-        if (real == null) {
-            return;
-        }
-
         try {
-            real.channel().close();
+            if (real != null) {
+                real.channel().close();
+            }
+
+            if (workerGroup != null) {
+                workerGroup.shutdownGracefully();
+            }
         } catch (Throwable e) {
             log.debug("{}", e);
         }

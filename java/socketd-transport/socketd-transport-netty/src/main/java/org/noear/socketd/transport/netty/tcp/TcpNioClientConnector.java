@@ -36,6 +36,9 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     @Override
     public ChannelInternal connect() throws IOException {
+        //关闭之前的资源
+        close();
+
         workerGroup = new NioEventLoopGroup(client.config().getCoreThreads(), new NamedThreadFactory("nettyClientWork-"));
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -74,10 +77,6 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
     @Override
     public void close() {
-        if (real == null) {
-            return;
-        }
-
         try {
             if (real != null) {
                 real.channel().close();

@@ -29,8 +29,10 @@ import java.io.IOException;
 public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements ChannelSupporter<Channel> {
     private static final Logger log = LoggerFactory.getLogger(TcpNioServer.class);
     private ChannelFuture server;
+
     private EventLoopGroup bossGroup;
     private EventLoopGroup workGroup;
+
     public TcpNioServer(ServerConfig config) {
         super(config, new TcpNioChannelAssistant());
     }
@@ -48,8 +50,9 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("nettyServerBoss-"));
-        workGroup = new NioEventLoopGroup(config().getMaxThreads(), new NamedThreadFactory("nettyServerWork-"));
+        bossGroup = new NioEventLoopGroup(2, new NamedThreadFactory("nettyTcpServerBoss-"));
+        workGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
+
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
             ChannelHandler channelHandler = new NettyChannelInitializer(config(), inboundHandler);

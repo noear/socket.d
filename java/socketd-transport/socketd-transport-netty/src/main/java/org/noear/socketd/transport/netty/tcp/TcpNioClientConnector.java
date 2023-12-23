@@ -39,7 +39,8 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
         //关闭之前的资源
         close();
 
-        workerGroup = new NioEventLoopGroup(client.config().getCoreThreads(), new NamedThreadFactory("nettyClientWork-"));
+        workerGroup = new NioEventLoopGroup(1, new NamedThreadFactory("nettyTcpClientWork-"));
+
         try {
             Bootstrap bootstrap = new Bootstrap();
 

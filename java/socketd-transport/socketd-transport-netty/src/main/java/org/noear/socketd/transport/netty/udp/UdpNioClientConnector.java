@@ -10,6 +10,7 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.udp.impl.NettyClientInboundHandler;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.utils.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
     private static final Logger log = LoggerFactory.getLogger(UdpNioClientConnector.class);
 
     private ChannelFuture real;
+
     private NioEventLoopGroup workerGroup;
 
     public UdpNioClientConnector(UdpNioClient client) {
@@ -38,7 +40,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
         //关闭之前的资源
         close();
 
-        workerGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup(1, new NamedThreadFactory("nettyUdpClientWork-"));
 
         try {
             Bootstrap bootstrap = new Bootstrap();

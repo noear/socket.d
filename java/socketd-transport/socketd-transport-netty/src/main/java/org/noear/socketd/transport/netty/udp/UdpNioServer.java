@@ -13,6 +13,7 @@ import org.noear.socketd.transport.netty.udp.impl.NettyServerInboundHandler;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.utils.NamedThreadFactory;
 import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.io.IOException;
 public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements ChannelSupporter<DatagramTagert> {
     private static final Logger log = LoggerFactory.getLogger(UdpNioServer.class);
     private ChannelFuture server;
+
     private EventLoopGroup bossGroup;
 
     public UdpNioServer(ServerConfig config) {
@@ -42,12 +44,12 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
     @Override
     public Server start() throws IOException {
         if (isStarted) {
-            throw new IllegalStateException("Server started");
+            throw new IllegalStateException("Socket.D server started");
         } else {
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(config().getCoreThreads());
+        bossGroup = new NioEventLoopGroup(2, new NamedThreadFactory("nettyUdpServerBoss-"));
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);

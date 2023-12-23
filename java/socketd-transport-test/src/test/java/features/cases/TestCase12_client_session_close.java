@@ -72,7 +72,7 @@ public class TestCase12_client_session_close extends BaseTestCase {
         //休息下（发完，那边还得收）
         Thread.sleep(100);
 
-        System.out.println("counter: " + messageCounter.get());
+        System.out.println("messageCounter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
 
         clientSession.close();
@@ -90,7 +90,8 @@ public class TestCase12_client_session_close extends BaseTestCase {
         //休息下（发完，那边还得收）
         Thread.sleep(1000);
 
-        System.out.println("counter: " + messageCounter.get());
+        System.out.println("messageCounter: " + messageCounter.get());
+        System.out.println("closeCounter: " + closeCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
         Assertions.assertEquals(closeCounter.get(), 1, getSchema() + ":client 关闭次数对不上");
 

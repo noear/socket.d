@@ -141,7 +141,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("sd:udp-java".equals(s1)){
+            if("udp".equals(s1)){
                 continue;
             }
 
@@ -230,7 +230,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("sd:udp-java".equals(s1)){
+            if(s1.contains("udp")){
                 continue;
             }
 
@@ -251,7 +251,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("sd:udp-java".equals(s1)){
+            if(s1.contains("udp")){
                 continue;
             }
 
@@ -289,7 +289,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("sd:udp-java".equals(s1)){
+            if("udp".equals(s1)){
                 continue;
             }
 
@@ -310,7 +310,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("sd:udp-java".equals(s1)){
+            if("udp".equals(s1)){
                 continue;
             }
 

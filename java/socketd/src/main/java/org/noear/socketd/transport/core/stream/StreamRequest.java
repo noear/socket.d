@@ -14,16 +14,8 @@ public class StreamRequest extends StreamBase {
     private final CompletableFuture<Reply> future;
 
     public StreamRequest(String sid, long timeout, CompletableFuture<Reply> future) {
-        super(sid, timeout);
+        super(sid, true, timeout);
         this.future = future;
-    }
-
-    /**
-     * 是否单发接收
-     */
-    @Override
-    public boolean isSingle() {
-        return true;
     }
 
     /**

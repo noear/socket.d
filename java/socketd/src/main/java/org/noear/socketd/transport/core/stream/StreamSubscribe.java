@@ -13,16 +13,8 @@ public class StreamSubscribe extends StreamBase {
     private final IoConsumer<Reply> future;
 
     public StreamSubscribe(String sid, long timeout, IoConsumer<Reply> future) {
-        super(sid, timeout);
+        super(sid, false, timeout);
         this.future = future;
-    }
-
-    /**
-     * 是否单发接收
-     */
-    @Override
-    public boolean isSingle() {
-        return false;
     }
 
     /**

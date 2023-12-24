@@ -33,7 +33,7 @@ public class ProcessorDefault implements Processor {
     /**
      * 接收处理
      */
-    public void onReceive(Channel channel, Frame frame) throws IOException {
+    public void onReceive(Channel channel, Frame frame)  {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
                 log.debug("C-REV:{}", frame);
@@ -174,7 +174,7 @@ public class ProcessorDefault implements Processor {
      * @param channel 通道
      */
     @Override
-    public void onOpen(Channel channel) throws IOException {
+    public void onOpen(Channel channel) {
         channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onOpen(channel.getSession());
@@ -196,7 +196,7 @@ public class ProcessorDefault implements Processor {
      * @param message 消息
      */
     @Override
-    public void onMessage(Channel channel, Message message) throws IOException {
+    public void onMessage(Channel channel, Message message) {
         channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onMessage(channel.getSession(), message);

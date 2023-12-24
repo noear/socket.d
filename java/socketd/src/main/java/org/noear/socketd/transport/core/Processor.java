@@ -17,14 +17,14 @@ public interface Processor {
     /**
      * 接收处理
      */
-    void onReceive(Channel channel, Frame frame) throws IOException;
+    void onReceive(Channel channel, Frame frame);
 
     /**
      * 打开时
      *
      * @param channel 通道
      */
-    void onOpen(Channel channel) throws IOException;
+    void onOpen(Channel channel);
 
     /**
      * 收到消息时
@@ -32,7 +32,7 @@ public interface Processor {
      * @param channel 通道
      * @param message 消息
      */
-    void onMessage(Channel channel, Message message) throws IOException;
+    void onMessage(Channel channel, Message message);
 
     /**
      * 关闭时

@@ -48,14 +48,14 @@ public class ByteBufferWriter implements BufferWriter {
         target.putChar((char) val);
     }
 
+    /**
+     * 冲刷
+     */
     @Override
     public void flush() throws IOException {
         target.flip();
     }
 
-    /**
-     * 冲刷
-     */
     public ByteBuffer getBuffer() {
         return target;
     }

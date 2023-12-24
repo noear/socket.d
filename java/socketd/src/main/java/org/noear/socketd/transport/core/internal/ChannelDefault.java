@@ -187,13 +187,13 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     @Override
-    public CompletableFuture<Boolean> onOpenFuture() {
-        return onOpenFuture;
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     @Override
-    public void setSession(Session session) {
-        this.session = session;
+    public CompletableFuture<Boolean> onOpenFuture() {
+        return onOpenFuture;
     }
 
     /**

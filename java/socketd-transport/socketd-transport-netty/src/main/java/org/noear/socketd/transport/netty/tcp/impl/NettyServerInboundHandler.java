@@ -17,7 +17,7 @@ import org.noear.socketd.transport.core.internal.ChannelDefault;
 public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Frame> {
     private static AttributeKey<Channel> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
 
-    private TcpNioServer server;
+    private final TcpNioServer server;
 
     public NettyServerInboundHandler(TcpNioServer server) {
         this.server = server;

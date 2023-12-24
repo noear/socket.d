@@ -40,4 +40,8 @@ public class NettyBufferWriter implements BufferWriter {
     public void flush() throws IOException {
 
     }
+
+    public ByteBuf getBuffer() {
+        return target;
+    }
 }

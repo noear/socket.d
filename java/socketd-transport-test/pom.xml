@@ -26,6 +26,11 @@
 
         <dependency>
             <groupId>org.noear</groupId>
+            <artifactId>socketd-transport-java-kcp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
             <artifactId>socketd-transport-java-tcp</artifactId>
         </dependency>
 

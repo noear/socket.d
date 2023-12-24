@@ -33,6 +33,7 @@
 
     <modules>
         <module>../socketd</module>
+        <module>../socketd-transport/socketd-transport-java-kcp</module>
         <module>../socketd-transport/socketd-transport-java-tcp</module>
         <module>../socketd-transport/socketd-transport-java-udp</module>
         <module>../socketd-transport/socketd-transport-java-websocket</module>
@@ -45,6 +46,12 @@
             <dependency>
                 <groupId>org.noear</groupId>
                 <artifactId>socketd</artifactId>
+                <version>${socketd.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>socketd-transport-java-kcp</artifactId>
                 <version>${socketd.version}</version>
             </dependency>
 

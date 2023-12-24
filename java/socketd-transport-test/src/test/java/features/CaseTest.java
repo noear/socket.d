@@ -11,7 +11,9 @@ public class CaseTest {
     static final String[] schemas = new String[]{
             "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
             "sd:ws-java",
-            "sd:udp-java"};
+            "sd:udp-java",
+            "sd:udp-netty"
+    };
 
     @Test
     public void TestCase01_client_send() throws Exception {

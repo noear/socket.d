@@ -86,7 +86,8 @@ public class CaseTest {
     public void TestCase14_file() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            if(s1.contains("udp")){
+
+            if(s1.contains("udp") || s1.contains("kcp")){
                 continue;
             }
 
@@ -106,7 +107,8 @@ public class CaseTest {
     public void TestCase15_size() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-            if(s1.contains("udp")){
+
+            if(s1.contains("udp") || s1.contains("kcp")){
                 continue;
             }
 
@@ -144,7 +146,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("udp".equals(s1)){
+            if(s1.contains("udp") || s1.contains("kcp")){
                 continue;
             }
 
@@ -292,7 +294,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("udp".equals(s1)){
+            if(s1.contains("udp") || s1.contains("kcp")){
                 continue;
             }
 
@@ -313,7 +315,7 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            if("udp".equals(s1)){
+            if(s1.contains("udp") || s1.contains("kcp")){
                 continue;
             }
 

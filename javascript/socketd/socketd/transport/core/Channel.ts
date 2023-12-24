@@ -1,12 +1,8 @@
-import {Session, SessionDefault} from "./Session";
+import {Session} from "./Session";
 import {Config} from "./Config";
-import {Handshake, HandshakeInternal} from "./Handshake";
-import {Frame, Frames, Message, MessageDefault} from "./Message";
-import {StreamBase, StreamManger} from "./Stream";
-import {ChannelSupporter} from "./ChannelSupporter";
-import {Processor} from "./Processor";
-import {ChannelAssistant} from "./ChannelAssistant";
-import {EntityMetas, Flags} from "./Constants";
+import {HandshakeInternal} from "./Handshake";
+import {Frame, Frames, Message} from "./Message";
+import {StreamBase} from "./Stream";
 
 export interface Channel {
     /**

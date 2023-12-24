@@ -186,6 +186,7 @@ export class Frames {
     /**
      * 构建连接帧
      *
+     * @param sid 流Id
      * @param url 连接地址
      */
     static connectFrame(sid: string, url: string): Frame {

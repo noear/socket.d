@@ -148,9 +148,7 @@ export abstract class ClientBase<T extends ChannelAssistant<T>> implements Clien
     /**
      * 打开会话
      */
-    open(): ClientSession {
-        throw new Error("Method not implemented.");
-    }
+    abstract open(): ClientSession ;
 
     /**
      * 创建连接器

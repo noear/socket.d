@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -42,7 +43,9 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
         channelConfig.setRcvwnd(512);
         channelConfig.setMtu(512);
         channelConfig.setAckNoDelay(true);
-        channelConfig.setConv(55);
+
+        //相当于，同一个IP下的通道号
+        channelConfig.setConv(Math.abs(new Random().nextInt()));
 
         channelConfig.setFecAdapt(new FecAdapt(3, 1));
         channelConfig.setCrc32Check(true);

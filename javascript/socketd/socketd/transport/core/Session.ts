@@ -138,7 +138,3 @@ export class SessionBase implements Session {
     }
 }
 
-export class SessionDefault extends SessionBase {
-
-
-}

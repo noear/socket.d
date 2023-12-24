@@ -159,18 +159,18 @@ export class MessageDefault implements MessageInternal {
 
 export class Frame {
     _flag: number;
-    _message: Message;
+    _message: MessageInternal;
 
-    constructor(flag: number, message: Message) {
+    constructor(flag: number, message: MessageInternal) {
         this._flag = flag;
         this._message = message;
     }
 
-    flag(): number {
+    getFlag(): number {
         return this._flag;
     }
 
-    message(): Message {
+    getMessage(): MessageInternal {
         return this._message;
     }
 }

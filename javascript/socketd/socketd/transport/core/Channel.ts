@@ -1,8 +1,12 @@
-import {Session} from "./Session";
+import {Session, SessionDefault} from "./Session";
 import {Config} from "./Config";
-import {HandshakeInternal} from "./Handshake";
-import {Frame, Frames, Message} from "./Message";
-import {StreamBase} from "./Stream";
+import {Handshake, HandshakeInternal} from "./Handshake";
+import {Frame, Frames, Message, MessageDefault} from "./Message";
+import {StreamBase, StreamManger} from "./Stream";
+import {ChannelSupporter} from "./ChannelSupporter";
+import {Processor} from "./Processor";
+import {ChannelAssistant} from "./ChannelAssistant";
+import {EntityMetas, Flags} from "./Constants";
 
 export interface Channel {
     /**
@@ -113,7 +117,14 @@ export interface Channel {
     getSession(): Session;
 }
 
-abstract class  ChannelBase implements Channel{
+export interface ChannelInternal extends Channel {
+    /**
+     * 设置会话
+     * */
+    setSession(session: Session);
+}
+
+export abstract class  ChannelBase implements ChannelInternal {
     _config: Config;
     _attachments: Map<string, object>;
     _handshake: HandshakeInternal;
@@ -124,12 +135,11 @@ abstract class  ChannelBase implements Channel{
         this._attachments = new Map<string, object>();
     }
 
-
-    getAttachment(name:string):object{
+    getAttachment(name: string): object {
         return this._attachments.get(name);
     }
 
-    setAttachment(name:string, val:object){
+    setAttachment(name: string, val: object) {
         if (val == null) {
             this._attachments.delete(name);
         } else {
@@ -137,11 +147,16 @@ abstract class  ChannelBase implements Channel{
         }
     }
 
-    isClosed():number{
+    isValid() {
+        throw new Error("Method not implemented.");
+    }
+
+
+    isClosed(): number {
         return this._isClosed;
     }
 
-    close(code:number){
+    close(code: number) {
         this._isClosed = code;
         this._attachments.clear();
     }
@@ -150,80 +165,60 @@ abstract class  ChannelBase implements Channel{
     getConfig(): Config {
         return this._config;
     }
+
     setHandshake(handshake: HandshakeInternal) {
-       this._handshake = handshake;
+        this._handshake = handshake;
     }
+
     getHandshake(): HandshakeInternal {
         return this._handshake;
     }
-    sendConnect(url:string) {
-        this.send(Frames.connectFrame(this.getConfig().generateId(), url),null)
+
+    sendConnect(url: string) {
+        this.send(Frames.connectFrame(this.getConfig().getIdGenerator().generate(), url), null)
     }
+
     sendConnack(connectMessage: Message) {
         this.send(Frames.connackFrame(connectMessage), null);
     }
+
     sendPing() {
         this.send(Frames.pingFrame(), null);
     }
+
     sendPong() {
         this.send(Frames.pongFrame(), null);
     }
+
     sendClose() {
         this.send(Frames.closeFrame(), null);
     }
+
     sendAlarm(from: Message, alarm: string) {
         this.send(Frames.alarmFrame(from, alarm), null);
     }
+
     send(frame: Frame, stream: StreamBase) {
         throw new Error("Method not implemented.");
     }
+
     retrieve(frame: Frame) {
         throw new Error("Method not implemented.");
     }
+
     reconnect() {
         throw new Error("Method not implemented.");
     }
+
     onError(error: Error) {
         throw new Error("Method not implemented.");
     }
+
     getSession(): Session {
         throw new Error("Method not implemented.");
     }
-}
 
-export class ChannelDefault extends ChannelBase implements Channel{
-    _real:WebSocket;
-    _config:Config;
-    _closeCode:number;
-    _handshake:any;
-    constructor(real: WebSocket, config: Config) {
-        this._real = real;
-        this._config = config;
-        this._closeCode = 0;
-        this._handshake = null;
-    }
-
-    config(): Config {
-        return this._config;
-    }
-
-    sendPing() {
-        this.send({flag: Flags.Ping});
-    }
-
-    sendPong() {
-        this.send({flag: Flags.Pong});
-    }
-
-    send(frame) {
-        this._config.codec().write(frame, null);
-    }
-
-    getSession(): Session {
-        return null;
-    }
-
-    close(code) {
-        this._closeCode = code;
+    setSession(session: Session) {
+        throw new Error("Method not implemented.");
     }
 }

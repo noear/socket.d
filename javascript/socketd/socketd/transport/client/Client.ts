@@ -3,8 +3,9 @@ import {IoConsumer} from "../core/Types";
 import {ClientSession} from "./ClientSession";
 import {ClientConfig} from "./ClientConfig";
 import {Processor, ProcessorDefault} from "../core/Processor";
-import {HeartbeatHandler} from "../core/HeartbeatHandler";
 import {ChannelAssistant} from "../core/ChannelAssistant";
+import {Session} from "../core/Session";
+import {ClientConnector} from "./ClientConnector";
 
 /**
  * 客户端（用于构建会话）
@@ -16,7 +17,7 @@ export interface Client {
     /**
      * 心跳
      */
-    heartbeatHandler(handler: HeartbeatHandler)
+    heartbeatHandler(handler: IoConsumer<Session>)
 
     /**
      * 配置
@@ -38,7 +39,7 @@ export interface ClientInternal extends Client {
     /**
      * 获取心跳处理
      */
-    getHeartbeatHandler(): HeartbeatHandler;
+    getHeartbeatHandler(): IoConsumer<Session>;
 
     /**
      * 获取心跳间隔（毫秒）
@@ -64,7 +65,7 @@ export interface ClientInternal extends Client {
  */
 export abstract class ClientBase<T extends ChannelAssistant<T>> implements ClientInternal {
     _config: ClientConfig;
-    _heartbeatHandler: HeartbeatHandler;
+    _heartbeatHandler: IoConsumer<Session>;
     _processor: Processor;
     _listener: Listener;
     _assistant: T;
@@ -76,27 +77,45 @@ export abstract class ClientBase<T extends ChannelAssistant<T>> implements Clien
         this._listener = new SimpleListener();
     }
 
+    /**
+     * 获取通道助理
+     */
     getAssistant(): T {
         return this._assistant;
     }
 
-    getHeartbeatHandler(): HeartbeatHandler {
+    /**
+     * 获取心跳处理
+     */
+    getHeartbeatHandler(): IoConsumer<Session> {
         return this._heartbeatHandler;
     }
 
+    /**
+     * 获取心跳间隔（毫秒）
+     */
     getHeartbeatInterval(): number {
         return this.getConfig().getHeartbeatInterval();
     }
 
+    /**
+     * 获取配置
+     */
     getConfig(): ClientConfig {
         return this._config;
     }
 
+    /**
+     * 获取处理器
+     */
     getProcessor(): Processor {
         return this._processor;
     }
 
-    heartbeatHandler(handler: HeartbeatHandler) {
+    /**
+     * 设置心跳
+     */
+    heartbeatHandler(handler: IoConsumer<Session>) {
         if (handler != null) {
             this._heartbeatHandler = handler;
         }
@@ -104,6 +123,9 @@ export abstract class ClientBase<T extends ChannelAssistant<T>> implements Clien
         return this;
     }
 
+    /**
+     * 配置
+     */
     config(configHandler: IoConsumer<ClientConfig>) {
         if (configHandler != null) {
             configHandler(this._config);
@@ -112,6 +134,9 @@ export abstract class ClientBase<T extends ChannelAssistant<T>> implements Clien
         return this;
     }
 
+    /**
+     * 设置监听器
+     */
     listen(listener: Listener): Client {
         if (listener != null) {
             this._listener = listener;
@@ -120,7 +145,15 @@ export abstract class ClientBase<T extends ChannelAssistant<T>> implements Clien
         return this;
     }
 
+    /**
+     * 打开会话
+     */
     open(): ClientSession {
         throw new Error("Method not implemented.");
     }
+
+    /**
+     * 创建连接器
+     */
+    protected abstract createConnector(): ClientConnector;
 }

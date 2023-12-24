@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.smartsocket.impl;
+package org.noear.socketd.transport.smartsocket.tcp.impl;
 
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Frame;

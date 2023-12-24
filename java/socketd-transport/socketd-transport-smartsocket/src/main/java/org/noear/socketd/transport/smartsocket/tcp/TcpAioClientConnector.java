@@ -1,11 +1,11 @@
-package org.noear.socketd.transport.smartsocket;
+package org.noear.socketd.transport.smartsocket.tcp;
 
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.smartsocket.impl.ClientMessageProcessor;
+import org.noear.socketd.transport.smartsocket.tcp.impl.ClientMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.IdleStatePlugin;

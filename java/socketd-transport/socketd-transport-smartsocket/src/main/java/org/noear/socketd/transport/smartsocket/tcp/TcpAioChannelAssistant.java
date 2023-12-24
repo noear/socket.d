@@ -1,11 +1,10 @@
-package org.noear.socketd.transport.smartsocket;
+package org.noear.socketd.transport.smartsocket.tcp;
 
 import org.noear.socketd.transport.core.*;
 import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.channels.ClosedChannelException;
 
 /**
  * Tcp-Aio 通道助理实现

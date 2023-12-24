@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.smartsocket;
+package org.noear.socketd.transport.smartsocket.tcp;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.exception.SocketdException;
@@ -7,9 +7,9 @@ import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
-import org.noear.socketd.transport.smartsocket.impl.FrameProtocol;
-import org.noear.socketd.transport.smartsocket.impl.IdleStatePluginEx;
-import org.noear.socketd.transport.smartsocket.impl.ServerMessageProcessor;
+import org.noear.socketd.transport.smartsocket.tcp.impl.FrameProtocol;
+import org.noear.socketd.transport.smartsocket.tcp.impl.IdleStatePluginEx;
+import org.noear.socketd.transport.smartsocket.tcp.impl.ServerMessageProcessor;
 import org.noear.socketd.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

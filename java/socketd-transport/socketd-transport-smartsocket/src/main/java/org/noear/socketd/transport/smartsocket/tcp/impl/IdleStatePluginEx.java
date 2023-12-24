@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.smartsocket.impl;
+package org.noear.socketd.transport.smartsocket.tcp.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

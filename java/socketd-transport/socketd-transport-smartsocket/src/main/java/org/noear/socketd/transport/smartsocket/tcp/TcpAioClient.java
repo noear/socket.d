@@ -1,10 +1,10 @@
-package org.noear.socketd.transport.smartsocket;
+package org.noear.socketd.transport.smartsocket.tcp;
 
 import org.noear.socketd.transport.client.ClientBase;
 import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.client.ClientConnector;
 import org.noear.socketd.transport.core.ChannelSupporter;
-import org.noear.socketd.transport.smartsocket.impl.FrameProtocol;
+import org.noear.socketd.transport.smartsocket.tcp.impl.FrameProtocol;
 import org.smartboot.socket.transport.AioSession;
 
 /**

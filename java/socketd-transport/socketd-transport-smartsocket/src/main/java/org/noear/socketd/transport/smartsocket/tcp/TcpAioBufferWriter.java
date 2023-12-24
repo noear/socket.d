@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.smartsocket;
+package org.noear.socketd.transport.smartsocket.tcp;
 
 import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.smartboot.socket.transport.WriteBuffer;

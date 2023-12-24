@@ -124,8 +124,9 @@ public class TestCase01 extends BaseTestCase {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
-            clientSession.sendAndRequest("demo", new StringEntity("test"));
-            sendAndRequestLatch.countDown();
+            clientSession.sendAndRequest("demo", new StringEntity("test"),r->{
+                sendAndRequestLatch.countDown();
+            });
         }
 
         long timeSpan = System.currentTimeMillis() - startTime;

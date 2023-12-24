@@ -49,8 +49,12 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
 
         channelConfig.setFecAdapt(new FecAdapt(3, 1));
         channelConfig.setCrc32Check(true);
-        //channelConfig.setTimeoutMillis(10000);
         //channelConfig.setAckMaskSize(32);
+
+        if (client.config().getIdleTimeout() > 0) {
+            channelConfig.setTimeoutMillis(client.config().getIdleTimeout());
+        }
+
         KcpClient kcpClient = new KcpClient();
         kcpClient.init(channelConfig);
 

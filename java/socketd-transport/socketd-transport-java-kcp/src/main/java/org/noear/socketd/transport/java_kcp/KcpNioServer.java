@@ -49,9 +49,12 @@ public class KcpNioServer extends ServerBase<KcpNioChannelAssistant> implements 
         channelConfig.setMtu(512);
         channelConfig.setFecAdapt(new FecAdapt(3, 1));
         channelConfig.setAckNoDelay(true);
-//        channelConfig.setTimeoutMillis(10000);
         channelConfig.setUseConvChannel(true);
         channelConfig.setCrc32Check(true);
+
+        if (config().getIdleTimeout() > 0) {
+            channelConfig.setTimeoutMillis(config().getIdleTimeout());
+        }
 
         server = new KcpServer();
         server.init(new ServerKcpListener(this), channelConfig, config().getPort());

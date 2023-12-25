@@ -3,7 +3,7 @@ import {Config} from "./Config";
 import {HandshakeInternal} from "./Handshake";
 import {Frame, Frames, Message} from "./Message";
 import {StreamBase} from "./Stream";
-import {IoBiConsumer, IoConsumer} from "./Types";
+import {IoBiConsumer} from "./Types";
 
 export interface Channel {
     /**

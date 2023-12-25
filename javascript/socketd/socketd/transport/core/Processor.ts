@@ -56,7 +56,7 @@ export class ProcessorDefault implements Processor{
         if (frame.flag == Flags.Connect) {
             channel.setHandshake(frame.message);
             channel.onOpenFuture((r,err)=>{
-                if (channel.isValid()) {
+                if (r && channel.isValid()) {
                     //如果还有效，则发送链接确认
                     try {
                         channel.sendConnack(frame.getMessage()); //->Connack

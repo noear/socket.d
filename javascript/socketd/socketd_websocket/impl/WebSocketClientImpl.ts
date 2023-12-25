@@ -27,8 +27,8 @@ export class WebSocketClientImpl {
     onOpen(e: Event) {
         try {
             this._channel.sendConnect(this._client.getConfig().getUrl());
-        } catch (e) {
-            console.warn("Client channel sendConnect error", e);
+        } catch (err) {
+            console.warn("Client channel sendConnect error", err);
         }
     }
 

@@ -33,7 +33,7 @@ public class ProcessorDefault implements Processor {
     /**
      * 接收处理
      */
-    public void onReceive(Channel channel, Frame frame)  {
+    public void onReceive(ChannelInternal channel, Frame frame)  {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
                 log.debug("C-REV:{}", frame);
@@ -141,7 +141,7 @@ public class ProcessorDefault implements Processor {
         }
     }
 
-    private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
+    private void onReceiveDo(ChannelInternal channel, Frame frame, boolean isReply) throws IOException {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
@@ -174,7 +174,7 @@ public class ProcessorDefault implements Processor {
      * @param channel 通道
      */
     @Override
-    public void onOpen(Channel channel) {
+    public void onOpen(ChannelInternal channel) {
         channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onOpen(channel.getSession());
@@ -196,7 +196,7 @@ public class ProcessorDefault implements Processor {
      * @param message 消息
      */
     @Override
-    public void onMessage(Channel channel, Message message) {
+    public void onMessage(ChannelInternal channel, Message message) {
         channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onMessage(channel.getSession(), message);
@@ -216,7 +216,7 @@ public class ProcessorDefault implements Processor {
      * @param channel 通道
      */
     @Override
-    public void onClose(Channel channel) {
+    public void onClose(ChannelInternal channel) {
         if (channel.isClosed() == 0) {
             onCloseInternal(channel);
         }
@@ -227,7 +227,7 @@ public class ProcessorDefault implements Processor {
      *
      * @param channel 通道
      */
-    private void onCloseInternal(Channel channel){
+    private void onCloseInternal(ChannelInternal channel){
         listener.onClose(channel.getSession());
     }
 
@@ -238,7 +238,7 @@ public class ProcessorDefault implements Processor {
      * @param error   错误信息
      */
     @Override
-    public void onError(Channel channel, Throwable error) {
+    public void onError(ChannelInternal channel, Throwable error) {
         listener.onError(channel.getSession(), error);
     }
 }

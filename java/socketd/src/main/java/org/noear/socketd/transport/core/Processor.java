@@ -1,7 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import java.io.IOException;
-
 /**
  * 处理器
  *
@@ -17,14 +15,14 @@ public interface Processor {
     /**
      * 接收处理
      */
-    void onReceive(Channel channel, Frame frame);
+    void onReceive(ChannelInternal channel, Frame frame);
 
     /**
      * 打开时
      *
      * @param channel 通道
      */
-    void onOpen(Channel channel);
+    void onOpen(ChannelInternal channel);
 
     /**
      * 收到消息时
@@ -32,14 +30,14 @@ public interface Processor {
      * @param channel 通道
      * @param message 消息
      */
-    void onMessage(Channel channel, Message message);
+    void onMessage(ChannelInternal channel, Message message);
 
     /**
      * 关闭时
      *
      * @param channel 通道
      */
-    void onClose(Channel channel);
+    void onClose(ChannelInternal channel);
 
     /**
      * 出错时
@@ -47,5 +45,5 @@ public interface Processor {
      * @param channel 通道
      * @param error   错误信息
      */
-    void onError(Channel channel, Throwable error);
+    void onError(ChannelInternal channel, Throwable error);
 }

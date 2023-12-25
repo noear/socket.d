@@ -5,9 +5,9 @@ from typing import Callable
 from concurrent.futures import ThreadPoolExecutor
 
 from .Config import Config
-from socketd.core.handler.FragmentHandlerDefault import FragmentHandlerDefault
 from socketd.transport.Codec import Codec
 from socketd.transport.CodecByteBuffer import CodecByteBuffer
+from ..handler.FragmentHandlerDefault import FragmentHandlerDefault
 
 
 class ConfigBase(Config):
@@ -27,6 +27,7 @@ class ConfigBase(Config):
         self._reply_timeout = 3000
         self._max_requests = 10
         self._max_udp_size = 2048
+        self.__is_thread = False
 
     def client_mode(self):
         return self._client_mode
@@ -128,3 +129,9 @@ class ConfigBase(Config):
     def set_stream_timeout(self, _stream_timeout):
         self._stream_timeout = _stream_timeout
         return self
+
+    def set_is_thread(self, _is_thread):
+        self.__is_thread = _is_thread
+
+    def get_is_thread(self):
+        return self.__is_thread

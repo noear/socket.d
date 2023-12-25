@@ -10,7 +10,7 @@ from socketd_websocket.WsAioServer import WsAioServer
 
 class WsAioFactory(ClientFactory, ServerFactory):
 
-    def schema(self):
+    def schema(self) -> list[str]:
         return ["ws", "wss", "ws-python"]
 
     def create_server(self, serverConfig: ServerConfig) -> Server:

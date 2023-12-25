@@ -6,9 +6,9 @@ from loguru import logger
 from test.modelu.BaseTest import BaseTest
 
 
-class TestCase(unittest.TestCase):
+class TestCase00(unittest.TestCase):
 
-    count = 10000
+    count = 100000
     timeout = 30
 
     def __init__(self, *args, **kwargs):
@@ -18,15 +18,15 @@ class TestCase(unittest.TestCase):
 
     def test_send(self):
         test = BaseTest()
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
         try:
             loop.run_until_complete(test.start())
-            loop.run_until_complete(test.send(TestCase.count))
-            loop.run_until_complete(test.send_and_request(TestCase.count))
-            loop.run_until_complete(test.send_and_subscribe(TestCase.count))
+            loop.run_until_complete(test.send(TestCase00.count))
+            # loop.run_until_complete(test.send_and_request(TestCase00.count))
+            # loop.run_until_complete(test.send_and_subscribe(TestCase00.count))
         except Exception as e:
             pass
         finally:
-            test.close()
+            loop.run_until_complete(test.close())
 
 

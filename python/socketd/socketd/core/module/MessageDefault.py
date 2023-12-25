@@ -1,3 +1,6 @@
+from io import BytesIO
+from typing import Optional, Any, Dict
+
 from .Entity import Entity
 from .Message import Message
 from ..Costants import Constants, Flag
@@ -49,3 +52,27 @@ class MessageDefault(Message):
 
     def __str__(self):
         return f"Message{{sid='{self.sid}', event='{self.event}', entity={self.entity}}}"
+
+    def get_meta_string(self) -> str:
+        return self.entity.get_meta_string()
+
+    def get_meta_map(self) -> Dict[str, str]:
+        return self.entity.get_meta_map()
+
+    def get_meta(self, name: str) -> Optional[Any]:
+        return self.entity.get_meta(name)
+
+    def get_meta_or_default(self, name: str, default: str) -> str:
+        return self.entity.get_meta_or_default(name, default)
+
+    def get_data(self) -> BytesIO:
+        return self.entity.get_data()
+
+    def get_data_as_string(self) -> str:
+        return self.entity.get_data_as_string()
+
+    def get_data_size(self) -> int:
+        return self.entity.get_data_size()
+
+    def get_data_as_bytes(self) -> bytes:
+        return self.entity.get_data_as_bytes()

@@ -54,7 +54,7 @@ async def application_test():
     server: Server = SocketD.create_server(ServerConfig("ws").set_port(9999))
     server_session: WebSocketServer = await server.config(idGenerator).listen(
         SimpleListenerTest()).start()
-
+    await asyncio.sleep(1)
     client_session: Session = await SocketD.create_client("ws://127.0.0.1:9999") \
         .config(idGenerator).open()
 

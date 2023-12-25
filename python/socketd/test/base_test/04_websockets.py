@@ -50,4 +50,3 @@ class websockets_Test(unittest.TestCase):
 
 if __name__ == "__main__":
     websockets_Test().test_application()
-    pass

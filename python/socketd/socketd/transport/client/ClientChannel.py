@@ -1,10 +1,15 @@
+import asyncio
 from abc import ABC
+from asyncio import Future
 
 from socketd.core.AssertsUtil import AssertsUtil
 from socketd.core.Channel import Channel
 from socketd.core.ChannelBase import ChannelBase
 from socketd.transport.client.ClientConnector import ClientConnector
 from loguru import logger
+
+from socketd.transport.core.AsyncUtil import AsyncUtil
+from socketd.transport.core.HeartbeatHandlerDefault import HeartbeatHandlerDefault
 
 
 class ClientChannel(ChannelBase, ABC):
@@ -13,13 +18,17 @@ class ClientChannel(ChannelBase, ABC):
         self.real: Channel = real
         self.connector: ClientConnector = connector
         self.heartbeatHandler = connector.heartbeatHandler()
+        self._heartbeatScheduledFuture: Future | None = None
 
-        # if self.heartbeatHandler is None:
-        #     self.heartbeatHandler = HeartbeatHandlerDefault()
-        connector.autoReconnect()
-        # if connector.autoReconnect() and self.heartbeatScheduledFuture is None:
-        #     self.heartbeatScheduledFuture = threading.Timer(connector.heartbeatInterval(), self.heartbeatHandle)
-        #     self.heartbeatScheduledFuture.start()
+        if self.heartbeatHandler is None:
+            self.heartbeatHandler = HeartbeatHandlerDefault()
+
+        self._loop = asyncio.new_event_loop()
+        self.initHeartbeat()
+
+    def __del__(self):
+        if self._loop:
+            self._loop.close()
 
     def remove_acceptor(self, sid):
         if self.real is not None:
@@ -49,13 +58,27 @@ class ClientChannel(ChannelBase, ABC):
         else:
             return self.real.get_local_address()
 
+    def initHeartbeat(self):
+        if self._heartbeatScheduledFuture is not None:
+            self._heartbeatScheduledFuture.cancel()
+
+        if self.connector.autoReconnect():
+            async def _heartbeatScheduled():
+                while True:
+                    await asyncio.sleep(self.connector.heartbeatInterval())
+                    await self.heartbeat_handle()
+            self._heartbeatScheduledFuture = asyncio.create_task(_heartbeatScheduled())
+
+            self.get_config().get_executor().submit(lambda:
+                                                    AsyncUtil.thread_handler(self._loop, self._heartbeatScheduledFuture))
+
     def heartbeat_handle(self):
         AssertsUtil.assert_closed(self.real)
 
         with self:
             try:
                 self.prepare_send()
-                self.heartbeatHandler.heartbeat_handle()
+                self.heartbeatHandler.heartbeat(self.get_session())
             except Exception as e:
                 if self.connector.autoReconnect():
                     self.real.close()
@@ -75,7 +98,7 @@ class ClientChannel(ChannelBase, ABC):
                 raise e
 
     async def retrieve(self, frame, on_error):
-        self.real.retrieve(frame, on_error)
+        await self.real.retrieve(frame, on_error)
 
     def get_session(self):
         return self.real.get_session()
@@ -84,6 +107,7 @@ class ClientChannel(ChannelBase, ABC):
                     reason: str = "", ):
         try:
             await super().close(code, reason)
+            self._heartbeatScheduledFuture.cancel()
             if self.real is not None:
                 await self.real.close()
         except Exception as e:
@@ -101,4 +125,3 @@ class ClientChannel(ChannelBase, ABC):
 
     def on_error(self, error: Exception):
         pass
-

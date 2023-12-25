@@ -1,5 +1,4 @@
 import asyncio
-from asyncio.coroutines import iscoroutine
 from typing import Generic, TypeVar
 
 from loguru import logger

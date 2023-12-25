@@ -18,7 +18,6 @@ class ClientConfig(ConfigBase):
         self.__auto_reconnect = True
         self.__read_buffer_size = None
         self.__write_buffer_size = None
-        self.__is_thread = False
 
     def get_schema(self):
         return self.__schema
@@ -70,12 +69,7 @@ class ClientConfig(ConfigBase):
         self.__auto_reconnect = __auto_reconnect
         return self
 
-    def is_thread(self, __is_thread: bool):
-        self.__is_thread = __is_thread
-        return self
 
-    def get_is_thread(self):
-        return self.__is_thread
 
     def __str__(self):
         return f"ClientConfig{{__schema='{self.__schema}', __url='{self.__url}', " \
@@ -85,5 +79,4 @@ class ClientConfig(ConfigBase):
                f"writeBufferSize={self.__write_buffer_size}, " \
                f"autoReconnect={self.__auto_reconnect}, " \
                f"maxRequests={self._max_requests}, " \
-               f"maxUdpSize={self._max_udp_size}}}" \
-               f"isThread={self.is_thread}}}"
+               f"maxUdpSize={self._max_udp_size}}}"

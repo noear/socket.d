@@ -6,13 +6,16 @@
 </p>
 
 <p align="center">
-    <a>python3.10+</a>
-</p>
-
-<br/>
-<p align="center">
-	<a href="https://jq.qq.com/?_wv=1027&k=kjB5JNiC">
-	<img src="https://img.shields.io/badge/QQ交流群-870505482-orange"/></a>
+    <a href="https://socketd.noear.org/">
+        <img src="https://img.shields.io/badge/socketd-2.1.1-blue" alt="socketd"/>
+    </a>
+    <a target="_blank" href="https://www.python.org/">
+        <img src="https://img.shields.io/badge/python-3.10-blue" alt="python10" />
+    </a>
+    <a href="">
+	    <img src="https://img.shields.io/badge/QQ交流群-870505482-orange" alt="qq"/>
+    </a>
+    
 </p>
 
 
@@ -26,7 +29,7 @@ Socket.D 是一种新的通讯应用协议，也是一个开发框架。可以�
 
 ### 主要特性
 
-* 异步通讯，由带语义的事件消息驱动
+* 异步通讯，由带语义的路由消息驱动
 * 语言无关，使用二进制通信协议（支持 tcp, ws, udp）。支持多语言、多平台
 * 背压流控，请求时不让你把服务端发死了
 * 断线重连，自动连接恢复
@@ -75,7 +78,7 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 
 ```
 //udp only <2k
-[len:int][flag:int][sid:str(<64)][\n][event:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
+[len:int][flag:int][sid:str(<64)][\n][route:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
 * 指令流
@@ -103,20 +106,47 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 
 ### 快速入门与学习
 
-- 快速入手
+* 学习
+
+请点击：[《快速入门与学习》](_docs/)。Java 之外的语言与平台会尽快跟进（欢迎有兴趣的同学加入社区）
+
+* 规划情况了解
+
+| 语言或平台  | 客户端 | 服务端 | 备注                   |
+|--------|-----|----|----------------------|
+| java   | 已完成 | 已完成  | 支持 tcp, udp, ws 通讯架构 |
+| js     | 开发中 | /  | 支持 ws 通讯架构           |
+| python | 开发中 | /  | 支持 ws 通讯架构           |
+| 其它     | 计划中 | 计划中  |                      |
+
+## 快速入门
 ```python
-async def appliction_test():
-    server = SocketD.create_server(ServerConfig("ws").setPort(9999))
-    server_session: Serve = server.config(idGenerator).listen(
+async def application():
+    # 服务端
+    server: Server = SocketD.create_server(ServerConfig("ws").set_port(9999))
+    server_session: WebSocketServer = await server.config(idGenerator).listen(
         SimpleListenerTest()).start()
-
-    await asyncio.sleep(3)
-
-    client_session: Session = SocketD.create_client("ws://127.0.0.1:9999") \
+    
+    # 客户端
+    client_session: Session = await SocketD.create_client("ws://127.0.0.1:9999") \
         .config(idGenerator).open()
 
-    for _ in range(100000):
+    start_time = time.monotonic()
+    for _ in range(100):
         await client_session.send("demo", StringEntity("test"))
+        await client_session.send_and_request("demo", StringEntity("test"), 100)
+        await client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
+    end_time = time.monotonic()
+    logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
     await client_session.close()
-    asyncio.get_event_loop().run_forever()
+    server_session.close()
+    await server.stop()
+
+asyncio.run(application())
+```
+
+非windows用户可以引入以下依赖，性能提升2倍，asyncio（协程）性能直逼Go
+```python
+import uvloop
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 ```

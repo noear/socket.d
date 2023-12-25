@@ -29,7 +29,7 @@ Socket.D 是一种新的通讯应用协议，也是一个开发框架。可以�
 
 ### 主要特性
 
-* 异步通讯，由带语义的路由消息驱动
+* 异步通讯，由带语义的事件消息驱动
 * 语言无关，使用二进制通信协议（支持 tcp, ws, udp）。支持多语言、多平台
 * 背压流控，请求时不让你把服务端发死了
 * 断线重连，自动连接恢复
@@ -78,7 +78,7 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 
 ```
 //udp only <2k
-[len:int][flag:int][sid:str(<64)][\n][route:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
+[len:int][flag:int][sid:str(<64)][\n][event:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
 * 指令流

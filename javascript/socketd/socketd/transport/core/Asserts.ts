@@ -1,5 +1,6 @@
 import {Channel} from "./Channel";
 import {Constants} from "./Constants";
+import {SocketdChannelException, SocketdSizeLimitException} from "../../exception/SocketdException";
 
 /**
  * 断言
@@ -13,7 +14,7 @@ export class Asserts {
      */
     static assertClosed(channel: Channel) {
         if (channel != null && channel.isClosed() > 0) {
-            throw new Error("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }
 
@@ -22,7 +23,7 @@ export class Asserts {
      */
     static assertClosedByUser(channel: Channel) {
         if (channel != null && channel.isClosed() == Constants.CLOSE4_USER) {
-            throw new Error("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }
 
@@ -51,7 +52,7 @@ export class Asserts {
         if (size > limitSize) {
             let message = `This message ${name} size is out of limit ${limitSize} (${size})`;
 
-            throw new Error(message);
+            throw new SocketdSizeLimitException(message);
         }
     }
 }

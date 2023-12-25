@@ -6,6 +6,7 @@ import {ClientConnector} from "./ClientConnector";
 import {HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
 import {Constants} from "../core/Constants";
 import {Asserts} from "../core/Asserts";
+import {SocketdChannelException, SocketdException} from "../../exception/SocketdException";
 
 export class ClientChannel extends ChannelBase implements Channel {
     _connector:ClientConnector;
@@ -64,12 +65,16 @@ export class ClientChannel extends ChannelBase implements Channel {
 
             this._heartbeatHandler.heartbeat(this.getSession());
         } catch (e) {
+            if (e instanceof SocketdException) {
+                throw e;
+            }
+
             if (this._connector.autoReconnect()) {
                 this._real.close(Constants.CLOSE3_ERROR);
                 this._real = null;
             }
 
-            throw e;
+            throw new SocketdChannelException(e);
         }
     }
 

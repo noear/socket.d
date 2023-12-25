@@ -21,11 +21,11 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     _session:Session;
 
     constructor(source: S, supporter: ChannelSupporter<S>) {
-        super(supporter.config());
+        super(supporter.getConfig());
         this._source = source;
-        this._processor = supporter.processor();
-        this._assistant = supporter.assistant();
-        this._streamManger = supporter.config().getStreamManger();
+        this._processor = supporter.getProcessor();
+        this._assistant = supporter.getAssistant();
+        this._streamManger = supporter.getConfig().getStreamManger();
     }
 
     isValid() {

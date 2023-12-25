@@ -13,10 +13,10 @@ export class WsClient extends ClientBase<WsChannelAssistant> implements ChannelS
         super(clientConfig, new WsChannelAssistant());
     }
 
-    processor(): Processor {
+    getProcessor(): Processor {
         throw new Error("Method not implemented.");
     }
-    assistant(): ChannelAssistant<WebSocket> {
+    getAssistant(): ChannelAssistant<WebSocket> {
         throw new Error("Method not implemented.");
     }
 

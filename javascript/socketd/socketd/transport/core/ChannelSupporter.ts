@@ -6,15 +6,15 @@ export interface ChannelSupporter<S> {
     /**
      * 处理器
      */
-    processor(): Processor;
+    getProcessor(): Processor;
 
     /**
      * 配置
      */
-    config(): Config;
+    getConfig(): Config;
 
     /**
      * 通道助理
      */
-    assistant(): ChannelAssistant<S>;
+    getAssistant(): ChannelAssistant<S>;
 }

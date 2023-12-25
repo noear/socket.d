@@ -120,7 +120,7 @@ export interface ChannelInternal extends Channel {
     setSession(session: Session);
 }
 
-export abstract class  ChannelBase implements ChannelInternal {
+export abstract class  ChannelBase implements Channel {
     _config: Config;
     _attachments: Map<string, object>;
     _handshake: HandshakeInternal;
@@ -143,9 +143,7 @@ export abstract class  ChannelBase implements ChannelInternal {
         }
     }
 
-    isValid() {
-        throw new Error("Method not implemented.");
-    }
+    abstract isValid();
 
 
     isClosed(): number {
@@ -194,27 +192,13 @@ export abstract class  ChannelBase implements ChannelInternal {
         this.send(Frames.alarmFrame(from, alarm), null);
     }
 
-    send(frame: Frame, stream: StreamBase) {
-        throw new Error("Method not implemented.");
-    }
+    abstract send(frame: Frame, stream: StreamBase);
 
-    retrieve(frame: Frame) {
-        throw new Error("Method not implemented.");
-    }
+    abstract retrieve(frame: Frame);
 
-    reconnect() {
-        throw new Error("Method not implemented.");
-    }
+    abstract reconnect();
 
-    onError(error: Error) {
-        throw new Error("Method not implemented.");
-    }
+    abstract onError(error: Error);
 
-    getSession(): Session {
-        throw new Error("Method not implemented.");
-    }
-
-    setSession(session: Session) {
-        throw new Error("Method not implemented.");
-    }
+    abstract getSession(): Session ;
 }

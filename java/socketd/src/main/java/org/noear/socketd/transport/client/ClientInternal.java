@@ -13,20 +13,20 @@ public interface ClientInternal extends Client {
     /**
      * 获取心跳处理
      */
-    HeartbeatHandler heartbeatHandler();
+    HeartbeatHandler getHeartbeatHandler();
 
     /**
      * 获取心跳间隔（毫秒）
      */
-    long heartbeatInterval();
+    long getHeartbeatInterval();
 
     /**
      * 获取配置
      */
-    ClientConfig config();
+    ClientConfig getConfig();
 
     /**
      * 获取处理器
      */
-    Processor processor();
+    Processor getProcessor();
 }

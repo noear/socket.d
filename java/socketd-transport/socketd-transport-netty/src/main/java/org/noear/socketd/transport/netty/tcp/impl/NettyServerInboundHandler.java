@@ -34,7 +34,7 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Frame
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Frame frame) throws Exception {
         Channel channel = ctx.attr(CHANNEL_KEY).get();
-        server.processor().onReceive(channel, frame);
+        server.getProcessor().onReceive(channel, frame);
     }
 
     @Override
@@ -42,13 +42,13 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Frame
         super.channelInactive(ctx);
 
         Channel channel = ctx.attr(CHANNEL_KEY).get();
-        server.processor().onClose(channel);
+        server.getProcessor().onClose(channel);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         Channel channel = ctx.attr(CHANNEL_KEY).get();
-        server.processor().onError(channel, cause);
+        server.getProcessor().onError(channel, cause);
 
         ctx.close();
     }

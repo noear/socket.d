@@ -1,6 +1,7 @@
 import {IoConsumer} from "../core/Types";
 import {Session} from "../core/Session";
 import {ChannelInternal} from "../core/Channel";
+import {Client, ClientBase, ClientInternal} from "./Client";
 
 /**
  * 客户端连接器
@@ -43,21 +44,26 @@ export interface ClientConnector {
  * @author noear
  * @since 2.0
  */
-export abstract class ClientConnectorBase<T> implements ClientConnector{
-    heartbeatHandler(): IoConsumer<Session> {
-        throw new Error("Method not implemented.");
-    }
-    heartbeatInterval(): number {
-        throw new Error("Method not implemented.");
-    }
-    autoReconnect(): boolean {
-        throw new Error("Method not implemented.");
-    }
-    connect(): ChannelInternal {
-        throw new Error("Method not implemented.");
-    }
-    close() {
-        throw new Error("Method not implemented.");
+export abstract class ClientConnectorBase<T extends ClientInternal> implements ClientConnector {
+    _client: T;
+
+    constructor(client: T) {
+        this._client = client;
     }
 
+    heartbeatHandler(): IoConsumer<Session> {
+        return this._client.getHeartbeatHandler();
+    }
+
+    heartbeatInterval(): number {
+        return this._client.getHeartbeatInterval();
+    }
+
+    autoReconnect(): boolean {
+        return this._client.getConfig().isAutoReconnect();
+    }
+
+    abstract connect(): ChannelInternal;
+
+    abstract close();
 }

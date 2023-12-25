@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import kcp.KcpListener;
 import kcp.Ukcp;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
@@ -37,7 +36,7 @@ public class ClientKcpListener implements KcpListener {
 
         //开始握手
         try {
-            channel.sendConnect(client.config().getUrl());
+            channel.sendConnect(client.getConfig().getUrl());
         } catch (Throwable e) {
             channel.onError(e);
         }
@@ -46,7 +45,7 @@ public class ClientKcpListener implements KcpListener {
     @Override
     public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
         BufferReader reader = new NettyBufferReader(byteBuf);
-        Frame frame = client.config().getCodec().read(reader);
+        Frame frame = client.getConfig().getCodec().read(reader);
         if (frame == null) {
             return;
         }
@@ -60,9 +59,9 @@ public class ClientKcpListener implements KcpListener {
                 });
             }
 
-            client.processor().onReceive(channel, frame);
+            client.getProcessor().onReceive(channel, frame);
         } catch (Throwable e) {
-            client.processor().onError(channel, e);
+            client.getProcessor().onError(channel, e);
 
             //说明握手失败了
             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
@@ -72,12 +71,12 @@ public class ClientKcpListener implements KcpListener {
     @Override
     public void handleException(Throwable throwable, Ukcp ukcp) {
         ChannelInternal channel = ukcp.user().getCache();
-        client.processor().onError(channel, throwable);
+        client.getProcessor().onError(channel, throwable);
     }
 
     @Override
     public void handleClose(Ukcp ukcp) {
         ChannelInternal channel = ukcp.user().getCache();
-        client.processor().onClose(channel);
+        client.getProcessor().onClose(channel);
     }
 }

@@ -29,7 +29,7 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "ws/nio/java-websocket 1.5/v" + SocketD.version();
     }
 
@@ -41,20 +41,20 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
             isStarted = true;
         }
 
-        if (Utils.isEmpty(config().getHost())) {
-            server = new WebSocketServerImpl(config().getPort(), this);
+        if (Utils.isEmpty(getConfig().getHost())) {
+            server = new WebSocketServerImpl(getConfig().getPort(), this);
         } else {
-            server = new WebSocketServerImpl(config().getHost(), config().getPort(), this);
+            server = new WebSocketServerImpl(getConfig().getHost(), getConfig().getPort(), this);
         }
 
         //支持 ssl
-        if (config().getSslContext() != null) {
-            server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(config().getSslContext()));
+        if (getConfig().getSslContext() != null) {
+            server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(getConfig().getSslContext()));
         }
 
         server.start();
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }

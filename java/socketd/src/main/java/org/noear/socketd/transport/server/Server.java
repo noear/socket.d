@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.server;
 
 import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.Processor;
 
 import java.io.IOException;
 
@@ -15,12 +14,12 @@ public interface Server {
     /**
      * 获取台头
      * */
-    String title();
+    String getTitle();
 
     /**
      * 获取配置
      * */
-    ServerConfig config();
+    ServerConfig getConfig();
 
     /**
      * 配置

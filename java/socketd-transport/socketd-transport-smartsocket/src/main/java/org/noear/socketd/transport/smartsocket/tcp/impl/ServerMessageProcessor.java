@@ -33,12 +33,12 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
         Channel channel = getChannel(s);
 
         try {
-            server.processor().onReceive(channel, frame);
+            server.getProcessor().onReceive(channel, frame);
         } catch (Throwable e) {
             if (channel == null) {
                 log.warn("Server process0 error", e);
             } else {
-                server.processor().onError(channel, e);
+                server.getProcessor().onError(channel, e);
             }
         }
     }
@@ -51,7 +51,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
                 break;
 
             case SESSION_CLOSED:
-                server.processor().onClose(getChannel(s));
+                server.getProcessor().onClose(getChannel(s));
                 break;
 
             case PROCESS_EXCEPTION:
@@ -59,7 +59,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                server.processor().onError(getChannel(s), e);
+                server.getProcessor().onError(getChannel(s), e);
                 break;
         }
     }

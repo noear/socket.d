@@ -51,22 +51,22 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
         channelConfig.setCrc32Check(true);
         //channelConfig.setAckMaskSize(32);
 
-        if (client.config().getIdleTimeout() > 0) {
-            channelConfig.setTimeoutMillis(client.config().getIdleTimeout());
+        if (client.getConfig().getIdleTimeout() > 0) {
+            channelConfig.setTimeoutMillis(client.getConfig().getIdleTimeout());
         }
 
         KcpClient kcpClient = new KcpClient();
         kcpClient.init(channelConfig);
 
         ClientKcpListener kcpListener = new ClientKcpListener(client);
-        InetSocketAddress kcpAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
+        InetSocketAddress kcpAddress = new InetSocketAddress(client.getConfig().getHost(), client.getConfig().getPort());
 
 
         try {
             real = kcpClient.connect(kcpAddress, channelConfig, kcpListener);
 
             //等待握手结果
-            ClientHandshakeResult handshakeResult = kcpListener.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = kcpListener.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getThrowable() != null) {
                 throw handshakeResult.getThrowable();
@@ -75,7 +75,7 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdTimeoutException("Connection timeout: " + client.config().getLinkUrl());
+            throw new SocketdTimeoutException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 

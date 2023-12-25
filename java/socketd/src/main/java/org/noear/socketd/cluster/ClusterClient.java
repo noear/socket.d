@@ -84,9 +84,9 @@ public class ClusterClient implements Client {
 
                 //复用通道执行器（省点线程数）
                 if (channelExecutor == null) {
-                    channelExecutor = client.config().getChannelExecutor();
+                    channelExecutor = client.getConfig().getChannelExecutor();
                 } else {
-                    client.config().channelExecutor(channelExecutor);
+                    client.getConfig().channelExecutor(channelExecutor);
                 }
 
                 sessionList.add(client.open());

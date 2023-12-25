@@ -38,7 +38,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "tcp/aio/smart-socket 1.5/" + SocketD.version();
     }
 
@@ -54,23 +54,23 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
 
         try {
             //支持 ssl
-            if (config().getSslContext() != null) {
-                SslPlugin<Frame> sslPlugin = new SslPlugin<>(config()::getSslContext, sslEngine -> {
+            if (getConfig().getSslContext() != null) {
+                SslPlugin<Frame> sslPlugin = new SslPlugin<>(getConfig()::getSslContext, sslEngine -> {
                     sslEngine.setUseClientMode(false);
                 });
                 messageProcessor.addPlugin(sslPlugin);
             }
 
             //闲置超时
-            if (config().getIdleTimeout() > 0) {
-                messageProcessor.addPlugin(new IdleStatePluginEx<>((int) config().getIdleTimeout(), true, false));
+            if (getConfig().getIdleTimeout() > 0) {
+                messageProcessor.addPlugin(new IdleStatePluginEx<>((int) getConfig().getIdleTimeout(), true, false));
             }
 
-            if (Utils.isEmpty(config().getHost())) {
-                server = new AioQuickServer(config().getPort(),
+            if (Utils.isEmpty(getConfig().getHost())) {
+                server = new AioQuickServer(getConfig().getPort(),
                         frameProtocol, messageProcessor);
             } else {
-                server = new AioQuickServer(config().getHost(), config().getPort(),
+                server = new AioQuickServer(getConfig().getHost(), getConfig().getPort(),
                         frameProtocol, messageProcessor);
             }
 
@@ -78,12 +78,12 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             server.setThreadNum(2);
             server.setBannerEnabled(false);
 
-            if (config().getReadBufferSize() > 0) {
-                server.setReadBufferSize(config().getReadBufferSize());
+            if (getConfig().getReadBufferSize() > 0) {
+                server.setReadBufferSize(getConfig().getReadBufferSize());
             }
 
-            if (config().getWriteBufferSize() > 0) {
-                server.setWriteBuffer(config().getWriteBufferSize(), 16);
+            if (getConfig().getWriteBufferSize() > 0) {
+                server.setWriteBuffer(getConfig().getWriteBufferSize(), 16);
             }
 
             server.start();
@@ -99,7 +99,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             }
         }
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }

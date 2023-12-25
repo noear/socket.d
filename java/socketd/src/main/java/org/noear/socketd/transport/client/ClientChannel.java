@@ -36,7 +36,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         super(real.getConfig());
         this.connector = connector;
         this.real = real;
-        this.heartbeatHandler = connector.heartbeatHandler();
+        this.heartbeatHandler = connector.getHeartbeatHandler();
 
         if (heartbeatHandler == null) {
             heartbeatHandler = new HeartbeatHandlerDefault();
@@ -62,7 +62,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                         log.warn("Client channel heartbeat error", e);
                     }
                 }
-            }, connector.heartbeatInterval());
+            }, connector.getHeartbeatInterval());
         }
     }
 

@@ -49,7 +49,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
                 });
             }
 
-            client.processor().onReceive(channel, frame);
+            client.getProcessor().onReceive(channel, frame);
         } catch (Exception e) {
             if (e instanceof SocketdConnectionException) {
                 //说明握手失败了
@@ -60,7 +60,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             if (channel == null) {
                 log.warn("Client process0 error", e);
             } else {
-                client.processor().onError(channel, e);
+                client.getProcessor().onError(channel, e);
             }
         }
     }
@@ -71,15 +71,15 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             case NEW_SESSION: {
                 Channel channel = getChannel(s);
                 try {
-                    channel.sendConnect(client.config().getUrl());
+                    channel.sendConnect(client.getConfig().getUrl());
                 } catch (Throwable ex) {
-                    client.processor().onError(channel, ex);
+                    client.getProcessor().onError(channel, ex);
                 }
             }
             break;
 
             case SESSION_CLOSED:
-                client.processor().onClose(getChannel(s));
+                client.getProcessor().onClose(getChannel(s));
                 break;
 
             case PROCESS_EXCEPTION:
@@ -87,7 +87,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION:
-                client.processor().onError(getChannel(s), e);
+                client.getProcessor().onError(getChannel(s), e);
                 break;
         }
     }

@@ -29,7 +29,7 @@ public class ServerKcpListener implements KcpListener {
     @Override
     public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
         BufferReader reader = new NettyBufferReader(byteBuf);
-        Frame frame = server.config().getCodec().read(reader);
+        Frame frame = server.getConfig().getCodec().read(reader);
         if (frame == null) {
             return;
         }
@@ -37,21 +37,21 @@ public class ServerKcpListener implements KcpListener {
         Channel channel = ukcp.user().getCache();
 
         try {
-            server.processor().onReceive(channel, frame);
+            server.getProcessor().onReceive(channel, frame);
         } catch (Throwable e) {
-            server.processor().onError(channel, e);
+            server.getProcessor().onError(channel, e);
         }
     }
 
     @Override
     public void handleException(Throwable throwable, Ukcp ukcp) {
         Channel channel = ukcp.user().getCache();
-        server.processor().onError(channel, throwable);
+        server.getProcessor().onError(channel, throwable);
     }
 
     @Override
     public void handleClose(Ukcp ukcp) {
         Channel channel = ukcp.user().getCache();
-        server.processor().onClose(channel);
+        server.getProcessor().onClose(channel);
     }
 }

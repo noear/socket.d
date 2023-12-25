@@ -1,12 +1,13 @@
 import {Processor} from "./Processor";
 import {ChannelAssistant} from "./ChannelAssistant";
 import {StreamBase, StreamManger} from "./Stream";
-import {Session, SessionDefault} from "./Session";
+import {Session} from "./Session";
 import {ChannelSupporter} from "./ChannelSupporter";
 import {Config} from "./Config";
 import {Frame, Frames, MessageDefault} from "./Message";
-import {EntityMetas} from "./Constants";
+import {EntityMetas, Flags} from "./Constants";
 import {ChannelBase, ChannelInternal} from "./Channel";
+import {SessionDefault} from "./SessionDefault";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     _source: S;
@@ -98,6 +99,35 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         this._assistant.write(this._source, frame);
+    }
+
+    retrieve(frame: Frame) {
+        let stream = this._streamManger.getStream(frame.getMessage().sid());
+
+        if (stream != null) {
+            if (stream.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
+                //如果是单收或者答复结束，则移除流接收器
+                this._streamManger.removeStream(frame.getMessage().sid());
+            }
+
+            if (stream.isSingle()) {
+                //单收时，内部已经是异步机制
+                stream.onAccept(frame.getMessage(), this);
+            } else {
+                //改为异步处理，避免卡死Io线程
+                stream.onAccept(frame.getMessage(), this);
+            }
+        } else {
+            console.debug("{} stream not found, sid={}, sessionId={}",
+                this.getConfig().getRoleName(), frame.getMessage().sid(), this.getSession().sessionId());
+        }
+    }
+    reconnect() {
+        //由 ClientChannel 实现
+    }
+
+    onError(error: Error) {
+        this._processor.onError(this, error);
     }
 
     getSession(): Session {

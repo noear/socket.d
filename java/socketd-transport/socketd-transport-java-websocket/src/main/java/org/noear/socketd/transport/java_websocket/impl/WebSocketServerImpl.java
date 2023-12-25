@@ -54,7 +54,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         Channel channel = getChannel(conn);
-        server.processor().onClose(channel);
+        server.getProcessor().onClose(channel);
     }
 
     @Override
@@ -72,10 +72,10 @@ public class WebSocketServerImpl extends WebSocketServer {
             ((WebSocketImpl) conn).updateLastPong();
 
             Channel channel = getChannel(conn);
-            Frame frame = server.assistant().read(message);
+            Frame frame = server.getAssistant().read(message);
 
             if (frame != null) {
-                server.processor().onReceive(channel, frame);
+                server.getProcessor().onReceive(channel, frame);
             }
         } catch (Throwable e) {
             log.warn("WebSocket server onMessage error", e);
@@ -89,7 +89,7 @@ public class WebSocketServerImpl extends WebSocketServer {
 
             if (channel != null) {
                 //有可能未 onOpen，就 onError 了；此时通道未成
-                server.processor().onError(channel, ex);
+                server.getProcessor().onError(channel, ex);
             }
         } catch (Throwable e) {
             log.warn("WebSocket server onError error", e);
@@ -99,9 +99,9 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onStart() {
         //闲置超时
-        if (server.config().getIdleTimeout() > 0L) {
+        if (server.getConfig().getIdleTimeout() > 0L) {
             //单位：秒
-            setConnectionLostTimeout((int) (server.config().getIdleTimeout() / 1000L));
+            setConnectionLostTimeout((int) (server.getConfig().getIdleTimeout() / 1000L));
         } else {
             setConnectionLostTimeout(0);
         }

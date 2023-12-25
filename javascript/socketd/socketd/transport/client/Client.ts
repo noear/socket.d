@@ -6,6 +6,8 @@ import {Processor, ProcessorDefault} from "../core/Processor";
 import {ChannelAssistant} from "../core/ChannelAssistant";
 import {Session} from "../core/Session";
 import {ClientConnector} from "./ClientConnector";
+import {ClientChannel} from "./ClientChannel";
+import {SessionDefault} from "../core/SessionDefault";
 
 /**
  * 客户端（用于构建会话）
@@ -63,7 +65,7 @@ export interface ClientInternal extends Client {
  * @author noear
  * @since 2.0
  */
-export abstract class ClientBase<T extends ChannelAssistant<T>> implements ClientInternal {
+export abstract class ClientBase<T extends ChannelAssistant<Object>> implements ClientInternal {
     _config: ClientConfig;
     _heartbeatHandler: IoConsumer<Session>;
     _processor: Processor;
@@ -148,7 +150,23 @@ export abstract class ClientBase<T extends ChannelAssistant<T>> implements Clien
     /**
      * 打开会话
      */
-    abstract open(): ClientSession ;
+    open(): ClientSession {
+        let connector = this.createConnector();
+
+        //连接
+        let channel0 = connector.connect();
+        //新建客户端通道
+        let clientChannel = new ClientChannel(channel0, connector);
+        //同步握手信息
+        clientChannel.setHandshake(channel0.getHandshake());
+        let session = new SessionDefault(clientChannel);
+        //原始通道切换为带壳的 session
+        channel0.setSession(session);
+
+        console.info("Socket.D client successfully connected: {link={}}", this.getConfig().getLinkUrl());
+
+        return session;
+    }
 
     /**
      * 创建连接器

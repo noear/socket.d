@@ -38,11 +38,11 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
     }
 
     private DatagramSocket createServer() throws IOException {
-        return new DatagramSocket(config().getPort());
+        return new DatagramSocket(getConfig().getPort());
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "udp/bio/java-udp/" + SocketD.version();
     }
 
@@ -54,12 +54,12 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
             isStarted = true;
         }
 
-        serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
+        serverExecutor = Executors.newFixedThreadPool(getConfig().getMaxThreads());
         server = createServer();
 
         serverExecutor.submit(this::accept);
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }
@@ -70,7 +70,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
     private void accept() {
         while (true) {
             try {
-                DatagramFrame datagramFrame = assistant().read(server);
+                DatagramFrame datagramFrame = getAssistant().read(server);
                 if (datagramFrame == null) {
                     continue;
                 }
@@ -80,7 +80,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
                 try {
                     serverExecutor.submit(() -> {
                         try {
-                            processor().onReceive(channel, datagramFrame.getFrame());
+                            getProcessor().onReceive(channel, datagramFrame.getFrame());
                         } catch (Throwable e) {
                             if (log.isWarnEnabled()) {
                                 log.warn("Server receive error", e);

@@ -32,11 +32,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final CompletableFuture<Boolean> onOpenFuture = new CompletableFuture<>();
 
     public ChannelDefault(S source, ChannelSupporter<S> supporter) {
-        super(supporter.config());
+        super(supporter.getConfig());
         this.source = source;
-        this.processor = supporter.processor();
-        this.assistant = supporter.assistant();
-        this.streamManger = supporter.config().getStreamManger();
+        this.processor = supporter.getProcessor();
+        this.assistant = supporter.getAssistant();
+        this.streamManger = supporter.getConfig().getStreamManger();
     }
 
     /**

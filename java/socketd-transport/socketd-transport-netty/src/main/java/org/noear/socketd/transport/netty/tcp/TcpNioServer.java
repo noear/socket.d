@@ -4,7 +4,6 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.ChannelSupporter;
@@ -38,7 +37,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "tcp/nio/netty 4.1/" + SocketD.version();
     }
 
@@ -51,21 +50,21 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
         }
 
         bossGroup = new NioEventLoopGroup(2, new NamedThreadFactory("nettyTcpServerBoss-"));
-        workGroup = new NioEventLoopGroup(config().getCoreThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
+        workGroup = new NioEventLoopGroup(getConfig().getCoreThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
-            ChannelHandler channelHandler = new NettyChannelInitializer(config(), inboundHandler);
+            ChannelHandler channelHandler = new NettyChannelInitializer(getConfig(), inboundHandler);
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(channelHandler);
 
-            if (Utils.isEmpty(config().getHost())) {
-                server = bootstrap.bind(config().getPort()).await();
+            if (Utils.isEmpty(getConfig().getHost())) {
+                server = bootstrap.bind(getConfig().getPort()).await();
             } else {
-                server = bootstrap.bind(config().getHost(), config().getPort()).await();
+                server = bootstrap.bind(getConfig().getHost(), getConfig().getPort()).await();
             }
         } catch (Exception e) {
             bossGroup.shutdownGracefully();
@@ -78,7 +77,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             }
         }
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }

@@ -37,7 +37,7 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "udp/nio/netty 4.1/" + SocketD.version();
     }
 
@@ -60,10 +60,10 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
                     //.option(ChannelOption.SO_BROADCAST,true)
                     .handler(inboundHandler);
 
-            if (Utils.isEmpty(config().getHost())) {
-                server = bootstrap.bind(config().getPort()).await();
+            if (Utils.isEmpty(getConfig().getHost())) {
+                server = bootstrap.bind(getConfig().getPort()).await();
             } else {
-                server = bootstrap.bind(config().getHost(), config().getPort()).await();
+                server = bootstrap.bind(getConfig().getHost(), getConfig().getPort()).await();
             }
 
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
             }
         }
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }

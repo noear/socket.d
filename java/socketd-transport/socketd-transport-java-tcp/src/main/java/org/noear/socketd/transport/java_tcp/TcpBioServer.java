@@ -39,23 +39,23 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
      * 创建 server（支持 ssl, host）
      */
     private ServerSocket createServer() throws IOException {
-        if (config().getSslContext() == null) {
-            if (Utils.isEmpty(config().getHost())) {
-                return new ServerSocket(config().getPort());
+        if (getConfig().getSslContext() == null) {
+            if (Utils.isEmpty(getConfig().getHost())) {
+                return new ServerSocket(getConfig().getPort());
             } else {
-                return new ServerSocket(config().getPort(), 50, InetAddress.getByName(config().getHost()));
+                return new ServerSocket(getConfig().getPort(), 50, InetAddress.getByName(getConfig().getHost()));
             }
         } else {
-            if (Utils.isEmpty(config().getHost())) {
-                return config().getSslContext().getServerSocketFactory().createServerSocket(config().getPort());
+            if (Utils.isEmpty(getConfig().getHost())) {
+                return getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort());
             } else {
-                return config().getSslContext().getServerSocketFactory().createServerSocket(config().getPort(), 50, InetAddress.getByName(config().getHost()));
+                return getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort(), 50, InetAddress.getByName(getConfig().getHost()));
             }
         }
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "tcp/bio/java-tcp/" + SocketD.version();
     }
 
@@ -67,12 +67,12 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
             isStarted = true;
         }
 
-        serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
+        serverExecutor = Executors.newFixedThreadPool(getConfig().getMaxThreads());
         server = createServer();
 
         serverExecutor.submit(this::accept);
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }
@@ -87,19 +87,19 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                 Socket socket = socketTmp = server.accept();
 
                 //闲置超时
-                if (config().getIdleTimeout() > 0L) {
+                if (getConfig().getIdleTimeout() > 0L) {
                     //单位：毫秒
-                    socket.setSoTimeout((int) config().getIdleTimeout());
+                    socket.setSoTimeout((int) getConfig().getIdleTimeout());
                 }
 
                 //读缓冲
-                if (config().getReadBufferSize() > 0) {
-                    socket.setReceiveBufferSize(config().getReadBufferSize());
+                if (getConfig().getReadBufferSize() > 0) {
+                    socket.setReceiveBufferSize(getConfig().getReadBufferSize());
                 }
 
                 //写缓冲
-                if (config().getWriteBufferSize() > 0) {
-                    socket.setSendBufferSize(config().getWriteBufferSize());
+                if (getConfig().getWriteBufferSize() > 0) {
+                    socket.setSendBufferSize(getConfig().getWriteBufferSize());
                 }
 
                 serverExecutor.submit(() -> {
@@ -137,13 +137,13 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
             try {
                 try {
                     if (socket.isClosed()) {
-                        processor().onClose(channel);
+                        getProcessor().onClose(channel);
                         break;
                     }
 
-                    Frame frame = assistant().read(socket);
+                    Frame frame = getAssistant().read(socket);
                     if (frame != null) {
-                        processor().onReceive(channel, frame);
+                        getProcessor().onReceive(channel, frame);
                     }
                 } catch (SocketTimeoutException e) {
                     //说明 idleTimeout
@@ -156,12 +156,12 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                 }
             } catch (IOException e) {
                 //如果是 SocketTimeoutException，说明 idleTimeout
-                processor().onError(channel, e);
-                processor().onClose(channel);
+                getProcessor().onError(channel, e);
+                getProcessor().onClose(channel);
                 close(socket);
                 break;
             } catch (Throwable e) {
-                processor().onError(channel, e);
+                getProcessor().onError(channel, e);
             }
         }
     }

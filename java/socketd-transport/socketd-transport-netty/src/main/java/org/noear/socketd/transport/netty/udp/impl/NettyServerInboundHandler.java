@@ -34,10 +34,10 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Datag
             ctx.attr(CHANNEL_KEY).set(channel);
         }
 
-        Frame frame = server.assistant().read(packet.content());
+        Frame frame = server.getAssistant().read(packet.content());
 
         if (frame != null) {
-            server.processor().onReceive(channel, frame);
+            server.getProcessor().onReceive(channel, frame);
         }
     }
 
@@ -46,6 +46,6 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Datag
         //super.exceptionCaught(ctx, cause);
 
         Channel channel = ctx.attr(CHANNEL_KEY).get();
-        server.processor().onError(channel, cause);
+        server.getProcessor().onError(channel, cause);
     }
 }

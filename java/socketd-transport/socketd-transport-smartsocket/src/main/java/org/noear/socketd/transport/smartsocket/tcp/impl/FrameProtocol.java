@@ -46,6 +46,6 @@ public class FrameProtocol implements Protocol<Frame> {
             buffer = decoder.getBuffer();
         }
 
-        return channelSupporter.config().getCodec().read(new ByteBufferReader(buffer));
+        return channelSupporter.getConfig().getCodec().read(new ByteBufferReader(buffer));
     }
 }

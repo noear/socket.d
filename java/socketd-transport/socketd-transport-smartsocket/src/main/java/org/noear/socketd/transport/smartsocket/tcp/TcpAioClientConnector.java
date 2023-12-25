@@ -40,8 +40,8 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
         try {
             //支持 ssl
-            if (client.config().getSslContext() != null) {
-                SslPlugin<Frame> sslPlugin = new SslPlugin<>(client.config()::getSslContext, sslEngine -> {
+            if (client.getConfig().getSslContext() != null) {
+                SslPlugin<Frame> sslPlugin = new SslPlugin<>(client.getConfig()::getSslContext, sslEngine -> {
                     sslEngine.setUseClientMode(true);
                 });
 
@@ -49,29 +49,29 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             }
 
             //闲置超时
-            if (client.config().getIdleTimeout() > 0) {
-                messageProcessor.addPlugin(new IdleStatePlugin<>((int) client.config().getIdleTimeout(), true, false));
+            if (client.getConfig().getIdleTimeout() > 0) {
+                messageProcessor.addPlugin(new IdleStatePlugin<>((int) client.getConfig().getIdleTimeout(), true, false));
             }
 
 
-            real = new AioQuickClient(client.config().getHost(), client.config().getPort(), client.frameProtocol(), messageProcessor);
+            real = new AioQuickClient(client.getConfig().getHost(), client.getConfig().getPort(), client.frameProtocol(), messageProcessor);
 
-            if (client.config().getReadBufferSize() > 0) {
-                real.setReadBufferSize(client.config().getReadBufferSize());
+            if (client.getConfig().getReadBufferSize() > 0) {
+                real.setReadBufferSize(client.getConfig().getReadBufferSize());
             }
 
-            if (client.config().getWriteBufferSize() > 0) {
-                real.setWriteBuffer(client.config().getWriteBufferSize(), 16);
+            if (client.getConfig().getWriteBufferSize() > 0) {
+                real.setWriteBuffer(client.getConfig().getWriteBufferSize(), 16);
             }
 
-            if (client.config().getConnectTimeout() > 0) {
-                real.connectTimeout((int) client.config().getConnectTimeout());
+            if (client.getConfig().getConnectTimeout() > 0) {
+                real.connectTimeout((int) client.getConfig().getConnectTimeout());
             }
 
             real.start();
 
             //等待握手结果
-            ClientHandshakeResult handshakeResult = messageProcessor.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = messageProcessor.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getThrowable() != null) {
                 throw handshakeResult.getThrowable();
@@ -80,7 +80,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 

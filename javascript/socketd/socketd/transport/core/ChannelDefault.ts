@@ -8,6 +8,7 @@ import {Frame, Frames, MessageDefault} from "./Message";
 import {EntityMetas, Flags} from "./Constants";
 import {ChannelBase, ChannelInternal} from "./Channel";
 import {SessionDefault} from "./SessionDefault";
+import { IoBiConsumer } from "./Types";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     _source: S;
@@ -18,7 +19,8 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     //流管理器
     _streamManger: StreamManger;
     //会话（懒加载）
-    _session:Session;
+    _session: Session;
+    _onOpenFuture:IoBiConsumer<boolean, Error>;
 
     constructor(source: S, supporter: ChannelSupporter<S>) {
         super(supporter.getConfig());
@@ -26,6 +28,15 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this._processor = supporter.getProcessor();
         this._assistant = supporter.getAssistant();
         this._streamManger = supporter.getConfig().getStreamManger();
+    }
+
+    onOpenFuture(future: IoBiConsumer<boolean, Error>) {
+        this._onOpenFuture = future;
+    }
+    doOpenFuture(r:boolean, e:Error) {
+        if (this._onOpenFuture) {
+            this._onOpenFuture(r, e);
+        }
     }
 
     isValid() {

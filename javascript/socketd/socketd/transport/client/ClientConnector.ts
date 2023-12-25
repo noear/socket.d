@@ -1,7 +1,7 @@
 import {IoConsumer} from "../core/Types";
 import {Session} from "../core/Session";
 import {ChannelInternal} from "../core/Channel";
-import {Client, ClientBase, ClientInternal} from "./Client";
+import {ClientInternal} from "./Client";
 
 /**
  * 客户端连接器

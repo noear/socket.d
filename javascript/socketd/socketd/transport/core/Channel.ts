@@ -3,6 +3,7 @@ import {Config} from "./Config";
 import {HandshakeInternal} from "./Handshake";
 import {Frame, Frames, Message} from "./Message";
 import {StreamBase} from "./Stream";
+import {IoBiConsumer, IoConsumer} from "./Types";
 
 export interface Channel {
     /**
@@ -118,6 +119,10 @@ export interface ChannelInternal extends Channel {
      * 设置会话
      * */
     setSession(session: Session);
+
+    onOpenFuture(future: IoBiConsumer<boolean, Error>);
+
+    doOpenFuture(r: boolean, e: Error);
 }
 
 export abstract class  ChannelBase implements Channel {

@@ -2,6 +2,9 @@ import {ChannelAssistant} from "../socketd/transport/core/ChannelAssistant";
 import { Frame } from "../socketd/transport/core/Message";
 
 export class WsChannelAssistant implements ChannelAssistant<WebSocket> {
+    read(buffer:ArrayBuffer):Frame{
+        return null;
+    }
     write(target: WebSocket, frame: Frame) {
         throw new Error("Method not implemented.");
     }

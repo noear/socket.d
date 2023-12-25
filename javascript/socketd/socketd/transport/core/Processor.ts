@@ -1,7 +1,7 @@
 import {Listener, SimpleListener} from "./Listener";
-import {Channel} from "./Channel";
-import {Flags} from "./Flags";
+import {Channel, ChannelInternal} from "./Channel";
 import {Frame, Message} from "./Message";
+import {Constants, Flags} from "./Constants";
 
 export interface Processor {
     setListener(listener: Listener);
@@ -32,31 +32,30 @@ export class ProcessorDefault implements Processor{
     }
 
 
-    onOpen(channel: Channel) {
+    onOpen(channel: ChannelInternal) {
         this._listener.onOpen(channel.getSession())
     }
 
-    onMessage(channel: Channel, message) {
+    onMessage(channel: ChannelInternal, message) {
         this._listener.onMessage(channel.getSession(), message)
     }
 
-    onCloseInternal(channel: Channel) {
+    onCloseInternal(channel: ChannelInternal) {
 
     }
 
-    onClose(channel: Channel) {
+    onClose(channel: ChannelInternal) {
         this._listener.onClose(channel.getSession())
     }
 
-    onError(channel: Channel, error: Error) {
+    onError(channel: ChannelInternal, error: Error) {
         this._listener.onError(channel.getSession(), error)
     }
 
-    onReceive(channel: Channel, frame) {
+    onReceive(channel: ChannelInternal, frame) {
         if (frame.flag == Flags.Connect) {
             channel.setHandshake(frame.message);
-            channel.onError = this.onError;
-            channel.onOpenFuture = function () {
+            channel.onOpenFuture((r,err)=>{
                 if (channel.isValid()) {
                     //如果还有效，则发送链接确认
                     try {
@@ -65,14 +64,14 @@ export class ProcessorDefault implements Processor{
                         this.onError(channel, err);
                     }
                 }
-            }
+            })
             this.onOpen(channel);
         } else if (frame.flag == Flags.Connack) {
             //if client
             channel.setHandshake(frame.message);
             this.onOpen(channel);
         } else {
-            if (channel.handshake == null) {
+            if (channel.getHandshake() == null) {
                 channel.close(Constants.CLOSE1_PROTOCOL);
 
                 if (frame.flag == Flags.Close) {
@@ -99,11 +98,11 @@ export class ProcessorDefault implements Processor{
                     case Flags.Alarm: {
                         //结束流，并异常通知
                         let exception = new Error(frame.getMessage());
-                        let acceptor = channel.config.streamManger.getAcceptor(frame.getMessage().sid());
+                        let acceptor = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
                         if (acceptor == null) {
                             this.onError(channel, exception);
                         } else {
-                            channel.config.streamManger.removeAcceptor(frame.getMessage().sid());
+                            channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
                             acceptor.onError(exception);
                         }
                         break;
@@ -130,7 +129,7 @@ export class ProcessorDefault implements Processor{
         }
     }
 
-    onReceiveDo(channel: Channel, frame, isReply) {
+    onReceiveDo(channel: ChannelInternal, frame, isReply) {
 
     }
 }

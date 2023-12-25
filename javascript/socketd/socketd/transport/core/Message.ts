@@ -11,6 +11,8 @@ export interface Entity {
 
     data(): ArrayBuffer;
 
+    dataAsString(): string;
+
     dataSize(): number;
 }
 
@@ -27,6 +29,7 @@ export class EntityDefault implements Entity {
         this._metaMap = null;
         this._data = null;
     }
+
 
     metaStringSet(metaString: string): EntityDefault {
         this._metaMap = new URLSearchParams(metaString);
@@ -68,6 +71,10 @@ export class EntityDefault implements Entity {
 
     data(): ArrayBuffer {
         return this._data;
+    }
+
+    dataAsString(): string {
+        throw new Error("Method not implemented.");
     }
 
     dataSize(): number {
@@ -150,6 +157,10 @@ export class MessageDefault implements MessageInternal {
 
     data(): ArrayBuffer {
         return this._entity.data();
+    }
+
+    dataAsString(): string {
+        return this._entity.dataAsString();
     }
 
     dataSize(): number {

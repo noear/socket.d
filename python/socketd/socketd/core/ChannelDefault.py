@@ -60,9 +60,9 @@ class ChannelDefault(ChannelBase):
                                                                                                    message.get_entity())
                             if fragmentEntity is not None:
                                 fragmentFrame = Frame(frame.get_flag(), MessageDefault()
-                                                      .flag(frame.get_flag())
-                                                      .sid(message.get_sid())
-                                                      .entity(fragmentEntity))
+                                                      .set_flag(frame.get_flag())
+                                                      .set_sid(message.get_sid())
+                                                      .set_entity(fragmentEntity))
                                 await self.assistant.write(self.source, fragmentFrame)
                             else:
                                 return
@@ -79,10 +79,11 @@ class ChannelDefault(ChannelBase):
             if acceptor.is_single() or frame.get_flag() == Flag.ReplyEnd:
                 self.acceptorMap.pop(frame.get_message().get_sid())
             await asyncio.get_event_loop().run_in_executor(self.get_config().get_executor(),
-                                                     lambda _m: acceptor.on_accept(_m, onError), frame.get_message())
+                                                           lambda _m: acceptor.on_accept(_m, onError),
+                                                           frame.get_message())
         else:
-            logger.debug(f"{self.get_config().getRoleName()} stream not found, sid={frame.get_message().get_sid()}, sessionId={self.get_session().get_session_id()}")
-
+            logger.debug(
+                f"{self.get_config().get_role_name()} stream not found, sid={frame.get_message().get_sid()}, sessionId={self.get_session().get_session_id()}")
 
     def get_session(self) -> Session:
         if self.session is None:

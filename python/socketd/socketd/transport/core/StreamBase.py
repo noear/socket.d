@@ -12,7 +12,6 @@ class StreamBase(StreamInternal):
         self.__sid = sid
         self.__timeout = timeout
         self.__onError: Callable[[Exception], None] = None
-        self.insurance_future = Future()
 
     def on_error(self, error: Exception):
         if error:

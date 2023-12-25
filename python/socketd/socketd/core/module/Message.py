@@ -6,24 +6,28 @@ from .Entity import Entity
 class Message(Entity):
     @abstractmethod
     def is_request(self) -> bool:
-        pass
+        ...
 
     @abstractmethod
     def is_subscribe(self) -> bool:
-        pass
+        ...
 
     @abstractmethod
     def is_close(self) -> bool:
-        pass
+        ...
 
     @abstractmethod
     def get_sid(self) -> str:
-        pass
+        ...
 
     @abstractmethod
     def get_event(self) -> str:
-        pass
+        ...
 
     @abstractmethod
     def get_entity(self) -> Entity:
-        pass
+        ...
+
+    @abstractmethod
+    def get_flag(self) -> int:
+        ...

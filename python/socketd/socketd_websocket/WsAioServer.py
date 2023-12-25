@@ -17,13 +17,13 @@ class WsAioServer(ServerBase):
         super().__init__(config, WsAioChannelAssistant(config))
         self.__loop = asyncio.get_event_loop()
         self.server: Serve = None
-        self._stop = asyncio.Future()  # set this future to exit the server
+        self.__is_started = False
 
     async def start(self) -> 'WebSocketServer':
-        if self.isStarted:
+        if self.__is_started:
             raise Exception("Server started")
         else:
-            self.isStarted = True
+            self.__is_started = True
         if self._config.get_host() is not None:
             _server = AIOServe(ws_handler=None,
                                host="0.0.0.0", port=self._config.get_port(),
@@ -50,5 +50,5 @@ class WsAioServer(ServerBase):
 
     async def stop(self):
         logger.info("WsAioServer stop...")
-        await self.server.ws_server.close()
-        await self._stop
+        self.server.ws_server.close()
+        self.__is_started = False

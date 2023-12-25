@@ -12,6 +12,7 @@ from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
 from socketd.core.Costants import Flag
 from socketd.core.module.Frame import Frame
 from socketd.transport.client.Client import Client
+from socketd.transport.core.AsyncUtil import AsyncUtil
 
 log = logger.opt()
 
@@ -22,7 +23,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         self.status_state = Flag.Unknown
         self.client = client
         self.channel = ChannelDefault(self, client.get_config(), client.get_assistant())
-        self.connect_read_thread: Thread = None
+        self.connect_read_thread: Thread | None = None
 
     def get_channel(self):
         return self.channel
@@ -39,11 +40,17 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         return return_data
 
     def connection_open(self) -> None:
-        """打开握手完成回调"""
+        """
+        打开握手完成回调函数。
+        :return: 无返回值
+        """
         super().connection_open()
         log.debug("AIOWebSocketClientImpl connection_open")
 
         async def _handler():
+            """
+            异步处理函数，用于处理握手完成后的消息处理逻辑。
+            """
             while True:
                 await asyncio.sleep(0)
                 if self.closed or self.status_state == Flag.Close:
@@ -52,18 +59,16 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     try:
                         await self.on_message()
                     except Exception as e:
+                        log.error(e)
                         break
-
-        def thread__handler(_loop):
-            asyncio.set_event_loop(_loop)
-            _loop.run_until_complete(_handler())
-
+        # 如果配置中设置了使用线程，则创建一个新的事件循环，并启动一个线程来处理读取操作
         if self.client.get_config().get_is_thread():
             loop = asyncio.new_event_loop()
             if self.connect_read_thread is None:
-                self.connect_read_thread = Thread(target=thread__handler, args=(loop,))
+                self.connect_read_thread = Thread(target=AsyncUtil.thread_handler, args=(loop,))
                 self.connect_read_thread.start()
         else:
+            # 否则，使用异步运行此协程，并在当前线程中运行。
             asyncio.run_coroutine_threadsafe(_handler(), asyncio.get_event_loop())
 
     async def on_open(self):
@@ -72,12 +77,14 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             await self.channel.send_connect(self.client.get_config().get_url())
             await self.on_message()
         except Exception as e:
-            log.warning(str(e), exc_info=True)
+            log.error(str(e), exc_info=True)
             raise e
 
     async def on_message(self):
         """处理消息"""
         try:
+            if self.status_state == Flag.Close:
+                return
             message = await self.recv()
             log.debug(message)
             frame: Frame = self.client.get_assistant().read(message)
@@ -93,7 +100,6 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             # 超时自动推出
             log.debug(c)
         except Exception as e:
-            log.warning(str(e), exc_info=True)
             raise e
 
     def on_close(self):

@@ -31,7 +31,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
     def connection_open(self) -> None:
         """握手完成回调"""
         super().connection_open()
-        log.debug("AIOWebSocketServerImpl 打开握手完成回调")
+        log.debug("AIOWebSocketServerImpl connection_open")
         self.on_open(self)
 
     def handshake_handler(self):

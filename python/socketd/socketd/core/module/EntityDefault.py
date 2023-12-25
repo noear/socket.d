@@ -1,15 +1,18 @@
 from abc import ABC
 import pickle
+from io import BytesIO
+from typing import Any
 
 from .Entity import Entity
+from ..Costants import Constants
 
 
 class EntityDefault(Entity, ABC):
     def __init__(self):
         self.meta_map = None
-        self.meta_string = "_dEF__mET_a__sTRING"
+        self.meta_string = Constants.DEF_META_STRING
         self.meta_stringChanged = False
-        self.data: bytes = None
+        self.data: BytesIO = Constants.DEF_DATA
         self.data_size = 0
 
     def set_meta_string(self, meta_string):
@@ -56,17 +59,17 @@ class EntityDefault(Entity, ABC):
         self.get_meta_map()[name] = val
         self.meta_stringChanged = True
 
-    def get_meta(self, name):
+    def get_meta(self, name) -> Any:
         return self.get_meta_map().get(name)
 
-    def get_metaOr_default(self, name, default_val):
+    def get_meta_or_default(self, name, default_val):
         return self.get_meta_map().get(name, default_val)
 
-    def set_data(self, data):
-        if type(data) != bytes:
-            self.data = pickle.loads(data)
-        else:
+    def set_data(self, data: bytes | bytearray | memoryview | BytesIO):
+        if type(data) == BytesIO:
             self.data = data
+        else:
+            self.data = BytesIO(data)
         self.data_size = len(data)
         return self
 
@@ -74,7 +77,10 @@ class EntityDefault(Entity, ABC):
         return self.data
 
     def get_data_as_string(self):
-        return str(self.data, 'utf-8')  # _assuming data is of type bytes
+        return str(self.data.getvalue(), 'utf-8')  # _assuming data is of type bytes
+
+    def get_data_as_bytes(self) -> bytes:
+        return self.data.getvalue()
 
     def get_data_size(self):
         return self.data_size

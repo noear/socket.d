@@ -21,7 +21,7 @@ class CodecByteBuffer(Codec):
             # length
             target.put_int(_len)
             # flag
-            target.put_int(frame.flag.value)
+            target.put_int(frame.flag)
             target.flush()
 
             return target
@@ -48,7 +48,7 @@ class CodecByteBuffer(Codec):
             target.put_int(len1)
 
             # flag
-            target.put_int(frame.flag.value)
+            target.put_int(frame.flag)
 
             # sid
             target.write(sidB)
@@ -64,7 +64,7 @@ class CodecByteBuffer(Codec):
 
             # data
             if frame.message.get_entity().get_data() is not None:
-                target.write(frame.message.get_entity().get_data())
+                target.write(frame.message.get_entity().get_data().getvalue())
             target.flush()
 
             return target
@@ -98,7 +98,7 @@ class CodecByteBuffer(Codec):
                 for i in range(dataRealSize - Config.MAX_SIZE_FRAGMENT):
                     buffer.read()
             else:
-                data = buffer.read(dataRealSize)
+                data = bytearray(buffer.read(dataRealSize))
 
             message = MessageDefault().set_sid(sid).set_event(topic).set_entity(
                 EntityDefault().set_meta_string(metaString).set_data(data)

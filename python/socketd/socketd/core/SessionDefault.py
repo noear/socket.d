@@ -1,7 +1,7 @@
 import asyncio
 
 from abc import ABC
-from typing import Callable, Awaitable, Any
+from typing import Callable, Awaitable, Any, Coroutine
 
 from .SessionBase import SessionBase
 from .Channel import Channel
@@ -11,6 +11,7 @@ from .module.Message import Message
 from .module.Frame import Frame
 from .Costants import Flag
 from .module.MessageDefault import MessageDefault
+from ..exception.SocketdExecption import SocketDException
 from ..transport.core.CompletableFuture import CompletableFuture
 from ..transport.core.StreamRequest import StreamRequest
 from ..transport.core.StreamSubscribe import StreamSubscribe
@@ -34,8 +35,8 @@ class SessionDefault(SessionBase, ABC):
     def get_handshake(self) -> Handshake:
         return self.channel.get_handshake()
 
-    def send_ping(self):
-        self.channel.send_ping()
+    async def send_ping(self):
+        await self.channel.send_ping()
 
     async def send(self, topic: str, content: Entity):
         message = MessageDefault().set_sid(self.generate_id()).set_event(topic).set_entity(content)
@@ -54,23 +55,27 @@ class SessionDefault(SessionBase, ABC):
             return await future.get(timeout)
         except asyncio.TimeoutError as e:
             if self.channel.is_valid():
-                raise Exception(f"Request reply timeout>{timeout} "
+                raise SocketDException(f"Request reply timeout>{timeout} "
                                 f"sessionId={self.channel.get_session().get_session_id()} "
                                 f"event={event} sid={message.get_sid()}")
             else:
-                raise Exception(f"This channel is closed sessionId={self.channel.get_session().get_session_id()} "
+                raise SocketDException(f"This channel is closed sessionId={self.channel.get_session().get_session_id()} "
                                 f"event={event} sid={message.get_sid()}")
         except Exception as e:
             raise e
         finally:
             self.channel.remove_acceptor(message.get_sid())
 
-    async def send_stream_and_request(self, event: str, content: Entity, consumer: Callable[[Entity], Awaitable[Any]],
+    async def send_stream_and_request(self, event: str, content: Entity,
+                                      consumer: Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Any, None],
                                       timeout: int):
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         future: CompletableFuture[Entity] = CompletableFuture()
         try:
-            consumer(content)
+            if asyncio.iscoroutinefunction(consumer):
+                await consumer(content)
+            else:
+                self.channel.get_config().get_executor().submit(fn=consumer, args=(content,))
         except Exception as e:
             self.channel.on_error(e)
         streamAcceptor = StreamRequest(message.get_sid(), timeout, future)
@@ -98,5 +103,6 @@ class SessionDefault(SessionBase, ABC):
                                       .set_entity(content)), None)
 
     async def close(self):
-        await self.channel.send_close()
-        await self.channel.close()
+        if self.channel.is_valid():
+            await self.channel.send_close()
+            await self.channel.close()

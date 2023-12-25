@@ -1,5 +1,5 @@
 import abc
-from typing import Union, Dict, Any, Callable, Awaitable
+from typing import Union, Dict, Any, Callable, Awaitable, AsyncGenerator, Coroutine
 from socket import gethostbyaddr
 from socketd.core.Handshake import Handshake
 from socketd.core.module.Message import Message
@@ -44,19 +44,34 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def send_ping(self) -> None:
+    def send_ping(self) -> Callable | Coroutine:
         ...
 
     @abc.abstractmethod
-    async def send(self, topic: str, content: Entity) -> None:
+    async def send(self, event: str, content: Entity) -> None:
         ...
 
     @abc.abstractmethod
-    async def send_and_request(self, topic: str, content: Entity, timeout: int) -> Entity:
+    async def send_and_request(self, event: str, content: Entity, timeout: int) -> Entity:
         ...
 
-    async def send_stream_and_request(self, event: str, content: Entity, consumer: Callable[[Entity], Awaitable[Any]],
-                                      timeout: int): ...
+    @abc.abstractmethod
+    async def send_stream_and_request(self, event: str, content: Entity,
+                                      consumer: Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Any, None],
+                                      timeout: int):
+        """
+        发送流和请求的抽象方法。
+
+        Args:
+            event (str): 事件名称。
+            content (Entity): 内容实体。
+            consumer (Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Awaitable[Any]]): 消费函数或协程，用来处理内容实体并返回异步结果。
+            timeout (int): 超时时间。
+
+        Returns:
+            Awaitable[Any]: 消费函数或协程的异步结果。
+        """
+        ...
 
     @abc.abstractmethod
     async def send_and_subscribe(self, topic: str, content: Entity, consumer: Callable[[Entity], Any],
@@ -71,5 +86,6 @@ class Session(abc.ABC):
     def reply_end(self, from_msg: Message, content: Entity) -> None:
         ...
 
+    @abc.abstractmethod
     def close(self):
         ...

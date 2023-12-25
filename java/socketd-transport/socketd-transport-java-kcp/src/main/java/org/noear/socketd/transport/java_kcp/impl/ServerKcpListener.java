@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kcp.KcpListener;
 import kcp.Ukcp;
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.buffer.BufferReader;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -22,7 +23,7 @@ public class ServerKcpListener implements KcpListener {
 
     @Override
     public void onConnected(Ukcp ukcp) {
-        Channel channel = new ChannelDefault<>(ukcp, server);
+        ChannelInternal channel = new ChannelDefault<>(ukcp, server);
         ukcp.user().setCache(channel);
     }
 
@@ -34,7 +35,7 @@ public class ServerKcpListener implements KcpListener {
             return;
         }
 
-        Channel channel = ukcp.user().getCache();
+        ChannelInternal channel = ukcp.user().getCache();
 
         try {
             server.getProcessor().onReceive(channel, frame);
@@ -45,13 +46,13 @@ public class ServerKcpListener implements KcpListener {
 
     @Override
     public void handleException(Throwable throwable, Ukcp ukcp) {
-        Channel channel = ukcp.user().getCache();
+        ChannelInternal channel = ukcp.user().getCache();
         server.getProcessor().onError(channel, throwable);
     }
 
     @Override
     public void handleClose(Ukcp ukcp) {
-        Channel channel = ukcp.user().getCache();
+        ChannelInternal channel = ukcp.user().getCache();
         server.getProcessor().onClose(channel);
     }
 }

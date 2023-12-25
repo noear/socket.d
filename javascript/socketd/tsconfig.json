@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2015",
-    "sourceMap": true
+    "target": "es6",
+    "outDir": "dist",
+    "outFile": "dist/socketd.js"
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "node_modules"
   ]

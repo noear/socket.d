@@ -1,4 +1,4 @@
-import pickle
+from io import BytesIO
 
 from socketd.core.module.Entity import Entity, EntityMetas
 from socketd.core.module.EntityDefault import EntityDefault
@@ -6,7 +6,6 @@ from socketd.core.module.Frame import Frame
 from .FragmentAggregatorDefault import FragmentAggregatorDefault
 
 from .FragmentHandler import FragmentHandler
-from ..Buffer import Buffer
 from ..Channel import Channel
 from ..module.Message import Message
 
@@ -14,15 +13,11 @@ from ..module.Message import Message
 class FragmentHandlerDefault(FragmentHandler):
 
     def nextFragment(self, channel: Channel, fragmentIndex: int, message: Message) -> Entity | None:
-        fragmentBuf = Buffer()
-        pickle.dump(message, fragmentBuf)
-        fragmentBytes = fragmentBuf.getbuffer()
-        if len(fragmentBytes) == 0:
+        data = self.read_frame(message.get_data(), channel.get_config().get_fragment_size())
+        if len(data.getvalue()) == 0:
             return None
-
-        fragmentEntity = EntityDefault().set_data(fragmentBytes)
-        if fragmentIndex == 1:
-            fragmentEntity.set_meta_map(message.get_meta_map())
+        fragmentEntity = EntityDefault().set_data(data)
+        fragmentEntity.set_meta_map(message.get_meta_map())
         fragmentEntity.put_meta(EntityMetas.META_DATA_FRAGMENT_IDX, str(fragmentIndex))
         return fragmentEntity
 
@@ -34,8 +29,14 @@ class FragmentHandlerDefault(FragmentHandler):
 
         aggregator.add(index, message)
 
-        if aggregator.getDataLength() > aggregator.getDataStreamSize():
+        if aggregator.get_data_length() > aggregator.get_data_stream_size():
             return None  # Length is not enough, wait for the next fragment package
         else:
             channel.set_attachment(message.get_sid(), None)
             return aggregator.get()  # Reset as a merged frame
+
+    def read_frame(self, ins: BytesIO, max_size: int) -> BytesIO:
+        size = min(len(ins.getbuffer()) - ins.tell(), max_size)
+        buf = BytesIO()
+        buf.write(ins.read(size))
+        return buf

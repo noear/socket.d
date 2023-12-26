@@ -7,12 +7,14 @@ from concurrent.futures import ThreadPoolExecutor
 from .Config import Config
 from socketd.transport.Codec import Codec
 from socketd.transport.CodecByteBuffer import CodecByteBuffer
+from ..Costants import Constants
 from ..handler.FragmentHandlerDefault import FragmentHandlerDefault
 
 
 class ConfigBase(Config):
 
     def __init__(self, client_mode: bool):
+        self._fragment_size = Constants.MAX_SIZE_FRAGMENT
         self._stream_timeout = 1000 * 60 * 60 * 2
         self._request_timeout = 10_000
         self._client_mode = client_mode
@@ -144,3 +146,11 @@ class ConfigBase(Config):
     def set_ws_max_size(self, _max_size):
         self._ws_max_size = _max_size
         return self
+
+    def get_role_name(self) -> str:
+        return "Client" if self.client_mode() else "Server"
+
+    def get_fragment_size(self) -> int:
+        return self._fragment_size
+
+

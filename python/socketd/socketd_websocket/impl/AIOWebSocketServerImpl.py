@@ -79,6 +79,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             except ConnectionClosedError as e:
                 # 客户端异常关闭
                 log.error(e)
+                break
             except Exception as e:
                 log.error(e)
                 break

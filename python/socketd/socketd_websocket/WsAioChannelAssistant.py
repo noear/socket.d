@@ -20,19 +20,20 @@ class WsAioChannelAssistant(ChannelAssistant):
         writer: Buffer = self.config.get_codec().write(frame, lambda size: Buffer(limit=size))
         # 如果writer不为None，说明写入成功，通过调用source.send()方法将writer.getbuffer()发送给客户端。
         if writer is not None:
-            _data = writer.getbuffer()
+            _data = writer.getvalue()
             _len = len(writer.getbuffer())
-            if _len >= source.max_size:
+            if _len > source.max_size:
                 count = _len / source.max_size if (_len % source.max_size) > 0 else _len / source.max_size + 1
                 _start = 0
                 _steam = []
                 for i in range(1, math.ceil(count)):
                     _end = source.max_size * i
-                    await source.write_frame(False, frames.OP_BINARY, bytes(_data[_start:_end]))
+                    await source.write_frame(False, frames.OP_BINARY, _data[_start:_end])
                     _start += source.max_size
                 await source.write_frame(True, frames.OP_CONT, b"")
             else:
                 await source.send(_data)
+            writer.close()
 
     def is_valid(self, target: WebSocketServerProtocol) -> bool:
         return target.state == State.OPEN
@@ -48,4 +49,4 @@ class WsAioChannelAssistant(ChannelAssistant):
         return target.local_address
 
     def read(self, buffer: bytearray) -> Frame:
-        return self.config.get_codec().read(Buffer(buffer))
+        return self.config.get_codec().read(Buffer(len(buffer), buffer))

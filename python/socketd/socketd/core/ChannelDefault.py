@@ -11,6 +11,7 @@ from socketd.core.Costants import Function, Flag
 from socketd.core.Session import Session
 from socketd.core.SessionDefault import SessionDefault
 from socketd.core.config.Config import Config
+from socketd.core.module.Entity import EntityMetas
 from socketd.core.module.Frame import Frame
 from socketd.core.module.MessageDefault import MessageDefault
 from socketd.transport.ChannelAssistant import ChannelAssistant
@@ -51,13 +52,15 @@ class ChannelDefault(ChannelBase):
                 if acceptor is not None:
                     self.acceptorMap[message.get_sid()] = acceptor
                 if message.get_entity() is not None:
-                    if message.get_entity().get_data_size() > Config.MAX_SIZE_FRAGMENT:
+                    if message.get_entity().get_data_size() > self.get_config().get_fragment_size():
+                        message.get_meta_map()[EntityMetas.META_DATA_LENGTH] = str(message.get_data_size())
+
                         fragmentIndex = 0
                         while True:
                             fragmentIndex += 1
-                            fragmentEntity = self.get_config().get_fragment_handler().nextFragment(self.get_config(),
+                            fragmentEntity = self.get_config().get_fragment_handler().nextFragment(self,
                                                                                                    fragmentIndex,
-                                                                                                   message.get_entity())
+                                                                                                   message)
                             if fragmentEntity is not None:
                                 fragmentFrame = Frame(frame.get_flag(), MessageDefault()
                                                       .set_flag(frame.get_flag())

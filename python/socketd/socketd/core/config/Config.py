@@ -6,15 +6,7 @@ from ..Costants import Function
 
 class Config:
     # 流ID大小限制
-    MAX_SIZE_SID = 64
-    # 主题大小限制
-    MAX_SIZE_TOPIC = 512
-    # 元信息串大小限制
-    MAX_SIZE_META_STRING = 4096
-    # 分片大小限制
-    MAX_SIZE_FRAGMENT = 1024 * 1024 * 16
 
-    THEAD_POOL_SIZE = 10
 
     def client_mode(self) -> bool:
         """
@@ -104,4 +96,8 @@ class Config:
 
     def get_role_name(self) -> str:
         """获取角色名"""
+        pass
+
+    def get_fragment_size(self) -> int:
+        """获取分片大小"""
         pass

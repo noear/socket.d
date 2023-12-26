@@ -68,9 +68,10 @@ class EntityDefault(Entity, ABC):
     def set_data(self, data: bytes | bytearray | memoryview | BytesIO):
         if type(data) == BytesIO:
             self.data = data
+            self.data_size = len(data.getvalue())
         else:
             self.data = BytesIO(data)
-        self.data_size = len(data)
+            self.data_size = len(data)
         return self
 
     def get_data(self):

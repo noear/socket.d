@@ -70,7 +70,18 @@ class Flag:
 
 
 class Constants:
+
     DEF_SID = ""
     DEF_EVENT = ""
     DEF_META_STRING = ""
     DEF_DATA = BytesIO()
+
+    MAX_SIZE_SID = 64
+    # 主题大小限制
+    MAX_SIZE_TOPIC = 512
+    # 元信息串大小限制
+    MAX_SIZE_META_STRING = 4096
+    # 分片大小限制
+    MAX_SIZE_FRAGMENT = 1024 * 1024 * 16
+
+    THEAD_POOL_SIZE = 10

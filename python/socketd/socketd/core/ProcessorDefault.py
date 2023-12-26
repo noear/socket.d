@@ -65,7 +65,7 @@ class ProcessorDefault(Processor, ABC):
         fragmentIdxStr = frame.get_message().get_entity().get_meta(EntityMetas.META_DATA_FRAGMENT_IDX)
         if fragmentIdxStr is not None:
             index = int(fragmentIdxStr)
-            frameNew = channel.get_config().get_fragment_handler().aggrFragment(channel, index, frame)
+            frameNew: Frame = channel.get_config().get_fragment_handler().aggrFragment(channel, index, frame.get_message())
             if frameNew is None:
                 return
             else:

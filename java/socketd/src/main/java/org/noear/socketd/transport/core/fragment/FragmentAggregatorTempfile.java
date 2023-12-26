@@ -92,10 +92,10 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
 
             //返回
             return new Frame(main.flag(), new MessageDefault()
-                    .flag(main.flag())
-                    .sid(main.sid())
-                    .event(main.event())
-                    .entity(new TempfileEntity(tmpfile, dataBuffer, main.metaMap())));
+                    .flagSet(main.flag())
+                    .sidSet(main.sid())
+                    .eventSet(main.event())
+                    .entitySet(new TempfileEntity(tmpfile, dataBuffer, main.metaMap())));
         } finally {
             tmpfileChannel.close();
         }

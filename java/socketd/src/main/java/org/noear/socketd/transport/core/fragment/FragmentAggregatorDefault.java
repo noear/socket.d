@@ -97,9 +97,9 @@ public class FragmentAggregatorDefault implements FragmentAggregator {
 
         //返回
         return new Frame(main.flag(), new MessageDefault()
-                .flag(main.flag())
-                .sid(main.sid())
-                .event(main.event())
-                .entity(new EntityDefault().metaMap(main.metaMap()).data(dataBuffer)));
+                .flagSet(main.flag())
+                .sidSet(main.sid())
+                .eventSet(main.event())
+                .entitySet(new EntityDefault().metaMapPut(main.metaMap()).dataSet(dataBuffer)));
     }
 }

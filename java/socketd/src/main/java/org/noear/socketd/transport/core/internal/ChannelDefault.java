@@ -2,7 +2,6 @@ package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.StreamBase;
-import org.noear.socketd.utils.IoBiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,8 +82,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         synchronized (SEND_LOCK) {
-            if (frame.getMessage() != null) {
-                MessageInternal message = frame.getMessage();
+            if (frame.message() != null) {
+                MessageInternal message = frame.message();
 
                 //注册流接收器
                 if (stream != null) {
@@ -107,10 +106,10 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
                             if (fragmentEntity != null) {
                                 //主要是 sid 和 entity
-                                Frame fragmentFrame = new Frame(frame.getFlag(), new MessageDefault()
-                                        .flag(frame.getFlag())
-                                        .sid(message.sid())
-                                        .entity(fragmentEntity));
+                                Frame fragmentFrame = new Frame(frame.flag(), new MessageDefault()
+                                        .flagSet(frame.flag())
+                                        .sidSet(message.sid())
+                                        .entitySet(fragmentEntity));
 
                                 assistant.write(source, fragmentFrame);
                             } else {
@@ -138,27 +137,27 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public void retrieve(Frame frame) {
-        final StreamInternal stream = streamManger.getStream(frame.getMessage().sid());
+        final StreamInternal stream = streamManger.getStream(frame.message().sid());
 
         if (stream != null) {
-            if (stream.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
+            if (stream.isSingle() || frame.flag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
-                streamManger.removeStream(frame.getMessage().sid());
+                streamManger.removeStream(frame.message().sid());
             }
 
             if (stream.isSingle()) {
                 //单收时，内部已经是异步机制
-                stream.onAccept(frame.getMessage(), this);
+                stream.onAccept(frame.message(), this);
             } else {
                 //改为异步处理，避免卡死Io线程
                 getConfig().getChannelExecutor().submit(() -> {
-                    stream.onAccept(frame.getMessage(), this);
+                    stream.onAccept(frame.message(), this);
                 });
             }
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("{} stream not found, sid={}, sessionId={}",
-                        getConfig().getRoleName(), frame.getMessage().sid(), getSession().sessionId());
+                        getConfig().getRoleName(), frame.message().sid(), getSession().sessionId());
             }
         }
     }

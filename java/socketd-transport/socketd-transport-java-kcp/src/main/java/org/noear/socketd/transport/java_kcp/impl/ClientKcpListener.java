@@ -53,7 +53,7 @@ public class ClientKcpListener implements KcpListener {
         ChannelInternal channel = ukcp.user().getCache();
 
         try {
-            if (frame.getFlag() == Flags.Connack) {
+            if (frame.flag() == Flags.Connack) {
                 channel.onOpenFuture((r, e) -> {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 });

@@ -27,7 +27,7 @@ public class CodecByteBuffer implements Codec {
      */
     @Override
     public <T extends BufferWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException {
-        if (frame.getMessage() == null) {
+        if (frame.message() == null) {
             //length (len[int] + flag[int])
             int frameSize = Integer.BYTES + Integer.BYTES;
             T target = targetFactory.apply(frameSize);
@@ -36,25 +36,25 @@ public class CodecByteBuffer implements Codec {
             target.putInt(frameSize);
 
             //flag
-            target.putInt(frame.getFlag());
+            target.putInt(frame.flag());
             target.flush();
 
             return target;
         } else {
             //sid
-            byte[] sidB = frame.getMessage().sid().getBytes(config.getCharset());
+            byte[] sidB = frame.message().sid().getBytes(config.getCharset());
             //event
-            byte[] eventB = frame.getMessage().event().getBytes(config.getCharset());
+            byte[] eventB = frame.message().event().getBytes(config.getCharset());
             //metaString
-            byte[] metaStringB = frame.getMessage().metaString().getBytes(config.getCharset());
+            byte[] metaStringB = frame.message().metaString().getBytes(config.getCharset());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
-            int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + eventB.length + metaStringB.length + frame.getMessage().dataSize() + Short.BYTES * 3;
+            int frameSize = Integer.BYTES + Integer.BYTES + sidB.length + eventB.length + metaStringB.length + frame.message().dataSize() + Short.BYTES * 3;
 
             Asserts.assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
             Asserts.assertSize("event", eventB.length, Constants.MAX_SIZE_EVENT);
             Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
-            Asserts.assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_DATA);
+            Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
 
             T target = targetFactory.apply(frameSize);
 
@@ -62,7 +62,7 @@ public class CodecByteBuffer implements Codec {
             target.putInt(frameSize);
 
             //flag
-            target.putInt(frame.getFlag());
+            target.putInt(frame.flag());
 
             //sid
             target.putBytes(sidB);
@@ -77,7 +77,7 @@ public class CodecByteBuffer implements Codec {
             target.putChar('\n');
 
             //data
-            target.putBytes(frame.getMessage().dataAsBytes());
+            target.putBytes(frame.message().dataAsBytes());
 
             target.flush();
 
@@ -136,10 +136,10 @@ public class CodecByteBuffer implements Codec {
 
             //先 data , 后 metaString (避免 data 时修改元信息)
             MessageDefault message = new MessageDefault()
-                    .flag(Flags.of(flag))
-                    .sid(sid)
-                    .event(event)
-                    .entity(new EntityDefault().data(data).metaString(metaString));
+                    .flagSet(Flags.of(flag))
+                    .sidSet(sid)
+                    .eventSet(event)
+                    .entitySet(new EntityDefault().dataSet(data).metaStringSet(metaString));
 
             return new Frame(message.flag(), message);
         }

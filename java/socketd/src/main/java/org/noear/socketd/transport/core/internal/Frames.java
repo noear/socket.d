@@ -23,8 +23,8 @@ public class Frames {
     public static final Frame connectFrame(String sid, String url) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
-        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
-        return new Frame(Flags.Connect, new MessageDefault().sid(sid).event(url).entity(entity));
+        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
+        return new Frame(Flags.Connect, new MessageDefault().sidSet(sid).eventSet(url).entitySet(entity));
     }
 
     /**
@@ -35,8 +35,8 @@ public class Frames {
     public static final Frame connackFrame(Message connectMessage) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
-        entity.meta(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
-        return new Frame(Flags.Connack, new MessageDefault().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity));
+        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
+        return new Frame(Flags.Connack, new MessageDefault().sidSet(connectMessage.sid()).eventSet(connectMessage.event()).entitySet(entity));
     }
 
     /**
@@ -68,11 +68,11 @@ public class Frames {
 
         if (from != null) {
             //如果有来源消息，则回传元信息
-            message.sid(from.sid());
-            message.event(from.event());
-            message.entity(new StringEntity(alarm).metaString(from.metaString()));
+            message.sidSet(from.sid());
+            message.eventSet(from.event());
+            message.entitySet(new StringEntity(alarm).metaStringSet(from.metaString()));
         } else {
-            message.entity(new StringEntity(alarm));
+            message.entitySet(new StringEntity(alarm));
         }
 
         return new Frame(Flags.Alarm, message);

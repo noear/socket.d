@@ -22,7 +22,7 @@ public class MessageDefault implements MessageInternal {
     /**
      * 设置标记
      */
-    public MessageDefault flag(int flag) {
+    public MessageDefault flagSet(int flag) {
         this.flag = flag;
         return this;
     }
@@ -30,7 +30,7 @@ public class MessageDefault implements MessageInternal {
     /**
      * 设置流id
      */
-    public MessageDefault sid(String sid) {
+    public MessageDefault sidSet(String sid) {
         this.sid = sid;
         return this;
     }
@@ -38,7 +38,7 @@ public class MessageDefault implements MessageInternal {
     /**
      * 设置事件
      */
-    public MessageDefault event(String event) {
+    public MessageDefault eventSet(String event) {
         this.event = event;
         return this;
     }
@@ -46,7 +46,7 @@ public class MessageDefault implements MessageInternal {
     /**
      * 设置实体
      */
-    public MessageDefault entity(Entity entity) {
+    public MessageDefault entitySet(Entity entity) {
         this.entity = entity;
 
         return this;

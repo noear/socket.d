@@ -16,16 +16,16 @@ public class Frame {
     }
 
     /**
-     * 标志
+     * 标志（保持与 Message 的获取风格）
      * */
-    public int getFlag(){
+    public int flag(){
         return flag;
     }
 
     /**
      * 消息
      * */
-    public MessageInternal getMessage() {
+    public MessageInternal message() {
         return message;
     }
 

@@ -42,9 +42,9 @@ public class ProcessorDefault implements Processor {
             }
         }
 
-        if (frame.getFlag() == Flags.Connect) {
+        if (frame.flag() == Flags.Connect) {
             //if server
-            HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
+            HandshakeDefault handshake = new HandshakeDefault(frame.message());
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
@@ -54,7 +54,7 @@ public class ProcessorDefault implements Processor {
                     if (channel.isValid()) {
                         //如果还有效，则发送链接确认
                         try {
-                            channel.sendConnack(frame.getMessage()); //->Connack
+                            channel.sendConnack(frame.message()); //->Connack
                         } catch (Throwable err) {
                             onError(channel, err);
                         }
@@ -69,9 +69,9 @@ public class ProcessorDefault implements Processor {
                 }
             });
             onOpen(channel);
-        } else if (frame.getFlag() == Flags.Connack) {
+        } else if (frame.flag() == Flags.Connack) {
             //if client
-            HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
+            HandshakeDefault handshake = new HandshakeDefault(frame.message());
             channel.setHandshake(handshake);
 
             onOpen(channel);
@@ -79,7 +79,7 @@ public class ProcessorDefault implements Processor {
             if (channel.getHandshake() == null) {
                 channel.close(Constants.CLOSE1_PROTOCOL);
 
-                if(frame.getFlag() == Flags.Close){
+                if(frame.flag() == Flags.Close){
                     //说明握手失败了
                     throw new SocketdConnectionException("Connection request was rejected");
                 }
@@ -93,7 +93,7 @@ public class ProcessorDefault implements Processor {
             }
 
             try {
-                switch (frame.getFlag()) {
+                switch (frame.flag()) {
                     case Flags.Ping: {
                         channel.sendPong();
                         break;
@@ -109,12 +109,12 @@ public class ProcessorDefault implements Processor {
                     }
                     case Flags.Alarm: {
                         //结束流，并异常通知
-                        SocketdAlarmException exception = new SocketdAlarmException(frame.getMessage());
-                        StreamInternal stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
+                        SocketdAlarmException exception = new SocketdAlarmException(frame.message());
+                        StreamInternal stream = channel.getConfig().getStreamManger().getStream(frame.message().sid());
                         if (stream == null) {
                             onError(channel, exception);
                         } else {
-                            channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
+                            channel.getConfig().getStreamManger().removeStream(frame.message().sid());
                             stream.onError(exception);
                         }
                         break;
@@ -145,11 +145,11 @@ public class ProcessorDefault implements Processor {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
-            String fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            String fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
                 int index = Integer.parseInt(fragmentIdxStr);
-                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.message());
 
                 if (frameNew == null) {
                     return;
@@ -163,7 +163,7 @@ public class ProcessorDefault implements Processor {
         if (isReply) {
             channel.retrieve(frame);
         } else {
-            onMessage(channel, frame.getMessage());
+            onMessage(channel, frame.message());
         }
     }
 

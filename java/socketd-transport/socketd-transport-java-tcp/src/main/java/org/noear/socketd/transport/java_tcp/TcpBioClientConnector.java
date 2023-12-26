@@ -113,7 +113,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
                 Frame frame = client.getAssistant().read(socket);
                 if (frame != null) {
-                    if (frame.getFlag() == Flags.Connack) {
+                    if (frame.flag() == Flags.Connack) {
                         channel.onOpenFuture((r, e) -> {
                             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                         });

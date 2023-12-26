@@ -46,8 +46,8 @@ public class Demo06_Im_Client {
                 }
 
                 clientSession.send("cmd.chat", new StringEntity(msg)
-                        .meta("room", room)
-                        .meta("sender", user));
+                        .metaPut("room", room)
+                        .metaPut("sender", user));
             }
         }
     }
@@ -66,7 +66,7 @@ public class Demo06_Im_Client {
             }
 
             //加入聊天室
-            clientSession.send("cmd.join", new StringEntity("").meta("room", room));
+            clientSession.send("cmd.join", new StringEntity("").metaPut("room", room));
         }
     }
 
@@ -124,8 +124,8 @@ public class Demo06_Im_Client {
             }
 
             clientSession.send("cmd.t", new StringEntity("")
-                    .meta("room", "当前聊天室")
-                    .meta("u", id));
+                    .metaPut("room", "当前聊天室")
+                    .metaPut("u", id));
 
             System.err.println("用户已下线:" + id);
         }

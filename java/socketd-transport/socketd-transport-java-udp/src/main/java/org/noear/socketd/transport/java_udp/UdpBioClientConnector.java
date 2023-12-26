@@ -93,7 +93,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
                 DatagramFrame frame = client.getAssistant().read(socket);
                 if (frame != null) {
-                    if (frame.getFrame().getFlag() == Flags.Connack) {
+                    if (frame.getFrame().flag() == Flags.Connack) {
                         channel.onOpenFuture((r, e) -> {
                             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                         });

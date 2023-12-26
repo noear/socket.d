@@ -25,11 +25,11 @@ public class FragmentHandlerDefault implements FragmentHandler {
             return null;
         }
 
-        EntityDefault fragmentEntity = new EntityDefault().data(dataBuffer);
+        EntityDefault fragmentEntity = new EntityDefault().dataSet(dataBuffer);
         if (fragmentIndex == 1) {
-            fragmentEntity.metaMap(message.metaMap());
+            fragmentEntity.metaMapPut(message.metaMap());
         }
-        fragmentEntity.meta(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+        fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
 
         return fragmentEntity;
     }

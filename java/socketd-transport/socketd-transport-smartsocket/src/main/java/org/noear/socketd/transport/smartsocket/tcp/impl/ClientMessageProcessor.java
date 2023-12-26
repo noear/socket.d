@@ -2,7 +2,6 @@ package org.noear.socketd.transport.smartsocket.tcp.impl;
 
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
@@ -43,7 +42,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
         ChannelInternal channel = getChannel(s);
 
         try {
-            if (frame.getFlag() == Flags.Connack) {
+            if (frame.flag() == Flags.Connack) {
                 channel.onOpenFuture((r, e) -> {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 });

@@ -21,8 +21,8 @@ public class TempfileEntity extends EntityDefault {
 
     public TempfileEntity(File file, ByteBuffer data, Map<String, String> metaMap) throws IOException {
         this.file = file;
-        data(data);
-        metaMap(metaMap);
+        dataSet(data);
+        metaMapPut(metaMap);
     }
 
     public TempfileEntity(File file) throws IOException {
@@ -32,8 +32,8 @@ public class TempfileEntity extends EntityDefault {
                 .getChannel()
                 .map(FileChannel.MapMode.READ_ONLY, 0, len);
 
-        data(byteBuffer);
-        meta(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
+        dataSet(byteBuffer);
+        metaPut(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
     }
 
     @Override

@@ -26,12 +26,18 @@ public class EntityDefault implements Entity {
     private ByteBuffer data = Constants.DEF_DATA;
     private int dataSize = 0;
 
+    /**
+     * At
+     * */
     public EntityDefault at(String name) {
-        meta("@", name);
+        metaPut("@", name);
         return this;
     }
 
-    public EntityDefault metaString(String metaString) {
+    /**
+     * 设置元信息字符串
+     * */
+    public EntityDefault metaStringSet(String metaString) {
         this.metaMap = null;
         this.metaString = metaString;
         this.metaStringChanged = false;
@@ -65,11 +71,11 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * 设置元信息字典
+     * 添加元信息字典
      *
      * @param metaMap 元信息字典
      */
-    public EntityDefault metaMap(Map<String, String> metaMap) {
+    public EntityDefault metaMapPut(Map<String, String> metaMap) {
         this.metaMap().putAll(metaMap);
         this.metaStringChanged = true;
         return this;
@@ -99,12 +105,12 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * 设置元信息
+     * 添加元信息
      *
      * @param name 名字
      * @param val  值
      */
-    public EntityDefault meta(String name, String val) {
+    public EntityDefault metaPut(String name, String val) {
         metaMap().put(name, val);
         this.metaStringChanged = true;
         return this;
@@ -136,7 +142,7 @@ public class EntityDefault implements Entity {
      *
      * @param data 数据
      */
-    public EntityDefault data(byte[] data) {
+    public EntityDefault dataSet(byte[] data) {
         this.data = ByteBuffer.wrap(data);
         this.dataSize = data.length;
         return this;
@@ -147,7 +153,7 @@ public class EntityDefault implements Entity {
      *
      * @param data 数据
      */
-    public EntityDefault data(ByteBuffer data) {
+    public EntityDefault dataSet(ByteBuffer data) {
         this.data = data;
         this.dataSize = data.limit();
         return this;

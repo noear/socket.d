@@ -65,11 +65,11 @@ public class TestCase15_size extends BaseTestCase {
         }
 
         try {
-            clientSession.send("/user/size", new StringEntity("hi").meta("test", meta.toString()));
+            clientSession.send("/user/size", new StringEntity("hi").metaPut("test", meta.toString()));
         } catch (SocketdException e) {
             e.printStackTrace();
         }
-        clientSession.send("/user/size", new StringEntity("hi").meta("test", "ok"));
+        clientSession.send("/user/size", new StringEntity("hi").metaPut("test", "ok"));
 
         Thread.sleep(1000);
 

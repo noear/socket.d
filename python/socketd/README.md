@@ -133,9 +133,9 @@ async def application():
 
     start_time = time.monotonic()
     for _ in range(100):
-        await client_session.send("demo", StringEntity("test"))
-        await client_session.send_and_request("demo", StringEntity("test"), 100)
-        await client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
+        await client_session.send("demo", StringEntity("test.png"))
+        await client_session.send_and_request("demo", StringEntity("test.png"), 100)
+        await client_session.send_and_subscribe("demo", StringEntity("test.png"), send_and_subscribe_test, 100)
     end_time = time.monotonic()
     logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
     await client_session.close()

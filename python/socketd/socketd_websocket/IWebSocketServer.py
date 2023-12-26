@@ -1,4 +1,4 @@
-from websockets.server import WebSocketServer, WebSocketServerProtocol
+from websockets.server import WebSocketServerProtocol
 
 
 class IWebSocketServer:

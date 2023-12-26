@@ -36,6 +36,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         return_data = await super().handshake(wsuri, origin, available_extensions, available_subprotocols,
                                               extra_headers)
         log.debug("AIOWebSocketClientImpl handshake")
+        self.status_state = Flag.Connect
         await self.on_open()
         return return_data
 
@@ -55,12 +56,13 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 await asyncio.sleep(0)
                 if self.closed or self.status_state == Flag.Close:
                     break
-                if self.status_state != Flag.Unknown:
+                if self.status_state > Flag.Connect:
                     try:
                         await self.on_message()
                     except Exception as e:
                         log.error(e)
-                        break
+                        # raise e
+
         # 如果配置中设置了使用线程，则创建一个新的事件循环，并启动一个线程来处理读取操作
         if self.client.get_config().get_is_thread():
             loop = asyncio.new_event_loop()
@@ -72,24 +74,27 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             asyncio.run_coroutine_threadsafe(_handler(), asyncio.get_event_loop())
 
     async def on_open(self):
-        log.info("Client:Websocket onOpen...")
         try:
             await self.channel.send_connect(self.client.get_config().get_url())
             await self.on_message()
         except Exception as e:
             log.error(str(e), exc_info=True)
             raise e
+        finally:
+            log.info("Client:Websocket onOpen...")
 
     async def on_message(self):
         """处理消息"""
+        if self.status_state == Flag.Close:
+            return
         try:
-            if self.status_state == Flag.Close:
-                return
             message = await self.recv()
-            log.debug(message)
+            if message is None:
+                # 结束握手
+                return
             frame: Frame = self.client.get_assistant().read(message)
-            self.status_state = frame.get_flag()
             if frame is not None:
+                self.status_state = frame.get_flag()
                 await self.client.get_processor().on_receive(self.channel, frame)
                 if frame.get_flag() == Flag.Close:
                     """服务端主动关闭"""
@@ -107,3 +112,16 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
 
     def on_error(self, e):
         self.client.get_processor().on_error(self.channel.get_session(), e)
+
+
+# async def read_frame(protocol: WebSocketCommonProtocol, max_size):
+#     __data = bytearray()
+#     while True:
+#         _frame: frames.Frame = await protocol.read_data_frame(max_size=max_size)
+#         if _frame is None:
+#             return
+#         __data.extend(_frame.data)
+#         if _frame.fin:
+#             # 如果是最后一帧
+#             break
+#     return __data

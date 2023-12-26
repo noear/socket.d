@@ -22,8 +22,8 @@ class TestCase00(unittest.TestCase):
         try:
             loop.run_until_complete(test.start())
             loop.run_until_complete(test.send(TestCase00.count))
-            # loop.run_until_complete(test.send_and_request(TestCase00.count))
-            # loop.run_until_complete(test.send_and_subscribe(TestCase00.count))
+            # loop.run_until_complete(test.png.send_and_request(TestCase00.count))
+            # loop.run_until_complete(test.png.send_and_subscribe(TestCase00.count))
         except Exception as e:
             pass
         finally:

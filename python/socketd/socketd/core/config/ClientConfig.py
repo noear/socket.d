@@ -69,8 +69,6 @@ class ClientConfig(ConfigBase):
         self.__auto_reconnect = __auto_reconnect
         return self
 
-
-
     def __str__(self):
         return f"ClientConfig{{__schema='{self.__schema}', __url='{self.__url}', " \
                f"heartbeatInterval={self.__heartbeat_interval}, " \

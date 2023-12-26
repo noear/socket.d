@@ -1,5 +1,5 @@
 import asyncio
-from websockets import ConnectionClosedError
+from websockets import ConnectionClosedError, WebSocketCommonProtocol, frames
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.core.Channel import Channel
@@ -20,7 +20,8 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
         self.ws_aio_server = ws_aio_server
         self.__ws_server: WebSocketServer = ws_server
         self.__attachment = None
-        WebSocketServerProtocol.__init__(self, self.on_message, self.__ws_server, *args, **kwargs)
+        WebSocketServerProtocol.__init__(self=self, ws_handler=self.on_message, ws_server=self.__ws_server, *args,
+                                         **kwargs)
 
     def set_attachment(self, obj: Channel):
         self.__attachment = obj
@@ -56,11 +57,10 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
     async def on_message(self, conn: 'AIOWebSocketServerImpl', path: str):
         """ws_handler"""
         while True:
+            if conn.closed:
+                break
             try:
-                if conn.closed:
-                    break
-                message = await conn.recv()
-                log.debug(message)
+                message = await self.recv()
                 frame: Frame = self.ws_aio_server.get_assistant().read(
                     message)
                 # # 采用线程池执行IO耗时任务
@@ -82,7 +82,6 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             except Exception as e:
                 log.error(e)
                 break
-            # raise e
 
     async def on_close(self, conn: 'WebSocketServerProtocol'):
         """关闭tcp,结束握手"""

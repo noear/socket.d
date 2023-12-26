@@ -1,5 +1,4 @@
 from io import BytesIO
-from enum import Enum
 from typing import Callable
 
 

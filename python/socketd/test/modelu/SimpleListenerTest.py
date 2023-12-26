@@ -30,11 +30,11 @@ class SimpleListenerTest(Listener, ABC):
             with self.message_counter:
                 self.message_counter.set(self.message_counter.get() + 1)
             await session.reply(message, StringEntity("reply"))
-            await session.reply_end(message, StringEntity("ok test"))
+            await session.reply_end(message, StringEntity("ok test.png"))
             await session.reply(message, StringEntity("reply"))
         elif message.is_subscribe():
             await session.reply(message, StringEntity("reply"))
-            await session.reply_end(message, StringEntity("ok test"))
+            await session.reply_end(message, StringEntity("ok test.png"))
             await session.reply(message, StringEntity("reply"))
 
     def on_close(self, session):

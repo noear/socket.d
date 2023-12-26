@@ -29,7 +29,8 @@ class WsAioClientConnector(ClientConnectorBase):
             ws_url = ws_url.replace("ws", "wss")
         try:
             con = await AIOConnect(ws_url, client=self.client, ssl=self.client.get_config().get_ssl_context(),
-                                   create_protocol=AIOWebSocketClientImpl)
+                                   create_protocol=AIOWebSocketClientImpl,
+                                   max_size=self.client.get_config().get_ws_max_size())
             self.real: AIOWebSocketClientImpl | WebSocketClientProtocol = con
             return self.real.get_channel()
         except Exception as e:

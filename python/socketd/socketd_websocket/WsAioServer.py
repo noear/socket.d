@@ -24,18 +24,12 @@ class WsAioServer(ServerBase):
             raise Exception("Server started")
         else:
             self.__is_started = True
-        if self._config.get_host() is not None:
-            _server = AIOServe(ws_handler=None,
-                               host="0.0.0.0", port=self._config.get_port(),
-                               create_protocol=AIOWebSocketServerImpl,
-                               ws_aio_server=self,
-                               ssl=self._config.get_ssl_context())
-        else:
-            _server = AIOServe(ws_handler=None,
-                               host=self._config.get_host(), port=self._config.get_port(),
-                               create_protocol=AIOWebSocketServerImpl,
-                               ws_aio_server=self,
-                               ssl=self._config.get_ssl_context())
+        _server = AIOServe(ws_handler=None,
+                           host="0.0.0.0" if self._config.get_host() is None else self._config.get_host(),
+                           port=self._config.get_port(),
+                           create_protocol=AIOWebSocketServerImpl,
+                           ws_aio_server=self,
+                           ssl=self._config.get_ssl_context(), max_size=self._config.get_ws_max_size())
         self.server = _server
         logger.info("Server started: {server=" + self._config.get_local_url() + "}")
         return await self.server

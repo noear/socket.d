@@ -27,6 +27,8 @@ class ConfigBase(Config):
         self._reply_timeout = 3000
         self._max_requests = 10
         self._max_udp_size = 2048
+        # ws最大传输大小
+        self._ws_max_size = 2 ** 20
         self.__is_thread = False
 
     def client_mode(self):
@@ -135,3 +137,10 @@ class ConfigBase(Config):
 
     def get_is_thread(self):
         return self.__is_thread
+
+    def get_ws_max_size(self):
+        return self._ws_max_size
+
+    def set_ws_max_size(self, _max_size):
+        self._ws_max_size = _max_size
+        return self

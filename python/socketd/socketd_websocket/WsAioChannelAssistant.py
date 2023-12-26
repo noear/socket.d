@@ -1,4 +1,7 @@
 import asyncio
+import math
+
+from websockets import WebSocketClientProtocol, frames
 
 from socketd.core.Buffer import Buffer
 from socketd.core.config.Config import Config
@@ -13,16 +16,23 @@ class WsAioChannelAssistant(ChannelAssistant):
         self.config = config
         self.__loop = asyncio.get_event_loop()
 
-    async def write(self, source: WebSocketServerProtocol, frame: Frame) -> None:
-        # writer: Buffer = await self.__loop.run_in_executor(self.config.get_executor(), lambda _frame:
-        # self.config.get_codec().write(frame, lambda size: Buffer(limit=size)), frame)
-        # 这里使用了异步方式调用self.__loop.run_in_executor()来执行一个匿名函数，
-        # 该匿名函数的参数是一个帧（frame），然后调用self.config.get_codec().write()方法来将帧（frame）写入缓冲区，
-        # 其中lambda size: Buffer(limit=size)是一个匿名函数，用于创建一个容量为size的缓冲区。将得到的缓冲区对象赋值给writer变量。
+    async def write(self, source: WebSocketClientProtocol, frame: Frame) -> None:
         writer: Buffer = self.config.get_codec().write(frame, lambda size: Buffer(limit=size))
         # 如果writer不为None，说明写入成功，通过调用source.send()方法将writer.getbuffer()发送给客户端。
         if writer is not None:
-            await source.send(writer.getbuffer())
+            _data = writer.getbuffer()
+            _len = len(writer.getbuffer())
+            if _len >= source.max_size:
+                count = _len / source.max_size if (_len % source.max_size) > 0 else _len / source.max_size + 1
+                _start = 0
+                _steam = []
+                for i in range(1, math.ceil(count)):
+                    _end = source.max_size * i
+                    await source.write_frame(False, frames.OP_BINARY, bytes(_data[_start:_end]))
+                    _start += source.max_size
+                await source.write_frame(True, frames.OP_CONT, b"")
+            else:
+                await source.send(_data)
 
     def is_valid(self, target: WebSocketServerProtocol) -> bool:
         return target.state == State.OPEN

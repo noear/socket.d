@@ -1,4 +1,9 @@
 
+### 2.2.17
+* 修复 ClusterClientSession::getSessionOne 轮询目标错误的问题
+* 调整部分方法命名，方便跨语言开发
+
+
 ### 2.1.16
 * 调整 固定 Codec 类型定义（没必要泛型）
 * 调整 禁止 Codec 被外部修改（毕竟是内核）

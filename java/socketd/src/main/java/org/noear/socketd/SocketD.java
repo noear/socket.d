@@ -34,9 +34,19 @@ public class SocketD {
         return "1.0";
     }
 
+    /**
+     * 客户端提供者
+     */
     static Map<String, ClientProvider> clientProviderMap;
+
+    /**
+     * 服务端提供者
+     */
     static Map<String, ServerProvider> serverProviderMap;
 
+    /**
+     * 加载 spi
+     * */
     static {
         clientProviderMap = new HashMap<>();
         serverProviderMap = new HashMap<>();

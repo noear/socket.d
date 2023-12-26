@@ -17,38 +17,116 @@
 * 下划线风格：get_xxx_yyy
 
 
-##  二、规范定义缘由
+##  二、规范定义缘由（及调整案例）
+
+### 1、如果主接口是获取
 
 原 java 里可以：
 
 ```java
-public class Demo {
+public interface Demo{
+    String tag();
+}
+public class DemoDefault implements Demo{
     String tag;
 
-    Demo tag(String tag) { //这咱风格，在 Builder 模式里挺常见
+    public Demo tag(String tag) { //这种风格，在 Builder 模式里算常见
         this.tag = tag;
         return this;
     }
 
-    String tag() {
+    public String tag() { //它是主接口（优先简洁）
         return this.tag;
     }
 }
 ```
 
- 在 js 里就没办法用了，需改成：
+ 在 js 里就没办法用了，需要改成：
 
 ```javascript
-class Demo {
+//js
+class DemoDefault {
     _tag: string; //字段名不能与函数名同
 
-    tagSet(tag: stirng): Demo { //不能有相同的函数名，故改成 tagSet，同时与普通设置风格区别开来
+    tagSet(tag: stirng): Demo { //与主接口冲突，改成 tagSet 链式设置风格
         this._tag = tag;
         return this;
     }
 
-    tag(): string {
+    tag(): string { //它是主接口（优先简洁）
         return this._tag;
+    }
+}
+```
+
+```java
+//java
+public class DemoDefault implements Demo{
+    String tag;
+
+    public Demo tagSet(String tag) { //与主接口冲突，改成 tagSet 链式设置风格
+        this.tag = tag;
+        return this;
+    }
+
+    public String tag() { //它是主接口（优先简洁）
+        return this.tag;
+    }
+}
+```
+
+### 2、如果主接口是配置（或设置）
+
+原 java 里可以：
+
+```java
+public interface Demo{
+    Demo tag(String tag);
+}
+public class DemoDefault implements Demo{
+    String tag;
+
+    public Demo tag(String tag) { //它是主接口（优先简洁）
+        this.tag = tag;
+        return this;
+    }
+
+    public String tag() { //这种风格，在 Builder 模式里算常见
+        return this.tag;
+    }
+}
+```
+
+在 js 里就没办法用了，需要改成：
+
+```javascript
+//js
+class DemoDefault implements Demo {
+    _tag: string; //字段名不能与函数名同
+
+    tag(tag: stirng): Demo {  //它是主接口（优先简洁）
+        this._tag = tag;
+        return this;
+    }
+
+    getTag(): string { //与主接口冲突，改成 getTag 普通获取风格
+        return this._tag;
+    }
+}
+```
+
+```java
+//java
+public class DemoDefault implements Demo{
+    String tag;
+
+    public Demo tag(String tag) { //它是主接口（优先简洁）
+        this.tag = tag;
+        return this;
+    }
+    
+    public String getTag() { //与主接口冲突，改成 getTag 普通获取风格
+        return this.tag;
     }
 }
 ```

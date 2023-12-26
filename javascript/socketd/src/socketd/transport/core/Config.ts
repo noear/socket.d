@@ -1,9 +1,15 @@
 import {Codec, CodecByteBuffer} from "./Codec";
-import {StreamManger} from "./Stream";
+import {StreamManger, StreamMangerDefault} from "./Stream";
 import {GuidGenerator, IdGenerator} from "./IdGenerator";
 import {FragmentHandler, FragmentHandlerDefault} from "./FragmentHandler";
 import {Constants} from "./Constants";
 
+/**
+ * 配置接口
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface Config {
 
     /**
@@ -87,7 +93,7 @@ export interface Config {
     getMaxUdpSize(): number;
 }
 
-export class ConfigBase implements Config {
+export abstract class ConfigBase implements Config {
     //是否客户端模式
     _clientMode:boolean;
     //流管理器
@@ -123,8 +129,8 @@ export class ConfigBase implements Config {
 
     constructor(clientMode:boolean) {
         this._clientMode = clientMode;
-        this._codec = new CodecByteBuffer();
-        this._streamManger = new StreamManger();
+        this._streamManger = new StreamMangerDefault(this);
+        this._codec = new CodecByteBuffer(this);
 
         this._charset = "utf-8";
 

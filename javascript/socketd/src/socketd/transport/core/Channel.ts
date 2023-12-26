@@ -5,6 +5,12 @@ import {Frame, Frames, Message} from "./Message";
 import {StreamBase} from "./Stream";
 import {IoBiConsumer} from "./Types";
 
+/**
+ * 通道
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface Channel {
     /**
      * 获取附件
@@ -114,14 +120,26 @@ export interface Channel {
     getSession(): Session;
 }
 
+/**
+ * 通道内部扩展
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface ChannelInternal extends Channel {
     /**
      * 设置会话
      * */
     setSession(session: Session);
 
+    /**
+     * 当打开时
+     * */
     onOpenFuture(future: IoBiConsumer<boolean, Error>);
 
+    /**
+     * 执行打开时
+     * */
     doOpenFuture(r: boolean, e: Error);
 }
 

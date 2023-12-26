@@ -8,6 +8,12 @@ import {Constants} from "../core/Constants";
 import {Asserts} from "../core/Asserts";
 import {SocketdChannelException, SocketdException} from "../../exception/SocketdException";
 
+/**
+ * 客户端通道
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class ClientChannel extends ChannelBase implements Channel {
     _connector:ClientConnector;
     _real:Channel;
@@ -29,6 +35,9 @@ export class ClientChannel extends ChannelBase implements Channel {
         this.initHeartbeat();
     }
 
+    /**
+     * 初始化心跳（关闭后，手动重链时也会用到）
+     */
     initHeartbeat() {
         if (this._heartbeatScheduledFuture) {
             clearInterval(this._heartbeatScheduledFuture);
@@ -45,6 +54,9 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 心跳处理
+     */
     heartbeatHandle() {
         if (this._real != null) {
             //说明握手未成
@@ -78,6 +90,11 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 预备检测
+     *
+     * @return 是否为新链接
+     */
     prepareCheck():boolean{
         if (this._real == null || this._real.isValid() == false) {
             this._real = this._connector.connect();
@@ -88,6 +105,9 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 是否有效
+     */
     isValid() {
         if (this._real == null) {
             return false;
@@ -95,6 +115,10 @@ export class ClientChannel extends ChannelBase implements Channel {
             return this._real.isValid();
         }
     }
+
+    /**
+     * 是否已关闭
+     */
     isClosed(): number {
         if (this._real == null) {
             return 0;
@@ -103,6 +127,12 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    /**
+     * 发送
+     *
+     * @param frame  帧
+     * @param stream 流（没有则为 null）
+     */
     send(frame: Frame, stream: StreamBase) {
         Asserts.assertClosedByUser(this._real);
 

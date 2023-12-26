@@ -1,17 +1,55 @@
 
 import {CodecUtils} from "./CodecUtils";
 import {Asserts} from "./Asserts";
-import {Constants} from "./Constants";
+import {Constants, Flags} from "./Constants";
 import {Frame} from "./Message";
+import {Config} from "./Config";
+import {BufferReader, BufferWriter} from "./Buffer";
+import {IoFunction} from "./Types";
 
+/**
+ * 编解码器
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface Codec {
-    write(frame: Frame, factory);
+    /**
+     * 编码读取
+     *
+     * @param buffer 缓冲
+     */
+    read(buffer: BufferReader): Frame;
 
-    read(buffer): Frame;
+    /**
+     * 解码写入
+     *
+     * @param frame         帧
+     * @param targetFactory 目标工厂
+     */
+    write<T extends BufferWriter>(frame: Frame, factory: IoFunction<number, T>): T;
 }
 
+/**
+ * 编解码器（基于 BufferWriter,BufferReader 接口编解）
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class CodecByteBuffer implements Codec {
-    write(frame: Frame, factory) {
+    _config: Config;
+
+    constructor(config: Config) {
+        this._config = config;
+    }
+
+    /**
+     * 解码写入
+     *
+     * @param frame         帧
+     * @param targetFactory 目标工厂
+     */
+    write<T extends BufferWriter>(frame: Frame, factory: IoFunction<number, T>): T {
         if (frame.getMessage()) {
             //sid
             let sidB = CodecUtils.strToBuf(frame.getMessage().sid());
@@ -70,7 +108,30 @@ export class CodecByteBuffer implements Codec {
         }
     }
 
-    read(buffer): Frame { //=>Frame
+    /**
+     * 编码读取
+     *
+     * @param buffer 缓冲
+     */
+    read(buffer: BufferReader): Frame { //=>Frame
+        let frameSize = buffer.getInt();
+
+        if (frameSize > (buffer.remaining() + 4)) {
+            return null;
+        }
+
+        let flag = buffer.getInt();
+
+        if (frameSize == 8) {
+            //len[int] + flag[int]
+            return new Frame(Flags.of(flag), null);
+        } else {
+
+            return null;
+        }
+    }
+
+    protected decodeString(reader: BufferReader, buf: object, maxLen: number): string {
         return null;
     }
 }

@@ -1,6 +1,9 @@
 import {MessageInternal, Reply} from "./Message";
 import {Channel} from "./Channel";
 import {IoConsumer} from "./Types";
+import {SocketdTimeoutException} from "../../exception/SocketdException";
+import {Config} from "./Config";
+import {Asserts} from "./Asserts";
 
 /**
  * 流
@@ -35,7 +38,23 @@ export interface Stream {
     thenError(onError: IoConsumer<Error>): Stream;
 }
 
-export interface SteamInternal extends Stream {
+/**
+ * 流内部接口
+ *
+ * @author noear
+ * @since 2.0
+ */
+export interface StreamInternal extends Stream {
+    /**
+     * 保险开始（避免永久没有回调，造成内存不能释放）
+     * */
+    insuranceStart(streamManger:StreamMangerDefault, streamTimeout:number);
+
+    /**
+     * 保险取消息
+     * */
+    insuranceCancel();
+
     /**
      * 接收时
      *
@@ -58,11 +77,13 @@ export interface SteamInternal extends Stream {
  * @author noear
  * @since 2.0
  */
-export abstract class StreamBase implements SteamInternal {
+export abstract class StreamBase implements StreamInternal {
+    //保险任务
+    _insuranceFuture: number;
     _sid: string;
     _isSingle: boolean;
     _timeout: number;
-    _onError: IoConsumer<Error>;
+    _doOnError: IoConsumer<Error>;
 
     constructor(sid: string, isSingle: boolean, timeout: number) {
         this._sid = sid;
@@ -74,11 +95,7 @@ export abstract class StreamBase implements SteamInternal {
 
     abstract isDone(): boolean;
 
-    onError(error: Error) {
-        if (this._onError != null) {
-            this._onError(error);
-        }
-    }
+
 
     sid(): string {
         return this._sid;
@@ -92,8 +109,47 @@ export abstract class StreamBase implements SteamInternal {
         return this._timeout;
     }
 
+
+
+    /**
+     * 保险开始（避免永久没有回调，造成内存不能释放）
+     *
+     * @param streamManger  流管理器
+     * @param streamTimeout 流超时
+     */
+    insuranceStart(streamManger: StreamMangerDefault, streamTimeout: number) {
+        if (this._insuranceFuture > 0) {
+            return;
+        }
+
+        this._insuranceFuture = window.setTimeout(() => {
+            streamManger.removeStream(this.sid());
+            this.onError(new SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
+        }, streamTimeout);
+    }
+
+    /**
+     * 保险取消息
+     */
+    insuranceCancel() {
+        if (this._insuranceFuture > 0) {
+            window.clearTimeout(this._insuranceFuture);
+        }
+    }
+
+    /**
+     * 异常时
+     *
+     * @param error 异常
+     */
+    onError(error: Error) {
+        if (this._doOnError != null) {
+            this._doOnError(error);
+        }
+    }
+
     thenError(onError: IoConsumer<Error>): Stream {
-        this._onError = onError;
+        this._doOnError = onError;
         return this;
     }
 }
@@ -104,7 +160,7 @@ export abstract class StreamBase implements SteamInternal {
  * @author noear
  * @since 2.0
  */
-export class StreamRequest extends StreamBase implements SteamInternal{
+export class StreamRequest extends StreamBase implements StreamInternal{
     _future:IoConsumer<Reply>;
     _isDone:boolean;
     constructor( sid:string,  timeout:number,  future:IoConsumer<Reply>) {
@@ -134,7 +190,7 @@ export class StreamRequest extends StreamBase implements SteamInternal{
  * @author noear
  * @since 2.0
  */
-export class StreamSubscribe extends StreamBase implements SteamInternal{
+export class StreamSubscribe extends StreamBase implements StreamInternal{
     _future:IoConsumer<Reply>;
     constructor( sid:string,  timeout:number,  future:IoConsumer<Reply>) {
         super(sid,false,timeout);
@@ -154,22 +210,84 @@ export class StreamSubscribe extends StreamBase implements SteamInternal{
     }
 }
 
-export class StreamManger {
-    _streamMap: Map<string, SteamInternal>
+/**
+ * 流管理器
+ *
+ * @author noear
+ * @since 2.0
+ */
+export interface StreamManger {
+    /**
+     * 添加流
+     *
+     * @param sid    流Id
+     * @param stream 流
+     */
+    addStream(sid: string, stream: StreamInternal);
 
-    constructor() {
-        this._streamMap = new Map<string, SteamInternal>();
+    /**
+     * 获取流
+     *
+     * @param sid 流Id
+     */
+    getStream(sid: string): StreamInternal;
+
+    /**
+     * 移除流
+     *
+     * @param sid 流Id
+     */
+    removeStream(sid: string);
+}
+
+export class StreamMangerDefault implements StreamManger{
+    _config:Config;
+    _streamMap: Map<string, StreamInternal>
+
+    constructor(config:Config) {
+        this._config = config;
+        this._streamMap = new Map<string, StreamInternal>();
     }
 
+    /**
+     * 获取流接收器
+     *
+     * @param sid 流Id
+     */
     getStream(sid) {
         return this._streamMap.get(sid);
     }
 
-    addStream(sid, stream: SteamInternal) {
+    /**
+     * 添加流接收器
+     *
+     * @param sid    流Id
+     * @param stream 流
+     */
+    addStream(sid, stream: StreamInternal) {
+        Asserts.assertNull("stream", stream);
+
         this._streamMap.set(sid, stream);
+
+        //增加流超时处理（做为后备保险）
+        let streamTimeout = stream.timeout() > 0 ? stream.timeout() : this._config.getStreamTimeout();
+        if (streamTimeout > 0) {
+            stream.insuranceStart(this, streamTimeout);
+        }
     }
 
+    /**
+     * 移除流接收器
+     *
+     * @param sid 流Id
+     */
     removeStream(sid) {
-        this._streamMap.delete(sid);
+        let stream = this.getStream(sid);
+
+        if (stream) {
+            this._streamMap.delete(sid);
+            stream.insuranceCancel();
+            console.debug("{} stream removed, sid={}", this._config.getRoleName(), sid);
+        }
     }
 }

@@ -1,3 +1,10 @@
+
+/**
+ * 缓冲读
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface BufferReader {
 
     /**
@@ -26,7 +33,12 @@ export interface BufferReader {
     position(): number;
 }
 
-
+/**
+ * 缓冲写
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface BufferWriter {
     /**
      * 推入一组 byte

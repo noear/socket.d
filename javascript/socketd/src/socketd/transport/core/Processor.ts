@@ -1,7 +1,8 @@
 import {Listener, SimpleListener} from "./Listener";
 import {Channel, ChannelInternal} from "./Channel";
 import {Frame, Message} from "./Message";
-import {Constants, Flags} from "./Constants";
+import {Constants, EntityMetas, Flags} from "./Constants";
+import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
 
 export interface Processor {
     setListener(listener: Listener);
@@ -19,43 +20,24 @@ export interface Processor {
     onError(channel: Channel, error: Error);
 }
 
-export class ProcessorDefault implements Processor{
-    _listener:Listener;
+export class ProcessorDefault implements Processor {
+    _listener: Listener;
+
     constructor() {
         this._listener = new SimpleListener();
     }
 
     setListener(listener: Listener) {
-        if(listener != null){
+        if (listener != null) {
             this._listener = listener;
         }
     }
 
 
-    onOpen(channel: ChannelInternal) {
-        this._listener.onOpen(channel.getSession())
-    }
-
-    onMessage(channel: ChannelInternal, message) {
-        this._listener.onMessage(channel.getSession(), message)
-    }
-
-    onCloseInternal(channel: ChannelInternal) {
-
-    }
-
-    onClose(channel: ChannelInternal) {
-        this._listener.onClose(channel.getSession())
-    }
-
-    onError(channel: ChannelInternal, error: Error) {
-        this._listener.onError(channel.getSession(), error)
-    }
-
     onReceive(channel: ChannelInternal, frame) {
         if (frame.flag == Flags.Connect) {
             channel.setHandshake(frame.message);
-            channel.onOpenFuture((r,err)=>{
+            channel.onOpenFuture((r, err) => {
                 if (r && channel.isValid()) {
                     //如果还有效，则发送链接确认
                     try {
@@ -75,8 +57,13 @@ export class ProcessorDefault implements Processor{
                 channel.close(Constants.CLOSE1_PROTOCOL);
 
                 if (frame.flag == Flags.Close) {
-                    throw new Error("Connection request was rejected");
+                    //说明握手失败了
+                    throw new SocketdConnectionException("Connection request was rejected");
                 }
+
+                console.warn("{} channel handshake is null, sessionId={}",
+                    channel.getConfig().getRoleName(),
+                    channel.getSession().sessionId());
                 return
             }
 
@@ -97,7 +84,7 @@ export class ProcessorDefault implements Processor{
                     }
                     case Flags.Alarm: {
                         //结束流，并异常通知
-                        let exception = new Error(frame.getMessage());
+                        let exception = new SocketdAlarmException(frame.getMessage());
                         let acceptor = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
                         if (acceptor == null) {
                             this.onError(channel, exception);
@@ -130,6 +117,65 @@ export class ProcessorDefault implements Processor{
     }
 
     onReceiveDo(channel: ChannelInternal, frame, isReply) {
+        //如果启用了聚合!
+        if(channel.getConfig().getFragmentHandler().aggrEnable()) {
+            //尝试聚合分片处理
+            let fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            if (fragmentIdxStr != null) {
+                //解析分片索引
+                let index = parseInt(fragmentIdxStr);
+                let frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
 
+                if (frameNew == null) {
+                    return;
+                } else {
+                    frame = frameNew;
+                }
+            }
+        }
+
+        //执行接收处理
+        if (isReply) {
+            channel.retrieve(frame);
+        } else {
+            this.onMessage(channel, frame.getMessage());
+        }
+    }
+
+    onOpen(channel: ChannelInternal) {
+        try {
+            this._listener.onOpen(channel.getSession())
+            channel.doOpenFuture(true, null);
+        } catch (e) {
+            console.warn("{} channel listener onOpen error",
+                channel.getConfig().getRoleName(), e);
+
+            channel.doOpenFuture(false, e);
+        }
+    }
+
+    onMessage(channel: ChannelInternal, message) {
+        try {
+            this._listener.onMessage(channel.getSession(), message)
+        } catch (e) {
+            console.warn("{} channel listener onMessage error",
+                channel.getConfig().getRoleName(), e);
+
+            this.onError(channel, e);
+        }
+    }
+
+    onClose(channel: ChannelInternal) {
+        if (channel.isClosed() == 0) {
+            this.onCloseInternal(channel);
+        }
+    }
+
+    onCloseInternal(channel: ChannelInternal) {
+        this._listener.onClose(channel.getSession())
+    }
+
+    onError(channel: ChannelInternal, error: Error) {
+        this._listener.onError(channel.getSession(), error)
     }
 }

@@ -1,31 +1,185 @@
 
+/**
+ * 常量
+ *
+ * @author noear
+ * @since 2.0
+ */
 export const Constants = {
+    /**
+     * 默认流id（占位）
+     */
+    DEF_SID: "",
+    /**
+     * 默认事件（占位）
+     */
+    DEF_EVENT: "",
+    /**
+     * 默认元信息字符串（占位）
+     */
+    DEF_META_STRING: "",
+
+
+    /**
+     * 因协议指令关闭
+     */
     CLOSE1_PROTOCOL: 1,
+    /**
+     * 因协议非法关闭
+     */
     CLOSE2_PROTOCOL_ILLEGAL: 2,
+    /**
+     * 因异常关闭
+     */
     CLOSE3_ERROR: 3,
+    /**
+     * 因用户主动关闭
+     */
     CLOSE4_USER: 4,
+
+    /**
+     * 流ID长度最大限制
+     */
     MAX_SIZE_SID: 64,
+    /**
+     * 事件长度最大限制
+     */
     MAX_SIZE_EVENT: 512,
+    /**
+     * 元信息串长度最大限制
+     */
     MAX_SIZE_META_STRING: 4096,
+    /**
+     * 数据长度最大限制（也是分片长度最大限制）
+     */
     MAX_SIZE_DATA: 1024 * 1024 * 16,
+
+    /**
+     * 分片长度最小限制
+     */
     MIN_FRAGMENT_SIZE: 1024
 }
 
+/**
+ * 标志
+ *
+ * @author noear
+ * @since 2.0
+ */
 export const Flags = {
-    Unknown:0,
-    Connect: 10,
-    Connack: 11,
-    Ping: 20,
-    Pong: 21,
+    /**
+     * 未知
+     */
+    Unknown: 0,
+    /**
+     * 连接
+     */
+    Connect: 10, //握手：连接(c->s)，提交客户端握手信息，请求服务端握手信息
+    /**
+     * 连接确认
+     */
+    Connack: 11,//握手：确认(c<-s)，响应服务端握手信息
+    /**
+     * Ping
+     */
+    Ping: 20,//心跳:ping(c<->s)
+    /**
+     * Pong
+     */
+    Pong: 21, //心跳:pong(c<->s)
+    /**
+     * 关闭（Udp 没有断链的概念，需要发消息）
+     */
     Close: 30,
+    /**
+     * 告警
+     */
     Alarm: 31,
-    Message: 40,
-    Request: 41,
+    /**
+     * 消息
+     */
+    Message: 40, //消息(c<->s)
+    /**
+     * 请求
+     */
+    Request: 41, //请求(c<->s)
+    /**
+     * 订阅
+     */
     Subscribe: 42,
+    /**
+     * 答复
+     */
     Reply: 48,
-    ReplyEnd: 49
+    /**
+     * 答复结束（结束订阅接收）
+     */
+    ReplyEnd: 49,
+
+    of: function (code: number) {
+        switch (code) {
+            case 10:
+                return this.Connect;
+            case 11:
+                return this.Connack;
+            case 20:
+                return this.Ping;
+            case 21:
+                return this.Pong;
+            case 30:
+                return this.Close;
+            case 31:
+                return this.Alarm;
+            case 40:
+                return this.Message;
+            case 41:
+                return this.Request;
+            case 42:
+                return this.Subscribe;
+            case 48:
+                return this.Reply;
+            case 49:
+                return this.ReplyEnd;
+            default:
+                return this.Unknown;
+        }
+    },
+    name: function (code: number) {
+        switch (code) {
+            case this.Connect:
+                return "Connect";
+            case this.Connack:
+                return "Connack";
+            case this.Ping:
+                return "Ping";
+            case this.Pong:
+                return "Pong";
+            case this.Close:
+                return "Close";
+            case this.Alarm:
+                return "Alarm";
+            case this.Message:
+                return "Message";
+            case this.Request:
+                return "Request";
+            case this.Subscribe:
+                return "Subscribe";
+            case this.Reply:
+                return "Reply";
+            case this.ReplyEnd:
+                return "ReplyEnd";
+            default:
+                return "Unknown";
+        }
+    }
 }
 
+/**
+ * 实体元信息常用名
+ *
+ * @author noear
+ * @since 2.0
+ */
 export const EntityMetas= {
     /**
      * 框架版本号

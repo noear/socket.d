@@ -37,6 +37,13 @@ export interface Client {
     open(): ClientSession;
 }
 
+
+/**
+ * 客户端内部扩展接口
+ *
+ * @author noear
+ * @since  2.1
+ */
 export interface ClientInternal extends Client {
     /**
      * 获取心跳处理

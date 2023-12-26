@@ -1,5 +1,11 @@
 import {Frame} from "./Message";
 
+/**
+ * 通道助理
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface ChannelAssistant<T> {
     /**
      * 写入

@@ -1,5 +1,8 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.utils.RunUtils;
+
 import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
 
@@ -10,7 +13,8 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public abstract class StreamBase implements StreamInternal {
-    public ScheduledFuture<?> insuranceFuture;
+    //保险任务
+    private ScheduledFuture<?> insuranceFuture;
 
     private final String sid;
     private final boolean isSingle;
@@ -36,9 +40,37 @@ public abstract class StreamBase implements StreamInternal {
         return isSingle;
     }
 
+    /**
+     * 超时
+     * */
     @Override
     public long timeout() {
         return timeout;
+    }
+
+    /**
+     * 保险开始（避免永久没有回调，造成内存不能释放）
+     * */
+    @Override
+    public void insuranceStart(StreamManger streamManger, long streamTimeout) {
+        if (insuranceFuture != null) {
+            return;
+        }
+
+        insuranceFuture = RunUtils.delay(() -> {
+            streamManger.removeStream(sid);
+            this.onError(new SocketdTimeoutException("The stream response timeout, sid=" + sid));
+        }, streamTimeout);
+    }
+
+    /**
+     * 保险取消息
+     * */
+    @Override
+    public void insuranceCancel() {
+        if (insuranceFuture != null) {
+            insuranceFuture.cancel(false);
+        }
     }
 
     @Override

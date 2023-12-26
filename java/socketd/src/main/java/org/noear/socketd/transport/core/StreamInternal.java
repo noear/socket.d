@@ -7,6 +7,15 @@ package org.noear.socketd.transport.core;
  * @since 2.0
  */
 public interface StreamInternal extends Stream {
+    /**
+     * 保险开始（避免永久没有回调，造成内存不能释放）
+     * */
+    void insuranceStart(StreamManger streamManger, long streamTimeout);
+
+    /**
+     * 保险取消息
+     * */
+    void insuranceCancel();
 
     /**
      * 接收时

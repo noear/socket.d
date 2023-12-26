@@ -19,7 +19,7 @@ public abstract class StreamBase implements StreamInternal {
     private final String sid;
     private final boolean isSingle;
     private final long timeout;
-    private Consumer<Throwable> onError;
+    private Consumer<Throwable> doOnError;
 
     public StreamBase(String sid, boolean isSingle, long timeout) {
         this.sid = sid;
@@ -50,7 +50,10 @@ public abstract class StreamBase implements StreamInternal {
 
     /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
-     * */
+     *
+     * @param streamManger  流管理器
+     * @param streamTimeout 流超时
+     */
     @Override
     public void insuranceStart(StreamManger streamManger, long streamTimeout) {
         if (insuranceFuture != null) {
@@ -75,14 +78,14 @@ public abstract class StreamBase implements StreamInternal {
 
     @Override
     public void onError(Throwable error) {
-        if (onError != null) {
-            onError.accept(error);
+        if (doOnError != null) {
+            doOnError.accept(error);
         }
     }
 
     @Override
     public Stream thenError(Consumer<Throwable> onError) {
-        this.onError = onError;
+        this.doOnError = onError;
         return this;
     }
 }

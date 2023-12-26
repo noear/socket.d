@@ -30,6 +30,16 @@ public class StreamMangerDefault implements StreamManger {
     }
 
     /**
+     * 获取流接收器
+     *
+     * @param sid 流Id
+     */
+    @Override
+    public StreamInternal getStream(String sid) {
+        return streamMap.get(sid);
+    }
+
+    /**
      * 添加流接收器
      *
      * @param sid    流Id
@@ -45,16 +55,6 @@ public class StreamMangerDefault implements StreamManger {
         if (streamTimeout > 0) {
             stream.insuranceStart(this, streamTimeout);
         }
-    }
-
-    /**
-     * 获取流接收器
-     *
-     * @param sid 流Id
-     */
-    @Override
-    public StreamInternal getStream(String sid) {
-        return streamMap.get(sid);
     }
 
     /**

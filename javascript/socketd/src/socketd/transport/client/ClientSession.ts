@@ -32,19 +32,24 @@ export interface ClientSession {
     send(event: string, content: Entity);
 
     /**
-     * 发送并请求
+     * 发送并请求（限为一次答复；指定回调）
      *
-     * @param event   事件
-     * @param content 内容
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     * @param timeout  超时（毫秒）
+     * @return 流
      */
     sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout?: number): Stream;
 
     /**
-     * 发送并请求（限为一次答复；指定超时）
+     * 发送并订阅（答复结束之前，不限答复次数）
      *
-     * @param event   事件
-     * @param content 内容
-     * @param timeout 超时（毫秒）
+     * @param event    事件
+     * @param content  内容
+     * @param consumer 回调消费者
+     * @param timeout  超时（毫秒）
+     * @return 流
      */
     sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout?: number): Stream;
 

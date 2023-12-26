@@ -31,18 +31,16 @@ implementation("com.github.tony19:logback-android:3.0.0")
 
 ```kotlin
 //打开客户端会话（以 url 形式打开）
-val session: ClientSession =
-    SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
-        .open()
+val session = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d").open()
 
 
-val message: Entity = StringEntity("Hello wrold!").meta("user", "noear")
+val message = StringEntity("Hello wrold!").meta("user", "noear")
 
 //发送
 session.send("/demo", message)
 
 //发送并请求（且，等待一个答复）
-val reply: Entity = session.sendAndRequest("/demo", message)
+val reply = session.sendAndRequest("/demo", message)
 System.out.println(reply)
 
 //发送并订阅（且，接收零个或多个答复流）

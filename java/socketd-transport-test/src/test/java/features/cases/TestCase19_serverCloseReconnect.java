@@ -62,7 +62,7 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
-                .listen(new EventListener().onClose(s -> {
+                .listen(new EventListener().doOnClose(s -> {
                     //避免与服务端死循环
                     if (messageCounter.get() == 1) {
                         RunUtils.runAndTry(() -> {

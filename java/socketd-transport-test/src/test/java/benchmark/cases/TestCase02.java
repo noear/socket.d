@@ -50,7 +50,7 @@ public class TestCase02 extends BaseTestCase {
         //server
         server = SocketD.createServer(getSchema())
                 .config(c -> c.port(getPort()).idGenerator(new TimeidGenerator()))
-                .listen(new EventListener().on("demo", (session, message) -> {
+                .listen(new EventListener().doOn("demo", (session, message) -> {
                     if (message.isRequest()) {
                         session.replyEnd(message, new StringEntity("test"));
                     } else if (message.isSubscribe()) {
@@ -58,7 +58,7 @@ public class TestCase02 extends BaseTestCase {
                     } else {
                         sendLatch.countDown();
                     }
-                }).on("hot", (session, message) -> {
+                }).doOn("hot", (session, message) -> {
                     if (message.isRequest()) {
                         session.replyEnd(message, new StringEntity("test"));
                     } else if (message.isSubscribe()) {

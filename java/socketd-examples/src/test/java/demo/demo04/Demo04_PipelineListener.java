@@ -11,10 +11,10 @@ public class Demo04_PipelineListener {
         //::启动服务端
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
-                .listen(new PipelineListener().next(new EventListener().onMessage((s, m) -> {
+                .listen(new PipelineListener().next(new EventListener().doOnMessage((s, m) -> {
                     //这里可以做拦截
                     System.out.println("拦截打印::" + m);
-                })).next(new EventListener().onMessage((s, m) -> {
+                })).next(new EventListener().doOnMessage((s, m) -> {
                     //这里可以做业务处理
                     System.out.println(m);
                 })))

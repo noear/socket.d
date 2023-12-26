@@ -14,7 +14,7 @@ public class Demo07_Client {
         //客户端，如果也想提供服务，也通过 @ 取个名字
 
         //复用 listener
-        Listener listener = new EventListener().on("hello", (s, m) -> {
+        Listener listener = new EventListener().doOn("hello", (s, m) -> {
             System.out.println("Client: " + m);
         });
 

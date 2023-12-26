@@ -12,7 +12,7 @@ public class Demo07_Service0 {
         //原来的服务端，也用客户端形式监听（并通过 @ 取个服务名）
 
         //使用同一个监听器。这很重要！！！
-        Listener listener = new EventListener().on("hello", (s, m) -> {
+        Listener listener = new EventListener().doOn("hello", (s, m) -> {
             System.out.println("Server0: " + m);
 
             if (m.isSubscribe() || m.isRequest()) {

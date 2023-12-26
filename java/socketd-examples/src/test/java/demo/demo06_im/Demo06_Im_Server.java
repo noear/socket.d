@@ -21,7 +21,7 @@ public class Demo06_Im_Server {
                 .listen(new PathListener()
                         //::::::::::用户频道处理
                         .of("/", new EventListener()
-                                .onOpen(s -> {
+                                .doOnOpen(s -> {
                                     //用户连接
                                     String user = s.param("u");
                                     if (Utils.isNotEmpty(user)) {
@@ -32,7 +32,7 @@ public class Demo06_Im_Server {
                                         //否则说明是非法的
                                         s.close();
                                     }
-                                }).onClose(s -> {
+                                }).doOnClose(s -> {
                                     userList.remove(s.sessionId());
 
                                     String room = s.attr("room");
@@ -40,7 +40,7 @@ public class Demo06_Im_Server {
                                     if (Utils.isNotEmpty(room)) {
                                         pushToRoom(room, new StringEntity("有人退出聊天室：" + s.attr("user")));
                                     }
-                                }).on("cmd.join", (s, m) -> {
+                                }).doOn("cmd.join", (s, m) -> {
                                     //::加入房间指令
                                     String room = m.meta("room");
 
@@ -49,7 +49,7 @@ public class Demo06_Im_Server {
 
                                         pushToRoom(room, new StringEntity("新人加入聊天室：" + s.attr("user")));
                                     }
-                                }).on("cmd.chat", (s, m) -> {
+                                }).doOn("cmd.chat", (s, m) -> {
                                     //::聊天指令
                                     String room = m.meta("room");
 
@@ -62,7 +62,7 @@ public class Demo06_Im_Server {
                                 }))
                         //::::::::::管理频道处理
                         .of("/admin", new EventListener()
-                                .onOpen((session) -> {
+                                .doOnOpen((session) -> {
                                     //管理员签权
                                     String user = session.param("u");
                                     String token = session.param("t");
@@ -72,7 +72,7 @@ public class Demo06_Im_Server {
                                     } else {
                                         session.close();
                                     }
-                                }).on("cmd.t", (s, m) -> {
+                                }).doOn("cmd.t", (s, m) -> {
                                     String user = m.meta("u");
                                     String room = m.meta("room");
 

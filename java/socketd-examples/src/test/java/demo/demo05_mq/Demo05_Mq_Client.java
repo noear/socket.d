@@ -46,7 +46,7 @@ public class Demo05_Mq_Client {
             clientSession = SocketD.createClient("sd:udp://" + server + ":" + port)
                     .config(c -> c.heartbeatInterval(5)) //心跳频率调高，确保不断连
                     .listen(new EventListener()
-                            .on("mq.broadcast", (s, m) -> {
+                            .doOn("mq.broadcast", (s, m) -> {
                                 String topic = m.meta("topic");
                                 Consumer<String> listener = listenerMap.get(topic);
                                 if (listener != null) {

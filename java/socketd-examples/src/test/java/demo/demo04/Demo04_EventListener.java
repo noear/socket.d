@@ -10,7 +10,7 @@ public class Demo04_EventListener {
         //::启动服务端
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
-                .listen(new EventListener().onMessage((session, message) -> {
+                .listen(new EventListener().doOnMessage((session, message) -> {
                     System.out.println("server::" + message);
                     session.send("/demo", new StringEntity("Me too!"));
                     session.send("/demo2", new StringEntity("Me too!"));
@@ -21,11 +21,11 @@ public class Demo04_EventListener {
 
         //::打开客户端会话
         ClientSession clientSession  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
-                .listen(new EventListener().onMessage((s, m) -> {
+                .listen(new EventListener().doOnMessage((s, m) -> {
                     System.out.println("client::" + m);
-                }).on("/demo", (s, m) -> { //带了事件路由的功能
+                }).doOn("/demo", (s, m) -> { //带了事件路由的功能
                     System.out.println("on::" + m.event() + "::" + m);
-                }).on("/demo2", (s,m)->{
+                }).doOn("/demo2", (s, m)->{
 
                 }))
                 .open();

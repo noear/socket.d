@@ -16,20 +16,20 @@ public class Demo05_Mq_Server {
         SocketD.createServer("sd:udp")
                 .config(c -> c.port(8602))
                 .listen(new EventListener()
-                        .onOpen(s -> {
+                        .doOnOpen(s -> {
                             userList.add(s);
                         })
-                        .onClose(s -> {
+                        .doOnClose(s -> {
                             userList.remove(s);
                         })
-                        .on("mq.sub", (s, m) -> {
+                        .doOn("mq.sub", (s, m) -> {
                             //::订阅指令
                             String topic = m.meta("topic");
                             if (Utils.isNotEmpty(topic)) {
                                 //标记订阅关系
                                 s.attr(topic, "1");
                             }
-                        }).on("mq.push", (s, m) -> {
+                        }).doOn("mq.push", (s, m) -> {
                             //::推送指令
                             String topic = m.meta("topic");
                             String id = m.meta("id");

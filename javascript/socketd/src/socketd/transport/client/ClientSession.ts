@@ -47,4 +47,9 @@ export interface ClientSession {
      * @param timeout 超时（毫秒）
      */
     sendAndSubscribe(event: string, content: Entity, callback: IoConsumer<Reply>, timeout?: number): Stream;
+
+    /**
+     * 关闭
+     * */
+    close();
 }

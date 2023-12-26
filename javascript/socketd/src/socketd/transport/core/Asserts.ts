@@ -30,7 +30,7 @@ export class Asserts {
     /**
      * 断言 null
      */
-    static assertNull(name: string, val: object) {
+    static assertNull(name: string, val: any) {
         if (val == null) {
             throw new Error("The argument cannot be null: " + name);
         }

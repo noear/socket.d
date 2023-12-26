@@ -137,6 +137,11 @@ public class EntityDefault implements Entity {
         return metaMap().getOrDefault(name, def);
     }
 
+    @Override
+    public void putMeta(String name, String val) {
+        metaPut(name, val);
+    }
+
     /**
      * 设置数据
      *

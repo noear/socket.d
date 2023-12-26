@@ -138,6 +138,11 @@ public class MessageDefault implements MessageInternal {
     }
 
     @Override
+    public void putMeta(String name, String val) {
+        entity.putMeta(name, val);
+    }
+
+    @Override
     public ByteBuffer data() {
         return entity.data();
     }

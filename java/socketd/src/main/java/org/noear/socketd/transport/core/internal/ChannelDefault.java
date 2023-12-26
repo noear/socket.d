@@ -95,7 +95,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                     //确保用完自动关闭
 
                     if (message.dataSize() > getConfig().getFragmentSize()) {
-                        message.metaMap().put(EntityMetas.META_DATA_LENGTH, String.valueOf(message.dataSize()));
+                        message.putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(message.dataSize()));
 
                         //满足分片条件
                         int fragmentIndex = 0;

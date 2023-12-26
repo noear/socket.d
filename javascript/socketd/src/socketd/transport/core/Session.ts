@@ -81,7 +81,7 @@ export interface Session extends ClientSession {
      * 设置属性
      *
      * @param name  名字
-     * @param value 值
+     * @param val 值
      */
     attrSet(name: string, val: object);
 
@@ -101,7 +101,7 @@ export interface Session extends ClientSession {
      * @param from    来源消息
      * @param content 内容
      */
-    reply(from: Message, entity: Entity);
+    reply(from: Message, content: Entity);
 
     /**
      * 答复并结束（即最后一次答复）
@@ -109,7 +109,7 @@ export interface Session extends ClientSession {
      * @param from    来源消息
      * @param content 内容
      */
-    replyEnd(from: Message, entity: Entity);
+    replyEnd(from: Message, content: Entity);
 }
 
 /**

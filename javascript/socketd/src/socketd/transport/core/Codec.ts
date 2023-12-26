@@ -27,7 +27,7 @@ export interface Codec {
      * @param frame         帧
      * @param targetFactory 目标工厂
      */
-    write<T extends BufferWriter>(frame: Frame, factory: IoFunction<number, T>): T;
+    write<T extends BufferWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T;
 }
 
 /**
@@ -49,7 +49,7 @@ export class CodecByteBuffer implements Codec {
      * @param frame         帧
      * @param targetFactory 目标工厂
      */
-    write<T extends BufferWriter>(frame: Frame, factory: IoFunction<number, T>): T {
+    write<T extends BufferWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
         if (frame.message()) {
             //sid
             let sidB = CodecUtils.strToBuf(frame.message().sid());
@@ -66,7 +66,7 @@ export class CodecByteBuffer implements Codec {
             Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
             Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
 
-            let target = factory.apply(frameSize);
+            let target = targetFactory.apply(frameSize);
 
             //长度
             target.putInt(frameSize);
@@ -95,7 +95,7 @@ export class CodecByteBuffer implements Codec {
         } else {
             //length (len[int] + flag[int])
             let frameSize = 4 + 4;
-            let target = factory.apply(frameSize);
+            let target = targetFactory.apply(frameSize);
 
             //长度
             target.putInt(frameSize);

@@ -1,6 +1,6 @@
 import {Processor} from "./Processor";
 import {ChannelAssistant} from "./ChannelAssistant";
-import {StreamBase, StreamManger, StreamMangerDefault} from "./Stream";
+import {StreamBase, StreamManger} from "./Stream";
 import {Session} from "./Session";
 import {ChannelSupporter} from "./ChannelSupporter";
 import {Config} from "./Config";

@@ -22,7 +22,7 @@ from socketd.core.sync_api.AtomicRefer import AtomicRefer
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.set_is_thread(False)
-    config.set_ws_max_size(2 ** 20 * 16)
+    config.set_ws_max_size(2 ** 20 * 17)
     return config.id_generator(uuid.uuid4)
 
 
@@ -75,7 +75,7 @@ class TestCase05_file(BaseTestCase):
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
         try:
-            with open(r"C:\Users\bai\Pictures\妲己新皮肤海报图片 王者荣耀妲己新海报3440x1440带鱼屏壁纸_彼岸图网.jpg",
+            with open(r"C:\Users\bai\Pictures\飞书20230728-180708.mp4",
                       "rb") as f:
                 await self.client_session.send("/path?u=a&p=2", FileEntity(f.read(), "test.png"))
         except Exception as e:

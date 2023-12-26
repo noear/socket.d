@@ -72,7 +72,7 @@ public class ClusterClientSession implements ClientSession {
             if (counter > 999_999_999) {
                 sessionRoundCounter.set(0);
             }
-            return sessionSet.get(idx);
+            return sessions.get(idx);
         }
     }
 

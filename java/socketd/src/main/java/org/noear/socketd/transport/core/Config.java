@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
 
 /**
- * 配置类
+ * 配置接口
  *
  * @author noear
  * @since 2.0

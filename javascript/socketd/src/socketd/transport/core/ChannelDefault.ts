@@ -64,8 +64,8 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
 
-        if (frame.getMessage() != null) {
-            let message = frame.getMessage();
+        if (frame.message() != null) {
+            let message = frame.message();
 
             //注册流接收器
             if (stream != null) {
@@ -77,7 +77,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 //确保用完自动关闭
 
                 if (message.dataSize() > this.getConfig().getFragmentSize()) {
-                    message.metaMap().set(EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
+                    message.putMeta(EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
 
                     //满足分片条件
                     let fragmentIndex = 0;
@@ -88,8 +88,8 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
                         if (fragmentEntity != null) {
                             //主要是 sid 和 entity
-                            let fragmentFrame = new Frame(frame.getFlag(), new MessageDefault(
-                                frame.getFlag(),
+                            let fragmentFrame = new Frame(frame.flag(), new MessageDefault(
+                                frame.flag(),
                                 message.sid(),
                                 '',
                                 fragmentEntity));
@@ -113,24 +113,24 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     retrieve(frame: Frame) {
-        let stream = this._streamManger.getStream(frame.getMessage().sid());
+        let stream = this._streamManger.getStream(frame.message().sid());
 
         if (stream != null) {
-            if (stream.isSingle() || frame.getFlag() == Flags.ReplyEnd) {
+            if (stream.isSingle() || frame.flag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
-                this._streamManger.removeStream(frame.getMessage().sid());
+                this._streamManger.removeStream(frame.message().sid());
             }
 
             if (stream.isSingle()) {
                 //单收时，内部已经是异步机制
-                stream.onAccept(frame.getMessage(), this);
+                stream.onAccept(frame.message(), this);
             } else {
                 //改为异步处理，避免卡死Io线程
-                stream.onAccept(frame.getMessage(), this);
+                stream.onAccept(frame.message(), this);
             }
         } else {
             console.debug("{} stream not found, sid={}, sessionId={}",
-                this.getConfig().getRoleName(), frame.getMessage().sid(), this.getSession().sessionId());
+                this.getConfig().getRoleName(), frame.message().sid(), this.getSession().sessionId());
         }
     }
     reconnect() {

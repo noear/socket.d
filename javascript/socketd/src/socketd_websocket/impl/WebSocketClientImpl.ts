@@ -40,7 +40,7 @@ export class WebSocketClientImpl {
                 let frame = this._client.getAssistant().read(e.data);
 
                 if (frame != null) {
-                    if (frame.getFlag() == Flags.Connack) {
+                    if (frame.flag() == Flags.Connack) {
                         this._channel.onOpenFuture((r,err)=>{
                             if (err == null) {
                                 this._handshakeFuture(new ClientHandshakeResult(this._channel, null));

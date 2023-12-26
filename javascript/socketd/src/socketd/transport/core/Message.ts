@@ -3,20 +3,69 @@ import {EntityMetas,Flags} from "./Constants";
 import {SocketD} from "../../SocketD";
 
 export interface Entity {
+    /**
+     * at
+     *
+     * @since 2.1
+     */
+    at();
+
+    /**
+     * 获取元信息字符串（queryString style）
+     */
     metaString(): string;
 
+    /**
+     * 获取元信息字典
+     */
     metaMap(): URLSearchParams;
 
+    /**
+     * 获取元信息
+     */
     meta(name: string): string;
 
+    /**
+     * 获取元信息或默认
+     */
+    metaOrDefault(name: string, def: string): string;
+
+    /**
+     * 添加元信息
+     * */
+    putMeta(name: string, val: string);
+
+    /**
+     * 获取数据
+     */
     data(): ArrayBuffer;
 
+    /**
+     * 获取数据并转为字符串
+     */
     dataAsString(): string;
 
+    /**
+     * 获取数据长度
+     */
     dataSize(): number;
+
+    /**
+     * 释放资源
+     */
+    release();
 }
 
+/**
+ * 答复实体
+ *
+ * @author noear
+ * @since 2.1
+ */
 export interface Reply extends Entity {
+    /**
+     * 是否答复结束
+     */
     isEnd(): boolean
 }
 
@@ -30,20 +79,23 @@ export class EntityDefault implements Entity {
         this._data = null;
     }
 
+    at() {
+        return this.meta("@");
+    }
 
     metaStringSet(metaString: string): EntityDefault {
         this._metaMap = new URLSearchParams(metaString);
         return this;
     }
 
-    metaMapSet(map): EntityDefault {
+    metaMapPut(map): EntityDefault {
         for (let name of map.prototype) {
             this.metaMap().set(name, map[name]);
         }
         return this;
     }
 
-    metaSet(name: string, value: string): EntityDefault {
+    metaPut(name: string, value: string): EntityDefault {
         this.metaMap().set(name, value);
         return this;
     }
@@ -69,6 +121,18 @@ export class EntityDefault implements Entity {
         return this.metaMap().get(name);
     }
 
+    metaOrDefault(name: string, def: string): string {
+        let val = this.meta(name);
+        if (val == null) {
+            return val;
+        } else {
+            return def;
+        }
+    }
+    putMeta(name: string, val: string) {
+        this.metaPut(name, val);
+    }
+
     data(): ArrayBuffer {
         return this._data;
     }
@@ -79,6 +143,10 @@ export class EntityDefault implements Entity {
 
     dataSize(): number {
         return this._data.byteLength;
+    }
+
+    release() {
+
     }
 }
 
@@ -119,6 +187,10 @@ export class MessageDefault implements MessageInternal {
         this._entity = entity;
     }
 
+    at() {
+        return this._entity.at();
+    }
+
     isRequest(): boolean {
         return this._flag == Flags.Request;
     }
@@ -155,6 +227,13 @@ export class MessageDefault implements MessageInternal {
         return this._entity.meta(name);
     }
 
+    metaOrDefault(name: string, def: string): string {
+        return this._entity.metaOrDefault(name,def);
+    }
+    putMeta(name: string, val: string) {
+        this._entity.putMeta(name, val);
+    }
+
     data(): ArrayBuffer {
         return this._entity.data();
     }
@@ -165,6 +244,10 @@ export class MessageDefault implements MessageInternal {
 
     dataSize(): number {
         return this._entity.dataSize();
+    }
+
+    release() {
+
     }
 }
 
@@ -177,11 +260,11 @@ export class Frame {
         this._message = message;
     }
 
-    getFlag(): number {
+    flag(): number {
         return this._flag;
     }
 
-    getMessage(): MessageInternal {
+    message(): MessageInternal {
         return this._message;
     }
 }
@@ -203,7 +286,7 @@ export class Frames {
     static connectFrame(sid: string, url: string): Frame {
         let entity = new EntityDefault();
         //添加框架版本号
-        entity.metaSet(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
+        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connect, new MessageDefault(Flags.Connect, sid, url, entity));
     }
 
@@ -215,7 +298,7 @@ export class Frames {
     static connackFrame(connectMessage: Message): Frame {
         let entity = new EntityDefault();
         //添加框架版本号
-        entity.metaSet(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
+        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connack, new MessageDefault(Flags.Connack, connectMessage.sid(), connectMessage.event(), entity));
     }
 

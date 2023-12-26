@@ -50,21 +50,21 @@ export class CodecByteBuffer implements Codec {
      * @param targetFactory 目标工厂
      */
     write<T extends BufferWriter>(frame: Frame, factory: IoFunction<number, T>): T {
-        if (frame.getMessage()) {
+        if (frame.message()) {
             //sid
-            let sidB = CodecUtils.strToBuf(frame.getMessage().sid());
+            let sidB = CodecUtils.strToBuf(frame.message().sid());
             //event
-            let eventB = CodecUtils.strToBuf(frame.getMessage().event());
+            let eventB = CodecUtils.strToBuf(frame.message().event());
             //metaString
-            let metaStringB = CodecUtils.strToBuf(frame.getMessage().metaString());
+            let metaStringB = CodecUtils.strToBuf(frame.message().metaString());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
-            let frameSize = 4 + 4 + sidB.length + eventB.length + metaStringB.length + frame.getMessage().dataSize() + 2 * 3;
+            let frameSize = 4 + 4 + sidB.length + eventB.length + metaStringB.length + frame.message().dataSize() + 2 * 3;
 
             Asserts.assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
             Asserts.assertSize("event", eventB.length, Constants.MAX_SIZE_EVENT);
             Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
-            Asserts.assertSize("data", frame.getMessage().dataSize(), Constants.MAX_SIZE_DATA);
+            Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
 
             let target = factory.apply(frameSize);
 
@@ -72,7 +72,7 @@ export class CodecByteBuffer implements Codec {
             target.putInt(frameSize);
 
             //flag
-            target.putInt(frame.getFlag());
+            target.putInt(frame.flag());
 
             //sid
             target.putBytes(sidB);
@@ -87,7 +87,7 @@ export class CodecByteBuffer implements Codec {
             target.putChar('\n');
 
             //data
-            target.putBytes(frame.getMessage().data());
+            target.putBytes(frame.message().data());
 
             target.flush();
 
@@ -101,7 +101,7 @@ export class CodecByteBuffer implements Codec {
             target.putInt(frameSize);
 
             //flag
-            target.putInt(frame.getFlag());
+            target.putInt(frame.flag());
             target.flush();
 
             return target;

@@ -4,6 +4,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_websocket.WsNioServer;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
@@ -34,8 +35,8 @@ public class WebSocketServerImpl extends WebSocketServer {
     }
 
 
-    private Channel getChannel(WebSocket conn) {
-        Channel channel = conn.getAttachment();
+    private ChannelInternal getChannel(WebSocket conn) {
+        ChannelInternal channel = conn.getAttachment();
 
         if (channel == null) {
             //直接从附件拿，不一定可靠
@@ -53,7 +54,7 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        Channel channel = getChannel(conn);
+        ChannelInternal channel = getChannel(conn);
         server.getProcessor().onClose(channel);
     }
 
@@ -71,7 +72,7 @@ public class WebSocketServerImpl extends WebSocketServer {
             //用于支持 socket.d 控制 idleTimeout //前端也可能会关闭自动 pingPong
             ((WebSocketImpl) conn).updateLastPong();
 
-            Channel channel = getChannel(conn);
+            ChannelInternal channel = getChannel(conn);
             Frame frame = server.getAssistant().read(message);
 
             if (frame != null) {
@@ -85,7 +86,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onError(WebSocket conn, Exception ex) {
         try {
-            Channel channel = getChannel(conn);
+            ChannelInternal channel = getChannel(conn);
 
             if (channel != null) {
                 //有可能未 onOpen，就 onError 了；此时通道未成

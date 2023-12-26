@@ -69,7 +69,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
     public void stateEvent0(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION: {
-                Channel channel = getChannel(s);
+                ChannelInternal channel = getChannel(s);
                 try {
                     channel.sendConnect(client.getConfig().getUrl());
                 } catch (Throwable ex) {

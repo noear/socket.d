@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.smartsocket.tcp.impl;
 
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.tcp.TcpAioServer;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
 
     @Override
     public void process0(AioSession s, Frame frame) {
-        Channel channel = getChannel(s);
+        ChannelInternal channel = getChannel(s);
 
         try {
             server.getProcessor().onReceive(channel, frame);

@@ -66,13 +66,13 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
 
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
         client.getProcessor().onClose(channel);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
         client.getProcessor().onError(channel, cause);
         ctx.close();
     }

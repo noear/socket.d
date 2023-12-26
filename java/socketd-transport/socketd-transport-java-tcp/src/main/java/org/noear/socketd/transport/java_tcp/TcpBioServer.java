@@ -2,6 +2,7 @@ package org.noear.socketd.transport.java_tcp;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -104,7 +105,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
 
                 serverExecutor.submit(() -> {
                     try {
-                        Channel channel = new ChannelDefault<>(socket, this);
+                        ChannelInternal channel = new ChannelDefault<>(socket, this);
                         receive(channel, socket);
                     } catch (Throwable e) {
                         if (log.isWarnEnabled()) {
@@ -132,7 +133,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
     /**
      * 接收数据
      */
-    private void receive(Channel channel, Socket socket) {
+    private void receive(ChannelInternal channel, Socket socket) {
         while (true) {
             try {
                 try {

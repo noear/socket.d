@@ -35,7 +35,7 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
 
         if (this._connector.autoReconnect()) {
-            this._heartbeatScheduledFuture = setInterval(() => {
+            this._heartbeatScheduledFuture = window.setInterval(() => {
                 try {
                     this.heartbeatHandle();
                 } catch (e) {

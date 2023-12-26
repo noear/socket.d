@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "system",
     "target": "es6",
     "outDir": "dist",
     "outFile": "dist/socketd.js"

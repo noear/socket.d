@@ -37,7 +37,7 @@ export interface ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    sendAndRequest(event: string, content: Entity, callback: IoConsumer<Reply>, timeout?: number): Stream;
+    sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout?: number): Stream;
 
     /**
      * 发送并请求（限为一次答复；指定超时）
@@ -46,7 +46,7 @@ export interface ClientSession {
      * @param content 内容
      * @param timeout 超时（毫秒）
      */
-    sendAndSubscribe(event: string, content: Entity, callback: IoConsumer<Reply>, timeout?: number): Stream;
+    sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout?: number): Stream;
 
     /**
      * 关闭

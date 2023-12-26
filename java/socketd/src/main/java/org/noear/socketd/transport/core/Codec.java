@@ -14,12 +14,17 @@ import java.util.function.Function;
  */
 public interface Codec {
     /**
-     * 编码
+     * 编码读取
+     *
+     * @param buffer 缓冲
      */
     Frame read(BufferReader buffer);
 
     /**
-     * 解码
+     * 解码写入
+     *
+     * @param frame         帧
+     * @param targetFactory 目标工厂
      */
     <T extends BufferWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException;
 }

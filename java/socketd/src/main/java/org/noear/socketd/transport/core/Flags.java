@@ -12,11 +12,11 @@ public interface Flags {
      */
     int Unknown = 0;
     /**
-     * 链接
+     * 连接
      */
     int Connect = 10; //握手：连接(c->s)，提交客户端握手信息，请求服务端握手信息
     /**
-     * 链接确认
+     * 连接确认
      */
     int Connack = 11; //握手：确认(c<-s)，响应服务端握手信息
     /**
@@ -48,11 +48,11 @@ public interface Flags {
      */
     int Subscribe = 42;
     /**
-     * 回复
+     * 答复
      */
     int Reply = 48;
     /**
-     * 回复结束（结束订阅接收）
+     * 答复结束（结束订阅接收）
      */
     int ReplyEnd = 49;
 

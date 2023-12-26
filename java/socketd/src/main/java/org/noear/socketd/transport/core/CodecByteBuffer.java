@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 /**
- * 编解码器（基于 ByteBuffer 编解）
+ * 编解码器（基于 BufferWriter,BufferReader 接口编解）
  *
  * @author noear
  * @since 2.0
@@ -106,16 +106,16 @@ public class CodecByteBuffer implements Codec {
             int metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, buffer.remaining());
 
             //1.解码 sid and event
-            ByteBuffer sb = ByteBuffer.allocate(metaBufSize);
+            ByteBuffer buf = ByteBuffer.allocate(metaBufSize);
 
             //sid
-            String sid = decodeString(buffer, sb, Constants.MAX_SIZE_SID);
+            String sid = decodeString(buffer, buf, Constants.MAX_SIZE_SID);
 
             //event
-            String event = decodeString(buffer, sb, Constants.MAX_SIZE_EVENT);
+            String event = decodeString(buffer, buf, Constants.MAX_SIZE_EVENT);
 
             //metaString
-            String metaString = decodeString(buffer, sb, Constants.MAX_SIZE_META_STRING);
+            String metaString = decodeString(buffer, buf, Constants.MAX_SIZE_META_STRING);
 
             //2.解码 body
             int dataRealSize = frameSize - buffer.position();

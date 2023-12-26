@@ -192,12 +192,18 @@ public class ClientChannel extends ChannelBase implements Channel {
         return real.getSession();
     }
 
+    /**
+     * 打开时异常处理
+     * */
     @Override
     public CompletableFuture<Boolean> onOpenFuture() {
         return real.onOpenFuture();
     }
 
 
+    /**
+     * 重新连接
+     * */
     @Override
     public void reconnect() throws IOException {
         initHeartbeat();
@@ -205,6 +211,9 @@ public class ClientChannel extends ChannelBase implements Channel {
         prepareCheck();
     }
 
+    /**
+     * 出错时
+     * */
     @Override
     public void onError(Throwable error) {
         real.onError(error);
@@ -222,7 +231,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
 
     /**
-     * 预备检
+     * 预备检测
      *
      * @return 是否为新链接
      */

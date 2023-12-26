@@ -48,7 +48,7 @@ public class ProcessorDefault implements Processor {
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
-            channel.onOpenFuture().whenComplete((r,e)-> {
+            channel.onOpenFuture((r,e)-> {
                 if (e == null) {
                     //如果无异常
                     if (channel.isValid()) {
@@ -178,13 +178,13 @@ public class ProcessorDefault implements Processor {
         channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onOpen(channel.getSession());
-                channel.onOpenFuture().complete(true);
+                channel.doOpenFuture(true, null);
             } catch (Throwable e) {
                 if (log.isWarnEnabled()) {
                     log.warn("{} channel listener onOpen error",
                             channel.getConfig().getRoleName(), e);
                 }
-                channel.onOpenFuture().completeExceptionally(e);
+                channel.doOpenFuture(false, e);
             }
         });
     }

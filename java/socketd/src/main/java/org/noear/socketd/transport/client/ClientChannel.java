@@ -193,15 +193,6 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
-     * 打开时异常处理
-     * */
-    @Override
-    public CompletableFuture<Boolean> onOpenFuture() {
-        return real.onOpenFuture();
-    }
-
-
-    /**
      * 重新连接
      * */
     @Override

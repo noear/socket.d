@@ -126,9 +126,4 @@ public interface Channel {
      * 获取会话
      */
     Session getSession();
-
-    /**
-     * 打开前景
-     */
-    CompletableFuture<Boolean> onOpenFuture();
 }

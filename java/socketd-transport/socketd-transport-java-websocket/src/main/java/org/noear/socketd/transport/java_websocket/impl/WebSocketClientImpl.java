@@ -78,7 +78,7 @@ public class WebSocketClientImpl extends WebSocketClient {
 
             if (frame != null) {
                 if (frame.getFlag() == Flags.Connack) {
-                    channel.onOpenFuture().whenComplete((r, e) -> {
+                    channel.onOpenFuture((r, e) -> {
                         if (e == null) {
                             handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                         } else {

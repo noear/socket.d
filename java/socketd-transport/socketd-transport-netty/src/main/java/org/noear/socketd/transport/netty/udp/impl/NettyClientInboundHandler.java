@@ -51,7 +51,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Datag
 
         if (frame != null) {
             if (frame.getFlag() == Flags.Connack) {
-                channel.onOpenFuture().whenComplete((r, e) -> {
+                channel.onOpenFuture((r, e) -> {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 });
             }

@@ -2,12 +2,14 @@ package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.StreamBase;
+import org.noear.socketd.utils.IoBiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 /**
  * 通道默认实现（每个连接都会建立一个或多个通道）
@@ -192,9 +194,19 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     @Override
-    public CompletableFuture<Boolean> onOpenFuture() {
-        return onOpenFuture;
+    public void onOpenFuture(BiConsumer<Boolean, Throwable> future) {
+        onOpenFuture.whenComplete(future);
     }
+
+    @Override
+    public void doOpenFuture(boolean isOk, Throwable error) {
+        if (isOk) {
+            onOpenFuture.complete(isOk);
+        } else {
+            onOpenFuture.completeExceptionally(error);
+        }
+    }
+
 
     /**
      * 关闭

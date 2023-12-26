@@ -54,7 +54,7 @@ public class ClientKcpListener implements KcpListener {
 
         try {
             if (frame.getFlag() == Flags.Connack) {
-                channel.onOpenFuture().whenComplete((r, e) -> {
+                channel.onOpenFuture((r, e) -> {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 });
             }

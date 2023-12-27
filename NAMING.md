@@ -8,9 +8,9 @@ Socket.D 的协议实现，涉及了很多语言与平台。比如 javascript �
 
 #### 1、方法名规范（争对设置、增量设置、添加、获取方法）
 
-* 普通设置：`setXxx():void`
+* 普通设置：`setXxx():void` //指完全替换目标
 * 链式设置：`xxxSet():self`
-* 普通放置：`putXxx():void`
+* 普通放置：`putXxx():void` //指部分替换目标
 * 连式放置：`xxxPut():self`
 * 增通添加：`addXxx():void`
 * 连式添加：`xxxAdd():self`

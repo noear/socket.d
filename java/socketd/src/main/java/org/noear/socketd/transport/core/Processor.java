@@ -8,7 +8,7 @@ package org.noear.socketd.transport.core;
  */
 public interface Processor {
     /**
-     * 设置监听
+     * 设置监听器
      */
     void setListener(Listener listener);
 

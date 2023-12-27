@@ -76,8 +76,8 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
     @Override
     public void close() {
         try {
-            if(real != null) {
-                real.closeBlocking();
+            if(real != null && real.isOpen()) {
+                real.close();
             }
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {

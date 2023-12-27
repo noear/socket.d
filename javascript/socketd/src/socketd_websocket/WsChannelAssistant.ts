@@ -12,8 +12,7 @@ export class WsChannelAssistant implements ChannelAssistant<WebSocket> {
     }
 
     read(buffer: ArrayBuffer): Frame {
-        let frame = this._config.getCodec().read(new BufferReaderImpl(buffer));
-        return frame;
+        return this._config.getCodec().read(new BufferReaderImpl(buffer));
     }
 
     write(target: WebSocket, frame: Frame) {

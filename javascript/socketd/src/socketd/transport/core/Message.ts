@@ -1,6 +1,7 @@
-import {CodecUtils} from "./CodecUtils";
+
 import {EntityMetas,Flags} from "./Constants";
 import {SocketD} from "../../SocketD";
+import {StrUtils} from "../../utils/StrUtils";
 
 /**
  * 消息实体（帧[消息[实体]]）
@@ -233,7 +234,7 @@ export class EntityDefault implements Entity {
 export class StringEntity extends EntityDefault implements Entity{
     constructor(data: string) {
         super();
-        const dataBuf = CodecUtils.strToBuf(data);
+        const dataBuf = StrUtils.strToBuf(data);
         this.dataSet(dataBuf);
     }
 }

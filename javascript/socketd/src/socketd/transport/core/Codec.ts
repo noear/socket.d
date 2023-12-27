@@ -1,11 +1,11 @@
 
-import {CodecUtils} from "./CodecUtils";
 import {Asserts} from "./Asserts";
 import {Constants, Flags} from "./Constants";
 import {EntityDefault, Frame, MessageDefault} from "./Message";
 import {Config} from "./Config";
 import {BufferReader, BufferWriter} from "./Buffer";
 import {IoFunction} from "./Types";
+import {StrUtils} from "../../utils/StrUtils";
 
 /**
  * 编解码器
@@ -52,11 +52,11 @@ export class CodecByteBuffer implements Codec {
     write<T extends BufferWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
         if (frame.message()) {
             //sid
-            let sidB = CodecUtils.strToBuf(frame.message().sid());
+            let sidB = StrUtils.strToBuf(frame.message().sid());
             //event
-            let eventB = CodecUtils.strToBuf(frame.message().event());
+            let eventB = StrUtils.strToBuf(frame.message().event());
             //metaString
-            let metaStringB = CodecUtils.strToBuf(frame.message().metaString());
+            let metaStringB = StrUtils.strToBuf(frame.message().metaString());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
             let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
@@ -193,6 +193,6 @@ export class CodecByteBuffer implements Codec {
         }
 
         //这里要加个长度控制
-        return CodecUtils.bufToStr(buf, 0, bufViewIdx);
+        return StrUtils.bufToStr(buf, 0, bufViewIdx);
     }
 }

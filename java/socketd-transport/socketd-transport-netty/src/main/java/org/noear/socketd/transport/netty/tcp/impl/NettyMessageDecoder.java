@@ -22,17 +22,6 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf inBuf, List<Object> out) throws Exception {
-        //前面有 LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, -4, 0) 了
-//        int len = inBuf.readInt();
-//
-//        byte[] bytes = new byte[len - Integer.BYTES];
-//        inBuf.readBytes(bytes);
-//
-//        ByteBuffer byteBuffer = ByteBuffer.allocate(len);
-//        byteBuffer.putInt(len);
-//        byteBuffer.put(bytes);
-//        byteBuffer.flip();
-
         BufferReader reader = new NettyBufferReader(inBuf);
         Frame message = config.getCodec().read(reader);
         if (message == null) {

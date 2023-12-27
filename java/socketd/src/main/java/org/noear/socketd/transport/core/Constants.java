@@ -61,6 +61,10 @@ public interface Constants {
      * 数据长度最大限制（也是分片长度最大限制）
      */
     int MAX_SIZE_DATA = 1024 * 1024 * 16; //16m
+    /**
+     * 帧长度最大限制
+     */
+    int MAX_SIZE_FRAME = 1024 * 1024 * 17; //17m
 
     /**
      * 分片长度最小限制

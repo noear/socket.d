@@ -7,7 +7,7 @@ import {ChannelSupporter} from "../socketd/transport/core/ChannelSupporter";
 
 export class WsClient extends ClientBase<WsChannelAssistant> implements ChannelSupporter<WebSocket> {
     constructor(clientConfig: ClientConfig) {
-        super(clientConfig, new WsChannelAssistant());
+        super(clientConfig, new WsChannelAssistant(clientConfig));
     }
 
 

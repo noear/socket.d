@@ -25,14 +25,6 @@ public class ByteBufferWriter implements BufferWriter {
     }
 
     /**
-     * 推入一组 byte
-     */
-    @Override
-    public void putBytes(byte[] src, int offset, int length) {
-        target.put(src, offset, length);
-    }
-
-    /**
      * 推入 int
      */
     @Override

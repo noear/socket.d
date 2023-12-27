@@ -15,11 +15,6 @@ public interface BufferWriter {
     void putBytes(byte[] bytes) throws IOException;
 
     /**
-     * 推入一组 byte
-     */
-    void putBytes(byte[] src, int offset, int length) throws IOException;
-
-    /**
      * 推入 int
      */
     void putInt(int val) throws IOException;

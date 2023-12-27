@@ -22,11 +22,6 @@ public class TcpAioBufferWriter implements BufferWriter {
     }
 
     @Override
-    public void putBytes(byte[] src, int offset, int length) throws IOException {
-        target.write(src, offset, length);
-    }
-
-    @Override
     public void putInt(int val) throws IOException {
         target.writeInt(val);
     }

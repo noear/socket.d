@@ -113,7 +113,7 @@ export class EntityDefault implements Entity {
     /**
      * 放置元信息字典
      *
-     * @param metaMap 元信息字典
+     * @param map 元信息字典
      */
     metaMapPut(map): EntityDefault {
         for (let name of map.prototype) {
@@ -128,8 +128,8 @@ export class EntityDefault implements Entity {
      * @param name 名字
      * @param val  值
      */
-    metaPut(name: string, value: string): EntityDefault {
-        this.metaMap().set(name, value);
+    metaPut(name: string, val: string): EntityDefault {
+        this.metaMap().set(name, val);
         return this;
     }
 

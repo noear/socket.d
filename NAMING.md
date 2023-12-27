@@ -10,9 +10,12 @@ Socket.D 的协议实现，涉及了很多语言与平台。比如 javascript �
 
 * 普通设置：`setXxx():void`
 * 链式设置：`xxxSet():self`
-* 普通添加：`putXxx():void`, `addXxx():void`
-* 连式添加：`xxxPut():self`, `xxxAdd():self`
+* 普通放置：`putXxx():void`
+* 连式放置：`xxxPut():self`
+* 增通添加：`addXxx():void`
+* 连式添加：`xxxAdd():self`
 * 普通获取：`getXxx()`
+* 分组获取：`xxxGet()`
 * 简化获取：`xxx()` //目前主要用在"实体"、"消息"、"帧"的接口上
 
 #### 2、命名风格（争对不同语言）

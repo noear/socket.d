@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.net.URI;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class HandshakeDefault implements HandshakeInternal {
         this.paramMap = new ConcurrentHashMap<>();
 
         String queryString = uri.getQuery();
-        if (Utils.isNotEmpty(queryString)) {
+        if (StrUtils.isNotEmpty(queryString)) {
             for (String kvStr : queryString.split("&")) {
                 int idx = kvStr.indexOf('=');
                 if (idx > 0) {

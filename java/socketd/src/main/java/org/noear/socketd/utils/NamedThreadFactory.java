@@ -22,7 +22,7 @@ public class NamedThreadFactory implements ThreadFactory {
      * @param namePrefix 名字前缀
      */
     public NamedThreadFactory(String namePrefix) {
-        if (Utils.isEmpty(namePrefix)) {
+        if (StrUtils.isEmpty(namePrefix)) {
             this.namePrefix = this.getClass().getSimpleName() + "-";
         } else {
             this.namePrefix = namePrefix;

@@ -7,7 +7,7 @@ import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.transport.core.listener.PathListener;
 import org.noear.socketd.utils.RunUtils;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class Demo06_Im_Server {
                                 .doOnOpen(s -> {
                                     //用户连接
                                     String user = s.param("u");
-                                    if (Utils.isNotEmpty(user)) {
+                                    if (StrUtils.isNotEmpty(user)) {
                                         //有用户名，才登录成功
                                         userList.put(s.sessionId(), s);
                                         s.attrPut("user", user);
@@ -37,14 +37,14 @@ public class Demo06_Im_Server {
 
                                     String room = s.attr("room");
 
-                                    if (Utils.isNotEmpty(room)) {
+                                    if (StrUtils.isNotEmpty(room)) {
                                         pushToRoom(room, new StringEntity("有人退出聊天室：" + s.attr("user")));
                                     }
                                 }).doOn("cmd.join", (s, m) -> {
                                     //::加入房间指令
                                     String room = m.meta("room");
 
-                                    if (Utils.isNotEmpty(room)) {
+                                    if (StrUtils.isNotEmpty(room)) {
                                         s.attrPut("room", room);
 
                                         pushToRoom(room, new StringEntity("新人加入聊天室：" + s.attr("user")));
@@ -53,7 +53,7 @@ public class Demo06_Im_Server {
                                     //::聊天指令
                                     String room = m.meta("room");
 
-                                    if (Utils.isNotEmpty(room)) {
+                                    if (StrUtils.isNotEmpty(room)) {
                                         StringBuilder buf = new StringBuilder();
                                         buf.append(m.meta("sender")).append(": ").append(m.dataAsString());
 

@@ -10,7 +10,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.transport.smartsocket.tcp.impl.FrameProtocol;
 import org.noear.socketd.transport.smartsocket.tcp.impl.IdleStatePluginEx;
 import org.noear.socketd.transport.smartsocket.tcp.impl.ServerMessageProcessor;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.SslPlugin;
@@ -66,7 +66,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
                 messageProcessor.addPlugin(new IdleStatePluginEx<>((int) getConfig().getIdleTimeout(), true, false));
             }
 
-            if (Utils.isEmpty(getConfig().getHost())) {
+            if (StrUtils.isEmpty(getConfig().getHost())) {
                 server = new AioQuickServer(getConfig().getPort(),
                         frameProtocol, messageProcessor);
             } else {

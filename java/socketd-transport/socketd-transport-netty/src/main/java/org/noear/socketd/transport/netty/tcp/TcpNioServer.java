@@ -13,7 +13,7 @@ import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.utils.NamedThreadFactory;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +61,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
                     .channel(NioServerSocketChannel.class)
                     .childHandler(channelHandler);
 
-            if (Utils.isEmpty(getConfig().getHost())) {
+            if (StrUtils.isEmpty(getConfig().getHost())) {
                 server = bootstrap.bind(getConfig().getPort()).await();
             } else {
                 server = bootstrap.bind(getConfig().getHost(), getConfig().getPort()).await();

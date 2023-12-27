@@ -2,7 +2,7 @@ package org.noear.socketd.transport.core.entity;
 
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -91,7 +91,7 @@ public class EntityDefault implements Entity {
             metaStringChanged = false;
 
             //此处要优化
-            if (Utils.isNotEmpty(metaString)) {
+            if (StrUtils.isNotEmpty(metaString)) {
                 for (String kvStr : metaString.split("&")) {
                     int idx = kvStr.indexOf('=');
                     if (idx > 0) {

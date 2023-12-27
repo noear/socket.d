@@ -3,7 +3,7 @@ package demo.demo05_mq;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.EventListener;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class Demo05_Mq_Server {
                         .doOn("mq.sub", (s, m) -> {
                             //::订阅指令
                             String topic = m.meta("topic");
-                            if (Utils.isNotEmpty(topic)) {
+                            if (StrUtils.isNotEmpty(topic)) {
                                 //标记订阅关系
                                 s.attrPut(topic, "1");
                             }
@@ -34,7 +34,7 @@ public class Demo05_Mq_Server {
                             String topic = m.meta("topic");
                             String id = m.meta("id");
 
-                            if (Utils.isNotEmpty(topic) && Utils.isNotEmpty(id)) {
+                            if (StrUtils.isNotEmpty(topic) && StrUtils.isNotEmpty(id)) {
                                 //开始给订阅用户广播
                                 for (Session s1 : userList.stream().filter(s1 -> s.attrMap().containsKey(topic)).collect(Collectors.toList())) {
                                     //Qos0 发送广播

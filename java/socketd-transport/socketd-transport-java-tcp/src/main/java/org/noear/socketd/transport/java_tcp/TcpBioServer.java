@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.java_tcp;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Frame;
@@ -10,7 +9,7 @@ import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.utils.RunUtils;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +40,13 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
      */
     private ServerSocket createServer() throws IOException {
         if (getConfig().getSslContext() == null) {
-            if (Utils.isEmpty(getConfig().getHost())) {
+            if (StrUtils.isEmpty(getConfig().getHost())) {
                 return new ServerSocket(getConfig().getPort());
             } else {
                 return new ServerSocket(getConfig().getPort(), 50, InetAddress.getByName(getConfig().getHost()));
             }
         } else {
-            if (Utils.isEmpty(getConfig().getHost())) {
+            if (StrUtils.isEmpty(getConfig().getHost())) {
                 return getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort());
             } else {
                 return getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort(), 50, InetAddress.getByName(getConfig().getHost()));

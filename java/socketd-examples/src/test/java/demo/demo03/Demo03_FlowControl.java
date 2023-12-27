@@ -2,15 +2,10 @@ package demo.demo03;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.transport.core.Message;
-import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.EntityDefault;
-import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
-import org.noear.socketd.transport.core.listener.SimpleListener;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class Demo03_FlowControl {
@@ -28,7 +23,7 @@ public class Demo03_FlowControl {
                     int start = Integer.parseInt(m.metaOrDefault("start", "0"));
                     int size = Integer.parseInt(m.metaOrDefault("size", "0"));
 
-                    if (Utils.isEmpty(videoId) || size == 0) {
+                    if (StrUtils.isEmpty(videoId) || size == 0) {
                         s.sendAlarm(m, "参数不合规");
                         return;
                     }

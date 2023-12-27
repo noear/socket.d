@@ -1,7 +1,5 @@
 package org.noear.socketd.utils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +10,7 @@ import java.util.UUID;
  * @author noear
  * @since 2.0
  */
-public class Utils {
+public class StrUtils {
     /**
      * 生成 guid
      * */
@@ -58,33 +56,5 @@ public class Utils {
      */
     public static boolean isNotEmpty(Collection s) {
         return !isEmpty(s);
-    }
-
-
-    /**
-     * 解包异常
-     *
-     * @param ex 异常
-     */
-    public static Throwable throwableUnwrap(Throwable ex) {
-        Throwable th = ex;
-
-        while (true) {
-            if (th instanceof InvocationTargetException) {
-                th = ((InvocationTargetException) th).getTargetException();
-            } else if (th instanceof UndeclaredThrowableException) {
-                th = ((UndeclaredThrowableException) th).getUndeclaredThrowable();
-            } else if (th.getClass() == RuntimeException.class) {
-                if (th.getCause() != null) {
-                    th = th.getCause();
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-
-        return th;
     }
 }

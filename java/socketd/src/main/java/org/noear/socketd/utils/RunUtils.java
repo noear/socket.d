@@ -46,22 +46,6 @@ public class RunUtils {
         }
     }
 
-    /**
-     * 运行或异常
-     */
-    public static void runOrThrow(RunnableEx task) {
-        try {
-            task.run();
-        } catch (Throwable e) {
-            e = Utils.throwableUnwrap(e);
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     public static void runAndTry(RunnableEx task) {
         try {
             task.run();

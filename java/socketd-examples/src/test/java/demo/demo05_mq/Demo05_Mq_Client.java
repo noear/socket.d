@@ -5,12 +5,11 @@ import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 public class Demo05_Mq_Client {
@@ -73,7 +72,7 @@ public class Demo05_Mq_Client {
         public void publish(String topic, String message) throws IOException {
             Entity entity = new StringEntity(message)
                     .metaPut("topic", topic)
-                    .metaPut("id", Utils.guid());
+                    .metaPut("id", StrUtils.guid());
 
             //Qos0
             clientSession.send("mq.push", entity);

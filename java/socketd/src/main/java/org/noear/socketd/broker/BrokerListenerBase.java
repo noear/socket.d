@@ -2,7 +2,7 @@ package org.noear.socketd.broker;
 
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +54,7 @@ public abstract class BrokerListenerBase implements Listener {
      * @param name 名字
      */
     public Session getPlayerOne(String name) {
-        if (Utils.isEmpty(name)) {
+        if (StrUtils.isEmpty(name)) {
             return null;
         }
 
@@ -101,7 +101,7 @@ public abstract class BrokerListenerBase implements Listener {
      */
     public void addPlayer(String name, Session session) {
         //注册玩家会话
-        if (Utils.isNotEmpty(name)) {
+        if (StrUtils.isNotEmpty(name)) {
             Set<Session> sessions = playerSessions.computeIfAbsent(name, n -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
             sessions.add(session);
         }
@@ -115,7 +115,7 @@ public abstract class BrokerListenerBase implements Listener {
      */
     public void removePlayer(String name, Session session) {
         //注销玩家会话
-        if (Utils.isNotEmpty(name)) {
+        if (StrUtils.isNotEmpty(name)) {
             Collection<Session> sessions = getPlayerAll(name);
             if (sessions != null) {
                 sessions.remove(session);

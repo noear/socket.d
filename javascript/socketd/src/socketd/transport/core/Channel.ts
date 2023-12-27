@@ -18,9 +18,9 @@ export interface Channel {
     getAttachment(name: string): object;
 
     /**
-     * 设置附件
+     * 放置附件
      */
-    setAttachment(name: string, val: object);
+    putAttachment(name: string, val: object);
 
     /**
      * 是否有效
@@ -158,7 +158,7 @@ export abstract class  ChannelBase implements Channel {
         return this._attachments.get(name);
     }
 
-    setAttachment(name: string, val: object) {
+    putAttachment(name: string, val: object) {
         if (val == null) {
             this._attachments.delete(name);
         } else {

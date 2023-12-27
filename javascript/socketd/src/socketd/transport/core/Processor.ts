@@ -1,23 +1,57 @@
 import {Listener, SimpleListener} from "./Listener";
-import {Channel, ChannelInternal} from "./Channel";
+import {ChannelInternal} from "./Channel";
 import {Frame, Message} from "./Message";
 import {Constants, EntityMetas, Flags} from "./Constants";
 import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
 
+/**
+ * 处理器
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface Processor {
+    /**
+     * 设置监听器
+     */
     setListener(listener: Listener);
 
-    onReceive(channel: Channel, frame: Frame);
+    /**
+     * 接收处理
+     */
+    onReceive(channel: ChannelInternal, frame: Frame);
 
-    onOpen(channel: Channel);
+    /**
+     * 打开时
+     *
+     * @param channel 通道
+     */
+    onOpen(channel: ChannelInternal);
 
-    onMessage(channel: Channel, message: Message);
+    /**
+     * 收到消息时
+     *
+     * @param channel 通道
+     * @param message 消息
+     */
+    onMessage(channel: ChannelInternal, message: Message);
 
 
-    onClose(channel: Channel);
+    /**
+     * 关闭时
+     *
+     * @param channel 通道
+     */
+    onClose(channel: ChannelInternal);
 
 
-    onError(channel: Channel, error: Error);
+    /**
+     * 出错时
+     *
+     * @param channel 通道
+     * @param error   错误信息
+     */
+    onError(channel: ChannelInternal, error: Error);
 }
 
 export class ProcessorDefault implements Processor {

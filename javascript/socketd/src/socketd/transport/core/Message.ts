@@ -2,6 +2,12 @@ import {CodecUtils} from "./CodecUtils";
 import {EntityMetas,Flags} from "./Constants";
 import {SocketD} from "../../SocketD";
 
+/**
+ * 消息实体（帧[消息[实体]]）
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface Entity {
     /**
      * at
@@ -64,12 +70,22 @@ export interface Entity {
  */
 export interface Reply extends Entity {
     /**
+     * 流Id
+     */
+    sid(): string;
+
+    /**
      * 是否答复结束
      */
     isEnd(): boolean
 }
 
-
+/**
+ * 实体默认实现
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class EntityDefault implements Entity {
     private _metaMap: URLSearchParams
     private _data: ArrayBuffer;
@@ -79,15 +95,26 @@ export class EntityDefault implements Entity {
         this._data = null;
     }
 
+    /**
+     * At
+     * */
     at() {
         return this.meta("@");
     }
 
+    /**
+     * 设置元信息字符串
+     * */
     metaStringSet(metaString: string): EntityDefault {
         this._metaMap = new URLSearchParams(metaString);
         return this;
     }
 
+    /**
+     * 放置元信息字典
+     *
+     * @param metaMap 元信息字典
+     */
     metaMapPut(map): EntityDefault {
         for (let name of map.prototype) {
             this.metaMap().set(name, map[name]);
@@ -95,20 +122,27 @@ export class EntityDefault implements Entity {
         return this;
     }
 
+    /**
+     * 放置元信息
+     *
+     * @param name 名字
+     * @param val  值
+     */
     metaPut(name: string, value: string): EntityDefault {
         this.metaMap().set(name, value);
         return this;
     }
 
-    dataSet(data: ArrayBuffer): EntityDefault {
-        this._data = data;
-        return this;
-    }
-
+    /**
+     * 获取元信息字符串（queryString style）
+     */
     metaString(): string {
         return this.metaMap().toString();
     }
 
+    /**
+     * 获取元信息字典
+     */
     metaMap(): URLSearchParams {
         if (this._metaMap == null) {
             this._metaMap = new URLSearchParams();
@@ -117,10 +151,21 @@ export class EntityDefault implements Entity {
         return this._metaMap;
     }
 
+    /**
+     * 获取元信息
+     *
+     * @param name 名字
+     */
     meta(name: string): string {
         return this.metaMap().get(name);
     }
 
+    /**
+     * 获取元信息或默认值
+     *
+     * @param name 名字
+     * @param def  默认值
+     */
     metaOrDefault(name: string, def: string): string {
         let val = this.meta(name);
         if (val == null) {
@@ -129,27 +174,62 @@ export class EntityDefault implements Entity {
             return def;
         }
     }
+
+    /**
+     * 放置元信息
+     *
+     * @param name 名字
+     * @param val  值
+     */
     putMeta(name: string, val: string) {
         this.metaPut(name, val);
     }
 
+    /**
+     * 设置数据
+     *
+     * @param data 数据
+     */
+    dataSet(data: ArrayBuffer): EntityDefault {
+        this._data = data;
+        return this;
+    }
+
+    /**
+     * 获取数据（若多次复用，需要reset）
+     */
     data(): ArrayBuffer {
         return this._data;
     }
 
+    /**
+     * 获取数据并转成字符串
+     */
     dataAsString(): string {
         throw new Error("Method not implemented.");
     }
 
+    /**
+     * 获取数据长度
+     */
     dataSize(): number {
         return this._data.byteLength;
     }
 
+    /**
+     * 释放资源
+     */
     release() {
 
     }
 }
 
+/**
+ * 字符串实体
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class StringEntity extends EntityDefault implements Entity{
     constructor(data: string) {
         super();
@@ -158,22 +238,56 @@ export class StringEntity extends EntityDefault implements Entity{
     }
 }
 
+/**
+ * 消息
+ *
+ * @author noear
+ * @since 2.0
+ */
 export interface Message extends Entity {
+    /**
+     * 是否为请求
+     */
     isRequest(): boolean;
 
+    /**
+     * 是否为订阅
+     */
     isSubscribe(): boolean;
 
+    /**
+     * 获取消息流Id（用于消息交互、分片）
+     */
     sid(): string;
 
+    /**
+     * 获取消息事件
+     */
     event(): string;
 
+    /**
+     * 获取消息实体（有时需要获取实体）
+     */
     entity(): Entity;
 }
 
-export interface MessageInternal extends Message, Entity, Reply{
-
+/**
+ * @author noear
+ * @since 2.0
+ */
+export interface MessageInternal extends Message, Entity, Reply {
+    /**
+     * 获取标记
+     */
+    flag(): number;
 }
 
+/**
+ * 消息默认实现（帧[消息[实体]]）
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class MessageDefault implements MessageInternal {
     _flag: number;
     _sid: string;
@@ -191,26 +305,51 @@ export class MessageDefault implements MessageInternal {
         return this._entity.at();
     }
 
+    /**
+     * 获取标记
+     */
+    flag(): number {
+        return this._flag;
+    }
+
+    /**
+     * 是否为请求
+     */
     isRequest(): boolean {
         return this._flag == Flags.Request;
     }
 
+    /**
+     * 是否为订阅
+     */
     isSubscribe(): boolean {
         return this._flag == Flags.Subscribe;
     }
 
+    /**
+     * 是否答复结束
+     * */
     isEnd(): boolean {
         return this._flag == Flags.ReplyEnd;
     }
 
+    /**
+     * 获取消息流Id（用于消息交互、分片）
+     */
     sid(): string {
         return this._sid;
     }
 
+    /**
+     * 获取消息事件
+     */
     event(): string {
         return this._event;
     }
 
+    /**
+     * 获取消息实体
+     */
     entity(): Entity {
         return this._entity;
     }
@@ -251,6 +390,12 @@ export class MessageDefault implements MessageInternal {
     }
 }
 
+/**
+ * 帧（帧[消息[实体]]）
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class Frame {
     _flag: number;
     _message: MessageInternal;
@@ -260,10 +405,16 @@ export class Frame {
         this._message = message;
     }
 
+    /**
+     * 标志（保持与 Message 的获取风格）
+     * */
     flag(): number {
         return this._flag;
     }
 
+    /**
+     * 消息
+     * */
     message(): MessageInternal {
         return this._message;
     }

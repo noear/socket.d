@@ -83,7 +83,7 @@ export interface Session extends ClientSession {
      * @param name  名字
      * @param val 值
      */
-    attrSet(name: string, val: object);
+    attrPut(name: string, val: object);
 
     /**
      * 手动发送 Ping（一般是自动）
@@ -160,7 +160,7 @@ export abstract class SessionBase implements Session {
         }
     }
 
-    attrSet(name: string, val: object) {
+    attrPut(name: string, val: object) {
         this.attrMap().set(name, val);
     }
 

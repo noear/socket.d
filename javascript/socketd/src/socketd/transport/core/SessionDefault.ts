@@ -6,6 +6,12 @@ import {Constants, Flags} from "./Constants";
 import {IoConsumer} from "./Types";
 import {Stream, StreamRequest, StreamSubscribe} from "./Stream";
 
+/**
+ * 会话默认实现
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class SessionDefault extends SessionBase {
     _pathNew: string;
 

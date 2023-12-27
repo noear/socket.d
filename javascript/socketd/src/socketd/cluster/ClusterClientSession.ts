@@ -2,7 +2,7 @@ import {ClientSession} from "../transport/client/ClientSession";
 import { Entity, Reply } from "../transport/core/Message";
 import { Stream } from "../transport/core/Stream";
 import { IoConsumer } from "../transport/core/Types";
-import {Utils} from "../utils/Utils";
+import {StrUtils} from "../utils/StrUtils";
 import {SocketdException} from "../exception/SocketdException";
 import {ClientChannel} from "../transport/client/ClientChannel";
 import {RunUtils} from "../utils/RunUtils";
@@ -23,7 +23,7 @@ export class ClusterClientSession implements ClientSession {
 
     constructor(sessions: ClientSession[]) {
         this._sessionSet = sessions;
-        this._sessionId = Utils.guid();
+        this._sessionId = StrUtils.guid();
         this._sessionRoundCounter = 0;
     }
 

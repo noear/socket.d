@@ -1,4 +1,4 @@
-import {Utils} from "../../utils/Utils";
+import {StrUtils} from "../../utils/StrUtils";
 
 
 export interface IdGenerator {
@@ -10,6 +10,6 @@ export interface IdGenerator {
 
 export class GuidGenerator implements IdGenerator {
     generate(): string {
-        return Utils.guid();
+        return StrUtils.guid();
     }
 }

@@ -1,4 +1,4 @@
-export class Utils {
+export class StrUtils {
     static guid(): string {
         let guid = "";
         for (let i = 1; i <= 32; i++) {

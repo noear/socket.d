@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol StreamInternal{
+protocol StreamInternal : Stream{
     
 }

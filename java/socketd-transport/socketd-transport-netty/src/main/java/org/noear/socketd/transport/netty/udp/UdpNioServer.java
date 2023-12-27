@@ -90,8 +90,13 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
         }
 
         try {
-            server.channel().close();
-            bossGroup.shutdownGracefully();
+            if (server != null) {
+                server.channel().close();
+            }
+
+            if (bossGroup != null) {
+                bossGroup.shutdownGracefully();
+            }
         } catch (Exception e) {
             log.debug("{}", e);
         }

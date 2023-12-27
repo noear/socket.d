@@ -1,6 +1,6 @@
 import {Processor} from "./Processor";
 import {ChannelAssistant} from "./ChannelAssistant";
-import {StreamBase, StreamManger} from "./Stream";
+import {StreamInternal, StreamManger} from "./Stream";
 import {Session} from "./Session";
 import {ChannelSupporter} from "./ChannelSupporter";
 import {Config} from "./Config";
@@ -55,7 +55,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this.send(Frames.pongFrame(), null);
     }
 
-    send(frame: Frame, stream: StreamBase) {
+    send(frame: Frame, stream: StreamInternal) {
 
         if (this.getConfig().clientMode()) {
             console.debug("C-SEN:{}", frame);

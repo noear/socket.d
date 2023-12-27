@@ -1,12 +1,12 @@
-import {Channel, ChannelBase} from "../core/Channel";
+import { Channel, ChannelBase } from "../core/Channel";
 import { Frame } from "../core/Message";
 import { Session } from "../core/Session";
-import { StreamBase } from "../core/Stream";
-import {ClientConnector} from "./ClientConnector";
-import {HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
-import {Constants} from "../core/Constants";
-import {Asserts} from "../core/Asserts";
-import {SocketdChannelException, SocketdException} from "../../exception/SocketdException";
+import { StreamInternal } from "../core/Stream";
+import { ClientConnector } from "./ClientConnector";
+import { HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
+import { Constants } from "../core/Constants";
+import { Asserts } from "../core/Asserts";
+import { SocketdChannelException, SocketdException } from "../../exception/SocketdException";
 
 /**
  * 客户端通道
@@ -133,7 +133,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    send(frame: Frame, stream: StreamBase) {
+    send(frame: Frame, stream: StreamInternal) {
         Asserts.assertClosedByUser(this._real);
 
         try {
@@ -166,5 +166,4 @@ export class ClientChannel extends ChannelBase implements Channel {
     setSession(session: Session) {
         throw new Error("Method not implemented.");
     }
-
 }

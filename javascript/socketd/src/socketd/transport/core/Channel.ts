@@ -2,7 +2,7 @@ import {Session} from "./Session";
 import {Config} from "./Config";
 import {HandshakeInternal} from "./Handshake";
 import {Frame, Frames, Message} from "./Message";
-import {StreamBase} from "./Stream";
+import {StreamInternal} from "./Stream";
 import {IoBiConsumer} from "./Types";
 
 /**
@@ -95,7 +95,7 @@ export interface Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    send(frame: Frame, stream: StreamBase);
+    send(frame: Frame, stream: StreamInternal);
 
     /**
      * 接收（接收答复帧）
@@ -215,7 +215,7 @@ export abstract class  ChannelBase implements Channel {
         this.send(Frames.alarmFrame(from, alarm), null);
     }
 
-    abstract send(frame: Frame, stream: StreamBase);
+    abstract send(frame: Frame, stream: StreamInternal);
 
     abstract retrieve(frame: Frame);
 

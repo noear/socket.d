@@ -10,12 +10,12 @@ export interface BufferReader {
     /**
      * 获取 byte
      */
-    get(): number;
+    getByte(): number;
 
     /**
      * 获取一组 byte
      */
-    get(dst: number[], offset: number, length: number);
+    getBytes(dst: ArrayBuffer, offset: number, length: number);
 
     /**
      * 获取 int
@@ -43,12 +43,7 @@ export interface BufferWriter {
     /**
      * 推入一组 byte
      */
-    putBytes(bytes: number[]);
-
-    /**
-     * 推入一组 byte
-     */
-    putBytes(src: number[], offset: number, length: number);
+    putBytes(src: ArrayBuffer);
 
     /**
      * 推入 int

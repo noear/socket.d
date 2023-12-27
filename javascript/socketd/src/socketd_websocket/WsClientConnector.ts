@@ -31,7 +31,6 @@ export class WsClientConnector extends ClientConnectorBase<WsClient> {
     }
 
 
-
     close() {
         if (this._real) {
             this._real.close();

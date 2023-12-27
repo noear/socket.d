@@ -2,7 +2,7 @@
 import {CodecUtils} from "./CodecUtils";
 import {Asserts} from "./Asserts";
 import {Constants, Flags} from "./Constants";
-import {Frame} from "./Message";
+import {EntityDefault, Frame, MessageDefault} from "./Message";
 import {Config} from "./Config";
 import {BufferReader, BufferWriter} from "./Buffer";
 import {IoFunction} from "./Types";
@@ -59,11 +59,11 @@ export class CodecByteBuffer implements Codec {
             let metaStringB = CodecUtils.strToBuf(frame.message().metaString());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
-            let frameSize = 4 + 4 + sidB.length + eventB.length + metaStringB.length + frame.message().dataSize() + 2 * 3;
+            let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
 
-            Asserts.assertSize("sid", sidB.length, Constants.MAX_SIZE_SID);
-            Asserts.assertSize("event", eventB.length, Constants.MAX_SIZE_EVENT);
-            Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
+            Asserts.assertSize("sid", sidB.byteLength, Constants.MAX_SIZE_SID);
+            Asserts.assertSize("event", eventB.byteLength, Constants.MAX_SIZE_EVENT);
+            Asserts.assertSize("metaString", metaStringB.byteLength, Constants.MAX_SIZE_META_STRING);
             Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
 
             let target = targetFactory.apply(frameSize);
@@ -127,11 +127,72 @@ export class CodecByteBuffer implements Codec {
             return new Frame(Flags.of(flag), null);
         } else {
 
-            return null;
+            let metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, buffer.remaining());
+
+            //1.解码 sid and event
+            let buf = new ArrayBuffer(metaBufSize);
+
+            //sid
+            let sid = this.decodeString(buffer, buf, Constants.MAX_SIZE_SID);
+
+            //event
+            let event = this.decodeString(buffer, buf, Constants.MAX_SIZE_EVENT);
+
+            //metaString
+            let metaString = this.decodeString(buffer, buf, Constants.MAX_SIZE_META_STRING);
+
+            //2.解码 body
+            let dataRealSize = frameSize - buffer.position();
+            let data: ArrayBuffer;
+            if (dataRealSize > Constants.MAX_SIZE_DATA) {
+                //超界了，空读。必须读，不然协议流会坏掉
+                data = new ArrayBuffer(Constants.MAX_SIZE_DATA);
+                buffer.getBytes(data, 0, Constants.MAX_SIZE_DATA);
+                for (let i = dataRealSize - Constants.MAX_SIZE_DATA; i > 0; i--) {
+                    buffer.getByte();
+                }
+            } else {
+                data = new ArrayBuffer(dataRealSize);
+                if (dataRealSize > 0) {
+                    buffer.getBytes(data, 0, dataRealSize);
+                }
+            }
+
+            //先 data , 后 metaString (避免 data 时修改元信息)
+            let entity = new EntityDefault().dataSet(data).metaStringSet(metaString);
+            let message = new MessageDefault(Flags.of(flag), sid, event, entity);
+
+            return new Frame(message.flag(), message);
         }
     }
 
-    protected decodeString(reader: BufferReader, buf: object, maxLen: number): string {
-        return null;
+    protected decodeString(reader: BufferReader, buf: ArrayBuffer, maxLen: number): string {
+        let bufView = new DataView(buf);
+        let bufViewIdx = 0;
+
+        while (true) {
+            let c = reader.getByte();
+
+            if (c == 10) { //10:'\n'
+                break;
+            }
+
+            if (maxLen > 0 && maxLen <= bufViewIdx) {
+                //超界了，空读。必须读，不然协议流会坏掉
+            } else {
+                if (c != 0) { //32:' '
+                    bufView.setInt8(bufViewIdx, c);
+                    bufViewIdx++;
+                }
+            }
+        }
+
+
+        if (bufViewIdx < 1) {
+            return "";
+        }
+
+        //这里要加个长度控制
+        return CodecUtils.bufToStr(buf, 0, bufViewIdx);
     }
 }

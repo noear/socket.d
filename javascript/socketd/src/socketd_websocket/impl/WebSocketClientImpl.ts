@@ -18,6 +18,7 @@ export class WebSocketClientImpl {
         this._channel = new ChannelDefault(this._real, client);
         this._handshakeFuture = handshakeFuture;
 
+        this._real.binaryType = "arraybuffer";
         this._real.onopen = this.onOpen;
         this._real.onmessage = this.onMessage;
         this._real.onclose = this.onClose;

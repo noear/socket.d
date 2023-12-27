@@ -123,14 +123,14 @@ public class CodecByteBuffer implements Codec {
             if (dataRealSize > Constants.MAX_SIZE_DATA) {
                 //超界了，空读。必须读，不然协议流会坏掉
                 data = new byte[Constants.MAX_SIZE_DATA];
-                buffer.get(data, 0, Constants.MAX_SIZE_DATA);
+                buffer.getBytes(data, 0, Constants.MAX_SIZE_DATA);
                 for (int i = dataRealSize - Constants.MAX_SIZE_DATA; i > 0; i--) {
-                    buffer.get();
+                    buffer.getByte();
                 }
             } else {
                 data = new byte[dataRealSize];
                 if (dataRealSize > 0) {
-                    buffer.get(data, 0, dataRealSize);
+                    buffer.getBytes(data, 0, dataRealSize);
                 }
             }
 
@@ -156,7 +156,7 @@ public class CodecByteBuffer implements Codec {
         buf.clear();
 
         while (true) {
-            byte c = reader.get();
+            byte c = reader.getByte();
 
             if (c == 10) { //10:'\n'
                 break;

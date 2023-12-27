@@ -11,12 +11,12 @@ public interface BufferReader {
     /**
      * 获取 byte
      */
-    byte get();
+    byte getByte();
 
     /**
      * 获取一组 byte
      */
-    void get(byte[] dst, int offset, int length);
+    void getBytes(byte[] dst, int offset, int length);
 
     /**
      * 获取 int

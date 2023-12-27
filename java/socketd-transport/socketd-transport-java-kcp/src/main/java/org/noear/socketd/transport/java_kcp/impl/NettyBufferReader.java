@@ -13,12 +13,12 @@ public class NettyBufferReader implements BufferReader {
         this.source = source;
     }
     @Override
-    public byte get() {
+    public byte getByte() {
         return source.readByte();
     }
 
     @Override
-    public void get(byte[] dst, int offset, int length) {
+    public void getBytes(byte[] dst, int offset, int length) {
         source.readBytes(dst, offset, length);
     }
 

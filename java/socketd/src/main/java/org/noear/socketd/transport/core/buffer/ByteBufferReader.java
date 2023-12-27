@@ -19,7 +19,7 @@ public class ByteBufferReader implements BufferReader {
      * 获取 byte
      */
     @Override
-    public byte get() {
+    public byte getByte() {
         return buffer.get();
     }
 
@@ -27,7 +27,7 @@ public class ByteBufferReader implements BufferReader {
      * 获取一组 byte
      */
     @Override
-    public void get(byte[] dst, int offset, int length) {
+    public void getBytes(byte[] dst, int offset, int length) {
         buffer.get(dst, offset, length);
     }
 

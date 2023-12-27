@@ -10,13 +10,13 @@ from socketd.transport.CodecByteBuffer import CodecByteBuffer
 from ..Costants import Constants
 from ..handler.FragmentHandlerDefault import FragmentHandlerDefault
 
+from .logConfig import logger
+
 
 class ConfigBase(Config):
 
     def __init__(self, client_mode: bool):
         self._fragment_size = Constants.MAX_SIZE_FRAGMENT
-        self._stream_timeout = 1000 * 60 * 60 * 2
-        self._request_timeout = 10_000
         self._client_mode = client_mode
         self._charset = "utf-8"
         self._codec: Codec = CodecByteBuffer(self)
@@ -26,12 +26,16 @@ class ConfigBase(Config):
         self._executor = None
         self._core_threads = os.cpu_count() * 2
         self._max_threads = self._core_threads * 8
+        self._idle_timeout = 60
         self._reply_timeout = 3000
+        self._stream_timeout = 1000 * 60 * 60 * 2
+        self._request_timeout = 10_000
         self._max_requests = 10
         self._max_udp_size = 2048
         # ws最大传输大小
         self._ws_max_size = 2 ** 20
         self.__is_thread = False
+        self.__logger_level = "INFO"
 
     def client_mode(self):
         return self._client_mode
@@ -153,4 +157,16 @@ class ConfigBase(Config):
     def get_fragment_size(self) -> int:
         return self._fragment_size
 
+    def get_idle_timeout(self):
+        return self._idle_timeout
+
+    def set_idle_timeout(self, _idle_timeout: float):
+        self._idle_timeout = _idle_timeout
+
+    def get_logger_level(self) -> str:
+        return self.__logger_level
+
+    def set_logger_level(self, __logger_level: str):
+        self.__logger_level = __logger_level
+        logger.setLevel(__logger_level)
 

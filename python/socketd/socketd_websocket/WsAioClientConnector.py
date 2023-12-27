@@ -1,13 +1,11 @@
 import asyncio
-import logging
-from websockets.client import  WebSocketClientProtocol
 
+from websockets.client import WebSocketClientProtocol
 from socketd.core.Channel import Channel
+from socketd.core.config.logConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd_websocket.impl.AIOConnect import AIOConnect
 from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
-
-logger = logging.getLogger(__name__)
 
 
 class WsAioClientConnector(ClientConnectorBase):
@@ -30,6 +28,9 @@ class WsAioClientConnector(ClientConnectorBase):
         try:
             con = await AIOConnect(ws_url, client=self.client, ssl=self.client.get_config().get_ssl_context(),
                                    create_protocol=AIOWebSocketClientImpl,
+                                   ping_timeout=self.client.get_config().get_idle_timeout(),
+                                   # ping_interval=self.client.get_config().get_idle_timeout(),
+                                   logger=logger,
                                    max_size=self.client.get_config().get_ws_max_size())
             self.real: AIOWebSocketClientImpl | WebSocketClientProtocol = con
             return self.real.get_channel()
@@ -40,7 +41,7 @@ class WsAioClientConnector(ClientConnectorBase):
         if self.real is None:
             return
         try:
+            self.real.on_close()
             await self.__stop
-            pass
         except Exception as e:
             logger.debug(e)

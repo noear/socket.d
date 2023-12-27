@@ -7,7 +7,6 @@ from ..Costants import Function
 class Config:
     # 流ID大小限制
 
-
     def client_mode(self) -> bool:
         """
         返回一个布尔值，指示配置是否为客户端模式。
@@ -100,4 +99,11 @@ class Config:
 
     def get_fragment_size(self) -> int:
         """获取分片大小"""
+        pass
+
+    def get_idle_timeout(self) -> float:
+        """闲置超时"""
+        pass
+
+    def get_logger_level(self) -> str:
         pass

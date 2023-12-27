@@ -20,7 +20,7 @@ class SimpleListenerTest(Listener, ABC):
         self.close_counter = AtomicRefer(0)
         self.message_counter = AtomicRefer(0)
 
-    def on_open(self, session):
+    async def on_open(self, session):
         pass
 
     async def on_message(self, session, message: Message):
@@ -48,6 +48,8 @@ class SimpleListenerTest(Listener, ABC):
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.set_is_thread(False)
+    config.set_idle_timeout(10)
+    config.set_logger_level("DEBUG")
     return config.id_generator(uuid.uuid4)
 
 

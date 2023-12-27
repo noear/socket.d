@@ -1,5 +1,6 @@
 import asyncio
-from websockets import ConnectionClosedError, WebSocketCommonProtocol, frames
+
+from websockets import ConnectionClosedError
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.core.Channel import Channel

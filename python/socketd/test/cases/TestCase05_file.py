@@ -31,7 +31,7 @@ class SimpleListenerTest(Listener, ABC):
     def __init__(self):
         self.message_counter = AtomicRefer(0)
 
-    def on_open(self, session):
+    async def on_open(self, session):
         pass
 
     async def on_message(self, session, message: Message):

@@ -52,11 +52,11 @@ export class CodecByteBuffer implements Codec {
     write<T extends BufferWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
         if (frame.message()) {
             //sid
-            let sidB = StrUtils.strToBuf(frame.message().sid());
+            let sidB = StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
             //event
-            let eventB = StrUtils.strToBuf(frame.message().event());
+            let eventB = StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
             //metaString
-            let metaStringB = StrUtils.strToBuf(frame.message().metaString());
+            let metaStringB = StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
             let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
@@ -193,6 +193,6 @@ export class CodecByteBuffer implements Codec {
         }
 
         //这里要加个长度控制
-        return StrUtils.bufToStr(buf, 0, bufViewIdx);
+        return StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
     }
 }

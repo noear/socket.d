@@ -8,7 +8,7 @@ export class StrUtils {
         return guid;
     }
 
-    static strToBuf(str: string, charet: string): ArrayBuffer {
+    static strToBuf(str: string, charet?: string): ArrayBuffer {
         if (!charet) {
             charet = 'utf-8';
         }
@@ -17,7 +17,7 @@ export class StrUtils {
         return encoder.encode(str); // 将字符串编码成 Uint8Array 数组
     }
 
-    static bufToStr(buf: ArrayBuffer, start: number, length: number, charet: string): string {
+    static bufToStr(buf: ArrayBuffer, start: number, length: number, charet?: string): string {
         if (!charet) {
             charet = 'utf-8';
         }

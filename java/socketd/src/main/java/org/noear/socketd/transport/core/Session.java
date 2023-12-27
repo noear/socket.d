@@ -100,6 +100,11 @@ public interface Session extends ClientSession, Closeable {
     <T> Session attrPut(String name, T value);
 
     /**
+     * 是否有效
+     */
+    boolean isValid();
+
+    /**
      * 获取会话Id
      */
     String sessionId();

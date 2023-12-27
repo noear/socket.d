@@ -20,10 +20,12 @@ class TestCase00(unittest.TestCase):
         test = BaseTest()
         loop = asyncio.new_event_loop()
         try:
-            loop.run_until_complete(test.start())
-            loop.run_until_complete(test.send(TestCase00.count))
-            # loop.run_until_complete(test.png.send_and_request(TestCase00.count))
-            # loop.run_until_complete(test.png.send_and_subscribe(TestCase00.count))
+            async def _run():
+                await test.start()
+                await test.send(TestCase00.count)
+                await test.send_and_request(TestCase00.count)
+                await test.send_and_subscribe(TestCase00.count)
+            loop.run_until_complete(_run())
         except Exception as e:
             pass
         finally:

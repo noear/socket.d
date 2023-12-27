@@ -7,15 +7,15 @@ from websockets.legacy.server import WebSocketServer
 from socketd.core.SocketD import SocketD
 from socketd.core.config.ServerConfig import ServerConfig
 
-from test.modelu.SimpleListenerTest import idGenerator, SimpleListenerTest
+from test.modelu.SimpleListenerTest import config_handler, SimpleListenerTest
 
-logger.remove()
-logger.add(sys.stderr, level="INFO")
+# logger.remove()
+# logger.add(sys.stderr, level="INFO")
 
 
 async def main():
     server = SocketD.create_server(ServerConfig("ws").set_port(7779))
-    server_session: WebSocketServer = await server.config(idGenerator).listen(
+    server_session: WebSocketServer = await server.config(config_handler).listen(
         SimpleListenerTest()).start()
     await asyncio.Future()
     server_session.close()

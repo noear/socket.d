@@ -105,6 +105,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             # 超时自动推出
             log.debug(c)
         except Exception as e:
+            self.on_error(e)
             raise e
 
     def on_close(self):

@@ -7,6 +7,8 @@ from socketd.core.Costants import Flag, Constants
 from socketd.core.config.Config import Config
 from ..core.Buffer import Buffer
 
+import os
+
 
 def assert_size(name: str, size: int, limitSize: int) -> None:
     if size > limitSize:
@@ -35,16 +37,16 @@ class CodecByteBuffer(Codec):
             # sid
             sidB: bytes = frame.message.get_sid().encode(self.config.get_charset())
             # event
-            topicB: bytes = frame.message.get_event().encode(self.config.get_charset())
+            event: bytes = frame.message.get_event().encode(self.config.get_charset())
             # metaString
             metaStringB: bytes = frame.message.get_entity().get_meta_string().encode(self.config.get_charset())
 
             # length (flag + sid + event + metaString + data + int.bytes + \n*3)
-            len1 = len(sidB) + len(topicB) + len(
+            len1 = len(sidB) + len(event) + len(
                 metaStringB) + frame.message.get_entity().get_data_size() + 1 * 3 + 2 * 4
 
             assert_size("sid", len(sidB), Constants.MAX_SIZE_SID)
-            assert_size("event", len(topicB), Constants.MAX_SIZE_TOPIC)
+            assert_size("event", len(event), Constants.MAX_SIZE_EVENT)
             assert_size("metaString", len(metaStringB), Constants.MAX_SIZE_META_STRING)
             assert_size("data", frame.message.get_entity().get_data_size(), Constants.MAX_SIZE_FRAGMENT)
 
@@ -61,7 +63,7 @@ class CodecByteBuffer(Codec):
             target.write(b'\n')
 
             # event
-            target.write(topicB)
+            target.write(event)
             target.write(b'\n')
 
             # metaString
@@ -91,7 +93,7 @@ class CodecByteBuffer(Codec):
             # 1. decode sid and event
             by = Buffer(limit=metaBufSize)
             sid = self.decodeString(buffer, by, Constants.MAX_SIZE_SID)
-            topic = self.decodeString(buffer, by, Constants.MAX_SIZE_TOPIC)
+            event = self.decodeString(buffer, by, Constants.MAX_SIZE_EVENT)
             metaString = self.decodeString(buffer, by, Constants.MAX_SIZE_META_STRING)
 
             # 2. decode body
@@ -106,30 +108,14 @@ class CodecByteBuffer(Codec):
             else:
                 data = bytearray(buffer.read(dataRealSize))
 
-            message = MessageDefault().set_sid(sid).set_event(topic).set_entity(
+            message = MessageDefault().set_sid(sid).set_event(event).set_entity(
                 EntityDefault().set_meta_string(metaString).set_data(data)
             )
             message.flag = Flag.of(flag)
             return Frame(message.flag, message)
 
     def decodeString(self, reader: Buffer, buf: Buffer, maxLen: int) -> str:
-        buf.seek(0)
-
-        while True:
-            c = reader.read(1)
-
-            if c == b'\n':
-                break
-
-            if 0 < maxLen <= buf.tell():
-                # exceeded the limit, read and discard the bytes
-                pass
-            else:
-                if c != b' ':
-                    buf.write(c)
-
-        # buf.flip()
+        b = bytearray(reader.readline(maxLen).replace(b'\n', b''))
         if buf.limit() < 1:
             return ""
-
-        return buf.getvalue().decode(self.config.get_charset())
+        return b.decode(self.config.get_charset())

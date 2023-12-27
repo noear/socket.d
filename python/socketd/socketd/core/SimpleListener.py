@@ -3,7 +3,7 @@ from socketd.core.Listener import Listener
 
 class SimpleListener(Listener):
 
-    def on_open(self, session):
+    async def on_open(self, session):
         pass
 
     async def on_message(self, session, message):

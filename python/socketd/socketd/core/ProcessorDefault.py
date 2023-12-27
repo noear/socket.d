@@ -24,16 +24,15 @@ class ProcessorDefault(Processor, ABC):
             self.listener = listener
 
     async def on_receive(self, channel: Channel, frame):
-        self.log.debug("on_receive {frame}", frame=frame)
         if frame.get_flag() == Flag.Connect:
             connectMessage = frame.get_message()
             channel.set_handshake(Handshake(connectMessage))
             await channel.send_connack(connectMessage)
-            self.on_open(channel.get_session())
+            await self.on_open(channel.get_session())
         elif frame.get_flag() == Flag.Connack:
             message = frame.get_message()
             channel.set_handshake(Handshake(message))
-            self.on_open(channel.get_session())
+            await self.on_open(channel.get_session())
         else:
             if channel.get_handshake() is None:
                 await channel.close()
@@ -76,8 +75,8 @@ class ProcessorDefault(Processor, ABC):
         else:
             await self.on_message(channel, frame.get_message())
 
-    def on_open(self, session):
-        self.listener.on_open(session)
+    async def on_open(self, session):
+        await self.listener.on_open(session)
 
     async def on_message(self, channel: Channel, message):
         await asyncio.get_running_loop().run_in_executor(channel.get_config().get_executor(),

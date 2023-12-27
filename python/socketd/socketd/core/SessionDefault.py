@@ -106,3 +106,6 @@ class SessionDefault(SessionBase, ABC):
         if self.channel.is_valid():
             await self.channel.send_close()
             await self.channel.close()
+
+    def get_param(self, name: str):
+        return self.get_handshake().get_param(name)

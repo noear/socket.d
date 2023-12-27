@@ -78,7 +78,7 @@ class Constants:
 
     MAX_SIZE_SID = 64
     # 主题大小限制
-    MAX_SIZE_TOPIC = 512
+    MAX_SIZE_EVENT = 512
     # 元信息串大小限制
     MAX_SIZE_META_STRING = 4096
     # 分片大小限制

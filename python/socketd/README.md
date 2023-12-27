@@ -120,6 +120,24 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 | 其它     | 计划中 | 计划中  |                      |
 
 ## 快速入门
+使用pip远程安装(暂时没发布)
+```shell
+pip install socketD
+```
+或
+克隆项目，通过setup.py文件安装到本地
+```shell
+python setup.py build
+python setup.py install
+```
+或
+pip安装到本地
+```shell
+cd \python\socketd
+pip install .
+```
+快速创建服务器和客户端
+
 ```python
 async def application():
     # 服务端
@@ -146,6 +164,9 @@ asyncio.run(application())
 ```
 
 非windows用户可以引入以下依赖，性能提升2倍，asyncio（协程）性能直逼Go
+```shell
+pip install uvloop
+```
 ```python
 import uvloop
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())

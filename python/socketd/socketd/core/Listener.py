@@ -3,7 +3,7 @@ import abc
 
 class Listener(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def on_open(self, session):
+    async def on_open(self, session):
         pass
 
     @abc.abstractmethod

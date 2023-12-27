@@ -24,6 +24,9 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
+    def get_param(self, name: str): ...
+
+    @abc.abstractmethod
     def get_attr_map(self) -> Dict[str, Any]:
         ...
 
@@ -88,4 +91,12 @@ class Session(abc.ABC):
 
     @abc.abstractmethod
     def close(self):
+        ...
+
+    @abc.abstractmethod
+    def generate_id(self) -> str:
+        ...
+
+    @abc.abstractmethod
+    def set_session_id(self, value):
         ...

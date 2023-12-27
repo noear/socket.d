@@ -40,7 +40,7 @@ public interface Entity {
     String metaOrDefault(String name, String def);
 
     /**
-     * 添加元信息
+     * 放置元信息
      * */
     void putMeta(String name, String val);
 

@@ -80,8 +80,8 @@ public class SessionWrapper implements Session {
     }
 
     @Override
-    public <T> void attr(String name, T value) {
-        real.attr(name, value);
+    public <T> Session attrPut(String name, T value) {
+        return real.attrPut(name, value);
     }
 
     @Override

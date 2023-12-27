@@ -2,7 +2,6 @@ package org.noear.socketd.transport.core;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 通道
@@ -17,9 +16,9 @@ public interface Channel {
     <T> T getAttachment(String name);
 
     /**
-     * 设置附件
+     * 放置附件
      */
-    void setAttachment(String name, Object val);
+    void putAttachment(String name, Object val);
 
     /**
      * 是否有效

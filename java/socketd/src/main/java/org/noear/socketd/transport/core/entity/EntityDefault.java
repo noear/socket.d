@@ -71,7 +71,7 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * 添加元信息字典
+     * 放置元信息字典
      *
      * @param metaMap 元信息字典
      */
@@ -105,7 +105,7 @@ public class EntityDefault implements Entity {
     }
 
     /**
-     * 添加元信息
+     * 放置元信息
      *
      * @param name 名字
      * @param val  值
@@ -137,6 +137,12 @@ public class EntityDefault implements Entity {
         return metaMap().getOrDefault(name, def);
     }
 
+    /**
+     * 放置元信息
+     *
+     * @param name 名字
+     * @param val  值
+     */
     @Override
     public void putMeta(String name, String val) {
         metaPut(name, val);

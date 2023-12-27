@@ -27,7 +27,7 @@ public class Demo05_Mq_Server {
                             String topic = m.meta("topic");
                             if (Utils.isNotEmpty(topic)) {
                                 //标记订阅关系
-                                s.attr(topic, "1");
+                                s.attrPut(topic, "1");
                             }
                         }).doOn("mq.push", (s, m) -> {
                             //::推送指令

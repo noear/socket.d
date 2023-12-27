@@ -27,7 +27,7 @@ public class Demo06_Im_Server {
                                     if (Utils.isNotEmpty(user)) {
                                         //有用户名，才登录成功
                                         userList.put(s.sessionId(), s);
-                                        s.attr("user", user);
+                                        s.attrPut("user", user);
                                     } else {
                                         //否则说明是非法的
                                         s.close();
@@ -45,7 +45,7 @@ public class Demo06_Im_Server {
                                     String room = m.meta("room");
 
                                     if (Utils.isNotEmpty(room)) {
-                                        s.attr("room", room);
+                                        s.attrPut("room", room);
 
                                         pushToRoom(room, new StringEntity("新人加入聊天室：" + s.attr("user")));
                                     }
@@ -78,7 +78,7 @@ public class Demo06_Im_Server {
 
                                     Session s2 = userList.values().parallelStream().filter(s1 -> user.equals(s1.attr("user"))).findFirst().get();
                                     if (s2 != null) {
-                                        s2.attr("room", null);
+                                        s2.attrPut("room", null);
                                         s2.send("cmd.t", new StringEntity("你被T出聊天室: " + room));
                                     }
                                 })

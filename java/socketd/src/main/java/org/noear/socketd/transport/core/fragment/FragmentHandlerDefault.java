@@ -42,7 +42,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
         FragmentAggregatorDefault aggregator = channel.getAttachment(message.sid());
         if (aggregator == null) {
             aggregator = new FragmentAggregatorDefault(message);
-            channel.setAttachment(aggregator.getSid(), aggregator);
+            channel.putAttachment(aggregator.getSid(), aggregator);
         }
 
         aggregator.add(index, message);
@@ -52,7 +52,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
             return null;
         } else {
             //重置为聚合帖
-            channel.setAttachment(message.sid(), null);
+            channel.putAttachment(message.sid(), null);
             return aggregator.get();
         }
     }

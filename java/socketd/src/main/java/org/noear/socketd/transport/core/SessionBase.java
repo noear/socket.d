@@ -74,11 +74,12 @@ public abstract class SessionBase implements Session {
      * 设置附件
      */
     @Override
-    public <T> void attr(String name, T value) {
+    public <T> Session attrPut(String name, T value) {
         if (attrMap == null) {
             attrMap = new ConcurrentHashMap<>();
         }
         attrMap.put(name, value);
+        return this;
     }
 
     @Override

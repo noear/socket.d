@@ -149,7 +149,7 @@ public class SessionDefault extends SessionBase {
 
         try {
             CompletableFuture<Reply> future = new CompletableFuture<>();
-            StreamBase stream = new StreamRequest(message.sid(), timeout, future);
+            StreamInternal stream = new StreamRequest(message.sid(), timeout, future);
             channel.send(new Frame(Flags.Request, message), stream);
 
             try {
@@ -193,7 +193,7 @@ public class SessionDefault extends SessionBase {
                 channel.onError(eh);
             }
         });
-        StreamBase stream = new StreamRequest(message.sid(), timeout, future);
+        StreamInternal stream = new StreamRequest(message.sid(), timeout, future);
         channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -209,7 +209,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
         MessageInternal message = new MessageDefault().sidSet(generateId()).eventSet(event).entitySet(content);
-        StreamBase stream = new StreamSubscribe(message.sid(), timeout, consumer);
+        StreamInternal stream = new StreamSubscribe(message.sid(), timeout, consumer);
         channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }

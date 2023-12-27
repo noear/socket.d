@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.StreamBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +69,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * 发送
      */
     @Override
-    public void send(Frame frame, StreamBase stream) throws IOException {
+    public void send(Frame frame, StreamInternal stream) throws IOException {
         Asserts.assertClosed(this);
 
         if (log.isDebugEnabled()) {

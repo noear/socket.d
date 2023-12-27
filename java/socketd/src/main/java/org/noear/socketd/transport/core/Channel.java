@@ -102,7 +102,7 @@ public interface Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    void send(Frame frame, StreamBase stream) throws IOException;
+    void send(Frame frame, StreamInternal stream) throws IOException;
 
     /**
      * 接收（接收答复帧）

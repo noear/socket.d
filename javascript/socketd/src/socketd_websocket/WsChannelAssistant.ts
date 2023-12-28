@@ -1,5 +1,5 @@
 import {ChannelAssistant} from "../socketd/transport/core/ChannelAssistant";
-import { Frame } from "../socketd/transport/core/Message";
+import {Frame} from "../socketd/transport/core/Frame";
 import {Config} from "../socketd/transport/core/Config";
 import {ArrayBufferCodecWriter} from "./impl/ArrayBufferCodecWriter";
 import {ArrayBufferCodecReader} from "./impl/ArrayBufferCodecReader";

@@ -1,4 +1,4 @@
-import {Frame} from "./Message";
+import {Frame} from "./Frame";
 
 /**
  * 通道助理

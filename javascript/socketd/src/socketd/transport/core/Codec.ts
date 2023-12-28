@@ -1,10 +1,12 @@
 
 import {Asserts} from "./Asserts";
 import {Constants, Flags} from "./Constants";
-import {EntityDefault, Frame, MessageDefault} from "./Message";
+import {EntityDefault} from "./Entity";
+import {MessageBuilder} from "./Message";
 import {Config} from "./Config";
 import {IoFunction} from "./Types";
 import {StrUtils} from "../../utils/StrUtils";
+import {Frame} from "./Frame";
 
 
 
@@ -222,8 +224,12 @@ export class CodecByteBuffer implements Codec {
             }
 
             //先 data , 后 metaString (避免 data 时修改元信息)
-            let entity = new EntityDefault().dataSet(data).metaStringSet(metaString);
-            let message = new MessageDefault(Flags.of(flag), sid, event, entity);
+            let message = new MessageBuilder()
+                .flag(Flags.of(flag))
+                .sid(sid)
+                .event(event)
+                .entity(new EntityDefault().dataSet(data).metaStringSet(metaString))
+                .build();
 
             return new Frame(message.flag(), message);
         }

@@ -1,4 +1,5 @@
-import {MessageInternal, Reply} from "./Message";
+import {Reply} from "./Entity";
+import {MessageInternal} from "./Message";
 import {Channel} from "./Channel";
 import {IoConsumer} from "./Types";
 import {SocketdTimeoutException} from "../../exception/SocketdException";

@@ -1,5 +1,5 @@
 import {ClientSession} from "../transport/client/ClientSession";
-import { Entity, Reply } from "../transport/core/Message";
+import { Entity, Reply } from "../transport/core/Entity";
 import { Stream } from "../transport/core/Stream";
 import { IoConsumer } from "../transport/core/Types";
 import {StrUtils} from "../utils/StrUtils";

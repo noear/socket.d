@@ -1,5 +1,5 @@
 import { Channel, ChannelBase } from "../core/Channel";
-import { Frame } from "../core/Message";
+import { Frame } from "../core/Frame";
 import { Session } from "../core/Session";
 import { StreamInternal } from "../core/Stream";
 import { ClientConnector } from "./ClientConnector";

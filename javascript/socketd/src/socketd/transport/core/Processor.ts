@@ -1,6 +1,7 @@
 import {Listener, SimpleListener} from "./Listener";
 import {ChannelInternal} from "./Channel";
-import {Frame, Message} from "./Message";
+import {Message} from "./Message";
+import {Frame} from "./Frame";
 import {Constants, EntityMetas, Flags} from "./Constants";
 import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
 

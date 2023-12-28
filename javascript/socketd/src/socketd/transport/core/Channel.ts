@@ -1,7 +1,8 @@
 import {Session} from "./Session";
 import {Config} from "./Config";
 import {HandshakeInternal} from "./Handshake";
-import {Frame, Frames, Message} from "./Message";
+import {Message} from "./Message";
+import {Frame, Frames} from "./Frame";
 import {StreamInternal} from "./Stream";
 import {IoBiConsumer} from "./Types";
 

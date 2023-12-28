@@ -4,7 +4,8 @@ import {StreamInternal, StreamManger} from "./Stream";
 import {Session} from "./Session";
 import {ChannelSupporter} from "./ChannelSupporter";
 import {Config} from "./Config";
-import {Frame, Frames, MessageDefault} from "./Message";
+import {Frame, Frames} from "./Frame";
+import {MessageBuilder} from "./Message";
 import {EntityMetas, Flags} from "./Constants";
 import {ChannelBase, ChannelInternal} from "./Channel";
 import {SessionDefault} from "./SessionDefault";
@@ -88,11 +89,11 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
                         if (fragmentEntity != null) {
                             //主要是 sid 和 entity
-                            let fragmentFrame = new Frame(frame.flag(), new MessageDefault(
-                                frame.flag(),
-                                message.sid(),
-                                '',
-                                fragmentEntity));
+                            let fragmentFrame  = new Frame(frame.flag(), new MessageBuilder()
+                                .flag(frame.flag())
+                                .sid(message.sid())
+                                .entity(fragmentEntity)
+                                .build());
 
                             this._assistant.write(this._source, fragmentFrame);
                         } else {

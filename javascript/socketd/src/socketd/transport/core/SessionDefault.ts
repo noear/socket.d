@@ -1,7 +1,9 @@
 import {SessionBase} from "./Session";
 import {Channel} from "./Channel";
 import {Handshake} from "./Handshake";
-import {Entity, Frame, Message, MessageDefault, Reply} from "./Message";
+import {Entity, Reply} from "./Entity";
+import {Message, MessageBuilder} from "./Message";
+import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
 import {IoConsumer} from "./Types";
 import {Stream, StreamRequest, StreamSubscribe} from "./Stream";
@@ -86,7 +88,11 @@ export class SessionDefault extends SessionBase {
      * 发送
      */
     send(event: string, content: Entity) {
-        let message = new MessageDefault(Flags.Message, this.generateId(), event, content);
+        let message = new MessageBuilder()
+            .sid(this.generateId())
+            .event(event)
+            .entity(content)
+            .build();
 
         this._channel.send(new Frame(Flags.Message, message), null);
     }
@@ -102,7 +108,11 @@ export class SessionDefault extends SessionBase {
      */
     sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
         //异步，用 streamTimeout
-        let message = new MessageDefault(Flags.Request, this.generateId(), event, content);
+        let message = new MessageBuilder()
+            .sid(this.generateId())
+            .event(event)
+            .entity(content)
+            .build();
 
         let stream = new StreamRequest(message.sid(), timeout, consumer);
         this._channel.send(new Frame(Flags.Request, message), stream);
@@ -118,7 +128,12 @@ export class SessionDefault extends SessionBase {
      * @param timeout 超时
      */
     sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
-        let message = new MessageDefault(Flags.Subscribe, this.generateId(), event, content);
+        let message = new MessageBuilder()
+            .sid(this.generateId())
+            .event(event)
+            .entity(content)
+            .build();
+
         let stream = new StreamSubscribe(message.sid(), timeout, consumer);
         this._channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
@@ -131,7 +146,12 @@ export class SessionDefault extends SessionBase {
      * @param content 内容
      */
     reply(from: Message, content: Entity) {
-        let message = new MessageDefault(Flags.Reply, from.sid(), from.event(), content);
+        let message = new MessageBuilder()
+            .sid(from.sid())
+            .event(from.event())
+            .entity(content)
+            .build();
+
         this._channel.send(new Frame(Flags.Reply, message), null);
     }
 
@@ -142,7 +162,12 @@ export class SessionDefault extends SessionBase {
      * @param content 内容
      */
     replyEnd(from: Message, content: Entity) {
-        let message = new MessageDefault(Flags.ReplyEnd, from.sid(), from.event(), content);
+        let message = new MessageBuilder()
+            .sid(from.sid())
+            .event(from.event())
+            .entity(content)
+            .build();
+
         this._channel.send(new Frame(Flags.ReplyEnd, message), null);
     }
 

@@ -1,4 +1,5 @@
-import {Entity, Message, Reply} from "./Message";
+import {Entity, Reply} from "./Entity";
+import {Message} from "./Message";
 import {IoConsumer} from "./Types";
 import {Channel} from "./Channel";
 import {Stream} from "./Stream";

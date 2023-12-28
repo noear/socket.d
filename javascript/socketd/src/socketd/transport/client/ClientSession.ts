@@ -1,6 +1,6 @@
 import {IoConsumer} from "../core/Types";
 import {Stream} from "../core/Stream";
-import {Entity, Reply} from "../core/Message";
+import {Entity, Reply} from "../core/Entity";
 
 /**
  * 客户会话

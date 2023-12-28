@@ -4,12 +4,12 @@ let isOpen = false;
 let sd = null;
 
 async function open(callback) {
-    let schema =  document.getElementById("schema").value;
-    if (!schema) {
-        alert('schema不能为空!');
+    let serverUrl =  document.getElementById("serverUrl").value;
+    if (!serverUrl) {
+        alert('serverUrl不能为空!');
         return;
     }
-    let clientSession = await sd.SocketD.createClient(schema).open();
+    let clientSession = await sd.SocketD.createClient(serverUrl).open();
     console.log('session', clientSession);
     if (callback) callback();
 }

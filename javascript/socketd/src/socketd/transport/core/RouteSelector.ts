@@ -1,6 +1,3 @@
-import {Listener} from "./Listener";
-
-
 /**
  * 路径映射器
  *

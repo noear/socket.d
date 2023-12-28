@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.java_udp;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
@@ -29,7 +30,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements ChannelSupporter<DatagramTagert> {
     private static final Logger log = LoggerFactory.getLogger(UdpBioServer.class);
 
-    private Map<String, Channel> channelMap = new HashMap<>();
+    private Map<String, ChannelInternal> channelMap = new HashMap<>();
     private DatagramSocket server;
     private ExecutorService serverExecutor;
 
@@ -38,11 +39,11 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
     }
 
     private DatagramSocket createServer() throws IOException {
-        return new DatagramSocket(config().getPort());
+        return new DatagramSocket(getConfig().getPort());
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "udp/bio/java-udp/" + SocketD.version();
     }
 
@@ -54,12 +55,12 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
             isStarted = true;
         }
 
-        serverExecutor = Executors.newFixedThreadPool(config().getMaxThreads());
+        serverExecutor = Executors.newFixedThreadPool(getConfig().getMaxThreads());
         server = createServer();
 
         serverExecutor.submit(this::accept);
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }
@@ -70,17 +71,17 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
     private void accept() {
         while (true) {
             try {
-                DatagramFrame datagramFrame = assistant().read(server);
+                DatagramFrame datagramFrame = getAssistant().read(server);
                 if (datagramFrame == null) {
                     continue;
                 }
 
-                Channel channel = getChannel(datagramFrame);
+                ChannelInternal channel = getChannel(datagramFrame);
 
                 try {
                     serverExecutor.submit(() -> {
                         try {
-                            processor().onReceive(channel, datagramFrame.getFrame());
+                            getProcessor().onReceive(channel, datagramFrame.getFrame());
                         } catch (Throwable e) {
                             if (log.isWarnEnabled()) {
                                 log.warn("Server receive error", e);
@@ -103,9 +104,9 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
         }
     }
 
-    private Channel getChannel(DatagramFrame datagramFrame) {
+    private ChannelInternal getChannel(DatagramFrame datagramFrame) {
         String addressAndPort = datagramFrame.getPacketAddress();
-        Channel channel0 = channelMap.get(addressAndPort);
+        ChannelInternal channel0 = channelMap.get(addressAndPort);
 
         if (channel0 == null) {
             DatagramTagert tagert = new DatagramTagert(server, datagramFrame.getPacket(), false);

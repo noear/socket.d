@@ -21,7 +21,7 @@ public class FileEntity extends EntityDefault {
                 .getChannel()
                 .map(FileChannel.MapMode.READ_ONLY, 0, len);
 
-        data(byteBuffer);
-        meta(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
+        dataSet(byteBuffer);
+        metaPut(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
     }
 }

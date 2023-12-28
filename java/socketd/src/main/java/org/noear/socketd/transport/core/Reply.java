@@ -8,6 +8,11 @@ package org.noear.socketd.transport.core;
  */
 public interface Reply extends Entity {
     /**
+     * 流Id
+     */
+    String sid();
+
+    /**
      * 是否答复结束
      */
     boolean isEnd();

@@ -35,7 +35,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     /**
      * 获取通道助理
      */
-    public T assistant() {
+    public T getAssistant() {
         return assistant;
     }
 
@@ -43,7 +43,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 获取心跳处理
      */
     @Override
-    public HeartbeatHandler heartbeatHandler() {
+    public HeartbeatHandler getHeartbeatHandler() {
         return heartbeatHandler;
     }
 
@@ -51,7 +51,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 获取心跳间隔（毫秒）
      */
     @Override
-    public long heartbeatInterval() {
+    public long getHeartbeatInterval() {
         return config.getHeartbeatInterval();
     }
 
@@ -60,7 +60,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 获取配置
      */
     @Override
-    public ClientConfig config() {
+    public ClientConfig getConfig() {
         return config;
     }
 
@@ -68,7 +68,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 获取处理器
      */
     @Override
-    public Processor processor() {
+    public Processor getProcessor() {
         return processor;
     }
 
@@ -123,7 +123,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
         //原始通道切换为带壳的 session
         channel0.setSession(session);
 
-        log.info("Socket.D client successfully connected: {link={}}", config().getLinkUrl());
+        log.info("Socket.D client successfully connected: {link={}}", getConfig().getLinkUrl());
 
         return session;
     }

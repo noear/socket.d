@@ -24,7 +24,7 @@ public class SocketD {
      * 框架版本号
      */
     public static String version() {
-        return "2.1.16";
+        return "2.2.1-SNAPSHOT";
     }
 
     /**
@@ -34,9 +34,19 @@ public class SocketD {
         return "1.0";
     }
 
+    /**
+     * 客户端提供者
+     */
     static Map<String, ClientProvider> clientProviderMap;
+
+    /**
+     * 服务端提供者
+     */
     static Map<String, ServerProvider> serverProviderMap;
 
+    /**
+     * 加载 spi
+     * */
     static {
         clientProviderMap = new HashMap<>();
         serverProviderMap = new HashMap<>();

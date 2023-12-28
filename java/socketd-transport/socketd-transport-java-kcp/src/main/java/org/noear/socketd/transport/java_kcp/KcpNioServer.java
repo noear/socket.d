@@ -29,7 +29,7 @@ public class KcpNioServer extends ServerBase<KcpNioChannelAssistant> implements 
     private KcpServer server;
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "kcp/nio/java-kcp/" + SocketD.version();
     }
 
@@ -52,14 +52,14 @@ public class KcpNioServer extends ServerBase<KcpNioChannelAssistant> implements 
         channelConfig.setUseConvChannel(true);
         channelConfig.setCrc32Check(true);
 
-        if (config().getIdleTimeout() > 0) {
-            channelConfig.setTimeoutMillis(config().getIdleTimeout());
+        if (getConfig().getIdleTimeout() > 0) {
+            channelConfig.setTimeoutMillis(getConfig().getIdleTimeout());
         }
 
         server = new KcpServer();
-        server.init(new ServerKcpListener(this), channelConfig, config().getPort());
+        server.init(new ServerKcpListener(this), channelConfig, getConfig().getPort());
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }

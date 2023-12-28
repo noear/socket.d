@@ -1,6 +1,7 @@
 package labs;
 
 import features.cases.*;
+import org.junit.jupiter.api.Test;
 
 public class DebugTest {
 
@@ -17,9 +18,10 @@ public class DebugTest {
     /**
      * 用于调试
      */
-    public static void main(String[] args) throws Exception {
+    @Test
+    public void debug() throws Exception {
         String s1 = schemas[6];
-        BaseTestCase testCase = new TestCase01_client_send(s1, 2100);
+        BaseTestCase testCase = new TestCase11_autoReconnect(s1, 2100);
         try {
             testCase.start();
             testCase.stop();

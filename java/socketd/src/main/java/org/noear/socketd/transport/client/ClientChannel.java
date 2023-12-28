@@ -3,15 +3,14 @@ package org.noear.socketd.transport.client;
 import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.internal.ChannelBase;
 import org.noear.socketd.transport.core.internal.HeartbeatHandlerDefault;
-import org.noear.socketd.transport.core.StreamBase;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -36,7 +35,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         super(real.getConfig());
         this.connector = connector;
         this.real = real;
-        this.heartbeatHandler = connector.heartbeatHandler();
+        this.heartbeatHandler = connector.getHeartbeatHandler();
 
         if (heartbeatHandler == null) {
             heartbeatHandler = new HeartbeatHandlerDefault();
@@ -62,7 +61,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                         log.warn("Client channel heartbeat error", e);
                     }
                 }
-            }, connector.heartbeatInterval());
+            }, connector.getHeartbeatInterval());
         }
     }
 
@@ -156,7 +155,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      * @param stream 流（没有则为 null）
      */
     @Override
-    public void send(Frame frame, StreamBase stream) throws IOException {
+    public void send(Frame frame, StreamInternal stream) throws IOException {
         Asserts.assertClosedByUser(real);
 
         try {
@@ -192,12 +191,9 @@ public class ClientChannel extends ChannelBase implements Channel {
         return real.getSession();
     }
 
-    @Override
-    public CompletableFuture<Boolean> onOpenFuture() {
-        return real.onOpenFuture();
-    }
-
-
+    /**
+     * 重新连接
+     * */
     @Override
     public void reconnect() throws IOException {
         initHeartbeat();
@@ -205,6 +201,9 @@ public class ClientChannel extends ChannelBase implements Channel {
         prepareCheck();
     }
 
+    /**
+     * 出错时
+     * */
     @Override
     public void onError(Throwable error) {
         real.onError(error);
@@ -222,7 +221,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
 
     /**
-     * 预备检
+     * 预备检测
      *
      * @return 是否为新链接
      */

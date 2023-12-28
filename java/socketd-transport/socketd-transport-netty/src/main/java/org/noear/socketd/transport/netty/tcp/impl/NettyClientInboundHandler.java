@@ -7,7 +7,6 @@ import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.tcp.TcpNioClient;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
@@ -41,7 +40,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
         ctx.attr(CHANNEL_KEY).set(channel);
 
         //开始握手
-        channel.sendConnect(client.config().getUrl());
+        channel.sendConnect(client.getConfig().getUrl());
     }
 
     @Override
@@ -49,13 +48,13 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
         ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
 
         try {
-            if (frame.getFlag() == Flags.Connack) {
-                channel.onOpenFuture().whenComplete((r, e) -> {
+            if (frame.flag() == Flags.Connack) {
+                channel.onOpenFuture((r, e) -> {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 });
             }
 
-            client.processor().onReceive(channel, frame);
+            client.getProcessor().onReceive(channel, frame);
         } catch (SocketdConnectionException e) {
             //说明握手失败了
             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
@@ -66,14 +65,14 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
 
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
-        client.processor().onClose(channel);
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
+        client.getProcessor().onClose(channel);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
-        client.processor().onError(channel, cause);
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
+        client.getProcessor().onError(channel, cause);
         ctx.close();
     }
 }

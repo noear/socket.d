@@ -55,7 +55,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         try {
-            channel.sendConnect(client.config().getUrl());
+            channel.sendConnect(client.getConfig().getUrl());
         } catch (Throwable e) {
             if (log.isWarnEnabled()) {
                 log.warn("Client channel sendConnect error", e);
@@ -74,11 +74,11 @@ public class WebSocketClientImpl extends WebSocketClient {
     @Override
     public void onMessage(ByteBuffer bytes) {
         try {
-            Frame frame = client.assistant().read(bytes);
+            Frame frame = client.getAssistant().read(bytes);
 
             if (frame != null) {
-                if (frame.getFlag() == Flags.Connack) {
-                    channel.onOpenFuture().whenComplete((r, e) -> {
+                if (frame.flag() == Flags.Connack) {
+                    channel.onOpenFuture((r, e) -> {
                         if (e == null) {
                             handshakeFuture.complete(new ClientHandshakeResult(channel, null));
                         } else {
@@ -87,7 +87,7 @@ public class WebSocketClientImpl extends WebSocketClient {
                     });
                 }
 
-                client.processor().onReceive(channel, frame);
+                client.getProcessor().onReceive(channel, frame);
             }
         } catch (Exception e) {
             if (e instanceof SocketdConnectionException) {
@@ -104,11 +104,11 @@ public class WebSocketClientImpl extends WebSocketClient {
 
     @Override
     public void onClose(int i, String s, boolean b) {
-        client.processor().onClose(channel);
+        client.getProcessor().onClose(channel);
     }
 
     @Override
     public void onError(Exception e) {
-        client.processor().onError(channel, e);
+        client.getProcessor().onError(channel, e);
     }
 }

@@ -6,7 +6,7 @@ import org.noear.socketd.transport.client.ClientConfigHandler;
 import org.noear.socketd.transport.client.ClientInternal;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class ClusterClient implements Client {
         for (String urls : serverUrls) {
             for (String url : urls.split(",")) {
                 url = url.trim();
-                if (Utils.isEmpty(url)) {
+                if (StrUtils.isEmpty(url)) {
                     continue;
                 }
 
@@ -84,9 +84,9 @@ public class ClusterClient implements Client {
 
                 //复用通道执行器（省点线程数）
                 if (channelExecutor == null) {
-                    channelExecutor = client.config().getChannelExecutor();
+                    channelExecutor = client.getConfig().getChannelExecutor();
                 } else {
-                    client.config().channelExecutor(channelExecutor);
+                    client.getConfig().channelExecutor(channelExecutor);
                 }
 
                 sessionList.add(client.open());

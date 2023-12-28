@@ -2,7 +2,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdSizeLimitException;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 /**
  * 断言
@@ -42,7 +42,7 @@ public class Asserts {
      * 断言 empty
      */
     public static void assertEmpty(String name, String val) {
-        if (Utils.isEmpty(val)) {
+        if (StrUtils.isEmpty(val)) {
             throw new IllegalArgumentException("The argument cannot be empty: " + name);
         }
     }

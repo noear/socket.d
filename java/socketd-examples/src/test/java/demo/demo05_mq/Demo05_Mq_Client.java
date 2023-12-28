@@ -5,11 +5,11 @@ import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
+import org.noear.socketd.utils.StrUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 public class Demo05_Mq_Client {
@@ -46,7 +46,7 @@ public class Demo05_Mq_Client {
             clientSession = SocketD.createClient("sd:udp://" + server + ":" + port)
                     .config(c -> c.heartbeatInterval(5)) //心跳频率调高，确保不断连
                     .listen(new EventListener()
-                            .on("mq.broadcast", (s, m) -> {
+                            .doOn("mq.broadcast", (s, m) -> {
                                 String topic = m.meta("topic");
                                 Consumer<String> listener = listenerMap.get(topic);
                                 if (listener != null) {
@@ -63,7 +63,7 @@ public class Demo05_Mq_Client {
         public void subscribe(String topic, Consumer<String> listener) throws IOException {
             listenerMap.put(topic, listener);
             //Qos0
-            clientSession.send("mq.sub", new StringEntity("").meta("topic", topic));
+            clientSession.send("mq.sub", new StringEntity("").metaPut("topic", topic));
         }
 
         /**
@@ -71,8 +71,8 @@ public class Demo05_Mq_Client {
          */
         public void publish(String topic, String message) throws IOException {
             Entity entity = new StringEntity(message)
-                    .meta("topic", topic)
-                    .meta("id", UUID.randomUUID().toString());
+                    .metaPut("topic", topic)
+                    .metaPut("id", StrUtils.guid());
 
             //Qos0
             clientSession.send("mq.push", entity);

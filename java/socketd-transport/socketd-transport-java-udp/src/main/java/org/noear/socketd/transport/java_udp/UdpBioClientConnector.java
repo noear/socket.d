@@ -39,7 +39,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         //不要复用旧的对象
         real = new DatagramSocket();
 
-        SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
+        SocketAddress socketAddress = new InetSocketAddress(client.getConfig().getHost(), client.getConfig().getPort());
         real.connect(socketAddress);
 
         DatagramTagert tagert = new DatagramTagert(real, null, true);
@@ -59,10 +59,10 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
 
         try {
             //开始发连接包
-            channel.sendConnect(client.config().getUrl());
+            channel.sendConnect(client.getConfig().getUrl());
 
             //等待握手结果
-            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getThrowable() != null) {
                 throw handshakeResult.getThrowable();
@@ -71,7 +71,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 
@@ -87,19 +87,19 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         while (!clientThread.isInterrupted()) {
             try {
                 if (socket.isClosed()) {
-                    client.processor().onClose(channel);
+                    client.getProcessor().onClose(channel);
                     break;
                 }
 
-                DatagramFrame frame = client.assistant().read(socket);
+                DatagramFrame frame = client.getAssistant().read(socket);
                 if (frame != null) {
-                    if (frame.getFrame().getFlag() == Flags.Connack) {
-                        channel.onOpenFuture().whenComplete((r, e) -> {
+                    if (frame.getFrame().flag() == Flags.Connack) {
+                        channel.onOpenFuture((r, e) -> {
                             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                         });
                     }
 
-                    client.processor().onReceive(channel, frame.getFrame());
+                    client.getProcessor().onReceive(channel, frame.getFrame());
                 }
 
             } catch (Exception e) {
@@ -109,7 +109,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                     break;
                 }
 
-                client.processor().onError(channel, e);
+                client.getProcessor().onError(channel, e);
 
                 if (e instanceof SocketException) {
                     break;

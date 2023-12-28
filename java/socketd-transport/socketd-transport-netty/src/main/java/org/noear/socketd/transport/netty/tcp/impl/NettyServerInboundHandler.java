@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.tcp.TcpNioServer;
 import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
@@ -15,7 +16,7 @@ import org.noear.socketd.transport.core.internal.ChannelDefault;
  */
 @ChannelHandler.Sharable
 public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Frame> {
-    private static AttributeKey<Channel> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
+    private static AttributeKey<ChannelInternal> CHANNEL_KEY = AttributeKey.valueOf("CHANNEL_KEY");
 
     private final TcpNioServer server;
 
@@ -27,28 +28,28 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Frame
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
 
-        Channel channel = new ChannelDefault<>(ctx.channel(), server);
+        ChannelInternal channel = new ChannelDefault<>(ctx.channel(), server);
         ctx.attr(CHANNEL_KEY).set(channel);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Frame frame) throws Exception {
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
-        server.processor().onReceive(channel, frame);
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
+        server.getProcessor().onReceive(channel, frame);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
 
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
-        server.processor().onClose(channel);
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
+        server.getProcessor().onClose(channel);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        Channel channel = ctx.attr(CHANNEL_KEY).get();
-        server.processor().onError(channel, cause);
+        ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
+        server.getProcessor().onError(channel, cause);
 
         ctx.close();
     }

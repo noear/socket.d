@@ -8,7 +8,7 @@ import org.noear.socketd.transport.java_websocket.impl.WebSocketServerImpl;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "ws/nio/java-websocket 1.5/v" + SocketD.version();
     }
 
@@ -41,20 +41,20 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
             isStarted = true;
         }
 
-        if (Utils.isEmpty(config().getHost())) {
-            server = new WebSocketServerImpl(config().getPort(), this);
+        if (StrUtils.isEmpty(getConfig().getHost())) {
+            server = new WebSocketServerImpl(getConfig().getPort(), this);
         } else {
-            server = new WebSocketServerImpl(config().getHost(), config().getPort(), this);
+            server = new WebSocketServerImpl(getConfig().getHost(), getConfig().getPort(), this);
         }
 
         //支持 ssl
-        if (config().getSslContext() != null) {
-            server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(config().getSslContext()));
+        if (getConfig().getSslContext() != null) {
+            server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(getConfig().getSslContext()));
         }
 
         server.start();
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }

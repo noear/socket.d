@@ -18,7 +18,7 @@ public class Demo {
     public void server() throws Exception {
         //演服务端，要带 @
         SocketD.createClient("sd:tcp://127.0.0.1:5001?@=demoapp")
-                .listen(new EventListener().on("hello", (s, m) -> {
+                .listen(new EventListener().doOn("hello", (s, m) -> {
                     System.out.println(m);
                 }))
                 .open();
@@ -36,7 +36,7 @@ public class Demo {
     public void serverAndClient() throws Exception {
         //演服务端，要带 @
         ClientSession session  = SocketD.createClient("sd:tcp://127.0.0.1:5001?@=demoapp")
-                .listen(new EventListener().on("hello", (s, m) -> {
+                .listen(new EventListener().doOn("hello", (s, m) -> {
                     System.out.println(m);
                 }))
                 .open();

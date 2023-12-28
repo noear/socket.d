@@ -26,7 +26,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     /**
      * 获取通道助理
      */
-    public T assistant() {
+    public T getAssistant() {
         return assistant;
     }
 
@@ -34,7 +34,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
      * 获取配置
      */
     @Override
-    public ServerConfig config() {
+    public ServerConfig getConfig() {
         return config;
     }
 
@@ -52,7 +52,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server {
     /**
      * 获取处理器
      */
-    public Processor processor() {
+    public Processor getProcessor() {
         return processor;
     }
 

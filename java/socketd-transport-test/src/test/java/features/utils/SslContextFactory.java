@@ -1,6 +1,6 @@
 package features.utils;
 
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -18,7 +18,7 @@ public class SslContextFactory {
     }
 
     public static SSLContext create(String keyStoreName, String keyStoreType, String keyStorePassword) throws IOException {
-        if (Utils.isEmpty(keyStoreType)) {
+        if (StrUtils.isEmpty(keyStoreType)) {
             keyStoreType = "jks";
         }
 
@@ -41,7 +41,7 @@ public class SslContextFactory {
     private static KeyStore loadKeyStore(final String location, String type, String storePassword)
             throws IOException {
 
-        URL KeyStoreUrl = Utils.class.getResource(location);
+        URL KeyStoreUrl = StrUtils.class.getResource(location);
 
         if (KeyStoreUrl == null) {
             throw new IllegalStateException("The keyStore file does not exist: " + location);

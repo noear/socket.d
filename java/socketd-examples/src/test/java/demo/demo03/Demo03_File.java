@@ -46,7 +46,7 @@ public class Demo03_File {
                 .open();
 
         //发送 + 元信息
-        clientSession.send("/demo", new StringEntity("{user:'noear'}").meta("Trace-Id", UUID.randomUUID().toString()));
+        clientSession.send("/demo", new StringEntity("{user:'noear'}").metaPut("Trace-Id", UUID.randomUUID().toString()));
         //发送文件
         clientSession.send("/demo2", new FileEntity(new File("/Users/noear/Downloads/socketd-upload.mov")));
     }

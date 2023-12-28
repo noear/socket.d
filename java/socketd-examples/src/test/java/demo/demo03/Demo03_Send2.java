@@ -43,7 +43,7 @@ public class Demo03_Send2 {
 
                         //加个附件计数
                         Integer count = session.attrOrDefault("count", 0);
-                        session.attr("count", ++count);
+                        session.attrPut("count", ++count);
 
                         if (count > 5) {
                             //超过5次后，不玩了

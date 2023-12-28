@@ -7,7 +7,7 @@ import org.noear.socketd.transport.core.Reply;
 import org.noear.socketd.transport.core.Stream;
 import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,7 +30,7 @@ public class ClusterClientSession implements ClientSession {
 
     public ClusterClientSession(List<ClientSession> sessions) {
         this.sessionSet = sessions;
-        this.sessionId = Utils.guid();
+        this.sessionId = StrUtils.guid();
         this.sessionRoundCounter = new AtomicInteger(0);
     }
 
@@ -72,7 +72,7 @@ public class ClusterClientSession implements ClientSession {
             if (counter > 999_999_999) {
                 sessionRoundCounter.set(0);
             }
-            return sessionSet.get(idx);
+            return sessions.get(idx);
         }
     }
 

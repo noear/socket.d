@@ -1,4 +1,14 @@
 
+### 2.2.1
+* 调整 BufferReader 更名为 CodecReader
+* 调整 BufferWriter 更名为 CodecWriter
+
+### 2.2.0
+* 调整 部分接口方法名，方便跨语言迁移开发!!!
+* 修复 ClusterClientSession::getSessionOne 轮询目标错误的问题
+* 调整部分方法命名，方便跨语言开发
+
+
 ### 2.1.16
 * 调整 固定 Codec 类型定义（没必要泛型）
 * 调整 禁止 Codec 被外部修改（毕竟是内核）

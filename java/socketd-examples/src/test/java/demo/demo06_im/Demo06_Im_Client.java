@@ -46,8 +46,8 @@ public class Demo06_Im_Client {
                 }
 
                 clientSession.send("cmd.chat", new StringEntity(msg)
-                        .meta("room", room)
-                        .meta("sender", user));
+                        .metaPut("room", room)
+                        .metaPut("sender", user));
             }
         }
     }
@@ -66,7 +66,7 @@ public class Demo06_Im_Client {
             }
 
             //加入聊天室
-            clientSession.send("cmd.join", new StringEntity("").meta("room", room));
+            clientSession.send("cmd.join", new StringEntity("").metaPut("room", room));
         }
     }
 
@@ -91,9 +91,9 @@ public class Demo06_Im_Client {
 
         if (token == null) {
             //进入用户频道
-            clientSession = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new EventListener().onMessage((s, m) -> {
+            clientSession = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new EventListener().doOnMessage((s, m) -> {
                 System.err.println("聊到室：" + m.dataAsString());
-            }).on("cmd.t", (s,m)->{
+            }).doOn("cmd.t", (s, m)->{
                 //把房间置空
                 room = null;
             })).open();
@@ -124,8 +124,8 @@ public class Demo06_Im_Client {
             }
 
             clientSession.send("cmd.t", new StringEntity("")
-                    .meta("room", "当前聊天室")
-                    .meta("u", id));
+                    .metaPut("room", "当前聊天室")
+                    .metaPut("u", id));
 
             System.err.println("用户已下线:" + id);
         }

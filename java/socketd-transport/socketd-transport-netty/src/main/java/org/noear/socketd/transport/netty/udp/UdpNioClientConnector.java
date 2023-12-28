@@ -51,13 +51,13 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
                     .channel(NioDatagramChannel.class)
                     //.option(ChannelOption.SO_BROADCAST,true)
                     .handler(inboundHandler)
-                    .connect(client.config().getHost(),
-                            client.config().getPort())
+                    .connect(client.getConfig().getHost(),
+                            client.getConfig().getPort())
                     .await();
 
 
             //等待握手结果
-            ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getThrowable() != null) {
                 throw handshakeResult.getThrowable();
@@ -66,7 +66,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdTimeoutException("Connection timeout: " + client.config().getLinkUrl());
+            throw new SocketdTimeoutException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 

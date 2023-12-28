@@ -13,43 +13,16 @@ import java.util.Map;
  * @since 2.0
  */
 public class MessageDefault implements MessageInternal {
-    private String sid = Constants.DEF_SID;
-    private String event = Constants.DEF_EVENT;
-    private Entity entity = null;
+    private final int flag ;
+    private final String sid ;
+    private final String event ;
+    private final Entity entity;
 
-    private int flag = Flags.Unknown;
-
-    /**
-     * 设置标记
-     */
-    public MessageDefault flag(int flag) {
+    public MessageDefault(int flag, String sid, String event, Entity entity ) {
         this.flag = flag;
-        return this;
-    }
-
-    /**
-     * 设置流id
-     */
-    public MessageDefault sid(String sid) {
         this.sid = sid;
-        return this;
-    }
-
-    /**
-     * 设置事件
-     */
-    public MessageDefault event(String event) {
         this.event = event;
-        return this;
-    }
-
-    /**
-     * 设置实体
-     */
-    public MessageDefault entity(Entity entity) {
         this.entity = entity;
-
-        return this;
     }
 
     /**
@@ -135,6 +108,11 @@ public class MessageDefault implements MessageInternal {
     @Override
     public String metaOrDefault(String name, String def) {
         return entity.metaOrDefault(name, def);
+    }
+
+    @Override
+    public void putMeta(String name, String val) {
+        entity.putMeta(name, val);
     }
 
     @Override

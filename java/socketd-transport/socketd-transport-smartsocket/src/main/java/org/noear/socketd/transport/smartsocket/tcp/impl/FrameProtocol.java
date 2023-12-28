@@ -2,7 +2,7 @@ package org.noear.socketd.transport.smartsocket.tcp.impl;
 
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.buffer.ByteBufferReader;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
 import org.smartboot.socket.Protocol;
 import org.smartboot.socket.extension.decoder.FixedLengthFrameDecoder;
 import org.smartboot.socket.transport.AioSession;
@@ -46,6 +46,6 @@ public class FrameProtocol implements Protocol<Frame> {
             buffer = decoder.getBuffer();
         }
 
-        return channelSupporter.config().getCodec().read(new ByteBufferReader(buffer));
+        return channelSupporter.getConfig().getCodec().read(new ByteBufferCodecReader(buffer));
     }
 }

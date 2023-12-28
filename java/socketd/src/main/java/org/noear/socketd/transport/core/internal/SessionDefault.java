@@ -127,7 +127,11 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void send(String event, Entity content) throws IOException {
-        MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
+        MessageInternal message = new MessageBuilder()
+                .sid(generateId())
+                .event(event)
+                .entity(content)
+                .build();
 
         channel.send(new Frame(Flags.Message, message), null);
     }
@@ -145,11 +149,15 @@ public class SessionDefault extends SessionBase {
             timeout = channel.getConfig().getRequestTimeout();
         }
 
-        MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
+        MessageInternal message = new MessageBuilder()
+                .sid(generateId())
+                .event(event)
+                .entity(content)
+                .build();
 
         try {
             CompletableFuture<Reply> future = new CompletableFuture<>();
-            StreamBase stream = new StreamRequest(message.sid(), timeout, future);
+            StreamInternal stream = new StreamRequest(message.sid(), timeout, future);
             channel.send(new Frame(Flags.Request, message), stream);
 
             try {
@@ -184,7 +192,12 @@ public class SessionDefault extends SessionBase {
     @Override
     public Stream sendAndRequest(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
         //异步，用 streamTimeout
-        MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
+        MessageInternal message = new MessageBuilder()
+                .sid(generateId())
+                .event(event)
+                .entity(content)
+                .build();
+
         CompletableFuture<Reply> future = new CompletableFuture<>();
         future.thenAccept((r) -> {
             try {
@@ -193,7 +206,7 @@ public class SessionDefault extends SessionBase {
                 channel.onError(eh);
             }
         });
-        StreamBase stream = new StreamRequest(message.sid(), timeout, future);
+        StreamInternal stream = new StreamRequest(message.sid(), timeout, future);
         channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -208,8 +221,13 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
-        MessageInternal message = new MessageDefault().sid(generateId()).event(event).entity(content);
-        StreamBase stream = new StreamSubscribe(message.sid(), timeout, consumer);
+        MessageInternal message = new MessageBuilder()
+                .sid(generateId())
+                .event(event)
+                .entity(content)
+                .build();
+
+        StreamInternal stream = new StreamSubscribe(message.sid(), timeout, consumer);
         channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }
@@ -222,7 +240,13 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void reply(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flags.Reply, new MessageDefault().sid(from.sid()).event(from.event()).entity(content)), null);
+        MessageInternal message = new MessageBuilder()
+                .sid(from.sid())
+                .event(from.event())
+                .entity(content)
+                .build();
+
+        channel.send(new Frame(Flags.Reply, message), null);
     }
 
     /**
@@ -233,7 +257,13 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void replyEnd(Message from, Entity content) throws IOException {
-        channel.send(new Frame(Flags.ReplyEnd, new MessageDefault().sid(from.sid()).event(from.event()).entity(content)), null);
+        MessageInternal message = new MessageBuilder()
+                .sid(from.sid())
+                .event(from.event())
+                .entity(content)
+                .build();
+
+        channel.send(new Frame(Flags.ReplyEnd, message), null);
     }
 
     /**

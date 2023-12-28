@@ -19,35 +19,35 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public class EventListener implements Listener {
-    private IoConsumer<Session> onOpenHandler;
-    private IoBiConsumer<Session, Message> onMessageHandler;
-    private Consumer<Session> onCloseHandler;
-    private BiConsumer<Session, Throwable> onErrorHandler;
-    private Map<String, IoBiConsumer<Session, Message>> onMessageRouting = new ConcurrentHashMap<>();
+    private IoConsumer<Session> doOnOpenHandler;
+    private IoBiConsumer<Session, Message> doOnMessageHandler;
+    private Consumer<Session> doOnCloseHandler;
+    private BiConsumer<Session, Throwable> doOnErrorHandler;
+    private Map<String, IoBiConsumer<Session, Message>> doOnMessageRouting = new ConcurrentHashMap<>();
 
     //for builder
-    public EventListener onOpen(IoConsumer<Session> onOpen) {
-        this.onOpenHandler = onOpen;
+    public EventListener doOnOpen(IoConsumer<Session> onOpen) {
+        this.doOnOpenHandler = onOpen;
         return this;
     }
 
-    public EventListener onMessage(IoBiConsumer<Session, Message> onMessage) {
-        this.onMessageHandler = onMessage;
+    public EventListener doOnMessage(IoBiConsumer<Session, Message> onMessage) {
+        this.doOnMessageHandler = onMessage;
         return this;
     }
 
-    public EventListener onClose(Consumer<Session> onClose) {
-        this.onCloseHandler = onClose;
+    public EventListener doOnClose(Consumer<Session> onClose) {
+        this.doOnCloseHandler = onClose;
         return this;
     }
 
-    public EventListener onError(BiConsumer<Session, Throwable> onError) {
-        this.onErrorHandler = onError;
+    public EventListener doOnError(BiConsumer<Session, Throwable> onError) {
+        this.doOnErrorHandler = onError;
         return this;
     }
 
-    public EventListener on(String event, IoBiConsumer<Session, Message> handler) {
-        onMessageRouting.put(event, handler);
+    public EventListener doOn(String event, IoBiConsumer<Session, Message> handler) {
+        doOnMessageRouting.put(event, handler);
         return this;
     }
 
@@ -56,18 +56,18 @@ public class EventListener implements Listener {
 
     @Override
     public void onOpen(Session session) throws IOException {
-        if (onOpenHandler != null) {
-            onOpenHandler.accept(session);
+        if (doOnOpenHandler != null) {
+            doOnOpenHandler.accept(session);
         }
     }
 
     @Override
     public void onMessage(Session session, Message message) throws IOException {
-        if (onMessageHandler != null) {
-            onMessageHandler.accept(session, message);
+        if (doOnMessageHandler != null) {
+            doOnMessageHandler.accept(session, message);
         }
 
-        IoBiConsumer<Session, Message> messageHandler = onMessageRouting.get(message.event());
+        IoBiConsumer<Session, Message> messageHandler = doOnMessageRouting.get(message.event());
         if (messageHandler != null) {
             messageHandler.accept(session, message);
         }
@@ -75,15 +75,15 @@ public class EventListener implements Listener {
 
     @Override
     public void onClose(Session session) {
-        if (onCloseHandler != null) {
-            onCloseHandler.accept(session);
+        if (doOnCloseHandler != null) {
+            doOnCloseHandler.accept(session);
         }
     }
 
     @Override
     public void onError(Session session, Throwable error) {
-        if (onErrorHandler != null) {
-            onErrorHandler.accept(session, error);
+        if (doOnErrorHandler != null) {
+            doOnErrorHandler.accept(session, error);
         }
     }
 }

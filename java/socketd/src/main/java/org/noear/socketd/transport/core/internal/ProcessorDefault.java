@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * 处理器默认实现
+ * 协议处理器默认实现
  *
  * @author noear
  * @since 2.0
@@ -33,7 +33,7 @@ public class ProcessorDefault implements Processor {
     /**
      * 接收处理
      */
-    public void onReceive(Channel channel, Frame frame)  {
+    public void onReceive(ChannelInternal channel, Frame frame)  {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
                 log.debug("C-REV:{}", frame);
@@ -42,19 +42,19 @@ public class ProcessorDefault implements Processor {
             }
         }
 
-        if (frame.getFlag() == Flags.Connect) {
+        if (frame.flag() == Flags.Connect) {
             //if server
-            HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
+            HandshakeDefault handshake = new HandshakeDefault(frame.message());
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
-            channel.onOpenFuture().whenComplete((r,e)-> {
+            channel.onOpenFuture((r,e)-> {
                 if (e == null) {
                     //如果无异常
                     if (channel.isValid()) {
                         //如果还有效，则发送链接确认
                         try {
-                            channel.sendConnack(frame.getMessage()); //->Connack
+                            channel.sendConnack(frame.message()); //->Connack
                         } catch (Throwable err) {
                             onError(channel, err);
                         }
@@ -69,9 +69,9 @@ public class ProcessorDefault implements Processor {
                 }
             });
             onOpen(channel);
-        } else if (frame.getFlag() == Flags.Connack) {
+        } else if (frame.flag() == Flags.Connack) {
             //if client
-            HandshakeDefault handshake = new HandshakeDefault(frame.getMessage());
+            HandshakeDefault handshake = new HandshakeDefault(frame.message());
             channel.setHandshake(handshake);
 
             onOpen(channel);
@@ -79,7 +79,7 @@ public class ProcessorDefault implements Processor {
             if (channel.getHandshake() == null) {
                 channel.close(Constants.CLOSE1_PROTOCOL);
 
-                if(frame.getFlag() == Flags.Close){
+                if(frame.flag() == Flags.Close){
                     //说明握手失败了
                     throw new SocketdConnectionException("Connection request was rejected");
                 }
@@ -93,7 +93,7 @@ public class ProcessorDefault implements Processor {
             }
 
             try {
-                switch (frame.getFlag()) {
+                switch (frame.flag()) {
                     case Flags.Ping: {
                         channel.sendPong();
                         break;
@@ -109,12 +109,12 @@ public class ProcessorDefault implements Processor {
                     }
                     case Flags.Alarm: {
                         //结束流，并异常通知
-                        SocketdAlarmException exception = new SocketdAlarmException(frame.getMessage());
-                        StreamInternal stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
+                        SocketdAlarmException exception = new SocketdAlarmException(frame.message());
+                        StreamInternal stream = channel.getConfig().getStreamManger().getStream(frame.message().sid());
                         if (stream == null) {
                             onError(channel, exception);
                         } else {
-                            channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
+                            channel.getConfig().getStreamManger().removeStream(frame.message().sid());
                             stream.onError(exception);
                         }
                         break;
@@ -141,15 +141,15 @@ public class ProcessorDefault implements Processor {
         }
     }
 
-    private void onReceiveDo(Channel channel, Frame frame, boolean isReply) throws IOException {
+    private void onReceiveDo(ChannelInternal channel, Frame frame, boolean isReply) throws IOException {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
-            String fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            String fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
                 int index = Integer.parseInt(fragmentIdxStr);
-                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.message());
 
                 if (frameNew == null) {
                     return;
@@ -163,7 +163,7 @@ public class ProcessorDefault implements Processor {
         if (isReply) {
             channel.retrieve(frame);
         } else {
-            onMessage(channel, frame.getMessage());
+            onMessage(channel, frame.message());
         }
     }
 
@@ -174,17 +174,17 @@ public class ProcessorDefault implements Processor {
      * @param channel 通道
      */
     @Override
-    public void onOpen(Channel channel) {
+    public void onOpen(ChannelInternal channel) {
         channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onOpen(channel.getSession());
-                channel.onOpenFuture().complete(true);
+                channel.doOpenFuture(true, null);
             } catch (Throwable e) {
                 if (log.isWarnEnabled()) {
                     log.warn("{} channel listener onOpen error",
                             channel.getConfig().getRoleName(), e);
                 }
-                channel.onOpenFuture().completeExceptionally(e);
+                channel.doOpenFuture(false, e);
             }
         });
     }
@@ -196,7 +196,7 @@ public class ProcessorDefault implements Processor {
      * @param message 消息
      */
     @Override
-    public void onMessage(Channel channel, Message message) {
+    public void onMessage(ChannelInternal channel, Message message) {
         channel.getConfig().getChannelExecutor().submit(() -> {
             try {
                 listener.onMessage(channel.getSession(), message);
@@ -216,7 +216,7 @@ public class ProcessorDefault implements Processor {
      * @param channel 通道
      */
     @Override
-    public void onClose(Channel channel) {
+    public void onClose(ChannelInternal channel) {
         if (channel.isClosed() == 0) {
             onCloseInternal(channel);
         }
@@ -227,7 +227,7 @@ public class ProcessorDefault implements Processor {
      *
      * @param channel 通道
      */
-    private void onCloseInternal(Channel channel){
+    private void onCloseInternal(ChannelInternal channel){
         listener.onClose(channel.getSession());
     }
 
@@ -238,7 +238,7 @@ public class ProcessorDefault implements Processor {
      * @param error   错误信息
      */
     @Override
-    public void onError(Channel channel, Throwable error) {
+    public void onError(ChannelInternal channel, Throwable error) {
         listener.onError(channel.getSession(), error);
     }
 }

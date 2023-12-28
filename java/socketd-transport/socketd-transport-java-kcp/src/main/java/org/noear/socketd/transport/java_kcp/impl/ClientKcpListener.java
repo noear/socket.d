@@ -4,11 +4,10 @@ import io.netty.buffer.ByteBuf;
 import kcp.KcpListener;
 import kcp.Ukcp;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.buffer.BufferReader;
+import org.noear.socketd.transport.core.CodecReader;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.transport.java_kcp.KcpNioClient;
 
@@ -37,7 +36,7 @@ public class ClientKcpListener implements KcpListener {
 
         //开始握手
         try {
-            channel.sendConnect(client.config().getUrl());
+            channel.sendConnect(client.getConfig().getUrl());
         } catch (Throwable e) {
             channel.onError(e);
         }
@@ -45,8 +44,8 @@ public class ClientKcpListener implements KcpListener {
 
     @Override
     public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
-        BufferReader reader = new NettyBufferReader(byteBuf);
-        Frame frame = client.config().getCodec().read(reader);
+        CodecReader reader = new NettyBufferCodecReader(byteBuf);
+        Frame frame = client.getConfig().getCodec().read(reader);
         if (frame == null) {
             return;
         }
@@ -54,15 +53,15 @@ public class ClientKcpListener implements KcpListener {
         ChannelInternal channel = ukcp.user().getCache();
 
         try {
-            if (frame.getFlag() == Flags.Connack) {
-                channel.onOpenFuture().whenComplete((r, e) -> {
+            if (frame.flag() == Flags.Connack) {
+                channel.onOpenFuture((r, e) -> {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 });
             }
 
-            client.processor().onReceive(channel, frame);
+            client.getProcessor().onReceive(channel, frame);
         } catch (Throwable e) {
-            client.processor().onError(channel, e);
+            client.getProcessor().onError(channel, e);
 
             //说明握手失败了
             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
@@ -72,12 +71,12 @@ public class ClientKcpListener implements KcpListener {
     @Override
     public void handleException(Throwable throwable, Ukcp ukcp) {
         ChannelInternal channel = ukcp.user().getCache();
-        client.processor().onError(channel, throwable);
+        client.getProcessor().onError(channel, throwable);
     }
 
     @Override
     public void handleClose(Ukcp ukcp) {
         ChannelInternal channel = ukcp.user().getCache();
-        client.processor().onClose(channel);
+        client.getProcessor().onClose(channel);
     }
 }

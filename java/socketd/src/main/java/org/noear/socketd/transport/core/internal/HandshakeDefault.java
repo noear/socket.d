@@ -1,14 +1,14 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 握手信息内部实现类
+ * 握手信息默认实现
  *
  * @author noear
  * @since 2.0
@@ -33,7 +33,7 @@ public class HandshakeDefault implements HandshakeInternal {
         this.paramMap = new ConcurrentHashMap<>();
 
         String queryString = uri.getQuery();
-        if (Utils.isNotEmpty(queryString)) {
+        if (StrUtils.isNotEmpty(queryString)) {
             for (String kvStr : queryString.split("&")) {
                 int idx = kvStr.indexOf('=');
                 if (idx > 0) {

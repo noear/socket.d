@@ -2,79 +2,36 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>go测试socket</title>
+    <title>socket.d debug</title>
+    <script src="socketd/dist/socketd.js"></script>
 </head>
 <body>
 <script type="text/javascript">
-    //包装一个客户端，带自动心跳的 //只是参考
-    function SimpleWebSocketClient(url) {
-        this.intervalId = 0;
-        this.socket = new WebSocket(url);
+    import {SocketD} from "./socketd/dist/socketd";
 
-        let self = this;
+    let serverUrl = "sd:ws://127.0.0.1:8062";
 
-        this.socket.onopen = function (e) {
-            //添加心跳
-            self.intervalId = setInterval(() => {
-                self.sendPing();
-            }, 20 * 1000);
-
-            if(self.onopen){
-                self.onopen(e);
-            }
-        }
-        this.socket.onclose = function (e) {
-            //取消心跳
-            clearInterval(self.intervalId);
-
-            if(self.onclose){
-                self.onclose(e);
-            }
-        }
-        this.socket.onmessage = function (e) {
-            if(self.onmessage){
-                self.onmessage(e);
-            }
-        }
-        this.socket.onerror = function (e) {
-            if(self.onerror){
-                self.onerror(e);
-            }
-        }
-        this.send = function (msg){
-            self.socket.send(msg);
-        }
-        this.sendPing = function (){
-            //发个 ping //这个可能不对，根据情况修改
-            self.socket.send(JSON.stringify({ type: "ping" }), { fin: true, opcode: 0x9 });
-        }
-    }
-
-    var serverUrl = "ws://127.0.0.1:18080/demoe/websocket/13?guid=2";
-    var client = null;
-
-    window.onload = function() {
-        client = new SimpleWebSocketClient(serverUrl);
-
-        client.onopen = (e)=>{
-            //成功连接到服务器
-            alert("connected to " + serverUrl);
-            client.send("1111")
-        }
-        client.onclose = function(e) {
-            alert("connection closed (" + e.code + ")");
-        }
-        client.onmessage = (e)=>{
-            //服务器发送通知
-            //开始处理
-            document.getElementById("rst").append("message received: " + e.data+"\n");
-        }
+    window.onload = async function() {
+        window.client = SocketD.createClient(serverUrl)
+            .listen(new EventListener().doOnOpen(s => {
+                //成功连接到服务器
+                console.log("connected to " + serverUrl);
+                client.send("1111")
+            }).doOnMessage((s, m) => {
+                //服务器发送通知
+                //开始处理
+                document.getElementById("rst").append("message received: " + e.data + "\n");
+            })
+                .doOnClose(s => {
+                    console.log("connection closed (" + e.code + ")");
+                }))
+            .open();
     };
 
     function send() {
         var msg = document.getElementById('message').value;
-        client.send(msg);
-    };
+        window.client.send(msg);
+    }
 
 </script>
 <h1>WebSocket Echo Test</h1>

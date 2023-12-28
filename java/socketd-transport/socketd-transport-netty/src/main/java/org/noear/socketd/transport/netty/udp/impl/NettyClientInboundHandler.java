@@ -41,22 +41,22 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Datag
         ctx.attr(CHANNEL_KEY).set(channel);
 
         //开始握手
-        channel.sendConnect(client.config().getUrl());
+        channel.sendConnect(client.getConfig().getUrl());
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) throws Exception {
         ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
-        Frame frame = client.assistant().read(packet.content());
+        Frame frame = client.getAssistant().read(packet.content());
 
         if (frame != null) {
-            if (frame.getFlag() == Flags.Connack) {
-                channel.onOpenFuture().whenComplete((r, e) -> {
+            if (frame.flag() == Flags.Connack) {
+                channel.onOpenFuture((r, e) -> {
                     handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 });
             }
 
-            client.processor().onReceive(channel, frame);
+            client.getProcessor().onReceive(channel, frame);
         }
     }
 
@@ -65,6 +65,6 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Datag
         //super.exceptionCaught(ctx, cause);
 
         ChannelInternal channel = ctx.attr(CHANNEL_KEY).get();
-        client.processor().onError(channel, cause);
+        client.getProcessor().onError(channel, cause);
     }
 }

@@ -1,6 +1,8 @@
 package org.noear.socketd.transport.core;
 
 /**
+ * 消息内部接口
+ *
  * @author noear
  * @since 2.0
  */

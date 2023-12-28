@@ -7,7 +7,7 @@ import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.transport.core.listener.PathListener;
 import org.noear.socketd.utils.RunUtils;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,39 +21,39 @@ public class Demo06_Im_Server {
                 .listen(new PathListener()
                         //::::::::::用户频道处理
                         .of("/", new EventListener()
-                                .onOpen(s -> {
+                                .doOnOpen(s -> {
                                     //用户连接
                                     String user = s.param("u");
-                                    if (Utils.isNotEmpty(user)) {
+                                    if (StrUtils.isNotEmpty(user)) {
                                         //有用户名，才登录成功
                                         userList.put(s.sessionId(), s);
-                                        s.attr("user", user);
+                                        s.attrPut("user", user);
                                     } else {
                                         //否则说明是非法的
                                         s.close();
                                     }
-                                }).onClose(s -> {
+                                }).doOnClose(s -> {
                                     userList.remove(s.sessionId());
 
                                     String room = s.attr("room");
 
-                                    if (Utils.isNotEmpty(room)) {
+                                    if (StrUtils.isNotEmpty(room)) {
                                         pushToRoom(room, new StringEntity("有人退出聊天室：" + s.attr("user")));
                                     }
-                                }).on("cmd.join", (s, m) -> {
+                                }).doOn("cmd.join", (s, m) -> {
                                     //::加入房间指令
                                     String room = m.meta("room");
 
-                                    if (Utils.isNotEmpty(room)) {
-                                        s.attr("room", room);
+                                    if (StrUtils.isNotEmpty(room)) {
+                                        s.attrPut("room", room);
 
                                         pushToRoom(room, new StringEntity("新人加入聊天室：" + s.attr("user")));
                                     }
-                                }).on("cmd.chat", (s, m) -> {
+                                }).doOn("cmd.chat", (s, m) -> {
                                     //::聊天指令
                                     String room = m.meta("room");
 
-                                    if (Utils.isNotEmpty(room)) {
+                                    if (StrUtils.isNotEmpty(room)) {
                                         StringBuilder buf = new StringBuilder();
                                         buf.append(m.meta("sender")).append(": ").append(m.dataAsString());
 
@@ -62,7 +62,7 @@ public class Demo06_Im_Server {
                                 }))
                         //::::::::::管理频道处理
                         .of("/admin", new EventListener()
-                                .onOpen((session) -> {
+                                .doOnOpen((session) -> {
                                     //管理员签权
                                     String user = session.param("u");
                                     String token = session.param("t");
@@ -72,13 +72,13 @@ public class Demo06_Im_Server {
                                     } else {
                                         session.close();
                                     }
-                                }).on("cmd.t", (s, m) -> {
+                                }).doOn("cmd.t", (s, m) -> {
                                     String user = m.meta("u");
                                     String room = m.meta("room");
 
                                     Session s2 = userList.values().parallelStream().filter(s1 -> user.equals(s1.attr("user"))).findFirst().get();
                                     if (s2 != null) {
-                                        s2.attr("room", null);
+                                        s2.attrPut("room", null);
                                         s2.send("cmd.t", new StringEntity("你被T出聊天室: " + room));
                                     }
                                 })

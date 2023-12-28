@@ -3,7 +3,7 @@ package org.noear.socketd.transport.core;
 import java.util.function.Consumer;
 
 /**
- * 流
+ * 流接口
  *
  * @author noear
  * @since 2.1

@@ -3,8 +3,8 @@ package org.noear.socketd.transport.java_tcp;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.buffer.ByteBufferReader;
-import org.noear.socketd.transport.core.buffer.ByteBufferWriter;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +53,7 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
         OutputStream output = source.getOutputStream();
 //        config.getCodec().write(frame, i -> new OutputStreamBufferWriter(output));
 //        output.flush();
-        ByteBuffer buffer = config.getCodec().write(frame, (i) -> new ByteBufferWriter(ByteBuffer.allocate(i))).getBuffer();
+        ByteBuffer buffer = config.getCodec().write(frame, (i) -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
         output.write(buffer.array());
         output.flush();
     }
@@ -99,7 +99,7 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
 
         buffer.flip();
 
-        return config.getCodec().read(new ByteBufferReader(buffer));
+        return config.getCodec().read(new ByteBufferCodecReader(buffer));
     }
 
     private static int bytesToInt32(byte[] bytes) {

@@ -34,7 +34,7 @@ public class Demo01_Helloworld {
                 .open();
 
         //发送并请求（且，收回答复）
-        Entity reply = clientSession.sendAndRequest("/demo", new StringEntity("Hello wrold!").meta("user","noear"));
+        Entity reply = clientSession.sendAndRequest("/demo", new StringEntity("Hello wrold!").metaPut("user","noear"));
         System.out.println(reply);
         System.out.println(reply.dataAsString());
     }

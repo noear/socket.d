@@ -8,7 +8,7 @@ import org.noear.socketd.transport.core.HeartbeatHandler;
  * @author noear
  * @since 2.0
  */
-public abstract class ClientConnectorBase<T extends ClientBase> implements ClientConnector{
+public abstract class ClientConnectorBase<T extends ClientInternal> implements ClientConnector{
     protected final T client;
     public ClientConnectorBase(T client){
         this.client = client;
@@ -18,16 +18,16 @@ public abstract class ClientConnectorBase<T extends ClientBase> implements Clien
      * 心跳处理
      */
     @Override
-    public HeartbeatHandler heartbeatHandler() {
-        return client.heartbeatHandler();
+    public HeartbeatHandler getHeartbeatHandler() {
+        return client.getHeartbeatHandler();
     }
 
     /**
      * 心跳频率（单位：毫秒）
      */
     @Override
-    public long heartbeatInterval() {
-        return client.heartbeatInterval();
+    public long getHeartbeatInterval() {
+        return client.getHeartbeatInterval();
     }
 
     /**
@@ -35,6 +35,6 @@ public abstract class ClientConnectorBase<T extends ClientBase> implements Clien
      */
     @Override
     public boolean autoReconnect() {
-        return client.config().isAutoReconnect();
+        return client.getConfig().isAutoReconnect();
     }
 }

@@ -13,14 +13,14 @@ import java.io.IOException;
  */
 public interface ClientConnector {
     /**
-     * 心跳处理
+     * 获取心跳处理
      */
-    HeartbeatHandler heartbeatHandler();
+    HeartbeatHandler getHeartbeatHandler();
 
     /**
-     * 心跳频率（单位：毫秒）
+     * 获取心跳频率（单位：毫秒）
      */
-    long heartbeatInterval();
+    long getHeartbeatInterval();
 
     /**
      * 是否自动重连

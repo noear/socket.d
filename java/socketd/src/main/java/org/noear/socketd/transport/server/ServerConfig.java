@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.server;
 
-import org.noear.socketd.transport.core.ConfigBase;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.transport.core.internal.ConfigBase;
+import org.noear.socketd.utils.StrUtils;
 
 
 /**
@@ -73,7 +73,7 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
      * 获取本机地址
      */
     public String getLocalUrl() {
-        if (Utils.isEmpty(host)) {
+        if (StrUtils.isEmpty(host)) {
             return "sd:" + schema + "://127.0.0.1:" + port;
         } else {
             return "sd:" + schema + "://" + host + ":" + port;

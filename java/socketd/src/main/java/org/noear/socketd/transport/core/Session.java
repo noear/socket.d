@@ -92,12 +92,17 @@ public interface Session extends ClientSession, Closeable {
     <T> T attrOrDefault(String name, T def);
 
     /**
-     * 设置属性
+     * 放置属性
      *
      * @param name  名字
      * @param value 值
      */
-    <T> void attr(String name, T value);
+    <T> Session attrPut(String name, T value);
+
+    /**
+     * 是否有效
+     */
+    boolean isValid();
 
     /**
      * 获取会话Id

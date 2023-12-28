@@ -45,17 +45,17 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             Bootstrap bootstrap = new Bootstrap();
 
             NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
-            ChannelHandler handler = new NettyChannelInitializer(client.config(), inboundHandler);
+            ChannelHandler handler = new NettyChannelInitializer(client.getConfig(), inboundHandler);
 
             real = bootstrap.group(workerGroup)
                     .channel(NioSocketChannel.class)
                     .handler(handler)
-                    .connect(client.config().getHost(),
-                            client.config().getPort())
+                    .connect(client.getConfig().getHost(),
+                            client.getConfig().getPort())
                     .await();
 
             //等待握手结果
-            ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = inboundHandler.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getThrowable() != null) {
                 throw handshakeResult.getThrowable();
@@ -64,7 +64,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 

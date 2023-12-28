@@ -34,25 +34,25 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
         close();
 
         //处理自定义架构的影响（重连时，新建实例比原生重链接口靠谱）
-        String wsUrl = client.config().getUrl().replace("-java://", "://");
+        String wsUrl = client.getConfig().getUrl().replace("-java://", "://");
         real = new WebSocketClientImpl(URI.create(wsUrl), client);
 
         //支持 ssl
-        if (client.config().getSslContext() != null) {
-            real.setSocketFactory(client.config().getSslContext().getSocketFactory());
+        if (client.getConfig().getSslContext() != null) {
+            real.setSocketFactory(client.getConfig().getSslContext().getSocketFactory());
         }
 
         //闲置超时
-        if (client.config().getIdleTimeout() > 0L) {
+        if (client.getConfig().getIdleTimeout() > 0L) {
             //单位：毫秒
-            real.setConnectionLostTimeout((int) (client.config().getIdleTimeout() / 1000L));
+            real.setConnectionLostTimeout((int) (client.getConfig().getIdleTimeout() / 1000L));
         }
 
         real.connect();
 
         try {
             //等待握手结果
-            ClientHandshakeResult handshakeResult = real.getHandshakeFuture().get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = real.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getThrowable() != null) {
                 throw handshakeResult.getThrowable();
@@ -61,7 +61,7 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 
@@ -76,8 +76,8 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
     @Override
     public void close() {
         try {
-            if(real != null) {
-                real.closeBlocking();
+            if(real != null && real.isOpen()) {
+                real.close();
             }
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {

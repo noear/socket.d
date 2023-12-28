@@ -25,11 +25,11 @@ public class FragmentHandlerDefault implements FragmentHandler {
             return null;
         }
 
-        EntityDefault fragmentEntity = new EntityDefault().data(dataBuffer);
+        EntityDefault fragmentEntity = new EntityDefault().dataSet(dataBuffer);
         if (fragmentIndex == 1) {
-            fragmentEntity.metaMap(message.metaMap());
+            fragmentEntity.metaMapPut(message.metaMap());
         }
-        fragmentEntity.meta(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+        fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
 
         return fragmentEntity;
     }
@@ -42,7 +42,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
         FragmentAggregatorDefault aggregator = channel.getAttachment(message.sid());
         if (aggregator == null) {
             aggregator = new FragmentAggregatorDefault(message);
-            channel.setAttachment(aggregator.getSid(), aggregator);
+            channel.putAttachment(aggregator.getSid(), aggregator);
         }
 
         aggregator.add(index, message);
@@ -52,7 +52,7 @@ public class FragmentHandlerDefault implements FragmentHandler {
             return null;
         } else {
             //重置为聚合帖
-            channel.setAttachment(message.sid(), null);
+            channel.putAttachment(message.sid(), null);
             return aggregator.get();
         }
     }

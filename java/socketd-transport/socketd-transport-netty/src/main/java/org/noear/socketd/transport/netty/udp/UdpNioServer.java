@@ -14,7 +14,7 @@ import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.utils.NamedThreadFactory;
-import org.noear.socketd.utils.Utils;
+import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return "udp/nio/netty 4.1/" + SocketD.version();
     }
 
@@ -60,10 +60,10 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
                     //.option(ChannelOption.SO_BROADCAST,true)
                     .handler(inboundHandler);
 
-            if (Utils.isEmpty(config().getHost())) {
-                server = bootstrap.bind(config().getPort()).await();
+            if (StrUtils.isEmpty(getConfig().getHost())) {
+                server = bootstrap.bind(getConfig().getPort()).await();
             } else {
-                server = bootstrap.bind(config().getHost(), config().getPort()).await();
+                server = bootstrap.bind(getConfig().getHost(), getConfig().getPort()).await();
             }
 
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
             }
         }
 
-        log.info("Socket.D server started: {server=" + config().getLocalUrl() + "}");
+        log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");
 
         return this;
     }
@@ -90,8 +90,13 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
         }
 
         try {
-            server.channel().close();
-            bossGroup.shutdownGracefully();
+            if (server != null) {
+                server.channel().close();
+            }
+
+            if (bossGroup != null) {
+                bossGroup.shutdownGracefully();
+            }
         } catch (Exception e) {
             log.debug("{}", e);
         }

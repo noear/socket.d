@@ -38,33 +38,33 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         //关闭之前的资源
         close();
 
-        SocketAddress socketAddress = new InetSocketAddress(client.config().getHost(), client.config().getPort());
+        SocketAddress socketAddress = new InetSocketAddress(client.getConfig().getHost(), client.getConfig().getPort());
 
         //支持 ssl
-        if (client.config().getSslContext() == null) {
+        if (client.getConfig().getSslContext() == null) {
             real = new Socket();
         } else {
-            real = client.config().getSslContext().getSocketFactory().createSocket();
+            real = client.getConfig().getSslContext().getSocketFactory().createSocket();
         }
 
         //闲置超时
-        if (client.config().getIdleTimeout() > 0L) {
+        if (client.getConfig().getIdleTimeout() > 0L) {
             //单位：毫秒
-            real.setSoTimeout((int) client.config().getIdleTimeout());
+            real.setSoTimeout((int) client.getConfig().getIdleTimeout());
         }
 
         //读缓冲大小
-        if (client.config().getReadBufferSize() > 0) {
-            real.setReceiveBufferSize(client.config().getReadBufferSize());
+        if (client.getConfig().getReadBufferSize() > 0) {
+            real.setReceiveBufferSize(client.getConfig().getReadBufferSize());
         }
 
         //写缓冲大小
-        if (client.config().getWriteBufferSize() > 0) {
-            real.setSendBufferSize(client.config().getWriteBufferSize());
+        if (client.getConfig().getWriteBufferSize() > 0) {
+            real.setSendBufferSize(client.getConfig().getWriteBufferSize());
         }
 
-        if (client.config().getConnectTimeout() > 0) {
-            real.connect(socketAddress, (int) client.config().getConnectTimeout());
+        if (client.getConfig().getConnectTimeout() > 0) {
+            real.connect(socketAddress, (int) client.getConfig().getConnectTimeout());
         } else {
             real.connect(socketAddress);
         }
@@ -79,10 +79,10 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
         try {
             //开始发连接包
-            channel.sendConnect(client.config().getUrl());
+            channel.sendConnect(client.getConfig().getUrl());
 
             //等待握手结果
-            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.config().getConnectTimeout(), TimeUnit.MILLISECONDS);
+            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
             if (handshakeResult.getThrowable() != null) {
                 throw handshakeResult.getThrowable();
@@ -91,7 +91,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.config().getLinkUrl());
+            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 
@@ -107,19 +107,19 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         while (!clientThread.isInterrupted()) {
             try {
                 if (socket.isClosed()) {
-                    client.processor().onClose(channel);
+                    client.getProcessor().onClose(channel);
                     break;
                 }
 
-                Frame frame = client.assistant().read(socket);
+                Frame frame = client.getAssistant().read(socket);
                 if (frame != null) {
-                    if (frame.getFlag() == Flags.Connack) {
-                        channel.onOpenFuture().whenComplete((r, e) -> {
+                    if (frame.flag() == Flags.Connack) {
+                        channel.onOpenFuture((r, e) -> {
                             handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                         });
                     }
 
-                    client.processor().onReceive(channel, frame);
+                    client.getProcessor().onReceive(channel, frame);
                 }
             } catch (Exception e) {
                 if (e instanceof SocketdConnectionException) {
@@ -128,7 +128,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                     break;
                 }
 
-                client.processor().onError(channel, e);
+                client.getProcessor().onError(channel, e);
 
                 if (e instanceof SocketException) {
                     break;

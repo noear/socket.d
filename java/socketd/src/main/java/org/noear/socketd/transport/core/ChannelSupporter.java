@@ -10,15 +10,15 @@ public interface ChannelSupporter<S> {
     /**
      * 处理器
      */
-    Processor processor();
+    Processor getProcessor();
 
     /**
      * 配置
      */
-    Config config();
+    Config getConfig();
 
     /**
      * 通道助理
      */
-    ChannelAssistant<S> assistant();
+    ChannelAssistant<S> getAssistant();
 }

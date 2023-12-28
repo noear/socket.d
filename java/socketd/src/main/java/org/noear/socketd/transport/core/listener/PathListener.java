@@ -13,21 +13,24 @@ import java.io.IOException;
  * @since 2.0
  */
 public class PathListener implements Listener {
-    protected final PathMapper mapper;
+    /**
+     * 路径路由选择器
+     * */
+    protected final RouteSelector<Listener> pathRouteSelector;
 
     public PathListener() {
-        this.mapper = new PathMapperDefault();
+        this.pathRouteSelector = new RouteSelectorDefault<>();
     }
 
-    public PathListener(PathMapper mapper) {
-        this.mapper = mapper;
+    public PathListener(RouteSelector<Listener> routeSelector) {
+        this.pathRouteSelector = routeSelector;
     }
 
     /**
      * 路由
      */
     public PathListener of(String path, Listener listener) {
-        mapper.put(path, listener);
+        pathRouteSelector.put(path, listener);
         return this;
     }
 
@@ -35,12 +38,12 @@ public class PathListener implements Listener {
      * 数量（二级监听器的数据）
      */
     public int size() {
-        return mapper.size();
+        return pathRouteSelector.size();
     }
 
     @Override
     public void onOpen(Session session) throws IOException {
-        Listener l1 = mapper.get(session.path());
+        Listener l1 = pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onOpen(session);
@@ -49,7 +52,7 @@ public class PathListener implements Listener {
 
     @Override
     public void onMessage(Session session, Message message) throws IOException {
-        Listener l1 = mapper.get(session.path());
+        Listener l1 = pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onMessage(session, message);
@@ -58,7 +61,7 @@ public class PathListener implements Listener {
 
     @Override
     public void onClose(Session session) {
-        Listener l1 = mapper.get(session.path());
+        Listener l1 = pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onClose(session);
@@ -67,7 +70,7 @@ public class PathListener implements Listener {
 
     @Override
     public void onError(Session session, Throwable error) {
-        Listener l1 = mapper.get(session.path());
+        Listener l1 = pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onError(session, error);

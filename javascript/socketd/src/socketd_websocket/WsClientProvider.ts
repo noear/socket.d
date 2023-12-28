@@ -9,6 +9,6 @@ export class WsClientProvider implements ClientProvider {
     }
 
     createClient(clientConfig: ClientConfig): Client {
-        throw new WsClient(clientConfig);
+        return  new WsClient(clientConfig);
     }
 }

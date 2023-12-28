@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Socketd-JS-WS测试</title>
+    <script src="main.js"></script>
+    <script src="../lib/RequireJS/require.js" data-main="config.js"></script>
+    <script>
+
+        // let isOpen = false;
+        // require(['socketd/SocketD'], function(sd) {
+        //     console.log('sd', sd)
+        //     document.getElementById("openBtn").addEventListener("click", function(){
+        //         if (isOpen) {
+        //             close(sd, function() {
+        //                 document.getElementById("openBtn").innerHTML = '连接';
+        //                 isOpen = false;
+        //             });
+        //         } else {
+        //             open(sd, function() {
+        //                 document.getElementById("openBtn").innerHTML = '关闭';
+        //                 isOpen = true;
+        //             });
+        //         }
+        //
+        //     });
+        // });
+    </script>
+</head>
+<body>
+    schema: <input type="text" id="schema" value="sd:ws://127.0.0.1:8602/?u=a&p=2" style="width: 400px"/>
+    <button id="openBtn">连接</button>
+</body>
+</html>

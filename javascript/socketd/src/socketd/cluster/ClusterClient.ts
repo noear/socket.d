@@ -3,7 +3,7 @@ import { ClientConfig } from "../transport/client/ClientConfig";
 import { ClientSession } from "../transport/client/ClientSession";
 import { Listener } from "../transport/core/Listener";
 import { Session } from "../transport/core/Session";
-import { IoConsumer } from "../transport/core/Types";
+import { IoConsumer } from "../transport/core/Typealias";
 import {SocketD} from "../SocketD";
 import {ClusterClientSession} from "./ClusterClientSession";
 

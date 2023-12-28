@@ -9,7 +9,7 @@ import {MessageBuilder} from "./Message";
 import {EntityMetas, Flags} from "./Constants";
 import {ChannelBase, ChannelInternal} from "./Channel";
 import {SessionDefault} from "./SessionDefault";
-import { IoBiConsumer } from "./Types";
+import { IoBiConsumer } from "./Typealias";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _source: S;

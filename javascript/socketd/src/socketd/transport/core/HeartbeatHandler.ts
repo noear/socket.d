@@ -1,5 +1,5 @@
 import {Session} from "./Session";
-import {IoConsumer} from "./Types";
+import {IoConsumer} from "./Typealias";
 
 export interface HeartbeatHandler{
     heartbeat(session:Session);

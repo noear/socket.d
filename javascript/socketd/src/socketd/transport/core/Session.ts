@@ -1,6 +1,6 @@
 import {Entity, Reply} from "./Entity";
 import {Message} from "./Message";
-import {IoConsumer} from "./Types";
+import {IoConsumer} from "./Typealias";
 import {Channel} from "./Channel";
 import {Stream} from "./Stream";
 import {ClientSession} from "../client/ClientSession";

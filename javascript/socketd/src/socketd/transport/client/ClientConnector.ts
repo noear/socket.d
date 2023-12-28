@@ -1,4 +1,4 @@
-import {IoConsumer} from "../core/Types";
+import {IoConsumer} from "../core/Typealias";
 import {Session} from "../core/Session";
 import {ChannelInternal} from "../core/Channel";
 import {ClientInternal} from "./Client";

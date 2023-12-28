@@ -4,7 +4,7 @@ import {Constants, Flags} from "./Constants";
 import {EntityDefault} from "./Entity";
 import {MessageBuilder} from "./Message";
 import {Config} from "./Config";
-import {IoFunction} from "./Types";
+import {IoFunction} from "./Typealias";
 import {StrUtils} from "../../utils/StrUtils";
 import {Frame} from "./Frame";
 

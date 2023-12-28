@@ -1,4 +1,4 @@
-import {IoConsumer} from "../core/Types";
+import {IoConsumer} from "../core/Typealias";
 import {Stream} from "../core/Stream";
 import {Entity, Reply} from "../core/Entity";
 

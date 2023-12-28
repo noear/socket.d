@@ -1,6 +1,6 @@
 import {Session} from "./Session";
 import {Message} from "./Message";
-import {IoBiConsumer, IoConsumer} from "./Types";
+import {IoBiConsumer, IoConsumer} from "./Typealias";
 import {RouteSelector, RouteSelectorDefault} from "./RouteSelector";
 
 /**

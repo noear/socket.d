@@ -5,7 +5,7 @@ import {Entity, Reply} from "./Entity";
 import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
-import {IoConsumer} from "./Types";
+import {IoConsumer} from "./Typealias";
 import {Stream, StreamRequest, StreamSubscribe} from "./Stream";
 
 /**

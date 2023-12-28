@@ -1,5 +1,5 @@
 import {Listener, SimpleListener} from "../core/Listener";
-import {IoConsumer} from "../core/Types";
+import {IoConsumer} from "../core/Typealias";
 import {ClientSession} from "./ClientSession";
 import {ClientConfig} from "./ClientConfig";
 import {Processor, ProcessorDefault} from "../core/Processor";

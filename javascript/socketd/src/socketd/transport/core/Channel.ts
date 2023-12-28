@@ -4,7 +4,7 @@ import {HandshakeInternal} from "./Handshake";
 import {Message} from "./Message";
 import {Frame, Frames} from "./Frame";
 import {StreamInternal} from "./Stream";
-import {IoBiConsumer} from "./Types";
+import {IoBiConsumer} from "./Typealias";
 
 /**
  * 通道

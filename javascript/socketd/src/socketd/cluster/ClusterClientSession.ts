@@ -15,11 +15,11 @@ import {RunUtils} from "../utils/RunUtils";
  */
 export class ClusterClientSession implements ClientSession {
     //会话集合
-    _sessionSet: ClientSession[];
+    private _sessionSet: ClientSession[];
     //轮询计数
-    _sessionRoundCounter: number;
+    private _sessionRoundCounter: number;
     //会话id
-    _sessionId: string;
+    private _sessionId: string;
 
     constructor(sessions: ClientSession[]) {
         this._sessionSet = sessions;

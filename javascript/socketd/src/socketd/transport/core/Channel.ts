@@ -145,10 +145,10 @@ export interface ChannelInternal extends Channel {
 }
 
 export abstract class  ChannelBase implements Channel {
-    _config: Config;
-    _attachments: Map<string, object>;
-    _handshake: HandshakeInternal;
-    _isClosed: number;
+    protected _config: Config;
+    private _attachments: Map<string, object>;
+    private _handshake: HandshakeInternal;
+    private  _isClosed: number;
 
     constructor(config: Config) {
         this._config = config;

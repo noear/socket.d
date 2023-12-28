@@ -19,7 +19,7 @@ export class SocketdException extends Error {
  * @since 2.0
  */
 export class SocketdAlarmException extends SocketdException {
-    _from: Message;
+    private  _from: Message;
 
     constructor(from: Message) {
         super(from.entity().dataAsString());

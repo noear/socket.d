@@ -15,7 +15,7 @@ import {Stream, StreamRequest, StreamSubscribe} from "./Stream";
  * @since 2.0
  */
 export class SessionDefault extends SessionBase {
-    _pathNew: string;
+    private  _pathNew: string;
 
     constructor(channel: Channel) {
         super(channel);

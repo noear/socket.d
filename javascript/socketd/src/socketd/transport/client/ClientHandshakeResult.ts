@@ -7,8 +7,8 @@ import {ChannelInternal} from "../core/Channel";
  * @since 2.0
  */
 export class ClientHandshakeResult {
-    _channel: ChannelInternal;
-    _throwable: Error;
+    private _channel: ChannelInternal;
+    private _throwable: Error;
 
     constructor(channel: ChannelInternal, throwable: Error) {
         this._channel = channel;

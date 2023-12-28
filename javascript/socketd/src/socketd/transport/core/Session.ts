@@ -119,9 +119,9 @@ export interface Session extends ClientSession {
  * @author noear
  */
 export abstract class SessionBase implements Session {
-    _channel: Channel;
-    _sessionId: string;
-    _attrMap: Map<string, object>;
+    protected _channel: Channel;
+    private _sessionId: string;
+    private _attrMap: Map<string, object>;
 
     constructor(channel: Channel) {
         this._channel = channel;

@@ -13,11 +13,11 @@ import {ClusterClientSession} from "./ClusterClientSession";
  * @author noear
  */
 export class ClusterClient implements Client {
-    _serverUrls: string[];
+    private _serverUrls: string[];
 
-    _heartbeatHandler: IoConsumer<Session>;
-    _configHandler: IoConsumer<ClientConfig>;
-    _listener: Listener;
+    private _heartbeatHandler: IoConsumer<Session>;
+    private _configHandler: IoConsumer<ClientConfig>;
+    private _listener: Listener;
 
     constructor(serverUrls: string[]) {
         this._serverUrls = serverUrls;

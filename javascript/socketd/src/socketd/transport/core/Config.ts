@@ -95,37 +95,37 @@ export interface Config {
 
 export abstract class ConfigBase implements Config {
     //是否客户端模式
-    _clientMode:boolean;
+    private _clientMode:boolean;
     //流管理器
-    _streamManger: StreamManger;
+    private _streamManger: StreamManger;
     //编解码器
-    _codec: Codec;
+    private _codec: Codec;
 
     //id生成器
-    _idGenerator:IdGenerator;
+    private _idGenerator:IdGenerator;
     //分片处理
-    _fragmentHandler: FragmentHandler;
+    private  _fragmentHandler: FragmentHandler;
     //分片大小
-    _fragmentSize:number;
+    private _fragmentSize:number;
     //字符集
-    _charset:string
+    private  _charset:string
     //内核线程数
-    _coreThreads:number;
+    private _coreThreads:number;
     //最大线程数
-    _maxThreads:number;
+    private  _maxThreads:number;
     //读缓冲大小
-    _readBufferSize:number;
+    private _readBufferSize:number;
     //写缓冲大小
-    _writeBufferSize:number;
+    private  _writeBufferSize:number;
 
     //连接空闲超时
-    _idleTimeout:number;
+    protected  _idleTimeout:number;
     //请求默认超时
-    _requestTimeout:number;
+    private _requestTimeout:number;
     //消息流超时（从发起到应答结束）
-    _streamTimeout:number;
+    private _streamTimeout:number;
     //最大udp包大小
-    _maxUdpSize:number;
+    private _maxUdpSize:number;
 
     constructor(clientMode:boolean) {
         this._clientMode = clientMode;

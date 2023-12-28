@@ -2,22 +2,22 @@ import {ConfigBase} from "../core/Config";
 
 export class ClientConfig extends ConfigBase {
     //通讯架构（tcp, ws, udp）
-    _schema: string;
+    private _schema: string;
 
     //连接地址
-    _linkUrl: string;
-    _url: string;
-    _uri: URL;
-    _port: number;
+    private _linkUrl: string;
+    private _url: string;
+    private _uri: URL;
+    private _port: number;
 
     //心跳间隔（毫秒）
-    _heartbeatInterval: number;
+    private _heartbeatInterval: number;
 
     //连接越时（毫秒）
-    _connectTimeout: number;
+    private _connectTimeout: number;
 
     //是否自动重链
-    _autoReconnect: boolean;
+    private _autoReconnect: boolean;
 
     constructor(url: string) {
         super(true);

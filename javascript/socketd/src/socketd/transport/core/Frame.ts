@@ -10,8 +10,8 @@ import {Message, MessageBuilder, MessageInternal} from "./Message";
  * @since 2.0
  */
 export class Frame {
-    _flag: number;
-    _message: MessageInternal;
+    private  _flag: number;
+    private _message: MessageInternal;
 
     constructor(flag: number, message: MessageInternal) {
         this._flag = flag;

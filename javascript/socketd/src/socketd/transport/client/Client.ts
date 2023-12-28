@@ -73,17 +73,15 @@ export interface ClientInternal extends Client {
  * @since 2.0
  */
 export abstract class ClientBase<T extends ChannelAssistant<Object>> implements ClientInternal {
-    _config: ClientConfig;
-    _heartbeatHandler: IoConsumer<Session>;
-    _processor: Processor;
-    _listener: Listener;
-    _assistant: T;
+    private _config: ClientConfig;
+    private _heartbeatHandler: IoConsumer<Session>;
+    private _processor: Processor;
+    private _assistant: T;
 
     constructor(clientConfig: ClientConfig, assistant: T) {
         this._config = clientConfig;
         this._assistant = assistant;
         this._processor = new ProcessorDefault();
-        this._listener = new SimpleListener();
     }
 
     /**
@@ -148,7 +146,7 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
      */
     listen(listener: Listener): Client {
         if (listener != null) {
-            this._listener = listener;
+            this._processor.setListener(listener);
         }
 
         return this;

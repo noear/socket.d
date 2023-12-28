@@ -56,7 +56,7 @@ export interface Processor {
 }
 
 export class ProcessorDefault implements Processor {
-    _listener: Listener;
+    private _listener: Listener;
 
     constructor() {
         this._listener = new SimpleListener();

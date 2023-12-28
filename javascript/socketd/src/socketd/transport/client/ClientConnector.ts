@@ -45,7 +45,7 @@ export interface ClientConnector {
  * @since 2.0
  */
 export abstract class ClientConnectorBase<T extends ClientInternal> implements ClientConnector {
-    _client: T;
+    protected _client: T;
 
     constructor(client: T) {
         this._client = client;

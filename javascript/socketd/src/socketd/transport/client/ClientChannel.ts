@@ -15,10 +15,10 @@ import { SocketdChannelException, SocketdException } from "../../exception/Socke
  * @since 2.0
  */
 export class ClientChannel extends ChannelBase implements Channel {
-    _connector: ClientConnector;
-    _real: Channel;
-    _heartbeatHandler: HeartbeatHandler;
-    _heartbeatScheduledFuture: number;
+    private _connector: ClientConnector;
+    private _real: Channel;
+    private  _heartbeatHandler: HeartbeatHandler;
+    private _heartbeatScheduledFuture: number;
 
     constructor(real: Channel, connector: ClientConnector) {
         super(real.getConfig());

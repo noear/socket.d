@@ -12,16 +12,16 @@ import {SessionDefault} from "./SessionDefault";
 import { IoBiConsumer } from "./Types";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
-    _source: S;
+    private _source: S;
     //处理器
-    _processor: Processor;
+    private _processor: Processor;
     //助理
-    _assistant: ChannelAssistant<S>;
+    private _assistant: ChannelAssistant<S>;
     //流管理器
-    _streamManger: StreamManger;
+    private _streamManger: StreamManger;
     //会话（懒加载）
-    _session: Session;
-    _onOpenFuture:IoBiConsumer<boolean, Error>;
+    private _session: Session;
+    private  _onOpenFuture:IoBiConsumer<boolean, Error>;
 
     constructor(source: S, supporter: ChannelSupporter<S>) {
         super(supporter.getConfig());

@@ -31,11 +31,11 @@ export class SimpleListener implements Listener {
 }
 
 export class EventListener implements Listener {
-    _doOnOpen: IoConsumer<Session>;
-    _doOnMessage: IoBiConsumer<Session, Message>;
-    _doOn: Map<string, IoBiConsumer<Session, Message>>;
-    _doOnClose: IoConsumer<Session>;
-    _doOnError: IoBiConsumer<Session, Error>;
+    private _doOnOpen: IoConsumer<Session>;
+    private _doOnMessage: IoBiConsumer<Session, Message>;
+    private _doOn: Map<string, IoBiConsumer<Session, Message>>;
+    private _doOnClose: IoConsumer<Session>;
+    private _doOnError: IoBiConsumer<Session, Error>;
 
     constructor() {
         this._doOn = new Map<string, IoBiConsumer<Session, Message>>();

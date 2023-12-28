@@ -6,7 +6,7 @@ export interface HeartbeatHandler{
 }
 
 export class HeartbeatHandlerDefault implements HeartbeatHandler {
-    _heartbeatHandler: IoConsumer<Session>;
+    private _heartbeatHandler: IoConsumer<Session>;
 
     constructor(heartbeatHandler: IoConsumer<Session>) {
         this._heartbeatHandler = heartbeatHandler;

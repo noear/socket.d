@@ -102,7 +102,7 @@ export interface Codec {
  * @since 2.0
  */
 export class CodecByteBuffer implements Codec {
-    _config: Config;
+    private _config: Config;
 
     constructor(config: Config) {
         this._config = config;

@@ -80,11 +80,11 @@ export interface StreamInternal extends Stream {
  */
 export abstract class StreamBase implements StreamInternal {
     //保险任务
-    _insuranceFuture: number;
-    _sid: string;
-    _isSingle: boolean;
-    _timeout: number;
-    _doOnError: IoConsumer<Error>;
+    private  _insuranceFuture: number;
+    private _sid: string;
+    private _isSingle: boolean;
+    private _timeout: number;
+    private _doOnError: IoConsumer<Error>;
 
     constructor(sid: string, isSingle: boolean, timeout: number) {
         this._sid = sid;

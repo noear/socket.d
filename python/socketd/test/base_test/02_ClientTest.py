@@ -3,10 +3,10 @@ import sys
 import time
 from loguru import logger
 
-from socketd.core.Session import Session
-from socketd.core.SocketD import SocketD
-from socketd.core.module.Entity import Entity
-from socketd.core.module.StringEntity import StringEntity
+from socketd.transport.core.Session import Session
+from socketd.transport.core.SocketD import SocketD
+from socketd.transport.core.entity.Entity import Entity
+from socketd.transport.core.entity.StringEntity import StringEntity
 from test.uitls import calc_async_time
 
 from test.modelu.SimpleListenerTest import config_handler, SimpleListenerTest

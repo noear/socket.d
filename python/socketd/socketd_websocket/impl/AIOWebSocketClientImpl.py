@@ -6,13 +6,13 @@ from loguru import logger
 from websockets.extensions import ClientExtensionFactory
 from websockets.uri import WebSocketURI
 
-from socketd.core.ChannelDefault import ChannelDefault
+from socketd.transport.core.internal.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
 
-from socketd.core.Costants import Flag
-from socketd.core.module.Frame import Frame
+from socketd.transport.core.Costants import Flag
+from socketd.transport.core.entity.Frame import Frame
 from socketd.transport.client.Client import Client
-from socketd.transport.core.AsyncUtil import AsyncUtil
+from socketd.transport.utils.AsyncUtil import AsyncUtil
 
 log = logger.opt()
 

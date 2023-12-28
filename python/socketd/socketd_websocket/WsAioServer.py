@@ -4,12 +4,12 @@ from websockets.server import WebSocketServer, serve as Serve, WebSocketServerPr
 from websockets import broadcast
 
 from socketd.transport.server.ServerBase import ServerBase
-from .WsAioChannelAssistant import WsAioChannelAssistant
-from socketd.core.config.ServerConfig import ServerConfig
-from .impl.AIOServe import AIOServe
+from socketd_websocket.WsAioChannelAssistant import WsAioChannelAssistant
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd_websocket.impl.AIOServe import AIOServe
 from socketd_websocket.impl.AIOWebSocketServerImpl import AIOWebSocketServerImpl
 
-from socketd.core.config.logConfig import logger
+from socketd.transport.core.config.logConfig import logger
 
 
 class WsAioServer(ServerBase):

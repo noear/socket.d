@@ -4,10 +4,10 @@ from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer
 
-from socketd.core.Session import Session
-from socketd.core.SocketD import SocketD
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.module.StringEntity import StringEntity
+from socketd.transport.core.Session import Session
+from socketd.transport.core.SocketD import SocketD
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
 from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler
 from loguru import logger

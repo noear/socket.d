@@ -3,12 +3,12 @@ import math
 
 from websockets import WebSocketClientProtocol, frames
 
-from socketd.core.Buffer import Buffer
-from socketd.core.config.Config import Config
-from socketd.core.module.Frame import Frame
+from socketd.transport.core.Buffer import Buffer
+from socketd.transport.core.config.Config import Config
+from socketd.transport.core.entity.Frame import Frame
 from websockets.server import WebSocketServerProtocol
 from websockets.protocol import State
-from socketd.transport.ChannelAssistant import ChannelAssistant
+from socketd.transport.core.ChannelAssistant import ChannelAssistant
 
 
 class WsAioChannelAssistant(ChannelAssistant):

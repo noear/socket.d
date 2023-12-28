@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from typing import Callable
 from asyncio.futures import Future
 
-from socketd.core.Processor import Processor
-from socketd.core.Session import Session
-from socketd.core.config.ClientConfig import ClientConfig
-from socketd.transport.ChannelAssistant import ChannelAssistant
+from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.core.ChannelAssistant import ChannelAssistant
+from socketd.transport.core.Processor import Processor
+from socketd.transport.core.Session import Session
 
 
 class Client(ABC):

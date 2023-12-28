@@ -1,8 +1,8 @@
 import unittest
 import asyncio
 
-from socketd.core.async_api.AtomicRefer import AtomicRefer
-from socketd.core.sync_api.AtomicRefer import AtomicRefer as AtomicRefer_
+from socketd.transport.core.async_api.AtomicRefer import AtomicRefer
+from socketd.transport.core import AtomicRefer as AtomicRefer_
 from test.uitls import calc_time
 from loguru import logger
 from concurrent.futures import ThreadPoolExecutor

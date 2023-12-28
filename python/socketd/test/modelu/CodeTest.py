@@ -3,13 +3,13 @@ import unittest
 from asyncio import Queue
 from concurrent.futures import ThreadPoolExecutor
 
-from socketd.core.Buffer import Buffer
-from socketd.core.Costants import Flag
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.module.Frame import Frame
-from socketd.core.module.MessageDefault import MessageDefault
-from socketd.core.module.StringEntity import StringEntity
-from socketd.transport.CodecByteBuffer import CodecByteBuffer
+from socketd.transport.core import Buffer
+from socketd.transport.core.Costants import Flag
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.entity.MessageDefault import MessageDefault
+from socketd.transport.core.entity.StringEntity import StringEntity
+from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer
 from test.uitls import calc_time
 
 

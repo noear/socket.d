@@ -3,10 +3,10 @@ import asyncio
 from websockets import ConnectionClosedError
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
-from socketd.core.Channel import Channel
-from socketd.core.ChannelDefault import ChannelDefault
-from socketd.core.Costants import Flag
-from socketd.core.module.Frame import Frame
+from socketd.transport.core.Channel import Channel
+from socketd.transport.core.internal.ChannelDefault import ChannelDefault
+from socketd.transport.core.Costants import Flag
+from socketd.transport.core.entity.Frame import Frame
 from loguru import logger
 
 from socketd_websocket.IWebSocketServer import IWebSocketServer

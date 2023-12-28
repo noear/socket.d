@@ -4,8 +4,8 @@ import sys
 from loguru import logger
 
 from websockets.legacy.server import WebSocketServer
-from socketd.core.SocketD import SocketD
-from socketd.core.config.ServerConfig import ServerConfig
+from socketd.transport.core.SocketD import SocketD
+from socketd.transport.server.ServerConfig import ServerConfig
 
 from test.modelu.SimpleListenerTest import config_handler, SimpleListenerTest
 

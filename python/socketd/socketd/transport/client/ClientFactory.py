@@ -1,5 +1,5 @@
 from .Client import Client
-from socketd.core.config.ClientConfig import ClientConfig
+from socketd.transport.client.ClientConfig import ClientConfig
 
 
 class ClientFactory:

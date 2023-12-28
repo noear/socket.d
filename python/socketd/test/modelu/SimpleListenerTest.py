@@ -1,16 +1,15 @@
 import uuid
 from abc import ABC
 
-from socketd.core.Listener import Listener
-from socketd.core.config.ClientConfig import ClientConfig
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.module.Entity import Entity
-from socketd.core.module.Message import Message
-from socketd.core.module.StringEntity import StringEntity
+from socketd.transport.core.Listener import Listener
+from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.core.sync_api.AtomicRefer import AtomicRefer
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.entity.Entity import Entity
+from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.entity.StringEntity import StringEntity
 
 from loguru import logger
-
-from socketd.core.sync_api.AtomicRefer import AtomicRefer
 
 
 class SimpleListenerTest(Listener, ABC):

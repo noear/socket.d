@@ -1,8 +1,8 @@
 import asyncio
 
 from websockets.client import WebSocketClientProtocol
-from socketd.core.Channel import Channel
-from socketd.core.config.logConfig import logger
+from socketd.transport.core.Channel import Channel
+from socketd.transport.core.config.logConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd_websocket.impl.AIOConnect import AIOConnect
 from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl

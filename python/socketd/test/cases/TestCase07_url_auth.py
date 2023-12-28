@@ -1,16 +1,16 @@
 import asyncio
 
-from socketd.core.Listener import Listener
-from socketd.core.module.Message import Message
-from socketd.core.sync_api.AtomicRefer import AtomicRefer
+from socketd.transport.core.Listener import Listener
+from socketd.transport.core.entity.Message import Message
+from socketd.transport.core import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer
 
-from socketd.core.Session import Session
-from socketd.core.SocketD import SocketD
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.module.StringEntity import StringEntity
+from socketd.transport.core.Session import Session
+from socketd.transport.core.SocketD import SocketD
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
 from test.modelu.SimpleListenerTest import config_handler
 from loguru import logger

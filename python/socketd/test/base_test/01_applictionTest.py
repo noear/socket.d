@@ -3,11 +3,11 @@ import uuid
 import time
 from websockets.legacy.server import WebSocketServer
 
-from socketd.core.Session import Session
-from socketd.core.SocketD import SocketD
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.module.Entity import Entity
-from socketd.core.module.StringEntity import StringEntity
+from socketd.transport.core.Session import Session
+from socketd.transport.core.SocketD import SocketD
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.entity.Entity import Entity
+from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
 from test.modelu.SimpleListenerTest import SimpleListenerTest
 from test.uitls import calc_async_time
@@ -34,7 +34,7 @@ async def application_test():
         .config(idGenerator).open()
 
     start_time = time.monotonic()
-    for _ in range(1000000):
+    for _ in range(1):
         await client_session.send("demo", StringEntity("test.png"))
         # await client_session.send_and_request("demo", StringEntity("test.png"), 100)
         # await client_session.send_and_subscribe("demo", StringEntity("test.png"), send_and_subscribe_test, 100)

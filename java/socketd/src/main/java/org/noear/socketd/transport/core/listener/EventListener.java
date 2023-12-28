@@ -7,8 +7,6 @@ import org.noear.socketd.utils.IoBiConsumer;
 import org.noear.socketd.utils.IoConsumer;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -23,7 +21,19 @@ public class EventListener implements Listener {
     private IoBiConsumer<Session, Message> doOnMessageHandler;
     private Consumer<Session> doOnCloseHandler;
     private BiConsumer<Session, Throwable> doOnErrorHandler;
-    private Map<String, IoBiConsumer<Session, Message>> doOnMessageRouting = new ConcurrentHashMap<>();
+
+    /**
+     * 事件路由选择器
+     * */
+    private final RouteSelector<IoBiConsumer<Session, Message>> eventRouteSelector;
+
+    public EventListener(){
+        eventRouteSelector = new RouteSelectorDefault<>();
+    }
+
+    public EventListener(RouteSelector<IoBiConsumer<Session, Message>> routeSelector){
+        eventRouteSelector = routeSelector;
+    }
 
     //for builder
     public EventListener doOnOpen(IoConsumer<Session> onOpen) {
@@ -47,7 +57,7 @@ public class EventListener implements Listener {
     }
 
     public EventListener doOn(String event, IoBiConsumer<Session, Message> handler) {
-        doOnMessageRouting.put(event, handler);
+        eventRouteSelector.put(event, handler);
         return this;
     }
 
@@ -67,7 +77,7 @@ public class EventListener implements Listener {
             doOnMessageHandler.accept(session, message);
         }
 
-        IoBiConsumer<Session, Message> messageHandler = doOnMessageRouting.get(message.event());
+        IoBiConsumer<Session, Message> messageHandler = eventRouteSelector.select(message.event());
         if (messageHandler != null) {
             messageHandler.accept(session, message);
         }

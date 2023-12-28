@@ -155,17 +155,13 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     close(code) {
-        console.debug("{} channel will be closed, sessionId={}",
-            this.getConfig().getRoleName(),
-            this.getSession().sessionId());
+        console.debug(`${this.getConfig().getRoleName()} channel will be closed, sessionId=${this.getSession().sessionId()}`);
 
         try {
             super.close(code);
             this._assistant.close(this._source);
         } catch (e) {
-            console.warn("{} channel close error, sessionId={}",
-                this.getConfig().getRoleName(),
-                this.getSession().sessionId(), e);
+            console.warn(`${this.getConfig().getRoleName()} channel close error, sessionId=${this.getSession().sessionId()}`, e);
         }
     }
 }

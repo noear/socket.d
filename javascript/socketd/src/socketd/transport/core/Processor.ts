@@ -96,9 +96,7 @@ export class ProcessorDefault implements Processor {
                     throw new SocketdConnectionException("Connection request was rejected");
                 }
 
-                console.warn("{} channel handshake is null, sessionId={}",
-                    channel.getConfig().getRoleName(),
-                    channel.getSession().sessionId());
+                console.warn(`${channel.getConfig().getRoleName()} channel handshake is null, sessionId=${channel.getSession().sessionId()}`);
                 return
             }
 

@@ -131,7 +131,7 @@ export class CodecByteBuffer implements Codec {
             Asserts.assertSize("metaString", metaStringB.byteLength, Constants.MAX_SIZE_META_STRING);
             Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
 
-            let target = targetFactory.apply(frameSize);
+            let target = targetFactory(frameSize);
 
             //长度
             target.putInt(frameSize);
@@ -141,15 +141,15 @@ export class CodecByteBuffer implements Codec {
 
             //sid
             target.putBytes(sidB);
-            target.putChar('\n');
+            target.putChar('\n'.charCodeAt(0));
 
             //event
             target.putBytes(eventB);
-            target.putChar('\n');
+            target.putChar('\n'.charCodeAt(0));
 
             //metaString
             target.putBytes(metaStringB);
-            target.putChar('\n');
+            target.putChar('\n'.charCodeAt(0));
 
             //data
             target.putBytes(frame.message().data());
@@ -160,7 +160,7 @@ export class CodecByteBuffer implements Codec {
         } else {
             //length (len[int] + flag[int])
             let frameSize = 4 + 4;
-            let target = targetFactory.apply(frameSize);
+            let target = targetFactory(frameSize);
 
             //长度
             target.putInt(frameSize);

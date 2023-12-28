@@ -91,7 +91,7 @@ export class EntityDefault implements Entity {
 
     constructor() {
         this._metaMap = null;
-        this._data = null;
+        this._data = new ArrayBuffer(0);
     }
 
     /**

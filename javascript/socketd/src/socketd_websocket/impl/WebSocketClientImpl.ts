@@ -19,10 +19,10 @@ export class WebSocketClientImpl {
         this._handshakeFuture = handshakeFuture;
 
         this._real.binaryType = "arraybuffer";
-        this._real.onopen = this.onOpen;
-        this._real.onmessage = this.onMessage;
-        this._real.onclose = this.onClose;
-        this._real.onerror = this.onError;
+        this._real.onopen = this.onOpen.bind(this);
+        this._real.onmessage = this.onMessage.bind(this);
+        this._real.onclose = this.onClose.bind(this);
+        this._real.onerror = this.onError.bind(this);
     }
 
     onOpen(e: Event) {

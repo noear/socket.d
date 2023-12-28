@@ -45,5 +45,5 @@ public interface Handshake {
     /**
      * 放置参数
      */
-    void paramPut(String name, String value);
+    Handshake paramPut(String name, String value);
 }

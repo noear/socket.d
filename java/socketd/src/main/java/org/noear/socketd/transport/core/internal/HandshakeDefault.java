@@ -97,7 +97,8 @@ public class HandshakeDefault implements HandshakeInternal {
      * @param value 值
      */
     @Override
-    public void paramPut(String name, String value) {
+    public Handshake paramPut(String name, String value) {
         paramMap.put(name, value);
+        return this;
     }
 }

@@ -20,7 +20,7 @@ public class NettyMessageEncoder extends MessageToByteEncoder<Frame> {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Frame message, ByteBuf byteBuf) throws Exception {
         if (message != null) {
-            NettyBufferWriter writer = new NettyBufferWriter(byteBuf);
+            NettyBufferCodecWriter writer = new NettyBufferCodecWriter(byteBuf);
             config.getCodec().write(message, i -> writer);
         }
     }

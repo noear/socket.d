@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.core.codec.CodecDefault;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
 import org.noear.socketd.transport.core.stream.StreamMangerDefault;
@@ -59,7 +60,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
         this.streamManger = new StreamMangerDefault(this);
-        this.codec = new CodecByteBuffer(this);
+        this.codec = new CodecDefault(this);
 
         this.charset = StandardCharsets.UTF_8;
 

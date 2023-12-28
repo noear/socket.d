@@ -9,10 +9,10 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class NettyBufferWriter implements CodecWriter {
+public class NettyBufferCodecWriter implements CodecWriter {
     private ByteBuf target;
 
-    public NettyBufferWriter(ByteBuf target) {
+    public NettyBufferCodecWriter(ByteBuf target) {
         this.target = target;
     }
 

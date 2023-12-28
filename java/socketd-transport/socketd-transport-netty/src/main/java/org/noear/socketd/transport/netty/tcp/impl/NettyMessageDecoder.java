@@ -22,7 +22,7 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf inBuf, List<Object> out) throws Exception {
-        CodecReader reader = new NettyBufferReader(inBuf);
+        CodecReader reader = new NettyBufferCodecReader(inBuf);
         Frame message = config.getCodec().read(reader);
         if (message == null) {
             return;

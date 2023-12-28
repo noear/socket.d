@@ -4,8 +4,8 @@ import org.java_websocket.WebSocket;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.buffer.ByteBufferReader;
-import org.noear.socketd.transport.core.buffer.ByteBufferWriter;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -26,7 +26,7 @@ public class WsNioChannelAssistant implements ChannelAssistant<WebSocket> {
 
     @Override
     public void write(WebSocket source, Frame frame) throws IOException {
-        ByteBufferWriter writer = config.getCodec().write(frame, len -> new ByteBufferWriter(ByteBuffer.allocate(len)));
+        ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
         source.send(writer.getBuffer());
     }
 
@@ -51,6 +51,6 @@ public class WsNioChannelAssistant implements ChannelAssistant<WebSocket> {
     }
 
     public Frame read(ByteBuffer buffer) throws IOException{
-        return config.getCodec().read(new ByteBufferReader(buffer));
+        return config.getCodec().read(new ByteBufferCodecReader(buffer));
     }
 }

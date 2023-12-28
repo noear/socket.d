@@ -1,8 +1,8 @@
 package org.noear.socketd.transport.netty.udp;
 
 import io.netty.buffer.ByteBuf;
-import org.noear.socketd.transport.core.buffer.ByteBufferReader;
-import org.noear.socketd.transport.core.buffer.ByteBufferWriter;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 import org.noear.socketd.transport.netty.udp.impl.DatagramTagert;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
@@ -25,7 +25,7 @@ public class UdpNioChannelAssistant implements ChannelAssistant<DatagramTagert> 
     }
     @Override
     public void write(DatagramTagert target, Frame frame) throws IOException {
-        ByteBufferWriter writer = config.getCodec().write(frame, i -> new ByteBufferWriter(ByteBuffer.allocate(i)));
+        ByteBufferCodecWriter writer = config.getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
 
         target.send(writer.getBuffer().array());
     }
@@ -51,7 +51,7 @@ public class UdpNioChannelAssistant implements ChannelAssistant<DatagramTagert> 
         byteBuffer.put(bytes);
         byteBuffer.flip();
 
-        return config.getCodec().read(new ByteBufferReader(byteBuffer));
+        return config.getCodec().read(new ByteBufferCodecReader(byteBuffer));
     }
 
     @Override

@@ -1,5 +1,6 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.codec;
 
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 
@@ -8,15 +9,15 @@ import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 /**
- * 编解码器（基于 BufferWriter,BufferReader 接口编解）
+ * 编解码器默认实现
  *
  * @author noear
  * @since 2.0
  */
-public class CodecByteBuffer implements Codec {
+public class CodecDefault implements Codec {
     private final Config config;
 
-    public CodecByteBuffer(Config config) {
+    public CodecDefault(Config config) {
         this.config = config;
     }
 

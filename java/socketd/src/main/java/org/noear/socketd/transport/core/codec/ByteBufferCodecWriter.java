@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core.buffer;
+package org.noear.socketd.transport.core.codec;
 
 import org.noear.socketd.transport.core.CodecWriter;
 
@@ -11,10 +11,10 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class ByteBufferWriter implements CodecWriter {
+public class ByteBufferCodecWriter implements CodecWriter {
     private ByteBuffer target;
 
-    public ByteBufferWriter(ByteBuffer target) {
+    public ByteBufferCodecWriter(ByteBuffer target) {
         this.target = target;
     }
 

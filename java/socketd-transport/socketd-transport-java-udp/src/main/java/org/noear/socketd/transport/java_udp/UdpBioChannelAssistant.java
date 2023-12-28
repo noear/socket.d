@@ -3,8 +3,8 @@ package org.noear.socketd.transport.java_udp;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.buffer.ByteBufferReader;
-import org.noear.socketd.transport.core.buffer.ByteBufferWriter;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
+import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> 
 
         buffer.reset();
 
-        Frame frame = config.getCodec().read(new ByteBufferReader(buffer));
+        Frame frame = config.getCodec().read(new ByteBufferCodecReader(buffer));
 
         return new DatagramFrame(datagramPacket, frame);
     }
@@ -63,7 +63,7 @@ public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> 
      */
     @Override
     public void write(DatagramTagert target, Frame frame) throws IOException {
-        ByteBufferWriter writer= config.getCodec().write(frame, i-> new ByteBufferWriter(ByteBuffer.allocate(i)));
+        ByteBufferCodecWriter writer= config.getCodec().write(frame, i-> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
         target.send(writer.getBuffer().array());
     }
 

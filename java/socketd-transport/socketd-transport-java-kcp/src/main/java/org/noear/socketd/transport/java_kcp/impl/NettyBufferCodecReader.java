@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.netty.tcp.impl;
+package org.noear.socketd.transport.java_kcp.impl;
 
 import io.netty.buffer.ByteBuf;
 import org.noear.socketd.transport.core.CodecReader;
@@ -7,9 +7,9 @@ import org.noear.socketd.transport.core.CodecReader;
  * @author noear
  * @since 2.0
  */
-public class NettyBufferReader implements CodecReader {
+public class NettyBufferCodecReader implements CodecReader {
     private ByteBuf source;
-    public NettyBufferReader(ByteBuf source){
+    public NettyBufferCodecReader(ByteBuf source){
         this.source = source;
     }
     @Override

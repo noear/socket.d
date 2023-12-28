@@ -1,4 +1,7 @@
 
+### 2.2.1
+* 调整 BufferReader 更名为 CodecReader
+* 调整 BufferWriter 更名为 CodecWriter
 
 ### 2.2.0
 * 调整 部分接口方法名，方便跨语言迁移开发!!!

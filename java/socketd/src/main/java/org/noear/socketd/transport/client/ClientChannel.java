@@ -3,6 +3,7 @@ package org.noear.socketd.transport.client;
 import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.internal.ChannelBase;
 import org.noear.socketd.transport.core.internal.HeartbeatHandlerDefault;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;

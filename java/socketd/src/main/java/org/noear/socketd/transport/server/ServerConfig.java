@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.server;
 
-import org.noear.socketd.transport.core.ConfigBase;
+import org.noear.socketd.transport.core.internal.ConfigBase;
 import org.noear.socketd.utils.StrUtils;
 
 

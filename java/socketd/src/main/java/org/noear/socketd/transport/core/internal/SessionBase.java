@@ -1,4 +1,7 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.internal;
+
+import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.Session;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

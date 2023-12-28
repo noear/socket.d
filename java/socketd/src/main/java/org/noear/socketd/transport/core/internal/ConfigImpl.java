@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.internal;
 
 /**
  * 基础配置实现

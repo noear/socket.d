@@ -1,5 +1,9 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.internal;
 
+import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.HandshakeInternal;
+import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.internal.Frames;
 
 import java.io.IOException;

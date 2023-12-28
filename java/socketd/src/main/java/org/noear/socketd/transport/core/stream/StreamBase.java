@@ -1,6 +1,9 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.stream;
 
 import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.transport.core.Stream;
+import org.noear.socketd.transport.core.StreamInternal;
+import org.noear.socketd.transport.core.StreamManger;
 import org.noear.socketd.utils.RunUtils;
 
 import java.util.concurrent.ScheduledFuture;

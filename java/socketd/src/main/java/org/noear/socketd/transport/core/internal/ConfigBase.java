@@ -1,5 +1,6 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.core.internal;
 
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.codec.CodecDefault;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;

@@ -1,14 +1,14 @@
-package org.noear.socketd.transport.core.buffer;
+package org.noear.socketd.transport.core;
 
 import java.io.IOException;
 
 /**
- * 缓冲写
+ * 编解码缓冲写
  *
  * @author noear
  * @since 2.0
  */
-public interface BufferWriter {
+public interface CodecWriter {
     /**
      * 推入一组 byte
      */

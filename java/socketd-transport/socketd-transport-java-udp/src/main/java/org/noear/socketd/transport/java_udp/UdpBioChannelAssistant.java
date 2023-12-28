@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.java_udp;
 
-import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;

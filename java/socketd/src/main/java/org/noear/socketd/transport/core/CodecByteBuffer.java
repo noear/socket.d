@@ -1,7 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.core.buffer.BufferReader;
-import org.noear.socketd.transport.core.buffer.BufferWriter;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 
@@ -26,7 +24,7 @@ public class CodecByteBuffer implements Codec {
      * 编码
      */
     @Override
-    public <T extends BufferWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException {
+    public <T extends CodecWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException {
         if (frame.message() == null) {
             //length (len[int] + flag[int])
             int frameSize = Integer.BYTES + Integer.BYTES;
@@ -89,7 +87,7 @@ public class CodecByteBuffer implements Codec {
      * 解码
      */
     @Override
-    public Frame read(BufferReader buffer) {
+    public Frame read(CodecReader buffer) {
         int frameSize = buffer.getInt();
 
         if (frameSize > (buffer.remaining() + Integer.BYTES)) {
@@ -152,7 +150,7 @@ public class CodecByteBuffer implements Codec {
      * @param buf    复用缓冲
      * @param maxLen 最大长度
      */
-    protected String decodeString(BufferReader reader, ByteBuffer buf, int maxLen) {
+    protected String decodeString(CodecReader reader, ByteBuffer buf, int maxLen) {
         buf.clear();
 
         while (true) {

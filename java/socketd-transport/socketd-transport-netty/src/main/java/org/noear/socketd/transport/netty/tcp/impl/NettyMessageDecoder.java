@@ -3,7 +3,7 @@ package org.noear.socketd.transport.netty.tcp.impl;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.noear.socketd.transport.core.buffer.BufferReader;
+import org.noear.socketd.transport.core.CodecReader;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 
@@ -22,7 +22,7 @@ public class NettyMessageDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf inBuf, List<Object> out) throws Exception {
-        BufferReader reader = new NettyBufferReader(inBuf);
+        CodecReader reader = new NettyBufferReader(inBuf);
         Frame message = config.getCodec().read(reader);
         if (message == null) {
             return;

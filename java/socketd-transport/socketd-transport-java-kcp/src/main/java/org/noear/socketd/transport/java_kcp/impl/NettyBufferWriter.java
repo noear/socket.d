@@ -1,16 +1,15 @@
 package org.noear.socketd.transport.java_kcp.impl;
 
 import io.netty.buffer.ByteBuf;
-import org.noear.socketd.transport.core.buffer.BufferWriter;
+import org.noear.socketd.transport.core.CodecWriter;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 /**
  * @author noear
  * @since 2.0
  */
-public class NettyBufferWriter implements BufferWriter {
+public class NettyBufferWriter implements CodecWriter {
     private ByteBuf target;
 
     public NettyBufferWriter(ByteBuf target) {

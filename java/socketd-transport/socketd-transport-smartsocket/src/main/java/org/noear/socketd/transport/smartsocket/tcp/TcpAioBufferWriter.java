@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.smartsocket.tcp;
 
-import org.noear.socketd.transport.core.buffer.BufferWriter;
+import org.noear.socketd.transport.core.CodecWriter;
 import org.smartboot.socket.transport.WriteBuffer;
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class TcpAioBufferWriter implements BufferWriter {
+public class TcpAioBufferWriter implements CodecWriter {
     private WriteBuffer target;
 
     public TcpAioBufferWriter(WriteBuffer target) {

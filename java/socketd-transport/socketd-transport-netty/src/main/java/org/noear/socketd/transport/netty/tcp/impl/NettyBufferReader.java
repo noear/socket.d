@@ -1,13 +1,13 @@
 package org.noear.socketd.transport.netty.tcp.impl;
 
 import io.netty.buffer.ByteBuf;
-import org.noear.socketd.transport.core.buffer.BufferReader;
+import org.noear.socketd.transport.core.CodecReader;
 
 /**
  * @author noear
  * @since 2.0
  */
-public class NettyBufferReader implements BufferReader {
+public class NettyBufferReader implements CodecReader {
     private ByteBuf source;
     public NettyBufferReader(ByteBuf source){
         this.source = source;

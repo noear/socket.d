@@ -1,8 +1,5 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.transport.core.buffer.BufferReader;
-import org.noear.socketd.transport.core.buffer.BufferWriter;
-
 import java.io.IOException;
 import java.util.function.Function;
 
@@ -18,7 +15,7 @@ public interface Codec {
      *
      * @param buffer 缓冲
      */
-    Frame read(BufferReader buffer);
+    Frame read(CodecReader buffer);
 
     /**
      * 解码写入
@@ -26,5 +23,5 @@ public interface Codec {
      * @param frame         帧
      * @param targetFactory 目标工厂
      */
-    <T extends BufferWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException;
+    <T extends CodecWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException;
 }

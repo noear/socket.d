@@ -1,12 +1,12 @@
-package org.noear.socketd.transport.core.buffer;
+package org.noear.socketd.transport.core;
 
 /**
- * 缓冲读
+ * 编解码缓冲读
  *
  * @author noear
  * @since 2.0
  */
-public interface BufferReader {
+public interface CodecReader {
 
     /**
      * 获取 byte

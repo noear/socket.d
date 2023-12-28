@@ -7,7 +7,7 @@ import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.buffer.BufferReader;
+import org.noear.socketd.transport.core.CodecReader;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
 import org.noear.socketd.transport.java_kcp.KcpNioClient;
 
@@ -44,7 +44,7 @@ public class ClientKcpListener implements KcpListener {
 
     @Override
     public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
-        BufferReader reader = new NettyBufferReader(byteBuf);
+        CodecReader reader = new NettyBufferReader(byteBuf);
         Frame frame = client.getConfig().getCodec().read(reader);
         if (frame == null) {
             return;

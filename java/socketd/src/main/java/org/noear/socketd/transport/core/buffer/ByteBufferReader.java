@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core.buffer;
 
+import org.noear.socketd.transport.core.CodecReader;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -8,7 +10,7 @@ import java.nio.ByteBuffer;
  * @author noear
  * @since 2.0
  */
-public class ByteBufferReader implements BufferReader {
+public class ByteBufferReader implements CodecReader {
     private ByteBuffer buffer;
 
     public ByteBufferReader(ByteBuffer buffer) {

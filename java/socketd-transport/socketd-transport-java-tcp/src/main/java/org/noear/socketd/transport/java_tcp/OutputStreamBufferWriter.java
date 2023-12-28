@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.java_tcp;
 
-import org.noear.socketd.transport.core.buffer.BufferWriter;
+import org.noear.socketd.transport.core.CodecWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,7 +9,7 @@ import java.io.OutputStream;
  * @author noear
  * @since 2.0
  */
-public class OutputStreamBufferWriter implements BufferWriter {
+public class OutputStreamBufferWriter implements CodecWriter {
     private OutputStream target;
 
     public OutputStreamBufferWriter(OutputStream target) {

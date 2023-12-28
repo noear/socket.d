@@ -32,15 +32,6 @@ public class PathListener implements Listener {
     }
 
     /**
-     * 路由
-     */
-    public EventListener of(String path) {
-        EventListener l1 = new EventListener();
-        mapper.put(path, l1);
-        return l1;
-    }
-
-    /**
      * 数量（二级监听器的数据）
      */
     public int size() {

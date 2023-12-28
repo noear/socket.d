@@ -16,8 +16,8 @@
 		CD1AF0A12B3C04CC00A769FE /* StreamInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0A02B3C04CC00A769FE /* StreamInternal.swift */; };
 		CD1AF0A32B3C050400A769FE /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0A22B3C050400A769FE /* Session.swift */; };
 		CD1AF0A52B3C055900A769FE /* Codec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0A42B3C055900A769FE /* Codec.swift */; };
-		CD1AF0A82B3C05AC00A769FE /* BufferReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0A72B3C05AC00A769FE /* BufferReader.swift */; };
-		CD1AF0AA2B3C05B900A769FE /* BufferWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0A92B3C05B900A769FE /* BufferWriter.swift */; };
+		CD1AF0A82B3C05AC00A769FE /* CodecReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0A72B3C05AC00A769FE /* CodecReader.swift */; };
+		CD1AF0AA2B3C05B900A769FE /* CodecWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0A92B3C05B900A769FE /* CodecWriter.swift */; };
 		CD1AF0AC2B3C075700A769FE /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0AB2B3C075700A769FE /* Entity.swift */; };
 		CD1AF0AE2B3C076B00A769FE /* Reply.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0AD2B3C076A00A769FE /* Reply.swift */; };
 		CD1AF0B02B3C078400A769FE /* MessageInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0AF2B3C078400A769FE /* MessageInternal.swift */; };
@@ -62,8 +62,8 @@
 		CD1AF0A02B3C04CC00A769FE /* StreamInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamInternal.swift; sourceTree = "<group>"; };
 		CD1AF0A22B3C050400A769FE /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		CD1AF0A42B3C055900A769FE /* Codec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Codec.swift; sourceTree = "<group>"; };
-		CD1AF0A72B3C05AC00A769FE /* BufferReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferReader.swift; sourceTree = "<group>"; };
-		CD1AF0A92B3C05B900A769FE /* BufferWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferWriter.swift; sourceTree = "<group>"; };
+		CD1AF0A72B3C05AC00A769FE /* CodecReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodecReader.swift; sourceTree = "<group>"; };
+		CD1AF0A92B3C05B900A769FE /* CodecWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodecWriter.swift; sourceTree = "<group>"; };
 		CD1AF0AB2B3C075700A769FE /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		CD1AF0AD2B3C076A00A769FE /* Reply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reply.swift; sourceTree = "<group>"; };
 		CD1AF0AF2B3C078400A769FE /* MessageInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInternal.swift; sourceTree = "<group>"; };
@@ -137,7 +137,9 @@
 		CD1AF0952B3C017B00A769FE /* core */ = {
 			isa = PBXGroup;
 			children = (
-				CD1AF0A62B3C058800A769FE /* buffer */,
+				CD1AF0D02B3CFFEC00A769FE /* codec */,
+				CD1AF0A72B3C05AC00A769FE /* CodecReader.swift */,
+				CD1AF0A92B3C05B900A769FE /* CodecWriter.swift */,
 				CD1AF0962B3C019300A769FE /* Channel.swift */,
 				CD1AF0C92B3C1A5100A769FE /* ChannelAssistant.swift */,
 				CD1AF0C52B3C19A500A769FE /* ChannelInternal.swift */,
@@ -167,21 +169,19 @@
 			path = core;
 			sourceTree = "<group>";
 		};
-		CD1AF0A62B3C058800A769FE /* buffer */ = {
-			isa = PBXGroup;
-			children = (
-				CD1AF0A72B3C05AC00A769FE /* BufferReader.swift */,
-				CD1AF0A92B3C05B900A769FE /* BufferWriter.swift */,
-			);
-			path = buffer;
-			sourceTree = "<group>";
-		};
 		CD1AF0CB2B3C1BDB00A769FE /* client */ = {
 			isa = PBXGroup;
 			children = (
 				CD1AF0CC2B3C1BE800A769FE /* ClientSession.swift */,
 			);
 			path = client;
+			sourceTree = "<group>";
+		};
+		CD1AF0D02B3CFFEC00A769FE /* codec */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = codec;
 			sourceTree = "<group>";
 		};
 		CDB49B9C2B3BFF33005C6BB8 = {
@@ -331,10 +331,10 @@
 			files = (
 				CD1AF0C62B3C19A500A769FE /* ChannelInternal.swift in Sources */,
 				CD1AF0B02B3C078400A769FE /* MessageInternal.swift in Sources */,
-				CD1AF0AA2B3C05B900A769FE /* BufferWriter.swift in Sources */,
+				CD1AF0AA2B3C05B900A769FE /* CodecWriter.swift in Sources */,
 				CD1AF0A12B3C04CC00A769FE /* StreamInternal.swift in Sources */,
 				CD1AF0B22B3C0DA100A769FE /* StreamManger.swift in Sources */,
-				CD1AF0A82B3C05AC00A769FE /* BufferReader.swift in Sources */,
+				CD1AF0A82B3C05AC00A769FE /* CodecReader.swift in Sources */,
 				CDB49BAB2B3BFF33005C6BB8 /* socketd.docc in Sources */,
 				CD1AF0A52B3C055900A769FE /* Codec.swift in Sources */,
 				CD1AF0BA2B3C0F5900A769FE /* Flags.swift in Sources */,

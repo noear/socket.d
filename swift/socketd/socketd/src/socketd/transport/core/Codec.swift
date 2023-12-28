@@ -19,7 +19,7 @@ protocol Codec{
      *
      * @param buffer 缓冲
      */
-    func read(_ buffer:BufferReader) -> Frame;
+    func read(_ buffer:CodecReader) -> Frame;
     
     /**
      * 解码写入
@@ -27,5 +27,5 @@ protocol Codec{
      * @param frame         帧
      * @param targetFactory 目标工厂
      */
-    func write<T:BufferWriter>(_ frame:Frame, _ targetFactory:((_ n:Int32)->T))->T;
+    func write<T:CodecWriter>(_ frame:Frame, _ targetFactory:((_ n:Int32)->T))->T;
 }

@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.codec;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.internal.MessageBuilder;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 
 import java.io.IOException;
@@ -134,11 +135,12 @@ public class CodecDefault implements Codec {
             }
 
             //先 data , 后 metaString (避免 data 时修改元信息)
-            MessageDefault message = new MessageDefault()
-                    .flagSet(Flags.of(flag))
-                    .sidSet(sid)
-                    .eventSet(event)
-                    .entitySet(new EntityDefault().dataSet(data).metaStringSet(metaString));
+            MessageInternal message = new MessageBuilder()
+                    .flag(Flags.of(flag))
+                    .sid(sid)
+                    .event(event)
+                    .entity(new EntityDefault().dataSet(data).metaStringSet(metaString))
+                    .build();
 
             return new Frame(message.flag(), message);
         }

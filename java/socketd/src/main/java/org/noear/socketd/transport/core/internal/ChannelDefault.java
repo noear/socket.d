@@ -105,10 +105,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
                             if (fragmentEntity != null) {
                                 //主要是 sid 和 entity
-                                Frame fragmentFrame = new Frame(frame.flag(), new MessageDefault()
-                                        .flagSet(frame.flag())
-                                        .sidSet(message.sid())
-                                        .entitySet(fragmentEntity));
+                                Frame fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
+                                        .flag(frame.flag())
+                                        .sid(message.sid())
+                                        .entity(fragmentEntity)
+                                        .build());
 
                                 assistant.write(source, fragmentFrame);
                             } else {

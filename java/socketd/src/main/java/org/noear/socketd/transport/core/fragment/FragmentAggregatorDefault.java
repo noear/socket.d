@@ -6,6 +6,7 @@ import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.exception.SocketdCodecException;
 import org.noear.socketd.transport.core.MessageInternal;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.internal.MessageBuilder;
 import org.noear.socketd.transport.core.internal.MessageDefault;
 import org.noear.socketd.utils.StrUtils;
 import java.io.IOException;
@@ -96,10 +97,11 @@ public class FragmentAggregatorDefault implements FragmentAggregator {
         dataBuffer.flip();
 
         //返回
-        return new Frame(main.flag(), new MessageDefault()
-                .flagSet(main.flag())
-                .sidSet(main.sid())
-                .eventSet(main.event())
-                .entitySet(new EntityDefault().metaMapPut(main.metaMap()).dataSet(dataBuffer)));
+        return new Frame(main.flag(), new MessageBuilder()
+                .flag(main.flag())
+                .sid(main.sid())
+                .event(main.event())
+                .entity(new EntityDefault().metaMapPut(main.metaMap()).dataSet(dataBuffer))
+                .build());
     }
 }

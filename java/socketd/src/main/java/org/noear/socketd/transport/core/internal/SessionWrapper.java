@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 
 /**
- * Session 包装器
+ * Session 包装器（用于静态代理）
  *
  * @author noear
  * @since 2.1

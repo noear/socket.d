@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * 处理器默认实现
+ * 协议处理器默认实现
  *
  * @author noear
  * @since 2.0

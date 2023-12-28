@@ -1,9 +1,7 @@
 package org.noear.socketd.transport.core.stream;
 
-import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
-import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 流管理器
+ * 流管理器默认实现
  *
  * @author noear
  * @since 2.0

@@ -13,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.*;
 
 /**
+ * 配置基类
+ *
  * @author noear
  * @since 2.0
  */

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 握手信息内部实现类
+ * 握手信息默认实现
  *
  * @author noear
  * @since 2.0

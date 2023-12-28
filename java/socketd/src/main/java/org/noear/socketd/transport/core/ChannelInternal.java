@@ -3,7 +3,7 @@ package org.noear.socketd.transport.core;
 import java.util.function.BiConsumer;
 
 /**
- * 通道内部扩展
+ * 通道内部接口
  *
  * @author noear
  * @since 2.0

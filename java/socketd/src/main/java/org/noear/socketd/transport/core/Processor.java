@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.core;
 
 /**
- * 处理器
+ * 协议处理器
  *
  * @author noear
  * @since 2.0

@@ -1,6 +1,6 @@
-import {BufferReader} from "../../socketd/transport/core/Buffer";
+import {CodecReader} from "../../socketd/transport/core/Codec";
 
-export class BufferReaderImpl implements BufferReader {
+export class ArrayBufferCodecReader implements CodecReader {
     _buf: ArrayBuffer;
     _bufView: DataView;
     _bufViewIdx: number;

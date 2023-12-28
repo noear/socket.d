@@ -3,9 +3,72 @@ import {Asserts} from "./Asserts";
 import {Constants, Flags} from "./Constants";
 import {EntityDefault, Frame, MessageDefault} from "./Message";
 import {Config} from "./Config";
-import {BufferReader, BufferWriter} from "./Buffer";
 import {IoFunction} from "./Types";
 import {StrUtils} from "../../utils/StrUtils";
+
+
+
+/**
+ * 编解码缓冲读
+ *
+ * @author noear
+ * @since 2.0
+ */
+export interface CodecReader {
+
+    /**
+     * 获取 byte
+     */
+    getByte(): number;
+
+    /**
+     * 获取一组 byte
+     */
+    getBytes(dst: ArrayBuffer, offset: number, length: number);
+
+    /**
+     * 获取 int
+     */
+    getInt(): number;
+
+    /**
+     * 剩余长度
+     */
+    remaining(): number;
+
+    /**
+     * 当前位置
+     */
+    position(): number;
+}
+
+/**
+ * 编解码缓冲写
+ *
+ * @author noear
+ * @since 2.0
+ */
+export interface CodecWriter {
+    /**
+     * 推入一组 byte
+     */
+    putBytes(src: ArrayBuffer);
+
+    /**
+     * 推入 int
+     */
+    putInt(val: number);
+
+    /**
+     * 推入 char
+     */
+    putChar(val: number);
+
+    /**
+     * 冲刷
+     */
+    flush();
+}
 
 /**
  * 编解码器
@@ -19,7 +82,7 @@ export interface Codec {
      *
      * @param buffer 缓冲
      */
-    read(buffer: BufferReader): Frame;
+    read(buffer: CodecReader): Frame;
 
     /**
      * 解码写入
@@ -27,7 +90,7 @@ export interface Codec {
      * @param frame         帧
      * @param targetFactory 目标工厂
      */
-    write<T extends BufferWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T;
+    write<T extends CodecWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T;
 }
 
 /**
@@ -49,7 +112,7 @@ export class CodecByteBuffer implements Codec {
      * @param frame         帧
      * @param targetFactory 目标工厂
      */
-    write<T extends BufferWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
+    write<T extends CodecWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
         if (frame.message()) {
             //sid
             let sidB = StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
@@ -113,7 +176,7 @@ export class CodecByteBuffer implements Codec {
      *
      * @param buffer 缓冲
      */
-    read(buffer: BufferReader): Frame { //=>Frame
+    read(buffer: CodecReader): Frame { //=>Frame
         let frameSize = buffer.getInt();
 
         if (frameSize > (buffer.remaining() + 4)) {
@@ -166,7 +229,7 @@ export class CodecByteBuffer implements Codec {
         }
     }
 
-    protected decodeString(reader: BufferReader, buf: ArrayBuffer, maxLen: number): string {
+    protected decodeString(reader: CodecReader, buf: ArrayBuffer, maxLen: number): string {
         let bufView = new DataView(buf);
         let bufViewIdx = 0;
 

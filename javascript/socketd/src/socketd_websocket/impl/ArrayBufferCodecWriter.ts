@@ -1,6 +1,7 @@
-import {BufferWriter} from "../../socketd/transport/core/Buffer";
+import {CodecWriter} from "../../socketd/transport/core/Codec";
 
-export class BufferWriterImpl implements BufferWriter {
+
+export class ArrayBufferCodecWriter implements CodecWriter {
     _buf: ArrayBuffer;
     _bufView: DataView;
     _bufViewIdx: number;

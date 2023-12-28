@@ -1,8 +1,8 @@
 import {ChannelAssistant} from "../socketd/transport/core/ChannelAssistant";
 import { Frame } from "../socketd/transport/core/Message";
 import {Config} from "../socketd/transport/core/Config";
-import {BufferWriterImpl} from "./impl/BufferWriterImpl";
-import {BufferReaderImpl} from "./impl/BufferReaderImpl";
+import {ArrayBufferCodecWriter} from "./impl/ArrayBufferCodecWriter";
+import {ArrayBufferCodecReader} from "./impl/ArrayBufferCodecReader";
 
 export class WsChannelAssistant implements ChannelAssistant<WebSocket> {
     _config: Config;
@@ -12,12 +12,12 @@ export class WsChannelAssistant implements ChannelAssistant<WebSocket> {
     }
 
     read(buffer: ArrayBuffer): Frame {
-        return this._config.getCodec().read(new BufferReaderImpl(buffer));
+        return this._config.getCodec().read(new ArrayBufferCodecReader(buffer));
     }
 
     write(target: WebSocket, frame: Frame) {
         let tmp = this._config.getCodec()
-            .write(frame, n => new BufferWriterImpl(n));
+            .write(frame, n => new ArrayBufferCodecWriter(n));
         target.send(tmp.getBuffer());
     }
 

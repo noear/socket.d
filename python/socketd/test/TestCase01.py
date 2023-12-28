@@ -11,6 +11,7 @@ from test.cases.TestCase05_file import TestCase05_file
 from test.cases.TestCase06_meta_size import TestCase06_meta_size
 from test.cases.TestCase07_url_auth import TestCase07_url_auth
 from test.cases.TestCase08_ping_timout import TestCase08_ping_timout
+from test.cases.TestCase09_clientCloseReconnect import TestCase09_clientCloseReconnect
 from test.modelu.BaseTest import BaseTest
 
 
@@ -95,6 +96,16 @@ class TestCase01(unittest.TestCase):
     def test_Case08_ping_timout(self):
         for i in range(len(TestCase01.schemas)):
             t = TestCase08_ping_timout(TestCase01.schemas[i], 9000 + i)
+            try:
+                t.start()
+                t.stop()
+            except Exception as e:
+                t.on_error()
+                raise e
+
+    def test_Case09_clientCloseReconnect(self):
+        for i in range(len(TestCase01.schemas)):
+            t = TestCase09_clientCloseReconnect(TestCase01.schemas[i], 9000 + i)
             try:
                 t.start()
                 t.stop()

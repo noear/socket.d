@@ -1,5 +1,4 @@
-
-from socketd.transport.core import EntityMetas
+from socketd.transport.core.entity.Entity import EntityMetas
 from socketd.transport.core.entity.EntityDefault import EntityDefault
 
 

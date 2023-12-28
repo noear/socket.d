@@ -1,11 +1,12 @@
 from typing import Any
+from asyncio import Future
 
 from socketd.transport.core.async_api.AtomicRefer import AtomicRefer
-from .Costants import Function
-from .Session import Session
-from .config.Config import Config
-from .entity.Frame import Frame
-from .entity.Message import Message
+from  socketd.transport.core.Costants import Function
+from  socketd.transport.core.Session import Session
+from  socketd.transport.core.config.Config import Config
+from  socketd.transport.core.entity.Frame import Frame
+from  socketd.transport.core.entity.Message import Message
 from abc import abstractmethod
 
 
@@ -100,3 +101,5 @@ class Channel:
 
     def on_error(self, error: Exception):
         ...
+
+    def reconnect(self) -> Future | None: ...

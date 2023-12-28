@@ -1,5 +1,7 @@
 import abc
-from typing import Union, Dict, Any, Callable, Awaitable, Coroutine
+from typing import Union, Dict, Any, Callable, Awaitable, Coroutine, Optional
+from asyncio import Future
+
 from socket import gethostbyaddr
 from socketd.transport.core import Handshake
 from socketd.transport.core.entity.Message import Message
@@ -100,3 +102,12 @@ class Session(abc.ABC):
     @abc.abstractmethod
     def set_session_id(self, value):
         ...
+
+    @abc.abstractmethod
+    def reconnect(self) -> Future | None: ...
+
+    @abc.abstractmethod
+    def path(self) -> Optional[str]: ...
+
+    @abc.abstractmethod
+    def pathNew(self, path: str): ...

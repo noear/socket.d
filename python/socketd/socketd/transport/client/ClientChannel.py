@@ -77,7 +77,7 @@ class ClientChannel(ChannelBase, ABC):
 
         with self:
             try:
-                self.prepare_send()
+                self.prepare_check()
                 self.heartbeatHandler.heartbeat(self.get_session())
             except Exception as e:
                 if self.connector.autoReconnect():
@@ -89,7 +89,7 @@ class ClientChannel(ChannelBase, ABC):
         AssertsUtil.assert_closed(self.real)
         with self:
             try:
-                await self.prepare_send()
+                await self.prepare_check()
                 await self.real.send(frame, acceptor)
             except Exception as e:
                 if self.connector.autoReconnect():
@@ -113,7 +113,7 @@ class ClientChannel(ChannelBase, ABC):
         except Exception as e:
             logger.error(e)
 
-    async def prepare_send(self):
+    async def prepare_check(self):
         if self.real is None or not self.real.is_valid():
             self.real = await self.connector.connect()
             return True
@@ -125,3 +125,7 @@ class ClientChannel(ChannelBase, ABC):
 
     def on_error(self, error: Exception):
         pass
+
+    async def reconnect(self):
+        self.initHeartbeat()
+        await self.prepare_check()

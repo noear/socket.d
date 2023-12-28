@@ -2,7 +2,7 @@ import asyncio
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.entity.Message import Message
-from socketd.transport.core import AtomicRefer
+from socketd.transport.core.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer

@@ -1,7 +1,7 @@
 import abc
 
 
-class Listener(metaclass=abc.ABCMeta):
+class Listener:
     @abc.abstractmethod
     async def on_open(self, session):
         pass

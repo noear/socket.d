@@ -101,3 +101,7 @@ class ChannelDefault(ChannelBase):
 
     def on_error(self, error: Exception):
         pass
+
+    def reconnect(self):
+        pass
+

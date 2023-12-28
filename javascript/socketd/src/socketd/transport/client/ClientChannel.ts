@@ -163,7 +163,4 @@ export class ClientChannel extends ChannelBase implements Channel {
     getSession(): Session {
         return this._real.getSession();
     }
-    setSession(session: Session) {
-        throw new Error("Method not implemented.");
-    }
 }

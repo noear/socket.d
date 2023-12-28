@@ -42,7 +42,7 @@ export interface Handshake {
     /**
      * 设置或修改参数
      */
-    paramSet(name: string, value: string);
+    paramPut(name: string, value: string);
 }
 
 

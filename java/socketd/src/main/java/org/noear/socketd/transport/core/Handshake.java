@@ -43,7 +43,7 @@ public interface Handshake {
     String paramOrDefault(String name, String def);
 
     /**
-     * 设置或修改参数
+     * 放置参数
      */
-    void param(String name, String value);
+    void paramPut(String name, String value);
 }

@@ -15,12 +15,12 @@ import { SocketdChannelException, SocketdException } from "../../exception/Socke
  * @since 2.0
  */
 export class ClientChannel extends ChannelBase implements Channel {
-    _connector:ClientConnector;
-    _real:Channel;
-    _heartbeatHandler:HeartbeatHandler;
-    _heartbeatScheduledFuture:number;
+    _connector: ClientConnector;
+    _real: Channel;
+    _heartbeatHandler: HeartbeatHandler;
+    _heartbeatScheduledFuture: number;
 
-    constructor(real:Channel, connector:ClientConnector) {
+    constructor(real: Channel, connector: ClientConnector) {
         super(real.getConfig());
 
         this._connector = connector;
@@ -57,7 +57,7 @@ export class ClientChannel extends ChannelBase implements Channel {
     /**
      * 心跳处理
      */
-    heartbeatHandle() {
+    async heartbeatHandle() {
         if (this._real != null) {
             //说明握手未成
             if (this._real.getHandshake() == null) {
@@ -73,7 +73,7 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
 
         try {
-            this.prepareCheck();
+            await this.prepareCheck();
 
             this._heartbeatHandler.heartbeat(this.getSession());
         } catch (e) {
@@ -95,9 +95,9 @@ export class ClientChannel extends ChannelBase implements Channel {
      *
      * @return 是否为新链接
      */
-    prepareCheck():boolean{
+    async prepareCheck(): Promise<boolean> {
         if (this._real == null || this._real.isValid() == false) {
-            this._real = this._connector.connect();
+            this._real = await this._connector.connect();
 
             return true;
         } else {
@@ -133,11 +133,11 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    send(frame: Frame, stream: StreamInternal) {
+    async send(frame: Frame, stream: StreamInternal) {
         Asserts.assertClosedByUser(this._real);
 
         try {
-            this.prepareCheck();
+            await this.prepareCheck();
 
             this._real.send(frame, stream);
         } catch (e) {
@@ -149,17 +149,21 @@ export class ClientChannel extends ChannelBase implements Channel {
             throw e;
         }
     }
+
     retrieve(frame: Frame) {
         this._real.retrieve(frame);
     }
+
     reconnect() {
         this.initHeartbeat();
 
         this.prepareCheck();
     }
+
     onError(error: Error) {
         throw new Error("Method not implemented.");
     }
+
     getSession(): Session {
         return this._real.getSession();
     }

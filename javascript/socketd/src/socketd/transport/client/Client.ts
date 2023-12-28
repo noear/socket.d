@@ -34,7 +34,7 @@ export interface Client {
     /**
      * 打开会话
      */
-    open(): ClientSession;
+    open(): Promise<ClientSession>;
 }
 
 
@@ -157,11 +157,11 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
     /**
      * 打开会话
      */
-    open(): ClientSession {
+    async open(): Promise<ClientSession> {
         let connector = this.createConnector();
 
         //连接
-        let channel0 = connector.connect();
+        let channel0 = await connector.connect();
         //新建客户端通道
         let clientChannel = new ClientChannel(channel0, connector);
         //同步握手信息

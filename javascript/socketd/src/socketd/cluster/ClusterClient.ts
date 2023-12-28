@@ -47,7 +47,7 @@ export class ClusterClient implements Client {
     /**
      * 打开
      */
-    open(): ClientSession {
+    async open(): Promise<ClientSession> {
         let sessionList = new ClusterClient[this._serverUrls.length];
 
         for (let urls of this._serverUrls) {
@@ -71,7 +71,8 @@ export class ClusterClient implements Client {
                     client.heartbeatHandler(this._heartbeatHandler);
                 }
 
-                sessionList.add(client.open());
+                let session = await client.open();
+                sessionList.add(session);
             }
         }
 

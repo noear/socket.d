@@ -30,7 +30,7 @@ export interface ClientConnector {
      *
      * @return 通道
      */
-    connect(): ChannelInternal;
+    connect(): Promise<ChannelInternal>;
 
     /**
      * 关闭
@@ -63,7 +63,7 @@ export abstract class ClientConnectorBase<T extends ClientInternal> implements C
         return this._client.getConfig().isAutoReconnect();
     }
 
-    abstract connect(): ChannelInternal;
+    abstract connect(): Promise<ChannelInternal>;
 
     abstract close();
 }

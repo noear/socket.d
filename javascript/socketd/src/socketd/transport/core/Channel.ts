@@ -153,6 +153,7 @@ export abstract class  ChannelBase implements Channel {
     constructor(config: Config) {
         this._config = config;
         this._attachments = new Map<string, object>();
+        this._isClosed = 0;
     }
 
     getAttachment(name: string): object {

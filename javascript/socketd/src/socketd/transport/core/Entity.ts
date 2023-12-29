@@ -204,8 +204,9 @@ export class EntityDefault implements Entity {
     /**
      * 获取数据并转成字符串
      */
-    dataAsString(): string {
-        throw new Error("Method not implemented.");
+    dataAsString(encoding = 'utf-8'): string {
+        const decoder = new TextDecoder(encoding);
+        return decoder.decode(this._data);
     }
 
     /**

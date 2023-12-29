@@ -37,12 +37,12 @@ public interface IChannel
   *
   * @param handshake 握手信息
   */
- void setHandshake(IIHandshakeInternal handshake);
+ void setHandshake(IHandshakeInternal handshake);
 
  /**
   * 获取握手信息
   */
- IIHandshakeInternal getHandshake();
+ IHandshakeInternal getHandshake();
 
  /**
   * 获取远程地址

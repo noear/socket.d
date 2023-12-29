@@ -1,7 +1,6 @@
 namespace org.noear.socketd.transport.core;
 
-public interface IFragmentHandler
-{
+public interface IFragmentHandler {
  /**
   * 获取下个分片
   *

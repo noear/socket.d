@@ -6,32 +6,32 @@ public interface IEntity {
  *
  * @since 2.1
  */
- String at();
+ string at();
 
  /**
   * 获取元信息字符串（queryString style）
   */
- String metaString();
+ string metaString();
 
  /**
   * 获取元信息字典
   */
- Dictionary<String, String> metaMap();
+ Dictionary<string, string> metaMap();
 
  /**
   * 获取元信息
   */
- String meta(String name);
+ string meta(string name);
 
  /**
   * 获取元信息或默认
   */
- String metaOrDefault(String name, String def);
+ string metaOrDefault(string name, string def);
 
  /**
   * 放置元信息
   * */
- void putMeta(String name, String val);
+ void putMeta(string name, string val);
 
  /**
   * 获取数据
@@ -41,7 +41,7 @@ public interface IEntity {
  /**
   * 获取数据并转为字符串
   */
- String dataAsString();
+ string dataAsString();
 
  /**
   * 获取数据并转为字节数组

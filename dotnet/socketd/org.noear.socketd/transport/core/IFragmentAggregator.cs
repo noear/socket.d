@@ -1,11 +1,10 @@
 namespace org.noear.socketd.transport.core;
 
-public interface IFragmentAggregator
-{
+public interface IFragmentAggregator {
  /**
   * 获取流Id
   */
- String getSid();
+ string getSid();
 
  /**
   * 数据流大小

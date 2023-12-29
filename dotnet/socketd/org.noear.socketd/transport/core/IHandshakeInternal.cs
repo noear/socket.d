@@ -1,7 +1,6 @@
 namespace org.noear.socketd.transport.core;
 
-public interface IIHandshakeInternal : IHandshake
-{
+public interface IHandshakeInternal : IHandshake {
     /**
      * 获取消息源
      */

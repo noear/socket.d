@@ -1,4 +1,4 @@
-import {CodecReader} from "../../socketd/transport/core/Codec";
+import type {CodecReader} from "../../socketd/transport/core/Codec";
 
 export class ArrayBufferCodecReader implements CodecReader {
     _buf: ArrayBuffer;

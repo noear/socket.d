@@ -1,11 +1,11 @@
-import {HandshakeInternal} from "./Handshake";
-import {MessageInternal} from "./Message";
+import type {HandshakeInternal} from "./Handshake";
+import type {MessageInternal} from "./Message";
 import {EntityMetas} from "./Constants";
 
 export class HandshakeDefault implements HandshakeInternal {
     private _source: MessageInternal
     private _url: URL
-    private _version: string
+    private _version: string | null
     private _paramMap: Map<string, string>
 
     constructor(source: MessageInternal) {
@@ -23,7 +23,7 @@ export class HandshakeDefault implements HandshakeInternal {
         return this._source;
     }
 
-    param(name: string): string {
+    param(name: string): string | undefined{
         return this._paramMap.get(name);
     }
 
@@ -44,7 +44,7 @@ export class HandshakeDefault implements HandshakeInternal {
         return this._url;
     }
 
-    version(): string {
+    version(): string | null{
         return this._version;
     }
 }

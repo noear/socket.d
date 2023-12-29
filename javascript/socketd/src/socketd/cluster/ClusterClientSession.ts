@@ -1,7 +1,7 @@
-import {ClientSession} from "../transport/client/ClientSession";
-import { Entity, Reply } from "../transport/core/Entity";
-import { Stream } from "../transport/core/Stream";
-import { IoConsumer } from "../transport/core/Typealias";
+import type {ClientSession} from "../transport/client/ClientSession";
+import type { Entity, Reply } from "../transport/core/Entity";
+import type { Stream } from "../transport/core/Stream";
+import type { IoConsumer } from "../transport/core/Typealias";
 import {StrUtils} from "../utils/StrUtils";
 import {SocketdException} from "../exception/SocketdException";
 import {ClientChannel} from "../transport/client/ClientChannel";

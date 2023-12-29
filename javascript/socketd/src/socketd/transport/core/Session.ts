@@ -1,10 +1,10 @@
-import {Entity, Reply} from "./Entity";
-import {Message} from "./Message";
-import {IoConsumer} from "./Typealias";
-import {Channel} from "./Channel";
-import {Stream} from "./Stream";
-import {ClientSession} from "../client/ClientSession";
-import {Handshake} from "./Handshake";
+import type {Entity, Reply} from "./Entity";
+import type {Message} from "./Message";
+import type {IoConsumer} from "./Typealias";
+import type {Channel} from "./Channel";
+import type {Stream} from "./Stream";
+import type {ClientSession} from "../client/ClientSession";
+import type {Handshake} from "./Handshake";
 
 
 /**
@@ -24,14 +24,14 @@ export interface Session extends ClientSession {
      *
      * @since 2.1
      */
-    name(): string;
+    name(): string | undefined;
 
     /**
      * 获取握手参数
      *
      * @param name 名字
      */
-    param(name: string): string;
+    param(name: string): string | undefined;
 
     /**
      * 获取握手参数或默认值
@@ -68,7 +68,7 @@ export interface Session extends ClientSession {
      *
      * @param name 名字
      */
-    attr(name: string): object;
+    attr(name: string): object | undefined;
 
     /**
      * 获取属性或默认值
@@ -132,7 +132,7 @@ export abstract class SessionBase implements Session {
         return this._sessionId;
     }
 
-    name(): string {
+    name(): string | undefined{
         return this.param("@");
     }
 
@@ -148,7 +148,7 @@ export abstract class SessionBase implements Session {
         return this.attrMap().has(name);
     }
 
-    attr(name: string): object {
+    attr(name: string): object | undefined{
         return this.attrMap().get(name);
     }
 
@@ -167,7 +167,7 @@ export abstract class SessionBase implements Session {
 
     abstract handshake(): Handshake ;
 
-    abstract param(name: string): string;
+    abstract param(name: string): string | undefined;
 
     abstract paramOrDefault(name: string, def: string): string;
 

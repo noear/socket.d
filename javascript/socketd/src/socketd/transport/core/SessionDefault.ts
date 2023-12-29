@@ -1,11 +1,11 @@
 import {SessionBase} from "./Session";
-import {Channel} from "./Channel";
-import {Handshake} from "./Handshake";
-import {Entity, Reply} from "./Entity";
+import type {Channel} from "./Channel";
+import type {Handshake} from "./Handshake";
+import type {Entity, Reply} from "./Entity";
 import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
-import {IoConsumer} from "./Typealias";
+import type {IoConsumer} from "./Typealias";
 import {Stream, StreamRequest, StreamSubscribe} from "./Stream";
 
 /**
@@ -34,7 +34,7 @@ export class SessionDefault extends SessionBase {
      *
      * @param name 名字
      */
-    param(name: string): string {
+    param(name: string): string | undefined{
         return this.handshake().param(name);
     }
 

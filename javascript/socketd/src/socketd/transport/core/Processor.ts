@@ -1,7 +1,7 @@
 import {Listener, SimpleListener} from "./Listener";
-import {ChannelInternal} from "./Channel";
-import {Message} from "./Message";
-import {Frame} from "./Frame";
+import type {ChannelInternal} from "./Channel";
+import type {Message} from "./Message";
+import type {Frame} from "./Frame";
 import {Constants, EntityMetas, Flags} from "./Constants";
 import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
 import {HandshakeDefault} from "./HandshakeDefault";
@@ -209,7 +209,7 @@ export class ProcessorDefault implements Processor {
         this._listener.onClose(channel.getSession())
     }
 
-    onError(channel: ChannelInternal, error: Error) {
+    onError(channel: ChannelInternal, error: any) {
         this._listener.onError(channel.getSession(), error)
     }
 }

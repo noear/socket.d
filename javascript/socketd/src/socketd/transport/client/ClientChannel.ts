@@ -1,8 +1,8 @@
 import { Channel, ChannelBase } from "../core/Channel";
-import { Frame } from "../core/Frame";
-import { Session } from "../core/Session";
-import { StreamInternal } from "../core/Stream";
-import { ClientConnector } from "./ClientConnector";
+import type { Frame } from "../core/Frame";
+import type { Session } from "../core/Session";
+import type { StreamInternal } from "../core/Stream";
+import type { ClientConnector } from "./ClientConnector";
 import { HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
 import { Constants } from "../core/Constants";
 import { Asserts } from "../core/Asserts";
@@ -16,7 +16,7 @@ import { SocketdChannelException, SocketdException } from "../../exception/Socke
  */
 export class ClientChannel extends ChannelBase implements Channel {
     private _connector: ClientConnector;
-    private _real: Channel;
+    private _real: Channel | null;
     private  _heartbeatHandler: HeartbeatHandler;
     private _heartbeatScheduledFuture: number;
 
@@ -82,7 +82,7 @@ export class ClientChannel extends ChannelBase implements Channel {
             }
 
             if (this._connector.autoReconnect()) {
-                this._real.close(Constants.CLOSE3_ERROR);
+                this._real!.close(Constants.CLOSE3_ERROR);
                 this._real = null;
             }
 
@@ -139,10 +139,10 @@ export class ClientChannel extends ChannelBase implements Channel {
         try {
             await this.prepareCheck();
 
-            this._real.send(frame, stream);
+            this._real!.send(frame, stream);
         } catch (e) {
             if (this._connector.autoReconnect()) {
-                this._real.close(Constants.CLOSE3_ERROR);
+                this._real!.close(Constants.CLOSE3_ERROR);
                 this._real = null;
             }
 
@@ -151,7 +151,7 @@ export class ClientChannel extends ChannelBase implements Channel {
     }
 
     retrieve(frame: Frame) {
-        this._real.retrieve(frame);
+        this._real!.retrieve(frame);
     }
 
     reconnect() {
@@ -165,6 +165,6 @@ export class ClientChannel extends ChannelBase implements Channel {
     }
 
     getSession(): Session {
-        return this._real.getSession();
+        return this._real!.getSession();
     }
 }

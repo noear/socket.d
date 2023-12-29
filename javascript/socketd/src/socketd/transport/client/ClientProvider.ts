@@ -1,5 +1,5 @@
-import {Client} from "./Client";
-import {ClientConfig} from "./ClientConfig";
+import type {Client} from "./Client";
+import type {ClientConfig} from "./ClientConfig";
 
 /**
  * 客户端工厂

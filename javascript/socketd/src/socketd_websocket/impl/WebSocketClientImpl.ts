@@ -1,7 +1,7 @@
-import {WsClient} from "../WsClient";
-import {IoConsumer} from "../../socketd/transport/core/Typealias";
+import type {WsClient} from "../WsClient";
+import type {IoConsumer} from "../../socketd/transport/core/Typealias";
 import {ClientHandshakeResult} from "../../socketd/transport/client/ClientHandshakeResult";
-import {ChannelInternal} from "../../socketd/transport/core/Channel";
+import type {ChannelInternal} from "../../socketd/transport/core/Channel";
 import {ChannelDefault} from "../../socketd/transport/core/ChannelDefault";
 import {Flags} from "../../socketd/transport/core/Constants";
 import {SocketdConnectionException} from "../../socketd/exception/SocketdException";

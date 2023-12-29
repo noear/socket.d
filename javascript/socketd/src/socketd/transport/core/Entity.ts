@@ -28,7 +28,7 @@ export interface Entity {
     /**
      * 获取元信息
      */
-    meta(name: string): string;
+    meta(name: string): string | null;
 
     /**
      * 获取元信息或默认
@@ -86,7 +86,7 @@ export interface Reply extends Entity {
  * @since 2.0
  */
 export class EntityDefault implements Entity {
-    private _metaMap: URLSearchParams
+    private _metaMap: URLSearchParams | null;
     private _data: ArrayBuffer;
 
     constructor() {
@@ -155,7 +155,7 @@ export class EntityDefault implements Entity {
      *
      * @param name 名字
      */
-    meta(name: string): string {
+    meta(name: string): string | null{
         return this.metaMap().get(name);
     }
 
@@ -167,7 +167,7 @@ export class EntityDefault implements Entity {
      */
     metaOrDefault(name: string, def: string): string {
         let val = this.meta(name);
-        if (val == null) {
+        if (val) {
             return val;
         } else {
             return def;

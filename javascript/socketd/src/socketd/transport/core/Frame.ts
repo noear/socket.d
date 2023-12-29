@@ -11,9 +11,9 @@ import {Message, MessageBuilder, MessageInternal} from "./Message";
  */
 export class Frame {
     private  _flag: number;
-    private _message: MessageInternal;
+    private _message: MessageInternal | null;
 
-    constructor(flag: number, message: MessageInternal) {
+    constructor(flag: number, message: MessageInternal | null) {
         this._flag = flag;
         this._message = message;
     }
@@ -28,7 +28,7 @@ export class Frame {
     /**
      * 消息
      * */
-    message(): MessageInternal {
+    message(): MessageInternal | null{
         return this._message;
     }
 }

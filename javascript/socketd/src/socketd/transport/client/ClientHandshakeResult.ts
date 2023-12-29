@@ -1,4 +1,4 @@
-import {ChannelInternal} from "../core/Channel";
+import type {ChannelInternal} from "../core/Channel";
 
 /**
  * 客户端握手结果
@@ -8,9 +8,9 @@ import {ChannelInternal} from "../core/Channel";
  */
 export class ClientHandshakeResult {
     private _channel: ChannelInternal;
-    private _throwable: Error;
+    private _throwable: any;
 
-    constructor(channel: ChannelInternal, throwable: Error) {
+    constructor(channel: ChannelInternal, throwable: any) {
         this._channel = channel;
         this._throwable = throwable;
     }
@@ -20,7 +20,7 @@ export class ClientHandshakeResult {
         return this._channel;
     }
 
-    getThrowable(): Error {
+    getThrowable(): any{
         return this._throwable;
     }
 }

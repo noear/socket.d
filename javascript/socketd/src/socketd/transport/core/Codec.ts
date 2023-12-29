@@ -3,10 +3,10 @@ import {Asserts} from "./Asserts";
 import {Constants, Flags} from "./Constants";
 import {EntityDefault} from "./Entity";
 import {MessageBuilder} from "./Message";
-import {Config} from "./Config";
-import {IoFunction} from "./Typealias";
 import {StrUtils} from "../../utils/StrUtils";
 import {Frame} from "./Frame";
+import type {Config} from "./Config";
+import type {IoFunction} from "./Typealias";
 
 
 
@@ -84,7 +84,7 @@ export interface Codec {
      *
      * @param buffer 缓冲
      */
-    read(buffer: CodecReader): Frame;
+    read(buffer: CodecReader): Frame | null;
 
     /**
      * 解码写入
@@ -117,19 +117,19 @@ export class CodecByteBuffer implements Codec {
     write<T extends CodecWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
         if (frame.message()) {
             //sid
-            let sidB = StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
+            let sidB = StrUtils.strToBuf(frame.message()!.sid(), this._config.getCharset());
             //event
-            let eventB = StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
+            let eventB = StrUtils.strToBuf(frame.message()!.event(), this._config.getCharset());
             //metaString
-            let metaStringB = StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
+            let metaStringB = StrUtils.strToBuf(frame.message()!.metaString(), this._config.getCharset());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
-            let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
+            let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message()!.dataSize() + 2 * 3;
 
             Asserts.assertSize("sid", sidB.byteLength, Constants.MAX_SIZE_SID);
             Asserts.assertSize("event", eventB.byteLength, Constants.MAX_SIZE_EVENT);
             Asserts.assertSize("metaString", metaStringB.byteLength, Constants.MAX_SIZE_META_STRING);
-            Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
+            Asserts.assertSize("data", frame.message()!.dataSize(), Constants.MAX_SIZE_DATA);
 
             let target = targetFactory(frameSize);
 
@@ -152,7 +152,7 @@ export class CodecByteBuffer implements Codec {
             target.putChar('\n'.charCodeAt(0));
 
             //data
-            target.putBytes(frame.message().data());
+            target.putBytes(frame.message()!.data());
 
             target.flush();
 
@@ -178,7 +178,7 @@ export class CodecByteBuffer implements Codec {
      *
      * @param buffer 缓冲
      */
-    read(buffer: CodecReader): Frame { //=>Frame
+    read(buffer: CodecReader): Frame|null { //=>Frame
         let frameSize = buffer.getInt();
 
         if (frameSize > (buffer.remaining() + 4)) {

@@ -1,10 +1,11 @@
-import {Session} from "./Session";
-import {Config} from "./Config";
-import {HandshakeInternal} from "./Handshake";
-import {Message} from "./Message";
-import {Frame, Frames} from "./Frame";
-import {StreamInternal} from "./Stream";
-import {IoBiConsumer} from "./Typealias";
+import type {Session} from "./Session";
+import type {Config} from "./Config";
+import type {HandshakeInternal} from "./Handshake";
+import type {Message} from "./Message";
+import  {Frames} from "./Frame";
+import type {Frame} from "./Frame";
+import type {StreamInternal} from "./Stream";
+import type {IoBiConsumer} from "./Typealias";
 
 /**
  * 通道
@@ -16,7 +17,7 @@ export interface Channel {
     /**
      * 获取附件
      */
-    getAttachment(name: string): object;
+    getAttachment(name: string): object | undefined;
 
     /**
      * 放置附件
@@ -96,7 +97,7 @@ export interface Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    send(frame: Frame, stream: StreamInternal);
+    send(frame: Frame, stream: StreamInternal | null);
 
     /**
      * 接收（接收答复帧）
@@ -113,7 +114,7 @@ export interface Channel {
     /**
      * 出错时
      */
-    onError(error: Error);
+    onError(error: any);
 
     /**
      * 获取会话
@@ -136,12 +137,12 @@ export interface ChannelInternal extends Channel {
     /**
      * 当打开时
      * */
-    onOpenFuture(future: IoBiConsumer<boolean, Error>);
+    onOpenFuture(future: IoBiConsumer<boolean, any>);
 
     /**
      * 执行打开时
      * */
-    doOpenFuture(r: boolean, e: Error);
+    doOpenFuture(r: boolean, e: any);
 }
 
 export abstract class  ChannelBase implements Channel {
@@ -156,7 +157,7 @@ export abstract class  ChannelBase implements Channel {
         this._isClosed = 0;
     }
 
-    getAttachment(name: string): object {
+    getAttachment(name: string): object | undefined {
         return this._attachments.get(name);
     }
 
@@ -217,13 +218,13 @@ export abstract class  ChannelBase implements Channel {
         this.send(Frames.alarmFrame(from, alarm), null);
     }
 
-    abstract send(frame: Frame, stream: StreamInternal);
+    abstract send(frame: Frame, stream: StreamInternal | null);
 
     abstract retrieve(frame: Frame);
 
     abstract reconnect();
 
-    abstract onError(error: Error);
+    abstract onError(error: any);
 
     abstract getSession(): Session ;
 }

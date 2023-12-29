@@ -1,6 +1,6 @@
 import {ClientConnectorBase} from "../socketd/transport/client/ClientConnector";
-import { ChannelInternal } from "../socketd/transport/core/Channel";
-import {WsClient} from "./WsClient";
+import type { ChannelInternal } from "../socketd/transport/core/Channel";
+import type {WsClient} from "./WsClient";
 import {WebSocketClientImpl} from "./impl/WebSocketClientImpl";
 
 export class WsClientConnector extends ClientConnectorBase<WsClient> {

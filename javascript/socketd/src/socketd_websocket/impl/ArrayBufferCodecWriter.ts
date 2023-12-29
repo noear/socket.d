@@ -1,4 +1,4 @@
-import {CodecWriter} from "../../socketd/transport/core/Codec";
+import type {CodecWriter} from "../../socketd/transport/core/Codec";
 
 
 export class ArrayBufferCodecWriter implements CodecWriter {

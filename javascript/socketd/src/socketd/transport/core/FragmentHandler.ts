@@ -1,7 +1,7 @@
-import {Channel} from "./Channel";
-import {Frame} from "./Frame";
-import {MessageInternal} from "./Message";
-import {Entity} from "./Entity";
+import type {Channel} from "./Channel";
+import type {Frame} from "./Frame";
+import type {MessageInternal} from "./Message";
+import type {Entity} from "./Entity";
 
 /**
  * 数据分片处理（分片必须做，聚合可开关）

@@ -1,6 +1,6 @@
-import {Processor} from "./Processor";
-import {Config} from "./Config";
-import {ChannelAssistant} from "./ChannelAssistant";
+import type {Processor} from "./Processor";
+import type {Config} from "./Config";
+import type {ChannelAssistant} from "./ChannelAssistant";
 
 /**
  * 通道支持者（创建通道的参数）

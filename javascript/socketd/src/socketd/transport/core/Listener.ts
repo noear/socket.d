@@ -1,6 +1,6 @@
-import {Session} from "./Session";
-import {Message} from "./Message";
-import {IoBiConsumer, IoConsumer} from "./Typealias";
+import type {Session} from "./Session";
+import type {Message} from "./Message";
+import type {IoBiConsumer, IoConsumer} from "./Typealias";
 import {RouteSelector, RouteSelectorDefault} from "./RouteSelector";
 
 /**
@@ -38,7 +38,7 @@ export interface Listener {
      * @param session 会话
      * @param error   错误信息
      */
-    onError(session: Session, error: Error);
+    onError(session: Session, error: any);
 }
 
 /**

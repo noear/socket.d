@@ -22,7 +22,7 @@ export interface Handshake {
     /**
      * 获取参数集合
      */
-    paramMap(): URLSearchParams
+    paramMap(): Map<string, string>
 
     /**
      * 获取参数

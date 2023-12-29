@@ -4,6 +4,7 @@ import {Message} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, EntityMetas, Flags} from "./Constants";
 import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
+import {HandshakeDefault} from "./HandshakeDefault";
 
 /**
  * 处理器
@@ -70,8 +71,8 @@ export class ProcessorDefault implements Processor {
 
 
     onReceive(channel: ChannelInternal, frame) {
-        if (frame.flag == Flags.Connect) {
-            channel.setHandshake(frame.message);
+        if (frame.flag() == Flags.Connect) {
+            channel.setHandshake(new HandshakeDefault(frame.message()));
             channel.onOpenFuture((r, err) => {
                 if (r && channel.isValid()) {
                     //如果还有效，则发送链接确认
@@ -83,15 +84,15 @@ export class ProcessorDefault implements Processor {
                 }
             })
             this.onOpen(channel);
-        } else if (frame.flag == Flags.Connack) {
+        } else if (frame.flag() == Flags.Connack) {
             //if client
-            channel.setHandshake(frame.message);
+            channel.setHandshake(new HandshakeDefault(frame.message()));
             this.onOpen(channel);
         } else {
             if (channel.getHandshake() == null) {
                 channel.close(Constants.CLOSE1_PROTOCOL);
 
-                if (frame.flag == Flags.Close) {
+                if (frame.flag() == Flags.Close) {
                     //说明握手失败了
                     throw new SocketdConnectionException("Connection request was rejected");
                 }
@@ -101,7 +102,7 @@ export class ProcessorDefault implements Processor {
             }
 
             try {
-                switch (frame.flag) {
+                switch (frame.flag()) {
                     case Flags.Ping: {
                         channel.sendPong();
                         break;

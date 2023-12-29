@@ -288,7 +288,7 @@ export class StreamMangerDefault implements StreamManger{
         if (stream) {
             this._streamMap.delete(sid);
             stream.insuranceCancel();
-            console.debug("{} stream removed, sid={}", this._config.getRoleName(), sid);
+            console.debug(`${this._config.getRoleName()} stream removed, sid=${sid}`);
         }
     }
 }

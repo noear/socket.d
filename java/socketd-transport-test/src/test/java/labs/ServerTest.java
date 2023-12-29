@@ -36,8 +36,13 @@ public class ServerTest {
                     public void onMessage(Session session, Message message) throws IOException {
                         System.out.println("onMessage: " + message);
 
-                        if(message.isRequest() || message.isSubscribe()){
+                        if (message.isRequest()) {
                             session.reply(message, new StringEntity("me to!"));
+                        }
+
+                        if (message.isSubscribe()) {
+                            session.reply(message, new StringEntity("me to!"));
+                            session.replyEnd(message, new StringEntity("welcome to my home!"));
                         }
                     }
 

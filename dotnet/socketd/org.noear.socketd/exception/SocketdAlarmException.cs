@@ -11,17 +11,17 @@ namespace org.noear.socketd.exception;
  */
 public class SocketdAlarmException : SocketdException
 {
-    private Message alarm;
+    private IMessage alarm;
 
     /**
      * 获取告警
      */
-    public Message getAlarm()
+    public IMessage getAlarm()
     {
         return alarm;
     }
 
-    public SocketdAlarmException(Message alarm) : base(alarm.dataAsString())
+    public SocketdAlarmException(IMessage alarm) : base(alarm.dataAsString())
     {
         this.alarm = alarm;
     }

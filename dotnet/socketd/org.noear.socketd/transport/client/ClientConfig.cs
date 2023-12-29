@@ -1,6 +1,6 @@
 namespace org.noear.socketd.transport.client;
 
-public interface Client
+public class ClientConfig
 {
     
 }

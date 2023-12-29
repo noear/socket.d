@@ -9,7 +9,6 @@
     <ItemGroup>
       <Folder Include="broker\" />
       <Folder Include="cluster\" />
-      <Folder Include="transport\server\" />
       <Folder Include="utils\" />
     </ItemGroup>
 

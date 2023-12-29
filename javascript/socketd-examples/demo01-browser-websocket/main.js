@@ -28,10 +28,10 @@ function send() {
         return;
     }
     appendToMessageList('发送', input);
-    clientSession.sendAndSubscribe("/demo", new entity.StringEntity(input), reply=> {
+    clientSession.sendAndRequest("/demo", new entity.StringEntity(input), reply=> {
         console.log('reply', reply);
         appendToMessageList('响应', reply.dataAsString());
-    });
+    }, 3000);
 }
 
 function appendToMessageList(hint, msg) {

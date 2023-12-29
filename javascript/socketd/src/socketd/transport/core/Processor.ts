@@ -172,7 +172,7 @@ export class ProcessorDefault implements Processor {
         if (isReply) {
             channel.retrieve(frame);
         } else {
-            this.onMessage(channel, frame.getMessage());
+            this.onMessage(channel, frame.message());
         }
     }
 

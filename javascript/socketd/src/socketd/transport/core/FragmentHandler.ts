@@ -50,6 +50,6 @@ export class FragmentHandlerDefault implements FragmentHandler {
     }
 
     aggrEnable(): boolean {
-        throw new Error("Method not implemented.");
+        return false;
     }
 }

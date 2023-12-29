@@ -7,11 +7,11 @@ package org.noear.socketd.exception;
  * @since 2.0
  */
 public class SocketdConnectionException extends SocketdException {
-    public SocketdConnectionException(Throwable cause){
-        super(cause);
+    public SocketdConnectionException(String message) {
+        super(message);
     }
 
-    public SocketdConnectionException(String message){
-        super(message);
+    public SocketdConnectionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

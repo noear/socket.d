@@ -174,7 +174,12 @@ public class SessionDefault extends SessionBase {
                     throw new SocketdChannelException("This channel is closed" + hint);
                 }
             } catch (Throwable e) {
-                throw new SocketdException(e);
+                StringBuilder hint = new StringBuilder();
+                hint.append(", sessionId=").append(channel.getSession().sessionId());
+                hint.append(", event=").append(event);
+                hint.append(", sid=").append(message.sid());
+
+                throw new SocketdException("Send and request failed" + hint, e);
             }
         } finally {
             channel.getConfig().getStreamManger().removeStream(message.sid());

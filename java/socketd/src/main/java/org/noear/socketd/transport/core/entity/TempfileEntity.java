@@ -37,7 +37,7 @@ public class TempfileEntity extends EntityDefault {
     }
 
     @Override
-    public void release() {
+    public void release() throws IOException{
         file.delete();
     }
 }

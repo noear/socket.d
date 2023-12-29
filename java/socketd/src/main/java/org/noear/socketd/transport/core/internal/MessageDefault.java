@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -136,7 +137,7 @@ public class MessageDefault implements MessageInternal {
     }
 
     @Override
-    public void release() {
+    public void release() throws IOException {
         entity.release();
     }
 }

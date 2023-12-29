@@ -4,6 +4,7 @@ import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.utils.StrUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -217,7 +218,7 @@ public class EntityDefault implements Entity {
      * 释放资源
      */
     @Override
-    public void release() {
+    public void release() throws IOException {
 
     }
 

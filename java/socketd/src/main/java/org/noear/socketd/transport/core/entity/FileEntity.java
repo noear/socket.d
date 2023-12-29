@@ -15,7 +15,7 @@ import java.nio.channels.FileChannel;
  * @since 2.0
  */
 public class FileEntity extends EntityDefault {
-    private RandomAccessFile fileRaf;
+    private final RandomAccessFile fileRaf;
 
     public FileEntity(File file) throws IOException {
         long len = file.length();
@@ -29,8 +29,7 @@ public class FileEntity extends EntityDefault {
     }
 
     @Override
-    public void release() throws IOException{
+    public void release() throws IOException {
         fileRaf.close();
-        System.gc();
     }
 }

@@ -1,7 +1,6 @@
 namespace org.noear.socketd.transport.core;
 
-public abstract class StreamBase : IStreamInternal
-{
+public abstract class StreamBase : IStreamInternal {
     //保险任务
     private object insuranceFuture;
 
@@ -10,23 +9,20 @@ public abstract class StreamBase : IStreamInternal
     private long _timeout;
     private Action<Exception> _doOnError;
 
-    public StreamBase(String sid, bool isSingle, long timeout)
-    {
+    protected StreamBase(String sid, bool isSingle, long timeout) {
         this._sid = sid;
         this._isSingle = isSingle;
         this._timeout = timeout;
     }
 
-    public String sid()
-    {
+    public String sid() {
         return _sid;
     }
 
     /**
      * 是否单发接收
      */
-    public bool isSingle()
-    {
+    public bool isSingle() {
         return _isSingle;
     }
 
@@ -35,8 +31,7 @@ public abstract class StreamBase : IStreamInternal
     /**
      * 超时
      * */
-    public long timeout()
-    {
+    public long timeout() {
         return _timeout;
     }
 
@@ -46,10 +41,8 @@ public abstract class StreamBase : IStreamInternal
      * @param streamManger  流管理器
      * @param streamTimeout 流超时
      */
-    public void insuranceStart(IStreamManger streamManger, long streamTimeout)
-    {
-        if (insuranceFuture != null)
-        {
+    public void insuranceStart(IStreamManger streamManger, long streamTimeout) {
+        if (insuranceFuture != null) {
             return;
         }
 
@@ -62,8 +55,7 @@ public abstract class StreamBase : IStreamInternal
     /**
      * 保险取消息
      * */
-    public void insuranceCancel()
-    {
+    public void insuranceCancel() {
         // if (insuranceFuture != null) {
         //     insuranceFuture.cancel(false);
         // }
@@ -71,17 +63,14 @@ public abstract class StreamBase : IStreamInternal
 
     public abstract void onAccept(IMessageInternal reply, IChannel channel);
 
-    public void onError(Exception error)
-    {
-        if (_doOnError != null)
-        {
+    public void onError(Exception error) {
+        if (_doOnError != null) {
             _doOnError.Invoke(error);
         }
     }
 
-    public IStream thenError(Action<Exception> onError)
-    {
-        this._doOnError = onError;
+    public IStream thenError(Action<Exception> onError) {
+        _doOnError = onError;
         return this;
     }
 }

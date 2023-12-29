@@ -155,7 +155,7 @@ export class EntityDefault implements Entity {
      *
      * @param name 名字
      */
-    meta(name: string): string | null{
+    meta(name: string): string | null {
         return this.metaMap().get(name);
     }
 
@@ -204,9 +204,8 @@ export class EntityDefault implements Entity {
     /**
      * 获取数据并转成字符串
      */
-    dataAsString(encoding = 'utf-8'): string {
-        const decoder = new TextDecoder(encoding);
-        return decoder.decode(this._data);
+    dataAsString(): string {
+        return StrUtils.bufToStrDo(this._data, '');
     }
 
     /**
@@ -230,7 +229,7 @@ export class EntityDefault implements Entity {
  * @author noear
  * @since 2.0
  */
-export class StringEntity extends EntityDefault implements Entity{
+export class StringEntity extends EntityDefault implements Entity {
     constructor(data: string) {
         super();
         const dataBuf = StrUtils.strToBuf(data);

@@ -7,6 +7,7 @@ import { HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandl
 import { Constants } from "../core/Constants";
 import { Asserts } from "../core/Asserts";
 import { SocketdChannelException, SocketdException } from "../../exception/SocketdException";
+import {RunUtils} from "../../utils/RunUtils";
 
 /**
  * 客户端通道
@@ -160,8 +161,15 @@ export class ClientChannel extends ChannelBase implements Channel {
         this.prepareCheck();
     }
 
-    onError(error: Error) {
-        throw new Error("Method not implemented.");
+    onError(error: any) {
+        this._real!.onError(error);
+    }
+
+    close(code: number) {
+        RunUtils.runAndTry(() => window.clearInterval(this._heartbeatScheduledFuture));
+        RunUtils.runAndTry(() => this._connector.close());
+        RunUtils.runAndTry(() => this._real.close(code));
+        super.close(code);
     }
 
     getSession(): Session {

@@ -18,9 +18,7 @@ export class StrUtils {
     }
 
     static bufToStr(buf: ArrayBuffer, start: number, length: number, charet?: string): string {
-        if (!charet) {
-            charet = 'utf-8';
-        }
+
 
         if (buf.byteLength != length) {
             //取出子集
@@ -34,6 +32,14 @@ export class StrUtils {
             }
 
             buf = tmp;
+        }
+
+        return StrUtils.bufToStrDo(buf, charet);
+    }
+
+    static bufToStrDo(buf: ArrayBuffer, charet?: string): string {
+        if (!charet) {
+            charet = 'utf-8';
         }
 
         const decoder = new TextDecoder(charet)

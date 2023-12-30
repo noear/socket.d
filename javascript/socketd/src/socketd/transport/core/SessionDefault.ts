@@ -175,15 +175,13 @@ export class SessionDefault extends SessionBase {
      * 关闭
      */
     close() {
-        console.debug("{} session will be closed, sessionId={}",
-            this._channel.getConfig().getRoleName(), this.sessionId());
+        console.debug(`${this._channel.getConfig().getRoleName()} session will be closed, sessionId=${this.sessionId()}`);
 
         if (this._channel.isValid()) {
             try {
                 this._channel.sendClose();
             } catch (e) {
-                console.warn("{} channel sendClose error",
-                    this._channel.getConfig().getRoleName(), e);
+                console.warn(`${this._channel.getConfig().getRoleName()} channel sendClose error`, e);
             }
         }
 

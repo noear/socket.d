@@ -71,6 +71,12 @@ export class ProcessorDefault implements Processor {
 
 
     onReceive(channel: ChannelInternal, frame) {
+        if (channel.getConfig().clientMode()) {
+            console.debug("C-REV:", frame);
+        } else {
+            console.debug("S-REV:", frame);
+        }
+
         if (frame.flag() == Flags.Connect) {
             channel.setHandshake(new HandshakeDefault(frame.message()));
             channel.onOpenFuture((r, err) => {
@@ -154,7 +160,7 @@ export class ProcessorDefault implements Processor {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
-            let fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            let fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
                 let index = parseInt(fragmentIdxStr);
@@ -181,8 +187,7 @@ export class ProcessorDefault implements Processor {
             this._listener.onOpen(channel.getSession())
             channel.doOpenFuture(true, null);
         } catch (e) {
-            console.warn("{} channel listener onOpen error",
-                channel.getConfig().getRoleName(), e);
+            console.warn(`${channel.getConfig().getRoleName()} channel listener onOpen error`, e);
 
             channel.doOpenFuture(false, e);
         }
@@ -192,8 +197,7 @@ export class ProcessorDefault implements Processor {
         try {
             this._listener.onMessage(channel.getSession(), message)
         } catch (e) {
-            console.warn("{} channel listener onMessage error",
-                channel.getConfig().getRoleName(), e);
+            console.warn(`${channel.getConfig().getRoleName()} channel listener onMessage error`, e);
 
             this.onError(channel, e);
         }

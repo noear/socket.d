@@ -67,8 +67,7 @@ export class ClientChannel extends ChannelBase implements Channel {
 
             //手动关闭
             if (this._real.isClosed() == Constants.CLOSE4_USER) {
-                console.debug("Client channel is closed (pause heartbeat), sessionId={}",
-                    this.getSession().sessionId());
+                console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
                 return;
             }
         }

@@ -59,9 +59,9 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     send(frame: Frame, stream: StreamInternal | null) {
 
         if (this.getConfig().clientMode()) {
-            console.debug("C-SEN:{}", frame);
+            console.debug("C-SEN:", frame);
         } else {
-            console.debug("S-SEN:{}", frame);
+            console.debug("S-SEN:", frame);
         }
 
 
@@ -130,8 +130,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 stream.onAccept(frame.message()!, this);
             }
         } else {
-            console.debug("{} stream not found, sid={}, sessionId={}",
-                this.getConfig().getRoleName(), frame.message()!.sid(), this.getSession().sessionId());
+            console.debug(`${this.getConfig().getRoleName()} stream not found, sid=${frame.message()!.sid()}, sessionId=${this.getSession().sessionId()}`);
         }
     }
     reconnect() {

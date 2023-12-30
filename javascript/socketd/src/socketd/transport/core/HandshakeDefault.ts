@@ -32,8 +32,8 @@ export class HandshakeDefault implements HandshakeInternal {
     }
 
     paramOrDefault(name: string, def: string): string {
-        let res = this.param(name);
-        return res ? res : def;
+        let tmp = this.param(name);
+        return tmp ? tmp : def;
     }
 
     paramPut(name: string, value: string) {

@@ -145,20 +145,24 @@ export abstract class SessionBase implements Session {
     }
 
     attrHas(name: string) {
-        return this.attrMap().has(name);
+        if (this._attrMap == null) {
+            return false;
+        }
+
+        return this._attrMap.has(name);
     }
 
-    attr(name: string): object | undefined{
-        return this.attrMap().get(name);
+    attr(name: string): object | undefined {
+        if (this._attrMap == null) {
+            return null;
+        }
+
+        return this._attrMap.get(name);
     }
 
     attrOrDefault(name: string, def: object): object {
-        let val = this.attrMap().get(name);
-        if (val) {
-            return val;
-        } else {
-            return def;
-        }
+        let tmp = this.attr(name);
+        return tmp ? tmp : def;
     }
 
     attrPut(name: string, val: object) {

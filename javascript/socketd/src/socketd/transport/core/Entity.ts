@@ -133,7 +133,7 @@ export class EntityDefault implements Entity {
      * @param map 元信息字典
      */
     metaMapPut(map): EntityDefault {
-        for (let name of map.prototype) {
+        for (const name of map.prototype) {
             this.metaMap().set(name, map[name]);
         }
         return this;
@@ -184,7 +184,7 @@ export class EntityDefault implements Entity {
      * @param def  默认值
      */
     metaOrDefault(name: string, def: string): string {
-        let val = this.meta(name);
+        const val = this.meta(name);
         if (val) {
             return val;
         } else {

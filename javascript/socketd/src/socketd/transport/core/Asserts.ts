@@ -50,7 +50,7 @@ export class Asserts {
      */
     static assertSize(name: string, size: number, limitSize: number) {
         if (size > limitSize) {
-            let message = `This message ${name} size is out of limit ${limitSize} (${size})`;
+            const message = `This message ${name} size is out of limit ${limitSize} (${size})`;
 
             throw new SocketdSizeLimitException(message);
         }

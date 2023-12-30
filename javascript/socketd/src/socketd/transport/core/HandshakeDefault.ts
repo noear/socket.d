@@ -14,7 +14,7 @@ export class HandshakeDefault implements HandshakeInternal {
         this._version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this._paramMap = new Map<string, string>();
 
-        for (let [k, v] of this._url.searchParams) {
+        for (const [k, v] of this._url.searchParams) {
             this._paramMap.set(k, v);
         }
     }
@@ -32,7 +32,7 @@ export class HandshakeDefault implements HandshakeInternal {
     }
 
     paramOrDefault(name: string, def: string): string {
-        let tmp = this.param(name);
+        const tmp = this.param(name);
         return tmp ? tmp : def;
     }
 

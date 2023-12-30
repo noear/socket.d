@@ -11,7 +11,7 @@ export class SocketD {
      * 框架版本号
      */
     static version(): string {
-        return "2.2.1-SNAPSHOT";
+        return "2.2.1";
     }
 
     /**
@@ -24,8 +24,8 @@ export class SocketD {
     static clientProviderMap: Map<String, ClientProvider> = new Map<String, ClientProvider>();
 
     static {
-        let provider = new WsClientProvider();
-        for (let s of provider.schemas()) {
+        const provider = new WsClientProvider();
+        for (const s of provider.schemas()) {
             SocketD.clientProviderMap.set(s, provider);
         }
     }
@@ -37,7 +37,7 @@ export class SocketD {
      * @param serverUrl 服务器地址
      */
     static createClient(serverUrl: string): Client {
-        let client = SocketD.createClientOrNull(serverUrl);
+        const client = SocketD.createClientOrNull(serverUrl);
         if (client == null) {
             throw new Error("No socketd client providers were found.");
         } else {
@@ -53,18 +53,18 @@ export class SocketD {
     static createClientOrNull(serverUrl: string): Client | null{
         Asserts.assertNull("serverUrl", serverUrl);
 
-        let idx = serverUrl.indexOf("://");
+        const idx = serverUrl.indexOf("://");
         if (idx < 2) {
             throw new Error("The serverUrl invalid: " + serverUrl);
         }
 
-        let schema = serverUrl.substring(0, idx);
+        const schema = serverUrl.substring(0, idx);
 
-        let factory = SocketD.clientProviderMap.get(schema);
+        const factory = SocketD.clientProviderMap.get(schema);
         if (factory == null) {
             return null;
         } else {
-            let clientConfig = new ClientConfig(serverUrl);
+            const clientConfig = new ClientConfig(serverUrl);
             return factory.createClient(clientConfig);
         }
     }

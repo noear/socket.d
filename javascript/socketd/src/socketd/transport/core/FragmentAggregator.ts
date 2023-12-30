@@ -57,7 +57,7 @@ export class FragmentAggregatorDefault implements FragmentAggregator {
 
     constructor(main: MessageInternal) {
         this._main = main;
-        let dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
+        const dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
 
         if (!dataLengthStr) {
             throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
@@ -113,12 +113,12 @@ export class FragmentAggregatorDefault implements FragmentAggregator {
         });
 
         //创建聚合流
-        let dataBuffer = new ArrayBuffer(this._dataLength);
-        let dataBufferView = new DataView(dataBuffer);
+        const dataBuffer = new ArrayBuffer(this._dataLength);
+        const dataBufferView = new DataView(dataBuffer);
         let dataBufferViewIdx = 0;
         //添加分片数据
-        for (let fh of this._fragmentHolders) {
-            let tmp = new DataView(fh.getMessage().data());
+        for (const fh of this._fragmentHolders) {
+            const tmp = new DataView(fh.getMessage().data());
             for (let i = 0; i < fh.getMessage().data().byteLength; i++) {
                 dataBufferView.setInt8(dataBufferViewIdx, tmp.getInt8(i));
                 dataBufferViewIdx++;

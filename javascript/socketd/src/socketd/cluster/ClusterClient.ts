@@ -48,16 +48,16 @@ export class ClusterClient implements Client {
      * 打开
      */
     async open(): Promise<ClientSession> {
-        let sessionList = new ClusterClient[this._serverUrls.length];
+        const sessionList = new ClusterClient[this._serverUrls.length];
 
-        for (let urls of this._serverUrls) {
+        for (const urls of this._serverUrls) {
             for (let url of urls.split(",")) {
                 url = url.trim();
                 if (!url) {
                     continue;
                 }
 
-                let client = SocketD.createClient(url);
+                const client = SocketD.createClient(url);
 
                 if (this._listener != null) {
                     client.listen(this._listener);
@@ -71,7 +71,7 @@ export class ClusterClient implements Client {
                     client.heartbeatHandler(this._heartbeatHandler);
                 }
 
-                let session = await client.open();
+                const session = await client.open();
                 sessionList.add(session);
             }
         }

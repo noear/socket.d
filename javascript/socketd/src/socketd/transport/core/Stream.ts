@@ -271,7 +271,7 @@ export class StreamMangerDefault implements StreamManger{
         this._streamMap.set(sid, stream);
 
         //增加流超时处理（做为后备保险）
-        let streamTimeout = stream.timeout() > 0 ? stream.timeout() : this._config.getStreamTimeout();
+        const streamTimeout = stream.timeout() > 0 ? stream.timeout() : this._config.getStreamTimeout();
         if (streamTimeout > 0) {
             stream.insuranceStart(this, streamTimeout);
         }
@@ -283,7 +283,7 @@ export class StreamMangerDefault implements StreamManger{
      * @param sid 流Id
      */
     removeStream(sid) {
-        let stream = this.getStream(sid);
+        const stream = this.getStream(sid);
 
         if (stream) {
             this._streamMap.delete(sid);

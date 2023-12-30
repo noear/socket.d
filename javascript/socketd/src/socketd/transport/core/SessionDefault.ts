@@ -88,7 +88,7 @@ export class SessionDefault extends SessionBase {
      * 发送
      */
     send(event: string, content: Entity) {
-        let message = new MessageBuilder()
+        const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
             .entity(content)
@@ -108,13 +108,13 @@ export class SessionDefault extends SessionBase {
      */
     sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
         //异步，用 streamTimeout
-        let message = new MessageBuilder()
+        const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
             .entity(content)
             .build();
 
-        let stream = new StreamRequest(message.sid(), timeout, consumer);
+        const stream = new StreamRequest(message.sid(), timeout, consumer);
         this._channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -128,13 +128,13 @@ export class SessionDefault extends SessionBase {
      * @param timeout 超时
      */
     sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
-        let message = new MessageBuilder()
+        const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
             .entity(content)
             .build();
 
-        let stream = new StreamSubscribe(message.sid(), timeout, consumer);
+        const stream = new StreamSubscribe(message.sid(), timeout, consumer);
         this._channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }
@@ -146,7 +146,7 @@ export class SessionDefault extends SessionBase {
      * @param content 内容
      */
     reply(from: Message, content: Entity) {
-        let message = new MessageBuilder()
+        const message = new MessageBuilder()
             .sid(from.sid())
             .event(from.event())
             .entity(content)
@@ -162,7 +162,7 @@ export class SessionDefault extends SessionBase {
      * @param content 内容
      */
     replyEnd(from: Message, content: Entity) {
-        let message = new MessageBuilder()
+        const message = new MessageBuilder()
             .sid(from.sid())
             .event(from.event())
             .entity(content)

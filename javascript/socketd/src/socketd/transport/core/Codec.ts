@@ -127,21 +127,21 @@ export class CodecByteBuffer implements Codec {
     write<T extends CodecWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
         if (frame.message()) {
             //sid
-            let sidB = StrUtils.strToBuf(frame.message()!.sid(), this._config.getCharset());
+            const sidB = StrUtils.strToBuf(frame.message()!.sid(), this._config.getCharset());
             //event
-            let eventB = StrUtils.strToBuf(frame.message()!.event(), this._config.getCharset());
+            const eventB = StrUtils.strToBuf(frame.message()!.event(), this._config.getCharset());
             //metaString
-            let metaStringB = StrUtils.strToBuf(frame.message()!.metaString(), this._config.getCharset());
+            const metaStringB = StrUtils.strToBuf(frame.message()!.metaString(), this._config.getCharset());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
-            let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message()!.dataSize() + 2 * 3;
+            const frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message()!.dataSize() + 2 * 3;
 
             Asserts.assertSize("sid", sidB.byteLength, Constants.MAX_SIZE_SID);
             Asserts.assertSize("event", eventB.byteLength, Constants.MAX_SIZE_EVENT);
             Asserts.assertSize("metaString", metaStringB.byteLength, Constants.MAX_SIZE_META_STRING);
             Asserts.assertSize("data", frame.message()!.dataSize(), Constants.MAX_SIZE_DATA);
 
-            let target = targetFactory(frameSize);
+            const target = targetFactory(frameSize);
 
             //长度
             target.putInt(frameSize);
@@ -169,8 +169,8 @@ export class CodecByteBuffer implements Codec {
             return target;
         } else {
             //length (len[int] + flag[int])
-            let frameSize = 4 + 4;
-            let target = targetFactory(frameSize);
+            const frameSize = 4 + 4;
+            const target = targetFactory(frameSize);
 
             //长度
             target.putInt(frameSize);
@@ -189,35 +189,35 @@ export class CodecByteBuffer implements Codec {
      * @param buffer 缓冲
      */
     read(buffer: CodecReader): Frame|null { //=>Frame
-        let frameSize = buffer.getInt();
+        const frameSize = buffer.getInt();
 
         if (frameSize > (buffer.remaining() + 4)) {
             return null;
         }
 
-        let flag = buffer.getInt();
+        const flag = buffer.getInt();
 
         if (frameSize == 8) {
             //len[int] + flag[int]
             return new Frame(Flags.of(flag), null);
         } else {
 
-            let metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, buffer.remaining());
+            const metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, buffer.remaining());
 
             //1.解码 sid and event
-            let buf = new ArrayBuffer(metaBufSize);
+            const buf = new ArrayBuffer(metaBufSize);
 
             //sid
-            let sid = this.decodeString(buffer, buf, Constants.MAX_SIZE_SID);
+            const sid = this.decodeString(buffer, buf, Constants.MAX_SIZE_SID);
 
             //event
-            let event = this.decodeString(buffer, buf, Constants.MAX_SIZE_EVENT);
+            const event = this.decodeString(buffer, buf, Constants.MAX_SIZE_EVENT);
 
             //metaString
-            let metaString = this.decodeString(buffer, buf, Constants.MAX_SIZE_META_STRING);
+            const metaString = this.decodeString(buffer, buf, Constants.MAX_SIZE_META_STRING);
 
             //2.解码 body
-            let dataRealSize = frameSize - buffer.position();
+            const dataRealSize = frameSize - buffer.position();
             let data: ArrayBuffer;
             if (dataRealSize > Constants.MAX_SIZE_DATA) {
                 //超界了，空读。必须读，不然协议流会坏掉
@@ -234,7 +234,7 @@ export class CodecByteBuffer implements Codec {
             }
 
             //先 data , 后 metaString (避免 data 时修改元信息)
-            let message = new MessageBuilder()
+            const message = new MessageBuilder()
                 .flag(Flags.of(flag))
                 .sid(sid)
                 .event(event)
@@ -246,11 +246,11 @@ export class CodecByteBuffer implements Codec {
     }
 
     protected decodeString(reader: CodecReader, buf: ArrayBuffer, maxLen: number): string {
-        let bufView = new DataView(buf);
+        const bufView = new DataView(buf);
         let bufViewIdx = 0;
 
         while (true) {
-            let c = reader.getByte();
+            const c = reader.getByte();
 
             if (c == 10) { //10:'\n'
                 break;
@@ -292,14 +292,14 @@ export class ArrayBufferCodecReader implements CodecReader {
             return -1;
         }
 
-        let tmp = this._bufView.getInt8(this._bufViewIdx);
+        const tmp = this._bufView.getInt8(this._bufViewIdx);
         this._bufViewIdx += 1;
         return tmp;
     }
 
     getBytes(dst: ArrayBuffer, offset: number, length: number) {
-        let tmp = new DataView(dst);
-        let tmpEndIdx = offset + length;
+        const tmp = new DataView(dst);
+        const tmpEndIdx = offset + length;
         for (let i = offset; i < tmpEndIdx; i++) {
             if (this._bufViewIdx >= this._buf.byteLength) {
                 //读完了
@@ -316,7 +316,7 @@ export class ArrayBufferCodecReader implements CodecReader {
             return -1;
         }
 
-        let tmp = this._bufView.getInt32(this._bufViewIdx);
+        const tmp = this._bufView.getInt32(this._bufViewIdx);
         this._bufViewIdx += 4;
         return tmp;
     }
@@ -352,8 +352,8 @@ export class ArrayBufferCodecWriter implements CodecWriter {
     }
 
     putBytes(src: ArrayBuffer) {
-        let tmp = new DataView(src);
-        let len = tmp.byteLength;
+        const tmp = new DataView(src);
+        const len = tmp.byteLength;
 
         for (let i = 0; i < len; i++) {
             this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));

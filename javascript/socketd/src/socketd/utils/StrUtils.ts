@@ -2,7 +2,7 @@ export class StrUtils {
     static guid(): string {
         let guid = "";
         for (let i = 1; i <= 32; i++) {
-            let n = Math.floor(Math.random() * 16.0).toString(16);
+            const n = Math.floor(Math.random() * 16.0).toString(16);
             guid += n;
         }
         return guid;
@@ -22,10 +22,10 @@ export class StrUtils {
 
         if (buf.byteLength != length) {
             //取出子集
-            let bufView = new DataView(buf);
+            const bufView = new DataView(buf);
 
-            let tmp = new ArrayBuffer(length);
-            let tmpView = new DataView(tmp);
+            const tmp = new ArrayBuffer(length);
+            const tmpView = new DataView(tmp);
 
             for (let i = 0; i < length; i++) {
                 tmpView.setInt8(i, bufView.getInt8(start + i));

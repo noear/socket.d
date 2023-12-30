@@ -179,7 +179,7 @@ export class PathListener implements Listener {
     }
 
     onOpen(session: Session) {
-        let l1 = this._pathRouteSelector.select(session.path());
+        const l1 = this._pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onOpen(session);
@@ -187,7 +187,7 @@ export class PathListener implements Listener {
     }
 
     onMessage(session: Session, message: Message) {
-        let l1 = this._pathRouteSelector.select(session.path());
+        const l1 = this._pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onMessage(session, message);
@@ -195,7 +195,7 @@ export class PathListener implements Listener {
     }
 
     onClose(session: Session) {
-        let l1 = this._pathRouteSelector.select(session.path());
+        const l1 = this._pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onClose(session);
@@ -203,7 +203,7 @@ export class PathListener implements Listener {
     }
 
     onError(session: Session, error: Error) {
-        let l1 = this._pathRouteSelector.select(session.path());
+        const l1 = this._pathRouteSelector.select(session.path());
 
         if (l1 != null) {
             l1.onError(session, error);
@@ -249,7 +249,7 @@ export class PipelineListener implements Listener {
      * @param session 会话
      */
     onOpen(session: Session) {
-        for (let listener of this._deque) {
+        for (const listener of this._deque) {
             listener.onOpen(session);
         }
     }
@@ -261,7 +261,7 @@ export class PipelineListener implements Listener {
      * @param message 消息
      */
     onMessage(session: Session, message: Message) {
-        for (let listener of this._deque) {
+        for (const listener of this._deque) {
             listener.onMessage(session, message);
         }
     }
@@ -272,7 +272,7 @@ export class PipelineListener implements Listener {
      * @param session 会话
      */
     onClose(session: Session) {
-        for (let listener of this._deque) {
+        for (const listener of this._deque) {
             listener.onClose(session);
         }
     }
@@ -284,7 +284,7 @@ export class PipelineListener implements Listener {
      * @param error   错误信息
      */
     onError(session: Session, error: Error) {
-        for (let listener of this._deque) {
+        for (const listener of this._deque) {
             listener.onError(session, error);
         }
     }

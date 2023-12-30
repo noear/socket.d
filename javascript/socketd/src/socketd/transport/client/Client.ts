@@ -156,15 +156,15 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
      * 打开会话
      */
     async open(): Promise<ClientSession> {
-        let connector = this.createConnector();
+        const connector = this.createConnector();
 
         //连接
-        let channel0 = await connector.connect();
+        const channel0 = await connector.connect();
         //新建客户端通道
-        let clientChannel = new ClientChannel(channel0, connector);
+        const clientChannel = new ClientChannel(channel0, connector);
         //同步握手信息
         clientChannel.setHandshake(channel0.getHandshake());
-        let session = new SessionDefault(clientChannel);
+        const session = new SessionDefault(clientChannel);
         //原始通道切换为带壳的 session
         channel0.setSession(session);
 

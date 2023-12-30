@@ -161,7 +161,7 @@ export abstract class SessionBase implements Session {
     }
 
     attrOrDefault(name: string, def: object): object {
-        let tmp = this.attr(name);
+        const tmp = this.attr(name);
         return tmp ? tmp : def;
     }
 

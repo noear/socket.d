@@ -66,7 +66,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
 
         if (frame.message()) {
-            let message = frame.message()!;
+            const message = frame.message()!;
 
             //注册流接收器
             if (stream != null) {
@@ -85,11 +85,11 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                     while (true) {
                         //获取分片
                         fragmentIndex++;
-                        let fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
+                        const fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
 
                         if (fragmentEntity != null) {
                             //主要是 sid 和 entity
-                            let fragmentFrame  = new Frame(frame.flag(), new MessageBuilder()
+                            const fragmentFrame  = new Frame(frame.flag(), new MessageBuilder()
                                 .flag(frame.flag())
                                 .sid(message.sid())
                                 .entity(fragmentEntity)
@@ -114,7 +114,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     retrieve(frame: Frame) {
-        let stream = this._streamManger.getStream(frame.message()!.sid());
+        const stream = this._streamManger.getStream(frame.message()!.sid());
 
         if (stream != null) {
             if (stream.isSingle() || frame.flag() == Flags.ReplyEnd) {

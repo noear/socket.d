@@ -46,9 +46,9 @@ export class ClusterClientSession implements ClientSession {
             return this._sessionSet[0];
         } else {
             //查找可用的会话
-            let sessions = new ClientChannel[this._sessionSet.length];
+            const sessions = new ClientChannel[this._sessionSet.length];
             let sessionsSize = 0;
-            for (let s of this._sessionSet) {
+            for (const s of this._sessionSet) {
                 if (s.isValid()) {
                     sessions[sessionsSize] = s;
                     sessionsSize++;
@@ -65,8 +65,8 @@ export class ClusterClientSession implements ClientSession {
             }
 
             //论询处理
-            let counter = this._sessionRoundCounter++;
-            let idx = counter % sessionsSize;
+            const counter = this._sessionRoundCounter++;
+            const idx = counter % sessionsSize;
             if (counter > 999_999_999) {
                 this._sessionRoundCounter = 0;
             }
@@ -75,7 +75,7 @@ export class ClusterClientSession implements ClientSession {
     }
 
     isValid(): boolean {
-        for (let session of this._sessionSet) {
+        for (const session of this._sessionSet) {
             if (session.isValid()) {
                 return true;
             }
@@ -89,7 +89,7 @@ export class ClusterClientSession implements ClientSession {
     }
 
     reconnect() {
-        for (let session of this._sessionSet) {
+        for (const session of this._sessionSet) {
             if (session.isValid() == false) {
                 session.reconnect();
             }
@@ -103,7 +103,7 @@ export class ClusterClientSession implements ClientSession {
      * @param content 内容
      */
     send(event: string, content: Entity) {
-        let sender = this.getSessionOne();
+        const sender = this.getSessionOne();
 
         sender.send(event, content);
     }
@@ -118,7 +118,7 @@ export class ClusterClientSession implements ClientSession {
      * @param timeout  超时
      */
     sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
-        let sender = this.getSessionOne();
+        const sender = this.getSessionOne();
 
         return sender.sendAndRequest(event, content, consumer, timeout);
     }
@@ -132,7 +132,7 @@ export class ClusterClientSession implements ClientSession {
      * @param timeout  超时
      */
     sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
-        let sender = this.getSessionOne();
+        const sender = this.getSessionOne();
 
         return sender.sendAndSubscribe(event, content, consumer, timeout);
     }
@@ -141,7 +141,7 @@ export class ClusterClientSession implements ClientSession {
      * 关闭
      */
     close() {
-        for (let session of this._sessionSet) {
+        for (const session of this._sessionSet) {
             //某个关闭出错，不影响别的关闭
             RunUtils.runAndTry(session.close);
         }

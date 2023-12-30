@@ -53,12 +53,12 @@ export class FragmentHandlerDefault implements FragmentHandler {
      */
     nextFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Entity {
 
-        let dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
+        const dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
         if (dataBuffer == null || dataBuffer.byteLength == 0) {
             return null;
         }
 
-        let fragmentEntity = new EntityDefault().dataSet(dataBuffer);
+        const fragmentEntity = new EntityDefault().dataSet(dataBuffer);
         if (fragmentIndex == 1) {
             fragmentEntity.metaMapPut(message.metaMap());
         }
@@ -105,7 +105,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
             size = ins.remaining();
         }
 
-        let buf = new ArrayBuffer(size);
+        const buf = new ArrayBuffer(size);
 
         ins.getBytes(buf, 0, size);
 

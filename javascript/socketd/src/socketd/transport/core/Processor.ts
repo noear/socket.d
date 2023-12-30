@@ -124,13 +124,13 @@ export class ProcessorDefault implements Processor {
                     }
                     case Flags.Alarm: {
                         //结束流，并异常通知
-                        let exception = new SocketdAlarmException(frame.getMessage());
-                        let acceptor = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
-                        if (acceptor == null) {
+                        const exception = new SocketdAlarmException(frame.getMessage());
+                        const stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
+                        if (stream == null) {
                             this.onError(channel, exception);
                         } else {
                             channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
-                            acceptor.onError(exception);
+                            stream.onError(exception);
                         }
                         break;
                     }
@@ -160,11 +160,11 @@ export class ProcessorDefault implements Processor {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
-            let fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            const fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
-                let index = parseInt(fragmentIdxStr);
-                let frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+                const index = parseInt(fragmentIdxStr);
+                const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
 
                 if (frameNew == null) {
                     return;

@@ -14,12 +14,12 @@ import java.util.Map;
  * @since 2.0
  */
 public class MessageDefault implements MessageInternal {
-    private final int flag ;
-    private final String sid ;
-    private final String event ;
+    private final int flag;
+    private final String sid;
+    private final String event;
     private final Entity entity;
 
-    public MessageDefault(int flag, String sid, String event, Entity entity ) {
+    public MessageDefault(int flag, String sid, String event, Entity entity) {
         this.flag = flag;
         this.sid = sid;
         this.event = event;
@@ -36,7 +36,7 @@ public class MessageDefault implements MessageInternal {
 
     /**
      * 是否答复结束
-     * */
+     */
     @Override
     public boolean isEnd() {
         return flag == Flags.ReplyEnd;
@@ -138,6 +138,8 @@ public class MessageDefault implements MessageInternal {
 
     @Override
     public void release() throws IOException {
-        entity.release();
+        if (entity != null) {
+            entity.release();
+        }
     }
 }

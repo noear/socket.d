@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Socketd-JS-WS测试</title>
-    <script src="main.js"></script>
-    <script src="../lib/RequireJS/require.js" data-main="config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="../lib/RequireJS/require.js" data-main="js/config.js"></script>
     <style>
         label {
             width: 100px;
@@ -27,6 +27,10 @@
     <br/>
     <label for="input">Input:</label><input type="text" id="input" value="hello"/>
     <button id="send">发送</button>
+    <button id="sendAndRequest">发送并请求</button>
+    <button id="sendAndSubscribe">发送并订阅</button>
+    <button id="push">接收推送</button>
+    <button id="unpush">取消推送</button>
     <br/>
     <label for="message">Message:</label><textarea id="message" rows="15" cols="20" readonly></textarea>
 </body>

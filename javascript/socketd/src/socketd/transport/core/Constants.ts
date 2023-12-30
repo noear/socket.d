@@ -200,5 +200,13 @@ export const EntityMetas= {
     /**
      * 数据描述之文件名
      */
-    META_DATA_DISPOSITION_FILENAME: "Data-Disposition-Filename"
+    META_DATA_DISPOSITION_FILENAME: "Data-Disposition-Filename",
+    /**
+     * 数据范围开始（相当于分页）
+     */
+    META_RANGE_START: "Data-Range-Start",
+    /**
+     * 数据范围长度
+     */
+    META_RANGE_SIZE: "Data-Range-Size",
 }

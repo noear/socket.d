@@ -1,15 +1,10 @@
 import asyncio
-import uuid
 from abc import ABC
 
 from websockets.legacy.server import WebSocketServer
 from loguru import logger
-from pathlib import Path
 
 from socketd.transport.core.Listener import Listener
-from socketd.transport.client.ClientConfig import ClientConfig
-from socketd.transport.core.entity.Entity import EntityMetas
-from socketd.transport.core.entity.FileEntity import FileEntity
 from socketd.transport.core.entity.Message import Message
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.core.sync_api.AtomicRefer import AtomicRefer
@@ -48,8 +43,10 @@ class SimpleListenerTest(Listener, ABC):
         pass
 
 
-
 class TestCase10_serverCloseReconnect(BaseTestCase):
+    """
+    todo 未完成测试
+    """
 
     def __init__(self, schema, port):
         super().__init__(schema, port)

@@ -5,10 +5,10 @@ from test.modelu.BaseTestCase import BaseTestCase
 import time
 from websockets.legacy.server import WebSocketServer
 
-from socketd.core.Session import Session
-from socketd.core.SocketD import SocketD
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.module.StringEntity import StringEntity
+from socketd.transport.core.Session import Session
+from socketd.transport.core.SocketD import SocketD
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
 from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler, send_and_subscribe_test
 from loguru import logger
@@ -24,9 +24,10 @@ class TestCase01_client_send(BaseTestCase):
         self.loop = asyncio.get_event_loop()
 
     async def _start(self):
+        s = SimpleListenerTest()
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
         self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
-            SimpleListenerTest()).start()
+            s).start()
 
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
@@ -34,13 +35,15 @@ class TestCase01_client_send(BaseTestCase):
         await self.client_session.send_and_request("demo", StringEntity("test"), 100)
 
         start_time = time.monotonic()
-        for _ in range(3):
+        for _ in range(100):
             await self.client_session.send("demo", StringEntity("test"))
 
-        await self.client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
+        # await self.client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
         end_time = time.monotonic()
         logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
         await asyncio.sleep(3)
+        logger.info(
+            f" message {s.message_counter.get()}")
 
     def start(self):
         super().start()

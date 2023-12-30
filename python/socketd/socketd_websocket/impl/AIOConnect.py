@@ -3,9 +3,9 @@ import logging
 import functools
 from typing import Callable, Any, Optional, Sequence
 
-from websockets import WebSocketServerProtocol, LoggerLike, Origin, Subprotocol, WebSocketClientProtocol, HeadersLike
-from websockets.extensions import ServerExtensionFactory, ClientExtensionFactory
-from websockets.extensions.permessage_deflate import enable_server_permessage_deflate, enable_client_permessage_deflate
+from websockets import LoggerLike, Origin, Subprotocol, WebSocketClientProtocol, HeadersLike
+from websockets.extensions import  ClientExtensionFactory
+from websockets.extensions.permessage_deflate import  enable_client_permessage_deflate
 from websockets.headers import validate_subprotocols
 from websockets.http import USER_AGENT
 from websockets.legacy.client import Connect

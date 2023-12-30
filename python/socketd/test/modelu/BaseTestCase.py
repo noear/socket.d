@@ -1,5 +1,6 @@
 from loguru import logger
 
+
 class BaseTestCase:
 
     def __init__(self, schema, port):
@@ -7,7 +8,7 @@ class BaseTestCase:
         self.port = port
 
     def start(self):
-        logger.info (f"--------START {self.schema}------")
+        logger.info(f"--------START {self.schema}------")
 
     def stop(self):
         logger.info(f"--------STOP {self.schema}------")

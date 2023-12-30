@@ -1,7 +1,10 @@
-from .Server import Server
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.ProcessorDefault import ProcessorDefault
-from socketd.transport.ChannelAssistant import ChannelAssistant
+from typing import Callable
+
+from socketd.transport.server.Server import Server
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.internal.ProcessorDefault import ProcessorDefault
+from socketd.transport.core.ChannelAssistant import ChannelAssistant
+from socketd.transport.core.config.Config import Config
 
 
 class ServerBase(Server):
@@ -21,7 +24,7 @@ class ServerBase(Server):
         """
         return self._assistant
 
-    def config(self, consumer: 'Function'):
+    def config(self, consumer: Callable[[Config], Config]):
         """
         获取配置
         """

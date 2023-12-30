@@ -1,5 +1,5 @@
-from socketd.core.config.ClientConfig import ClientConfig
-from socketd.core.config.ServerConfig import ServerConfig
+from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientFactory import ClientFactory
 from socketd.transport.server.Server import Server

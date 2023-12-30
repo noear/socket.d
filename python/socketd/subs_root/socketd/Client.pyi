@@ -2,6 +2,9 @@
 
 from typing import Callable
 
+from socketd.transport.client.ClientConfig import ClientConfig
+
+
 class Client:
     def heartbeatHandler(self, handler: Callable) -> 'Client':...
 

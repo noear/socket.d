@@ -1,5 +1,5 @@
-from socketd.core.config.ServerConfig import ServerConfig
 from socketd.transport.server.Server import Server
+from socketd.transport.server.ServerConfig import ServerConfig
 
 
 class ServerFactory:

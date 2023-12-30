@@ -55,6 +55,13 @@ public interface Entity {
     }
 
     /**
+     * 获取元信息并转为 float
+     */
+    default float metaAsFloat(String name) {
+        return Float.parseFloat(metaOrDefault(name, "0"));
+    }
+
+    /**
      * 获取元信息并转为 double
      */
     default double metaAsDouble(String name) {

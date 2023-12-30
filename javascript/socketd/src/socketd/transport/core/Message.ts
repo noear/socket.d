@@ -202,6 +202,14 @@ export class MessageDefault implements MessageInternal {
         return this._entity!.metaOrDefault(name, def);
     }
 
+    metaAsInt(name: string): number {
+        return this._entity!.metaAsInt(name);
+    }
+
+    metaAsFloat(name: string): number {
+        return this._entity!.metaAsFloat(name);
+    }
+
     putMeta(name: string, val: string) {
         this._entity!.putMeta(name, val);
     }

@@ -37,6 +37,16 @@ export interface Entity {
     metaOrDefault(name: string, def: string): string;
 
     /**
+     * 获取元信息并转为 int
+     */
+    metaAsInt(name:string):number;
+
+    /**
+     * 获取元信息并转为 float
+     */
+    metaAsFloat(name:string):number;
+
+    /**
      * 添加元信息
      * */
     putMeta(name: string, val: string);
@@ -180,6 +190,20 @@ export class EntityDefault implements Entity {
         } else {
             return def;
         }
+    }
+
+    /**
+     * 获取元信息并转为 int
+     */
+    metaAsInt(name:string):number {
+        return parseInt(this.metaOrDefault(name, '0'));
+    }
+
+    /**
+     * 获取元信息并转为 float
+     */
+    metaAsFloat(name:string):number {
+        return parseFloat(this.metaOrDefault(name, '0'));
     }
 
     /**

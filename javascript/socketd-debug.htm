@@ -13,7 +13,6 @@
         window.client = SocketD.createClient(serverUrl)
             .listen(new EventListener().doOnOpen(s => {
                 //成功连接到服务器
-                console.log("connected to " + serverUrl);
                 client.send("1111")
             }).doOnMessage((s, m) => {
                 //服务器发送通知
@@ -21,7 +20,7 @@
                 document.getElementById("rst").append("message received: " + e.data + "\n");
             })
                 .doOnClose(s => {
-                    console.log("connection closed (" + e.code + ")");
+
                 }))
             .open();
     };

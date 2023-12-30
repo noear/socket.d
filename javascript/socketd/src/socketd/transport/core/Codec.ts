@@ -265,3 +265,98 @@ export class CodecByteBuffer implements Codec {
         return StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
     }
 }
+
+export class ArrayBufferCodecReader implements CodecReader {
+    _buf: ArrayBuffer;
+    _bufView: DataView;
+    _bufViewIdx: number;
+
+    constructor(buf: ArrayBuffer) {
+        this._buf = buf;
+        this._bufView = new DataView(buf);
+        this._bufViewIdx = 0;
+    }
+
+    getByte(): number {
+        if (this._bufViewIdx >= this._buf.byteLength) {
+            return -1;
+        }
+
+        let tmp = this._bufView.getInt8(this._bufViewIdx);
+        this._bufViewIdx += 1;
+        return tmp;
+    }
+
+    getBytes(dst: ArrayBuffer, offset: number, length: number) {
+        let tmp = new DataView(dst);
+        let tmpEndIdx = offset+length;
+        for (let i = offset; i < tmpEndIdx; i++) {
+            if (this._bufViewIdx >= this._buf.byteLength) {
+                //读完了
+                break;
+            }
+
+            tmp.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
+            this._bufViewIdx++;
+        }
+    }
+
+    getInt(): number {
+        if (this._bufViewIdx >= this._buf.byteLength) {
+            return -1;
+        }
+
+        let tmp = this._bufView.getInt32(this._bufViewIdx);
+        this._bufViewIdx += 4;
+        return tmp;
+    }
+
+    remaining(): number {
+        return this._buf.byteLength - this._bufViewIdx;
+    }
+
+    position(): number {
+        return this._bufViewIdx;
+    }
+}
+
+
+export class ArrayBufferCodecWriter implements CodecWriter {
+    _buf: ArrayBuffer;
+    _bufView: DataView;
+    _bufViewIdx: number;
+
+    constructor(n: number) {
+        this._buf = new ArrayBuffer(n);
+        this._bufView = new DataView(this._buf);
+        this._bufViewIdx = 0;
+    }
+
+    putBytes(src: ArrayBuffer) {
+        let tmp = new DataView(src);
+        let len = tmp.byteLength;
+
+        for (let i = 0; i < len; i++) {
+            this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));
+            this._bufViewIdx += 1;
+        }
+    }
+
+    putInt(val: number) {
+        this._bufView.setInt32(this._bufViewIdx, val);
+        this._bufViewIdx += 4;
+    }
+
+    putChar(val: number) {
+        this._bufView.setInt16(this._bufViewIdx, val);
+        this._bufViewIdx += 2;
+    }
+
+    flush() {
+
+    }
+
+    getBuffer(): ArrayBuffer {
+        return this._buf;
+    }
+}

@@ -226,98 +226,6 @@ define("socketd/transport/core/Constants", ["require", "exports"], function (req
         META_DATA_DISPOSITION_FILENAME: "Data-Disposition-Filename"
     };
 });
-define("socketd/transport/core/Message", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.MessageDefault = exports.MessageBuilder = void 0;
-    class MessageBuilder {
-        constructor() {
-            this._flag = Constants_1.Flags.Unknown;
-            this._sid = Constants_1.Constants.DEF_SID;
-            this._event = Constants_1.Constants.DEF_EVENT;
-            this._entity = null;
-        }
-        flag(flag) {
-            this._flag = flag;
-            return this;
-        }
-        sid(sid) {
-            this._sid = sid;
-            return this;
-        }
-        event(event) {
-            this._event = event;
-            return this;
-        }
-        entity(entity) {
-            this._entity = entity;
-            return this;
-        }
-        build() {
-            return new MessageDefault(this._flag, this._sid, this._event, this._entity);
-        }
-    }
-    exports.MessageBuilder = MessageBuilder;
-    class MessageDefault {
-        constructor(flag, sid, event, entity) {
-            this._flag = flag;
-            this._sid = sid;
-            this._event = event;
-            this._entity = entity;
-        }
-        at() {
-            return this._entity.at();
-        }
-        flag() {
-            return this._flag;
-        }
-        isRequest() {
-            return this._flag == Constants_1.Flags.Request;
-        }
-        isSubscribe() {
-            return this._flag == Constants_1.Flags.Subscribe;
-        }
-        isEnd() {
-            return this._flag == Constants_1.Flags.ReplyEnd;
-        }
-        sid() {
-            return this._sid;
-        }
-        event() {
-            return this._event;
-        }
-        entity() {
-            return this._entity;
-        }
-        metaString() {
-            return this._entity.metaString();
-        }
-        metaMap() {
-            return this._entity.metaMap();
-        }
-        meta(name) {
-            return this._entity.meta(name);
-        }
-        metaOrDefault(name, def) {
-            return this._entity.metaOrDefault(name, def);
-        }
-        putMeta(name, val) {
-            this._entity.putMeta(name, val);
-        }
-        data() {
-            return this._entity.data();
-        }
-        dataAsString() {
-            return this._entity.dataAsString();
-        }
-        dataSize() {
-            return this._entity.dataSize();
-        }
-        release() {
-        }
-    }
-    exports.MessageDefault = MessageDefault;
-});
 define("socketd/transport/core/Typealias", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -373,197 +281,7 @@ define("socketd/exception/SocketdException", ["require", "exports"], function (r
     }
     exports.SocketdTimeoutException = SocketdTimeoutException;
 });
-define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Constants_2, SocketdException_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Asserts = void 0;
-    class Asserts {
-        static assertClosed(channel) {
-            if (channel != null && channel.isClosed() > 0) {
-                throw new SocketdException_1.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
-            }
-        }
-        static assertClosedByUser(channel) {
-            if (channel != null && channel.isClosed() == Constants_2.Constants.CLOSE4_USER) {
-                throw new SocketdException_1.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
-            }
-        }
-        static assertNull(name, val) {
-            if (val == null) {
-                throw new Error("The argument cannot be null: " + name);
-            }
-        }
-        static assertEmpty(name, val) {
-            if (!val) {
-                throw new Error("The argument cannot be empty: " + name);
-            }
-        }
-        static assertSize(name, size, limitSize) {
-            if (size > limitSize) {
-                let message = `This message ${name} size is out of limit ${limitSize} (${size})`;
-                throw new SocketdException_1.SocketdSizeLimitException(message);
-            }
-        }
-    }
-    exports.Asserts = Asserts;
-});
-define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/SocketD", "socketd/transport/core/Message"], function (require, exports, Entity_1, Constants_3, SocketD_1, Message_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Frames = exports.Frame = void 0;
-    class Frame {
-        constructor(flag, message) {
-            this._flag = flag;
-            this._message = message;
-        }
-        flag() {
-            return this._flag;
-        }
-        message() {
-            return this._message;
-        }
-    }
-    exports.Frame = Frame;
-    class Frames {
-        static connectFrame(sid, url) {
-            let entity = new Entity_1.EntityDefault();
-            entity.metaPut(Constants_3.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
-            return new Frame(Constants_3.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
-        }
-        static connackFrame(connectMessage) {
-            let entity = new Entity_1.EntityDefault();
-            entity.metaPut(Constants_3.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
-            return new Frame(Constants_3.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
-        }
-        static pingFrame() {
-            return new Frame(Constants_3.Flags.Ping, null);
-        }
-        static pongFrame() {
-            return new Frame(Constants_3.Flags.Pong, null);
-        }
-        static closeFrame() {
-            return new Frame(Constants_3.Flags.Close, null);
-        }
-        static alarmFrame(from, alarm) {
-            let message = new Message_1.MessageBuilder();
-            if (from != null) {
-                message.sid(from.sid());
-                message.event(from.event());
-                message.entity(new Entity_1.StringEntity(alarm).metaStringSet(from.metaString()));
-            }
-            else {
-                message.entity(new Entity_1.StringEntity(alarm));
-            }
-            return new Frame(Constants_3.Flags.Alarm, message.build());
-        }
-    }
-    exports.Frames = Frames;
-});
-define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/core/Constants", "socketd/transport/core/Entity", "socketd/transport/core/Message", "socketd/utils/StrUtils", "socketd/transport/core/Frame"], function (require, exports, Asserts_1, Constants_4, Entity_2, Message_2, StrUtils_2, Frame_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CodecByteBuffer = void 0;
-    class CodecByteBuffer {
-        constructor(config) {
-            this._config = config;
-        }
-        write(frame, targetFactory) {
-            if (frame.message()) {
-                let sidB = StrUtils_2.StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
-                let eventB = StrUtils_2.StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
-                let metaStringB = StrUtils_2.StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
-                let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
-                Asserts_1.Asserts.assertSize("sid", sidB.byteLength, Constants_4.Constants.MAX_SIZE_SID);
-                Asserts_1.Asserts.assertSize("event", eventB.byteLength, Constants_4.Constants.MAX_SIZE_EVENT);
-                Asserts_1.Asserts.assertSize("metaString", metaStringB.byteLength, Constants_4.Constants.MAX_SIZE_META_STRING);
-                Asserts_1.Asserts.assertSize("data", frame.message().dataSize(), Constants_4.Constants.MAX_SIZE_DATA);
-                let target = targetFactory(frameSize);
-                target.putInt(frameSize);
-                target.putInt(frame.flag());
-                target.putBytes(sidB);
-                target.putChar('\n'.charCodeAt(0));
-                target.putBytes(eventB);
-                target.putChar('\n'.charCodeAt(0));
-                target.putBytes(metaStringB);
-                target.putChar('\n'.charCodeAt(0));
-                target.putBytes(frame.message().data());
-                target.flush();
-                return target;
-            }
-            else {
-                let frameSize = 4 + 4;
-                let target = targetFactory(frameSize);
-                target.putInt(frameSize);
-                target.putInt(frame.flag());
-                target.flush();
-                return target;
-            }
-        }
-        read(buffer) {
-            let frameSize = buffer.getInt();
-            if (frameSize > (buffer.remaining() + 4)) {
-                return null;
-            }
-            let flag = buffer.getInt();
-            if (frameSize == 8) {
-                return new Frame_1.Frame(Constants_4.Flags.of(flag), null);
-            }
-            else {
-                let metaBufSize = Math.min(Constants_4.Constants.MAX_SIZE_META_STRING, buffer.remaining());
-                let buf = new ArrayBuffer(metaBufSize);
-                let sid = this.decodeString(buffer, buf, Constants_4.Constants.MAX_SIZE_SID);
-                let event = this.decodeString(buffer, buf, Constants_4.Constants.MAX_SIZE_EVENT);
-                let metaString = this.decodeString(buffer, buf, Constants_4.Constants.MAX_SIZE_META_STRING);
-                let dataRealSize = frameSize - buffer.position();
-                let data;
-                if (dataRealSize > Constants_4.Constants.MAX_SIZE_DATA) {
-                    data = new ArrayBuffer(Constants_4.Constants.MAX_SIZE_DATA);
-                    buffer.getBytes(data, 0, Constants_4.Constants.MAX_SIZE_DATA);
-                    for (let i = dataRealSize - Constants_4.Constants.MAX_SIZE_DATA; i > 0; i--) {
-                        buffer.getByte();
-                    }
-                }
-                else {
-                    data = new ArrayBuffer(dataRealSize);
-                    if (dataRealSize > 0) {
-                        buffer.getBytes(data, 0, dataRealSize);
-                    }
-                }
-                let message = new Message_2.MessageBuilder()
-                    .flag(Constants_4.Flags.of(flag))
-                    .sid(sid)
-                    .event(event)
-                    .entity(new Entity_2.EntityDefault().dataSet(data).metaStringSet(metaString))
-                    .build();
-                return new Frame_1.Frame(message.flag(), message);
-            }
-        }
-        decodeString(reader, buf, maxLen) {
-            let bufView = new DataView(buf);
-            let bufViewIdx = 0;
-            while (true) {
-                let c = reader.getByte();
-                if (c == 10) {
-                    break;
-                }
-                if (maxLen > 0 && maxLen <= bufViewIdx) {
-                }
-                else {
-                    if (c != 0) {
-                        bufView.setInt8(bufViewIdx, c);
-                        bufViewIdx++;
-                    }
-                }
-            }
-            if (bufViewIdx < 1) {
-                return "";
-            }
-            return StrUtils_2.StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
-        }
-    }
-    exports.CodecByteBuffer = CodecByteBuffer;
-});
-define("socketd/transport/core/Stream", ["require", "exports", "socketd/exception/SocketdException", "socketd/transport/core/Asserts"], function (require, exports, SocketdException_2, Asserts_2) {
+define("socketd/transport/core/Stream", ["require", "exports", "socketd/exception/SocketdException", "socketd/transport/core/Asserts"], function (require, exports, SocketdException_1, Asserts_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamMangerDefault = exports.StreamSubscribe = exports.StreamRequest = exports.StreamBase = void 0;
@@ -588,7 +306,7 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
             }
             this._insuranceFuture = window.setTimeout(() => {
                 streamManger.removeStream(this.sid());
-                this.onError(new SocketdException_2.SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
+                this.onError(new SocketdException_1.SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
             }, streamTimeout);
         }
         insuranceCancel() {
@@ -654,7 +372,7 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
             return this._streamMap.get(sid);
         }
         addStream(sid, stream) {
-            Asserts_2.Asserts.assertNull("stream", stream);
+            Asserts_1.Asserts.assertNull("stream", stream);
             this._streamMap.set(sid, stream);
             let streamTimeout = stream.timeout() > 0 ? stream.timeout() : this._config.getStreamTimeout();
             if (streamTimeout > 0) {
@@ -672,35 +390,197 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
     }
     exports.StreamMangerDefault = StreamMangerDefault;
 });
-define("socketd/transport/core/IdGenerator", ["require", "exports", "socketd/utils/StrUtils"], function (require, exports, StrUtils_3) {
+define("socketd/transport/core/IdGenerator", ["require", "exports", "socketd/utils/StrUtils"], function (require, exports, StrUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GuidGenerator = void 0;
     class GuidGenerator {
         generate() {
-            return StrUtils_3.StrUtils.guid();
+            return StrUtils_2.StrUtils.guid();
         }
     }
     exports.GuidGenerator = GuidGenerator;
 });
-define("socketd/transport/core/FragmentHandler", ["require", "exports"], function (require, exports) {
+define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/SocketD", "socketd/transport/core/Message"], function (require, exports, Entity_1, Constants_1, SocketD_1, Message_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Frames = exports.Frame = void 0;
+    class Frame {
+        constructor(flag, message) {
+            this._flag = flag;
+            this._message = message;
+        }
+        flag() {
+            return this._flag;
+        }
+        message() {
+            return this._message;
+        }
+    }
+    exports.Frame = Frame;
+    class Frames {
+        static connectFrame(sid, url) {
+            let entity = new Entity_1.EntityDefault();
+            entity.metaPut(Constants_1.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
+            return new Frame(Constants_1.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
+        }
+        static connackFrame(connectMessage) {
+            let entity = new Entity_1.EntityDefault();
+            entity.metaPut(Constants_1.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
+            return new Frame(Constants_1.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
+        }
+        static pingFrame() {
+            return new Frame(Constants_1.Flags.Ping, null);
+        }
+        static pongFrame() {
+            return new Frame(Constants_1.Flags.Pong, null);
+        }
+        static closeFrame() {
+            return new Frame(Constants_1.Flags.Close, null);
+        }
+        static alarmFrame(from, alarm) {
+            let message = new Message_1.MessageBuilder();
+            if (from != null) {
+                message.sid(from.sid());
+                message.event(from.event());
+                message.entity(new Entity_1.StringEntity(alarm).metaStringSet(from.metaString()));
+            }
+            else {
+                message.entity(new Entity_1.StringEntity(alarm));
+            }
+            return new Frame(Constants_1.Flags.Alarm, message.build());
+        }
+    }
+    exports.Frames = Frames;
+});
+define("socketd/transport/core/FragmentHolder", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.FragmentHolder = void 0;
+    class FragmentHolder {
+        constructor(index, message) {
+            this._index = index;
+            this._message = message;
+        }
+        getIndex() {
+            return this._index;
+        }
+        getMessage() {
+            return this._message;
+        }
+    }
+    exports.FragmentHolder = FragmentHolder;
+});
+define("socketd/transport/core/FragmentAggregator", ["require", "exports", "socketd/transport/core/Message", "socketd/transport/core/Entity", "socketd/transport/core/Frame", "socketd/transport/core/FragmentHolder", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Message_2, Entity_2, Frame_1, FragmentHolder_1, Constants_2, SocketdException_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.FragmentAggregatorDefault = void 0;
+    class FragmentAggregatorDefault {
+        constructor(main) {
+            this._fragmentHolders = new Array();
+            this._main = main;
+            let dataLengthStr = main.meta(Constants_2.EntityMetas.META_DATA_LENGTH);
+            if (!dataLengthStr) {
+                throw new SocketdException_2.SocketdCodecException("Missing '" + Constants_2.EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
+            }
+            this._dataLength = parseInt(dataLengthStr);
+        }
+        getSid() {
+            return this._main.sid();
+        }
+        getDataStreamSize() {
+            return this._dataStreamSize;
+        }
+        getDataLength() {
+            return this._dataLength;
+        }
+        add(index, message) {
+            this._fragmentHolders.push(new FragmentHolder_1.FragmentHolder(index, message));
+            this._dataStreamSize = this._dataStreamSize + message.dataSize();
+        }
+        get() {
+            this._fragmentHolders.sort((f1, f2) => {
+                if (f1.getIndex() == f2.getIndex()) {
+                    return 0;
+                }
+                else if (f1.getIndex() > f2.getIndex()) {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            });
+            let dataBuffer = new ArrayBuffer(this._dataLength);
+            let dataBufferView = new DataView(dataBuffer);
+            let dataBufferViewIdx = 0;
+            for (let fh of this._fragmentHolders) {
+                let tmp = new DataView(fh.getMessage().data());
+                for (let i = 0; i < fh.getMessage().data().byteLength; i++) {
+                    dataBufferView.setInt8(dataBufferViewIdx, tmp.getInt8(i));
+                    dataBufferViewIdx++;
+                }
+            }
+            return new Frame_1.Frame(this._main.flag(), new Message_2.MessageBuilder()
+                .flag(this._main.flag())
+                .sid(this._main.sid())
+                .event(this._main.event())
+                .entity(new Entity_2.EntityDefault().metaMapPut(this._main.metaMap()).dataSet(dataBuffer))
+                .build());
+        }
+    }
+    exports.FragmentAggregatorDefault = FragmentAggregatorDefault;
+});
+define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/transport/core/FragmentAggregator"], function (require, exports, Entity_3, Constants_3, FragmentAggregator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentHandlerDefault = void 0;
     class FragmentHandlerDefault {
         nextFragment(channel, fragmentIndex, message) {
-            throw new Error("Method not implemented.");
+            let dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
+            if (dataBuffer == null || dataBuffer.byteLength == 0) {
+                return null;
+            }
+            let fragmentEntity = new Entity_3.EntityDefault().dataSet(dataBuffer);
+            if (fragmentIndex == 1) {
+                fragmentEntity.metaMapPut(message.metaMap());
+            }
+            fragmentEntity.metaPut(Constants_3.EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
+            return fragmentEntity;
         }
         aggrFragment(channel, fragmentIndex, message) {
-            throw new Error("Method not implemented.");
+            let aggregator = channel.getAttachment(message.sid());
+            if (aggregator == null) {
+                aggregator = new FragmentAggregator_1.FragmentAggregatorDefault(message);
+                channel.putAttachment(aggregator.getSid(), aggregator);
+            }
+            aggregator.add(fragmentIndex, message);
+            if (aggregator.getDataLength() > aggregator.getDataStreamSize()) {
+                return null;
+            }
+            else {
+                channel.putAttachment(message.sid(), null);
+                return aggregator.get();
+            }
         }
         aggrEnable() {
-            return false;
+            return true;
+        }
+        readFragmentData(ins, maxSize) {
+            let size = 0;
+            if (ins.remaining() > maxSize) {
+                size = maxSize;
+            }
+            else {
+                size = ins.remaining();
+            }
+            let buf = new ArrayBuffer(size);
+            ins.getBytes(buf, 0, size);
+            return buf;
         }
     }
     exports.FragmentHandlerDefault = FragmentHandlerDefault;
 });
-define("socketd/transport/core/Config", ["require", "exports", "socketd/transport/core/Codec", "socketd/transport/core/Stream", "socketd/transport/core/IdGenerator", "socketd/transport/core/FragmentHandler", "socketd/transport/core/Constants"], function (require, exports, Codec_1, Stream_1, IdGenerator_1, FragmentHandler_1, Constants_5) {
+define("socketd/transport/core/Config", ["require", "exports", "socketd/transport/core/Codec", "socketd/transport/core/Stream", "socketd/transport/core/IdGenerator", "socketd/transport/core/FragmentHandler", "socketd/transport/core/Constants"], function (require, exports, Codec_1, Stream_1, IdGenerator_1, FragmentHandler_1, Constants_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConfigBase = void 0;
@@ -712,7 +592,7 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
             this._charset = "utf-8";
             this._idGenerator = new IdGenerator_1.GuidGenerator();
             this._fragmentHandler = new FragmentHandler_1.FragmentHandlerDefault();
-            this._fragmentSize = Constants_5.Constants.MAX_SIZE_DATA;
+            this._fragmentSize = Constants_4.Constants.MAX_SIZE_DATA;
             this._coreThreads = 2;
             this._maxThreads = this._coreThreads * 4;
             this._readBufferSize = 512;
@@ -838,6 +718,312 @@ define("socketd/transport/core/Channel", ["require", "exports", "socketd/transpo
     }
     exports.ChannelBase = ChannelBase;
 });
+define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Constants_5, SocketdException_3) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Asserts = void 0;
+    class Asserts {
+        static assertClosed(channel) {
+            if (channel != null && channel.isClosed() > 0) {
+                throw new SocketdException_3.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            }
+        }
+        static assertClosedByUser(channel) {
+            if (channel != null && channel.isClosed() == Constants_5.Constants.CLOSE4_USER) {
+                throw new SocketdException_3.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            }
+        }
+        static assertNull(name, val) {
+            if (val == null) {
+                throw new Error("The argument cannot be null: " + name);
+            }
+        }
+        static assertEmpty(name, val) {
+            if (!val) {
+                throw new Error("The argument cannot be empty: " + name);
+            }
+        }
+        static assertSize(name, size, limitSize) {
+            if (size > limitSize) {
+                let message = `This message ${name} size is out of limit ${limitSize} (${size})`;
+                throw new SocketdException_3.SocketdSizeLimitException(message);
+            }
+        }
+    }
+    exports.Asserts = Asserts;
+});
+define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/core/Constants", "socketd/transport/core/Entity", "socketd/transport/core/Message", "socketd/utils/StrUtils", "socketd/transport/core/Frame"], function (require, exports, Asserts_2, Constants_6, Entity_4, Message_3, StrUtils_3, Frame_3) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ArrayBufferCodecWriter = exports.ArrayBufferCodecReader = exports.CodecByteBuffer = void 0;
+    class CodecByteBuffer {
+        constructor(config) {
+            this._config = config;
+        }
+        write(frame, targetFactory) {
+            if (frame.message()) {
+                let sidB = StrUtils_3.StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
+                let eventB = StrUtils_3.StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
+                let metaStringB = StrUtils_3.StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
+                let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
+                Asserts_2.Asserts.assertSize("sid", sidB.byteLength, Constants_6.Constants.MAX_SIZE_SID);
+                Asserts_2.Asserts.assertSize("event", eventB.byteLength, Constants_6.Constants.MAX_SIZE_EVENT);
+                Asserts_2.Asserts.assertSize("metaString", metaStringB.byteLength, Constants_6.Constants.MAX_SIZE_META_STRING);
+                Asserts_2.Asserts.assertSize("data", frame.message().dataSize(), Constants_6.Constants.MAX_SIZE_DATA);
+                let target = targetFactory(frameSize);
+                target.putInt(frameSize);
+                target.putInt(frame.flag());
+                target.putBytes(sidB);
+                target.putChar('\n'.charCodeAt(0));
+                target.putBytes(eventB);
+                target.putChar('\n'.charCodeAt(0));
+                target.putBytes(metaStringB);
+                target.putChar('\n'.charCodeAt(0));
+                target.putBytes(frame.message().data());
+                target.flush();
+                return target;
+            }
+            else {
+                let frameSize = 4 + 4;
+                let target = targetFactory(frameSize);
+                target.putInt(frameSize);
+                target.putInt(frame.flag());
+                target.flush();
+                return target;
+            }
+        }
+        read(buffer) {
+            let frameSize = buffer.getInt();
+            if (frameSize > (buffer.remaining() + 4)) {
+                return null;
+            }
+            let flag = buffer.getInt();
+            if (frameSize == 8) {
+                return new Frame_3.Frame(Constants_6.Flags.of(flag), null);
+            }
+            else {
+                let metaBufSize = Math.min(Constants_6.Constants.MAX_SIZE_META_STRING, buffer.remaining());
+                let buf = new ArrayBuffer(metaBufSize);
+                let sid = this.decodeString(buffer, buf, Constants_6.Constants.MAX_SIZE_SID);
+                let event = this.decodeString(buffer, buf, Constants_6.Constants.MAX_SIZE_EVENT);
+                let metaString = this.decodeString(buffer, buf, Constants_6.Constants.MAX_SIZE_META_STRING);
+                let dataRealSize = frameSize - buffer.position();
+                let data;
+                if (dataRealSize > Constants_6.Constants.MAX_SIZE_DATA) {
+                    data = new ArrayBuffer(Constants_6.Constants.MAX_SIZE_DATA);
+                    buffer.getBytes(data, 0, Constants_6.Constants.MAX_SIZE_DATA);
+                    for (let i = dataRealSize - Constants_6.Constants.MAX_SIZE_DATA; i > 0; i--) {
+                        buffer.getByte();
+                    }
+                }
+                else {
+                    data = new ArrayBuffer(dataRealSize);
+                    if (dataRealSize > 0) {
+                        buffer.getBytes(data, 0, dataRealSize);
+                    }
+                }
+                let message = new Message_3.MessageBuilder()
+                    .flag(Constants_6.Flags.of(flag))
+                    .sid(sid)
+                    .event(event)
+                    .entity(new Entity_4.EntityDefault().dataSet(data).metaStringSet(metaString))
+                    .build();
+                return new Frame_3.Frame(message.flag(), message);
+            }
+        }
+        decodeString(reader, buf, maxLen) {
+            let bufView = new DataView(buf);
+            let bufViewIdx = 0;
+            while (true) {
+                let c = reader.getByte();
+                if (c == 10) {
+                    break;
+                }
+                if (maxLen > 0 && maxLen <= bufViewIdx) {
+                }
+                else {
+                    if (c != 0) {
+                        bufView.setInt8(bufViewIdx, c);
+                        bufViewIdx++;
+                    }
+                }
+            }
+            if (bufViewIdx < 1) {
+                return "";
+            }
+            return StrUtils_3.StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
+        }
+    }
+    exports.CodecByteBuffer = CodecByteBuffer;
+    class ArrayBufferCodecReader {
+        constructor(buf) {
+            this._buf = buf;
+            this._bufView = new DataView(buf);
+            this._bufViewIdx = 0;
+        }
+        getByte() {
+            if (this._bufViewIdx >= this._buf.byteLength) {
+                return -1;
+            }
+            let tmp = this._bufView.getInt8(this._bufViewIdx);
+            this._bufViewIdx += 1;
+            return tmp;
+        }
+        getBytes(dst, offset, length) {
+            let tmp = new DataView(dst);
+            let tmpEndIdx = offset + length;
+            for (let i = offset; i < tmpEndIdx; i++) {
+                if (this._bufViewIdx >= this._buf.byteLength) {
+                    break;
+                }
+                tmp.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
+                this._bufViewIdx++;
+            }
+        }
+        getInt() {
+            if (this._bufViewIdx >= this._buf.byteLength) {
+                return -1;
+            }
+            let tmp = this._bufView.getInt32(this._bufViewIdx);
+            this._bufViewIdx += 4;
+            return tmp;
+        }
+        remaining() {
+            return this._buf.byteLength - this._bufViewIdx;
+        }
+        position() {
+            return this._bufViewIdx;
+        }
+    }
+    exports.ArrayBufferCodecReader = ArrayBufferCodecReader;
+    class ArrayBufferCodecWriter {
+        constructor(n) {
+            this._buf = new ArrayBuffer(n);
+            this._bufView = new DataView(this._buf);
+            this._bufViewIdx = 0;
+        }
+        putBytes(src) {
+            let tmp = new DataView(src);
+            let len = tmp.byteLength;
+            for (let i = 0; i < len; i++) {
+                this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));
+                this._bufViewIdx += 1;
+            }
+        }
+        putInt(val) {
+            this._bufView.setInt32(this._bufViewIdx, val);
+            this._bufViewIdx += 4;
+        }
+        putChar(val) {
+            this._bufView.setInt16(this._bufViewIdx, val);
+            this._bufViewIdx += 2;
+        }
+        flush() {
+        }
+        getBuffer() {
+            return this._buf;
+        }
+    }
+    exports.ArrayBufferCodecWriter = ArrayBufferCodecWriter;
+});
+define("socketd/transport/core/Message", ["require", "exports", "socketd/transport/core/Constants", "socketd/transport/core/Codec"], function (require, exports, Constants_7, Codec_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.MessageDefault = exports.MessageBuilder = void 0;
+    class MessageBuilder {
+        constructor() {
+            this._flag = Constants_7.Flags.Unknown;
+            this._sid = Constants_7.Constants.DEF_SID;
+            this._event = Constants_7.Constants.DEF_EVENT;
+            this._entity = null;
+        }
+        flag(flag) {
+            this._flag = flag;
+            return this;
+        }
+        sid(sid) {
+            this._sid = sid;
+            return this;
+        }
+        event(event) {
+            this._event = event;
+            return this;
+        }
+        entity(entity) {
+            this._entity = entity;
+            return this;
+        }
+        build() {
+            return new MessageDefault(this._flag, this._sid, this._event, this._entity);
+        }
+    }
+    exports.MessageBuilder = MessageBuilder;
+    class MessageDefault {
+        constructor(flag, sid, event, entity) {
+            this._flag = flag;
+            this._sid = sid;
+            this._event = event;
+            this._entity = entity;
+        }
+        at() {
+            return this._entity.at();
+        }
+        flag() {
+            return this._flag;
+        }
+        isRequest() {
+            return this._flag == Constants_7.Flags.Request;
+        }
+        isSubscribe() {
+            return this._flag == Constants_7.Flags.Subscribe;
+        }
+        isEnd() {
+            return this._flag == Constants_7.Flags.ReplyEnd;
+        }
+        sid() {
+            return this._sid;
+        }
+        event() {
+            return this._event;
+        }
+        entity() {
+            return this._entity;
+        }
+        metaString() {
+            return this._entity.metaString();
+        }
+        metaMap() {
+            return this._entity.metaMap();
+        }
+        meta(name) {
+            return this._entity.meta(name);
+        }
+        metaOrDefault(name, def) {
+            return this._entity.metaOrDefault(name, def);
+        }
+        putMeta(name, val) {
+            this._entity.putMeta(name, val);
+        }
+        data() {
+            return this._entity.data();
+        }
+        dataAsReader() {
+            if (!this._dataAsReader) {
+                this._dataAsReader = new Codec_2.ArrayBufferCodecReader(this._entity.data());
+            }
+            return this._dataAsReader;
+        }
+        dataAsString() {
+            return this._entity.dataAsString();
+        }
+        dataSize() {
+            return this._entity.dataSize();
+        }
+        release() {
+        }
+    }
+    exports.MessageDefault = MessageDefault;
+});
 define("socketd/transport/client/ClientSession", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -864,19 +1050,20 @@ define("socketd/transport/core/Session", ["require", "exports"], function (requi
             return this._attrMap;
         }
         attrHas(name) {
-            return this.attrMap().has(name);
+            if (this._attrMap == null) {
+                return false;
+            }
+            return this._attrMap.has(name);
         }
         attr(name) {
-            return this.attrMap().get(name);
+            if (this._attrMap == null) {
+                return null;
+            }
+            return this._attrMap.get(name);
         }
         attrOrDefault(name, def) {
-            let val = this.attrMap().get(name);
-            if (val) {
-                return val;
-            }
-            else {
-                return def;
-            }
+            let tmp = this.attr(name);
+            return tmp ? tmp : def;
         }
         attrPut(name, val) {
             this.attrMap().set(name, val);
@@ -1134,7 +1321,7 @@ define("socketd/transport/client/ClientConfig", ["require", "exports", "socketd/
     }
     exports.ClientConfig = ClientConfig;
 });
-define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_6) {
+define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HandshakeDefault = void 0;
@@ -1142,7 +1329,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
         constructor(source) {
             this._source = source;
             this._url = new URL(source.event());
-            this._version = source.meta(Constants_6.EntityMetas.META_SOCKETD_VERSION);
+            this._version = source.meta(Constants_8.EntityMetas.META_SOCKETD_VERSION);
             this._paramMap = new Map();
             for (let [k, v] of this._url.searchParams) {
                 this._paramMap.set(k, v);
@@ -1158,8 +1345,8 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
             return this._paramMap;
         }
         paramOrDefault(name, def) {
-            let res = this.param(name);
-            return res ? res : def;
+            let tmp = this.param(name);
+            return tmp ? tmp : def;
         }
         paramPut(name, value) {
             this._paramMap.set(name, value);
@@ -1173,7 +1360,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
     }
     exports.HandshakeDefault = HandshakeDefault;
 });
-define("socketd/transport/core/Processor", ["require", "exports", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException", "socketd/transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_7, SocketdException_3, HandshakeDefault_1) {
+define("socketd/transport/core/Processor", ["require", "exports", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException", "socketd/transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_9, SocketdException_4, HandshakeDefault_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ProcessorDefault = void 0;
@@ -1187,7 +1374,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
             }
         }
         onReceive(channel, frame) {
-            if (frame.flag() == Constants_7.Flags.Connect) {
+            if (frame.flag() == Constants_9.Flags.Connect) {
                 channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
                 channel.onOpenFuture((r, err) => {
                     if (r && channel.isValid()) {
@@ -1201,35 +1388,35 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                 });
                 this.onOpen(channel);
             }
-            else if (frame.flag() == Constants_7.Flags.Connack) {
+            else if (frame.flag() == Constants_9.Flags.Connack) {
                 channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
                 this.onOpen(channel);
             }
             else {
                 if (channel.getHandshake() == null) {
-                    channel.close(Constants_7.Constants.CLOSE1_PROTOCOL);
-                    if (frame.flag() == Constants_7.Flags.Close) {
-                        throw new SocketdException_3.SocketdConnectionException("Connection request was rejected");
+                    channel.close(Constants_9.Constants.CLOSE1_PROTOCOL);
+                    if (frame.flag() == Constants_9.Flags.Close) {
+                        throw new SocketdException_4.SocketdConnectionException("Connection request was rejected");
                     }
                     console.warn(`${channel.getConfig().getRoleName()} channel handshake is null, sessionId=${channel.getSession().sessionId()}`);
                     return;
                 }
                 try {
                     switch (frame.flag()) {
-                        case Constants_7.Flags.Ping: {
+                        case Constants_9.Flags.Ping: {
                             channel.sendPong();
                             break;
                         }
-                        case Constants_7.Flags.Pong: {
+                        case Constants_9.Flags.Pong: {
                             break;
                         }
-                        case Constants_7.Flags.Close: {
-                            channel.close(Constants_7.Constants.CLOSE1_PROTOCOL);
+                        case Constants_9.Flags.Close: {
+                            channel.close(Constants_9.Constants.CLOSE1_PROTOCOL);
                             this.onCloseInternal(channel);
                             break;
                         }
-                        case Constants_7.Flags.Alarm: {
-                            let exception = new SocketdException_3.SocketdAlarmException(frame.getMessage());
+                        case Constants_9.Flags.Alarm: {
+                            let exception = new SocketdException_4.SocketdAlarmException(frame.getMessage());
                             let acceptor = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
                             if (acceptor == null) {
                                 this.onError(channel, exception);
@@ -1240,19 +1427,19 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                             }
                             break;
                         }
-                        case Constants_7.Flags.Message:
-                        case Constants_7.Flags.Request:
-                        case Constants_7.Flags.Subscribe: {
+                        case Constants_9.Flags.Message:
+                        case Constants_9.Flags.Request:
+                        case Constants_9.Flags.Subscribe: {
                             this.onReceiveDo(channel, frame, false);
                             break;
                         }
-                        case Constants_7.Flags.Reply:
-                        case Constants_7.Flags.ReplyEnd: {
+                        case Constants_9.Flags.Reply:
+                        case Constants_9.Flags.ReplyEnd: {
                             this.onReceiveDo(channel, frame, true);
                             break;
                         }
                         default: {
-                            channel.close(Constants_7.Constants.CLOSE2_PROTOCOL_ILLEGAL);
+                            channel.close(Constants_9.Constants.CLOSE2_PROTOCOL_ILLEGAL);
                             this.onCloseInternal(channel);
                         }
                     }
@@ -1264,7 +1451,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
         }
         onReceiveDo(channel, frame, isReply) {
             if (channel.getConfig().getFragmentHandler().aggrEnable()) {
-                let fragmentIdxStr = frame.getMessage().meta(Constants_7.EntityMetas.META_DATA_FRAGMENT_IDX);
+                let fragmentIdxStr = frame.getMessage().meta(Constants_9.EntityMetas.META_DATA_FRAGMENT_IDX);
                 if (fragmentIdxStr != null) {
                     let index = parseInt(fragmentIdxStr);
                     let frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
@@ -1374,7 +1561,7 @@ define("socketd/utils/RunUtils", ["require", "exports"], function (require, expo
     }
     exports.RunUtils = RunUtils;
 });
-define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd/transport/core/Channel", "socketd/transport/core/HeartbeatHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/exception/SocketdException", "socketd/utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_8, Asserts_3, SocketdException_4, RunUtils_1) {
+define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd/transport/core/Channel", "socketd/transport/core/HeartbeatHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/exception/SocketdException", "socketd/utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_10, Asserts_3, SocketdException_5, RunUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientChannel = void 0;
@@ -1412,7 +1599,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                     if (this._real.getHandshake() == null) {
                         return;
                     }
-                    if (this._real.isClosed() == Constants_8.Constants.CLOSE4_USER) {
+                    if (this._real.isClosed() == Constants_10.Constants.CLOSE4_USER) {
                         console.debug("Client channel is closed (pause heartbeat), sessionId={}", this.getSession().sessionId());
                         return;
                     }
@@ -1422,14 +1609,14 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                     this._heartbeatHandler.heartbeat(this.getSession());
                 }
                 catch (e) {
-                    if (e instanceof SocketdException_4.SocketdException) {
+                    if (e instanceof SocketdException_5.SocketdException) {
                         throw e;
                     }
                     if (this._connector.autoReconnect()) {
-                        this._real.close(Constants_8.Constants.CLOSE3_ERROR);
+                        this._real.close(Constants_10.Constants.CLOSE3_ERROR);
                         this._real = null;
                     }
-                    throw new SocketdException_4.SocketdChannelException(e);
+                    throw new SocketdException_5.SocketdChannelException(e);
                 }
             });
         }
@@ -1469,7 +1656,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 }
                 catch (e) {
                     if (this._connector.autoReconnect()) {
-                        this._real.close(Constants_8.Constants.CLOSE3_ERROR);
+                        this._real.close(Constants_10.Constants.CLOSE3_ERROR);
                         this._real = null;
                     }
                     throw e;
@@ -1498,7 +1685,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
     }
     exports.ClientChannel = ClientChannel;
 });
-define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/transport/core/Session", "socketd/transport/core/Message", "socketd/transport/core/Frame", "socketd/transport/core/Constants", "socketd/transport/core/Stream"], function (require, exports, Session_1, Message_3, Frame_3, Constants_9, Stream_2) {
+define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/transport/core/Session", "socketd/transport/core/Message", "socketd/transport/core/Frame", "socketd/transport/core/Constants", "socketd/transport/core/Stream"], function (require, exports, Session_1, Message_4, Frame_4, Constants_11, Stream_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SessionDefault = void 0;
@@ -1539,48 +1726,48 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
             this._channel.sendAlarm(from, alarm);
         }
         send(event, content) {
-            let message = new Message_3.MessageBuilder()
+            let message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
                 .event(event)
                 .entity(content)
                 .build();
-            this._channel.send(new Frame_3.Frame(Constants_9.Flags.Message, message), null);
+            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Message, message), null);
         }
         sendAndRequest(event, content, consumer, timeout) {
-            let message = new Message_3.MessageBuilder()
+            let message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
                 .event(event)
                 .entity(content)
                 .build();
             let stream = new Stream_2.StreamRequest(message.sid(), timeout, consumer);
-            this._channel.send(new Frame_3.Frame(Constants_9.Flags.Request, message), stream);
+            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Request, message), stream);
             return stream;
         }
         sendAndSubscribe(event, content, consumer, timeout) {
-            let message = new Message_3.MessageBuilder()
+            let message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
                 .event(event)
                 .entity(content)
                 .build();
             let stream = new Stream_2.StreamSubscribe(message.sid(), timeout, consumer);
-            this._channel.send(new Frame_3.Frame(Constants_9.Flags.Subscribe, message), stream);
+            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Subscribe, message), stream);
             return stream;
         }
         reply(from, content) {
-            let message = new Message_3.MessageBuilder()
+            let message = new Message_4.MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())
                 .entity(content)
                 .build();
-            this._channel.send(new Frame_3.Frame(Constants_9.Flags.Reply, message), null);
+            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Reply, message), null);
         }
         replyEnd(from, content) {
-            let message = new Message_3.MessageBuilder()
+            let message = new Message_4.MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())
                 .entity(content)
                 .build();
-            this._channel.send(new Frame_3.Frame(Constants_9.Flags.ReplyEnd, message), null);
+            this._channel.send(new Frame_4.Frame(Constants_11.Flags.ReplyEnd, message), null);
         }
         close() {
             console.debug("{} session will be closed, sessionId={}", this._channel.getConfig().getRoleName(), this.sessionId());
@@ -1592,7 +1779,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                     console.warn("{} channel sendClose error", this._channel.getConfig().getRoleName(), e);
                 }
             }
-            this._channel.close(Constants_9.Constants.CLOSE4_USER);
+            this._channel.close(Constants_11.Constants.CLOSE4_USER);
         }
     }
     exports.SessionDefault = SessionDefault;
@@ -1659,7 +1846,7 @@ define("socketd/transport/client/ClientProvider", ["require", "exports"], functi
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/utils/StrUtils", "socketd/exception/SocketdException", "socketd/transport/client/ClientChannel", "socketd/utils/RunUtils"], function (require, exports, StrUtils_4, SocketdException_5, ClientChannel_2, RunUtils_2) {
+define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/utils/StrUtils", "socketd/exception/SocketdException", "socketd/transport/client/ClientChannel", "socketd/utils/RunUtils"], function (require, exports, StrUtils_4, SocketdException_6, ClientChannel_2, RunUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClientSession = void 0;
@@ -1674,7 +1861,7 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
         }
         getSessionOne() {
             if (this._sessionSet.length == 0) {
-                throw new SocketdException_5.SocketdException("No session!");
+                throw new SocketdException_6.SocketdException("No session!");
             }
             else if (this._sessionSet.length == 1) {
                 return this._sessionSet[0];
@@ -1689,7 +1876,7 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
                     }
                 }
                 if (sessionsSize == 0) {
-                    throw new SocketdException_5.SocketdException("No session is available!");
+                    throw new SocketdException_6.SocketdException("No session is available!");
                 }
                 if (sessionsSize == 1) {
                     return sessions[0];
@@ -1789,86 +1976,7 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD"
     }
     exports.ClusterClient = ClusterClient;
 });
-define("socketd_websocket/impl/ArrayBufferCodecWriter", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ArrayBufferCodecWriter = void 0;
-    class ArrayBufferCodecWriter {
-        constructor(n) {
-            this._buf = new ArrayBuffer(n);
-            this._bufView = new DataView(this._buf);
-            this._bufViewIdx = 0;
-        }
-        putBytes(src) {
-            let tmp = new DataView(src);
-            let len = tmp.byteLength;
-            for (let i = 0; i < len; i++) {
-                this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));
-                this._bufViewIdx += 1;
-            }
-        }
-        putInt(val) {
-            this._bufView.setInt32(this._bufViewIdx, val);
-            this._bufViewIdx += 4;
-        }
-        putChar(val) {
-            this._bufView.setInt16(this._bufViewIdx, val);
-            this._bufViewIdx += 2;
-        }
-        flush() {
-        }
-        getBuffer() {
-            return this._buf;
-        }
-    }
-    exports.ArrayBufferCodecWriter = ArrayBufferCodecWriter;
-});
-define("socketd_websocket/impl/ArrayBufferCodecReader", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ArrayBufferCodecReader = void 0;
-    class ArrayBufferCodecReader {
-        constructor(buf) {
-            this._buf = buf;
-            this._bufView = new DataView(buf);
-            this._bufViewIdx = 0;
-        }
-        getByte() {
-            if (this._bufViewIdx >= this._buf.byteLength) {
-                return -1;
-            }
-            let tmp = this._bufView.getInt8(this._bufViewIdx);
-            this._bufViewIdx += 1;
-            return tmp;
-        }
-        getBytes(dst, offset, length) {
-            let tmp = new DataView(dst);
-            for (let i = 0; i < length; i++) {
-                if (this._bufViewIdx >= this._buf.byteLength) {
-                    break;
-                }
-                tmp.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
-                this._bufViewIdx++;
-            }
-        }
-        getInt() {
-            if (this._bufViewIdx >= this._buf.byteLength) {
-                return -1;
-            }
-            let tmp = this._bufView.getInt32(this._bufViewIdx);
-            this._bufViewIdx += 4;
-            return tmp;
-        }
-        remaining() {
-            return this._buf.byteLength - this._bufViewIdx;
-        }
-        position() {
-            return this._bufViewIdx;
-        }
-    }
-    exports.ArrayBufferCodecReader = ArrayBufferCodecReader;
-});
-define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd_websocket/impl/ArrayBufferCodecWriter", "socketd_websocket/impl/ArrayBufferCodecReader"], function (require, exports, ArrayBufferCodecWriter_1, ArrayBufferCodecReader_1) {
+define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd/transport/core/Codec"], function (require, exports, Codec_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WsChannelAssistant = void 0;
@@ -1877,11 +1985,11 @@ define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd_w
             this._config = config;
         }
         read(buffer) {
-            return this._config.getCodec().read(new ArrayBufferCodecReader_1.ArrayBufferCodecReader(buffer));
+            return this._config.getCodec().read(new Codec_3.ArrayBufferCodecReader(buffer));
         }
         write(target, frame) {
             let tmp = this._config.getCodec()
-                .write(frame, n => new ArrayBufferCodecWriter_1.ArrayBufferCodecWriter(n));
+                .write(frame, n => new Codec_3.ArrayBufferCodecWriter(n));
             target.send(tmp.getBuffer());
         }
         isValid(target) {
@@ -1921,7 +2029,7 @@ define("socketd/transport/core/ChannelSupporter", ["require", "exports"], functi
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/transport/core/Frame", "socketd/transport/core/Message", "socketd/transport/core/Constants", "socketd/transport/core/Channel", "socketd/transport/core/SessionDefault"], function (require, exports, Frame_4, Message_4, Constants_10, Channel_2, SessionDefault_2) {
+define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/transport/core/Frame", "socketd/transport/core/Message", "socketd/transport/core/Constants", "socketd/transport/core/Channel", "socketd/transport/core/SessionDefault"], function (require, exports, Frame_5, Message_5, Constants_12, Channel_2, SessionDefault_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ChannelDefault = void 0;
@@ -1948,10 +2056,10 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
             return this._config;
         }
         sendPing() {
-            this.send(Frame_4.Frames.pingFrame(), null);
+            this.send(Frame_5.Frames.pingFrame(), null);
         }
         sendPong() {
-            this.send(Frame_4.Frames.pongFrame(), null);
+            this.send(Frame_5.Frames.pongFrame(), null);
         }
         send(frame, stream) {
             if (this.getConfig().clientMode()) {
@@ -1967,13 +2075,13 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
                 }
                 if (message.entity() != null) {
                     if (message.dataSize() > this.getConfig().getFragmentSize()) {
-                        message.putMeta(Constants_10.EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
+                        message.putMeta(Constants_12.EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
                         let fragmentIndex = 0;
                         while (true) {
                             fragmentIndex++;
                             let fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
                             if (fragmentEntity != null) {
-                                let fragmentFrame = new Frame_4.Frame(frame.flag(), new Message_4.MessageBuilder()
+                                let fragmentFrame = new Frame_5.Frame(frame.flag(), new Message_5.MessageBuilder()
                                     .flag(frame.flag())
                                     .sid(message.sid())
                                     .entity(fragmentEntity)
@@ -1996,7 +2104,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
         retrieve(frame) {
             let stream = this._streamManger.getStream(frame.message().sid());
             if (stream != null) {
-                if (stream.isSingle() || frame.flag() == Constants_10.Flags.ReplyEnd) {
+                if (stream.isSingle() || frame.flag() == Constants_12.Flags.ReplyEnd) {
                     this._streamManger.removeStream(frame.message().sid());
                 }
                 if (stream.isSingle()) {
@@ -2037,7 +2145,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
     }
     exports.ChannelDefault = ChannelDefault;
 });
-define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "socketd/transport/client/ClientHandshakeResult", "socketd/transport/core/ChannelDefault", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_11, SocketdException_6) {
+define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "socketd/transport/client/ClientHandshakeResult", "socketd/transport/core/ChannelDefault", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_13, SocketdException_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebSocketClientImpl = void 0;
@@ -2069,7 +2177,7 @@ define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "soc
                 try {
                     let frame = this._client.getAssistant().read(e.data);
                     if (frame != null) {
-                        if (frame.flag() == Constants_11.Flags.Connack) {
+                        if (frame.flag() == Constants_13.Flags.Connack) {
                             this._channel.onOpenFuture((r, err) => {
                                 if (err == null) {
                                     this._handshakeFuture(new ClientHandshakeResult_1.ClientHandshakeResult(this._channel, null));
@@ -2083,7 +2191,7 @@ define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "soc
                     }
                 }
                 catch (e) {
-                    if (e instanceof SocketdException_6.SocketdConnectionException) {
+                    if (e instanceof SocketdException_7.SocketdConnectionException) {
                         this._handshakeFuture(new ClientHandshakeResult_1.ClientHandshakeResult(this._channel, e));
                     }
                     console.warn("WebSocket client onMessage error", e);
@@ -2208,81 +2316,4 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
             SocketD.clientProviderMap.set(s, provider);
         }
     })();
-});
-define("socketd/transport/core/FragmentHolder", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.FragmentHolder = void 0;
-    class FragmentHolder {
-        constructor(index, message) {
-            this._index = index;
-            this._message = message;
-        }
-        getIndex() {
-            return this._index;
-        }
-        getMessage() {
-            return this._message;
-        }
-    }
-    exports.FragmentHolder = FragmentHolder;
-});
-define("socketd/transport/core/FragmentAggregator", ["require", "exports", "socketd/transport/core/Message", "socketd/transport/core/Entity", "socketd/transport/core/Frame", "socketd/transport/core/FragmentHolder", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Message_5, Entity_3, Frame_5, FragmentHolder_1, Constants_12, SocketdException_7) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.FragmentAggregatorDefault = void 0;
-    class FragmentAggregatorDefault {
-        constructor(main) {
-            this._fragmentHolders = new Array();
-            this._main = main;
-            let dataLengthStr = main.meta(Constants_12.EntityMetas.META_DATA_LENGTH);
-            if (!dataLengthStr) {
-                throw new SocketdException_7.SocketdCodecException("Missing '" + Constants_12.EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
-            }
-            this._dataLength = parseInt(dataLengthStr);
-        }
-        getSid() {
-            return this._main.sid();
-        }
-        getDataStreamSize() {
-            return this._dataStreamSize;
-        }
-        getDataLength() {
-            return this._dataLength;
-        }
-        add(index, message) {
-            this._fragmentHolders.push(new FragmentHolder_1.FragmentHolder(index, message));
-            this._dataStreamSize = this._dataStreamSize + message.dataSize();
-        }
-        get() {
-            this._fragmentHolders.sort((f1, f2) => {
-                if (f1.getIndex() == f2.getIndex()) {
-                    return 0;
-                }
-                else if (f1.getIndex() > f2.getIndex()) {
-                    return 1;
-                }
-                else {
-                    return -1;
-                }
-            });
-            let dataBuffer = new ArrayBuffer(this._dataLength);
-            let dataBufferView = new DataView(dataBuffer);
-            let dataBufferViewIdx = 0;
-            for (let fh of this._fragmentHolders) {
-                let tmp = new DataView(fh.getMessage().data());
-                for (let i = 0; i < fh.getMessage().data().byteLength; i++) {
-                    dataBufferView.setInt8(dataBufferViewIdx, tmp.getInt8(i));
-                    dataBufferViewIdx++;
-                }
-            }
-            return new Frame_5.Frame(this._main.flag(), new Message_5.MessageBuilder()
-                .flag(this._main.flag())
-                .sid(this._main.sid())
-                .event(this._main.event())
-                .entity(new Entity_3.EntityDefault().metaMapPut(this._main.metaMap()).dataSet(dataBuffer))
-                .build());
-        }
-    }
-    exports.FragmentAggregatorDefault = FragmentAggregatorDefault;
 });

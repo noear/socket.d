@@ -17,7 +17,7 @@ export interface Channel {
     /**
      * 获取附件
      */
-    getAttachment(name: string): object | undefined;
+    getAttachment<T>(name: string): T | undefined;
 
     /**
      * 放置附件
@@ -147,7 +147,7 @@ export interface ChannelInternal extends Channel {
 
 export abstract class  ChannelBase implements Channel {
     protected _config: Config;
-    private _attachments: Map<string, object>;
+    private _attachments: Map<string, any>;
     private _handshake: HandshakeInternal;
     private  _isClosed: number;
 
@@ -157,7 +157,7 @@ export abstract class  ChannelBase implements Channel {
         this._isClosed = 0;
     }
 
-    getAttachment(name: string): object | undefined {
+    getAttachment<T>(name: string): T | undefined {
         return this._attachments.get(name);
     }
 

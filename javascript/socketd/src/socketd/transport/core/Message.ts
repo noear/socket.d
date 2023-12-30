@@ -1,6 +1,7 @@
 
 import {Constants, Flags} from "./Constants";
 import type {Entity, Reply} from "./Entity";
+import {ArrayBufferCodecReader, CodecReader} from "./Codec";
 
 
 /**
@@ -41,6 +42,11 @@ export interface Message extends Entity {
  * @since 2.0
  */
 export interface MessageInternal extends Message, Entity, Reply {
+    /**
+     * 获取数据读模式
+     * */
+    dataAsReader(): CodecReader;
+
     /**
      * 获取标记
      */
@@ -111,6 +117,7 @@ export class MessageDefault implements MessageInternal {
     private _sid: string;
     private _event: string;
     private _entity: Entity|null;
+    private _dataAsReader : CodecReader|null;
 
     constructor(flag: number, sid: string, event: string, entity: Entity|null) {
         this._flag = flag;
@@ -193,6 +200,14 @@ export class MessageDefault implements MessageInternal {
 
     data(): ArrayBuffer {
         return this._entity!.data();
+    }
+
+    dataAsReader(): CodecReader {
+        if (!this._dataAsReader) {
+            this._dataAsReader = new ArrayBufferCodecReader(this._entity!.data());
+        }
+
+        return this._dataAsReader;
     }
 
     dataAsString(): string {

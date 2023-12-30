@@ -42,6 +42,16 @@ export interface CodecReader {
      * 当前位置
      */
     position(): number;
+
+    /**
+     * 长度
+     * */
+    size():number;
+
+    /**
+     * 重置索引
+     * */
+    reset();
 }
 
 /**
@@ -289,7 +299,7 @@ export class ArrayBufferCodecReader implements CodecReader {
 
     getBytes(dst: ArrayBuffer, offset: number, length: number) {
         let tmp = new DataView(dst);
-        let tmpEndIdx = offset+length;
+        let tmpEndIdx = offset + length;
         for (let i = offset; i < tmpEndIdx; i++) {
             if (this._bufViewIdx >= this._buf.byteLength) {
                 //读完了
@@ -317,6 +327,15 @@ export class ArrayBufferCodecReader implements CodecReader {
 
     position(): number {
         return this._bufViewIdx;
+    }
+
+
+    size(): number {
+        return this._buf.byteLength;
+    }
+
+    reset() {
+        this._bufViewIdx = 0;
     }
 }
 

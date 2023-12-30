@@ -117,7 +117,6 @@ export class MessageDefault implements MessageInternal {
     private _sid: string;
     private _event: string;
     private _entity: Entity|null;
-    private _dataAsReader : CodecReader|null;
 
     constructor(flag: number, sid: string, event: string, entity: Entity|null) {
         this._flag = flag;
@@ -203,11 +202,7 @@ export class MessageDefault implements MessageInternal {
     }
 
     dataAsReader(): CodecReader {
-        if (!this._dataAsReader) {
-            this._dataAsReader = new ArrayBufferCodecReader(this._entity!.data());
-        }
-
-        return this._dataAsReader;
+        return this._entity!.dataAsReader();
     }
 
     dataAsString(): string {

@@ -1,4 +1,5 @@
 import {StrUtils} from "../../utils/StrUtils";
+import {ArrayBufferCodecReader, CodecReader} from "./Codec";
 
 
 /**
@@ -46,6 +47,11 @@ export interface Entity {
     data(): ArrayBuffer;
 
     /**
+     * 获取数据并转为读取器
+     */
+    dataAsReader(): CodecReader;
+
+    /**
      * 获取数据并转为字符串
      */
     dataAsString(): string;
@@ -88,10 +94,12 @@ export interface Reply extends Entity {
 export class EntityDefault implements Entity {
     private _metaMap: URLSearchParams | null;
     private _data: ArrayBuffer;
+    private _dataAsReader : CodecReader|null;
 
     constructor() {
         this._metaMap = null;
         this._data = new ArrayBuffer(0);
+        this._dataAsReader = null;
     }
 
     /**
@@ -199,6 +207,14 @@ export class EntityDefault implements Entity {
      */
     data(): ArrayBuffer {
         return this._data;
+    }
+
+    dataAsReader(): CodecReader {
+        if (!this._dataAsReader) {
+            this._dataAsReader = new ArrayBufferCodecReader(this._data);
+        }
+
+        return this._dataAsReader;
     }
 
     /**

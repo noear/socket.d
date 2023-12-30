@@ -1,3 +1,8 @@
+/*!
+ * Socket.D v2.2.0
+ * (c) 2023 noear.org and other contributors
+ * Released under the Apache-2.0 License.
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -142,7 +147,9 @@ define("socketd/transport/core/Constants", ["require", "exports"], function (req
         META_DATA_LENGTH: "Data-Length",
         META_DATA_TYPE: "Data-Type",
         META_DATA_FRAGMENT_IDX: "Data-Fragment-Idx",
-        META_DATA_DISPOSITION_FILENAME: "Data-Disposition-Filename"
+        META_DATA_DISPOSITION_FILENAME: "Data-Disposition-Filename",
+        META_RANGE_START: "Data-Range-Start",
+        META_RANGE_SIZE: "Data-Range-Size",
     };
 });
 define("socketd/transport/core/Message", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_1) {
@@ -226,6 +233,12 @@ define("socketd/transport/core/Message", ["require", "exports", "socketd/transpo
         }
         metaOrDefault(name, def) {
             return this._entity.metaOrDefault(name, def);
+        }
+        metaAsInt(name) {
+            return this._entity.metaAsInt(name);
+        }
+        metaAsFloat(name) {
+            return this._entity.metaAsFloat(name);
         }
         putMeta(name, val) {
             this._entity.putMeta(name, val);
@@ -1066,6 +1079,12 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
             else {
                 return def;
             }
+        }
+        metaAsInt(name) {
+            return parseInt(this.metaOrDefault(name, '0'));
+        }
+        metaAsFloat(name) {
+            return parseFloat(this.metaOrDefault(name, '0'));
         }
         putMeta(name, val) {
             this.metaPut(name, val);

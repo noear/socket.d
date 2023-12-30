@@ -98,7 +98,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
     }
 
     readFragmentData(ins: CodecReader, maxSize: number): ArrayBuffer {
-        let size = 0;
+        let size:number;
         if (ins.remaining() > maxSize) {
             size = maxSize;
         } else {

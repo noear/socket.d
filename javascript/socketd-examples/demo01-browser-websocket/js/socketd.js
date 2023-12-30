@@ -20,7 +20,7 @@ define("socketd/utils/StrUtils", ["require", "exports"], function (require, expo
         static guid() {
             let guid = "";
             for (let i = 1; i <= 32; i++) {
-                let n = Math.floor(Math.random() * 16.0).toString(16);
+                const n = Math.floor(Math.random() * 16.0).toString(16);
                 guid += n;
             }
             return guid;
@@ -34,9 +34,9 @@ define("socketd/utils/StrUtils", ["require", "exports"], function (require, expo
         }
         static bufToStr(buf, start, length, charet) {
             if (buf.byteLength != length) {
-                let bufView = new DataView(buf);
-                let tmp = new ArrayBuffer(length);
-                let tmpView = new DataView(tmp);
+                const bufView = new DataView(buf);
+                const tmp = new ArrayBuffer(length);
+                const tmpView = new DataView(tmp);
                 for (let i = 0; i < length; i++) {
                     tmpView.setInt8(i, bufView.getInt8(start + i));
                 }
@@ -411,13 +411,13 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
         addStream(sid, stream) {
             Asserts_1.Asserts.assertNull("stream", stream);
             this._streamMap.set(sid, stream);
-            let streamTimeout = stream.timeout() > 0 ? stream.timeout() : this._config.getStreamTimeout();
+            const streamTimeout = stream.timeout() > 0 ? stream.timeout() : this._config.getStreamTimeout();
             if (streamTimeout > 0) {
                 stream.insuranceStart(this, streamTimeout);
             }
         }
         removeStream(sid) {
-            let stream = this.getStream(sid);
+            const stream = this.getStream(sid);
             if (stream) {
                 this._streamMap.delete(sid);
                 stream.insuranceCancel();
@@ -463,12 +463,12 @@ define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport
     exports.Frame = Frame;
     class Frames {
         static connectFrame(sid, url) {
-            let entity = new Entity_1.EntityDefault();
+            const entity = new Entity_1.EntityDefault();
             entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
             return new Frame(Constants_2.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
         }
         static connackFrame(connectMessage) {
-            let entity = new Entity_1.EntityDefault();
+            const entity = new Entity_1.EntityDefault();
             entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
             return new Frame(Constants_2.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
         }
@@ -482,7 +482,7 @@ define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport
             return new Frame(Constants_2.Flags.Close, null);
         }
         static alarmFrame(from, alarm) {
-            let message = new Message_1.MessageBuilder();
+            const message = new Message_1.MessageBuilder();
             if (from != null) {
                 message.sid(from.sid());
                 message.event(from.event());
@@ -522,7 +522,7 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
         constructor(main) {
             this._fragmentHolders = new Array();
             this._main = main;
-            let dataLengthStr = main.meta(Constants_3.EntityMetas.META_DATA_LENGTH);
+            const dataLengthStr = main.meta(Constants_3.EntityMetas.META_DATA_LENGTH);
             if (!dataLengthStr) {
                 throw new SocketdException_2.SocketdCodecException("Missing '" + Constants_3.EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
             }
@@ -553,11 +553,11 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
                     return -1;
                 }
             });
-            let dataBuffer = new ArrayBuffer(this._dataLength);
-            let dataBufferView = new DataView(dataBuffer);
+            const dataBuffer = new ArrayBuffer(this._dataLength);
+            const dataBufferView = new DataView(dataBuffer);
             let dataBufferViewIdx = 0;
-            for (let fh of this._fragmentHolders) {
-                let tmp = new DataView(fh.getMessage().data());
+            for (const fh of this._fragmentHolders) {
+                const tmp = new DataView(fh.getMessage().data());
                 for (let i = 0; i < fh.getMessage().data().byteLength; i++) {
                     dataBufferView.setInt8(dataBufferViewIdx, tmp.getInt8(i));
                     dataBufferViewIdx++;
@@ -579,11 +579,11 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
     exports.FragmentHandlerDefault = void 0;
     class FragmentHandlerDefault {
         nextFragment(channel, fragmentIndex, message) {
-            let dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
+            const dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
             if (dataBuffer == null || dataBuffer.byteLength == 0) {
                 return null;
             }
-            let fragmentEntity = new Entity_3.EntityDefault().dataSet(dataBuffer);
+            const fragmentEntity = new Entity_3.EntityDefault().dataSet(dataBuffer);
             if (fragmentIndex == 1) {
                 fragmentEntity.metaMapPut(message.metaMap());
             }
@@ -616,7 +616,7 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
             else {
                 size = ins.remaining();
             }
-            let buf = new ArrayBuffer(size);
+            const buf = new ArrayBuffer(size);
             ins.getBytes(buf, 0, size);
             return buf;
         }
@@ -845,7 +845,7 @@ define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transpo
         }
         static assertSize(name, size, limitSize) {
             if (size > limitSize) {
-                let message = `This message ${name} size is out of limit ${limitSize} (${size})`;
+                const message = `This message ${name} size is out of limit ${limitSize} (${size})`;
                 throw new SocketdException_3.SocketdSizeLimitException(message);
             }
         }
@@ -862,15 +862,15 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
         }
         write(frame, targetFactory) {
             if (frame.message()) {
-                let sidB = StrUtils_2.StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
-                let eventB = StrUtils_2.StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
-                let metaStringB = StrUtils_2.StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
-                let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
+                const sidB = StrUtils_2.StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
+                const eventB = StrUtils_2.StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
+                const metaStringB = StrUtils_2.StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
+                const frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
                 Asserts_3.Asserts.assertSize("sid", sidB.byteLength, Constants_7.Constants.MAX_SIZE_SID);
                 Asserts_3.Asserts.assertSize("event", eventB.byteLength, Constants_7.Constants.MAX_SIZE_EVENT);
                 Asserts_3.Asserts.assertSize("metaString", metaStringB.byteLength, Constants_7.Constants.MAX_SIZE_META_STRING);
                 Asserts_3.Asserts.assertSize("data", frame.message().dataSize(), Constants_7.Constants.MAX_SIZE_DATA);
-                let target = targetFactory(frameSize);
+                const target = targetFactory(frameSize);
                 target.putInt(frameSize);
                 target.putInt(frame.flag());
                 target.putBytes(sidB);
@@ -884,8 +884,8 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
                 return target;
             }
             else {
-                let frameSize = 4 + 4;
-                let target = targetFactory(frameSize);
+                const frameSize = 4 + 4;
+                const target = targetFactory(frameSize);
                 target.putInt(frameSize);
                 target.putInt(frame.flag());
                 target.flush();
@@ -893,21 +893,21 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             }
         }
         read(buffer) {
-            let frameSize = buffer.getInt();
+            const frameSize = buffer.getInt();
             if (frameSize > (buffer.remaining() + 4)) {
                 return null;
             }
-            let flag = buffer.getInt();
+            const flag = buffer.getInt();
             if (frameSize == 8) {
                 return new Frame_3.Frame(Constants_7.Flags.of(flag), null);
             }
             else {
-                let metaBufSize = Math.min(Constants_7.Constants.MAX_SIZE_META_STRING, buffer.remaining());
-                let buf = new ArrayBuffer(metaBufSize);
-                let sid = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_SID);
-                let event = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_EVENT);
-                let metaString = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_META_STRING);
-                let dataRealSize = frameSize - buffer.position();
+                const metaBufSize = Math.min(Constants_7.Constants.MAX_SIZE_META_STRING, buffer.remaining());
+                const buf = new ArrayBuffer(metaBufSize);
+                const sid = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_SID);
+                const event = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_EVENT);
+                const metaString = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_META_STRING);
+                const dataRealSize = frameSize - buffer.position();
                 let data;
                 if (dataRealSize > Constants_7.Constants.MAX_SIZE_DATA) {
                     data = new ArrayBuffer(Constants_7.Constants.MAX_SIZE_DATA);
@@ -922,7 +922,7 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
                         buffer.getBytes(data, 0, dataRealSize);
                     }
                 }
-                let message = new Message_3.MessageBuilder()
+                const message = new Message_3.MessageBuilder()
                     .flag(Constants_7.Flags.of(flag))
                     .sid(sid)
                     .event(event)
@@ -932,10 +932,10 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             }
         }
         decodeString(reader, buf, maxLen) {
-            let bufView = new DataView(buf);
+            const bufView = new DataView(buf);
             let bufViewIdx = 0;
             while (true) {
-                let c = reader.getByte();
+                const c = reader.getByte();
                 if (c == 10) {
                     break;
                 }
@@ -965,13 +965,13 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             if (this._bufViewIdx >= this._buf.byteLength) {
                 return -1;
             }
-            let tmp = this._bufView.getInt8(this._bufViewIdx);
+            const tmp = this._bufView.getInt8(this._bufViewIdx);
             this._bufViewIdx += 1;
             return tmp;
         }
         getBytes(dst, offset, length) {
-            let tmp = new DataView(dst);
-            let tmpEndIdx = offset + length;
+            const tmp = new DataView(dst);
+            const tmpEndIdx = offset + length;
             for (let i = offset; i < tmpEndIdx; i++) {
                 if (this._bufViewIdx >= this._buf.byteLength) {
                     break;
@@ -984,7 +984,7 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             if (this._bufViewIdx >= this._buf.byteLength) {
                 return -1;
             }
-            let tmp = this._bufView.getInt32(this._bufViewIdx);
+            const tmp = this._bufView.getInt32(this._bufViewIdx);
             this._bufViewIdx += 4;
             return tmp;
         }
@@ -1009,8 +1009,8 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             this._bufViewIdx = 0;
         }
         putBytes(src) {
-            let tmp = new DataView(src);
-            let len = tmp.byteLength;
+            const tmp = new DataView(src);
+            const len = tmp.byteLength;
             for (let i = 0; i < len; i++) {
                 this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));
                 this._bufViewIdx += 1;
@@ -1050,7 +1050,7 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
             return this;
         }
         metaMapPut(map) {
-            for (let name of map.prototype) {
+            for (const name of map.prototype) {
                 this.metaMap().set(name, map[name]);
             }
             return this;
@@ -1072,7 +1072,7 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
             return this.metaMap().get(name);
         }
         metaOrDefault(name, def) {
-            let val = this.meta(name);
+            const val = this.meta(name);
             if (val) {
                 return val;
             }
@@ -1165,7 +1165,7 @@ define("socketd/transport/core/Session", ["require", "exports"], function (requi
             return this._attrMap.get(name);
         }
         attrOrDefault(name, def) {
-            let tmp = this.attr(name);
+            const tmp = this.attr(name);
             return tmp ? tmp : def;
         }
         attrPut(name, val) {
@@ -1287,25 +1287,25 @@ define("socketd/transport/core/Listener", ["require", "exports", "socketd/transp
             return this._pathRouteSelector.size();
         }
         onOpen(session) {
-            let l1 = this._pathRouteSelector.select(session.path());
+            const l1 = this._pathRouteSelector.select(session.path());
             if (l1 != null) {
                 l1.onOpen(session);
             }
         }
         onMessage(session, message) {
-            let l1 = this._pathRouteSelector.select(session.path());
+            const l1 = this._pathRouteSelector.select(session.path());
             if (l1 != null) {
                 l1.onMessage(session, message);
             }
         }
         onClose(session) {
-            let l1 = this._pathRouteSelector.select(session.path());
+            const l1 = this._pathRouteSelector.select(session.path());
             if (l1 != null) {
                 l1.onClose(session);
             }
         }
         onError(session, error) {
-            let l1 = this._pathRouteSelector.select(session.path());
+            const l1 = this._pathRouteSelector.select(session.path());
             if (l1 != null) {
                 l1.onError(session, error);
             }
@@ -1328,22 +1328,22 @@ define("socketd/transport/core/Listener", ["require", "exports", "socketd/transp
             return this._deque.length;
         }
         onOpen(session) {
-            for (let listener of this._deque) {
+            for (const listener of this._deque) {
                 listener.onOpen(session);
             }
         }
         onMessage(session, message) {
-            for (let listener of this._deque) {
+            for (const listener of this._deque) {
                 listener.onMessage(session, message);
             }
         }
         onClose(session) {
-            for (let listener of this._deque) {
+            for (const listener of this._deque) {
                 listener.onClose(session);
             }
         }
         onError(session, error) {
-            for (let listener of this._deque) {
+            for (const listener of this._deque) {
                 listener.onError(session, error);
             }
         }
@@ -1449,7 +1449,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
             this._url = new URL(source.event());
             this._version = source.meta(Constants_8.EntityMetas.META_SOCKETD_VERSION);
             this._paramMap = new Map();
-            for (let [k, v] of this._url.searchParams) {
+            for (const [k, v] of this._url.searchParams) {
                 this._paramMap.set(k, v);
             }
         }
@@ -1463,7 +1463,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
             return this._paramMap;
         }
         paramOrDefault(name, def) {
-            let tmp = this.param(name);
+            const tmp = this.param(name);
             return tmp ? tmp : def;
         }
         paramPut(name, value) {
@@ -1540,14 +1540,14 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                             break;
                         }
                         case Constants_9.Flags.Alarm: {
-                            let exception = new SocketdException_4.SocketdAlarmException(frame.getMessage());
-                            let acceptor = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
-                            if (acceptor == null) {
+                            const exception = new SocketdException_4.SocketdAlarmException(frame.getMessage());
+                            const stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
+                            if (stream == null) {
                                 this.onError(channel, exception);
                             }
                             else {
                                 channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
-                                acceptor.onError(exception);
+                                stream.onError(exception);
                             }
                             break;
                         }
@@ -1575,10 +1575,10 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
         }
         onReceiveDo(channel, frame, isReply) {
             if (channel.getConfig().getFragmentHandler().aggrEnable()) {
-                let fragmentIdxStr = frame.message().meta(Constants_9.EntityMetas.META_DATA_FRAGMENT_IDX);
+                const fragmentIdxStr = frame.message().meta(Constants_9.EntityMetas.META_DATA_FRAGMENT_IDX);
                 if (fragmentIdxStr != null) {
-                    let index = parseInt(fragmentIdxStr);
-                    let frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+                    const index = parseInt(fragmentIdxStr);
+                    const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
                     if (frameNew == null) {
                         return;
                     }
@@ -1850,7 +1850,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
             this._channel.sendAlarm(from, alarm);
         }
         send(event, content) {
-            let message = new Message_4.MessageBuilder()
+            const message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
                 .event(event)
                 .entity(content)
@@ -1858,27 +1858,27 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Message, message), null);
         }
         sendAndRequest(event, content, consumer, timeout) {
-            let message = new Message_4.MessageBuilder()
+            const message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
                 .event(event)
                 .entity(content)
                 .build();
-            let stream = new Stream_2.StreamRequest(message.sid(), timeout, consumer);
+            const stream = new Stream_2.StreamRequest(message.sid(), timeout, consumer);
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Request, message), stream);
             return stream;
         }
         sendAndSubscribe(event, content, consumer, timeout) {
-            let message = new Message_4.MessageBuilder()
+            const message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
                 .event(event)
                 .entity(content)
                 .build();
-            let stream = new Stream_2.StreamSubscribe(message.sid(), timeout, consumer);
+            const stream = new Stream_2.StreamSubscribe(message.sid(), timeout, consumer);
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Subscribe, message), stream);
             return stream;
         }
         reply(from, content) {
-            let message = new Message_4.MessageBuilder()
+            const message = new Message_4.MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())
                 .entity(content)
@@ -1886,7 +1886,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Reply, message), null);
         }
         replyEnd(from, content) {
-            let message = new Message_4.MessageBuilder()
+            const message = new Message_4.MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())
                 .entity(content)
@@ -1953,11 +1953,11 @@ define("socketd/transport/client/Client", ["require", "exports", "socketd/transp
         }
         open() {
             return __awaiter(this, void 0, void 0, function* () {
-                let connector = this.createConnector();
-                let channel0 = yield connector.connect();
-                let clientChannel = new ClientChannel_1.ClientChannel(channel0, connector);
+                const connector = this.createConnector();
+                const channel0 = yield connector.connect();
+                const clientChannel = new ClientChannel_1.ClientChannel(channel0, connector);
                 clientChannel.setHandshake(channel0.getHandshake());
-                let session = new SessionDefault_1.SessionDefault(clientChannel);
+                const session = new SessionDefault_1.SessionDefault(clientChannel);
                 channel0.setSession(session);
                 console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
                 return session;
@@ -1991,9 +1991,9 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
                 return this._sessionSet[0];
             }
             else {
-                let sessions = new ClientChannel_2.ClientChannel[this._sessionSet.length];
+                const sessions = new ClientChannel_2.ClientChannel[this._sessionSet.length];
                 let sessionsSize = 0;
-                for (let s of this._sessionSet) {
+                for (const s of this._sessionSet) {
                     if (s.isValid()) {
                         sessions[sessionsSize] = s;
                         sessionsSize++;
@@ -2005,8 +2005,8 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
                 if (sessionsSize == 1) {
                     return sessions[0];
                 }
-                let counter = this._sessionRoundCounter++;
-                let idx = counter % sessionsSize;
+                const counter = this._sessionRoundCounter++;
+                const idx = counter % sessionsSize;
                 if (counter > 999999999) {
                     this._sessionRoundCounter = 0;
                 }
@@ -2014,7 +2014,7 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
             }
         }
         isValid() {
-            for (let session of this._sessionSet) {
+            for (const session of this._sessionSet) {
                 if (session.isValid()) {
                     return true;
                 }
@@ -2025,26 +2025,26 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
             return this._sessionId;
         }
         reconnect() {
-            for (let session of this._sessionSet) {
+            for (const session of this._sessionSet) {
                 if (session.isValid() == false) {
                     session.reconnect();
                 }
             }
         }
         send(event, content) {
-            let sender = this.getSessionOne();
+            const sender = this.getSessionOne();
             sender.send(event, content);
         }
         sendAndRequest(event, content, consumer, timeout) {
-            let sender = this.getSessionOne();
+            const sender = this.getSessionOne();
             return sender.sendAndRequest(event, content, consumer, timeout);
         }
         sendAndSubscribe(event, content, consumer, timeout) {
-            let sender = this.getSessionOne();
+            const sender = this.getSessionOne();
             return sender.sendAndSubscribe(event, content, consumer, timeout);
         }
         close() {
-            for (let session of this._sessionSet) {
+            for (const session of this._sessionSet) {
                 RunUtils_2.RunUtils.runAndTry(session.close);
             }
         }
@@ -2073,14 +2073,14 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD"
         }
         open() {
             return __awaiter(this, void 0, void 0, function* () {
-                let sessionList = new ClusterClient[this._serverUrls.length];
-                for (let urls of this._serverUrls) {
+                const sessionList = new ClusterClient[this._serverUrls.length];
+                for (const urls of this._serverUrls) {
                     for (let url of urls.split(",")) {
                         url = url.trim();
                         if (!url) {
                             continue;
                         }
-                        let client = SocketD_2.SocketD.createClient(url);
+                        const client = SocketD_2.SocketD.createClient(url);
                         if (this._listener != null) {
                             client.listen(this._listener);
                         }
@@ -2090,7 +2090,7 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD"
                         if (this._heartbeatHandler != null) {
                             client.heartbeatHandler(this._heartbeatHandler);
                         }
-                        let session = yield client.open();
+                        const session = yield client.open();
                         sessionList.add(session);
                     }
                 }
@@ -2193,7 +2193,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
                 console.debug("S-SEN:" + frame);
             }
             if (frame.message()) {
-                let message = frame.message();
+                const message = frame.message();
                 if (stream != null) {
                     this._streamManger.addStream(message.sid(), stream);
                 }
@@ -2203,9 +2203,9 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
                         let fragmentIndex = 0;
                         while (true) {
                             fragmentIndex++;
-                            let fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
+                            const fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
                             if (fragmentEntity != null) {
-                                let fragmentFrame = new Frame_5.Frame(frame.flag(), new Message_5.MessageBuilder()
+                                const fragmentFrame = new Frame_5.Frame(frame.flag(), new Message_5.MessageBuilder()
                                     .flag(frame.flag())
                                     .sid(message.sid())
                                     .entity(fragmentEntity)
@@ -2226,7 +2226,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
             this._assistant.write(this._source, frame);
         }
         retrieve(frame) {
-            let stream = this._streamManger.getStream(frame.message().sid());
+            const stream = this._streamManger.getStream(frame.message().sid());
             if (stream != null) {
                 if (stream.isSingle() || frame.flag() == Constants_12.Flags.ReplyEnd) {
                     this._streamManger.removeStream(frame.message().sid());
@@ -2398,13 +2398,13 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
     exports.SocketD = void 0;
     class SocketD {
         static version() {
-            return "2.2.1-SNAPSHOT";
+            return "2.2.1";
         }
         static protocolVersion() {
             return "1.0";
         }
         static createClient(serverUrl) {
-            let client = SocketD.createClientOrNull(serverUrl);
+            const client = SocketD.createClientOrNull(serverUrl);
             if (client == null) {
                 throw new Error("No socketd client providers were found.");
             }
@@ -2414,17 +2414,17 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
         }
         static createClientOrNull(serverUrl) {
             Asserts_5.Asserts.assertNull("serverUrl", serverUrl);
-            let idx = serverUrl.indexOf("://");
+            const idx = serverUrl.indexOf("://");
             if (idx < 2) {
                 throw new Error("The serverUrl invalid: " + serverUrl);
             }
-            let schema = serverUrl.substring(0, idx);
-            let factory = SocketD.clientProviderMap.get(schema);
+            const schema = serverUrl.substring(0, idx);
+            const factory = SocketD.clientProviderMap.get(schema);
             if (factory == null) {
                 return null;
             }
             else {
-                let clientConfig = new ClientConfig_1.ClientConfig(serverUrl);
+                const clientConfig = new ClientConfig_1.ClientConfig(serverUrl);
                 return factory.createClient(clientConfig);
             }
         }
@@ -2435,8 +2435,8 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
     exports.SocketD = SocketD;
     SocketD.clientProviderMap = new Map();
     (() => {
-        let provider = new WsClientProvider_1.WsClientProvider();
-        for (let s of provider.schemas()) {
+        const provider = new WsClientProvider_1.WsClientProvider();
+        for (const s of provider.schemas()) {
             SocketD.clientProviderMap.set(s, provider);
         }
     })();

@@ -27,4 +27,13 @@ public interface EntityMetas {
      * 数据描述之文件名
      */
     String META_DATA_DISPOSITION_FILENAME = "Data-Disposition-Filename";
+
+    /**
+     * 数据范围开始（相当于分页）
+     */
+    String META_RANGE_START = "Data-Range-Start";
+    /**
+     * 数据范围长度
+     */
+    String META_RANGE_SIZE = "Data-Range-Size";
 }

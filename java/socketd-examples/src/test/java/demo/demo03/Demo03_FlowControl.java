@@ -2,6 +2,7 @@ package demo.demo03;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
+import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.utils.StrUtils;
@@ -19,11 +20,11 @@ public class Demo03_FlowControl {
                         return;
                     }
 
-                    String videoId = m.meta("videoId");
-                    int start = Integer.parseInt(m.metaOrDefault("start", "0"));
-                    int size = Integer.parseInt(m.metaOrDefault("size", "0"));
+                    long videoId = m.metaAsLong("videoId");
+                    int start = m.metaAsInt(EntityMetas.META_RANGE_START);
+                    int size = m.metaAsInt(EntityMetas.META_RANGE_SIZE);
 
-                    if (StrUtils.isEmpty(videoId) || size == 0) {
+                    if (videoId == 0 || size == 0) {
                         s.sendAlarm(m, "参数不合规");
                         return;
                     }
@@ -45,8 +46,8 @@ public class Demo03_FlowControl {
         //发送并请求
         clientSession.sendAndSubscribe("/demo", new EntityDefault()
                 .metaPut("videoId", "42E056E1-B4B7-4EF4-AC4B-AEE77EDB0B86")
-                .metaPut("start", "5")
-                .metaPut("size", "5"), r -> {
+                .metaPut(EntityMetas.META_RANGE_START, "5")
+                .metaPut(EntityMetas.META_RANGE_SIZE, "5"), r -> {
             if (r.dataSize() > 0) {
                 System.out.println(r);
             }

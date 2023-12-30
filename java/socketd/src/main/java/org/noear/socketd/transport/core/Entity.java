@@ -41,6 +41,27 @@ public interface Entity {
     String metaOrDefault(String name, String def);
 
     /**
+     * 获取元信息并转为 int
+     */
+    default int metaAsInt(String name) {
+        return Integer.parseInt(metaOrDefault(name, "0"));
+    }
+
+    /**
+     * 获取元信息并转为 long
+     */
+    default long metaAsLong(String name) {
+        return Long.parseLong(metaOrDefault(name, "0"));
+    }
+
+    /**
+     * 获取元信息并转为 double
+     */
+    default double metaAsDouble(String name) {
+        return Double.parseDouble(metaOrDefault(name, "0"));
+    }
+
+    /**
      * 放置元信息
      * */
     void putMeta(String name, String val);

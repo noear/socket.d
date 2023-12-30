@@ -72,9 +72,9 @@ export class ProcessorDefault implements Processor {
 
     onReceive(channel: ChannelInternal, frame) {
         if (channel.getConfig().clientMode()) {
-            console.debug("C-REV:", frame);
+            console.debug("C-REV:" + frame);
         } else {
-            console.debug("S-REV:", frame);
+            console.debug("S-REV:" + frame);
         }
 
         if (frame.flag() == Flags.Connect) {

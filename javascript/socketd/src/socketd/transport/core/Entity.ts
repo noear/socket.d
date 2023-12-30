@@ -94,7 +94,7 @@ export interface Reply extends Entity {
 export class EntityDefault implements Entity {
     private _metaMap: URLSearchParams | null;
     private _data: ArrayBuffer;
-    private _dataAsReader : CodecReader|null;
+    private _dataAsReader: CodecReader | null;
 
     constructor() {
         this._metaMap = null;
@@ -236,6 +236,13 @@ export class EntityDefault implements Entity {
      */
     release() {
 
+    }
+
+    toString(): string {
+        return "Entity{" +
+            "meta='" + this.metaString() + '\'' +
+            ", data=byte[" + this.dataSize() + ']' + //避免内容太大，影响打印
+            '}';
     }
 }
 

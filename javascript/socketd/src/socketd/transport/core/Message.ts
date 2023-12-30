@@ -116,9 +116,9 @@ export class MessageDefault implements MessageInternal {
     private _flag: number;
     private _sid: string;
     private _event: string;
-    private _entity: Entity|null;
+    private _entity: Entity | null;
 
-    constructor(flag: number, sid: string, event: string, entity: Entity|null) {
+    constructor(flag: number, sid: string, event: string, entity: Entity | null) {
         this._flag = flag;
         this._sid = sid;
         this._event = event;
@@ -178,6 +178,14 @@ export class MessageDefault implements MessageInternal {
         return this._entity;
     }
 
+    toString():string {
+        return "Message{" +
+            "sid='" + this._sid + '\'' +
+            ", event='" + this._event + '\'' +
+            ", entity=" + this._entity +
+            '}';
+    }
+
     metaString(): string {
         return this._entity!.metaString();
     }
@@ -186,13 +194,14 @@ export class MessageDefault implements MessageInternal {
         return this._entity!.metaMap();
     }
 
-    meta(name: string): string | null{
+    meta(name: string): string | null {
         return this._entity!.meta(name);
     }
 
     metaOrDefault(name: string, def: string): string {
-        return this._entity!.metaOrDefault(name,def);
+        return this._entity!.metaOrDefault(name, def);
     }
+
     putMeta(name: string, val: string) {
         this._entity!.putMeta(name, val);
     }
@@ -214,6 +223,8 @@ export class MessageDefault implements MessageInternal {
     }
 
     release() {
-
+        if (this._entity) {
+            this._entity!.release();
+        }
     }
 }

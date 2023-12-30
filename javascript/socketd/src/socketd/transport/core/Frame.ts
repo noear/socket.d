@@ -10,7 +10,7 @@ import {Message, MessageBuilder, MessageInternal} from "./Message";
  * @since 2.0
  */
 export class Frame {
-    private  _flag: number;
+    private _flag: number;
     private _message: MessageInternal | null;
 
     constructor(flag: number, message: MessageInternal | null) {
@@ -28,8 +28,15 @@ export class Frame {
     /**
      * 消息
      * */
-    message(): MessageInternal | null{
+    message(): MessageInternal | null {
         return this._message;
+    }
+
+    toString(): string {
+        return "Frame{" +
+            "flag=" + Flags.name(this._flag) +
+            ", message=" + this._message +
+            '}';
     }
 }
 

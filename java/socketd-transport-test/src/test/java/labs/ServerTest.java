@@ -1,12 +1,9 @@
 package labs;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.Message;
-import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-
-import java.io.IOException;
+import org.noear.socketd.transport.core.listener.EventListener;
+import org.noear.socketd.utils.RunUtils;
 
 public class ServerTest {
     static final String[] schemas = new String[]{
@@ -26,37 +23,44 @@ public class ServerTest {
         String s1 = schemas[3];
         SocketD.createServer(s1)
                 .config(c -> c.port(8602))
-                .listen(new Listener() {
-                    @Override
-                    public void onOpen(Session session) throws IOException {
-                        System.out.println("onOpen: " + session.sessionId());
-                    }
+                .listen(new EventListener()
+                        .doOnOpen(s -> {
+                            System.out.println("onOpen: " + s.sessionId());
+                        }).doOnMessage((s, m) -> {
+                            System.out.println("onMessage: " + m);
 
-                    @Override
-                    public void onMessage(Session session, Message message) throws IOException {
-                        System.out.println("onMessage: " + message);
+                            if (m.isRequest()) {
+                                s.reply(m, new StringEntity("me to!"));
+                            }
 
-                        if (message.isRequest()) {
-                            session.reply(message, new StringEntity("me to!"));
-                        }
+                            if (m.isSubscribe()) {
+                                s.reply(m, new StringEntity("me to!"));
+                                s.replyEnd(m, new StringEntity("welcome to my home!"));
+                            }
+                        }).doOn("/push", (s, m) -> {
+                            if(s.attrHas("push")){
+                                return;
+                            }
 
-                        if (message.isSubscribe()) {
-                            session.reply(message, new StringEntity("me to!"));
-                            session.replyEnd(message, new StringEntity("welcome to my home!"));
-                        }
-                    }
+                            s.attrPut("push", "1");
 
-                    @Override
-                    public void onClose(Session session) {
-                        System.out.println("onClose: " + session.sessionId());
-                    }
+                            while (true) {
+                                if (s.attrHas("push") == false) {
+                                    break;
+                                }
 
-                    @Override
-                    public void onError(Session session, Throwable error) {
-                        System.out.println("onError: " + session.sessionId());
-                        error.printStackTrace();
-                    }
-                })
+                                s.send("/push", new StringEntity("push test"));
+                                RunUtils.runAndTry(() -> Thread.sleep(1000));
+                            }
+                        }).doOn("/unpush", (s, m) -> {
+                            s.attrMap().remove("push");
+                        })
+                        .doOnClose(s -> {
+                            System.out.println("onClose: " + s.sessionId());
+                        }).doOnError((s, err) -> {
+                            System.out.println("onError: " + s.sessionId());
+                            err.printStackTrace();
+                        }))
                 .start();
     }
 }

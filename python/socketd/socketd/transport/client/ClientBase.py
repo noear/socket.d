@@ -1,8 +1,8 @@
 from abc import ABC
 
-from .Client import Client
-from socketd.core.ProcessorDefault import ProcessorDefault
-from socketd.core.config.ClientConfig import ClientConfig
+from socketd.transport.client.Client import Client
+from socketd.transport.core.internal.ProcessorDefault import ProcessorDefault
+from socketd.transport.client.ClientConfig import ClientConfig
 
 
 class ClientBase(Client, ABC):

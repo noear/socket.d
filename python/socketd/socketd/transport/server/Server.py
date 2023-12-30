@@ -1,11 +1,10 @@
 from typing import Callable, Coroutine
-from asyncio import Future
 
 from websockets.sync.server import WebSocketServer
 
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.Processor import Processor
-from socketd.core.Listener import Listener
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core import Processor
+from socketd.transport.core.Listener import Listener
 
 
 class Server:

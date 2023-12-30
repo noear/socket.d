@@ -2,11 +2,11 @@ import asyncio
 
 from loguru import logger
 
-from socketd.core.Channel import Channel
-from socketd.core.Session import Session
-from socketd.core.SessionDefault import SessionDefault
+from socketd.transport.core.Channel import Channel
+from socketd.transport.core.Session import Session
+from socketd.transport.core.internal.SessionDefault import SessionDefault
 from socketd.transport.client.ClientBase import ClientBase
-from socketd.core.config.ClientConfig import ClientConfig
+from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.ClientChannel import ClientChannel
 from .WsAioChannelAssistant import WsAioChannelAssistant
 from .WsAioClientConnector import WsAioClientConnector

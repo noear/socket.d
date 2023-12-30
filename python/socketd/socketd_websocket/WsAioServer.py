@@ -1,14 +1,15 @@
 import asyncio
-from loguru import logger
 
 from websockets.server import WebSocketServer, serve as Serve, WebSocketServerProtocol
 from websockets import broadcast
 
 from socketd.transport.server.ServerBase import ServerBase
-from .WsAioChannelAssistant import WsAioChannelAssistant
-from socketd.core.config.ServerConfig import ServerConfig
-from .impl.AIOServe import AIOServe
+from socketd_websocket.WsAioChannelAssistant import WsAioChannelAssistant
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd_websocket.impl.AIOServe import AIOServe
 from socketd_websocket.impl.AIOWebSocketServerImpl import AIOWebSocketServerImpl
+
+from socketd.transport.core.config.logConfig import logger
 
 
 class WsAioServer(ServerBase):
@@ -24,20 +25,18 @@ class WsAioServer(ServerBase):
             raise Exception("Server started")
         else:
             self.__is_started = True
-        if self._config.get_host() is not None:
-            _server = AIOServe(ws_handler=None,
-                               host="0.0.0.0", port=self._config.get_port(),
-                               create_protocol=AIOWebSocketServerImpl,
-                               ws_aio_server=self,
-                               ssl=self._config.get_ssl_context())
-        else:
-            _server = AIOServe(ws_handler=None,
-                               host=self._config.get_host(), port=self._config.get_port(),
-                               create_protocol=AIOWebSocketServerImpl,
-                               ws_aio_server=self,
-                               ssl=self._config.get_ssl_context())
+        _server = AIOServe(ws_handler=None,
+                           host="0.0.0.0" if self.get_config().get_host() is None else self.get_config().get_host(),
+                           port=self.get_config().get_port(),
+                           create_protocol=AIOWebSocketServerImpl,
+                           ws_aio_server=self,
+                           # ping_interval = self.get_config().get_idle_timeout(),
+                           ping_timeout=self.get_config().get_idle_timeout(),
+                           ssl=self.get_config().get_ssl_context(),
+                           logger=logger,
+                           max_size=self.get_config().get_ws_max_size())
         self.server = _server
-        logger.info("Server started: {server=" + self._config.get_local_url() + "}")
+        logger.info("Server started: {server=" + self.get_config().get_local_url() + "}")
         return await self.server
 
     def message_all(self, message: str):

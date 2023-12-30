@@ -1,16 +1,15 @@
 import uuid
 from abc import ABC
 
-from socketd.core.Listener import Listener
-from socketd.core.config.ClientConfig import ClientConfig
-from socketd.core.config.ServerConfig import ServerConfig
-from socketd.core.module.Entity import Entity
-from socketd.core.module.Message import Message
-from socketd.core.module.StringEntity import StringEntity
+from socketd.transport.core.Listener import Listener
+from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.core.sync_api.AtomicRefer import AtomicRefer
+from socketd.transport.server.ServerConfig import ServerConfig
+from socketd.transport.core.entity.Entity import Entity
+from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.entity.StringEntity import StringEntity
 
 from loguru import logger
-
-from socketd.core.sync_api.AtomicRefer import AtomicRefer
 
 
 class SimpleListenerTest(Listener, ABC):
@@ -20,7 +19,7 @@ class SimpleListenerTest(Listener, ABC):
         self.close_counter = AtomicRefer(0)
         self.message_counter = AtomicRefer(0)
 
-    def on_open(self, session):
+    async def on_open(self, session):
         pass
 
     async def on_message(self, session, message: Message):
@@ -30,11 +29,11 @@ class SimpleListenerTest(Listener, ABC):
             with self.message_counter:
                 self.message_counter.set(self.message_counter.get() + 1)
             await session.reply(message, StringEntity("reply"))
-            await session.reply_end(message, StringEntity("ok test"))
+            await session.reply_end(message, StringEntity("ok test.png"))
             await session.reply(message, StringEntity("reply"))
         elif message.is_subscribe():
             await session.reply(message, StringEntity("reply"))
-            await session.reply_end(message, StringEntity("ok test"))
+            await session.reply_end(message, StringEntity("ok test.png"))
             await session.reply(message, StringEntity("reply"))
 
     def on_close(self, session):
@@ -48,6 +47,8 @@ class SimpleListenerTest(Listener, ABC):
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.set_is_thread(False)
+    config.set_idle_timeout(10)
+    config.set_logger_level("DEBUG")
     return config.id_generator(uuid.uuid4)
 
 

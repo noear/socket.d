@@ -29,3 +29,4 @@ bin/
 
 ### Mac files ###
 *.DS_Store
+/python/socketd/socketD.egg-info/

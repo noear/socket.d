@@ -112,7 +112,7 @@ export class ClientConfig extends ConfigBase {
     /**
      * 配置连接超时（单位毫秒）
      */
-    connectTimeout(connectTimeout: number): ClientConfig {
+    connectTimeout(connectTimeout: number): this {
         this._connectTimeout = connectTimeout;
         return this;
     }
@@ -127,12 +127,12 @@ export class ClientConfig extends ConfigBase {
     /**
      * 配置是否自动重链
      */
-    autoReconnect(autoReconnect: boolean): ClientConfig {
+    autoReconnect(autoReconnect: boolean): this {
         this._autoReconnect = autoReconnect;
         return this;
     }
 
-    idleTimeout(idleTimeout: number): ClientConfig {
+    idleTimeout(idleTimeout: number): this {
         if (this._autoReconnect == false) {
             //自动重链下，禁用 idleTimeout
             this._idleTimeout = (idleTimeout);
@@ -141,5 +141,21 @@ export class ClientConfig extends ConfigBase {
             this._idleTimeout = (0);
             return this;
         }
+    }
+
+    toString(): string{
+        return "ClientConfig{" +
+            "schema='" + this._schema + '\'' +
+            ", charset=" + this._charset +
+            ", url='" + this._url + '\'' +
+            ", heartbeatInterval=" + this._heartbeatInterval +
+            ", connectTimeout=" + this._connectTimeout +
+            ", idleTimeout=" + this._idleTimeout +
+            ", requestTimeout=" + this._requestTimeout +
+            ", readBufferSize=" + this._readBufferSize +
+            ", writeBufferSize=" + this._writeBufferSize +
+            ", autoReconnect=" + this._autoReconnect +
+            ", maxUdpSize=" + this._maxUdpSize +
+            '}';
     }
 }

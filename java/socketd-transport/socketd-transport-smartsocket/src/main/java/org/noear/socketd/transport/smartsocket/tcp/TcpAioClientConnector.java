@@ -87,7 +87,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdConnectionException(e);
+                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
     }

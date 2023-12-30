@@ -7,10 +7,6 @@ package org.noear.socketd.exception;
  * @since 2.0
  */
 public class SocketdCodecException extends SocketdException {
-    public SocketdCodecException(Throwable cause){
-        super(cause);
-    }
-
     public SocketdCodecException(String message){
         super(message);
     }

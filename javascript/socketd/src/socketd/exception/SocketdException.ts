@@ -1,4 +1,4 @@
-import {Message} from "../transport/core/Message";
+import type {Message} from "../transport/core/Message";
 
 /**
  * 异常
@@ -22,7 +22,7 @@ export class SocketdAlarmException extends SocketdException {
     private  _from: Message;
 
     constructor(from: Message) {
-        super(from.entity().dataAsString());
+        super(from.entity()!.dataAsString());
         this._from = from;
     }
 

@@ -1,9 +1,9 @@
-import {Reply} from "./Entity";
-import {MessageInternal} from "./Message";
-import {Channel} from "./Channel";
-import {IoConsumer} from "./Types";
+import type {Reply} from "./Entity";
+import type {MessageInternal} from "./Message";
+import type {Channel} from "./Channel";
+import type {IoConsumer} from "./Typealias";
 import {SocketdTimeoutException} from "../../exception/SocketdException";
-import {Config} from "./Config";
+import type {Config} from "./Config";
 import {Asserts} from "./Asserts";
 
 /**
@@ -231,7 +231,7 @@ export interface StreamManger {
      *
      * @param sid 流Id
      */
-    getStream(sid: string): StreamInternal;
+    getStream(sid: string): StreamInternal | undefined;
 
     /**
      * 移除流
@@ -255,7 +255,7 @@ export class StreamMangerDefault implements StreamManger{
      *
      * @param sid 流Id
      */
-    getStream(sid) {
+    getStream(sid:string) {
         return this._streamMap.get(sid);
     }
 
@@ -288,7 +288,7 @@ export class StreamMangerDefault implements StreamManger{
         if (stream) {
             this._streamMap.delete(sid);
             stream.insuranceCancel();
-            console.debug("{} stream removed, sid={}", this._config.getRoleName(), sid);
+            console.debug(`${this._config.getRoleName()} stream removed, sid=${sid}`);
         }
     }
 }

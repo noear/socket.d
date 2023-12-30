@@ -1,11 +1,11 @@
-import {Listener, SimpleListener} from "../core/Listener";
-import {IoConsumer} from "../core/Types";
-import {ClientSession} from "./ClientSession";
-import {ClientConfig} from "./ClientConfig";
+import type {Listener} from "../core/Listener";
+import type {IoConsumer} from "../core/Typealias";
+import type {ClientSession} from "./ClientSession";
+import type {ClientConfig} from "./ClientConfig";
 import {Processor, ProcessorDefault} from "../core/Processor";
-import {ChannelAssistant} from "../core/ChannelAssistant";
-import {Session} from "../core/Session";
-import {ClientConnector} from "./ClientConnector";
+import type {ChannelAssistant} from "../core/ChannelAssistant";
+import type {Session} from "../core/Session";
+import type {ClientConnector} from "./ClientConnector";
 import {ClientChannel} from "./ClientChannel";
 import {SessionDefault} from "../core/SessionDefault";
 
@@ -168,7 +168,7 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
         //原始通道切换为带壳的 session
         channel0.setSession(session);
 
-        console.info("Socket.D client successfully connected: {link={}}", this.getConfig().getLinkUrl());
+        console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
 
         return session;
     }

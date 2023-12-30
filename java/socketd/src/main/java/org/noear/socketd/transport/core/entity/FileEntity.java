@@ -15,13 +15,21 @@ import java.nio.channels.FileChannel;
  * @since 2.0
  */
 public class FileEntity extends EntityDefault {
+    private final RandomAccessFile fileRaf;
+
     public FileEntity(File file) throws IOException {
         long len = file.length();
-        MappedByteBuffer byteBuffer = new RandomAccessFile(file, "r")
+        fileRaf = new RandomAccessFile(file, "r");
+        MappedByteBuffer byteBuffer = fileRaf
                 .getChannel()
                 .map(FileChannel.MapMode.READ_ONLY, 0, len);
 
         dataSet(byteBuffer);
         metaPut(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
+    }
+
+    @Override
+    public void release() throws IOException {
+        fileRaf.close();
     }
 }

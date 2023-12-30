@@ -42,6 +42,10 @@ public abstract class SessionBase implements Session {
      */
     @Override
     public boolean attrHas(String name) {
+        if (attrMap == null) {
+            return false;
+        }
+
         return attrMap.containsKey(name);
     }
 

@@ -7,15 +7,12 @@
 </head>
 <body>
 <script type="text/javascript">
-    import {SocketD} from "./socketd/dist/socketd";
-
     let serverUrl = "sd:ws://127.0.0.1:8062";
 
     window.onload = async function() {
         window.client = SocketD.createClient(serverUrl)
             .listen(new EventListener().doOnOpen(s => {
                 //成功连接到服务器
-                console.log("connected to " + serverUrl);
                 client.send("1111")
             }).doOnMessage((s, m) => {
                 //服务器发送通知
@@ -23,7 +20,7 @@
                 document.getElementById("rst").append("message received: " + e.data + "\n");
             })
                 .doOnClose(s => {
-                    console.log("connection closed (" + e.code + ")");
+
                 }))
             .open();
     };

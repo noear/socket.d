@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.noear</groupId>
-    <artifactId>socketd-framework</artifactId>
+    <artifactId>socketd-protocol</artifactId>
     <version>dev</version>
     <packaging>pom</packaging>
 
     <name>_root</name>
-    <description>Java project for socketd</description>
+    <description>Maven project for socketd protocol</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

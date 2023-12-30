@@ -7,11 +7,11 @@ package org.noear.socketd.exception;
  * @since 2.0
  */
 public class SocketdChannelException extends SocketdException {
-    public SocketdChannelException(Throwable cause){
-        super(cause);
+    public SocketdChannelException(String message) {
+        super(message);
     }
 
-    public SocketdChannelException(String message){
-        super(message);
+    public SocketdChannelException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

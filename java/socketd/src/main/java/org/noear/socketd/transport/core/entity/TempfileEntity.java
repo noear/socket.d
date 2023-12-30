@@ -18,6 +18,7 @@ import java.util.Map;
  */
 public class TempfileEntity extends EntityDefault {
     private final File file;
+    private RandomAccessFile fileRaf;
 
     public TempfileEntity(File file, ByteBuffer data, Map<String, String> metaMap) throws IOException {
         this.file = file;
@@ -27,8 +28,10 @@ public class TempfileEntity extends EntityDefault {
 
     public TempfileEntity(File file) throws IOException {
         this.file = file;
+        this.fileRaf = new RandomAccessFile(file, "r");
+
         long len = file.length();
-        MappedByteBuffer byteBuffer = new RandomAccessFile(file, "r")
+        MappedByteBuffer byteBuffer = fileRaf
                 .getChannel()
                 .map(FileChannel.MapMode.READ_ONLY, 0, len);
 
@@ -37,7 +40,11 @@ public class TempfileEntity extends EntityDefault {
     }
 
     @Override
-    public void release() {
+    public void release() throws IOException {
+        if (fileRaf != null) {
+            fileRaf.close();
+        }
+
         file.delete();
     }
 }

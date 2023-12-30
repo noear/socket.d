@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -67,5 +68,5 @@ public interface Entity {
     /**
      * 释放资源
      */
-    void release();
+    void release() throws IOException;
 }

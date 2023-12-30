@@ -1,5 +1,5 @@
-import {Client} from "./transport/client/Client";
-import {ClientProvider} from "./transport/client/ClientProvider";
+import type {Client} from "./transport/client/Client";
+import type {ClientProvider} from "./transport/client/ClientProvider";
 import {Asserts} from "./transport/core/Asserts";
 import {ClientConfig} from "./transport/client/ClientConfig";
 import {ClusterClient} from "./cluster/ClusterClient";
@@ -50,7 +50,7 @@ export class SocketD {
      *
      * @param serverUrl 服务器地址
      */
-    static createClientOrNull(serverUrl: string): Client {
+    static createClientOrNull(serverUrl: string): Client | null{
         Asserts.assertNull("serverUrl", serverUrl);
 
         let idx = serverUrl.indexOf("://");

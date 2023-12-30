@@ -36,7 +36,9 @@ public class BigUploadClient {
                 .open();
         int count = 0;
         while (true) {
-            clientSession.sendAndRequest("/user/upload", new FileEntity(new File("/Users/noear/Movies/[Socket.D 实战] 直播手写 FolkMQ (4).mov")));
+            FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/[Socket.D 实战] 直播手写 FolkMQ (4).mov"));
+            clientSession.sendAndRequest("/user/upload", fileEntity);
+            fileEntity.release();
             System.out.println("count=" + (count++));
         }
     }

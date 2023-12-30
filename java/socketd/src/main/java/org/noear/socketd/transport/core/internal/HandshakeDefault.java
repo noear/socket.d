@@ -91,13 +91,14 @@ public class HandshakeDefault implements HandshakeInternal {
     }
 
     /**
-     * 设置或修改参数
+     * 设置参数
      *
      * @param name  名字
      * @param value 值
      */
     @Override
-    public void param(String name, String value) {
+    public Handshake paramPut(String name, String value) {
         paramMap.put(name, value);
+        return this;
     }
 }

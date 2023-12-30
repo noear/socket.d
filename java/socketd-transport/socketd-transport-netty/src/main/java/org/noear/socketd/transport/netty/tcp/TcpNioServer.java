@@ -73,7 +73,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdException(e);
+                throw new SocketdException("Socket.D server start failed!", e);
             }
         }
 

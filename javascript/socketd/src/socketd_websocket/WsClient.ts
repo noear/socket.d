@@ -1,9 +1,9 @@
 import {ClientBase} from "../socketd/transport/client/Client";
-import {ClientConfig} from "../socketd/transport/client/ClientConfig";
+import type {ClientConfig} from "../socketd/transport/client/ClientConfig";
 import {WsChannelAssistant} from "./WsChannelAssistant";
-import {ClientConnector } from "../socketd/transport/client/ClientConnector";
+import type {ClientConnector } from "../socketd/transport/client/ClientConnector";
 import {WsClientConnector} from "./WsClientConnector";
-import {ChannelSupporter} from "../socketd/transport/core/ChannelSupporter";
+import type {ChannelSupporter} from "../socketd/transport/core/ChannelSupporter";
 
 export class WsClient extends ClientBase<WsChannelAssistant> implements ChannelSupporter<WebSocket> {
     constructor(clientConfig: ClientConfig) {

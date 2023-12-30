@@ -1,11 +1,11 @@
 import {SessionBase} from "./Session";
-import {Channel} from "./Channel";
-import {Handshake} from "./Handshake";
-import {Entity, Reply} from "./Entity";
+import type {Channel} from "./Channel";
+import type {Handshake} from "./Handshake";
+import type {Entity, Reply} from "./Entity";
 import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
-import {IoConsumer} from "./Types";
+import type {IoConsumer} from "./Typealias";
 import {Stream, StreamRequest, StreamSubscribe} from "./Stream";
 
 /**
@@ -34,7 +34,7 @@ export class SessionDefault extends SessionBase {
      *
      * @param name 名字
      */
-    param(name: string): string {
+    param(name: string): string | undefined{
         return this.handshake().param(name);
     }
 
@@ -175,15 +175,13 @@ export class SessionDefault extends SessionBase {
      * 关闭
      */
     close() {
-        console.debug("{} session will be closed, sessionId={}",
-            this._channel.getConfig().getRoleName(), this.sessionId());
+        console.debug(`${this._channel.getConfig().getRoleName()} session will be closed, sessionId=${this.sessionId()}`);
 
         if (this._channel.isValid()) {
             try {
                 this._channel.sendClose();
             } catch (e) {
-                console.warn("{} channel sendClose error",
-                    this._channel.getConfig().getRoleName(), e);
+                console.warn(`${this._channel.getConfig().getRoleName()} channel sendClose error`, e);
             }
         }
 

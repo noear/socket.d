@@ -1,4 +1,4 @@
-import {Channel} from "./Channel";
+import type {Channel} from "./Channel";
 import {Constants} from "./Constants";
 import {SocketdChannelException, SocketdSizeLimitException} from "../../exception/SocketdException";
 
@@ -12,7 +12,7 @@ export class Asserts {
     /**
      * 断言关闭
      */
-    static assertClosed(channel: Channel) {
+    static assertClosed(channel: Channel | null) {
         if (channel != null && channel.isClosed() > 0) {
             throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
@@ -21,7 +21,7 @@ export class Asserts {
     /**
      * 断言关闭
      */
-    static assertClosedByUser(channel: Channel) {
+    static assertClosedByUser(channel: Channel | null) {
         if (channel != null && channel.isClosed() == Constants.CLOSE4_USER) {
             throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }

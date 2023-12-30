@@ -7,11 +7,11 @@ package org.noear.socketd.exception;
  * @since 2.0
  */
 public class SocketdException extends RuntimeException {
-    public SocketdException(Throwable cause){
-        super(cause);
+    public SocketdException(String message) {
+        super(message);
     }
 
-    public SocketdException(String message){
-        super(message);
+    public SocketdException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

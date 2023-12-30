@@ -79,7 +79,9 @@ public class TestCase14_file extends BaseTestCase {
                 .config(c -> c.fragmentSize(1024 * 1024))
                 .open();
 
-        clientSession.send("/user/upload", new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov")));
+        FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov"));
+        clientSession.send("/user/upload", fileEntity);
+        fileEntity.release();
 
 
         Thread.sleep(10000);

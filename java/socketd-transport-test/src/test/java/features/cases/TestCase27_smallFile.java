@@ -80,7 +80,9 @@ public class TestCase27_smallFile extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl)
                 .open();
 
-        clientSession.send("/user/upload", new FileEntity(new File("/Users/noear/Movies/upload_test.png")));
+        FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/upload_test.png"));
+        clientSession.send("/user/upload", fileEntity);
+        fileEntity.release();
 
 
         Thread.sleep(1000);

@@ -1,12 +1,13 @@
 import { Channel, ChannelBase } from "../core/Channel";
-import { Frame } from "../core/Frame";
-import { Session } from "../core/Session";
-import { StreamInternal } from "../core/Stream";
-import { ClientConnector } from "./ClientConnector";
+import type { Frame } from "../core/Frame";
+import type { Session } from "../core/Session";
+import type { StreamInternal } from "../core/Stream";
+import type { ClientConnector } from "./ClientConnector";
 import { HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
 import { Constants } from "../core/Constants";
 import { Asserts } from "../core/Asserts";
 import { SocketdChannelException, SocketdException } from "../../exception/SocketdException";
+import {RunUtils} from "../../utils/RunUtils";
 
 /**
  * 客户端通道
@@ -16,7 +17,7 @@ import { SocketdChannelException, SocketdException } from "../../exception/Socke
  */
 export class ClientChannel extends ChannelBase implements Channel {
     private _connector: ClientConnector;
-    private _real: Channel;
+    private _real: Channel | null;
     private  _heartbeatHandler: HeartbeatHandler;
     private _heartbeatScheduledFuture: number;
 
@@ -66,8 +67,7 @@ export class ClientChannel extends ChannelBase implements Channel {
 
             //手动关闭
             if (this._real.isClosed() == Constants.CLOSE4_USER) {
-                console.debug("Client channel is closed (pause heartbeat), sessionId={}",
-                    this.getSession().sessionId());
+                console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
                 return;
             }
         }
@@ -82,7 +82,7 @@ export class ClientChannel extends ChannelBase implements Channel {
             }
 
             if (this._connector.autoReconnect()) {
-                this._real.close(Constants.CLOSE3_ERROR);
+                this._real!.close(Constants.CLOSE3_ERROR);
                 this._real = null;
             }
 
@@ -139,10 +139,10 @@ export class ClientChannel extends ChannelBase implements Channel {
         try {
             await this.prepareCheck();
 
-            this._real.send(frame, stream);
+            this._real!.send(frame, stream);
         } catch (e) {
             if (this._connector.autoReconnect()) {
-                this._real.close(Constants.CLOSE3_ERROR);
+                this._real!.close(Constants.CLOSE3_ERROR);
                 this._real = null;
             }
 
@@ -151,7 +151,7 @@ export class ClientChannel extends ChannelBase implements Channel {
     }
 
     retrieve(frame: Frame) {
-        this._real.retrieve(frame);
+        this._real!.retrieve(frame);
     }
 
     reconnect() {
@@ -160,11 +160,18 @@ export class ClientChannel extends ChannelBase implements Channel {
         this.prepareCheck();
     }
 
-    onError(error: Error) {
-        throw new Error("Method not implemented.");
+    onError(error: any) {
+        this._real!.onError(error);
+    }
+
+    close(code: number) {
+        RunUtils.runAndTry(() => window.clearInterval(this._heartbeatScheduledFuture));
+        RunUtils.runAndTry(() => this._connector.close());
+        RunUtils.runAndTry(() => this._real.close(code));
+        super.close(code);
     }
 
     getSession(): Session {
-        return this._real.getSession();
+        return this._real!.getSession();
     }
 }

@@ -1,9 +1,10 @@
 import {Listener, SimpleListener} from "./Listener";
-import {ChannelInternal} from "./Channel";
-import {Message} from "./Message";
-import {Frame} from "./Frame";
+import type {ChannelInternal} from "./Channel";
+import type {Message} from "./Message";
+import type {Frame} from "./Frame";
 import {Constants, EntityMetas, Flags} from "./Constants";
 import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
+import {HandshakeDefault} from "./HandshakeDefault";
 
 /**
  * 处理器
@@ -70,8 +71,14 @@ export class ProcessorDefault implements Processor {
 
 
     onReceive(channel: ChannelInternal, frame) {
-        if (frame.flag == Flags.Connect) {
-            channel.setHandshake(frame.message);
+        if (channel.getConfig().clientMode()) {
+            console.debug("C-REV:" + frame);
+        } else {
+            console.debug("S-REV:" + frame);
+        }
+
+        if (frame.flag() == Flags.Connect) {
+            channel.setHandshake(new HandshakeDefault(frame.message()));
             channel.onOpenFuture((r, err) => {
                 if (r && channel.isValid()) {
                     //如果还有效，则发送链接确认
@@ -83,27 +90,25 @@ export class ProcessorDefault implements Processor {
                 }
             })
             this.onOpen(channel);
-        } else if (frame.flag == Flags.Connack) {
+        } else if (frame.flag() == Flags.Connack) {
             //if client
-            channel.setHandshake(frame.message);
+            channel.setHandshake(new HandshakeDefault(frame.message()));
             this.onOpen(channel);
         } else {
             if (channel.getHandshake() == null) {
                 channel.close(Constants.CLOSE1_PROTOCOL);
 
-                if (frame.flag == Flags.Close) {
+                if (frame.flag() == Flags.Close) {
                     //说明握手失败了
                     throw new SocketdConnectionException("Connection request was rejected");
                 }
 
-                console.warn("{} channel handshake is null, sessionId={}",
-                    channel.getConfig().getRoleName(),
-                    channel.getSession().sessionId());
+                console.warn(`${channel.getConfig().getRoleName()} channel handshake is null, sessionId=${channel.getSession().sessionId()}`);
                 return
             }
 
             try {
-                switch (frame.flag) {
+                switch (frame.flag()) {
                     case Flags.Ping: {
                         channel.sendPong();
                         break;
@@ -155,7 +160,7 @@ export class ProcessorDefault implements Processor {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
-            let fragmentIdxStr = frame.getMessage().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            let fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
                 let index = parseInt(fragmentIdxStr);
@@ -173,7 +178,7 @@ export class ProcessorDefault implements Processor {
         if (isReply) {
             channel.retrieve(frame);
         } else {
-            this.onMessage(channel, frame.getMessage());
+            this.onMessage(channel, frame.message());
         }
     }
 
@@ -182,8 +187,7 @@ export class ProcessorDefault implements Processor {
             this._listener.onOpen(channel.getSession())
             channel.doOpenFuture(true, null);
         } catch (e) {
-            console.warn("{} channel listener onOpen error",
-                channel.getConfig().getRoleName(), e);
+            console.warn(`${channel.getConfig().getRoleName()} channel listener onOpen error`, e);
 
             channel.doOpenFuture(false, e);
         }
@@ -193,8 +197,7 @@ export class ProcessorDefault implements Processor {
         try {
             this._listener.onMessage(channel.getSession(), message)
         } catch (e) {
-            console.warn("{} channel listener onMessage error",
-                channel.getConfig().getRoleName(), e);
+            console.warn(`${channel.getConfig().getRoleName()} channel listener onMessage error`, e);
 
             this.onError(channel, e);
         }
@@ -210,7 +213,7 @@ export class ProcessorDefault implements Processor {
         this._listener.onClose(channel.getSession())
     }
 
-    onError(channel: ChannelInternal, error: Error) {
+    onError(channel: ChannelInternal, error: any) {
         this._listener.onError(channel.getSession(), error)
     }
 }

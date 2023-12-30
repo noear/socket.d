@@ -91,6 +91,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return clientMode;
     }
 
+    /**
+     * 获取流管理器
+     */
     @Override
     public StreamManger getStreamManger() {
         return streamManger;
@@ -98,7 +101,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * 获取角色名
-     * */
+     */
     @Override
     public String getRoleName() {
         return clientMode() ? "Client" : "Server";
@@ -227,7 +230,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * 配置调试执行器
-     * */
+     */
     public T channelExecutor(ExecutorService channelExecutor) {
         ExecutorService odl = this.channelExecutor;
         this.channelExecutor = channelExecutor;
@@ -337,7 +340,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * 获取消息流超时（单位：毫秒）
-     * */
+     */
     @Override
     public long getStreamTimeout() {
         return streamTimeout;
@@ -345,7 +348,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * 配置消息流超时（单位：毫秒）
-     * */
+     */
     public T streamTimeout(long streamTimeout) {
         this.streamTimeout = streamTimeout;
         return (T) this;

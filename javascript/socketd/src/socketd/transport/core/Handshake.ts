@@ -1,4 +1,4 @@
-import {MessageInternal} from "./Message";
+import type {MessageInternal} from "./Message";
 
 /**
  * 握手信息
@@ -10,7 +10,7 @@ export interface Handshake {
     /**
      * 协议版本
      */
-    version(): string;
+    version(): string | null;
 
     /**
      * 获请传输地址
@@ -22,14 +22,14 @@ export interface Handshake {
     /**
      * 获取参数集合
      */
-    paramMap(): URLSearchParams
+    paramMap(): Map<string, string>
 
     /**
      * 获取参数
      *
      * @param name 参数名
      */
-    param(name: string): string;
+    param(name: string): string | undefined;
 
     /**
      * 获取参数或默认值
@@ -42,7 +42,7 @@ export interface Handshake {
     /**
      * 设置或修改参数
      */
-    paramSet(name: string, value: string);
+    paramPut(name: string, value: string);
 }
 
 

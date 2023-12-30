@@ -8,5 +8,5 @@
 import Foundation
 
 protocol Session : ClientSession{
-    
+    func path() -> String;
 }

@@ -1,15 +1,15 @@
-import {Processor} from "./Processor";
-import {ChannelAssistant} from "./ChannelAssistant";
-import {StreamInternal, StreamManger} from "./Stream";
-import {Session} from "./Session";
-import {ChannelSupporter} from "./ChannelSupporter";
-import {Config} from "./Config";
+import type {Processor} from "./Processor";
+import type {ChannelAssistant} from "./ChannelAssistant";
+import type {StreamInternal, StreamManger} from "./Stream";
+import type {Session} from "./Session";
+import type {ChannelSupporter} from "./ChannelSupporter";
+import type {Config} from "./Config";
 import {Frame, Frames} from "./Frame";
 import {MessageBuilder} from "./Message";
 import {EntityMetas, Flags} from "./Constants";
 import {ChannelBase, ChannelInternal} from "./Channel";
 import {SessionDefault} from "./SessionDefault";
-import { IoBiConsumer } from "./Types";
+import type { IoBiConsumer } from "./Typealias";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _source: S;
@@ -56,17 +56,17 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this.send(Frames.pongFrame(), null);
     }
 
-    send(frame: Frame, stream: StreamInternal) {
+    send(frame: Frame, stream: StreamInternal | null) {
 
         if (this.getConfig().clientMode()) {
-            console.debug("C-SEN:{}", frame);
+            console.debug("C-SEN:" + frame);
         } else {
-            console.debug("S-SEN:{}", frame);
+            console.debug("S-SEN:" + frame);
         }
 
 
-        if (frame.message() != null) {
-            let message = frame.message();
+        if (frame.message()) {
+            let message = frame.message()!;
 
             //注册流接收器
             if (stream != null) {
@@ -114,24 +114,23 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     retrieve(frame: Frame) {
-        let stream = this._streamManger.getStream(frame.message().sid());
+        let stream = this._streamManger.getStream(frame.message()!.sid());
 
         if (stream != null) {
             if (stream.isSingle() || frame.flag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
-                this._streamManger.removeStream(frame.message().sid());
+                this._streamManger.removeStream(frame.message()!.sid());
             }
 
             if (stream.isSingle()) {
                 //单收时，内部已经是异步机制
-                stream.onAccept(frame.message(), this);
+                stream.onAccept(frame.message()!, this);
             } else {
                 //改为异步处理，避免卡死Io线程
-                stream.onAccept(frame.message(), this);
+                stream.onAccept(frame.message()!, this);
             }
         } else {
-            console.debug("{} stream not found, sid={}, sessionId={}",
-                this.getConfig().getRoleName(), frame.message().sid(), this.getSession().sessionId());
+            console.debug(`${this.getConfig().getRoleName()} stream not found, sid=${frame.message()!.sid()}, sessionId=${this.getSession().sessionId()}`);
         }
     }
     reconnect() {
@@ -155,17 +154,13 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     close(code) {
-        console.debug("{} channel will be closed, sessionId={}",
-            this.getConfig().getRoleName(),
-            this.getSession().sessionId());
+        console.debug(`${this.getConfig().getRoleName()} channel will be closed, sessionId=${this.getSession().sessionId()}`);
 
         try {
             super.close(code);
             this._assistant.close(this._source);
         } catch (e) {
-            console.warn("{} channel close error, sessionId={}",
-                this.getConfig().getRoleName(),
-                this.getSession().sessionId(), e);
+            console.warn(`${this.getConfig().getRoleName()} channel close error, sessionId=${this.getSession().sessionId()}`, e);
         }
     }
 }

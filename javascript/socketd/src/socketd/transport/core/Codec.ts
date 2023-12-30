@@ -3,10 +3,10 @@ import {Asserts} from "./Asserts";
 import {Constants, Flags} from "./Constants";
 import {EntityDefault} from "./Entity";
 import {MessageBuilder} from "./Message";
-import {Config} from "./Config";
-import {IoFunction} from "./Types";
 import {StrUtils} from "../../utils/StrUtils";
 import {Frame} from "./Frame";
+import type {Config} from "./Config";
+import type {IoFunction} from "./Typealias";
 
 
 
@@ -42,6 +42,16 @@ export interface CodecReader {
      * 当前位置
      */
     position(): number;
+
+    /**
+     * 长度
+     * */
+    size():number;
+
+    /**
+     * 重置索引
+     * */
+    reset();
 }
 
 /**
@@ -84,7 +94,7 @@ export interface Codec {
      *
      * @param buffer 缓冲
      */
-    read(buffer: CodecReader): Frame;
+    read(buffer: CodecReader): Frame | null;
 
     /**
      * 解码写入
@@ -117,21 +127,21 @@ export class CodecByteBuffer implements Codec {
     write<T extends CodecWriter>(frame: Frame, targetFactory: IoFunction<number, T>): T {
         if (frame.message()) {
             //sid
-            let sidB = StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
+            let sidB = StrUtils.strToBuf(frame.message()!.sid(), this._config.getCharset());
             //event
-            let eventB = StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
+            let eventB = StrUtils.strToBuf(frame.message()!.event(), this._config.getCharset());
             //metaString
-            let metaStringB = StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
+            let metaStringB = StrUtils.strToBuf(frame.message()!.metaString(), this._config.getCharset());
 
             //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
-            let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
+            let frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message()!.dataSize() + 2 * 3;
 
             Asserts.assertSize("sid", sidB.byteLength, Constants.MAX_SIZE_SID);
             Asserts.assertSize("event", eventB.byteLength, Constants.MAX_SIZE_EVENT);
             Asserts.assertSize("metaString", metaStringB.byteLength, Constants.MAX_SIZE_META_STRING);
-            Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
+            Asserts.assertSize("data", frame.message()!.dataSize(), Constants.MAX_SIZE_DATA);
 
-            let target = targetFactory.apply(frameSize);
+            let target = targetFactory(frameSize);
 
             //长度
             target.putInt(frameSize);
@@ -141,18 +151,18 @@ export class CodecByteBuffer implements Codec {
 
             //sid
             target.putBytes(sidB);
-            target.putChar('\n');
+            target.putChar('\n'.charCodeAt(0));
 
             //event
             target.putBytes(eventB);
-            target.putChar('\n');
+            target.putChar('\n'.charCodeAt(0));
 
             //metaString
             target.putBytes(metaStringB);
-            target.putChar('\n');
+            target.putChar('\n'.charCodeAt(0));
 
             //data
-            target.putBytes(frame.message().data());
+            target.putBytes(frame.message()!.data());
 
             target.flush();
 
@@ -160,7 +170,7 @@ export class CodecByteBuffer implements Codec {
         } else {
             //length (len[int] + flag[int])
             let frameSize = 4 + 4;
-            let target = targetFactory.apply(frameSize);
+            let target = targetFactory(frameSize);
 
             //长度
             target.putInt(frameSize);
@@ -178,7 +188,7 @@ export class CodecByteBuffer implements Codec {
      *
      * @param buffer 缓冲
      */
-    read(buffer: CodecReader): Frame { //=>Frame
+    read(buffer: CodecReader): Frame|null { //=>Frame
         let frameSize = buffer.getInt();
 
         if (frameSize > (buffer.remaining() + 4)) {
@@ -263,5 +273,109 @@ export class CodecByteBuffer implements Codec {
 
         //这里要加个长度控制
         return StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
+    }
+}
+
+export class ArrayBufferCodecReader implements CodecReader {
+    _buf: ArrayBuffer;
+    _bufView: DataView;
+    _bufViewIdx: number;
+
+    constructor(buf: ArrayBuffer) {
+        this._buf = buf;
+        this._bufView = new DataView(buf);
+        this._bufViewIdx = 0;
+    }
+
+    getByte(): number {
+        if (this._bufViewIdx >= this._buf.byteLength) {
+            return -1;
+        }
+
+        let tmp = this._bufView.getInt8(this._bufViewIdx);
+        this._bufViewIdx += 1;
+        return tmp;
+    }
+
+    getBytes(dst: ArrayBuffer, offset: number, length: number) {
+        let tmp = new DataView(dst);
+        let tmpEndIdx = offset + length;
+        for (let i = offset; i < tmpEndIdx; i++) {
+            if (this._bufViewIdx >= this._buf.byteLength) {
+                //读完了
+                break;
+            }
+
+            tmp.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
+            this._bufViewIdx++;
+        }
+    }
+
+    getInt(): number {
+        if (this._bufViewIdx >= this._buf.byteLength) {
+            return -1;
+        }
+
+        let tmp = this._bufView.getInt32(this._bufViewIdx);
+        this._bufViewIdx += 4;
+        return tmp;
+    }
+
+    remaining(): number {
+        return this._buf.byteLength - this._bufViewIdx;
+    }
+
+    position(): number {
+        return this._bufViewIdx;
+    }
+
+
+    size(): number {
+        return this._buf.byteLength;
+    }
+
+    reset() {
+        this._bufViewIdx = 0;
+    }
+}
+
+
+export class ArrayBufferCodecWriter implements CodecWriter {
+    _buf: ArrayBuffer;
+    _bufView: DataView;
+    _bufViewIdx: number;
+
+    constructor(n: number) {
+        this._buf = new ArrayBuffer(n);
+        this._bufView = new DataView(this._buf);
+        this._bufViewIdx = 0;
+    }
+
+    putBytes(src: ArrayBuffer) {
+        let tmp = new DataView(src);
+        let len = tmp.byteLength;
+
+        for (let i = 0; i < len; i++) {
+            this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));
+            this._bufViewIdx += 1;
+        }
+    }
+
+    putInt(val: number) {
+        this._bufView.setInt32(this._bufViewIdx, val);
+        this._bufViewIdx += 4;
+    }
+
+    putChar(val: number) {
+        this._bufView.setInt16(this._bufViewIdx, val);
+        this._bufViewIdx += 2;
+    }
+
+    flush() {
+
+    }
+
+    getBuffer(): ArrayBuffer {
+        return this._buf;
     }
 }

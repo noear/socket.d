@@ -144,7 +144,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 real = null;
             }
 
-            throw new SocketdChannelException(e);
+            throw new SocketdChannelException("Client channel heartbeat failed", e);
         }
     }
 
@@ -169,7 +169,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 real.close(Constants.CLOSE3_ERROR);
                 real = null;
             }
-            throw new SocketdChannelException(e);
+            throw new SocketdChannelException("Client channel send failed", e);
         }
     }
 
@@ -193,7 +193,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     /**
      * 重新连接
-     * */
+     */
     @Override
     public void reconnect() throws IOException {
         initHeartbeat();
@@ -203,7 +203,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     /**
      * 出错时
-     * */
+     */
     @Override
     public void onError(Throwable error) {
         real.onError(error);

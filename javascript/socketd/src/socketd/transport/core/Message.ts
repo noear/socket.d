@@ -1,6 +1,7 @@
 
 import {Constants, Flags} from "./Constants";
-import {Entity, Reply} from "./Entity";
+import type {Entity, Reply} from "./Entity";
+import {ArrayBufferCodecReader, CodecReader} from "./Codec";
 
 
 /**
@@ -33,7 +34,7 @@ export interface Message extends Entity {
     /**
      * 获取消息实体（有时需要获取实体）
      */
-    entity(): Entity;
+    entity(): Entity | null;
 }
 
 /**
@@ -41,6 +42,11 @@ export interface Message extends Entity {
  * @since 2.0
  */
 export interface MessageInternal extends Message, Entity, Reply {
+    /**
+     * 获取数据读模式
+     * */
+    dataAsReader(): CodecReader;
+
     /**
      * 获取标记
      */
@@ -58,7 +64,7 @@ export class MessageBuilder {
     private _flag: number = Flags.Unknown;
     private _sid: string = Constants.DEF_SID;
     private _event: string = Constants.DEF_EVENT;
-    private _entity: Entity = null;
+    private _entity: Entity|null = null;
 
     /**
      * 设置标记
@@ -110,9 +116,9 @@ export class MessageDefault implements MessageInternal {
     private _flag: number;
     private _sid: string;
     private _event: string;
-    private _entity: Entity;
+    private _entity: Entity | null;
 
-    constructor(flag: number, sid: string, event: string, entity: Entity) {
+    constructor(flag: number, sid: string, event: string, entity: Entity | null) {
         this._flag = flag;
         this._sid = sid;
         this._event = event;
@@ -120,7 +126,7 @@ export class MessageDefault implements MessageInternal {
     }
 
     at() {
-        return this._entity.at();
+        return this._entity!.at();
     }
 
     /**
@@ -168,42 +174,57 @@ export class MessageDefault implements MessageInternal {
     /**
      * 获取消息实体
      */
-    entity(): Entity {
+    entity(): Entity | null {
         return this._entity;
     }
 
+    toString():string {
+        return "Message{" +
+            "sid='" + this._sid + '\'' +
+            ", event='" + this._event + '\'' +
+            ", entity=" + this._entity +
+            '}';
+    }
+
     metaString(): string {
-        return this._entity.metaString();
+        return this._entity!.metaString();
     }
 
     metaMap(): URLSearchParams {
-        return this._entity.metaMap();
+        return this._entity!.metaMap();
     }
 
-    meta(name: string): string {
-        return this._entity.meta(name);
+    meta(name: string): string | null {
+        return this._entity!.meta(name);
     }
 
     metaOrDefault(name: string, def: string): string {
-        return this._entity.metaOrDefault(name,def);
+        return this._entity!.metaOrDefault(name, def);
     }
+
     putMeta(name: string, val: string) {
-        this._entity.putMeta(name, val);
+        this._entity!.putMeta(name, val);
     }
 
     data(): ArrayBuffer {
-        return this._entity.data();
+        return this._entity!.data();
+    }
+
+    dataAsReader(): CodecReader {
+        return this._entity!.dataAsReader();
     }
 
     dataAsString(): string {
-        return this._entity.dataAsString();
+        return this._entity!.dataAsString();
     }
 
     dataSize(): number {
-        return this._entity.dataSize();
+        return this._entity!.dataSize();
     }
 
     release() {
-
+        if (this._entity) {
+            this._entity!.release();
+        }
     }
 }

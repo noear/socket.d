@@ -1,6 +1,3 @@
-import {Listener} from "./Listener";
-
-
 /**
  * 路径映射器
  *
@@ -13,7 +10,7 @@ export interface RouteSelector<T> {
      *
      * @param route 路由
      */
-    select(route: string): T;
+    select(route: string): T | undefined;
 
     /**
      * 放置
@@ -48,7 +45,7 @@ export class RouteSelectorDefault<T> implements RouteSelector<T> {
      *
      * @param route 路由
      */
-    select(route: string): T {
+    select(route: string): T | undefined{
         return this._inner.get(route);
     }
 

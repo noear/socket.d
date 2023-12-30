@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -13,12 +14,12 @@ import java.util.Map;
  * @since 2.0
  */
 public class MessageDefault implements MessageInternal {
-    private final int flag ;
-    private final String sid ;
-    private final String event ;
+    private final int flag;
+    private final String sid;
+    private final String event;
     private final Entity entity;
 
-    public MessageDefault(int flag, String sid, String event, Entity entity ) {
+    public MessageDefault(int flag, String sid, String event, Entity entity) {
         this.flag = flag;
         this.sid = sid;
         this.event = event;
@@ -35,7 +36,7 @@ public class MessageDefault implements MessageInternal {
 
     /**
      * 是否答复结束
-     * */
+     */
     @Override
     public boolean isEnd() {
         return flag == Flags.ReplyEnd;
@@ -136,7 +137,9 @@ public class MessageDefault implements MessageInternal {
     }
 
     @Override
-    public void release() {
-        entity.release();
+    public void release() throws IOException {
+        if (entity != null) {
+            entity.release();
+        }
     }
 }

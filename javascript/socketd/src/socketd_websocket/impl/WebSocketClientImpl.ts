@@ -1,7 +1,7 @@
-import {WsClient} from "../WsClient";
-import {IoConsumer} from "../../socketd/transport/core/Types";
+import type {WsClient} from "../WsClient";
+import type {IoConsumer} from "../../socketd/transport/core/Typealias";
 import {ClientHandshakeResult} from "../../socketd/transport/client/ClientHandshakeResult";
-import {ChannelInternal} from "../../socketd/transport/core/Channel";
+import type {ChannelInternal} from "../../socketd/transport/core/Channel";
 import {ChannelDefault} from "../../socketd/transport/core/ChannelDefault";
 import {Flags} from "../../socketd/transport/core/Constants";
 import {SocketdConnectionException} from "../../socketd/exception/SocketdException";
@@ -19,10 +19,10 @@ export class WebSocketClientImpl {
         this._handshakeFuture = handshakeFuture;
 
         this._real.binaryType = "arraybuffer";
-        this._real.onopen = this.onOpen;
-        this._real.onmessage = this.onMessage;
-        this._real.onclose = this.onClose;
-        this._real.onerror = this.onError;
+        this._real.onopen = this.onOpen.bind(this);
+        this._real.onmessage = this.onMessage.bind(this);
+        this._real.onclose = this.onClose.bind(this);
+        this._real.onerror = this.onError.bind(this);
     }
 
     onOpen(e: Event) {

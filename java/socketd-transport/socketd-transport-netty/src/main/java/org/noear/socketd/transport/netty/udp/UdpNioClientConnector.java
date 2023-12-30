@@ -73,7 +73,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdConnectionException(e);
+                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
     }

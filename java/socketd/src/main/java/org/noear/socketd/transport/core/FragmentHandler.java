@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.utils.IoConsumer;
+
 import java.io.IOException;
 
 /**
@@ -10,16 +12,16 @@ import java.io.IOException;
  */
 public interface FragmentHandler {
     /**
-     * 获取下个分片
+     * 拆割分片
      *
      * @param channel       通道
      * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
      * @param message       总包消息
      */
-    Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException;
+    void spliFragment(Channel channel, MessageInternal message, IoConsumer<Entity> callback) throws IOException;
 
     /**
-     * 聚合所有分片
+     * 聚合分片
      *
      * @param channel       通道
      * @param fragmentIndex 分片索引（传过来信息，不一定有顺序）

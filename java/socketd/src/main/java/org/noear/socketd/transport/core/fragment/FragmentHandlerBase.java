@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.fragment;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.utils.IoConsumer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,24 +17,32 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
     /**
      * 获取下个分片
      *
-     * @param channel       通道
-     * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
-     * @param message       总包消息
+     * @param channel 通道
+     * @param message 总包消息
      */
     @Override
-    public Entity nextFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
-        ByteBuffer dataBuffer = readFragmentData(message.data(), channel.getConfig().getFragmentSize());
-        if (dataBuffer == null || dataBuffer.limit() == 0) {
-            return null;
-        }
+    public void spliFragment(Channel channel, MessageInternal message, IoConsumer<Entity> consumer) throws IOException {
+        if (message.dataSize() > channel.getConfig().getFragmentSize()) {
+            int fragmentIndex = 0;
+            while (true) {
+                //生产分片
+                fragmentIndex++;
+                ByteBuffer dataBuffer = readFragmentData(message.data(), channel.getConfig().getFragmentSize());
+                if (dataBuffer == null || dataBuffer.limit() == 0) {
+                    return;
+                }
 
-        EntityDefault fragmentEntity = new EntityDefault().dataSet(dataBuffer);
-        if (fragmentIndex == 1) {
-            fragmentEntity.metaMapPut(message.metaMap());
-        }
-        fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+                EntityDefault fragmentEntity = new EntityDefault().dataSet(dataBuffer);
+                if (fragmentIndex == 1) {
+                    fragmentEntity.metaMapPut(message.metaMap());
+                }
+                fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
 
-        return fragmentEntity;
+                consumer.accept(fragmentEntity);
+            }
+        } else {
+            consumer.accept(message);
+        }
     }
 
     /**

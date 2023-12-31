@@ -95,41 +95,28 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
                     if (message.dataSize() > getConfig().getFragmentSize()) {
                         message.putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(message.dataSize()));
-
-                        //满足分片条件
-                        int fragmentIndex = 0;
-                        while (true) {
-                            //获取分片
-                            fragmentIndex++;
-                            Entity fragmentEntity = getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
-
-                            if (fragmentEntity != null) {
-                                //主要是 sid 和 entity
-                                Frame fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
-                                        .flag(frame.flag())
-                                        .sid(message.sid())
-                                        .event(message.event())
-                                        .entity(fragmentEntity)
-                                        .build());
-
-                                assistant.write(source, fragmentFrame);
-                            } else {
-                                //没有分片，说明发完了
-                                return;
-                            }
-                        }
-                    } else {
-                        //不满足分片条件，直接发
-                        assistant.write(source, frame);
-                        return;
                     }
 
+                    getConfig().getFragmentHandler().spliFragment(this, message, fragmentEntity -> {
+                        //主要是 sid 和 entity
+                        Frame fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
+                                .flag(frame.flag())
+                                .sid(message.sid())
+                                .event(message.event())
+                                .entity(fragmentEntity)
+                                .build());
+
+                        assistant.write(source, fragmentFrame);
+                    });
+                    return;
                 }
             }
 
+            //不满足分片条件，直接发
             assistant.write(source, frame);
         }
     }
+
 
     /**
      * 接收（接收答复帧）

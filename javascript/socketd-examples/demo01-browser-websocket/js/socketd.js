@@ -1,8 +1,3 @@
-/*!
- * Socket.D v2.2.0
- * (c) 2023 noear.org and other contributors
- * Released under the Apache-2.0 License.
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29,11 +24,12 @@ define("socketd/utils/StrUtils", ["require", "exports"], function (require, expo
             if (!charet) {
                 charet = 'utf-8';
             }
-            const encoder = new TextEncoder();
-            return encoder.encode(str).buffer;
+            const encoder = new TextEncoder(); // 使用 UTF-8 编码器进行编码
+            return encoder.encode(str).buffer; // 将字符串编码成 ArrayBuffer,
         }
         static bufToStr(buf, start, length, charet) {
             if (buf.byteLength != length) {
+                //取出子集
                 const bufView = new DataView(buf);
                 const tmp = new ArrayBuffer(length);
                 const tmpView = new DataView(tmp);
@@ -58,32 +54,116 @@ define("socketd/transport/core/Constants", ["require", "exports"], function (req
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EntityMetas = exports.Flags = exports.Constants = void 0;
+    /**
+     * 常量
+     *
+     * @author noear
+     * @since 2.0
+     */
     exports.Constants = {
+        /**
+         * 默认流id（占位）
+         */
         DEF_SID: "",
+        /**
+         * 默认事件（占位）
+         */
         DEF_EVENT: "",
+        /**
+         * 默认元信息字符串（占位）
+         */
         DEF_META_STRING: "",
+        /**
+         * 因协议指令关闭
+         */
         CLOSE1_PROTOCOL: 1,
+        /**
+         * 因协议非法关闭
+         */
         CLOSE2_PROTOCOL_ILLEGAL: 2,
+        /**
+         * 因异常关闭
+         */
         CLOSE3_ERROR: 3,
+        /**
+         * 因用户主动关闭
+         */
         CLOSE4_USER: 4,
+        /**
+         * 流ID长度最大限制
+         */
         MAX_SIZE_SID: 64,
+        /**
+         * 事件长度最大限制
+         */
         MAX_SIZE_EVENT: 512,
+        /**
+         * 元信息串长度最大限制
+         */
         MAX_SIZE_META_STRING: 4096,
+        /**
+         * 数据长度最大限制（也是分片长度最大限制）
+         */
         MAX_SIZE_DATA: 1024 * 1024 * 16,
+        /**
+         * 分片长度最小限制
+         */
         MIN_FRAGMENT_SIZE: 1024
     };
+    /**
+     * 标志
+     *
+     * @author noear
+     * @since 2.0
+     */
     exports.Flags = {
+        /**
+         * 未知
+         */
         Unknown: 0,
+        /**
+         * 连接
+         */
         Connect: 10,
+        /**
+         * 连接确认
+         */
         Connack: 11,
+        /**
+         * Ping
+         */
         Ping: 20,
+        /**
+         * Pong
+         */
         Pong: 21,
+        /**
+         * 关闭（Udp 没有断链的概念，需要发消息）
+         */
         Close: 30,
+        /**
+         * 告警
+         */
         Alarm: 31,
+        /**
+         * 消息
+         */
         Message: 40,
+        /**
+         * 请求
+         */
         Request: 41,
+        /**
+         * 订阅
+         */
         Subscribe: 42,
+        /**
+         * 答复
+         */
         Reply: 48,
+        /**
+         * 答复结束（结束订阅接收）
+         */
         ReplyEnd: 49,
         of: function (code) {
             switch (code) {
@@ -142,13 +222,40 @@ define("socketd/transport/core/Constants", ["require", "exports"], function (req
             }
         }
     };
+    /**
+     * 实体元信息常用名
+     *
+     * @author noear
+     * @since 2.0
+     */
     exports.EntityMetas = {
+        /**
+         * 框架版本号
+         */
         META_SOCKETD_VERSION: "SocketD",
+        /**
+         * 数据长度
+         */
         META_DATA_LENGTH: "Data-Length",
+        /**
+         * 数据类型
+         */
         META_DATA_TYPE: "Data-Type",
+        /**
+         * 数据分片索引
+         */
         META_DATA_FRAGMENT_IDX: "Data-Fragment-Idx",
+        /**
+         * 数据描述之文件名
+         */
         META_DATA_DISPOSITION_FILENAME: "Data-Disposition-Filename",
+        /**
+         * 数据范围开始（相当于分页）
+         */
         META_RANGE_START: "Data-Range-Start",
+        /**
+         * 数据范围长度
+         */
         META_RANGE_SIZE: "Data-Range-Size",
     };
 });
@@ -156,6 +263,12 @@ define("socketd/transport/core/Message", ["require", "exports", "socketd/transpo
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageDefault = exports.MessageBuilder = void 0;
+    /**
+     * 消息默认实现（帧[消息[实体]]）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class MessageBuilder {
         constructor() {
             this._flag = Constants_1.Flags.Unknown;
@@ -163,27 +276,48 @@ define("socketd/transport/core/Message", ["require", "exports", "socketd/transpo
             this._event = Constants_1.Constants.DEF_EVENT;
             this._entity = null;
         }
+        /**
+         * 设置标记
+         */
         flag(flag) {
             this._flag = flag;
             return this;
         }
+        /**
+         * 设置流id
+         */
         sid(sid) {
             this._sid = sid;
             return this;
         }
+        /**
+         * 设置事件
+         */
         event(event) {
             this._event = event;
             return this;
         }
+        /**
+         * 设置实体
+         */
         entity(entity) {
             this._entity = entity;
             return this;
         }
+        /**
+         * 构建
+         */
         build() {
             return new MessageDefault(this._flag, this._sid, this._event, this._entity);
         }
     }
     exports.MessageBuilder = MessageBuilder;
+    /**
+     * 消息默认实现（帧[消息[实体]]）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class MessageDefault {
         constructor(flag, sid, event, entity) {
             this._flag = flag;
@@ -194,24 +328,45 @@ define("socketd/transport/core/Message", ["require", "exports", "socketd/transpo
         at() {
             return this._entity.at();
         }
+        /**
+         * 获取标记
+         */
         flag() {
             return this._flag;
         }
+        /**
+         * 是否为请求
+         */
         isRequest() {
             return this._flag == Constants_1.Flags.Request;
         }
+        /**
+         * 是否为订阅
+         */
         isSubscribe() {
             return this._flag == Constants_1.Flags.Subscribe;
         }
+        /**
+         * 是否答复结束
+         * */
         isEnd() {
             return this._flag == Constants_1.Flags.ReplyEnd;
         }
+        /**
+         * 获取消息流Id（用于消息交互、分片）
+         */
         sid() {
             return this._sid;
         }
+        /**
+         * 获取消息事件
+         */
         event() {
             return this._event;
         }
+        /**
+         * 获取消息实体
+         */
         entity() {
             return this._entity;
         }
@@ -271,12 +426,24 @@ define("socketd/exception/SocketdException", ["require", "exports"], function (r
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SocketdTimeoutException = exports.SocketdSizeLimitException = exports.SocketdConnectionException = exports.SocketdCodecException = exports.SocketdChannelException = exports.SocketdAlarmException = exports.SocketdException = void 0;
+    /**
+     * 异常
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SocketdException extends Error {
         constructor(message) {
             super(message);
         }
     }
     exports.SocketdException = SocketdException;
+    /**
+     * 告警异常
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SocketdAlarmException extends SocketdException {
         constructor(from) {
             super(from.entity().dataAsString());
@@ -287,30 +454,60 @@ define("socketd/exception/SocketdException", ["require", "exports"], function (r
         }
     }
     exports.SocketdAlarmException = SocketdAlarmException;
+    /**
+     * 通道异常
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SocketdChannelException extends SocketdException {
         constructor(message) {
             super(message);
         }
     }
     exports.SocketdChannelException = SocketdChannelException;
+    /**
+     * 编码异常
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SocketdCodecException extends SocketdException {
         constructor(message) {
             super(message);
         }
     }
     exports.SocketdCodecException = SocketdCodecException;
+    /**
+     * 连接异常
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SocketdConnectionException extends SocketdException {
         constructor(message) {
             super(message);
         }
     }
     exports.SocketdConnectionException = SocketdConnectionException;
+    /**
+     * 大小限制异常
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SocketdSizeLimitException extends SocketdException {
         constructor(message) {
             super(message);
         }
     }
     exports.SocketdSizeLimitException = SocketdSizeLimitException;
+    /**
+     * 超时异常
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SocketdTimeoutException extends SocketdException {
         constructor(message) {
             super(message);
@@ -322,6 +519,12 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamMangerDefault = exports.StreamSubscribe = exports.StreamRequest = exports.StreamBase = void 0;
+    /**
+     * 流基类
+     *
+     * @author noear
+     * @since 2.0
+     */
     class StreamBase {
         constructor(sid, isSingle, timeout) {
             this._sid = sid;
@@ -337,6 +540,12 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
         timeout() {
             return this._timeout;
         }
+        /**
+         * 保险开始（避免永久没有回调，造成内存不能释放）
+         *
+         * @param streamManger  流管理器
+         * @param streamTimeout 流超时
+         */
         insuranceStart(streamManger, streamTimeout) {
             if (this._insuranceFuture > 0) {
                 return;
@@ -346,11 +555,19 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
                 this.onError(new SocketdException_1.SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
             }, streamTimeout);
         }
+        /**
+         * 保险取消息
+         */
         insuranceCancel() {
             if (this._insuranceFuture > 0) {
                 window.clearTimeout(this._insuranceFuture);
             }
         }
+        /**
+         * 异常时
+         *
+         * @param error 异常
+         */
         onError(error) {
             if (this._doOnError != null) {
                 this._doOnError(error);
@@ -362,6 +579,12 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
         }
     }
     exports.StreamBase = StreamBase;
+    /**
+     * 请求流
+     *
+     * @author noear
+     * @since 2.0
+     */
     class StreamRequest extends StreamBase {
         constructor(sid, timeout, future) {
             super(sid, false, timeout);
@@ -382,6 +605,12 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
         }
     }
     exports.StreamRequest = StreamRequest;
+    /**
+     * 订阅流
+     *
+     * @author noear
+     * @since 2.0
+     */
     class StreamSubscribe extends StreamBase {
         constructor(sid, timeout, future) {
             super(sid, false, timeout);
@@ -405,17 +634,34 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
             this._config = config;
             this._streamMap = new Map();
         }
+        /**
+         * 获取流接收器
+         *
+         * @param sid 流Id
+         */
         getStream(sid) {
             return this._streamMap.get(sid);
         }
+        /**
+         * 添加流接收器
+         *
+         * @param sid    流Id
+         * @param stream 流
+         */
         addStream(sid, stream) {
             Asserts_1.Asserts.assertNull("stream", stream);
             this._streamMap.set(sid, stream);
+            //增加流超时处理（做为后备保险）
             const streamTimeout = stream.timeout() > 0 ? stream.timeout() : this._config.getStreamTimeout();
             if (streamTimeout > 0) {
                 stream.insuranceStart(this, streamTimeout);
             }
         }
+        /**
+         * 移除流接收器
+         *
+         * @param sid 流Id
+         */
         removeStream(sid) {
             const stream = this.getStream(sid);
             if (stream) {
@@ -442,14 +688,26 @@ define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Frames = exports.Frame = void 0;
+    /**
+     * 帧（帧[消息[实体]]）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class Frame {
         constructor(flag, message) {
             this._flag = flag;
             this._message = message;
         }
+        /**
+         * 标志（保持与 Message 的获取风格）
+         * */
         flag() {
             return this._flag;
         }
+        /**
+         * 消息
+         * */
         message() {
             return this._message;
         }
@@ -461,29 +719,61 @@ define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport
         }
     }
     exports.Frame = Frame;
+    /**
+     * 帧工厂
+     *
+     * @author noear
+     * @since 2.0
+     * */
     class Frames {
+        /**
+         * 构建连接帧
+         *
+         * @param sid 流Id
+         * @param url 连接地址
+         */
         static connectFrame(sid, url) {
             const entity = new Entity_1.EntityDefault();
+            //添加框架版本号
             entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
             return new Frame(Constants_2.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
         }
+        /**
+         * 构建连接确认帧
+         *
+         * @param connectMessage 连接消息
+         */
         static connackFrame(connectMessage) {
             const entity = new Entity_1.EntityDefault();
+            //添加框架版本号
             entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
             return new Frame(Constants_2.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
         }
+        /**
+         * 构建 ping 帧
+         */
         static pingFrame() {
             return new Frame(Constants_2.Flags.Ping, null);
         }
+        /**
+         * 构建 pong 帧
+         */
         static pongFrame() {
             return new Frame(Constants_2.Flags.Pong, null);
         }
+        /**
+         * 构建关闭帧（一般用不到）
+         */
         static closeFrame() {
             return new Frame(Constants_2.Flags.Close, null);
         }
+        /**
+         * 构建告警帧（一般用不到）
+         */
         static alarmFrame(from, alarm) {
             const message = new Message_1.MessageBuilder();
             if (from != null) {
+                //如果有来源消息，则回传元信息
                 message.sid(from.sid());
                 message.event(from.event());
                 message.entity(new Entity_1.StringEntity(alarm).metaStringSet(from.metaString()));
@@ -505,9 +795,15 @@ define("socketd/transport/core/FragmentHolder", ["require", "exports"], function
             this._index = index;
             this._message = message;
         }
+        /**
+         * 获取顺序位
+         */
         getIndex() {
             return this._index;
         }
+        /**
+         * 获取分片帧
+         */
         getMessage() {
             return this._message;
         }
@@ -518,8 +814,15 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentAggregatorDefault = void 0;
+    /**
+     * 分片聚合器
+     *
+     * @author noear
+     * @since 2.0
+     */
     class FragmentAggregatorDefault {
         constructor(main) {
+            //分片列表
             this._fragmentHolders = new Array();
             this._main = main;
             const dataLengthStr = main.meta(Constants_3.EntityMetas.META_DATA_LENGTH);
@@ -528,20 +831,38 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
             }
             this._dataLength = parseInt(dataLengthStr);
         }
+        /**
+         * 获取消息流Id（用于消息交互、分片）
+         */
         getSid() {
             return this._main.sid();
         }
+        /**
+         * 数据流大小
+         */
         getDataStreamSize() {
             return this._dataStreamSize;
         }
+        /**
+         * 数据总长度
+         */
         getDataLength() {
             return this._dataLength;
         }
+        /**
+         * 添加帧
+         */
         add(index, message) {
+            //添加分片
             this._fragmentHolders.push(new FragmentHolder_1.FragmentHolder(index, message));
+            //添加计数
             this._dataStreamSize = this._dataStreamSize + message.dataSize();
         }
+        /**
+         * 获取聚合后的帧
+         */
         get() {
+            //排序
             this._fragmentHolders.sort((f1, f2) => {
                 if (f1.getIndex() == f2.getIndex()) {
                     return 0;
@@ -553,9 +874,11 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
                     return -1;
                 }
             });
+            //创建聚合流
             const dataBuffer = new ArrayBuffer(this._dataLength);
             const dataBufferView = new DataView(dataBuffer);
             let dataBufferViewIdx = 0;
+            //添加分片数据
             for (const fh of this._fragmentHolders) {
                 const tmp = new DataView(fh.getMessage().data());
                 for (let i = 0; i < fh.getMessage().data().byteLength; i++) {
@@ -563,6 +886,7 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
                     dataBufferViewIdx++;
                 }
             }
+            //返回
             return new Frame_1.Frame(this._main.flag(), new Message_2.MessageBuilder()
                 .flag(this._main.flag())
                 .sid(this._main.sid())
@@ -577,7 +901,20 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentHandlerDefault = void 0;
+    /**
+     * 数据分片默认实现（可以重写，把大流先缓存到磁盘以节省内存）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class FragmentHandlerDefault {
+        /**
+         * 获取下个分片
+         *
+         * @param channel       通道
+         * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
+         * @param message       总包消息
+         */
         nextFragment(channel, fragmentIndex, message) {
             const dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
             if (dataBuffer == null || dataBuffer.byteLength == 0) {
@@ -590,17 +927,26 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
             fragmentEntity.metaPut(Constants_4.EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
             return fragmentEntity;
         }
+        /**
+         * 聚合所有分片
+         *
+         * @param channel       通道
+         * @param fragmentIndex 分片索引（传过来信息，不一定有顺序）
+         * @param message       分片消息
+         */
         aggrFragment(channel, fragmentIndex, message) {
             let aggregator = channel.getAttachment(message.sid());
-            if (aggregator == null) {
+            if (!aggregator) {
                 aggregator = new FragmentAggregator_1.FragmentAggregatorDefault(message);
                 channel.putAttachment(aggregator.getSid(), aggregator);
             }
             aggregator.add(fragmentIndex, message);
             if (aggregator.getDataLength() > aggregator.getDataStreamSize()) {
+                //长度不够，等下一个分片包
                 return null;
             }
             else {
+                //重置为聚合帖
                 channel.putAttachment(message.sid(), null);
                 return aggregator.get();
             }
@@ -609,7 +955,7 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
             return true;
         }
         readFragmentData(ins, maxSize) {
-            let size = 0;
+            let size;
             if (ins.remaining() > maxSize) {
                 size = maxSize;
             }
@@ -640,49 +986,85 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
             this._maxThreads = this._coreThreads * 4;
             this._readBufferSize = 512;
             this._writeBufferSize = 512;
-            this._idleTimeout = 0;
-            this._requestTimeout = 10000;
-            this._streamTimeout = 1000 * 60 * 60 * 2;
-            this._maxUdpSize = 2048;
+            this._idleTimeout = 0; //默认不关（提供用户特殊场景选择）
+            this._requestTimeout = 10000; //10秒（默认与连接超时同）
+            this._streamTimeout = 1000 * 60 * 60 * 2; //2小时 //避免永不回调时，不能释放
+            this._maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
         }
+        /**
+         * 是否客户端模式
+         */
         clientMode() {
             return this._clientMode;
         }
+        /**
+         * 获取流管理器
+         */
         getStreamManger() {
             return this._streamManger;
         }
+        /**
+         * 获取角色名
+         * */
         getRoleName() {
             return this.clientMode() ? "Client" : "Server";
         }
+        /**
+         * 获取字符集
+         */
         getCharset() {
             return this._charset;
         }
+        /**
+         * 配置字符集
+         */
         charset(charset) {
             this._charset = charset;
             return this;
         }
+        /**
+         * 获取编解码器
+         */
         getCodec() {
             return this._codec;
         }
+        /**
+         * 获取标识生成器
+         */
         getIdGenerator() {
             return this._idGenerator;
         }
+        /**
+         * 配置标识生成器
+         */
         idGenerator(idGenerator) {
             Asserts_2.Asserts.assertNull("idGenerator", idGenerator);
             this._idGenerator = idGenerator;
             return this;
         }
+        /**
+         * 获取分片处理
+         */
         getFragmentHandler() {
             return this._fragmentHandler;
         }
+        /**
+         * 配置分片处理
+         */
         fragmentHandler(fragmentHandler) {
             Asserts_2.Asserts.assertNull("fragmentHandler", fragmentHandler);
             this._fragmentHandler = fragmentHandler;
             return this;
         }
+        /**
+         * 获取分片大小
+         */
         getFragmentSize() {
             return this._fragmentSize;
         }
+        /**
+         * 配置分片大小
+         */
         fragmentSize(fragmentSize) {
             if (fragmentSize > Constants_5.Constants.MAX_SIZE_DATA) {
                 throw new Error("The parameter fragmentSize cannot > 16m");
@@ -693,63 +1075,114 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
             this._fragmentSize = fragmentSize;
             return this;
         }
+        /**
+         * 获取核心线程数
+         */
         getCoreThreads() {
             return this._coreThreads;
         }
+        /**
+         * 配置核心线程数
+         */
         coreThreads(coreThreads) {
             this._coreThreads = coreThreads;
             this._maxThreads = coreThreads * 4;
             return this;
         }
+        /**
+         * 获取最大线程数
+         */
         getMaxThreads() {
             return this._maxThreads;
         }
+        /**
+         * 配置最大线程数
+         */
         maxThreads(maxThreads) {
             this._maxThreads = maxThreads;
             return this;
         }
+        /**
+         * 获取读缓冲大小
+         */
         getReadBufferSize() {
             return this._readBufferSize;
         }
+        /**
+         * 配置读缓冲大小
+         */
         readBufferSize(readBufferSize) {
             this._readBufferSize = readBufferSize;
             return this;
         }
+        /**
+         * 获取写缓冲大小
+         */
         getWriteBufferSize() {
             return this._writeBufferSize;
         }
+        /**
+         * 配置写缓冲大小
+         */
         writeBufferSize(writeBufferSize) {
             this._writeBufferSize = writeBufferSize;
             return this;
         }
+        /**
+         * 配置连接空闲超时
+         */
         getIdleTimeout() {
             return this._idleTimeout;
         }
+        /**
+         * 配置连接空闲超时
+         */
         idleTimeout(idleTimeout) {
             this._idleTimeout = idleTimeout;
             return this;
         }
+        /**
+         * 配置请求默认超时
+         */
         getRequestTimeout() {
             return this._requestTimeout;
         }
+        /**
+         * 配置请求默认超时
+         */
         requestTimeout(requestTimeout) {
             this._requestTimeout = requestTimeout;
             return this;
         }
+        /**
+         * 获取消息流超时（单位：毫秒）
+         * */
         getStreamTimeout() {
             return this._streamTimeout;
         }
+        /**
+         * 配置消息流超时（单位：毫秒）
+         * */
         streamTimeout(streamTimeout) {
             this._streamTimeout = streamTimeout;
             return this;
         }
+        /**
+         * 获取允许最大UDP包大小
+         */
         getMaxUdpSize() {
             return this._maxUdpSize;
         }
+        /**
+         * 配置允许最大UDP包大小
+         */
         maxUdpSize(maxUdpSize) {
             this._maxUdpSize = maxUdpSize;
             return this;
         }
+        /**
+         * 生成 id
+         * */
         generateId() {
             return this._idGenerator.generate();
         }
@@ -822,27 +1255,48 @@ define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transpo
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Asserts = void 0;
+    /**
+     * 断言
+     *
+     * @author noear
+     * @since 2.0
+     */
     class Asserts {
+        /**
+         * 断言关闭
+         */
         static assertClosed(channel) {
             if (channel != null && channel.isClosed() > 0) {
                 throw new SocketdException_3.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
             }
         }
+        /**
+         * 断言关闭
+         */
         static assertClosedByUser(channel) {
             if (channel != null && channel.isClosed() == Constants_6.Constants.CLOSE4_USER) {
                 throw new SocketdException_3.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
             }
         }
+        /**
+         * 断言 null
+         */
         static assertNull(name, val) {
             if (val == null) {
                 throw new Error("The argument cannot be null: " + name);
             }
         }
+        /**
+         * 断言 empty
+         */
         static assertEmpty(name, val) {
             if (!val) {
                 throw new Error("The argument cannot be empty: " + name);
             }
         }
+        /**
+         * 断言 size
+         */
         static assertSize(name, size, limitSize) {
             if (size > limitSize) {
                 const message = `This message ${name} size is out of limit ${limitSize} (${size})`;
@@ -856,42 +1310,72 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ArrayBufferCodecWriter = exports.ArrayBufferCodecReader = exports.CodecByteBuffer = void 0;
+    /**
+     * 编解码器（基于 BufferWriter,BufferReader 接口编解）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class CodecByteBuffer {
         constructor(config) {
             this._config = config;
         }
+        /**
+         * 解码写入
+         *
+         * @param frame         帧
+         * @param targetFactory 目标工厂
+         */
         write(frame, targetFactory) {
             if (frame.message()) {
+                //sid
                 const sidB = StrUtils_2.StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
+                //event
                 const eventB = StrUtils_2.StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
+                //metaString
                 const metaStringB = StrUtils_2.StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
+                //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
                 const frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
                 Asserts_3.Asserts.assertSize("sid", sidB.byteLength, Constants_7.Constants.MAX_SIZE_SID);
                 Asserts_3.Asserts.assertSize("event", eventB.byteLength, Constants_7.Constants.MAX_SIZE_EVENT);
                 Asserts_3.Asserts.assertSize("metaString", metaStringB.byteLength, Constants_7.Constants.MAX_SIZE_META_STRING);
                 Asserts_3.Asserts.assertSize("data", frame.message().dataSize(), Constants_7.Constants.MAX_SIZE_DATA);
                 const target = targetFactory(frameSize);
+                //长度
                 target.putInt(frameSize);
+                //flag
                 target.putInt(frame.flag());
+                //sid
                 target.putBytes(sidB);
                 target.putChar('\n'.charCodeAt(0));
+                //event
                 target.putBytes(eventB);
                 target.putChar('\n'.charCodeAt(0));
+                //metaString
                 target.putBytes(metaStringB);
                 target.putChar('\n'.charCodeAt(0));
+                //data
                 target.putBytes(frame.message().data());
                 target.flush();
                 return target;
             }
             else {
+                //length (len[int] + flag[int])
                 const frameSize = 4 + 4;
                 const target = targetFactory(frameSize);
+                //长度
                 target.putInt(frameSize);
+                //flag
                 target.putInt(frame.flag());
                 target.flush();
                 return target;
             }
         }
+        /**
+         * 编码读取
+         *
+         * @param buffer 缓冲
+         */
         read(buffer) {
             const frameSize = buffer.getInt();
             if (frameSize > (buffer.remaining() + 4)) {
@@ -899,17 +1383,24 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             }
             const flag = buffer.getInt();
             if (frameSize == 8) {
+                //len[int] + flag[int]
                 return new Frame_3.Frame(Constants_7.Flags.of(flag), null);
             }
             else {
                 const metaBufSize = Math.min(Constants_7.Constants.MAX_SIZE_META_STRING, buffer.remaining());
+                //1.解码 sid and event
                 const buf = new ArrayBuffer(metaBufSize);
+                //sid
                 const sid = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_SID);
+                //event
                 const event = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_EVENT);
+                //metaString
                 const metaString = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_META_STRING);
+                //2.解码 body
                 const dataRealSize = frameSize - buffer.position();
                 let data;
                 if (dataRealSize > Constants_7.Constants.MAX_SIZE_DATA) {
+                    //超界了，空读。必须读，不然协议流会坏掉
                     data = new ArrayBuffer(Constants_7.Constants.MAX_SIZE_DATA);
                     buffer.getBytes(data, 0, Constants_7.Constants.MAX_SIZE_DATA);
                     for (let i = dataRealSize - Constants_7.Constants.MAX_SIZE_DATA; i > 0; i--) {
@@ -922,6 +1413,7 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
                         buffer.getBytes(data, 0, dataRealSize);
                     }
                 }
+                //先 data , 后 metaString (避免 data 时修改元信息)
                 const message = new Message_3.MessageBuilder()
                     .flag(Constants_7.Flags.of(flag))
                     .sid(sid)
@@ -936,13 +1428,14 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             let bufViewIdx = 0;
             while (true) {
                 const c = reader.getByte();
-                if (c == 10) {
+                if (c == 10) { //10:'\n'
                     break;
                 }
                 if (maxLen > 0 && maxLen <= bufViewIdx) {
+                    //超界了，空读。必须读，不然协议流会坏掉
                 }
                 else {
-                    if (c != 0) {
+                    if (c != 0) { //32:' '
                         bufView.setInt8(bufViewIdx, c);
                         bufViewIdx++;
                     }
@@ -951,6 +1444,7 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             if (bufViewIdx < 1) {
                 return "";
             }
+            //这里要加个长度控制
             return StrUtils_2.StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
         }
     }
@@ -974,6 +1468,7 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
             const tmpEndIdx = offset + length;
             for (let i = offset; i < tmpEndIdx; i++) {
                 if (this._bufViewIdx >= this._buf.byteLength) {
+                    //读完了
                     break;
                 }
                 tmp.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
@@ -1036,41 +1531,81 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StringEntity = exports.EntityDefault = void 0;
+    /**
+     * 实体默认实现
+     *
+     * @author noear
+     * @since 2.0
+     */
     class EntityDefault {
         constructor() {
             this._metaMap = null;
             this._data = new ArrayBuffer(0);
             this._dataAsReader = null;
         }
+        /**
+         * At
+         * */
         at() {
             return this.meta("@");
         }
+        /**
+         * 设置元信息字符串
+         * */
         metaStringSet(metaString) {
             this._metaMap = new URLSearchParams(metaString);
             return this;
         }
+        /**
+         * 放置元信息字典
+         *
+         * @param map 元信息字典
+         */
         metaMapPut(map) {
             for (const name of map.prototype) {
                 this.metaMap().set(name, map[name]);
             }
             return this;
         }
+        /**
+         * 放置元信息
+         *
+         * @param name 名字
+         * @param val  值
+         */
         metaPut(name, val) {
             this.metaMap().set(name, val);
             return this;
         }
+        /**
+         * 获取元信息字符串（queryString style）
+         */
         metaString() {
             return this.metaMap().toString();
         }
+        /**
+         * 获取元信息字典
+         */
         metaMap() {
             if (this._metaMap == null) {
                 this._metaMap = new URLSearchParams();
             }
             return this._metaMap;
         }
+        /**
+         * 获取元信息
+         *
+         * @param name 名字
+         */
         meta(name) {
             return this.metaMap().get(name);
         }
+        /**
+         * 获取元信息或默认值
+         *
+         * @param name 名字
+         * @param def  默认值
+         */
         metaOrDefault(name, def) {
             const val = this.meta(name);
             if (val) {
@@ -1080,19 +1615,39 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
                 return def;
             }
         }
+        /**
+         * 获取元信息并转为 int
+         */
         metaAsInt(name) {
             return parseInt(this.metaOrDefault(name, '0'));
         }
+        /**
+         * 获取元信息并转为 float
+         */
         metaAsFloat(name) {
             return parseFloat(this.metaOrDefault(name, '0'));
         }
+        /**
+         * 放置元信息
+         *
+         * @param name 名字
+         * @param val  值
+         */
         putMeta(name, val) {
             this.metaPut(name, val);
         }
+        /**
+         * 设置数据
+         *
+         * @param data 数据
+         */
         dataSet(data) {
             this._data = data;
             return this;
         }
+        /**
+         * 获取数据（若多次复用，需要reset）
+         */
         data() {
             return this._data;
         }
@@ -1102,22 +1657,37 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
             }
             return this._dataAsReader;
         }
+        /**
+         * 获取数据并转成字符串
+         */
         dataAsString() {
             return StrUtils_3.StrUtils.bufToStrDo(this._data, '');
         }
+        /**
+         * 获取数据长度
+         */
         dataSize() {
             return this._data.byteLength;
         }
+        /**
+         * 释放资源
+         */
         release() {
         }
         toString() {
             return "Entity{" +
                 "meta='" + this.metaString() + '\'' +
-                ", data=byte[" + this.dataSize() + ']' +
+                ", data=byte[" + this.dataSize() + ']' + //避免内容太大，影响打印
                 '}';
         }
     }
     exports.EntityDefault = EntityDefault;
+    /**
+     * 字符串实体
+     *
+     * @author noear
+     * @since 2.0
+     */
     class StringEntity extends EntityDefault {
         constructor(data) {
             super();
@@ -1135,6 +1705,11 @@ define("socketd/transport/core/Session", ["require", "exports"], function (requi
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SessionBase = void 0;
+    /**
+     * 会话基类
+     *
+     * @author noear
+     */
     class SessionBase {
         constructor(channel) {
             this._channel = channel;
@@ -1181,19 +1756,44 @@ define("socketd/transport/core/RouteSelector", ["require", "exports"], function 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RouteSelectorDefault = void 0;
+    /**
+     * 路径映射器默认实现（哈希）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class RouteSelectorDefault {
         constructor() {
             this._inner = new Map();
         }
+        /**
+         * 选择
+         *
+         * @param route 路由
+         */
         select(route) {
             return this._inner.get(route);
         }
+        /**
+         * 放置
+         *
+         * @param route  路由
+         * @param target 目标
+         */
         put(route, target) {
             this._inner.set(route, target);
         }
+        /**
+         * 移除
+         *
+         * @param route 路由
+         */
         remove(route) {
             this._inner.delete(route);
         }
+        /**
+         * 数量
+         */
         size() {
             return this._inner.size;
         }
@@ -1204,6 +1804,12 @@ define("socketd/transport/core/Listener", ["require", "exports", "socketd/transp
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PipelineListener = exports.PathListener = exports.EventListener = exports.SimpleListener = void 0;
+    /**
+     * 简单监听器（一般用于占位）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SimpleListener {
         onOpen(session) {
         }
@@ -1215,13 +1821,19 @@ define("socketd/transport/core/Listener", ["require", "exports", "socketd/transp
         }
     }
     exports.SimpleListener = SimpleListener;
+    /**
+     * 事件监听器（根据消息事件路由）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class EventListener {
         constructor(routeSelector) {
-            if (routeSelector == null) {
-                this._eventRouteSelector = new RouteSelector_1.RouteSelectorDefault();
+            if (routeSelector) {
+                this._eventRouteSelector = routeSelector;
             }
             else {
-                this._eventRouteSelector = routeSelector;
+                this._eventRouteSelector = new RouteSelector_1.RouteSelectorDefault();
             }
         }
         doOn(event, consumer) {
@@ -1270,19 +1882,31 @@ define("socketd/transport/core/Listener", ["require", "exports", "socketd/transp
         }
     }
     exports.EventListener = EventListener;
+    /**
+     * 路径监听器（根据握手地址路由，一般用于服务端）
+     *
+     * @author noear
+     * @since 2.0
+     */
     class PathListener {
         constructor(routeSelector) {
-            if (routeSelector == null) {
-                this._pathRouteSelector = new RouteSelector_1.RouteSelectorDefault();
-            }
-            else {
+            if (routeSelector) {
                 this._pathRouteSelector = routeSelector;
             }
+            else {
+                this._pathRouteSelector = new RouteSelector_1.RouteSelectorDefault();
+            }
         }
+        /**
+         * 路由
+         */
         of(path, listener) {
             this._pathRouteSelector.put(path, listener);
             return this;
         }
+        /**
+         * 数量（二级监听器的数据）
+         */
         size() {
             return this._pathRouteSelector.size();
         }
@@ -1312,36 +1936,73 @@ define("socketd/transport/core/Listener", ["require", "exports", "socketd/transp
         }
     }
     exports.PathListener = PathListener;
+    /**
+     * 管道监听器
+     *
+     * @author noear
+     * @since 2.0
+     */
     class PipelineListener {
         constructor() {
             this._deque = new Array();
         }
+        /**
+         * 前一个
+         */
         prev(listener) {
             this._deque.unshift(listener);
             return this;
         }
+        /**
+         * 后一个
+         */
         next(listener) {
             this._deque.push(listener);
             return this;
         }
+        /**
+         * 数量（二级监听器的数据）
+         * */
         size() {
             return this._deque.length;
         }
+        /**
+         * 打开时
+         *
+         * @param session 会话
+         */
         onOpen(session) {
             for (const listener of this._deque) {
                 listener.onOpen(session);
             }
         }
+        /**
+         * 收到消息时
+         *
+         * @param session 会话
+         * @param message 消息
+         */
         onMessage(session, message) {
             for (const listener of this._deque) {
                 listener.onMessage(session, message);
             }
         }
+        /**
+         * 关闭时
+         *
+         * @param session 会话
+         */
         onClose(session) {
             for (const listener of this._deque) {
                 listener.onClose(session);
             }
         }
+        /**
+         * 出错时
+         *
+         * @param session 会话
+         * @param error   错误信息
+         */
         onError(session, error) {
             for (const listener of this._deque) {
                 listener.onError(session, error);
@@ -1357,6 +2018,7 @@ define("socketd/transport/client/ClientConfig", ["require", "exports", "socketd/
     class ClientConfig extends Config_1.ConfigBase {
         constructor(url) {
             super(true);
+            //支持 sd: 开头的架构
             if (url.startsWith("sd:")) {
                 url = url.substring(3);
             }
@@ -1372,47 +2034,84 @@ define("socketd/transport/client/ClientConfig", ["require", "exports", "socketd/
             this._heartbeatInterval = 20000;
             this._autoReconnect = true;
         }
+        /**
+         * 获取通讯架构（tcp, ws, udp）
+         */
         getSchema() {
             return this._schema;
         }
+        /**
+         * 获取连接地址
+         */
         getUrl() {
             return this._url;
         }
+        /**
+         * 获取连接地址
+         */
         getUri() {
             return this._uri;
         }
+        /**
+         * 获取链接地址
+         */
         getLinkUrl() {
             return this._linkUrl;
         }
+        /**
+         * 获取连接主机
+         */
         getHost() {
             return this._uri.host;
         }
+        /**
+         * 获取连接端口
+         */
         getPort() {
             return this._port;
         }
+        /**
+         * 获取心跳间隔（单位毫秒）
+         */
         getHeartbeatInterval() {
             return this._heartbeatInterval;
         }
+        /**
+         * 配置心跳间隔（单位毫秒）
+         */
         heartbeatInterval(heartbeatInterval) {
             this._heartbeatInterval = heartbeatInterval;
             return this;
         }
+        /**
+         * 获取连接超时（单位毫秒）
+         */
         getConnectTimeout() {
             return this._connectTimeout;
         }
+        /**
+         * 配置连接超时（单位毫秒）
+         */
         connectTimeout(connectTimeout) {
             this._connectTimeout = connectTimeout;
             return this;
         }
+        /**
+         * 获取是否自动重链
+         */
         isAutoReconnect() {
             return this._autoReconnect;
         }
+        /**
+         * 配置是否自动重链
+         */
         autoReconnect(autoReconnect) {
             this._autoReconnect = autoReconnect;
             return this;
         }
         idleTimeout(idleTimeout) {
             if (this._autoReconnect == false) {
+                //自动重链下，禁用 idleTimeout
                 this._idleTimeout = (idleTimeout);
                 return this;
             }
@@ -1502,8 +2201,9 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                 channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
                 channel.onOpenFuture((r, err) => {
                     if (r && channel.isValid()) {
+                        //如果还有效，则发送链接确认
                         try {
-                            channel.sendConnack(frame.getMessage());
+                            channel.sendConnack(frame.getMessage()); //->Connack
                         }
                         catch (err) {
                             this.onError(channel, err);
@@ -1513,6 +2213,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                 this.onOpen(channel);
             }
             else if (frame.flag() == Constants_9.Flags.Connack) {
+                //if client
                 channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
                 this.onOpen(channel);
             }
@@ -1520,6 +2221,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                 if (channel.getHandshake() == null) {
                     channel.close(Constants_9.Constants.CLOSE1_PROTOCOL);
                     if (frame.flag() == Constants_9.Flags.Close) {
+                        //说明握手失败了
                         throw new SocketdException_4.SocketdConnectionException("Connection request was rejected");
                     }
                     console.warn(`${channel.getConfig().getRoleName()} channel handshake is null, sessionId=${channel.getSession().sessionId()}`);
@@ -1535,11 +2237,13 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                             break;
                         }
                         case Constants_9.Flags.Close: {
+                            //关闭通道
                             channel.close(Constants_9.Constants.CLOSE1_PROTOCOL);
                             this.onCloseInternal(channel);
                             break;
                         }
                         case Constants_9.Flags.Alarm: {
+                            //结束流，并异常通知
                             const exception = new SocketdException_4.SocketdAlarmException(frame.getMessage());
                             const stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
                             if (stream == null) {
@@ -1574,9 +2278,12 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
             }
         }
         onReceiveDo(channel, frame, isReply) {
+            //如果启用了聚合!
             if (channel.getConfig().getFragmentHandler().aggrEnable()) {
+                //尝试聚合分片处理
                 const fragmentIdxStr = frame.message().meta(Constants_9.EntityMetas.META_DATA_FRAGMENT_IDX);
                 if (fragmentIdxStr != null) {
+                    //解析分片索引
                     const index = parseInt(fragmentIdxStr);
                     const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
                     if (frameNew == null) {
@@ -1587,6 +2294,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                     }
                 }
             }
+            //执行接收处理
             if (isReply) {
                 channel.retrieve(frame);
             }
@@ -1635,6 +2343,12 @@ define("socketd/transport/client/ClientConnector", ["require", "exports"], funct
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientConnectorBase = void 0;
+    /**
+     * 客户端连接器基类
+     *
+     * @author noear
+     * @since 2.0
+     */
     class ClientConnectorBase {
         constructor(client) {
             this._client = client;
@@ -1689,6 +2403,12 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientChannel = void 0;
+    /**
+     * 客户端通道
+     *
+     * @author noear
+     * @since 2.0
+     */
     class ClientChannel extends Channel_1.ChannelBase {
         constructor(real, connector) {
             super(real.getConfig());
@@ -1702,6 +2422,9 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
             }
             this.initHeartbeat();
         }
+        /**
+         * 初始化心跳（关闭后，手动重链时也会用到）
+         */
         initHeartbeat() {
             if (this._heartbeatScheduledFuture) {
                 clearInterval(this._heartbeatScheduledFuture);
@@ -1717,12 +2440,17 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 }, this._connector.heartbeatInterval());
             }
         }
+        /**
+         * 心跳处理
+         */
         heartbeatHandle() {
             return __awaiter(this, void 0, void 0, function* () {
                 if (this._real != null) {
+                    //说明握手未成
                     if (this._real.getHandshake() == null) {
                         return;
                     }
+                    //手动关闭
                     if (this._real.isClosed() == Constants_10.Constants.CLOSE4_USER) {
                         console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
                         return;
@@ -1744,6 +2472,11 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 }
             });
         }
+        /**
+         * 预备检测
+         *
+         * @return 是否为新链接
+         */
         prepareCheck() {
             return __awaiter(this, void 0, void 0, function* () {
                 if (this._real == null || this._real.isValid() == false) {
@@ -1755,6 +2488,9 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 }
             });
         }
+        /**
+         * 是否有效
+         */
         isValid() {
             if (this._real == null) {
                 return false;
@@ -1763,6 +2499,9 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 return this._real.isValid();
             }
         }
+        /**
+         * 是否已关闭
+         */
         isClosed() {
             if (this._real == null) {
                 return 0;
@@ -1771,6 +2510,12 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 return this._real.isClosed();
             }
         }
+        /**
+         * 发送
+         *
+         * @param frame  帧
+         * @param stream 流（没有则为 null）
+         */
         send(frame, stream) {
             return __awaiter(this, void 0, void 0, function* () {
                 Asserts_4.Asserts.assertClosedByUser(this._real);
@@ -1800,7 +2545,9 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
         close(code) {
             RunUtils_1.RunUtils.runAndTry(() => window.clearInterval(this._heartbeatScheduledFuture));
             RunUtils_1.RunUtils.runAndTry(() => this._connector.close());
-            RunUtils_1.RunUtils.runAndTry(() => this._real.close(code));
+            if (this._real) {
+                RunUtils_1.RunUtils.runAndTry(() => this._real.close(code));
+            }
             super.close(code);
         }
         getSession() {
@@ -1813,6 +2560,12 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SessionDefault = void 0;
+    /**
+     * 会话默认实现
+     *
+     * @author noear
+     * @since 2.0
+     */
     class SessionDefault extends Session_1.SessionBase {
         constructor(channel) {
             super(channel);
@@ -1823,12 +2576,26 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
         handshake() {
             return this._channel.getHandshake();
         }
+        /**
+         * 获取握手参数
+         *
+         * @param name 名字
+         */
         param(name) {
             return this.handshake().param(name);
         }
+        /**
+         * 获取握手参数或默认值
+         *
+         * @param name 名字
+         * @param def  默认值
+         */
         paramOrDefault(name, def) {
             return this.handshake().paramOrDefault(name, def);
         }
+        /**
+         * 获取路径
+         */
         path() {
             if (this._pathNew == null) {
                 return this.handshake().uri().pathname;
@@ -1837,18 +2604,30 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 return this._pathNew;
             }
         }
+        /**
+         * 设置新路径
+         */
         pathNew(pathNew) {
             this._pathNew = pathNew;
         }
+        /**
+         * 手动重连（一般是自动）
+         */
         reconnect() {
             this._channel.reconnect();
         }
+        /**
+         * 手动发送 Ping（一般是自动）
+         */
         sendPing() {
             this._channel.sendPing();
         }
         sendAlarm(from, alarm) {
             this._channel.sendAlarm(from, alarm);
         }
+        /**
+         * 发送
+         */
         send(event, content) {
             const message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
@@ -1857,7 +2636,16 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .build();
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Message, message), null);
         }
+        /**
+         * 发送并请求（限为一次答复；指定超时）
+         *
+         * @param event    事件
+         * @param content  内容
+         * @param consumer 回调消费者
+         * @param timeout 超时
+         */
         sendAndRequest(event, content, consumer, timeout) {
+            //异步，用 streamTimeout
             const message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
                 .event(event)
@@ -1867,6 +2655,14 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Request, message), stream);
             return stream;
         }
+        /**
+         * 发送并订阅（答复结束之前，不限答复次数）
+         *
+         * @param event    事件
+         * @param content  内容
+         * @param consumer 回调消费者
+         * @param timeout 超时
+         */
         sendAndSubscribe(event, content, consumer, timeout) {
             const message = new Message_4.MessageBuilder()
                 .sid(this.generateId())
@@ -1877,6 +2673,12 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Subscribe, message), stream);
             return stream;
         }
+        /**
+         * 答复
+         *
+         * @param from    来源消息
+         * @param content 内容
+         */
         reply(from, content) {
             const message = new Message_4.MessageBuilder()
                 .sid(from.sid())
@@ -1885,6 +2687,12 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .build();
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.Reply, message), null);
         }
+        /**
+         * 答复并结束（即最后一次答复）
+         *
+         * @param from    来源消息
+         * @param content 内容
+         */
         replyEnd(from, content) {
             const message = new Message_4.MessageBuilder()
                 .sid(from.sid())
@@ -1893,6 +2701,9 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .build();
             this._channel.send(new Frame_4.Frame(Constants_11.Flags.ReplyEnd, message), null);
         }
+        /**
+         * 关闭
+         */
         close() {
             console.debug(`${this._channel.getConfig().getRoleName()} session will be closed, sessionId=${this.sessionId()}`);
             if (this._channel.isValid()) {
@@ -1912,52 +2723,89 @@ define("socketd/transport/client/Client", ["require", "exports", "socketd/transp
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientBase = void 0;
+    /**
+     * 客户端基类
+     *
+     * @author noear
+     * @since 2.0
+     */
     class ClientBase {
         constructor(clientConfig, assistant) {
             this._config = clientConfig;
             this._assistant = assistant;
             this._processor = new Processor_1.ProcessorDefault();
         }
+        /**
+         * 获取通道助理
+         */
         getAssistant() {
             return this._assistant;
         }
+        /**
+         * 获取心跳处理
+         */
         getHeartbeatHandler() {
             return this._heartbeatHandler;
         }
+        /**
+         * 获取心跳间隔（毫秒）
+         */
         getHeartbeatInterval() {
             return this.getConfig().getHeartbeatInterval();
         }
+        /**
+         * 获取配置
+         */
         getConfig() {
             return this._config;
         }
+        /**
+         * 获取处理器
+         */
         getProcessor() {
             return this._processor;
         }
+        /**
+         * 设置心跳
+         */
         heartbeatHandler(handler) {
             if (handler != null) {
                 this._heartbeatHandler = handler;
             }
             return this;
         }
+        /**
+         * 配置
+         */
         config(configHandler) {
             if (configHandler != null) {
                 configHandler(this._config);
             }
             return this;
         }
+        /**
+         * 设置监听器
+         */
         listen(listener) {
             if (listener != null) {
                 this._processor.setListener(listener);
             }
             return this;
         }
+        /**
+         * 打开会话
+         */
         open() {
             return __awaiter(this, void 0, void 0, function* () {
                 const connector = this.createConnector();
+                //连接
                 const channel0 = yield connector.connect();
+                //新建客户端通道
                 const clientChannel = new ClientChannel_1.ClientChannel(channel0, connector);
+                //同步握手信息
                 clientChannel.setHandshake(channel0.getHandshake());
                 const session = new SessionDefault_1.SessionDefault(clientChannel);
+                //原始通道切换为带壳的 session
                 channel0.setSession(session);
                 console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
                 return session;
@@ -1974,23 +2822,38 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClientSession = void 0;
+    /**
+     * 集群客户端会话
+     *
+     * @author noear
+     * @since 2.1
+     */
     class ClusterClientSession {
         constructor(sessions) {
             this._sessionSet = sessions;
             this._sessionId = StrUtils_4.StrUtils.guid();
             this._sessionRoundCounter = 0;
         }
+        /**
+         * 获取所有会话
+         */
         getSessionAll() {
             return this._sessionSet;
         }
+        /**
+         * 获取一个会话（轮询负栽均衡）
+         */
         getSessionOne() {
             if (this._sessionSet.length == 0) {
+                //没有会话
                 throw new SocketdException_6.SocketdException("No session!");
             }
             else if (this._sessionSet.length == 1) {
+                //只有一个就不管了
                 return this._sessionSet[0];
             }
             else {
+                //查找可用的会话
                 const sessions = new ClientChannel_2.ClientChannel[this._sessionSet.length];
                 let sessionsSize = 0;
                 for (const s of this._sessionSet) {
@@ -2000,11 +2863,13 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
                     }
                 }
                 if (sessionsSize == 0) {
+                    //没有可用的会话
                     throw new SocketdException_6.SocketdException("No session is available!");
                 }
                 if (sessionsSize == 1) {
                     return sessions[0];
                 }
+                //论询处理
                 const counter = this._sessionRoundCounter++;
                 const idx = counter % sessionsSize;
                 if (counter > 999999999) {
@@ -2031,20 +2896,46 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
                 }
             }
         }
+        /**
+         * 发送
+         *
+         * @param event   事件
+         * @param content 内容
+         */
         send(event, content) {
             const sender = this.getSessionOne();
             sender.send(event, content);
         }
+        /**
+         * 发送并请求（限为一次答复；指定回调）
+         *
+         * @param event    事件
+         * @param content  内容
+         * @param consumer 回调消费者
+         * @param timeout  超时
+         */
         sendAndRequest(event, content, consumer, timeout) {
             const sender = this.getSessionOne();
             return sender.sendAndRequest(event, content, consumer, timeout);
         }
+        /**
+         * 发送并订阅（答复结束之前，不限答复次数）
+         *
+         * @param event    事件
+         * @param content  内容
+         * @param consumer 回调消费者
+         * @param timeout  超时
+         */
         sendAndSubscribe(event, content, consumer, timeout) {
             const sender = this.getSessionOne();
             return sender.sendAndSubscribe(event, content, consumer, timeout);
         }
+        /**
+         * 关闭
+         */
         close() {
             for (const session of this._sessionSet) {
+                //某个关闭出错，不影响别的关闭
                 RunUtils_2.RunUtils.runAndTry(session.close);
             }
         }
@@ -2055,6 +2946,11 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD"
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClient = void 0;
+    /**
+     * 集群客户端
+     *
+     * @author noear
+     */
     class ClusterClient {
         constructor(serverUrls) {
             this._serverUrls = serverUrls;
@@ -2063,14 +2959,23 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD"
             this._heartbeatHandler = heartbeatHandler;
             return this;
         }
+        /**
+         * 配置
+         */
         config(configHandler) {
             this._configHandler = configHandler;
             return this;
         }
+        /**
+         * 监听
+         */
         listen(listener) {
             this._listener = listener;
             return this;
         }
+        /**
+         * 打开
+         */
         open() {
             return __awaiter(this, void 0, void 0, function* () {
                 const sessionList = new ClusterClient[this._serverUrls.length];
@@ -2135,6 +3040,12 @@ define("socketd/transport/client/ClientHandshakeResult", ["require", "exports"],
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientHandshakeResult = void 0;
+    /**
+     * 客户端握手结果
+     *
+     * @author noear
+     * @since 2.0
+     */
     class ClientHandshakeResult {
         constructor(channel, throwable) {
             this._channel = channel;
@@ -2194,17 +3105,23 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
             }
             if (frame.message()) {
                 const message = frame.message();
+                //注册流接收器
                 if (stream != null) {
                     this._streamManger.addStream(message.sid(), stream);
                 }
+                //如果有实体（尝试分片）
                 if (message.entity() != null) {
+                    //确保用完自动关闭
                     if (message.dataSize() > this.getConfig().getFragmentSize()) {
                         message.putMeta(Constants_12.EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
+                        //满足分片条件
                         let fragmentIndex = 0;
                         while (true) {
+                            //获取分片
                             fragmentIndex++;
                             const fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
                             if (fragmentEntity != null) {
+                                //主要是 sid 和 entity
                                 const fragmentFrame = new Frame_5.Frame(frame.flag(), new Message_5.MessageBuilder()
                                     .flag(frame.flag())
                                     .sid(message.sid())
@@ -2213,11 +3130,13 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
                                 this._assistant.write(this._source, fragmentFrame);
                             }
                             else {
+                                //没有分片，说明发完了
                                 return;
                             }
                         }
                     }
                     else {
+                        //不满足分片条件，直接发
                         this._assistant.write(this._source, frame);
                         return;
                     }
@@ -2229,12 +3148,15 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
             const stream = this._streamManger.getStream(frame.message().sid());
             if (stream != null) {
                 if (stream.isSingle() || frame.flag() == Constants_12.Flags.ReplyEnd) {
+                    //如果是单收或者答复结束，则移除流接收器
                     this._streamManger.removeStream(frame.message().sid());
                 }
                 if (stream.isSingle()) {
+                    //单收时，内部已经是异步机制
                     stream.onAccept(frame.message(), this);
                 }
                 else {
+                    //改为异步处理，避免卡死Io线程
                     stream.onAccept(frame.message(), this);
                 }
             }
@@ -2243,6 +3165,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
             }
         }
         reconnect() {
+            //由 ClientChannel 实现
         }
         onError(error) {
             this._processor.onError(this, error);
@@ -2343,7 +3266,9 @@ define("socketd_websocket/WsClientConnector", ["require", "exports", "socketd/tr
             super(client);
         }
         connect() {
+            //关闭之前的资源
             this.close();
+            //处理自定义架构的影响（重连时，新建实例比原生重链接口靠谱）
             let url = this._client.getConfig().getUrl();
             return new Promise((resolve, reject) => {
                 this._real = new WebSocketClientImpl_1.WebSocketClientImpl(url, this._client, (r) => {
@@ -2392,17 +3317,28 @@ define("socketd_websocket/WsClientProvider", ["require", "exports", "socketd_web
     }
     exports.WsClientProvider = WsClientProvider;
 });
-define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1) {
+define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_14) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.SocketD = void 0;
+    exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newStringEntity = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = exports.SocketD = void 0;
     class SocketD {
+        /**
+         * 框架版本号
+         */
         static version() {
             return "2.2.1";
         }
+        /**
+         * 协议版本号
+         */
         static protocolVersion() {
             return "1.0";
         }
+        /**
+         * 创建客户端（支持 url 自动识别）
+         *
+         * @param serverUrl 服务器地址
+         */
         static createClient(serverUrl) {
             const client = SocketD.createClientOrNull(serverUrl);
             if (client == null) {
@@ -2412,6 +3348,11 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
                 return client;
             }
         }
+        /**
+         * 创建客户端（支持 url 自动识别），如果没有则为 null
+         *
+         * @param serverUrl 服务器地址
+         */
         static createClientOrNull(serverUrl) {
             Asserts_5.Asserts.assertNull("serverUrl", serverUrl);
             const idx = serverUrl.indexOf("://");
@@ -2428,6 +3369,11 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
                 return factory.createClient(clientConfig);
             }
         }
+        /**
+         * 创建集群客户端
+         *
+         * @param serverUrls 服务端地址
+         */
         static createClusterClient(serverUrls) {
             return new ClusterClient_1.ClusterClient(serverUrls);
         }
@@ -2440,4 +3386,94 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
             SocketD.clientProviderMap.set(s, provider);
         }
     })();
+    //
+    // 下面是快捷接口（对外需要 new 的接口都在了）
+    //
+    /**
+     * 框架版本号
+     */
+    function version() {
+        return SocketD.version();
+    }
+    exports.version = version;
+    /**
+     * 协议版本号
+     */
+    function protocolVersion() {
+        return SocketD.protocolVersion();
+    }
+    exports.protocolVersion = protocolVersion;
+    /**
+     * 创建客户端（支持 url 自动识别）
+     *
+     * @param serverUrl 服务器地址
+     */
+    function createClient(serverUrl) {
+        return SocketD.createClient(serverUrl);
+    }
+    exports.createClient = createClient;
+    /**
+     * 创建客户端（支持 url 自动识别），如果没有则为 null
+     *
+     * @param serverUrl 服务器地址
+     */
+    function createClientOrNull(serverUrl) {
+        return SocketD.createClientOrNull(serverUrl);
+    }
+    exports.createClientOrNull = createClientOrNull;
+    /**
+     * 创建集群客户端
+     *
+     * @param serverUrls 服务端地址
+     */
+    function createClusterClient(serverUrls) {
+        return SocketD.createClusterClient(serverUrls);
+    }
+    exports.createClusterClient = createClusterClient;
+    /**
+     * 创建实体
+     * */
+    function newEntity() {
+        return new Entity_5.EntityDefault();
+    }
+    exports.newEntity = newEntity;
+    /**
+     * 创建字符串实体
+     * */
+    function newStringEntity(data) {
+        return new Entity_5.StringEntity(data);
+    }
+    exports.newStringEntity = newStringEntity;
+    /**
+     * 创建简单临听器
+     * */
+    function newSimpleListener() {
+        return new Listener_2.SimpleListener();
+    }
+    exports.newSimpleListener = newSimpleListener;
+    /**
+     * 创建事件监听器
+     * */
+    function newEventListener(routeSelector) {
+        return new Listener_2.EventListener(routeSelector);
+    }
+    exports.newEventListener = newEventListener;
+    /**
+     * 创建路径监听器（一般用于服务端）
+     * */
+    function newPathListener(routeSelector) {
+        return new Listener_2.PathListener(routeSelector);
+    }
+    exports.newPathListener = newPathListener;
+    /**
+     * 创建管道监听器
+     * */
+    function newPipelineListener() {
+        return new Listener_2.PipelineListener();
+    }
+    exports.newPipelineListener = newPipelineListener;
+    /**
+     * 元信息字典
+     * */
+    exports.Metas = Constants_14.EntityMetas;
 });

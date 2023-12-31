@@ -54,7 +54,7 @@ export interface Session extends ClientSession {
     /**
      * 获取所有属性
      */
-    attrMap(): Map<string, object>;
+    attrMap(): Map<string, any>;
 
     /**
      * 是有属性
@@ -68,7 +68,7 @@ export interface Session extends ClientSession {
      *
      * @param name 名字
      */
-    attr(name: string): object | undefined;
+    attr(name: string): any;
 
     /**
      * 获取属性或默认值
@@ -136,9 +136,9 @@ export abstract class SessionBase implements Session {
         return this.param("@");
     }
 
-    attrMap(): Map<string, object> {
+    attrMap(): Map<string, any> {
         if (this._attrMap == null) {
-            this._attrMap = new Map<string, object>();
+            this._attrMap = new Map<string, any>();
         }
 
         return this._attrMap;
@@ -152,7 +152,7 @@ export abstract class SessionBase implements Session {
         return this._attrMap.has(name);
     }
 
-    attr(name: string): object | undefined {
+    attr(name: string): any {
         if (this._attrMap == null) {
             return null;
         }

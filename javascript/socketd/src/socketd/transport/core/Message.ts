@@ -1,7 +1,7 @@
 
 import {Constants, Flags} from "./Constants";
 import type {Entity, Reply} from "./Entity";
-import {ArrayBufferCodecReader, CodecReader} from "./Codec";
+import type {CodecReader} from "./Codec";
 
 
 /**

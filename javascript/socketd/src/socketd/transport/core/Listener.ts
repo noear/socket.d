@@ -81,10 +81,10 @@ export class EventListener implements Listener {
     private _eventRouteSelector: RouteSelector<IoBiConsumer<Session, Message>>
 
     constructor(routeSelector?: RouteSelector<IoBiConsumer<Session, Message>>) {
-        if (routeSelector == null) {
-            this._eventRouteSelector = new RouteSelectorDefault();
-        } else {
+        if (routeSelector) {
             this._eventRouteSelector = routeSelector;
+        } else {
+            this._eventRouteSelector = new RouteSelectorDefault();
         }
     }
 
@@ -155,11 +155,11 @@ export class PathListener implements Listener {
      * */
     protected _pathRouteSelector: RouteSelector<Listener>;
 
-    constructor(routeSelector: RouteSelector<Listener>) {
-        if (routeSelector == null) {
-            this._pathRouteSelector = new RouteSelectorDefault();
-        } else {
+    constructor(routeSelector?: RouteSelector<Listener>) {
+        if (routeSelector) {
             this._pathRouteSelector = routeSelector;
+        } else {
+            this._pathRouteSelector = new RouteSelectorDefault();
         }
     }
 

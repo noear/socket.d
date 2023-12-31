@@ -4,6 +4,13 @@ import {Asserts} from "./transport/core/Asserts";
 import {ClientConfig} from "./transport/client/ClientConfig";
 import {ClusterClient} from "./cluster/ClusterClient";
 import {WsClientProvider} from "../socketd_websocket/WsClientProvider";
+import {EntityDefault, StringEntity} from "./transport/core/Entity";
+import {EventListener, Listener, PathListener, PipelineListener, SimpleListener} from "./transport/core/Listener";
+import type {RouteSelector} from "./transport/core/RouteSelector";
+import type {IoBiConsumer} from "./transport/core/Typealias";
+import type {Session} from "./transport/core/Session";
+import type {Message} from "./transport/core/Message";
+import {EntityMetas} from "./transport/core/Constants";
 
 
 export class SocketD {
@@ -78,3 +85,97 @@ export class SocketD {
         return new ClusterClient(serverUrls);
     }
 }
+
+//
+// 下面是快捷接口（对外需要 new 的接口都在了）
+//
+
+/**
+ * 框架版本号
+ */
+export function version():string{
+    return SocketD.version();
+}
+
+/**
+ * 协议版本号
+ */
+export function protocolVersion():string{
+    return SocketD.protocolVersion();
+}
+
+/**
+ * 创建客户端（支持 url 自动识别）
+ *
+ * @param serverUrl 服务器地址
+ */
+export function createClient(serverUrl: string): Client {
+    return SocketD.createClient(serverUrl);
+}
+
+/**
+ * 创建客户端（支持 url 自动识别），如果没有则为 null
+ *
+ * @param serverUrl 服务器地址
+ */
+export function createClientOrNull(serverUrl: string): Client | null {
+    return SocketD.createClientOrNull(serverUrl);
+}
+
+/**
+ * 创建集群客户端
+ *
+ * @param serverUrls 服务端地址
+ */
+export function createClusterClient(serverUrls: string[]): ClusterClient {
+    return SocketD.createClusterClient(serverUrls);
+}
+
+/**
+ * 创建实体
+ * */
+export function newEntity():EntityDefault {
+    return new EntityDefault();
+}
+
+/**
+ * 创建字符串实体
+ * */
+export function newStringEntity(data:string):StringEntity {
+    return new StringEntity(data);
+}
+
+/**
+ * 创建简单临听器
+ * */
+export function newSimpleListener():SimpleListener {
+    return new SimpleListener();
+}
+
+/**
+ * 创建事件监听器
+ * */
+export function newEventListener(routeSelector?: RouteSelector<IoBiConsumer<Session, Message>>):EventListener{
+    return new EventListener(routeSelector);
+}
+
+
+/**
+ * 创建路径监听器（一般用于服务端）
+ * */
+export function newPathListener(routeSelector?: RouteSelector<Listener>):PathListener{
+    return new PathListener(routeSelector);
+}
+
+/**
+ * 创建管道监听器
+ * */
+export function newPipelineListener():PipelineListener {
+    return new PipelineListener();
+}
+
+/**
+ * 元信息字典
+ * */
+export const Metas = EntityMetas;
+

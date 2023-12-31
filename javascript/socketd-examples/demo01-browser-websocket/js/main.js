@@ -9,7 +9,7 @@ async function open(callback) {
         return;
     }
     window.clientSession = await SocketD.createClient(serverUrl)
-        .listen(new EventListener().doOnMessage((s,m)=>{
+        .listen(SocketD.newEventListener().doOnMessage((s,m)=>{
             appendToMessageList('收到推送', m.dataAsString());
         }))
         .open();
@@ -32,13 +32,14 @@ function send(type) {
 
     if (type == 1) {
         appendToMessageList('发送并请求', input);
-        clientSession.sendAndRequest("/demo", new StringEntity(input), reply => {
+        clientSession.sendAndRequest("/demo", SocketD.newStringEntity(input), reply => {
             console.log('reply', reply);
             appendToMessageList('答复', reply.dataAsString());
         }, 3000);
     } else if (type == 2) {
         appendToMessageList('发送并订阅', input);
-        clientSession.sendAndSubscribe("/demo", new StringEntity(input), reply => {
+        clientSession.sendAndSubscribe("/demo", SocketD.newStringEntity(input)
+            .metaPut(SocketD.Metas.META_RANGE_SIZE,"3"), reply => {
             console.log('reply', reply);
             if(reply.isEnd()){
                 appendToMessageList('答复结束', reply.dataAsString());
@@ -48,7 +49,7 @@ function send(type) {
         }, 3000);
     } else {
         appendToMessageList('发送', input);
-        clientSession.send("/demo", new StringEntity(input));
+        clientSession.send("/demo", SocketD.newStringEntity(input));
     }
 }
 
@@ -59,10 +60,8 @@ function appendToMessageList(hint, msg) {
 }
 
 function main() {
-    require(['socketd/SocketD','socketd/transport/core/Entity','socketd/transport/core/Listener'], (sd,en,ls) => {
-        window.SocketD = sd.SocketD;
-        window.StringEntity = en.StringEntity;
-        window.EventListener = ls.EventListener;
+    require(['socketd/SocketD'], (SocketD) => {
+        window.SocketD = SocketD;
         mainDo();
     });
 }
@@ -110,13 +109,13 @@ function mainDo(){
 
     push.addEventListener("click", () => {
         if (isOpen) {
-            clientSession.send("/push", new StringEntity(""));
+            clientSession.send("/push", SocketD.newStringEntity(""));
         }
     });
 
     unpush.addEventListener("click", () => {
         if (isOpen) {
-            clientSession.send("/unpush", new StringEntity(""))
+            clientSession.send("/unpush", SocketD.newStringEntity(""))
         }
     });
 }

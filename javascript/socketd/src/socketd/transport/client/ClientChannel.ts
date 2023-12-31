@@ -167,7 +167,9 @@ export class ClientChannel extends ChannelBase implements Channel {
     close(code: number) {
         RunUtils.runAndTry(() => window.clearInterval(this._heartbeatScheduledFuture));
         RunUtils.runAndTry(() => this._connector.close());
-        RunUtils.runAndTry(() => this._real.close(code));
+        if (this._real) {
+            RunUtils.runAndTry(() => this._real!.close(code));
+        }
         super.close(code);
     }
 

@@ -17,12 +17,12 @@ export interface Channel {
     /**
      * 获取附件
      */
-    getAttachment<T>(name: string): T | undefined;
+    getAttachment<T>(name: string): T | null;
 
     /**
      * 放置附件
      */
-    putAttachment(name: string, val: object);
+    putAttachment(name: string, val: object|null);
 
     /**
      * 是否有效
@@ -157,11 +157,11 @@ export abstract class  ChannelBase implements Channel {
         this._isClosed = 0;
     }
 
-    getAttachment<T>(name: string): T | undefined {
+    getAttachment<T>(name: string): T | null {
         return this._attachments.get(name);
     }
 
-    putAttachment(name: string, val: object) {
+    putAttachment(name: string, val: object|null) {
         if (val == null) {
             this._attachments.delete(name);
         } else {

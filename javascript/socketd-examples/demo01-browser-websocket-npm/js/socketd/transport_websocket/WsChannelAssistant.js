@@ -1,14 +1,17 @@
-import { ArrayBufferCodecReader, ArrayBufferCodecWriter } from "../socketd/transport/core/Codec";
-export class WsChannelAssistant {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WsChannelAssistant = void 0;
+const Codec_1 = require("../transport/core/Codec");
+class WsChannelAssistant {
     constructor(config) {
         this._config = config;
     }
     read(buffer) {
-        return this._config.getCodec().read(new ArrayBufferCodecReader(buffer));
+        return this._config.getCodec().read(new Codec_1.ArrayBufferCodecReader(buffer));
     }
     write(target, frame) {
         let tmp = this._config.getCodec()
-            .write(frame, n => new ArrayBufferCodecWriter(n));
+            .write(frame, n => new Codec_1.ArrayBufferCodecWriter(n));
         target.send(tmp.getBuffer());
     }
     isValid(target) {
@@ -24,3 +27,4 @@ export class WsChannelAssistant {
         throw new Error("Method not implemented.");
     }
 }
+exports.WsChannelAssistant = WsChannelAssistant;

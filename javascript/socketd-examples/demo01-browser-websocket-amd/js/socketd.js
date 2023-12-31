@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-define("socketd/utils/StrUtils", ["require", "exports"], function (require, exports) {
+define("utils/StrUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StrUtils = void 0;
@@ -50,11 +50,11 @@ define("socketd/utils/StrUtils", ["require", "exports"], function (require, expo
     }
     exports.StrUtils = StrUtils;
 });
-define("socketd/transport/core/Typealias", ["require", "exports"], function (require, exports) {
+define("transport/core/Typealias", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/core/Buffer", ["require", "exports"], function (require, exports) {
+define("transport/core/Buffer", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BlobBuffer = exports.ByteBuffer = void 0;
@@ -144,7 +144,7 @@ define("socketd/transport/core/Buffer", ["require", "exports"], function (requir
     }
     exports.BlobBuffer = BlobBuffer;
 });
-define("socketd/transport/core/Constants", ["require", "exports", "socketd/transport/core/Buffer"], function (require, exports, Buffer_1) {
+define("transport/core/Constants", ["require", "exports", "transport/core/Buffer"], function (require, exports, Buffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EntityMetas = exports.Flags = exports.Constants = void 0;
@@ -357,7 +357,7 @@ define("socketd/transport/core/Constants", ["require", "exports", "socketd/trans
         META_RANGE_SIZE: "Data-Range-Size",
     };
 });
-define("socketd/transport/core/Message", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_1) {
+define("transport/core/Message", ["require", "exports", "transport/core/Constants"], function (require, exports, Constants_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MessageDefault = exports.MessageBuilder = void 0;
@@ -516,7 +516,7 @@ define("socketd/transport/core/Message", ["require", "exports", "socketd/transpo
     }
     exports.MessageDefault = MessageDefault;
 });
-define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/transport/core/Message", "socketd/SocketD"], function (require, exports, Entity_1, Constants_2, Message_1, SocketD_1) {
+define("transport/core/Frame", ["require", "exports", "transport/core/Entity", "transport/core/Constants", "transport/core/Message", "SocketD"], function (require, exports, Entity_1, Constants_2, Message_1, SocketD_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Frames = exports.Frame = void 0;
@@ -618,7 +618,7 @@ define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport
     }
     exports.Frames = Frames;
 });
-define("socketd/transport/core/Codec", ["require", "exports"], function (require, exports) {
+define("transport/core/Codec", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ArrayBufferCodecWriter = exports.ArrayBufferCodecReader = void 0;
@@ -700,7 +700,7 @@ define("socketd/transport/core/Codec", ["require", "exports"], function (require
     }
     exports.ArrayBufferCodecWriter = ArrayBufferCodecWriter;
 });
-define("socketd/exception/SocketdException", ["require", "exports"], function (require, exports) {
+define("exception/SocketdException", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SocketdTimeoutException = exports.SocketdSizeLimitException = exports.SocketdConnectionException = exports.SocketdCodecException = exports.SocketdChannelException = exports.SocketdAlarmException = exports.SocketdException = void 0;
@@ -793,7 +793,7 @@ define("socketd/exception/SocketdException", ["require", "exports"], function (r
     }
     exports.SocketdTimeoutException = SocketdTimeoutException;
 });
-define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/StrUtils", "socketd/transport/core/Codec", "socketd/transport/core/Constants", "socketd/transport/core/Buffer", "socketd/exception/SocketdException"], function (require, exports, StrUtils_1, Codec_1, Constants_3, Buffer_2, SocketdException_1) {
+define("transport/core/Entity", ["require", "exports", "utils/StrUtils", "transport/core/Codec", "transport/core/Constants", "transport/core/Buffer", "exception/SocketdException"], function (require, exports, StrUtils_1, Codec_1, Constants_3, Buffer_2, SocketdException_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FileEntity = exports.StringEntity = exports.EntityDefault = void 0;
@@ -990,7 +990,7 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
     }
     exports.FileEntity = FileEntity;
 });
-define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Constants_4, SocketdException_2) {
+define("transport/core/Asserts", ["require", "exports", "transport/core/Constants", "exception/SocketdException"], function (require, exports, Constants_4, SocketdException_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Asserts = void 0;
@@ -1045,7 +1045,7 @@ define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transpo
     }
     exports.Asserts = Asserts;
 });
-define("socketd/transport/core/Stream", ["require", "exports", "socketd/exception/SocketdException", "socketd/transport/core/Asserts"], function (require, exports, SocketdException_3, Asserts_1) {
+define("transport/core/Stream", ["require", "exports", "exception/SocketdException", "transport/core/Asserts"], function (require, exports, SocketdException_3, Asserts_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamMangerDefault = exports.StreamSubscribe = exports.StreamRequest = exports.StreamBase = void 0;
@@ -1203,7 +1203,7 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
     }
     exports.StreamMangerDefault = StreamMangerDefault;
 });
-define("socketd/transport/core/IdGenerator", ["require", "exports", "socketd/utils/StrUtils"], function (require, exports, StrUtils_2) {
+define("transport/core/IdGenerator", ["require", "exports", "utils/StrUtils"], function (require, exports, StrUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GuidGenerator = void 0;
@@ -1214,7 +1214,7 @@ define("socketd/transport/core/IdGenerator", ["require", "exports", "socketd/uti
     }
     exports.GuidGenerator = GuidGenerator;
 });
-define("socketd/transport/core/FragmentHolder", ["require", "exports"], function (require, exports) {
+define("transport/core/FragmentHolder", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentHolder = void 0;
@@ -1238,7 +1238,7 @@ define("socketd/transport/core/FragmentHolder", ["require", "exports"], function
     }
     exports.FragmentHolder = FragmentHolder;
 });
-define("socketd/transport/core/FragmentAggregator", ["require", "exports", "socketd/transport/core/Message", "socketd/transport/core/Entity", "socketd/transport/core/Frame", "socketd/transport/core/FragmentHolder", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Message_2, Entity_2, Frame_1, FragmentHolder_1, Constants_5, SocketdException_4) {
+define("transport/core/FragmentAggregator", ["require", "exports", "transport/core/Message", "transport/core/Entity", "transport/core/Frame", "transport/core/FragmentHolder", "transport/core/Constants", "exception/SocketdException"], function (require, exports, Message_2, Entity_2, Frame_1, FragmentHolder_1, Constants_5, SocketdException_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentAggregatorDefault = void 0;
@@ -1325,7 +1325,7 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
     }
     exports.FragmentAggregatorDefault = FragmentAggregatorDefault;
 });
-define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/transport/core/FragmentAggregator"], function (require, exports, Entity_3, Constants_6, FragmentAggregator_1) {
+define("transport/core/FragmentHandler", ["require", "exports", "transport/core/Entity", "transport/core/Constants", "transport/core/FragmentAggregator"], function (require, exports, Entity_3, Constants_6, FragmentAggregator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentHandlerDefault = void 0;
@@ -1402,7 +1402,7 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
     }
     exports.FragmentHandlerDefault = FragmentHandlerDefault;
 });
-define("socketd/transport/core/CodecByteBuffer", ["require", "exports", "socketd/transport/core/Frame", "socketd/utils/StrUtils", "socketd/transport/core/Asserts", "socketd/transport/core/Constants", "socketd/transport/core/Message", "socketd/transport/core/Entity"], function (require, exports, Frame_2, StrUtils_3, Asserts_2, Constants_7, Message_3, Entity_4) {
+define("transport/core/CodecByteBuffer", ["require", "exports", "transport/core/Frame", "utils/StrUtils", "transport/core/Asserts", "transport/core/Constants", "transport/core/Message", "transport/core/Entity"], function (require, exports, Frame_2, StrUtils_3, Asserts_2, Constants_7, Message_3, Entity_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CodecByteBuffer = void 0;
@@ -1546,7 +1546,7 @@ define("socketd/transport/core/CodecByteBuffer", ["require", "exports", "socketd
     }
     exports.CodecByteBuffer = CodecByteBuffer;
 });
-define("socketd/transport/core/Config", ["require", "exports", "socketd/transport/core/Stream", "socketd/transport/core/IdGenerator", "socketd/transport/core/FragmentHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/transport/core/CodecByteBuffer"], function (require, exports, Stream_1, IdGenerator_1, FragmentHandler_1, Constants_8, Asserts_3, CodecByteBuffer_1) {
+define("transport/core/Config", ["require", "exports", "transport/core/Stream", "transport/core/IdGenerator", "transport/core/FragmentHandler", "transport/core/Constants", "transport/core/Asserts", "transport/core/CodecByteBuffer"], function (require, exports, Stream_1, IdGenerator_1, FragmentHandler_1, Constants_8, Asserts_3, CodecByteBuffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConfigBase = void 0;
@@ -1766,11 +1766,11 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
     }
     exports.ConfigBase = ConfigBase;
 });
-define("socketd/transport/core/Handshake", ["require", "exports"], function (require, exports) {
+define("transport/core/Handshake", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/core/Channel", ["require", "exports", "socketd/transport/core/Frame"], function (require, exports, Frame_3) {
+define("transport/core/Channel", ["require", "exports", "transport/core/Frame"], function (require, exports, Frame_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ChannelBase = void 0;
@@ -1828,11 +1828,11 @@ define("socketd/transport/core/Channel", ["require", "exports", "socketd/transpo
     }
     exports.ChannelBase = ChannelBase;
 });
-define("socketd/transport/client/ClientSession", ["require", "exports"], function (require, exports) {
+define("transport/client/ClientSession", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/core/Session", ["require", "exports"], function (require, exports) {
+define("transport/core/Session", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SessionBase = void 0;
@@ -1883,7 +1883,7 @@ define("socketd/transport/core/Session", ["require", "exports"], function (requi
     }
     exports.SessionBase = SessionBase;
 });
-define("socketd/transport/core/RouteSelector", ["require", "exports"], function (require, exports) {
+define("transport/core/RouteSelector", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RouteSelectorDefault = void 0;
@@ -1931,7 +1931,7 @@ define("socketd/transport/core/RouteSelector", ["require", "exports"], function 
     }
     exports.RouteSelectorDefault = RouteSelectorDefault;
 });
-define("socketd/transport/core/Listener", ["require", "exports", "socketd/transport/core/RouteSelector"], function (require, exports, RouteSelector_1) {
+define("transport/core/Listener", ["require", "exports", "transport/core/RouteSelector"], function (require, exports, RouteSelector_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.PipelineListener = exports.PathListener = exports.EventListener = exports.SimpleListener = void 0;
@@ -2142,7 +2142,7 @@ define("socketd/transport/core/Listener", ["require", "exports", "socketd/transp
     }
     exports.PipelineListener = PipelineListener;
 });
-define("socketd/transport/client/ClientConfig", ["require", "exports", "socketd/transport/core/Config"], function (require, exports, Config_1) {
+define("transport/client/ClientConfig", ["require", "exports", "transport/core/Config"], function (require, exports, Config_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientConfig = void 0;
@@ -2269,7 +2269,7 @@ define("socketd/transport/client/ClientConfig", ["require", "exports", "socketd/
     }
     exports.ClientConfig = ClientConfig;
 });
-define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_9) {
+define("transport/core/HandshakeDefault", ["require", "exports", "transport/core/Constants"], function (require, exports, Constants_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HandshakeDefault = void 0;
@@ -2308,7 +2308,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
     }
     exports.HandshakeDefault = HandshakeDefault;
 });
-define("socketd/transport/core/Processor", ["require", "exports", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException", "socketd/transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_10, SocketdException_5, HandshakeDefault_1) {
+define("transport/core/Processor", ["require", "exports", "transport/core/Listener", "transport/core/Constants", "exception/SocketdException", "transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_10, SocketdException_5, HandshakeDefault_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ProcessorDefault = void 0;
@@ -2466,11 +2466,11 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
     }
     exports.ProcessorDefault = ProcessorDefault;
 });
-define("socketd/transport/core/ChannelAssistant", ["require", "exports"], function (require, exports) {
+define("transport/core/ChannelAssistant", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/client/ClientConnector", ["require", "exports"], function (require, exports) {
+define("transport/client/ClientConnector", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientConnectorBase = void 0;
@@ -2496,7 +2496,7 @@ define("socketd/transport/client/ClientConnector", ["require", "exports"], funct
     }
     exports.ClientConnectorBase = ClientConnectorBase;
 });
-define("socketd/transport/core/HeartbeatHandler", ["require", "exports"], function (require, exports) {
+define("transport/core/HeartbeatHandler", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HeartbeatHandlerDefault = void 0;
@@ -2515,7 +2515,7 @@ define("socketd/transport/core/HeartbeatHandler", ["require", "exports"], functi
     }
     exports.HeartbeatHandlerDefault = HeartbeatHandlerDefault;
 });
-define("socketd/utils/RunUtils", ["require", "exports"], function (require, exports) {
+define("utils/RunUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.RunUtils = void 0;
@@ -2530,7 +2530,7 @@ define("socketd/utils/RunUtils", ["require", "exports"], function (require, expo
     }
     exports.RunUtils = RunUtils;
 });
-define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd/transport/core/Channel", "socketd/transport/core/HeartbeatHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/exception/SocketdException", "socketd/utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_11, Asserts_4, SocketdException_6, RunUtils_1) {
+define("transport/client/ClientChannel", ["require", "exports", "transport/core/Channel", "transport/core/HeartbeatHandler", "transport/core/Constants", "transport/core/Asserts", "exception/SocketdException", "utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_11, Asserts_4, SocketdException_6, RunUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientChannel = void 0;
@@ -2687,7 +2687,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
     }
     exports.ClientChannel = ClientChannel;
 });
-define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/transport/core/Session", "socketd/transport/core/Message", "socketd/transport/core/Frame", "socketd/transport/core/Constants", "socketd/transport/core/Stream"], function (require, exports, Session_1, Message_4, Frame_4, Constants_12, Stream_2) {
+define("transport/core/SessionDefault", ["require", "exports", "transport/core/Session", "transport/core/Message", "transport/core/Frame", "transport/core/Constants", "transport/core/Stream"], function (require, exports, Session_1, Message_4, Frame_4, Constants_12, Stream_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SessionDefault = void 0;
@@ -2850,7 +2850,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
     }
     exports.SessionDefault = SessionDefault;
 });
-define("socketd/transport/client/Client", ["require", "exports", "socketd/transport/core/Processor", "socketd/transport/client/ClientChannel", "socketd/transport/core/SessionDefault"], function (require, exports, Processor_1, ClientChannel_1, SessionDefault_1) {
+define("transport/client/Client", ["require", "exports", "transport/core/Processor", "transport/client/ClientChannel", "transport/core/SessionDefault"], function (require, exports, Processor_1, ClientChannel_1, SessionDefault_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientBase = void 0;
@@ -2945,11 +2945,11 @@ define("socketd/transport/client/Client", ["require", "exports", "socketd/transp
     }
     exports.ClientBase = ClientBase;
 });
-define("socketd/transport/client/ClientProvider", ["require", "exports"], function (require, exports) {
+define("transport/client/ClientProvider", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/utils/StrUtils", "socketd/exception/SocketdException", "socketd/transport/client/ClientChannel", "socketd/utils/RunUtils"], function (require, exports, StrUtils_4, SocketdException_7, ClientChannel_2, RunUtils_2) {
+define("cluster/ClusterClientSession", ["require", "exports", "utils/StrUtils", "exception/SocketdException", "transport/client/ClientChannel", "utils/RunUtils"], function (require, exports, StrUtils_4, SocketdException_7, ClientChannel_2, RunUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClientSession = void 0;
@@ -3073,7 +3073,7 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
     }
     exports.ClusterClientSession = ClusterClientSession;
 });
-define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/cluster/ClusterClientSession", "socketd/SocketD"], function (require, exports, ClusterClientSession_1, SocketD_2) {
+define("cluster/ClusterClient", ["require", "exports", "cluster/ClusterClientSession", "SocketD"], function (require, exports, ClusterClientSession_1, SocketD_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClient = void 0;
@@ -3136,7 +3136,7 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/cluster/
     }
     exports.ClusterClient = ClusterClient;
 });
-define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd/transport/core/Codec"], function (require, exports, Codec_2) {
+define("transport_websocket/WsChannelAssistant", ["require", "exports", "transport/core/Codec"], function (require, exports, Codec_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WsChannelAssistant = void 0;
@@ -3167,7 +3167,7 @@ define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd/t
     }
     exports.WsChannelAssistant = WsChannelAssistant;
 });
-define("socketd/transport/client/ClientHandshakeResult", ["require", "exports"], function (require, exports) {
+define("transport/client/ClientHandshakeResult", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientHandshakeResult = void 0;
@@ -3191,11 +3191,11 @@ define("socketd/transport/client/ClientHandshakeResult", ["require", "exports"],
     }
     exports.ClientHandshakeResult = ClientHandshakeResult;
 });
-define("socketd/transport/core/ChannelSupporter", ["require", "exports"], function (require, exports) {
+define("transport/core/ChannelSupporter", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/transport/core/Frame", "socketd/transport/core/Message", "socketd/transport/core/Constants", "socketd/transport/core/Channel", "socketd/transport/core/SessionDefault"], function (require, exports, Frame_5, Message_5, Constants_13, Channel_2, SessionDefault_2) {
+define("transport/core/ChannelDefault", ["require", "exports", "transport/core/Frame", "transport/core/Message", "transport/core/Constants", "transport/core/Channel", "transport/core/SessionDefault"], function (require, exports, Frame_5, Message_5, Constants_13, Channel_2, SessionDefault_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ChannelDefault = void 0;
@@ -3310,7 +3310,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
     }
     exports.ChannelDefault = ChannelDefault;
 });
-define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "socketd/transport/client/ClientHandshakeResult", "socketd/transport/core/ChannelDefault", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_14, SocketdException_8) {
+define("transport_websocket/impl/WebSocketClientImpl", ["require", "exports", "transport/client/ClientHandshakeResult", "transport/core/ChannelDefault", "transport/core/Constants", "exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_14, SocketdException_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebSocketClientImpl = void 0;
@@ -3375,7 +3375,7 @@ define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "soc
     }
     exports.WebSocketClientImpl = WebSocketClientImpl;
 });
-define("socketd_websocket/WsClientConnector", ["require", "exports", "socketd/transport/client/ClientConnector", "socketd_websocket/impl/WebSocketClientImpl"], function (require, exports, ClientConnector_1, WebSocketClientImpl_1) {
+define("transport_websocket/WsClientConnector", ["require", "exports", "transport/client/ClientConnector", "transport_websocket/impl/WebSocketClientImpl"], function (require, exports, ClientConnector_1, WebSocketClientImpl_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WsClientConnector = void 0;
@@ -3407,7 +3407,7 @@ define("socketd_websocket/WsClientConnector", ["require", "exports", "socketd/tr
     }
     exports.WsClientConnector = WsClientConnector;
 });
-define("socketd_websocket/WsClient", ["require", "exports", "socketd/transport/client/Client", "socketd_websocket/WsChannelAssistant", "socketd_websocket/WsClientConnector"], function (require, exports, Client_1, WsChannelAssistant_1, WsClientConnector_1) {
+define("transport_websocket/WsClient", ["require", "exports", "transport/client/Client", "transport_websocket/WsChannelAssistant", "transport_websocket/WsClientConnector"], function (require, exports, Client_1, WsChannelAssistant_1, WsClientConnector_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WsClient = void 0;
@@ -3421,7 +3421,7 @@ define("socketd_websocket/WsClient", ["require", "exports", "socketd/transport/c
     }
     exports.WsClient = WsClient;
 });
-define("socketd_websocket/WsClientProvider", ["require", "exports", "socketd_websocket/WsClient"], function (require, exports, WsClient_1) {
+define("transport_websocket/WsClientProvider", ["require", "exports", "transport_websocket/WsClient"], function (require, exports, WsClient_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WsClientProvider = void 0;
@@ -3435,7 +3435,7 @@ define("socketd_websocket/WsClientProvider", ["require", "exports", "socketd_web
     }
     exports.WsClientProvider = WsClientProvider;
 });
-define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15) {
+define("SocketD", ["require", "exports", "transport/core/Asserts", "transport/client/ClientConfig", "cluster/ClusterClient", "transport_websocket/WsClientProvider", "transport/core/Entity", "transport/core/Listener", "transport/core/Constants"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = void 0;

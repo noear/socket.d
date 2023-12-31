@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WsClientConnector = void 0;
-const ClientConnector_1 = require("../socketd/transport/client/ClientConnector");
+const ClientConnector_1 = require("../transport/client/ClientConnector");
 const WebSocketClientImpl_1 = require("./impl/WebSocketClientImpl");
 class WsClientConnector extends ClientConnector_1.ClientConnectorBase {
     constructor(client) {

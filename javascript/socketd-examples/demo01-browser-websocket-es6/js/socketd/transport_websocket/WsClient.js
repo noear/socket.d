@@ -1,4 +1,4 @@
-import { ClientBase } from "../socketd/transport/client/Client";
+import { ClientBase } from "../transport/client/Client";
 import { WsChannelAssistant } from "./WsChannelAssistant";
 import { WsClientConnector } from "./WsClientConnector";
 export class WsClient extends ClientBase {

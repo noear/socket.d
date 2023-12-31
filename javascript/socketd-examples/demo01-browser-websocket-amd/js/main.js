@@ -61,7 +61,7 @@ function appendToMessageList(hint, msg) {
 }
 
 function main() {
-    require(['socketd/SocketD'], (SocketD) => {
+    require(['SocketD'], (SocketD) => {
         window.SocketD = SocketD;
         mainDo();
     });

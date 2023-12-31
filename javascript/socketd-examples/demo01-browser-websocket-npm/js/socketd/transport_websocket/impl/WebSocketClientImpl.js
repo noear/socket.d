@@ -1,12 +1,15 @@
-import { ClientHandshakeResult } from "../../socketd/transport/client/ClientHandshakeResult";
-import { ChannelDefault } from "../../socketd/transport/core/ChannelDefault";
-import { Flags } from "../../socketd/transport/core/Constants";
-import { SocketdConnectionException } from "../../socketd/exception/SocketdException";
-export class WebSocketClientImpl {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WebSocketClientImpl = void 0;
+const ClientHandshakeResult_1 = require("../../transport/client/ClientHandshakeResult");
+const ChannelDefault_1 = require("../../transport/core/ChannelDefault");
+const Constants_1 = require("../../transport/core/Constants");
+const SocketdException_1 = require("../../exception/SocketdException");
+class WebSocketClientImpl {
     constructor(url, client, handshakeFuture) {
         this._real = new WebSocket(url);
         this._client = client;
-        this._channel = new ChannelDefault(this._real, client);
+        this._channel = new ChannelDefault_1.ChannelDefault(this._real, client);
         this._handshakeFuture = handshakeFuture;
         this._real.binaryType = "arraybuffer";
         this._real.onopen = this.onOpen.bind(this);
@@ -30,13 +33,13 @@ export class WebSocketClientImpl {
             try {
                 let frame = this._client.getAssistant().read(e.data);
                 if (frame != null) {
-                    if (frame.flag() == Flags.Connack) {
+                    if (frame.flag() == Constants_1.Flags.Connack) {
                         this._channel.onOpenFuture((r, err) => {
                             if (err == null) {
-                                this._handshakeFuture(new ClientHandshakeResult(this._channel, null));
+                                this._handshakeFuture(new ClientHandshakeResult_1.ClientHandshakeResult(this._channel, null));
                             }
                             else {
-                                this._handshakeFuture(new ClientHandshakeResult(this._channel, err));
+                                this._handshakeFuture(new ClientHandshakeResult_1.ClientHandshakeResult(this._channel, err));
                             }
                         });
                     }
@@ -44,8 +47,8 @@ export class WebSocketClientImpl {
                 }
             }
             catch (e) {
-                if (e instanceof SocketdConnectionException) {
-                    this._handshakeFuture(new ClientHandshakeResult(this._channel, e));
+                if (e instanceof SocketdException_1.SocketdConnectionException) {
+                    this._handshakeFuture(new ClientHandshakeResult_1.ClientHandshakeResult(this._channel, e));
                 }
                 console.warn("WebSocket client onMessage error", e);
             }
@@ -61,3 +64,4 @@ export class WebSocketClientImpl {
         this._real.close();
     }
 }
+exports.WebSocketClientImpl = WebSocketClientImpl;

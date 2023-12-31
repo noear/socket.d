@@ -1,4 +1,4 @@
-import { ClientConnectorBase } from "../socketd/transport/client/ClientConnector";
+import { ClientConnectorBase } from "../transport/client/ClientConnector";
 import { WebSocketClientImpl } from "./impl/WebSocketClientImpl";
 export class WsClientConnector extends ClientConnectorBase {
     constructor(client) {

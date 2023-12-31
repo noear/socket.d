@@ -1,6 +1,6 @@
-import type { Client } from "../socketd/transport/client/Client";
-import type { ClientConfig } from "../socketd/transport/client/ClientConfig";
-import type {ClientProvider} from "../socketd/transport/client/ClientProvider";
+import type { Client } from "../transport/client/Client";
+import type { ClientConfig } from "../transport/client/ClientConfig";
+import type {ClientProvider} from "../transport/client/ClientProvider";
 import {WsClient} from "./WsClient";
 
 export class WsClientProvider implements ClientProvider {

@@ -5,7 +5,7 @@
     "module": "amd",
     "target": "es6",
 
-    "declaration": true,
+    "declaration": false,
     "esModuleInterop": true,
 
     "incremental": true,

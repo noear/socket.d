@@ -4,7 +4,7 @@ exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.
 const Asserts_1 = require("./transport/core/Asserts");
 const ClientConfig_1 = require("./transport/client/ClientConfig");
 const ClusterClient_1 = require("./cluster/ClusterClient");
-const WsClientProvider_1 = require("../socketd_websocket/WsClientProvider");
+const WsClientProvider_1 = require("./transport_websocket/WsClientProvider");
 const Entity_1 = require("./transport/core/Entity");
 const Listener_1 = require("./transport/core/Listener");
 const Constants_1 = require("./transport/core/Constants");

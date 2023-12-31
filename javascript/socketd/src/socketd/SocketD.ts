@@ -3,7 +3,7 @@ import type {ClientProvider} from "./transport/client/ClientProvider";
 import {Asserts} from "./transport/core/Asserts";
 import {ClientConfig} from "./transport/client/ClientConfig";
 import {ClusterClient} from "./cluster/ClusterClient";
-import {WsClientProvider} from "../socketd_websocket/WsClientProvider";
+import {WsClientProvider} from "./transport_websocket/WsClientProvider";
 import {EntityDefault, FileEntity, StringEntity} from "./transport/core/Entity";
 import {EventListener, Listener, PathListener, PipelineListener, SimpleListener} from "./transport/core/Listener";
 import type {RouteSelector} from "./transport/core/RouteSelector";

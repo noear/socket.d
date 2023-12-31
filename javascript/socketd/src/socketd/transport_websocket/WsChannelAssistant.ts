@@ -1,7 +1,7 @@
-import type {ChannelAssistant} from "../socketd/transport/core/ChannelAssistant";
-import type {Frame} from "../socketd/transport/core/Frame";
-import type {Config} from "../socketd/transport/core/Config";
-import {ArrayBufferCodecReader, ArrayBufferCodecWriter} from "../socketd/transport/core/Codec";
+import type {ChannelAssistant} from "../transport/core/ChannelAssistant";
+import type {Frame} from "../transport/core/Frame";
+import type {Config} from "../transport/core/Config";
+import {ArrayBufferCodecReader, ArrayBufferCodecWriter} from "../transport/core/Codec";
 
 export class WsChannelAssistant implements ChannelAssistant<WebSocket> {
     _config: Config;

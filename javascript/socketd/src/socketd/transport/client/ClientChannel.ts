@@ -19,7 +19,7 @@ export class ClientChannel extends ChannelBase implements Channel {
     private _connector: ClientConnector;
     private _real: Channel | null;
     private  _heartbeatHandler: HeartbeatHandler;
-    private _heartbeatScheduledFuture: number;
+    private _heartbeatScheduledFuture: any;
 
     constructor(real: Channel, connector: ClientConnector) {
         super(real.getConfig());
@@ -45,7 +45,7 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
 
         if (this._connector.autoReconnect()) {
-            this._heartbeatScheduledFuture = window.setInterval(() => {
+            this._heartbeatScheduledFuture = setInterval(() => {
                 try {
                     this.heartbeatHandle();
                 } catch (e) {

@@ -80,7 +80,7 @@ export interface StreamInternal extends Stream {
  */
 export abstract class StreamBase implements StreamInternal {
     //保险任务
-    private  _insuranceFuture: number;
+    private  _insuranceFuture: any;
     private _sid: string;
     private _isSingle: boolean;
     private _timeout: number;
@@ -119,11 +119,11 @@ export abstract class StreamBase implements StreamInternal {
      * @param streamTimeout 流超时
      */
     insuranceStart(streamManger: StreamMangerDefault, streamTimeout: number) {
-        if (this._insuranceFuture > 0) {
+        if (this._insuranceFuture) {
             return;
         }
 
-        this._insuranceFuture = window.setTimeout(() => {
+        this._insuranceFuture = setTimeout(() => {
             streamManger.removeStream(this.sid());
             this.onError(new SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
         }, streamTimeout);
@@ -133,8 +133,8 @@ export abstract class StreamBase implements StreamInternal {
      * 保险取消息
      */
     insuranceCancel() {
-        if (this._insuranceFuture > 0) {
-            window.clearTimeout(this._insuranceFuture);
+        if (this._insuranceFuture) {
+            clearTimeout(this._insuranceFuture);
         }
     }
 

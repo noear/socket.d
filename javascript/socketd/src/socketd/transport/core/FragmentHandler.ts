@@ -58,7 +58,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
                 //获取分片
                 fragmentIndex++;
 
-                message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
+                const isOk = message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
                     if (dataBuffer == null || dataBuffer.byteLength == 0) {
                         return;
                     }
@@ -70,7 +70,11 @@ export class FragmentHandlerDefault implements FragmentHandler {
                     fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
 
                     consumer(fragmentEntity);
-                })
+                });
+
+                if (!isOk) {
+                    return;
+                }
             }
         } else {
             consumer(message);

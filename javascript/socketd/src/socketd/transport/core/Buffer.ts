@@ -27,7 +27,7 @@ export interface Buffer {
     /**
      * 获取数据
      * */
-    getBytes(length: number, callback: IoConsumer<ArrayBuffer>);
+    getBytes(length: number, callback: IoConsumer<ArrayBuffer>) : boolean;
 
     /**
      * 获取 blob?
@@ -61,7 +61,7 @@ export class ByteBuffer implements Buffer {
     reset() {
         this._bufViewIdx = 0;
     }
-    getBytes(length: number, callback: IoConsumer<ArrayBuffer>) {
+    getBytes(length: number, callback: IoConsumer<ArrayBuffer>) : boolean {
         if (!this._bufView) {
             this._bufView = new DataView(this._buf);
         }
@@ -72,7 +72,7 @@ export class ByteBuffer implements Buffer {
         }
 
         if (tmpSize <= 0) {
-            return;
+            return false;
         }
 
         const tmp = new ArrayBuffer(tmpSize);
@@ -84,6 +84,7 @@ export class ByteBuffer implements Buffer {
         }
 
         callback(tmp);
+        return true;
     }
 
     getBlob(): Blob | null {
@@ -115,14 +116,14 @@ export class BlobBuffer implements Buffer {
     reset() {
         this._bufIdx = 0;
     }
-    getBytes(length: number, callback: IoConsumer<ArrayBuffer>) {
+    getBytes(length: number, callback: IoConsumer<ArrayBuffer>) : boolean {
         let tmpSize = this.remaining();
         if (tmpSize > length) {
             tmpSize = length;
         }
 
         if (tmpSize <= 0) {
-            return;
+            return false;
         }
 
         let tmp = this._buf.slice(this._bufIdx, tmpSize);
@@ -135,6 +136,8 @@ export class BlobBuffer implements Buffer {
             }
         };
         tmpReader.readAsArrayBuffer(tmp);
+
+        return true;
     }
 
     getBlob(): Blob | null {

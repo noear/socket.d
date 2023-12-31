@@ -27,7 +27,7 @@ const clientProviderMap: Map<String, ClientProvider> = new Map<String, ClientPro
  * 框架版本号
  */
 export function version():string{
-    return "2.2.1";
+    return "2.2.2";
 }
 
 /**
@@ -87,19 +87,17 @@ export function createClusterClient(serverUrls: string[]): ClusterClient {
 /**
  * 创建实体
  * */
-export function newEntity(data?:String | File | ArrayBuffer):EntityDefault {
+export function newEntity(data?:String | Blob | ArrayBuffer):EntityDefault {
     if (!data) {
         return new EntityDefault();
     } else if (data instanceof File) {
         return new FileEntity(data);
     } else if (data instanceof ArrayBuffer) {
         return new EntityDefault().dataSet(data);
-    } else if (data instanceof String) {
-        return new StringEntity(data.toString());
-    } else if (typeof (data) === 'string') {
-        return new StringEntity(data);
+    } else if (data instanceof Blob) {
+        return new EntityDefault().dataSet(data);
     } else {
-        throw new SocketdException("The type is not supported: " + typeof (data));
+        return new StringEntity(data.toString());
     }
 }
 

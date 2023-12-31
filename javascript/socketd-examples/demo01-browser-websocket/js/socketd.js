@@ -3435,7 +3435,7 @@ define("socketd_websocket/WsClientProvider", ["require", "exports", "socketd_web
     }
     exports.WsClientProvider = WsClientProvider;
 });
-define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15, SocketdException_9) {
+define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = void 0;
@@ -3451,7 +3451,7 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
      * 框架版本号
      */
     function version() {
-        return "2.2.1";
+        return "2.2.2";
     }
     exports.version = version;
     /**
@@ -3520,14 +3520,11 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
         else if (data instanceof ArrayBuffer) {
             return new Entity_5.EntityDefault().dataSet(data);
         }
-        else if (data instanceof String) {
-            return new Entity_5.StringEntity(data.toString());
-        }
-        else if (typeof (data) === 'string') {
-            return new Entity_5.StringEntity(data);
+        else if (data instanceof Blob) {
+            return new Entity_5.EntityDefault().dataSet(data);
         }
         else {
-            throw new SocketdException_9.SocketdException("The type is not supported: " + typeof (data));
+            return new Entity_5.StringEntity(data.toString());
         }
     }
     exports.newEntity = newEntity;

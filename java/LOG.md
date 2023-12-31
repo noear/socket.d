@@ -1,4 +1,8 @@
 
+### 2.2.2
+* 修复 分片时，事件丢失的问题
+* 调整 分片处理改为回调模式。与 js 同步（有更强适应性）
+
 ### 2.2.1
 * 调整 BufferReader 更名为 CodecReader
 * 调整 BufferWriter 更名为 CodecWriter

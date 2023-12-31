@@ -99,12 +99,17 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
                     getConfig().getFragmentHandler().spliFragment(this, message, fragmentEntity -> {
                         //主要是 sid 和 entity
-                        Frame fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
-                                .flag(frame.flag())
-                                .sid(message.sid())
-                                .event(message.event())
-                                .entity(fragmentEntity)
-                                .build());
+                        Frame fragmentFrame;
+                        if (fragmentEntity instanceof MessageInternal) {
+                            fragmentFrame = new Frame(frame.flag(), (MessageInternal) fragmentEntity);
+                        } else {
+                            fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
+                                    .flag(frame.flag())
+                                    .sid(message.sid())
+                                    .event(message.event())
+                                    .entity(fragmentEntity)
+                                    .build());
+                        }
 
                         assistant.write(source, fragmentFrame);
                     });

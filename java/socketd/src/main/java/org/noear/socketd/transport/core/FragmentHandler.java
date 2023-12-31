@@ -14,11 +14,11 @@ public interface FragmentHandler {
     /**
      * 拆割分片
      *
-     * @param channel       通道
-     * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
-     * @param message       总包消息
+     * @param channel  通道
+     * @param message  总包消息
+     * @param consumer 分片消费
      */
-    void spliFragment(Channel channel, MessageInternal message, IoConsumer<Entity> callback) throws IOException;
+    void spliFragment(Channel channel, MessageInternal message, IoConsumer<Entity> consumer) throws IOException;
 
     /**
      * 聚合分片

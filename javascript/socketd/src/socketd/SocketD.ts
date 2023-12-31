@@ -11,7 +11,6 @@ import type {IoBiConsumer} from "./transport/core/Typealias";
 import type {Session} from "./transport/core/Session";
 import type {Message} from "./transport/core/Message";
 import {EntityMetas} from "./transport/core/Constants";
-import {SocketdException} from "./exception/SocketdException";
 
 const clientProviderMap: Map<String, ClientProvider> = new Map<String, ClientProvider>();
 

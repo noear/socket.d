@@ -108,6 +108,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                                 Frame fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
                                         .flag(frame.flag())
                                         .sid(message.sid())
+                                        .event(message.event())
                                         .entity(fragmentEntity)
                                         .build());
 

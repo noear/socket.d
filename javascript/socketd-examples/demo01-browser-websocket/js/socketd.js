@@ -547,10 +547,10 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
          * @param streamTimeout 流超时
          */
         insuranceStart(streamManger, streamTimeout) {
-            if (this._insuranceFuture > 0) {
+            if (this._insuranceFuture) {
                 return;
             }
-            this._insuranceFuture = window.setTimeout(() => {
+            this._insuranceFuture = setTimeout(() => {
                 streamManger.removeStream(this.sid());
                 this.onError(new SocketdException_1.SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
             }, streamTimeout);
@@ -559,8 +559,8 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
          * 保险取消息
          */
         insuranceCancel() {
-            if (this._insuranceFuture > 0) {
-                window.clearTimeout(this._insuranceFuture);
+            if (this._insuranceFuture) {
+                clearTimeout(this._insuranceFuture);
             }
         }
         /**
@@ -2430,7 +2430,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 clearInterval(this._heartbeatScheduledFuture);
             }
             if (this._connector.autoReconnect()) {
-                this._heartbeatScheduledFuture = window.setInterval(() => {
+                this._heartbeatScheduledFuture = setInterval(() => {
                     try {
                         this.heartbeatHandle();
                     }
@@ -2543,7 +2543,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
             this._real.onError(error);
         }
         close(code) {
-            RunUtils_1.RunUtils.runAndTry(() => window.clearInterval(this._heartbeatScheduledFuture));
+            RunUtils_1.RunUtils.runAndTry(() => clearInterval(this._heartbeatScheduledFuture));
             RunUtils_1.RunUtils.runAndTry(() => this._connector.close());
             if (this._real) {
                 RunUtils_1.RunUtils.runAndTry(() => this._real.close(code));

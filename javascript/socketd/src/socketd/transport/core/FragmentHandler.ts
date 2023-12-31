@@ -14,21 +14,22 @@ import type {IoConsumer} from "./Typealias";
  */
 export interface FragmentHandler {
     /**
-     * 获取下个分片
+     * 拆割分片
      *
      * @param channel       通道
      * @param message       总包消息
+     * @param consumer 分片消费
      */
-    spliFragment(channel: Channel, message: MessageInternal, callback:IoConsumer<Entity>);
+    spliFragment(channel: Channel, message: MessageInternal, consumer: IoConsumer<Entity>);
 
     /**
-     * 聚合所有分片
+     * 聚合分片
      *
      * @param channel       通道
      * @param fragmentIndex 分片索引（传过来信息，不一定有顺序）
      * @param message       分片消息
      */
-    aggrFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Frame|null;
+    aggrFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Frame | null;
 
     /**
      * 聚合启用
@@ -44,13 +45,13 @@ export interface FragmentHandler {
  */
 export class FragmentHandlerDefault implements FragmentHandler {
     /**
-     * 获取下个分片
+     * 拆割分片
      *
      * @param channel       通道
-     * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
      * @param message       总包消息
+     * @param consumer 分片消费
      */
-    spliFragment(channel: Channel, message: MessageInternal, callback:IoConsumer<Entity>) {
+    spliFragment(channel: Channel, message: MessageInternal, consumer: IoConsumer<Entity>) {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
             let fragmentIndex = 0;
             while (true) {
@@ -68,23 +69,23 @@ export class FragmentHandlerDefault implements FragmentHandler {
                     }
                     fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
 
-                    callback(fragmentEntity);
+                    consumer(fragmentEntity);
                 })
             }
         } else {
-            callback(message);
+            consumer(message);
         }
     }
 
     /**
-     * 聚合所有分片
+     * 聚合分片
      *
      * @param channel       通道
      * @param fragmentIndex 分片索引（传过来信息，不一定有顺序）
      * @param message       分片消息
      */
-    aggrFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Frame|null {
-        let aggregator: FragmentAggregator|null = channel.getAttachment(message.sid());
+    aggrFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Frame | null {
+        let aggregator: FragmentAggregator | null = channel.getAttachment(message.sid());
         if (!aggregator) {
             aggregator = new FragmentAggregatorDefault(message);
             channel.putAttachment(aggregator.getSid(), aggregator);

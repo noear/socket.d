@@ -77,7 +77,6 @@ export class ByteBuffer implements Buffer {
 
         const tmp = new ArrayBuffer(tmpSize);
         const tmpView = new DataView(tmp);
-        let tmpViewIdx = 0;
 
         for (let i = 0; i < tmpSize; i++) {
             tmpView.setInt8(i, this._bufView.getInt8(this._bufViewIdx));

@@ -118,8 +118,8 @@ export class FragmentAggregatorDefault implements FragmentAggregator {
         let dataBufferViewIdx = 0;
         //添加分片数据
         for (const fh of this._fragmentHolders) {
-            const tmp = new DataView(fh.getMessage().data());
-            for (let i = 0; i < fh.getMessage().data().byteLength; i++) {
+            const tmp = new DataView(fh.getMessage().data().getArray()!);
+            for (let i = 0; i < fh.getMessage().data().size(); i++) {
                 dataBufferView.setInt8(dataBufferViewIdx, tmp.getInt8(i));
                 dataBufferViewIdx++;
             }

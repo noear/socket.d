@@ -1,6 +1,8 @@
 import {StrUtils} from "../../utils/StrUtils";
 import {ArrayBufferCodecReader, CodecReader} from "./Codec";
-import {EntityMetas} from "./Constants";
+import {Constants, EntityMetas} from "./Constants";
+import {BlobBuffer, type Buffer, ByteBuffer} from "./Buffer";
+import {SocketdException} from "../../exception/SocketdException";
 
 
 /**
@@ -55,7 +57,7 @@ export interface Entity {
     /**
      * 获取数据
      */
-    data(): ArrayBuffer;
+    data(): Buffer;
 
     /**
      * 获取数据并转为读取器
@@ -104,12 +106,12 @@ export interface Reply extends Entity {
  */
 export class EntityDefault implements Entity {
     private _metaMap: URLSearchParams | null;
-    private _data: ArrayBuffer;
+    private _data: Buffer;
     private _dataAsReader: CodecReader | null;
 
     constructor() {
         this._metaMap = null;
-        this._data = new ArrayBuffer(0);
+        this._data = Constants.DEF_DATA;
         this._dataAsReader = null;
     }
 
@@ -230,21 +232,30 @@ export class EntityDefault implements Entity {
      *
      * @param data 数据
      */
-    dataSet(data: ArrayBuffer): EntityDefault {
-        this._data = data;
+    dataSet(data: Blob | ArrayBuffer): EntityDefault {
+        if (data instanceof Blob) {
+            this._data = new BlobBuffer(data);
+        } else {
+            this._data = new ByteBuffer(data);
+        }
+
         return this;
     }
 
     /**
      * 获取数据（若多次复用，需要reset）
      */
-    data(): ArrayBuffer {
+    data(): Buffer {
         return this._data;
     }
 
     dataAsReader(): CodecReader {
+        if(this._data.getArray() == null){
+            throw new SocketdException("Blob does not support dataAsReader");
+        }
+
         if (!this._dataAsReader) {
-            this._dataAsReader = new ArrayBufferCodecReader(this._data);
+            this._dataAsReader = new ArrayBufferCodecReader(this._data.getArray()!);
         }
 
         return this._dataAsReader;
@@ -254,14 +265,18 @@ export class EntityDefault implements Entity {
      * 获取数据并转成字符串
      */
     dataAsString(): string {
-        return StrUtils.bufToStrDo(this._data, '');
+        if (this._data.getArray() == null) {
+            throw new SocketdException("Blob does not support dataAsString");
+        }
+
+        return StrUtils.bufToStrDo(this._data.getArray()!, '');
     }
 
     /**
      * 获取数据长度
      */
     dataSize(): number {
-        return this._data.byteLength;
+        return this._data.size();
     }
 
     /**
@@ -294,17 +309,10 @@ export class StringEntity extends EntityDefault implements Entity {
 }
 
 export class FileEntity extends EntityDefault implements Entity {
-    private _file: File;
 
     constructor(file: File) {
         super();
-        this._file = file;
+        this.dataSet(file);
         this.metaPut(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.name);
-    }
-
-    async load(): Promise<FileEntity> {
-        const buf = await this._file.arrayBuffer();
-        this.dataSet(buf);
-        return this;
     }
 }

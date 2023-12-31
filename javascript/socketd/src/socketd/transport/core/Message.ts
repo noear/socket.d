@@ -2,6 +2,7 @@
 import {Constants, Flags} from "./Constants";
 import type {Entity, Reply} from "./Entity";
 import type {CodecReader} from "./Codec";
+import type {Buffer} from "./Buffer";
 
 
 /**
@@ -214,7 +215,7 @@ export class MessageDefault implements MessageInternal {
         this._entity!.putMeta(name, val);
     }
 
-    data(): ArrayBuffer {
+    data(): Buffer {
         return this._entity!.data();
     }
 

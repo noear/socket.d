@@ -79,37 +79,24 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
                 if (message.dataSize() > this.getConfig().getFragmentSize()) {
                     message.putMeta(EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
-
-                    //满足分片条件
-                    let fragmentIndex = 0;
-                    while (true) {
-                        //获取分片
-                        fragmentIndex++;
-                        const fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
-
-                        if (fragmentEntity != null) {
-                            //主要是 sid 和 entity
-                            const fragmentFrame  = new Frame(frame.flag(), new MessageBuilder()
-                                .flag(frame.flag())
-                                .sid(message.sid())
-                                .entity(fragmentEntity)
-                                .build());
-
-                            this._assistant.write(this._source, fragmentFrame);
-                        } else {
-                            //没有分片，说明发完了
-                            return;
-                        }
-                    }
-                } else {
-                    //不满足分片条件，直接发
-                    this._assistant.write(this._source, frame);
-                    return;
                 }
 
+                this.getConfig().getFragmentHandler().spliFragment(this, message, fragmentEntity => {
+                    //主要是 sid 和 entity
+                    const fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
+                        .flag(frame.flag())
+                        .sid(message.sid())
+                        .event(message.event())
+                        .entity(fragmentEntity)
+                        .build());
+
+                    this._assistant.write(this._source, fragmentFrame);
+                });
+                return;
             }
         }
 
+        //不满足分片条件，直接发
         this._assistant.write(this._source, frame);
     }
 

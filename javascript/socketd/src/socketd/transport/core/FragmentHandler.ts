@@ -4,7 +4,7 @@ import type {MessageInternal} from "./Message";
 import {Entity, EntityDefault} from "./Entity";
 import {EntityMetas} from "./Constants";
 import {FragmentAggregator, FragmentAggregatorDefault} from "./FragmentAggregator";
-import type {CodecReader} from "./Codec";
+import type {IoConsumer} from "./Typealias";
 
 /**
  * 数据分片处理（分片必须做，聚合可开关）
@@ -17,10 +17,9 @@ export interface FragmentHandler {
      * 获取下个分片
      *
      * @param channel       通道
-     * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
      * @param message       总包消息
      */
-    nextFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Entity|null;
+    spliFragment(channel: Channel, message: MessageInternal, callback:IoConsumer<Entity>);
 
     /**
      * 聚合所有分片
@@ -51,20 +50,30 @@ export class FragmentHandlerDefault implements FragmentHandler {
      * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
      * @param message       总包消息
      */
-    nextFragment(channel: Channel, fragmentIndex: number, message: MessageInternal): Entity|null {
+    spliFragment(channel: Channel, message: MessageInternal, callback:IoConsumer<Entity>) {
+        if (message.dataSize() > channel.getConfig().getFragmentSize()) {
+            let fragmentIndex = 0;
+            while (true) {
+                //获取分片
+                fragmentIndex++;
 
-        const dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
-        if (dataBuffer == null || dataBuffer.byteLength == 0) {
-            return null;
+                message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
+                    if (dataBuffer == null || dataBuffer.byteLength == 0) {
+                        return;
+                    }
+
+                    const fragmentEntity = new EntityDefault().dataSet(dataBuffer);
+                    if (fragmentIndex == 1) {
+                        fragmentEntity.metaMapPut(message.metaMap());
+                    }
+                    fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
+
+                    callback(fragmentEntity);
+                })
+            }
+        } else {
+            callback(message);
         }
-
-        const fragmentEntity = new EntityDefault().dataSet(dataBuffer);
-        if (fragmentIndex == 1) {
-            fragmentEntity.metaMapPut(message.metaMap());
-        }
-        fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
-
-        return fragmentEntity;
     }
 
     /**
@@ -95,20 +104,5 @@ export class FragmentHandlerDefault implements FragmentHandler {
 
     aggrEnable(): boolean {
         return true;
-    }
-
-    readFragmentData(ins: CodecReader, maxSize: number): ArrayBuffer {
-        let size:number;
-        if (ins.remaining() > maxSize) {
-            size = maxSize;
-        } else {
-            size = ins.remaining();
-        }
-
-        const buf = new ArrayBuffer(size);
-
-        ins.getBytes(buf, 0, size);
-
-        return buf;
     }
 }

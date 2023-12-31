@@ -1,10 +1,11 @@
-import {Codec, CodecByteBuffer} from "./Codec";
+import type {Codec} from "./Codec";
 import type {StreamManger} from "./Stream";
 import {StreamMangerDefault} from "./Stream";
 import {GuidGenerator, IdGenerator} from "./IdGenerator";
 import {FragmentHandler, FragmentHandlerDefault} from "./FragmentHandler";
 import {Constants} from "./Constants";
 import {Asserts} from "./Asserts";
+import {CodecByteBuffer} from "./CodecByteBuffer";
 
 /**
  * 配置接口

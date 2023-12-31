@@ -1,3 +1,4 @@
+import {ByteBuffer} from "./Buffer";
 
 /**
  * 常量
@@ -18,6 +19,10 @@ export const Constants = {
      * 默认元信息字符串（占位）
      */
     DEF_META_STRING: "",
+    /**
+     * 默认数据
+     * */
+    DEF_DATA: new ByteBuffer(new ArrayBuffer(0)),
 
 
     /**

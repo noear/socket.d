@@ -54,31 +54,33 @@ export class FragmentHandlerDefault implements FragmentHandler {
     spliFragment(channel: Channel, message: MessageInternal, consumer: IoConsumer<Entity>) {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
             let fragmentIndex = 0;
-            while (true) {
-                //获取分片
-                fragmentIndex++;
-
-                const isOk = message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
-                    if (dataBuffer == null || dataBuffer.byteLength == 0) {
-                        return;
-                    }
-
-                    const fragmentEntity = new EntityDefault().dataSet(dataBuffer);
-                    if (fragmentIndex == 1) {
-                        fragmentEntity.metaMapPut(message.metaMap());
-                    }
-                    fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
-
-                    consumer(fragmentEntity);
-                });
-
-                if (!isOk) {
-                    return;
-                }
-            }
+            this.spliFragmentDo(fragmentIndex, channel, message, consumer);
         } else {
-            consumer(message);
+            if (message.data().getBlob() == null) {
+                consumer(message);
+            } else {
+                message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
+                    consumer(new EntityDefault().dataSet(dataBuffer).metaMapPut(message.metaMap()));
+                });
+            }
         }
+    }
+
+    spliFragmentDo( fragmentIndex:number, channel: Channel, message: MessageInternal, consumer: IoConsumer<Entity>) {
+        //获取分片
+        fragmentIndex++;
+
+        message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
+            const fragmentEntity = new EntityDefault().dataSet(dataBuffer);
+            if (fragmentIndex == 1) {
+                fragmentEntity.metaMapPut(message.metaMap());
+            }
+            fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
+
+            consumer(fragmentEntity);
+
+            this.spliFragmentDo(fragmentIndex, channel, message, consumer);
+        });
     }
 
     /**

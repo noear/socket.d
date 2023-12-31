@@ -50,7 +50,101 @@ define("socketd/utils/StrUtils", ["require", "exports"], function (require, expo
     }
     exports.StrUtils = StrUtils;
 });
-define("socketd/transport/core/Constants", ["require", "exports"], function (require, exports) {
+define("socketd/transport/core/Typealias", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+});
+define("socketd/transport/core/Buffer", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.BlobBuffer = exports.ByteBuffer = void 0;
+    class ByteBuffer {
+        constructor(buf) {
+            this._bufIdx = 0;
+            this._buf = buf;
+        }
+        remaining() {
+            return this.size() - this.position();
+        }
+        position() {
+            return this._bufIdx;
+        }
+        size() {
+            return this._buf.byteLength;
+        }
+        reset() {
+            this._bufIdx = 0;
+        }
+        getBytes(length, callback) {
+            let tmpSize = this.remaining();
+            if (tmpSize > length) {
+                tmpSize = length;
+            }
+            if (tmpSize <= 0) {
+                return false;
+            }
+            let tmpEnd = this._bufIdx + tmpSize;
+            let tmp = this._buf.slice(this._bufIdx, tmpEnd);
+            this._bufIdx = tmpEnd;
+            callback(tmp);
+            return true;
+        }
+        getBlob() {
+            return null;
+        }
+        getArray() {
+            return this._buf;
+        }
+    }
+    exports.ByteBuffer = ByteBuffer;
+    class BlobBuffer {
+        constructor(buf) {
+            this._bufIdx = 0;
+            this._buf = buf;
+        }
+        remaining() {
+            return this._buf.size - this._bufIdx;
+        }
+        position() {
+            return this._bufIdx;
+        }
+        size() {
+            return this._buf.size;
+        }
+        reset() {
+            this._bufIdx = 0;
+        }
+        getBytes(length, callback) {
+            let tmpSize = this.remaining();
+            if (tmpSize > length) {
+                tmpSize = length;
+            }
+            if (tmpSize <= 0) {
+                return false;
+            }
+            let tmpEnd = this._bufIdx + tmpSize;
+            let tmp = this._buf.slice(this._bufIdx, tmpEnd);
+            let tmpReader = new FileReader();
+            tmpReader.onload = (event) => {
+                if (event.target) {
+                    //成功读取
+                    callback(event.target.result);
+                }
+            };
+            tmpReader.readAsArrayBuffer(tmp);
+            this._bufIdx = tmpEnd;
+            return true;
+        }
+        getBlob() {
+            return this._buf;
+        }
+        getArray() {
+            return null;
+        }
+    }
+    exports.BlobBuffer = BlobBuffer;
+});
+define("socketd/transport/core/Constants", ["require", "exports", "socketd/transport/core/Buffer"], function (require, exports, Buffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.EntityMetas = exports.Flags = exports.Constants = void 0;
@@ -73,6 +167,10 @@ define("socketd/transport/core/Constants", ["require", "exports"], function (req
          * 默认元信息字符串（占位）
          */
         DEF_META_STRING: "",
+        /**
+         * 默认数据
+         * */
+        DEF_DATA: new Buffer_1.ByteBuffer(new ArrayBuffer(0)),
         /**
          * 因协议指令关闭
          */
@@ -418,9 +516,189 @@ define("socketd/transport/core/Message", ["require", "exports", "socketd/transpo
     }
     exports.MessageDefault = MessageDefault;
 });
-define("socketd/transport/core/Typealias", ["require", "exports"], function (require, exports) {
+define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/SocketD", "socketd/transport/core/Message"], function (require, exports, Entity_1, Constants_2, SocketD_1, Message_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Frames = exports.Frame = void 0;
+    /**
+     * 帧（帧[消息[实体]]）
+     *
+     * @author noear
+     * @since 2.0
+     */
+    class Frame {
+        constructor(flag, message) {
+            this._flag = flag;
+            this._message = message;
+        }
+        /**
+         * 标志（保持与 Message 的获取风格）
+         * */
+        flag() {
+            return this._flag;
+        }
+        /**
+         * 消息
+         * */
+        message() {
+            return this._message;
+        }
+        toString() {
+            return "Frame{" +
+                "flag=" + Constants_2.Flags.name(this._flag) +
+                ", message=" + this._message +
+                '}';
+        }
+    }
+    exports.Frame = Frame;
+    /**
+     * 帧工厂
+     *
+     * @author noear
+     * @since 2.0
+     * */
+    class Frames {
+        /**
+         * 构建连接帧
+         *
+         * @param sid 流Id
+         * @param url 连接地址
+         */
+        static connectFrame(sid, url) {
+            const entity = new Entity_1.EntityDefault();
+            //添加框架版本号
+            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
+            return new Frame(Constants_2.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
+        }
+        /**
+         * 构建连接确认帧
+         *
+         * @param connectMessage 连接消息
+         */
+        static connackFrame(connectMessage) {
+            const entity = new Entity_1.EntityDefault();
+            //添加框架版本号
+            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
+            return new Frame(Constants_2.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
+        }
+        /**
+         * 构建 ping 帧
+         */
+        static pingFrame() {
+            return new Frame(Constants_2.Flags.Ping, null);
+        }
+        /**
+         * 构建 pong 帧
+         */
+        static pongFrame() {
+            return new Frame(Constants_2.Flags.Pong, null);
+        }
+        /**
+         * 构建关闭帧（一般用不到）
+         */
+        static closeFrame() {
+            return new Frame(Constants_2.Flags.Close, null);
+        }
+        /**
+         * 构建告警帧（一般用不到）
+         */
+        static alarmFrame(from, alarm) {
+            const message = new Message_1.MessageBuilder();
+            if (from != null) {
+                //如果有来源消息，则回传元信息
+                message.sid(from.sid());
+                message.event(from.event());
+                message.entity(new Entity_1.StringEntity(alarm).metaStringSet(from.metaString()));
+            }
+            else {
+                message.entity(new Entity_1.StringEntity(alarm));
+            }
+            return new Frame(Constants_2.Flags.Alarm, message.build());
+        }
+    }
+    exports.Frames = Frames;
+});
+define("socketd/transport/core/Codec", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ArrayBufferCodecWriter = exports.ArrayBufferCodecReader = void 0;
+    class ArrayBufferCodecReader {
+        constructor(buf) {
+            this._buf = buf;
+            this._bufView = new DataView(buf);
+            this._bufViewIdx = 0;
+        }
+        getByte() {
+            if (this._bufViewIdx >= this._buf.byteLength) {
+                return -1;
+            }
+            const tmp = this._bufView.getInt8(this._bufViewIdx);
+            this._bufViewIdx += 1;
+            return tmp;
+        }
+        getBytes(dst, offset, length) {
+            const tmp = new DataView(dst);
+            const tmpEndIdx = offset + length;
+            for (let i = offset; i < tmpEndIdx; i++) {
+                if (this._bufViewIdx >= this._buf.byteLength) {
+                    //读完了
+                    break;
+                }
+                tmp.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
+                this._bufViewIdx++;
+            }
+        }
+        getInt() {
+            if (this._bufViewIdx >= this._buf.byteLength) {
+                return -1;
+            }
+            const tmp = this._bufView.getInt32(this._bufViewIdx);
+            this._bufViewIdx += 4;
+            return tmp;
+        }
+        remaining() {
+            return this._buf.byteLength - this._bufViewIdx;
+        }
+        position() {
+            return this._bufViewIdx;
+        }
+        size() {
+            return this._buf.byteLength;
+        }
+        reset() {
+            this._bufViewIdx = 0;
+        }
+    }
+    exports.ArrayBufferCodecReader = ArrayBufferCodecReader;
+    class ArrayBufferCodecWriter {
+        constructor(n) {
+            this._buf = new ArrayBuffer(n);
+            this._bufView = new DataView(this._buf);
+            this._bufViewIdx = 0;
+        }
+        putBytes(src) {
+            const tmp = new DataView(src);
+            const len = tmp.byteLength;
+            for (let i = 0; i < len; i++) {
+                this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));
+                this._bufViewIdx += 1;
+            }
+        }
+        putInt(val) {
+            this._bufView.setInt32(this._bufViewIdx, val);
+            this._bufViewIdx += 4;
+        }
+        putChar(val) {
+            this._bufView.setInt16(this._bufViewIdx, val);
+            this._bufViewIdx += 2;
+        }
+        flush() {
+        }
+        getBuffer() {
+            return this._buf;
+        }
+    }
+    exports.ArrayBufferCodecWriter = ArrayBufferCodecWriter;
 });
 define("socketd/exception/SocketdException", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -515,7 +793,259 @@ define("socketd/exception/SocketdException", ["require", "exports"], function (r
     }
     exports.SocketdTimeoutException = SocketdTimeoutException;
 });
-define("socketd/transport/core/Stream", ["require", "exports", "socketd/exception/SocketdException", "socketd/transport/core/Asserts"], function (require, exports, SocketdException_1, Asserts_1) {
+define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/StrUtils", "socketd/transport/core/Codec", "socketd/transport/core/Constants", "socketd/transport/core/Buffer", "socketd/exception/SocketdException"], function (require, exports, StrUtils_1, Codec_1, Constants_3, Buffer_2, SocketdException_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.FileEntity = exports.StringEntity = exports.EntityDefault = void 0;
+    /**
+     * 实体默认实现
+     *
+     * @author noear
+     * @since 2.0
+     */
+    class EntityDefault {
+        constructor() {
+            this._metaMap = null;
+            this._data = Constants_3.Constants.DEF_DATA;
+            this._dataAsReader = null;
+        }
+        /**
+         * At
+         * */
+        at() {
+            return this.meta("@");
+        }
+        /**
+         * 设置元信息字符串
+         * */
+        metaStringSet(metaString) {
+            this._metaMap = new URLSearchParams(metaString);
+            return this;
+        }
+        /**
+         * 放置元信息字典
+         *
+         * @param map 元信息字典
+         */
+        metaMapPut(map) {
+            if (map instanceof URLSearchParams) {
+                const tmp = map;
+                tmp.forEach((val, key, p) => {
+                    this.metaMap().set(key, val);
+                });
+            }
+            else {
+                for (const name of map.prototype) {
+                    this.metaMap().set(name, map[name]);
+                }
+            }
+            return this;
+        }
+        /**
+         * 放置元信息
+         *
+         * @param name 名字
+         * @param val  值
+         */
+        metaPut(name, val) {
+            this.metaMap().set(name, val);
+            return this;
+        }
+        /**
+         * 获取元信息字符串（queryString style）
+         */
+        metaString() {
+            return this.metaMap().toString();
+        }
+        /**
+         * 获取元信息字典
+         */
+        metaMap() {
+            if (this._metaMap == null) {
+                this._metaMap = new URLSearchParams();
+            }
+            return this._metaMap;
+        }
+        /**
+         * 获取元信息
+         *
+         * @param name 名字
+         */
+        meta(name) {
+            return this.metaMap().get(name);
+        }
+        /**
+         * 获取元信息或默认值
+         *
+         * @param name 名字
+         * @param def  默认值
+         */
+        metaOrDefault(name, def) {
+            const val = this.meta(name);
+            if (val) {
+                return val;
+            }
+            else {
+                return def;
+            }
+        }
+        /**
+         * 获取元信息并转为 int
+         */
+        metaAsInt(name) {
+            return parseInt(this.metaOrDefault(name, '0'));
+        }
+        /**
+         * 获取元信息并转为 float
+         */
+        metaAsFloat(name) {
+            return parseFloat(this.metaOrDefault(name, '0'));
+        }
+        /**
+         * 放置元信息
+         *
+         * @param name 名字
+         * @param val  值
+         */
+        putMeta(name, val) {
+            this.metaPut(name, val);
+        }
+        /**
+         * 设置数据
+         *
+         * @param data 数据
+         */
+        dataSet(data) {
+            if (data instanceof Blob) {
+                this._data = new Buffer_2.BlobBuffer(data);
+            }
+            else {
+                this._data = new Buffer_2.ByteBuffer(data);
+            }
+            return this;
+        }
+        /**
+         * 获取数据（若多次复用，需要reset）
+         */
+        data() {
+            return this._data;
+        }
+        dataAsReader() {
+            if (this._data.getArray() == null) {
+                throw new SocketdException_1.SocketdException("Blob does not support dataAsReader");
+            }
+            if (!this._dataAsReader) {
+                this._dataAsReader = new Codec_1.ArrayBufferCodecReader(this._data.getArray());
+            }
+            return this._dataAsReader;
+        }
+        /**
+         * 获取数据并转成字符串
+         */
+        dataAsString() {
+            if (this._data.getArray() == null) {
+                throw new SocketdException_1.SocketdException("Blob does not support dataAsString");
+            }
+            return StrUtils_1.StrUtils.bufToStrDo(this._data.getArray(), '');
+        }
+        /**
+         * 获取数据长度
+         */
+        dataSize() {
+            return this._data.size();
+        }
+        /**
+         * 释放资源
+         */
+        release() {
+        }
+        toString() {
+            return "Entity{" +
+                "meta='" + this.metaString() + '\'' +
+                ", data=byte[" + this.dataSize() + ']' + //避免内容太大，影响打印
+                '}';
+        }
+    }
+    exports.EntityDefault = EntityDefault;
+    /**
+     * 字符串实体
+     *
+     * @author noear
+     * @since 2.0
+     */
+    class StringEntity extends EntityDefault {
+        constructor(data) {
+            super();
+            const dataBuf = StrUtils_1.StrUtils.strToBuf(data);
+            this.dataSet(dataBuf);
+        }
+    }
+    exports.StringEntity = StringEntity;
+    class FileEntity extends EntityDefault {
+        constructor(file) {
+            super();
+            this.dataSet(file);
+            this.metaPut(Constants_3.EntityMetas.META_DATA_DISPOSITION_FILENAME, file.name);
+        }
+    }
+    exports.FileEntity = FileEntity;
+});
+define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Constants_4, SocketdException_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Asserts = void 0;
+    /**
+     * 断言
+     *
+     * @author noear
+     * @since 2.0
+     */
+    class Asserts {
+        /**
+         * 断言关闭
+         */
+        static assertClosed(channel) {
+            if (channel != null && channel.isClosed() > 0) {
+                throw new SocketdException_2.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            }
+        }
+        /**
+         * 断言关闭
+         */
+        static assertClosedByUser(channel) {
+            if (channel != null && channel.isClosed() == Constants_4.Constants.CLOSE4_USER) {
+                throw new SocketdException_2.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            }
+        }
+        /**
+         * 断言 null
+         */
+        static assertNull(name, val) {
+            if (val == null) {
+                throw new Error("The argument cannot be null: " + name);
+            }
+        }
+        /**
+         * 断言 empty
+         */
+        static assertEmpty(name, val) {
+            if (!val) {
+                throw new Error("The argument cannot be empty: " + name);
+            }
+        }
+        /**
+         * 断言 size
+         */
+        static assertSize(name, size, limitSize) {
+            if (size > limitSize) {
+                const message = `This message ${name} size is out of limit ${limitSize} (${size})`;
+                throw new SocketdException_2.SocketdSizeLimitException(message);
+            }
+        }
+    }
+    exports.Asserts = Asserts;
+});
+define("socketd/transport/core/Stream", ["require", "exports", "socketd/exception/SocketdException", "socketd/transport/core/Asserts"], function (require, exports, SocketdException_3, Asserts_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.StreamMangerDefault = exports.StreamSubscribe = exports.StreamRequest = exports.StreamBase = void 0;
@@ -552,7 +1082,7 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
             }
             this._insuranceFuture = setTimeout(() => {
                 streamManger.removeStream(this.sid());
-                this.onError(new SocketdException_1.SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
+                this.onError(new SocketdException_3.SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
             }, streamTimeout);
         }
         /**
@@ -673,118 +1203,16 @@ define("socketd/transport/core/Stream", ["require", "exports", "socketd/exceptio
     }
     exports.StreamMangerDefault = StreamMangerDefault;
 });
-define("socketd/transport/core/IdGenerator", ["require", "exports", "socketd/utils/StrUtils"], function (require, exports, StrUtils_1) {
+define("socketd/transport/core/IdGenerator", ["require", "exports", "socketd/utils/StrUtils"], function (require, exports, StrUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.GuidGenerator = void 0;
     class GuidGenerator {
         generate() {
-            return StrUtils_1.StrUtils.guid();
+            return StrUtils_2.StrUtils.guid();
         }
     }
     exports.GuidGenerator = GuidGenerator;
-});
-define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/SocketD", "socketd/transport/core/Message"], function (require, exports, Entity_1, Constants_2, SocketD_1, Message_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Frames = exports.Frame = void 0;
-    /**
-     * 帧（帧[消息[实体]]）
-     *
-     * @author noear
-     * @since 2.0
-     */
-    class Frame {
-        constructor(flag, message) {
-            this._flag = flag;
-            this._message = message;
-        }
-        /**
-         * 标志（保持与 Message 的获取风格）
-         * */
-        flag() {
-            return this._flag;
-        }
-        /**
-         * 消息
-         * */
-        message() {
-            return this._message;
-        }
-        toString() {
-            return "Frame{" +
-                "flag=" + Constants_2.Flags.name(this._flag) +
-                ", message=" + this._message +
-                '}';
-        }
-    }
-    exports.Frame = Frame;
-    /**
-     * 帧工厂
-     *
-     * @author noear
-     * @since 2.0
-     * */
-    class Frames {
-        /**
-         * 构建连接帧
-         *
-         * @param sid 流Id
-         * @param url 连接地址
-         */
-        static connectFrame(sid, url) {
-            const entity = new Entity_1.EntityDefault();
-            //添加框架版本号
-            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
-            return new Frame(Constants_2.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
-        }
-        /**
-         * 构建连接确认帧
-         *
-         * @param connectMessage 连接消息
-         */
-        static connackFrame(connectMessage) {
-            const entity = new Entity_1.EntityDefault();
-            //添加框架版本号
-            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
-            return new Frame(Constants_2.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
-        }
-        /**
-         * 构建 ping 帧
-         */
-        static pingFrame() {
-            return new Frame(Constants_2.Flags.Ping, null);
-        }
-        /**
-         * 构建 pong 帧
-         */
-        static pongFrame() {
-            return new Frame(Constants_2.Flags.Pong, null);
-        }
-        /**
-         * 构建关闭帧（一般用不到）
-         */
-        static closeFrame() {
-            return new Frame(Constants_2.Flags.Close, null);
-        }
-        /**
-         * 构建告警帧（一般用不到）
-         */
-        static alarmFrame(from, alarm) {
-            const message = new Message_1.MessageBuilder();
-            if (from != null) {
-                //如果有来源消息，则回传元信息
-                message.sid(from.sid());
-                message.event(from.event());
-                message.entity(new Entity_1.StringEntity(alarm).metaStringSet(from.metaString()));
-            }
-            else {
-                message.entity(new Entity_1.StringEntity(alarm));
-            }
-            return new Frame(Constants_2.Flags.Alarm, message.build());
-        }
-    }
-    exports.Frames = Frames;
 });
 define("socketd/transport/core/FragmentHolder", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -810,7 +1238,7 @@ define("socketd/transport/core/FragmentHolder", ["require", "exports"], function
     }
     exports.FragmentHolder = FragmentHolder;
 });
-define("socketd/transport/core/FragmentAggregator", ["require", "exports", "socketd/transport/core/Message", "socketd/transport/core/Entity", "socketd/transport/core/Frame", "socketd/transport/core/FragmentHolder", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Message_2, Entity_2, Frame_1, FragmentHolder_1, Constants_3, SocketdException_2) {
+define("socketd/transport/core/FragmentAggregator", ["require", "exports", "socketd/transport/core/Message", "socketd/transport/core/Entity", "socketd/transport/core/Frame", "socketd/transport/core/FragmentHolder", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Message_2, Entity_2, Frame_1, FragmentHolder_1, Constants_5, SocketdException_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentAggregatorDefault = void 0;
@@ -825,9 +1253,9 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
             //分片列表
             this._fragmentHolders = new Array();
             this._main = main;
-            const dataLengthStr = main.meta(Constants_3.EntityMetas.META_DATA_LENGTH);
+            const dataLengthStr = main.meta(Constants_5.EntityMetas.META_DATA_LENGTH);
             if (!dataLengthStr) {
-                throw new SocketdException_2.SocketdCodecException("Missing '" + Constants_3.EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
+                throw new SocketdException_4.SocketdCodecException("Missing '" + Constants_5.EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
             }
             this._dataLength = parseInt(dataLengthStr);
         }
@@ -880,8 +1308,8 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
             let dataBufferViewIdx = 0;
             //添加分片数据
             for (const fh of this._fragmentHolders) {
-                const tmp = new DataView(fh.getMessage().data());
-                for (let i = 0; i < fh.getMessage().data().byteLength; i++) {
+                const tmp = new DataView(fh.getMessage().data().getArray());
+                for (let i = 0; i < fh.getMessage().data().size(); i++) {
                     dataBufferView.setInt8(dataBufferViewIdx, tmp.getInt8(i));
                     dataBufferViewIdx++;
                 }
@@ -897,7 +1325,7 @@ define("socketd/transport/core/FragmentAggregator", ["require", "exports", "sock
     }
     exports.FragmentAggregatorDefault = FragmentAggregatorDefault;
 });
-define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/transport/core/FragmentAggregator"], function (require, exports, Entity_3, Constants_4, FragmentAggregator_1) {
+define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/transport/core/FragmentAggregator"], function (require, exports, Entity_3, Constants_6, FragmentAggregator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.FragmentHandlerDefault = void 0;
@@ -909,26 +1337,43 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
      */
     class FragmentHandlerDefault {
         /**
-         * 获取下个分片
+         * 拆割分片
          *
          * @param channel       通道
-         * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
          * @param message       总包消息
+         * @param consumer 分片消费
          */
-        nextFragment(channel, fragmentIndex, message) {
-            const dataBuffer = this.readFragmentData(message.dataAsReader(), channel.getConfig().getFragmentSize());
-            if (dataBuffer == null || dataBuffer.byteLength == 0) {
-                return null;
+        spliFragment(channel, message, consumer) {
+            if (message.dataSize() > channel.getConfig().getFragmentSize()) {
+                let fragmentIndex = 0;
+                this.spliFragmentDo(fragmentIndex, channel, message, consumer);
             }
-            const fragmentEntity = new Entity_3.EntityDefault().dataSet(dataBuffer);
-            if (fragmentIndex == 1) {
-                fragmentEntity.metaMapPut(message.metaMap());
+            else {
+                if (message.data().getBlob() == null) {
+                    consumer(message);
+                }
+                else {
+                    message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
+                        consumer(new Entity_3.EntityDefault().dataSet(dataBuffer).metaMapPut(message.metaMap()));
+                    });
+                }
             }
-            fragmentEntity.metaPut(Constants_4.EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
-            return fragmentEntity;
+        }
+        spliFragmentDo(fragmentIndex, channel, message, consumer) {
+            //获取分片
+            fragmentIndex++;
+            message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
+                const fragmentEntity = new Entity_3.EntityDefault().dataSet(dataBuffer);
+                if (fragmentIndex == 1) {
+                    fragmentEntity.metaMapPut(message.metaMap());
+                }
+                fragmentEntity.metaPut(Constants_6.EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
+                consumer(fragmentEntity);
+                this.spliFragmentDo(fragmentIndex, channel, message, consumer);
+            });
         }
         /**
-         * 聚合所有分片
+         * 聚合分片
          *
          * @param channel       通道
          * @param fragmentIndex 分片索引（传过来信息，不一定有顺序）
@@ -954,22 +1399,154 @@ define("socketd/transport/core/FragmentHandler", ["require", "exports", "socketd
         aggrEnable() {
             return true;
         }
-        readFragmentData(ins, maxSize) {
-            let size;
-            if (ins.remaining() > maxSize) {
-                size = maxSize;
-            }
-            else {
-                size = ins.remaining();
-            }
-            const buf = new ArrayBuffer(size);
-            ins.getBytes(buf, 0, size);
-            return buf;
-        }
     }
     exports.FragmentHandlerDefault = FragmentHandlerDefault;
 });
-define("socketd/transport/core/Config", ["require", "exports", "socketd/transport/core/Codec", "socketd/transport/core/Stream", "socketd/transport/core/IdGenerator", "socketd/transport/core/FragmentHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts"], function (require, exports, Codec_1, Stream_1, IdGenerator_1, FragmentHandler_1, Constants_5, Asserts_2) {
+define("socketd/transport/core/CodecByteBuffer", ["require", "exports", "socketd/transport/core/Frame", "socketd/utils/StrUtils", "socketd/transport/core/Asserts", "socketd/transport/core/Constants", "socketd/transport/core/Message", "socketd/transport/core/Entity"], function (require, exports, Frame_2, StrUtils_3, Asserts_2, Constants_7, Message_3, Entity_4) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.CodecByteBuffer = void 0;
+    /**
+     * 编解码器（基于 CodecReader,CodecWriter 接口编解）
+     *
+     * @author noear
+     * @since 2.0
+     */
+    class CodecByteBuffer {
+        constructor(config) {
+            this._config = config;
+        }
+        /**
+         * 解码写入
+         *
+         * @param frame         帧
+         * @param targetFactory 目标工厂
+         */
+        write(frame, targetFactory) {
+            if (frame.message()) {
+                //sid
+                const sidB = StrUtils_3.StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
+                //event
+                const eventB = StrUtils_3.StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
+                //metaString
+                const metaStringB = StrUtils_3.StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
+                //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
+                const frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
+                Asserts_2.Asserts.assertSize("sid", sidB.byteLength, Constants_7.Constants.MAX_SIZE_SID);
+                Asserts_2.Asserts.assertSize("event", eventB.byteLength, Constants_7.Constants.MAX_SIZE_EVENT);
+                Asserts_2.Asserts.assertSize("metaString", metaStringB.byteLength, Constants_7.Constants.MAX_SIZE_META_STRING);
+                Asserts_2.Asserts.assertSize("data", frame.message().dataSize(), Constants_7.Constants.MAX_SIZE_DATA);
+                const target = targetFactory(frameSize);
+                //长度
+                target.putInt(frameSize);
+                //flag
+                target.putInt(frame.flag());
+                //sid
+                target.putBytes(sidB);
+                target.putChar('\n'.charCodeAt(0));
+                //event
+                target.putBytes(eventB);
+                target.putChar('\n'.charCodeAt(0));
+                //metaString
+                target.putBytes(metaStringB);
+                target.putChar('\n'.charCodeAt(0));
+                //data
+                target.putBytes(frame.message().data().getArray());
+                target.flush();
+                return target;
+            }
+            else {
+                //length (len[int] + flag[int])
+                const frameSize = 4 + 4;
+                const target = targetFactory(frameSize);
+                //长度
+                target.putInt(frameSize);
+                //flag
+                target.putInt(frame.flag());
+                target.flush();
+                return target;
+            }
+        }
+        /**
+         * 编码读取
+         *
+         * @param buffer 缓冲
+         */
+        read(buffer) {
+            const frameSize = buffer.getInt();
+            if (frameSize > (buffer.remaining() + 4)) {
+                return null;
+            }
+            const flag = buffer.getInt();
+            if (frameSize == 8) {
+                //len[int] + flag[int]
+                return new Frame_2.Frame(Constants_7.Flags.of(flag), null);
+            }
+            else {
+                const metaBufSize = Math.min(Constants_7.Constants.MAX_SIZE_META_STRING, buffer.remaining());
+                //1.解码 sid and event
+                const buf = new ArrayBuffer(metaBufSize);
+                //sid
+                const sid = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_SID);
+                //event
+                const event = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_EVENT);
+                //metaString
+                const metaString = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_META_STRING);
+                //2.解码 body
+                const dataRealSize = frameSize - buffer.position();
+                let data;
+                if (dataRealSize > Constants_7.Constants.MAX_SIZE_DATA) {
+                    //超界了，空读。必须读，不然协议流会坏掉
+                    data = new ArrayBuffer(Constants_7.Constants.MAX_SIZE_DATA);
+                    buffer.getBytes(data, 0, Constants_7.Constants.MAX_SIZE_DATA);
+                    for (let i = dataRealSize - Constants_7.Constants.MAX_SIZE_DATA; i > 0; i--) {
+                        buffer.getByte();
+                    }
+                }
+                else {
+                    data = new ArrayBuffer(dataRealSize);
+                    if (dataRealSize > 0) {
+                        buffer.getBytes(data, 0, dataRealSize);
+                    }
+                }
+                //先 data , 后 metaString (避免 data 时修改元信息)
+                const message = new Message_3.MessageBuilder()
+                    .flag(Constants_7.Flags.of(flag))
+                    .sid(sid)
+                    .event(event)
+                    .entity(new Entity_4.EntityDefault().dataSet(data).metaStringSet(metaString))
+                    .build();
+                return new Frame_2.Frame(message.flag(), message);
+            }
+        }
+        decodeString(reader, buf, maxLen) {
+            const bufView = new DataView(buf);
+            let bufViewIdx = 0;
+            while (true) {
+                const c = reader.getByte();
+                if (c == 10) { //10:'\n'
+                    break;
+                }
+                if (maxLen > 0 && maxLen <= bufViewIdx) {
+                    //超界了，空读。必须读，不然协议流会坏掉
+                }
+                else {
+                    if (c != 0) { //32:' '
+                        bufView.setInt8(bufViewIdx, c);
+                        bufViewIdx++;
+                    }
+                }
+            }
+            if (bufViewIdx < 1) {
+                return "";
+            }
+            //这里要加个长度控制
+            return StrUtils_3.StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
+        }
+    }
+    exports.CodecByteBuffer = CodecByteBuffer;
+});
+define("socketd/transport/core/Config", ["require", "exports", "socketd/transport/core/Stream", "socketd/transport/core/IdGenerator", "socketd/transport/core/FragmentHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/transport/core/CodecByteBuffer"], function (require, exports, Stream_1, IdGenerator_1, FragmentHandler_1, Constants_8, Asserts_3, CodecByteBuffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ConfigBase = void 0;
@@ -977,11 +1554,11 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
         constructor(clientMode) {
             this._clientMode = clientMode;
             this._streamManger = new Stream_1.StreamMangerDefault(this);
-            this._codec = new Codec_1.CodecByteBuffer(this);
+            this._codec = new CodecByteBuffer_1.CodecByteBuffer(this);
             this._charset = "utf-8";
             this._idGenerator = new IdGenerator_1.GuidGenerator();
             this._fragmentHandler = new FragmentHandler_1.FragmentHandlerDefault();
-            this._fragmentSize = Constants_5.Constants.MAX_SIZE_DATA;
+            this._fragmentSize = Constants_8.Constants.MAX_SIZE_DATA;
             this._coreThreads = 2;
             this._maxThreads = this._coreThreads * 4;
             this._readBufferSize = 512;
@@ -1038,7 +1615,7 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
          * 配置标识生成器
          */
         idGenerator(idGenerator) {
-            Asserts_2.Asserts.assertNull("idGenerator", idGenerator);
+            Asserts_3.Asserts.assertNull("idGenerator", idGenerator);
             this._idGenerator = idGenerator;
             return this;
         }
@@ -1052,7 +1629,7 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
          * 配置分片处理
          */
         fragmentHandler(fragmentHandler) {
-            Asserts_2.Asserts.assertNull("fragmentHandler", fragmentHandler);
+            Asserts_3.Asserts.assertNull("fragmentHandler", fragmentHandler);
             this._fragmentHandler = fragmentHandler;
             return this;
         }
@@ -1066,10 +1643,10 @@ define("socketd/transport/core/Config", ["require", "exports", "socketd/transpor
          * 配置分片大小
          */
         fragmentSize(fragmentSize) {
-            if (fragmentSize > Constants_5.Constants.MAX_SIZE_DATA) {
+            if (fragmentSize > Constants_8.Constants.MAX_SIZE_DATA) {
                 throw new Error("The parameter fragmentSize cannot > 16m");
             }
-            if (fragmentSize < Constants_5.Constants.MIN_FRAGMENT_SIZE) {
+            if (fragmentSize < Constants_8.Constants.MIN_FRAGMENT_SIZE) {
                 throw new Error("The parameter fragmentSize cannot < 1k");
             }
             this._fragmentSize = fragmentSize;
@@ -1193,7 +1770,7 @@ define("socketd/transport/core/Handshake", ["require", "exports"], function (req
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/core/Channel", ["require", "exports", "socketd/transport/core/Frame"], function (require, exports, Frame_2) {
+define("socketd/transport/core/Channel", ["require", "exports", "socketd/transport/core/Frame"], function (require, exports, Frame_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ChannelBase = void 0;
@@ -1231,494 +1808,25 @@ define("socketd/transport/core/Channel", ["require", "exports", "socketd/transpo
             return this._handshake;
         }
         sendConnect(url) {
-            this.send(Frame_2.Frames.connectFrame(this.getConfig().getIdGenerator().generate(), url), null);
+            this.send(Frame_3.Frames.connectFrame(this.getConfig().getIdGenerator().generate(), url), null);
         }
         sendConnack(connectMessage) {
-            this.send(Frame_2.Frames.connackFrame(connectMessage), null);
+            this.send(Frame_3.Frames.connackFrame(connectMessage), null);
         }
         sendPing() {
-            this.send(Frame_2.Frames.pingFrame(), null);
+            this.send(Frame_3.Frames.pingFrame(), null);
         }
         sendPong() {
-            this.send(Frame_2.Frames.pongFrame(), null);
+            this.send(Frame_3.Frames.pongFrame(), null);
         }
         sendClose() {
-            this.send(Frame_2.Frames.closeFrame(), null);
+            this.send(Frame_3.Frames.closeFrame(), null);
         }
         sendAlarm(from, alarm) {
-            this.send(Frame_2.Frames.alarmFrame(from, alarm), null);
+            this.send(Frame_3.Frames.alarmFrame(from, alarm), null);
         }
     }
     exports.ChannelBase = ChannelBase;
-});
-define("socketd/transport/core/Asserts", ["require", "exports", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Constants_6, SocketdException_3) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Asserts = void 0;
-    /**
-     * 断言
-     *
-     * @author noear
-     * @since 2.0
-     */
-    class Asserts {
-        /**
-         * 断言关闭
-         */
-        static assertClosed(channel) {
-            if (channel != null && channel.isClosed() > 0) {
-                throw new SocketdException_3.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
-            }
-        }
-        /**
-         * 断言关闭
-         */
-        static assertClosedByUser(channel) {
-            if (channel != null && channel.isClosed() == Constants_6.Constants.CLOSE4_USER) {
-                throw new SocketdException_3.SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
-            }
-        }
-        /**
-         * 断言 null
-         */
-        static assertNull(name, val) {
-            if (val == null) {
-                throw new Error("The argument cannot be null: " + name);
-            }
-        }
-        /**
-         * 断言 empty
-         */
-        static assertEmpty(name, val) {
-            if (!val) {
-                throw new Error("The argument cannot be empty: " + name);
-            }
-        }
-        /**
-         * 断言 size
-         */
-        static assertSize(name, size, limitSize) {
-            if (size > limitSize) {
-                const message = `This message ${name} size is out of limit ${limitSize} (${size})`;
-                throw new SocketdException_3.SocketdSizeLimitException(message);
-            }
-        }
-    }
-    exports.Asserts = Asserts;
-});
-define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/core/Constants", "socketd/transport/core/Entity", "socketd/transport/core/Message", "socketd/utils/StrUtils", "socketd/transport/core/Frame"], function (require, exports, Asserts_3, Constants_7, Entity_4, Message_3, StrUtils_2, Frame_3) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ArrayBufferCodecWriter = exports.ArrayBufferCodecReader = exports.CodecByteBuffer = void 0;
-    /**
-     * 编解码器（基于 BufferWriter,BufferReader 接口编解）
-     *
-     * @author noear
-     * @since 2.0
-     */
-    class CodecByteBuffer {
-        constructor(config) {
-            this._config = config;
-        }
-        /**
-         * 解码写入
-         *
-         * @param frame         帧
-         * @param targetFactory 目标工厂
-         */
-        write(frame, targetFactory) {
-            if (frame.message()) {
-                //sid
-                const sidB = StrUtils_2.StrUtils.strToBuf(frame.message().sid(), this._config.getCharset());
-                //event
-                const eventB = StrUtils_2.StrUtils.strToBuf(frame.message().event(), this._config.getCharset());
-                //metaString
-                const metaStringB = StrUtils_2.StrUtils.strToBuf(frame.message().metaString(), this._config.getCharset());
-                //length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
-                const frameSize = 4 + 4 + sidB.byteLength + eventB.byteLength + metaStringB.byteLength + frame.message().dataSize() + 2 * 3;
-                Asserts_3.Asserts.assertSize("sid", sidB.byteLength, Constants_7.Constants.MAX_SIZE_SID);
-                Asserts_3.Asserts.assertSize("event", eventB.byteLength, Constants_7.Constants.MAX_SIZE_EVENT);
-                Asserts_3.Asserts.assertSize("metaString", metaStringB.byteLength, Constants_7.Constants.MAX_SIZE_META_STRING);
-                Asserts_3.Asserts.assertSize("data", frame.message().dataSize(), Constants_7.Constants.MAX_SIZE_DATA);
-                const target = targetFactory(frameSize);
-                //长度
-                target.putInt(frameSize);
-                //flag
-                target.putInt(frame.flag());
-                //sid
-                target.putBytes(sidB);
-                target.putChar('\n'.charCodeAt(0));
-                //event
-                target.putBytes(eventB);
-                target.putChar('\n'.charCodeAt(0));
-                //metaString
-                target.putBytes(metaStringB);
-                target.putChar('\n'.charCodeAt(0));
-                //data
-                target.putBytes(frame.message().data());
-                target.flush();
-                return target;
-            }
-            else {
-                //length (len[int] + flag[int])
-                const frameSize = 4 + 4;
-                const target = targetFactory(frameSize);
-                //长度
-                target.putInt(frameSize);
-                //flag
-                target.putInt(frame.flag());
-                target.flush();
-                return target;
-            }
-        }
-        /**
-         * 编码读取
-         *
-         * @param buffer 缓冲
-         */
-        read(buffer) {
-            const frameSize = buffer.getInt();
-            if (frameSize > (buffer.remaining() + 4)) {
-                return null;
-            }
-            const flag = buffer.getInt();
-            if (frameSize == 8) {
-                //len[int] + flag[int]
-                return new Frame_3.Frame(Constants_7.Flags.of(flag), null);
-            }
-            else {
-                const metaBufSize = Math.min(Constants_7.Constants.MAX_SIZE_META_STRING, buffer.remaining());
-                //1.解码 sid and event
-                const buf = new ArrayBuffer(metaBufSize);
-                //sid
-                const sid = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_SID);
-                //event
-                const event = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_EVENT);
-                //metaString
-                const metaString = this.decodeString(buffer, buf, Constants_7.Constants.MAX_SIZE_META_STRING);
-                //2.解码 body
-                const dataRealSize = frameSize - buffer.position();
-                let data;
-                if (dataRealSize > Constants_7.Constants.MAX_SIZE_DATA) {
-                    //超界了，空读。必须读，不然协议流会坏掉
-                    data = new ArrayBuffer(Constants_7.Constants.MAX_SIZE_DATA);
-                    buffer.getBytes(data, 0, Constants_7.Constants.MAX_SIZE_DATA);
-                    for (let i = dataRealSize - Constants_7.Constants.MAX_SIZE_DATA; i > 0; i--) {
-                        buffer.getByte();
-                    }
-                }
-                else {
-                    data = new ArrayBuffer(dataRealSize);
-                    if (dataRealSize > 0) {
-                        buffer.getBytes(data, 0, dataRealSize);
-                    }
-                }
-                //先 data , 后 metaString (避免 data 时修改元信息)
-                const message = new Message_3.MessageBuilder()
-                    .flag(Constants_7.Flags.of(flag))
-                    .sid(sid)
-                    .event(event)
-                    .entity(new Entity_4.EntityDefault().dataSet(data).metaStringSet(metaString))
-                    .build();
-                return new Frame_3.Frame(message.flag(), message);
-            }
-        }
-        decodeString(reader, buf, maxLen) {
-            const bufView = new DataView(buf);
-            let bufViewIdx = 0;
-            while (true) {
-                const c = reader.getByte();
-                if (c == 10) { //10:'\n'
-                    break;
-                }
-                if (maxLen > 0 && maxLen <= bufViewIdx) {
-                    //超界了，空读。必须读，不然协议流会坏掉
-                }
-                else {
-                    if (c != 0) { //32:' '
-                        bufView.setInt8(bufViewIdx, c);
-                        bufViewIdx++;
-                    }
-                }
-            }
-            if (bufViewIdx < 1) {
-                return "";
-            }
-            //这里要加个长度控制
-            return StrUtils_2.StrUtils.bufToStr(buf, 0, bufViewIdx, this._config.getCharset());
-        }
-    }
-    exports.CodecByteBuffer = CodecByteBuffer;
-    class ArrayBufferCodecReader {
-        constructor(buf) {
-            this._buf = buf;
-            this._bufView = new DataView(buf);
-            this._bufViewIdx = 0;
-        }
-        getByte() {
-            if (this._bufViewIdx >= this._buf.byteLength) {
-                return -1;
-            }
-            const tmp = this._bufView.getInt8(this._bufViewIdx);
-            this._bufViewIdx += 1;
-            return tmp;
-        }
-        getBytes(dst, offset, length) {
-            const tmp = new DataView(dst);
-            const tmpEndIdx = offset + length;
-            for (let i = offset; i < tmpEndIdx; i++) {
-                if (this._bufViewIdx >= this._buf.byteLength) {
-                    //读完了
-                    break;
-                }
-                tmp.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
-                this._bufViewIdx++;
-            }
-        }
-        getInt() {
-            if (this._bufViewIdx >= this._buf.byteLength) {
-                return -1;
-            }
-            const tmp = this._bufView.getInt32(this._bufViewIdx);
-            this._bufViewIdx += 4;
-            return tmp;
-        }
-        remaining() {
-            return this._buf.byteLength - this._bufViewIdx;
-        }
-        position() {
-            return this._bufViewIdx;
-        }
-        size() {
-            return this._buf.byteLength;
-        }
-        reset() {
-            this._bufViewIdx = 0;
-        }
-    }
-    exports.ArrayBufferCodecReader = ArrayBufferCodecReader;
-    class ArrayBufferCodecWriter {
-        constructor(n) {
-            this._buf = new ArrayBuffer(n);
-            this._bufView = new DataView(this._buf);
-            this._bufViewIdx = 0;
-        }
-        putBytes(src) {
-            const tmp = new DataView(src);
-            const len = tmp.byteLength;
-            for (let i = 0; i < len; i++) {
-                this._bufView.setInt8(this._bufViewIdx, tmp.getInt8(i));
-                this._bufViewIdx += 1;
-            }
-        }
-        putInt(val) {
-            this._bufView.setInt32(this._bufViewIdx, val);
-            this._bufViewIdx += 4;
-        }
-        putChar(val) {
-            this._bufView.setInt16(this._bufViewIdx, val);
-            this._bufViewIdx += 2;
-        }
-        flush() {
-        }
-        getBuffer() {
-            return this._buf;
-        }
-    }
-    exports.ArrayBufferCodecWriter = ArrayBufferCodecWriter;
-});
-define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/StrUtils", "socketd/transport/core/Codec", "socketd/transport/core/Constants"], function (require, exports, StrUtils_3, Codec_2, Constants_8) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.FileEntity = exports.StringEntity = exports.EntityDefault = void 0;
-    /**
-     * 实体默认实现
-     *
-     * @author noear
-     * @since 2.0
-     */
-    class EntityDefault {
-        constructor() {
-            this._metaMap = null;
-            this._data = new ArrayBuffer(0);
-            this._dataAsReader = null;
-        }
-        /**
-         * At
-         * */
-        at() {
-            return this.meta("@");
-        }
-        /**
-         * 设置元信息字符串
-         * */
-        metaStringSet(metaString) {
-            this._metaMap = new URLSearchParams(metaString);
-            return this;
-        }
-        /**
-         * 放置元信息字典
-         *
-         * @param map 元信息字典
-         */
-        metaMapPut(map) {
-            if (map instanceof URLSearchParams) {
-                const tmp = map;
-                tmp.forEach((val, key, p) => {
-                    this.metaMap().set(key, val);
-                });
-            }
-            else {
-                for (const name of map.prototype) {
-                    this.metaMap().set(name, map[name]);
-                }
-            }
-            return this;
-        }
-        /**
-         * 放置元信息
-         *
-         * @param name 名字
-         * @param val  值
-         */
-        metaPut(name, val) {
-            this.metaMap().set(name, val);
-            return this;
-        }
-        /**
-         * 获取元信息字符串（queryString style）
-         */
-        metaString() {
-            return this.metaMap().toString();
-        }
-        /**
-         * 获取元信息字典
-         */
-        metaMap() {
-            if (this._metaMap == null) {
-                this._metaMap = new URLSearchParams();
-            }
-            return this._metaMap;
-        }
-        /**
-         * 获取元信息
-         *
-         * @param name 名字
-         */
-        meta(name) {
-            return this.metaMap().get(name);
-        }
-        /**
-         * 获取元信息或默认值
-         *
-         * @param name 名字
-         * @param def  默认值
-         */
-        metaOrDefault(name, def) {
-            const val = this.meta(name);
-            if (val) {
-                return val;
-            }
-            else {
-                return def;
-            }
-        }
-        /**
-         * 获取元信息并转为 int
-         */
-        metaAsInt(name) {
-            return parseInt(this.metaOrDefault(name, '0'));
-        }
-        /**
-         * 获取元信息并转为 float
-         */
-        metaAsFloat(name) {
-            return parseFloat(this.metaOrDefault(name, '0'));
-        }
-        /**
-         * 放置元信息
-         *
-         * @param name 名字
-         * @param val  值
-         */
-        putMeta(name, val) {
-            this.metaPut(name, val);
-        }
-        /**
-         * 设置数据
-         *
-         * @param data 数据
-         */
-        dataSet(data) {
-            this._data = data;
-            return this;
-        }
-        /**
-         * 获取数据（若多次复用，需要reset）
-         */
-        data() {
-            return this._data;
-        }
-        dataAsReader() {
-            if (!this._dataAsReader) {
-                this._dataAsReader = new Codec_2.ArrayBufferCodecReader(this._data);
-            }
-            return this._dataAsReader;
-        }
-        /**
-         * 获取数据并转成字符串
-         */
-        dataAsString() {
-            return StrUtils_3.StrUtils.bufToStrDo(this._data, '');
-        }
-        /**
-         * 获取数据长度
-         */
-        dataSize() {
-            return this._data.byteLength;
-        }
-        /**
-         * 释放资源
-         */
-        release() {
-        }
-        toString() {
-            return "Entity{" +
-                "meta='" + this.metaString() + '\'' +
-                ", data=byte[" + this.dataSize() + ']' + //避免内容太大，影响打印
-                '}';
-        }
-    }
-    exports.EntityDefault = EntityDefault;
-    /**
-     * 字符串实体
-     *
-     * @author noear
-     * @since 2.0
-     */
-    class StringEntity extends EntityDefault {
-        constructor(data) {
-            super();
-            const dataBuf = StrUtils_3.StrUtils.strToBuf(data);
-            this.dataSet(dataBuf);
-        }
-    }
-    exports.StringEntity = StringEntity;
-    class FileEntity extends EntityDefault {
-        constructor(file) {
-            super();
-            this._file = file;
-            this.metaPut(Constants_8.EntityMetas.META_DATA_DISPOSITION_FILENAME, file.name);
-        }
-        load() {
-            return __awaiter(this, void 0, void 0, function* () {
-                const buf = yield this._file.arrayBuffer();
-                this.dataSet(buf);
-                return this;
-            });
-        }
-    }
-    exports.FileEntity = FileEntity;
 });
 define("socketd/transport/client/ClientSession", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -2200,7 +2308,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
     }
     exports.HandshakeDefault = HandshakeDefault;
 });
-define("socketd/transport/core/Processor", ["require", "exports", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException", "socketd/transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_10, SocketdException_4, HandshakeDefault_1) {
+define("socketd/transport/core/Processor", ["require", "exports", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException", "socketd/transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_10, SocketdException_5, HandshakeDefault_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ProcessorDefault = void 0;
@@ -2226,7 +2334,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                     if (r && channel.isValid()) {
                         //如果还有效，则发送链接确认
                         try {
-                            channel.sendConnack(frame.getMessage()); //->Connack
+                            channel.sendConnack(frame.message()); //->Connack
                         }
                         catch (err) {
                             this.onError(channel, err);
@@ -2245,7 +2353,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                     channel.close(Constants_10.Constants.CLOSE1_PROTOCOL);
                     if (frame.flag() == Constants_10.Flags.Close) {
                         //说明握手失败了
-                        throw new SocketdException_4.SocketdConnectionException("Connection request was rejected");
+                        throw new SocketdException_5.SocketdConnectionException("Connection request was rejected");
                     }
                     console.warn(`${channel.getConfig().getRoleName()} channel handshake is null, sessionId=${channel.getSession().sessionId()}`);
                     return;
@@ -2267,13 +2375,13 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                         }
                         case Constants_10.Flags.Alarm: {
                             //结束流，并异常通知
-                            const exception = new SocketdException_4.SocketdAlarmException(frame.getMessage());
-                            const stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
+                            const exception = new SocketdException_5.SocketdAlarmException(frame.message());
+                            const stream = channel.getConfig().getStreamManger().getStream(frame.message().sid());
                             if (stream == null) {
                                 this.onError(channel, exception);
                             }
                             else {
-                                channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
+                                channel.getConfig().getStreamManger().removeStream(frame.message().sid());
                                 stream.onError(exception);
                             }
                             break;
@@ -2308,7 +2416,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                 if (fragmentIdxStr != null) {
                     //解析分片索引
                     const index = parseInt(fragmentIdxStr);
-                    const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+                    const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.message());
                     if (frameNew == null) {
                         return;
                     }
@@ -2422,7 +2530,7 @@ define("socketd/utils/RunUtils", ["require", "exports"], function (require, expo
     }
     exports.RunUtils = RunUtils;
 });
-define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd/transport/core/Channel", "socketd/transport/core/HeartbeatHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/exception/SocketdException", "socketd/utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_11, Asserts_4, SocketdException_5, RunUtils_1) {
+define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd/transport/core/Channel", "socketd/transport/core/HeartbeatHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/exception/SocketdException", "socketd/utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_11, Asserts_4, SocketdException_6, RunUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientChannel = void 0;
@@ -2484,14 +2592,14 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                     this._heartbeatHandler.heartbeat(this.getSession());
                 }
                 catch (e) {
-                    if (e instanceof SocketdException_5.SocketdException) {
+                    if (e instanceof SocketdException_6.SocketdException) {
                         throw e;
                     }
                     if (this._connector.autoReconnect()) {
                         this._real.close(Constants_11.Constants.CLOSE3_ERROR);
                         this._real = null;
                     }
-                    throw new SocketdException_5.SocketdChannelException(e);
+                    throw new SocketdException_6.SocketdChannelException(e);
                 }
             });
         }
@@ -2841,7 +2949,7 @@ define("socketd/transport/client/ClientProvider", ["require", "exports"], functi
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/utils/StrUtils", "socketd/exception/SocketdException", "socketd/transport/client/ClientChannel", "socketd/utils/RunUtils"], function (require, exports, StrUtils_4, SocketdException_6, ClientChannel_2, RunUtils_2) {
+define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/utils/StrUtils", "socketd/exception/SocketdException", "socketd/transport/client/ClientChannel", "socketd/utils/RunUtils"], function (require, exports, StrUtils_4, SocketdException_7, ClientChannel_2, RunUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClientSession = void 0;
@@ -2869,7 +2977,7 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
         getSessionOne() {
             if (this._sessionSet.length == 0) {
                 //没有会话
-                throw new SocketdException_6.SocketdException("No session!");
+                throw new SocketdException_7.SocketdException("No session!");
             }
             else if (this._sessionSet.length == 1) {
                 //只有一个就不管了
@@ -2887,7 +2995,7 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
                 }
                 if (sessionsSize == 0) {
                     //没有可用的会话
-                    throw new SocketdException_6.SocketdException("No session is available!");
+                    throw new SocketdException_7.SocketdException("No session is available!");
                 }
                 if (sessionsSize == 1) {
                     return sessions[0];
@@ -3028,7 +3136,7 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD"
     }
     exports.ClusterClient = ClusterClient;
 });
-define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd/transport/core/Codec"], function (require, exports, Codec_3) {
+define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd/transport/core/Codec"], function (require, exports, Codec_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WsChannelAssistant = void 0;
@@ -3037,11 +3145,11 @@ define("socketd_websocket/WsChannelAssistant", ["require", "exports", "socketd/t
             this._config = config;
         }
         read(buffer) {
-            return this._config.getCodec().read(new Codec_3.ArrayBufferCodecReader(buffer));
+            return this._config.getCodec().read(new Codec_2.ArrayBufferCodecReader(buffer));
         }
         write(target, frame) {
             let tmp = this._config.getCodec()
-                .write(frame, n => new Codec_3.ArrayBufferCodecWriter(n));
+                .write(frame, n => new Codec_2.ArrayBufferCodecWriter(n));
             target.send(tmp.getBuffer());
         }
         isValid(target) {
@@ -3137,34 +3245,21 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
                     //确保用完自动关闭
                     if (message.dataSize() > this.getConfig().getFragmentSize()) {
                         message.putMeta(Constants_13.EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
-                        //满足分片条件
-                        let fragmentIndex = 0;
-                        while (true) {
-                            //获取分片
-                            fragmentIndex++;
-                            const fragmentEntity = this.getConfig().getFragmentHandler().nextFragment(this, fragmentIndex, message);
-                            if (fragmentEntity != null) {
-                                //主要是 sid 和 entity
-                                const fragmentFrame = new Frame_5.Frame(frame.flag(), new Message_5.MessageBuilder()
-                                    .flag(frame.flag())
-                                    .sid(message.sid())
-                                    .entity(fragmentEntity)
-                                    .build());
-                                this._assistant.write(this._source, fragmentFrame);
-                            }
-                            else {
-                                //没有分片，说明发完了
-                                return;
-                            }
-                        }
                     }
-                    else {
-                        //不满足分片条件，直接发
-                        this._assistant.write(this._source, frame);
-                        return;
-                    }
+                    this.getConfig().getFragmentHandler().spliFragment(this, message, fragmentEntity => {
+                        //主要是 sid 和 entity
+                        const fragmentFrame = new Frame_5.Frame(frame.flag(), new Message_5.MessageBuilder()
+                            .flag(frame.flag())
+                            .sid(message.sid())
+                            .event(message.event())
+                            .entity(fragmentEntity)
+                            .build());
+                        this._assistant.write(this._source, fragmentFrame);
+                    });
+                    return;
                 }
             }
+            //不满足分片条件，直接发
             this._assistant.write(this._source, frame);
         }
         retrieve(frame) {
@@ -3215,7 +3310,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
     }
     exports.ChannelDefault = ChannelDefault;
 });
-define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "socketd/transport/client/ClientHandshakeResult", "socketd/transport/core/ChannelDefault", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_14, SocketdException_7) {
+define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "socketd/transport/client/ClientHandshakeResult", "socketd/transport/core/ChannelDefault", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_14, SocketdException_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebSocketClientImpl = void 0;
@@ -3261,7 +3356,7 @@ define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "soc
                     }
                 }
                 catch (e) {
-                    if (e instanceof SocketdException_7.SocketdConnectionException) {
+                    if (e instanceof SocketdException_8.SocketdConnectionException) {
                         this._handshakeFuture(new ClientHandshakeResult_1.ClientHandshakeResult(this._channel, e));
                     }
                     console.warn("WebSocket client onMessage error", e);

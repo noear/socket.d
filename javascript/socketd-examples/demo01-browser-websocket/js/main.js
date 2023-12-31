@@ -3,13 +3,14 @@
 let isOpen = false;
 
 async function open(callback) {
-    let serverUrl =  document.getElementById("serverUrl").value;
+    let serverUrl = document.getElementById("serverUrl").value;
     if (!serverUrl) {
         alert('serverUrl不能为空!');
         return;
     }
-    window.clientSession = await SocketD.createClient(serverUrl)
-        .listen(SocketD.newEventListener().doOnMessage((s,m)=>{
+    window.clientSession = await SocketD.createClient(serverUrl.trim())
+        .config(c => c.fragmentSize(1024 * 1024))
+        .listen(SocketD.newEventListener().doOnMessage((s, m) => {
             appendToMessageList('收到推送', m.dataAsString());
         }))
         .open();
@@ -66,7 +67,7 @@ function main() {
     });
 }
 
-function mainDo(){
+function mainDo() {
     let openBtn = document.getElementById("openBtn");
     openBtn.addEventListener("click", function () {
         if (isOpen) {
@@ -84,7 +85,6 @@ function mainDo(){
     });
     let send0 = document.getElementById("send");
     let send1 = document.getElementById("sendAndRequest");
-    let send1f = document.getElementById("sendAndRequestFile");
     let send2 = document.getElementById("sendAndSubscribe");
     send0.addEventListener("click", () => {
         if (isOpen) {
@@ -95,25 +95,6 @@ function mainDo(){
     send1.addEventListener("click", () => {
         if (isOpen) {
             send(1);
-        }
-    });
-
-    send1f.addEventListener("click", async () =>  {
-        if (isOpen) {
-            const files = document.getElementById("file").files;
-            if(!files || files.length == 0){
-                alert("请选择文件");
-                return;
-            }
-
-            const file1 = document.getElementById("file").files[0];
-            const fileEntity = await SocketD.newFileEntity(file1).load();
-
-            appendToMessageList('发送文件并请求', file1.name);
-            clientSession.sendAndRequest("/demo", fileEntity, reply => {
-                console.log('reply', reply);
-                appendToMessageList('答复', reply.dataAsString());
-            });
         }
     });
 
@@ -136,6 +117,60 @@ function mainDo(){
     unpush.addEventListener("click", () => {
         if (isOpen) {
             clientSession.send("/unpush", SocketD.newStringEntity(""))
+        }
+    });
+
+
+    let uploadFile = document.getElementById("uploadFile");
+    let downloadFile = document.getElementById("downloadFile");
+    let uploadData = document.getElementById("uploadData");
+    uploadFile.addEventListener("click", async () => {
+        if (isOpen) {
+            const files = document.getElementById("file").files;
+            if (!files || files.length == 0) {
+                alert("请选择文件");
+                return;
+            }
+
+            const file1 = document.getElementById("file").files[0];
+
+            appendToMessageList('发送文件并请求', file1.name);
+            clientSession.sendAndRequest("/upload", SocketD.newFileEntity(file1), reply => {
+                console.log('reply', reply);
+                appendToMessageList('答复', reply.dataAsString());
+            });
+        }
+    });
+
+    downloadFile.addEventListener("click", async () => {
+        if (isOpen) {
+            appendToMessageList('下载文件', "...");
+            clientSession.sendAndRequest("/download", SocketD.newEntity(), reply => {
+                console.log('reply', reply);
+
+                const fileName = reply.meta(SocketD.Metas.META_DATA_DISPOSITION_FILENAME);
+                if (fileName) {
+                    appendToMessageList('答复', "下载文件: file=" + fileName + ", size=" + reply.dataSize());
+                } else {
+                    appendToMessageList('答复', "没有收到文件:(");
+                }
+            });
+        }
+    });
+
+    uploadData.addEventListener("click", async () => {
+        if (isOpen) {
+            const strSize = 1024*1024*10;
+            let str = "";
+            while (str.length < strSize) {
+                str += "1234567890"
+            }
+
+            appendToMessageList('上传大文本块10M', "...");
+            clientSession.sendAndRequest("/upload", SocketD.newStringEntity(str), reply => {
+                console.log('reply', reply);
+                appendToMessageList('答复', reply.dataAsString());
+            });
         }
     });
 }

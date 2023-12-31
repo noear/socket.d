@@ -42,8 +42,7 @@ export interface Buffer {
 
 export class ByteBuffer implements Buffer {
     private _buf: ArrayBuffer;
-    private _bufView?: DataView;
-    private _bufViewIdx = 0;
+    private _bufIdx = 0;
 
     constructor(buf: ArrayBuffer) {
         this._buf = buf;
@@ -53,19 +52,15 @@ export class ByteBuffer implements Buffer {
         return this.size() - this.position();
     }
     position(): number {
-        return  this._bufViewIdx;
+        return  this._bufIdx;
     }
     size(): number {
         return this._buf.byteLength;
     }
     reset() {
-        this._bufViewIdx = 0;
+        this._bufIdx = 0;
     }
     getBytes(length: number, callback: IoConsumer<ArrayBuffer>) : boolean {
-        if (!this._bufView) {
-            this._bufView = new DataView(this._buf);
-        }
-
         let tmpSize = this.remaining();
         if (tmpSize > length) {
             tmpSize = length;
@@ -75,15 +70,12 @@ export class ByteBuffer implements Buffer {
             return false;
         }
 
-        const tmp = new ArrayBuffer(tmpSize);
-        const tmpView = new DataView(tmp);
-
-        for (let i = 0; i < tmpSize; i++) {
-            tmpView.setInt8(i, this._bufView.getInt8(this._bufViewIdx));
-            this._bufViewIdx++;
-        }
+        let tmpEnd = this._bufIdx + tmpSize;
+        let tmp = this._buf.slice(this._bufIdx, tmpEnd);
+        this._bufIdx = tmpEnd;
 
         callback(tmp);
+
         return true;
     }
 
@@ -126,16 +118,18 @@ export class BlobBuffer implements Buffer {
             return false;
         }
 
-        let tmp = this._buf.slice(this._bufIdx, tmpSize);
+        let tmpEnd = this._bufIdx + tmpSize;
+        let tmp = this._buf.slice(this._bufIdx, tmpEnd);
         let tmpReader = new FileReader();
         tmpReader.onload = (event) => {
             if (event.target) {
                 //成功读取
-                this._bufIdx = this._bufIdx + tmpSize;
                 callback(event.target!.result as ArrayBuffer);
             }
         };
         tmpReader.readAsArrayBuffer(tmp);
+
+        this._bufIdx = tmpEnd;
 
         return true;
     }

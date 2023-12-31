@@ -70,7 +70,7 @@ export class ProcessorDefault implements Processor {
     }
 
 
-    onReceive(channel: ChannelInternal, frame) {
+    onReceive(channel: ChannelInternal, frame:Frame) {
         if (channel.getConfig().clientMode()) {
             console.debug("C-REV:" + frame);
         } else {
@@ -78,12 +78,12 @@ export class ProcessorDefault implements Processor {
         }
 
         if (frame.flag() == Flags.Connect) {
-            channel.setHandshake(new HandshakeDefault(frame.message()));
+            channel.setHandshake(new HandshakeDefault(frame.message()!));
             channel.onOpenFuture((r, err) => {
                 if (r && channel.isValid()) {
                     //如果还有效，则发送链接确认
                     try {
-                        channel.sendConnack(frame.getMessage()); //->Connack
+                        channel.sendConnack(frame.message()!); //->Connack
                     } catch (err) {
                         this.onError(channel, err);
                     }
@@ -92,7 +92,7 @@ export class ProcessorDefault implements Processor {
             this.onOpen(channel);
         } else if (frame.flag() == Flags.Connack) {
             //if client
-            channel.setHandshake(new HandshakeDefault(frame.message()));
+            channel.setHandshake(new HandshakeDefault(frame.message()!));
             this.onOpen(channel);
         } else {
             if (channel.getHandshake() == null) {
@@ -124,12 +124,12 @@ export class ProcessorDefault implements Processor {
                     }
                     case Flags.Alarm: {
                         //结束流，并异常通知
-                        const exception = new SocketdAlarmException(frame.getMessage());
-                        const stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
+                        const exception = new SocketdAlarmException(frame.message()!);
+                        const stream = channel.getConfig().getStreamManger().getStream(frame.message()!.sid());
                         if (stream == null) {
                             this.onError(channel, exception);
                         } else {
-                            channel.getConfig().getStreamManger().removeStream(frame.getMessage().sid());
+                            channel.getConfig().getStreamManger().removeStream(frame.message()!.sid());
                             stream.onError(exception);
                         }
                         break;
@@ -156,15 +156,15 @@ export class ProcessorDefault implements Processor {
         }
     }
 
-    onReceiveDo(channel: ChannelInternal, frame, isReply) {
+    onReceiveDo(channel: ChannelInternal, frame:Frame, isReply) {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
-            const fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
+            const fragmentIdxStr = frame.message()!.meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
                 const index = parseInt(fragmentIdxStr);
-                const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.getMessage());
+                const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.message()!);
 
                 if (frameNew == null) {
                     return;

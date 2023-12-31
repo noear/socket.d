@@ -2,10 +2,13 @@ package labs;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.EntityMetas;
+import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.StrUtils;
+
+import java.io.File;
 
 public class ServerTest {
     static final String[] schemas = new String[]{
@@ -24,20 +27,15 @@ public class ServerTest {
     public static void main(String[] args) throws Exception {
         String s1 = schemas[3];
         SocketD.createServer(s1)
-                .config(c -> c.port(8602))
+                .config(c -> c.port(8602).fragmentSize(1024 * 1024))
                 .listen(new EventListener()
                         .doOnOpen(s -> {
                             System.out.println("onOpen: " + s.sessionId());
                         }).doOnMessage((s, m) -> {
                             System.out.println("onMessage: " + m);
-
+                        }).doOn("/demo", (s, m) -> {
                             if (m.isRequest()) {
-                                String fileName = m.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
-                                if (StrUtils.isEmpty(fileName)) {
-                                    s.reply(m, new StringEntity("me to!"));
-                                } else {
-                                    s.reply(m, new StringEntity("file received: " + fileName + ", size: " + m.dataSize()));
-                                }
+                                s.reply(m, new StringEntity("me to!"));
                             }
 
                             if (m.isSubscribe()) {
@@ -47,8 +45,22 @@ public class ServerTest {
                                 }
                                 s.replyEnd(m, new StringEntity("welcome to my home!"));
                             }
+                        }).doOn("/upload", (s, m) -> {
+                            if (m.isRequest()) {
+                                String fileName = m.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+                                if (StrUtils.isEmpty(fileName)) {
+                                    s.reply(m, new StringEntity("no file! size: " + m.dataSize()));
+                                } else {
+                                    s.reply(m, new StringEntity("file received: " + fileName + ", size: " + m.dataSize()));
+                                }
+                            }
+                        }).doOn("/download", (s, m) -> {
+                            if (m.isRequest()) {
+                                FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov"));
+                                s.reply(m, fileEntity);
+                            }
                         }).doOn("/push", (s, m) -> {
-                            if(s.attrHas("push")){
+                            if (s.attrHas("push")) {
                                 return;
                             }
 

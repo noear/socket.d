@@ -5,6 +5,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.FileEntity;
+import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
 import org.slf4j.Logger;
@@ -42,31 +43,28 @@ public class TestCase14_file extends BaseTestCase {
         //server
         server = SocketD.createServer(getSchema())
                 .config(c -> c.port(getPort()))
-                .listen(new SimpleListener() {
-                    @Override
-                    public void onMessage(Session session, Message message) throws IOException {
-                        System.out.println("::" + message);
-                        messageCounter.incrementAndGet();
+                .listen(new EventListener().doOn("/user/upload", (s, m) -> {
+                    System.out.println("::" + m);
+                    messageCounter.incrementAndGet();
 
-                        String fileName = message.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+                    String fileName = m.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
 
-                        if (fileName != null) {
-                            System.out.println(fileName);
-                            File fileNew = new File("/Users/noear/Downloads/socketd-upload.mov");
-                            fileNew.delete();
+                    if (fileName != null) {
+                        System.out.println(fileName);
+                        File fileNew = new File("/Users/noear/Downloads/socketd-upload.mov");
+                        fileNew.delete();
 
-                            fileNew.createNewFile();
+                        fileNew.createNewFile();
 
-                            try {
-                                try (OutputStream outputStream = new FileOutputStream(fileNew)) {
-                                    outputStream.write(message.dataAsBytes());
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                        try {
+                            try (OutputStream outputStream = new FileOutputStream(fileNew)) {
+                                outputStream.write(m.dataAsBytes());
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                })
+                }))
                 .start();
 
         //休息下，启动可能要等会儿

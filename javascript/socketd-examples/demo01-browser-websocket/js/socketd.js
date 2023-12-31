@@ -1527,10 +1527,10 @@ define("socketd/transport/core/Codec", ["require", "exports", "socketd/transport
     }
     exports.ArrayBufferCodecWriter = ArrayBufferCodecWriter;
 });
-define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/StrUtils", "socketd/transport/core/Codec"], function (require, exports, StrUtils_3, Codec_2) {
+define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/StrUtils", "socketd/transport/core/Codec", "socketd/transport/core/Constants"], function (require, exports, StrUtils_3, Codec_2, Constants_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.StringEntity = exports.EntityDefault = void 0;
+    exports.FileEntity = exports.StringEntity = exports.EntityDefault = void 0;
     /**
      * 实体默认实现
      *
@@ -1562,8 +1562,16 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
          * @param map 元信息字典
          */
         metaMapPut(map) {
-            for (const name of map.prototype) {
-                this.metaMap().set(name, map[name]);
+            if (map instanceof URLSearchParams) {
+                const tmp = map;
+                tmp.forEach((val, key, p) => {
+                    this.metaMap().set(key, val);
+                });
+            }
+            else {
+                for (const name of map.prototype) {
+                    this.metaMap().set(name, map[name]);
+                }
             }
             return this;
         }
@@ -1696,6 +1704,21 @@ define("socketd/transport/core/Entity", ["require", "exports", "socketd/utils/St
         }
     }
     exports.StringEntity = StringEntity;
+    class FileEntity extends EntityDefault {
+        constructor(file) {
+            super();
+            this._file = file;
+            this.metaPut(Constants_8.EntityMetas.META_DATA_DISPOSITION_FILENAME, file.name);
+        }
+        load() {
+            return __awaiter(this, void 0, void 0, function* () {
+                const buf = yield this._file.arrayBuffer();
+                this.dataSet(buf);
+                return this;
+            });
+        }
+    }
+    exports.FileEntity = FileEntity;
 });
 define("socketd/transport/client/ClientSession", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -2138,7 +2161,7 @@ define("socketd/transport/client/ClientConfig", ["require", "exports", "socketd/
     }
     exports.ClientConfig = ClientConfig;
 });
-define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_8) {
+define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socketd/transport/core/Constants"], function (require, exports, Constants_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HandshakeDefault = void 0;
@@ -2146,7 +2169,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
         constructor(source) {
             this._source = source;
             this._url = new URL(source.event());
-            this._version = source.meta(Constants_8.EntityMetas.META_SOCKETD_VERSION);
+            this._version = source.meta(Constants_9.EntityMetas.META_SOCKETD_VERSION);
             this._paramMap = new Map();
             for (const [k, v] of this._url.searchParams) {
                 this._paramMap.set(k, v);
@@ -2177,7 +2200,7 @@ define("socketd/transport/core/HandshakeDefault", ["require", "exports", "socket
     }
     exports.HandshakeDefault = HandshakeDefault;
 });
-define("socketd/transport/core/Processor", ["require", "exports", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException", "socketd/transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_9, SocketdException_4, HandshakeDefault_1) {
+define("socketd/transport/core/Processor", ["require", "exports", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException", "socketd/transport/core/HandshakeDefault"], function (require, exports, Listener_1, Constants_10, SocketdException_4, HandshakeDefault_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ProcessorDefault = void 0;
@@ -2197,7 +2220,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
             else {
                 console.debug("S-REV:" + frame);
             }
-            if (frame.flag() == Constants_9.Flags.Connect) {
+            if (frame.flag() == Constants_10.Flags.Connect) {
                 channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
                 channel.onOpenFuture((r, err) => {
                     if (r && channel.isValid()) {
@@ -2212,15 +2235,15 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                 });
                 this.onOpen(channel);
             }
-            else if (frame.flag() == Constants_9.Flags.Connack) {
+            else if (frame.flag() == Constants_10.Flags.Connack) {
                 //if client
                 channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
                 this.onOpen(channel);
             }
             else {
                 if (channel.getHandshake() == null) {
-                    channel.close(Constants_9.Constants.CLOSE1_PROTOCOL);
-                    if (frame.flag() == Constants_9.Flags.Close) {
+                    channel.close(Constants_10.Constants.CLOSE1_PROTOCOL);
+                    if (frame.flag() == Constants_10.Flags.Close) {
                         //说明握手失败了
                         throw new SocketdException_4.SocketdConnectionException("Connection request was rejected");
                     }
@@ -2229,20 +2252,20 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                 }
                 try {
                     switch (frame.flag()) {
-                        case Constants_9.Flags.Ping: {
+                        case Constants_10.Flags.Ping: {
                             channel.sendPong();
                             break;
                         }
-                        case Constants_9.Flags.Pong: {
+                        case Constants_10.Flags.Pong: {
                             break;
                         }
-                        case Constants_9.Flags.Close: {
+                        case Constants_10.Flags.Close: {
                             //关闭通道
-                            channel.close(Constants_9.Constants.CLOSE1_PROTOCOL);
+                            channel.close(Constants_10.Constants.CLOSE1_PROTOCOL);
                             this.onCloseInternal(channel);
                             break;
                         }
-                        case Constants_9.Flags.Alarm: {
+                        case Constants_10.Flags.Alarm: {
                             //结束流，并异常通知
                             const exception = new SocketdException_4.SocketdAlarmException(frame.getMessage());
                             const stream = channel.getConfig().getStreamManger().getStream(frame.getMessage().sid());
@@ -2255,19 +2278,19 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
                             }
                             break;
                         }
-                        case Constants_9.Flags.Message:
-                        case Constants_9.Flags.Request:
-                        case Constants_9.Flags.Subscribe: {
+                        case Constants_10.Flags.Message:
+                        case Constants_10.Flags.Request:
+                        case Constants_10.Flags.Subscribe: {
                             this.onReceiveDo(channel, frame, false);
                             break;
                         }
-                        case Constants_9.Flags.Reply:
-                        case Constants_9.Flags.ReplyEnd: {
+                        case Constants_10.Flags.Reply:
+                        case Constants_10.Flags.ReplyEnd: {
                             this.onReceiveDo(channel, frame, true);
                             break;
                         }
                         default: {
-                            channel.close(Constants_9.Constants.CLOSE2_PROTOCOL_ILLEGAL);
+                            channel.close(Constants_10.Constants.CLOSE2_PROTOCOL_ILLEGAL);
                             this.onCloseInternal(channel);
                         }
                     }
@@ -2281,7 +2304,7 @@ define("socketd/transport/core/Processor", ["require", "exports", "socketd/trans
             //如果启用了聚合!
             if (channel.getConfig().getFragmentHandler().aggrEnable()) {
                 //尝试聚合分片处理
-                const fragmentIdxStr = frame.message().meta(Constants_9.EntityMetas.META_DATA_FRAGMENT_IDX);
+                const fragmentIdxStr = frame.message().meta(Constants_10.EntityMetas.META_DATA_FRAGMENT_IDX);
                 if (fragmentIdxStr != null) {
                     //解析分片索引
                     const index = parseInt(fragmentIdxStr);
@@ -2399,7 +2422,7 @@ define("socketd/utils/RunUtils", ["require", "exports"], function (require, expo
     }
     exports.RunUtils = RunUtils;
 });
-define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd/transport/core/Channel", "socketd/transport/core/HeartbeatHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/exception/SocketdException", "socketd/utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_10, Asserts_4, SocketdException_5, RunUtils_1) {
+define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd/transport/core/Channel", "socketd/transport/core/HeartbeatHandler", "socketd/transport/core/Constants", "socketd/transport/core/Asserts", "socketd/exception/SocketdException", "socketd/utils/RunUtils"], function (require, exports, Channel_1, HeartbeatHandler_1, Constants_11, Asserts_4, SocketdException_5, RunUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClientChannel = void 0;
@@ -2451,7 +2474,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                         return;
                     }
                     //手动关闭
-                    if (this._real.isClosed() == Constants_10.Constants.CLOSE4_USER) {
+                    if (this._real.isClosed() == Constants_11.Constants.CLOSE4_USER) {
                         console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
                         return;
                     }
@@ -2465,7 +2488,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                         throw e;
                     }
                     if (this._connector.autoReconnect()) {
-                        this._real.close(Constants_10.Constants.CLOSE3_ERROR);
+                        this._real.close(Constants_11.Constants.CLOSE3_ERROR);
                         this._real = null;
                     }
                     throw new SocketdException_5.SocketdChannelException(e);
@@ -2525,7 +2548,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
                 }
                 catch (e) {
                     if (this._connector.autoReconnect()) {
-                        this._real.close(Constants_10.Constants.CLOSE3_ERROR);
+                        this._real.close(Constants_11.Constants.CLOSE3_ERROR);
                         this._real = null;
                     }
                     throw e;
@@ -2556,7 +2579,7 @@ define("socketd/transport/client/ClientChannel", ["require", "exports", "socketd
     }
     exports.ClientChannel = ClientChannel;
 });
-define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/transport/core/Session", "socketd/transport/core/Message", "socketd/transport/core/Frame", "socketd/transport/core/Constants", "socketd/transport/core/Stream"], function (require, exports, Session_1, Message_4, Frame_4, Constants_11, Stream_2) {
+define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/transport/core/Session", "socketd/transport/core/Message", "socketd/transport/core/Frame", "socketd/transport/core/Constants", "socketd/transport/core/Stream"], function (require, exports, Session_1, Message_4, Frame_4, Constants_12, Stream_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SessionDefault = void 0;
@@ -2634,7 +2657,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .event(event)
                 .entity(content)
                 .build();
-            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Message, message), null);
+            this._channel.send(new Frame_4.Frame(Constants_12.Flags.Message, message), null);
         }
         /**
          * 发送并请求（限为一次答复；指定超时）
@@ -2652,7 +2675,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .entity(content)
                 .build();
             const stream = new Stream_2.StreamRequest(message.sid(), timeout, consumer);
-            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Request, message), stream);
+            this._channel.send(new Frame_4.Frame(Constants_12.Flags.Request, message), stream);
             return stream;
         }
         /**
@@ -2670,7 +2693,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .entity(content)
                 .build();
             const stream = new Stream_2.StreamSubscribe(message.sid(), timeout, consumer);
-            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Subscribe, message), stream);
+            this._channel.send(new Frame_4.Frame(Constants_12.Flags.Subscribe, message), stream);
             return stream;
         }
         /**
@@ -2685,7 +2708,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .event(from.event())
                 .entity(content)
                 .build();
-            this._channel.send(new Frame_4.Frame(Constants_11.Flags.Reply, message), null);
+            this._channel.send(new Frame_4.Frame(Constants_12.Flags.Reply, message), null);
         }
         /**
          * 答复并结束（即最后一次答复）
@@ -2699,7 +2722,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                 .event(from.event())
                 .entity(content)
                 .build();
-            this._channel.send(new Frame_4.Frame(Constants_11.Flags.ReplyEnd, message), null);
+            this._channel.send(new Frame_4.Frame(Constants_12.Flags.ReplyEnd, message), null);
         }
         /**
          * 关闭
@@ -2714,7 +2737,7 @@ define("socketd/transport/core/SessionDefault", ["require", "exports", "socketd/
                     console.warn(`${this._channel.getConfig().getRoleName()} channel sendClose error`, e);
                 }
             }
-            this._channel.close(Constants_11.Constants.CLOSE4_USER);
+            this._channel.close(Constants_12.Constants.CLOSE4_USER);
         }
     }
     exports.SessionDefault = SessionDefault;
@@ -3064,7 +3087,7 @@ define("socketd/transport/core/ChannelSupporter", ["require", "exports"], functi
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/transport/core/Frame", "socketd/transport/core/Message", "socketd/transport/core/Constants", "socketd/transport/core/Channel", "socketd/transport/core/SessionDefault"], function (require, exports, Frame_5, Message_5, Constants_12, Channel_2, SessionDefault_2) {
+define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/transport/core/Frame", "socketd/transport/core/Message", "socketd/transport/core/Constants", "socketd/transport/core/Channel", "socketd/transport/core/SessionDefault"], function (require, exports, Frame_5, Message_5, Constants_13, Channel_2, SessionDefault_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ChannelDefault = void 0;
@@ -3113,7 +3136,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
                 if (message.entity() != null) {
                     //确保用完自动关闭
                     if (message.dataSize() > this.getConfig().getFragmentSize()) {
-                        message.putMeta(Constants_12.EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
+                        message.putMeta(Constants_13.EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
                         //满足分片条件
                         let fragmentIndex = 0;
                         while (true) {
@@ -3147,7 +3170,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
         retrieve(frame) {
             const stream = this._streamManger.getStream(frame.message().sid());
             if (stream != null) {
-                if (stream.isSingle() || frame.flag() == Constants_12.Flags.ReplyEnd) {
+                if (stream.isSingle() || frame.flag() == Constants_13.Flags.ReplyEnd) {
                     //如果是单收或者答复结束，则移除流接收器
                     this._streamManger.removeStream(frame.message().sid());
                 }
@@ -3192,7 +3215,7 @@ define("socketd/transport/core/ChannelDefault", ["require", "exports", "socketd/
     }
     exports.ChannelDefault = ChannelDefault;
 });
-define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "socketd/transport/client/ClientHandshakeResult", "socketd/transport/core/ChannelDefault", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_13, SocketdException_7) {
+define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "socketd/transport/client/ClientHandshakeResult", "socketd/transport/core/ChannelDefault", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, ClientHandshakeResult_1, ChannelDefault_1, Constants_14, SocketdException_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.WebSocketClientImpl = void 0;
@@ -3224,7 +3247,7 @@ define("socketd_websocket/impl/WebSocketClientImpl", ["require", "exports", "soc
                 try {
                     let frame = this._client.getAssistant().read(e.data);
                     if (frame != null) {
-                        if (frame.flag() == Constants_13.Flags.Connack) {
+                        if (frame.flag() == Constants_14.Flags.Connack) {
                             this._channel.onOpenFuture((r, err) => {
                                 if (err == null) {
                                     this._handshakeFuture(new ClientHandshakeResult_1.ClientHandshakeResult(this._channel, null));
@@ -3317,10 +3340,10 @@ define("socketd_websocket/WsClientProvider", ["require", "exports", "socketd_web
     }
     exports.WsClientProvider = WsClientProvider;
 });
-define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_14) {
+define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newStringEntity = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = exports.SocketD = void 0;
+    exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newFileEntity = exports.newStringEntity = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = exports.SocketD = void 0;
     class SocketD {
         /**
          * 框架版本号
@@ -3445,6 +3468,13 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
     }
     exports.newStringEntity = newStringEntity;
     /**
+     * 创建文件实体
+     * */
+    function newFileEntity(file) {
+        return new Entity_5.FileEntity(file);
+    }
+    exports.newFileEntity = newFileEntity;
+    /**
      * 创建简单临听器
      * */
     function newSimpleListener() {
@@ -3475,5 +3505,5 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
     /**
      * 元信息字典
      * */
-    exports.Metas = Constants_14.EntityMetas;
+    exports.Metas = Constants_15.EntityMetas;
 });

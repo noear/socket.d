@@ -1,5 +1,6 @@
 import {StrUtils} from "../../utils/StrUtils";
 import {ArrayBufferCodecReader, CodecReader} from "./Codec";
+import {EntityMetas} from "./Constants";
 
 
 /**
@@ -132,10 +133,18 @@ export class EntityDefault implements Entity {
      *
      * @param map 元信息字典
      */
-    metaMapPut(map): EntityDefault {
-        for (const name of map.prototype) {
-            this.metaMap().set(name, map[name]);
+    metaMapPut(map:any): EntityDefault {
+        if (map instanceof URLSearchParams) {
+            const tmp = map as URLSearchParams;
+            tmp.forEach((val, key, p) => {
+                this.metaMap().set(key, val);
+            })
+        } else {
+            for (const name of map.prototype) {
+                this.metaMap().set(name, map[name]);
+            }
         }
+
         return this;
     }
 
@@ -281,5 +290,21 @@ export class StringEntity extends EntityDefault implements Entity {
         super();
         const dataBuf = StrUtils.strToBuf(data);
         this.dataSet(dataBuf);
+    }
+}
+
+export class FileEntity extends EntityDefault implements Entity {
+    private _file: File;
+
+    constructor(file: File) {
+        super();
+        this._file = file;
+        this.metaPut(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.name);
+    }
+
+    async load(): Promise<FileEntity> {
+        const buf = await this._file.arrayBuffer();
+        this.dataSet(buf);
+        return this;
     }
 }

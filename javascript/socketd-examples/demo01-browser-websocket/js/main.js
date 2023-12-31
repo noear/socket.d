@@ -35,7 +35,7 @@ function send(type) {
         clientSession.sendAndRequest("/demo", SocketD.newStringEntity(input), reply => {
             console.log('reply', reply);
             appendToMessageList('答复', reply.dataAsString());
-        }, 3000);
+        });
     } else if (type == 2) {
         appendToMessageList('发送并订阅', input);
         clientSession.sendAndSubscribe("/demo", SocketD.newStringEntity(input)
@@ -46,7 +46,7 @@ function send(type) {
             }else{
                 appendToMessageList('答复', reply.dataAsString());
             }
-        }, 3000);
+        });
     } else {
         appendToMessageList('发送', input);
         clientSession.send("/demo", SocketD.newStringEntity(input));
@@ -84,6 +84,7 @@ function mainDo(){
     });
     let send0 = document.getElementById("send");
     let send1 = document.getElementById("sendAndRequest");
+    let send1f = document.getElementById("sendAndRequestFile");
     let send2 = document.getElementById("sendAndSubscribe");
     send0.addEventListener("click", () => {
         if (isOpen) {
@@ -94,6 +95,25 @@ function mainDo(){
     send1.addEventListener("click", () => {
         if (isOpen) {
             send(1);
+        }
+    });
+
+    send1f.addEventListener("click", async () =>  {
+        if (isOpen) {
+            const files = document.getElementById("file").files;
+            if(!files || files.length == 0){
+                alert("请选择文件");
+                return;
+            }
+
+            const file1 = document.getElementById("file").files[0];
+            const fileEntity = await SocketD.newFileEntity(file1).load();
+
+            appendToMessageList('发送文件并请求', file1.name);
+            clientSession.sendAndRequest("/demo", fileEntity, reply => {
+                console.log('reply', reply);
+                appendToMessageList('答复', reply.dataAsString());
+            });
         }
     });
 

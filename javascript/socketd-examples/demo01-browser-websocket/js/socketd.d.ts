@@ -1515,6 +1515,11 @@ declare module "socketd/transport/core/Entity" {
     export class StringEntity extends EntityDefault implements Entity {
         constructor(data: string);
     }
+    export class FileEntity extends EntityDefault implements Entity {
+        private _file;
+        constructor(file: File);
+        load(): Promise<FileEntity>;
+    }
 }
 declare module "socketd/transport/client/ClientSession" {
     import type { IoConsumer } from "socketd/transport/core/Typealias";
@@ -2667,7 +2672,7 @@ declare module "socketd/SocketD" {
     import type { Client } from "socketd/transport/client/Client";
     import type { ClientProvider } from "socketd/transport/client/ClientProvider";
     import { ClusterClient } from "socketd/cluster/ClusterClient";
-    import { EntityDefault, StringEntity } from "socketd/transport/core/Entity";
+    import { EntityDefault, FileEntity, StringEntity } from "socketd/transport/core/Entity";
     import { EventListener, Listener, PathListener, PipelineListener, SimpleListener } from "socketd/transport/core/Listener";
     import type { RouteSelector } from "socketd/transport/core/RouteSelector";
     import type { IoBiConsumer } from "socketd/transport/core/Typealias";
@@ -2737,6 +2742,10 @@ declare module "socketd/SocketD" {
      * */
     export function newStringEntity(data: string): StringEntity;
     /**
+     * 创建文件实体
+     * */
+    export function newFileEntity(file: File): FileEntity;
+    /**
      * 创建简单临听器
      * */
     export function newSimpleListener(): SimpleListener;
@@ -2760,7 +2769,9 @@ declare module "socketd/SocketD" {
         META_DATA_LENGTH: string;
         META_DATA_TYPE: string;
         META_DATA_FRAGMENT_IDX: string;
-        META_DATA_DISPOSITION_FILENAME: string;
+        META_DATA_DISPOSITION_FILENAME: string; /**
+         * 创建文件实体
+         * */
         META_RANGE_START: string;
         META_RANGE_SIZE: string;
     };

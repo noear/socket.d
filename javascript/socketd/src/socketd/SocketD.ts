@@ -4,7 +4,7 @@ import {Asserts} from "./transport/core/Asserts";
 import {ClientConfig} from "./transport/client/ClientConfig";
 import {ClusterClient} from "./cluster/ClusterClient";
 import {WsClientProvider} from "../socketd_websocket/WsClientProvider";
-import {EntityDefault, StringEntity} from "./transport/core/Entity";
+import {EntityDefault, FileEntity, StringEntity} from "./transport/core/Entity";
 import {EventListener, Listener, PathListener, PipelineListener, SimpleListener} from "./transport/core/Listener";
 import type {RouteSelector} from "./transport/core/RouteSelector";
 import type {IoBiConsumer} from "./transport/core/Typealias";
@@ -143,6 +143,13 @@ export function newEntity():EntityDefault {
  * */
 export function newStringEntity(data:string):StringEntity {
     return new StringEntity(data);
+}
+
+/**
+ * 创建文件实体
+ * */
+export function newFileEntity(file:File):FileEntity{
+    return new FileEntity(file);
 }
 
 /**

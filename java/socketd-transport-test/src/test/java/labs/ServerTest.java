@@ -1,9 +1,11 @@
 package labs;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 import org.noear.socketd.utils.RunUtils;
+import org.noear.socketd.utils.StrUtils;
 
 public class ServerTest {
     static final String[] schemas = new String[]{
@@ -30,11 +32,19 @@ public class ServerTest {
                             System.out.println("onMessage: " + m);
 
                             if (m.isRequest()) {
-                                s.reply(m, new StringEntity("me to!"));
+                                String fileName = m.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+                                if (StrUtils.isEmpty(fileName)) {
+                                    s.reply(m, new StringEntity("me to!"));
+                                } else {
+                                    s.reply(m, new StringEntity("file received: " + fileName + ", size: " + m.dataSize()));
+                                }
                             }
 
                             if (m.isSubscribe()) {
-                                s.reply(m, new StringEntity("me to!"));
+                                int size = m.metaAsInt(EntityMetas.META_RANGE_SIZE);
+                                for (int i = 1; i <= size; i++) {
+                                    s.reply(m, new StringEntity("me to-" + i));
+                                }
                                 s.replyEnd(m, new StringEntity("welcome to my home!"));
                             }
                         }).doOn("/push", (s, m) -> {

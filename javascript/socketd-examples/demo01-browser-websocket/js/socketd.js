@@ -516,7 +516,7 @@ define("socketd/transport/core/Message", ["require", "exports", "socketd/transpo
     }
     exports.MessageDefault = MessageDefault;
 });
-define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/SocketD", "socketd/transport/core/Message"], function (require, exports, Entity_1, Constants_2, SocketD_1, Message_1) {
+define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport/core/Entity", "socketd/transport/core/Constants", "socketd/transport/core/Message", "socketd/SocketD"], function (require, exports, Entity_1, Constants_2, Message_1, SocketD_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Frames = exports.Frame = void 0;
@@ -567,7 +567,7 @@ define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport
         static connectFrame(sid, url) {
             const entity = new Entity_1.EntityDefault();
             //添加框架版本号
-            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
+            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, (0, SocketD_1.protocolVersion)());
             return new Frame(Constants_2.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
         }
         /**
@@ -578,7 +578,7 @@ define("socketd/transport/core/Frame", ["require", "exports", "socketd/transport
         static connackFrame(connectMessage) {
             const entity = new Entity_1.EntityDefault();
             //添加框架版本号
-            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, SocketD_1.SocketD.protocolVersion());
+            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, (0, SocketD_1.protocolVersion)());
             return new Frame(Constants_2.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
         }
         /**
@@ -3073,7 +3073,7 @@ define("socketd/cluster/ClusterClientSession", ["require", "exports", "socketd/u
     }
     exports.ClusterClientSession = ClusterClientSession;
 });
-define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD", "socketd/cluster/ClusterClientSession"], function (require, exports, SocketD_2, ClusterClientSession_1) {
+define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/cluster/ClusterClientSession", "socketd/SocketD"], function (require, exports, ClusterClientSession_1, SocketD_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClient = void 0;
@@ -3116,7 +3116,7 @@ define("socketd/cluster/ClusterClient", ["require", "exports", "socketd/SocketD"
                         if (!url) {
                             continue;
                         }
-                        const client = SocketD_2.SocketD.createClient(url);
+                        const client = (0, SocketD_2.createClient)(url);
                         if (this._listener != null) {
                             client.listen(this._listener);
                         }
@@ -3435,90 +3435,30 @@ define("socketd_websocket/WsClientProvider", ["require", "exports", "socketd_web
     }
     exports.WsClientProvider = WsClientProvider;
 });
-define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15) {
+define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts", "socketd/transport/client/ClientConfig", "socketd/cluster/ClusterClient", "socketd_websocket/WsClientProvider", "socketd/transport/core/Entity", "socketd/transport/core/Listener", "socketd/transport/core/Constants", "socketd/exception/SocketdException"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15, SocketdException_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newFileEntity = exports.newStringEntity = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = exports.SocketD = void 0;
-    class SocketD {
-        /**
-         * 框架版本号
-         */
-        static version() {
-            return "2.2.1";
-        }
-        /**
-         * 协议版本号
-         */
-        static protocolVersion() {
-            return "1.0";
-        }
-        /**
-         * 创建客户端（支持 url 自动识别）
-         *
-         * @param serverUrl 服务器地址
-         */
-        static createClient(serverUrl) {
-            const client = SocketD.createClientOrNull(serverUrl);
-            if (client == null) {
-                throw new Error("No socketd client providers were found.");
-            }
-            else {
-                return client;
-            }
-        }
-        /**
-         * 创建客户端（支持 url 自动识别），如果没有则为 null
-         *
-         * @param serverUrl 服务器地址
-         */
-        static createClientOrNull(serverUrl) {
-            Asserts_5.Asserts.assertNull("serverUrl", serverUrl);
-            const idx = serverUrl.indexOf("://");
-            if (idx < 2) {
-                throw new Error("The serverUrl invalid: " + serverUrl);
-            }
-            const schema = serverUrl.substring(0, idx);
-            const factory = SocketD.clientProviderMap.get(schema);
-            if (factory == null) {
-                return null;
-            }
-            else {
-                const clientConfig = new ClientConfig_1.ClientConfig(serverUrl);
-                return factory.createClient(clientConfig);
-            }
-        }
-        /**
-         * 创建集群客户端
-         *
-         * @param serverUrls 服务端地址
-         */
-        static createClusterClient(serverUrls) {
-            return new ClusterClient_1.ClusterClient(serverUrls);
-        }
-    }
-    exports.SocketD = SocketD;
-    SocketD.clientProviderMap = new Map();
-    (() => {
+    exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = void 0;
+    const clientProviderMap = new Map();
+    //init
+    (function () {
         const provider = new WsClientProvider_1.WsClientProvider();
         for (const s of provider.schemas()) {
-            SocketD.clientProviderMap.set(s, provider);
+            clientProviderMap.set(s, provider);
         }
     })();
-    //
-    // 下面是快捷接口（对外需要 new 的接口都在了）
-    //
     /**
      * 框架版本号
      */
     function version() {
-        return SocketD.version();
+        return "2.2.1";
     }
     exports.version = version;
     /**
      * 协议版本号
      */
     function protocolVersion() {
-        return SocketD.protocolVersion();
+        return "1.0";
     }
     exports.protocolVersion = protocolVersion;
     /**
@@ -3527,7 +3467,13 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
      * @param serverUrl 服务器地址
      */
     function createClient(serverUrl) {
-        return SocketD.createClient(serverUrl);
+        const client = createClientOrNull(serverUrl);
+        if (client == null) {
+            throw new Error("No socketd client providers were found.");
+        }
+        else {
+            return client;
+        }
     }
     exports.createClient = createClient;
     /**
@@ -3536,7 +3482,20 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
      * @param serverUrl 服务器地址
      */
     function createClientOrNull(serverUrl) {
-        return SocketD.createClientOrNull(serverUrl);
+        Asserts_5.Asserts.assertNull("serverUrl", serverUrl);
+        const idx = serverUrl.indexOf("://");
+        if (idx < 2) {
+            throw new Error("The serverUrl invalid: " + serverUrl);
+        }
+        const schema = serverUrl.substring(0, idx);
+        const factory = clientProviderMap.get(schema);
+        if (factory == null) {
+            return null;
+        }
+        else {
+            const clientConfig = new ClientConfig_1.ClientConfig(serverUrl);
+            return factory.createClient(clientConfig);
+        }
     }
     exports.createClientOrNull = createClientOrNull;
     /**
@@ -3545,30 +3504,33 @@ define("socketd/SocketD", ["require", "exports", "socketd/transport/core/Asserts
      * @param serverUrls 服务端地址
      */
     function createClusterClient(serverUrls) {
-        return SocketD.createClusterClient(serverUrls);
+        return new ClusterClient_1.ClusterClient(serverUrls);
     }
     exports.createClusterClient = createClusterClient;
     /**
      * 创建实体
      * */
-    function newEntity() {
-        return new Entity_5.EntityDefault();
+    function newEntity(data) {
+        if (!data) {
+            return new Entity_5.EntityDefault();
+        }
+        else if (data instanceof File) {
+            return new Entity_5.FileEntity(data);
+        }
+        else if (data instanceof ArrayBuffer) {
+            return new Entity_5.EntityDefault().dataSet(data);
+        }
+        else if (data instanceof String) {
+            return new Entity_5.StringEntity(data.toString());
+        }
+        else if (typeof (data) === 'string') {
+            return new Entity_5.StringEntity(data);
+        }
+        else {
+            throw new SocketdException_9.SocketdException("The type is not supported: " + typeof (data));
+        }
     }
     exports.newEntity = newEntity;
-    /**
-     * 创建字符串实体
-     * */
-    function newStringEntity(data) {
-        return new Entity_5.StringEntity(data);
-    }
-    exports.newStringEntity = newStringEntity;
-    /**
-     * 创建文件实体
-     * */
-    function newFileEntity(file) {
-        return new Entity_5.FileEntity(file);
-    }
-    exports.newFileEntity = newFileEntity;
     /**
      * 创建简单临听器
      * */

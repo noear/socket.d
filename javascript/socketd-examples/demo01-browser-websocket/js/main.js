@@ -33,13 +33,13 @@ function send(type) {
 
     if (type == 1) {
         appendToMessageList('发送并请求', input);
-        clientSession.sendAndRequest("/demo", SocketD.newStringEntity(input), reply => {
+        clientSession.sendAndRequest("/demo", SocketD.newEntity(input), reply => {
             console.log('reply', reply);
             appendToMessageList('答复', reply.dataAsString());
         });
     } else if (type == 2) {
         appendToMessageList('发送并订阅', input);
-        clientSession.sendAndSubscribe("/demo", SocketD.newStringEntity(input)
+        clientSession.sendAndSubscribe("/demo", SocketD.newEntity(input)
             .metaPut(SocketD.Metas.META_RANGE_SIZE,"3"), reply => {
             console.log('reply', reply);
             if(reply.isEnd()){
@@ -50,7 +50,7 @@ function send(type) {
         });
     } else {
         appendToMessageList('发送', input);
-        clientSession.send("/demo", SocketD.newStringEntity(input));
+        clientSession.send("/demo", SocketD.newEntity(input));
     }
 }
 
@@ -110,13 +110,13 @@ function mainDo() {
 
     push.addEventListener("click", () => {
         if (isOpen) {
-            clientSession.send("/push", SocketD.newStringEntity(""));
+            clientSession.send("/push", SocketD.newEntity());
         }
     });
 
     unpush.addEventListener("click", () => {
         if (isOpen) {
-            clientSession.send("/unpush", SocketD.newStringEntity(""))
+            clientSession.send("/unpush", SocketD.newEntity())
         }
     });
 
@@ -135,7 +135,7 @@ function mainDo() {
             const file1 = document.getElementById("file").files[0];
 
             appendToMessageList('发送文件并请求', file1.name);
-            clientSession.sendAndRequest("/upload", SocketD.newFileEntity(file1), reply => {
+            clientSession.sendAndRequest("/upload", SocketD.newEntity(file1), reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
             });
@@ -167,7 +167,7 @@ function mainDo() {
             }
 
             appendToMessageList('上传大文本块10M', "...");
-            clientSession.sendAndRequest("/upload", SocketD.newStringEntity(str), reply => {
+            clientSession.sendAndRequest("/upload", SocketD.newEntity(str), reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
             });

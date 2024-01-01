@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "dist/esm",
     "module": "esnext",
-    "target": "es6",
+    "target": "es2017",
 
     "declaration": false,
     "esModuleInterop": true,
@@ -21,7 +21,6 @@
     "src"
   ],
   "exclude": [
-    "node_modules",
-    "dist"
+    "node_modules"
   ]
 }

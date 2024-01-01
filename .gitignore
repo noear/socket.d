@@ -25,6 +25,7 @@ nbdist/
 .nb-gradle/
 obj/
 bin/
+node_modules/
 
 ### Mac files ###
 *.DS_Store

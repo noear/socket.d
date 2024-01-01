@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { ClusterClientSession } from "./ClusterClientSession";
-import { createClient } from "../SocketD";
+import { createClient } from "../socketd";
 /**
  * 集群客户端
  *
@@ -16,7 +16,12 @@ import { createClient } from "../SocketD";
  */
 export class ClusterClient {
     constructor(serverUrls) {
-        this._serverUrls = serverUrls;
+        if (serverUrls instanceof Array) {
+            this._serverUrls = serverUrls;
+        }
+        else {
+            this._serverUrls = [serverUrls];
+        }
     }
     heartbeatHandler(heartbeatHandler) {
         this._heartbeatHandler = heartbeatHandler;
@@ -41,7 +46,7 @@ export class ClusterClient {
      */
     open() {
         return __awaiter(this, void 0, void 0, function* () {
-            const sessionList = new ClusterClient[this._serverUrls.length];
+            const sessionList = new Array();
             for (const urls of this._serverUrls) {
                 for (let url of urls.split(",")) {
                     url = url.trim();
@@ -59,7 +64,7 @@ export class ClusterClient {
                         client.heartbeatHandler(this._heartbeatHandler);
                     }
                     const session = yield client.open();
-                    sessionList.add(session);
+                    sessionList.push(session);
                 }
             }
             return new ClusterClientSession(sessionList);

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClusterClient = void 0;
 const ClusterClientSession_1 = require("./ClusterClientSession");
-const SocketD_1 = require("../SocketD");
+const socketd_1 = require("../socketd");
 /**
  * 集群客户端
  *
@@ -19,7 +19,12 @@ const SocketD_1 = require("../SocketD");
  */
 class ClusterClient {
     constructor(serverUrls) {
-        this._serverUrls = serverUrls;
+        if (serverUrls instanceof Array) {
+            this._serverUrls = serverUrls;
+        }
+        else {
+            this._serverUrls = [serverUrls];
+        }
     }
     heartbeatHandler(heartbeatHandler) {
         this._heartbeatHandler = heartbeatHandler;
@@ -44,14 +49,14 @@ class ClusterClient {
      */
     open() {
         return __awaiter(this, void 0, void 0, function* () {
-            const sessionList = new ClusterClient[this._serverUrls.length];
+            const sessionList = new Array();
             for (const urls of this._serverUrls) {
                 for (let url of urls.split(",")) {
                     url = url.trim();
                     if (!url) {
                         continue;
                     }
-                    const client = (0, SocketD_1.createClient)(url);
+                    const client = (0, socketd_1.createClient)(url);
                     if (this._listener != null) {
                         client.listen(this._listener);
                     }
@@ -62,7 +67,7 @@ class ClusterClient {
                         client.heartbeatHandler(this._heartbeatHandler);
                     }
                     const session = yield client.open();
-                    sessionList.add(session);
+                    sessionList.push(session);
                 }
             }
             return new ClusterClientSession_1.ClusterClientSession(sessionList);

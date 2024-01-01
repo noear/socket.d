@@ -5,7 +5,7 @@ import type { Listener } from "../transport/core/Listener";
 import type { Session } from "../transport/core/Session";
 import type { IoConsumer } from "../transport/core/Typealias";
 import {ClusterClientSession} from "./ClusterClientSession";
-import {createClient} from "../SocketD";
+import {createClient} from "../socketd";
 
 /**
  * 集群客户端
@@ -19,8 +19,12 @@ export class ClusterClient implements Client {
     private _configHandler: IoConsumer<ClientConfig>;
     private _listener: Listener;
 
-    constructor(serverUrls: string[]) {
-        this._serverUrls = serverUrls;
+    constructor(serverUrls: string[] | string) {
+        if (serverUrls instanceof Array) {
+            this._serverUrls = serverUrls;
+        } else {
+            this._serverUrls = [serverUrls];
+        }
     }
 
     heartbeatHandler(heartbeatHandler: IoConsumer<Session>): Client {
@@ -48,7 +52,7 @@ export class ClusterClient implements Client {
      * 打开
      */
     async open(): Promise<ClientSession> {
-        const sessionList = new ClusterClient[this._serverUrls.length];
+        const sessionList = new Array<ClientSession>();
 
         for (const urls of this._serverUrls) {
             for (let url of urls.split(",")) {
@@ -72,7 +76,7 @@ export class ClusterClient implements Client {
                 }
 
                 const session = await client.open();
-                sessionList.add(session);
+                sessionList.push(session);
             }
         }
 

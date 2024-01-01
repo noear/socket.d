@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClusterClientSession = void 0;
 const StrUtils_1 = require("../utils/StrUtils");
 const SocketdException_1 = require("../exception/SocketdException");
-const ClientChannel_1 = require("../transport/client/ClientChannel");
+require("../transport/client/ClientChannel");
 const RunUtils_1 = require("../utils/RunUtils");
 /**
  * 集群客户端会话
@@ -37,24 +37,22 @@ class ClusterClientSession {
         }
         else {
             //查找可用的会话
-            const sessions = new ClientChannel_1.ClientChannel[this._sessionSet.length];
-            let sessionsSize = 0;
+            const sessions = new Array();
             for (const s of this._sessionSet) {
                 if (s.isValid()) {
-                    sessions[sessionsSize] = s;
-                    sessionsSize++;
+                    sessions.push(s);
                 }
             }
-            if (sessionsSize == 0) {
+            if (sessions.length == 0) {
                 //没有可用的会话
                 throw new SocketdException_1.SocketdException("No session is available!");
             }
-            if (sessionsSize == 1) {
+            if (sessions.length == 1) {
                 return sessions[0];
             }
             //论询处理
             const counter = this._sessionRoundCounter++;
-            const idx = counter % sessionsSize;
+            const idx = counter % sessions.length;
             if (counter > 999999999) {
                 this._sessionRoundCounter = 0;
             }

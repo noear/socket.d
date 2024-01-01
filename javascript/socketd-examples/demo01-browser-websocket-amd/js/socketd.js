@@ -1,3 +1,8 @@
+/*!
+ * Socket.D v2.2.2
+ * (c) 2023-2024 noear.org and other contributors
+ * Released under the Apache-2.0 License.
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -516,7 +521,7 @@ define("transport/core/Message", ["require", "exports", "transport/core/Constant
     }
     exports.MessageDefault = MessageDefault;
 });
-define("transport/core/Frame", ["require", "exports", "transport/core/Entity", "transport/core/Constants", "transport/core/Message", "SocketD"], function (require, exports, Entity_1, Constants_2, Message_1, SocketD_1) {
+define("transport/core/Frame", ["require", "exports", "transport/core/Entity", "transport/core/Constants", "transport/core/Message", "socketd"], function (require, exports, Entity_1, Constants_2, Message_1, socketd_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Frames = exports.Frame = void 0;
@@ -567,7 +572,7 @@ define("transport/core/Frame", ["require", "exports", "transport/core/Entity", "
         static connectFrame(sid, url) {
             const entity = new Entity_1.EntityDefault();
             //添加框架版本号
-            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, (0, SocketD_1.protocolVersion)());
+            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, (0, socketd_1.protocolVersion)());
             return new Frame(Constants_2.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
         }
         /**
@@ -578,7 +583,7 @@ define("transport/core/Frame", ["require", "exports", "transport/core/Entity", "
         static connackFrame(connectMessage) {
             const entity = new Entity_1.EntityDefault();
             //添加框架版本号
-            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, (0, SocketD_1.protocolVersion)());
+            entity.metaPut(Constants_2.EntityMetas.META_SOCKETD_VERSION, (0, socketd_1.protocolVersion)());
             return new Frame(Constants_2.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
         }
         /**
@@ -2949,7 +2954,7 @@ define("transport/client/ClientProvider", ["require", "exports"], function (requ
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("cluster/ClusterClientSession", ["require", "exports", "utils/StrUtils", "exception/SocketdException", "transport/client/ClientChannel", "utils/RunUtils"], function (require, exports, StrUtils_4, SocketdException_7, ClientChannel_2, RunUtils_2) {
+define("cluster/ClusterClientSession", ["require", "exports", "utils/StrUtils", "exception/SocketdException", "utils/RunUtils", "transport/client/ClientChannel"], function (require, exports, StrUtils_4, SocketdException_7, RunUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClientSession = void 0;
@@ -2985,24 +2990,22 @@ define("cluster/ClusterClientSession", ["require", "exports", "utils/StrUtils", 
             }
             else {
                 //查找可用的会话
-                const sessions = new ClientChannel_2.ClientChannel[this._sessionSet.length];
-                let sessionsSize = 0;
+                const sessions = new Array();
                 for (const s of this._sessionSet) {
                     if (s.isValid()) {
-                        sessions[sessionsSize] = s;
-                        sessionsSize++;
+                        sessions.push(s);
                     }
                 }
-                if (sessionsSize == 0) {
+                if (sessions.length == 0) {
                     //没有可用的会话
                     throw new SocketdException_7.SocketdException("No session is available!");
                 }
-                if (sessionsSize == 1) {
+                if (sessions.length == 1) {
                     return sessions[0];
                 }
                 //论询处理
                 const counter = this._sessionRoundCounter++;
-                const idx = counter % sessionsSize;
+                const idx = counter % sessions.length;
                 if (counter > 999999999) {
                     this._sessionRoundCounter = 0;
                 }
@@ -3073,7 +3076,7 @@ define("cluster/ClusterClientSession", ["require", "exports", "utils/StrUtils", 
     }
     exports.ClusterClientSession = ClusterClientSession;
 });
-define("cluster/ClusterClient", ["require", "exports", "cluster/ClusterClientSession", "SocketD"], function (require, exports, ClusterClientSession_1, SocketD_2) {
+define("cluster/ClusterClient", ["require", "exports", "cluster/ClusterClientSession", "socketd"], function (require, exports, ClusterClientSession_1, socketd_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ClusterClient = void 0;
@@ -3084,7 +3087,12 @@ define("cluster/ClusterClient", ["require", "exports", "cluster/ClusterClientSes
      */
     class ClusterClient {
         constructor(serverUrls) {
-            this._serverUrls = serverUrls;
+            if (serverUrls instanceof Array) {
+                this._serverUrls = serverUrls;
+            }
+            else {
+                this._serverUrls = [serverUrls];
+            }
         }
         heartbeatHandler(heartbeatHandler) {
             this._heartbeatHandler = heartbeatHandler;
@@ -3109,14 +3117,14 @@ define("cluster/ClusterClient", ["require", "exports", "cluster/ClusterClientSes
          */
         open() {
             return __awaiter(this, void 0, void 0, function* () {
-                const sessionList = new ClusterClient[this._serverUrls.length];
+                const sessionList = new Array();
                 for (const urls of this._serverUrls) {
                     for (let url of urls.split(",")) {
                         url = url.trim();
                         if (!url) {
                             continue;
                         }
-                        const client = (0, SocketD_2.createClient)(url);
+                        const client = (0, socketd_2.createClient)(url);
                         if (this._listener != null) {
                             client.listen(this._listener);
                         }
@@ -3127,7 +3135,7 @@ define("cluster/ClusterClient", ["require", "exports", "cluster/ClusterClientSes
                             client.heartbeatHandler(this._heartbeatHandler);
                         }
                         const session = yield client.open();
-                        sessionList.add(session);
+                        sessionList.push(session);
                     }
                 }
                 return new ClusterClientSession_1.ClusterClientSession(sessionList);
@@ -3435,7 +3443,7 @@ define("transport_websocket/WsClientProvider", ["require", "exports", "transport
     }
     exports.WsClientProvider = WsClientProvider;
 });
-define("SocketD", ["require", "exports", "transport/core/Asserts", "transport/client/ClientConfig", "cluster/ClusterClient", "transport_websocket/WsClientProvider", "transport/core/Entity", "transport/core/Listener", "transport/core/Constants"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15) {
+define("socketd", ["require", "exports", "transport/core/Asserts", "transport/client/ClientConfig", "cluster/ClusterClient", "transport_websocket/WsClientProvider", "transport/core/Entity", "transport/core/Listener", "transport/core/Constants"], function (require, exports, Asserts_5, ClientConfig_1, ClusterClient_1, WsClientProvider_1, Entity_5, Listener_2, Constants_15) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = void 0;

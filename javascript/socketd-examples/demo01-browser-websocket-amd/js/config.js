@@ -4,7 +4,7 @@ requirejs.config({
         "socketd" : "socketd",
     },
     callback() {
-        require(['socketd'], () => {
+        requirejs(['socketd'], () => {
             main();
         });
     }

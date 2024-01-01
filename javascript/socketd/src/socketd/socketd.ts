@@ -79,7 +79,7 @@ export function createClientOrNull(serverUrl: string): Client | null {
  *
  * @param serverUrls 服务端地址
  */
-export function createClusterClient(serverUrls: string[]): ClusterClient {
+export function createClusterClient(serverUrls: string[] | string): ClusterClient {
     return new ClusterClient(serverUrls);
 }
 

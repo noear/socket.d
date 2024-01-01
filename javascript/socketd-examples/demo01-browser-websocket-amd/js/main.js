@@ -8,7 +8,8 @@ async function open(callback) {
         alert('serverUrl不能为空!');
         return;
     }
-    window.clientSession = await SocketD.createClient(serverUrl.trim())
+    window.clientSession = await SocketD.createClusterClient([serverUrl.trim(),serverUrl.trim()])
+    // window.clientSession = await SocketD.createClient(serverUrl.trim())
         .config(c => c.fragmentSize(1024 * 1024))
         .listen(SocketD.newEventListener().doOnMessage((s, m) => {
             appendToMessageList('收到推送', m.dataAsString());
@@ -61,7 +62,7 @@ function appendToMessageList(hint, msg) {
 }
 
 function main() {
-    require(['SocketD'], (SocketD) => {
+    require(['socketd'], (SocketD) => {
         window.SocketD = SocketD;
         mainDo();
     });

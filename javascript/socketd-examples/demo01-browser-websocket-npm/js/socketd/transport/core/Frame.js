@@ -4,7 +4,7 @@ exports.Frames = exports.Frame = void 0;
 const Entity_1 = require("./Entity");
 const Constants_1 = require("./Constants");
 const Message_1 = require("./Message");
-const SocketD_1 = require("../../SocketD");
+const socketd_1 = require("../../socketd");
 /**
  * 帧（帧[消息[实体]]）
  *
@@ -52,7 +52,7 @@ class Frames {
     static connectFrame(sid, url) {
         const entity = new Entity_1.EntityDefault();
         //添加框架版本号
-        entity.metaPut(Constants_1.EntityMetas.META_SOCKETD_VERSION, (0, SocketD_1.protocolVersion)());
+        entity.metaPut(Constants_1.EntityMetas.META_SOCKETD_VERSION, (0, socketd_1.protocolVersion)());
         return new Frame(Constants_1.Flags.Connect, new Message_1.MessageBuilder().sid(sid).event(url).entity(entity).build());
     }
     /**
@@ -63,7 +63,7 @@ class Frames {
     static connackFrame(connectMessage) {
         const entity = new Entity_1.EntityDefault();
         //添加框架版本号
-        entity.metaPut(Constants_1.EntityMetas.META_SOCKETD_VERSION, (0, SocketD_1.protocolVersion)());
+        entity.metaPut(Constants_1.EntityMetas.META_SOCKETD_VERSION, (0, socketd_1.protocolVersion)());
         return new Frame(Constants_1.Flags.Connack, new Message_1.MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
     }
     /**

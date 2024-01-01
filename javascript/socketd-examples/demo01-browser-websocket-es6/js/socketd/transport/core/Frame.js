@@ -1,7 +1,7 @@
 import { EntityDefault, StringEntity } from "./Entity";
 import { EntityMetas, Flags } from "./Constants";
 import { MessageBuilder } from "./Message";
-import { protocolVersion } from "../../SocketD";
+import { protocolVersion } from "../../socketd";
 /**
  * 帧（帧[消息[实体]]）
  *

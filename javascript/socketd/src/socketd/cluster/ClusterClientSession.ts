@@ -15,7 +15,7 @@ import {RunUtils} from "../utils/RunUtils";
  */
 export class ClusterClientSession implements ClientSession {
     //会话集合
-    private _sessionSet: ClientSession[];
+    private _sessionSet: Array<ClientSession>;
     //轮询计数
     private _sessionRoundCounter: number;
     //会话id
@@ -46,27 +46,25 @@ export class ClusterClientSession implements ClientSession {
             return this._sessionSet[0];
         } else {
             //查找可用的会话
-            const sessions = new ClientChannel[this._sessionSet.length];
-            let sessionsSize = 0;
+            const sessions = new Array<ClientSession>();
             for (const s of this._sessionSet) {
                 if (s.isValid()) {
-                    sessions[sessionsSize] = s;
-                    sessionsSize++;
+                    sessions.push(s);
                 }
             }
 
-            if (sessionsSize == 0) {
+            if (sessions.length == 0) {
                 //没有可用的会话
                 throw new SocketdException("No session is available!");
             }
 
-            if (sessionsSize == 1) {
+            if (sessions.length == 1) {
                 return sessions[0];
             }
 
             //论询处理
             const counter = this._sessionRoundCounter++;
-            const idx = counter % sessionsSize;
+            const idx = counter % sessions.length;
             if (counter > 999_999_999) {
                 this._sessionRoundCounter = 0;
             }

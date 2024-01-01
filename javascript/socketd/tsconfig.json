@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "outFile": "../dist/amd/socketd.js",
-    "module": "amd",
+    "outDir": "../dist/esm",
+    "module": "esnext",
     "target": "es6",
 
     "declaration": false,
@@ -21,6 +21,7 @@
     "src"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

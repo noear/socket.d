@@ -1,16 +1,10 @@
-requirejs.config({
-    baseUrl : "js",
-    paths : {
-        "socketd" : "socketd",
-    }
-});
+import { socketd } from "./socketd/socketd.js";
 
-requirejs(['socketd'], () => {
-    main();
-});
+window.SocketD = socketd();
 
 //==============
 
+window.onload = mainDo;
 
 let isOpen = false;
 
@@ -78,12 +72,6 @@ function appendToMessageList(hint, msg) {
 
 }
 
-function main() {
-    require(['socketd'], (SocketD) => {
-        window.SocketD = SocketD;
-        mainDo();
-    });
-}
 
 function mainDo() {
     let openBtn = document.getElementById("openBtn");

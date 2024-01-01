@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
-    "outFile": "dist/socketd.js",
+    "outFile": "dist/amd/socketd.js",
     "module": "amd",
     "target": "es6",
 

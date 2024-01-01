@@ -1,7 +1,7 @@
 {
-  "name": "socketd",
+  "name": "socket.d",
   "version": "2.2.2",
-  "description": "socketd typescript project",
+  "description": "socket.d typescript project",
   "author": "noear",
   "license": "Apache-2.0",
   "main": "socketd.js",

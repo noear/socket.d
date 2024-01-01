@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "outFile": "dist/socketd.js",
+    "module": "amd",
+    "target": "es6",
+
+    "declaration": false,
+    "esModuleInterop": true,
+
+    "incremental": true,
+    "skipLibCheck": true,
+
+    "strict": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "strictPropertyInitialization": false,
+    "noImplicitReturns": true,
+    "importsNotUsedAsValues": "error"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

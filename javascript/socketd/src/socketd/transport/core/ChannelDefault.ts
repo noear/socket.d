@@ -58,11 +58,11 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     send(frame: Frame, stream: StreamInternal | null) {
 
-        if (this.getConfig().clientMode()) {
-            console.debug("C-SEN:" + frame);
-        } else {
-            console.debug("S-SEN:" + frame);
-        }
+        // if (this.getConfig().clientMode()) {
+        //     console.trace("C-SEN:" + frame);
+        // } else {
+        //     console.trace("S-SEN:" + frame);
+        // }
 
 
         if (frame.message()) {

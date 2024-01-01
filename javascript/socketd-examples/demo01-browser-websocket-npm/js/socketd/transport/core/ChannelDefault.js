@@ -35,12 +35,11 @@ class ChannelDefault extends Channel_1.ChannelBase {
         this.send(Frame_1.Frames.pongFrame(), null);
     }
     send(frame, stream) {
-        if (this.getConfig().clientMode()) {
-            console.debug("C-SEN:" + frame);
-        }
-        else {
-            console.debug("S-SEN:" + frame);
-        }
+        // if (this.getConfig().clientMode()) {
+        //     console.trace("C-SEN:" + frame);
+        // } else {
+        //     console.trace("S-SEN:" + frame);
+        // }
         if (frame.message()) {
             const message = frame.message();
             //注册流接收器

@@ -15,12 +15,11 @@ class ProcessorDefault {
         }
     }
     onReceive(channel, frame) {
-        if (channel.getConfig().clientMode()) {
-            console.debug("C-REV:" + frame);
-        }
-        else {
-            console.debug("S-REV:" + frame);
-        }
+        // if (channel.getConfig().clientMode()) {
+        //     console.trace("C-REV:" + frame);
+        // } else {
+        //     console.trace("S-REV:" + frame);
+        // }
         if (frame.flag() == Constants_1.Flags.Connect) {
             channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
             channel.onOpenFuture((r, err) => {

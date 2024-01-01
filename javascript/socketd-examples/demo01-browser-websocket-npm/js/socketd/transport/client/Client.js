@@ -97,7 +97,8 @@ class ClientBase {
             const session = new SessionDefault_1.SessionDefault(clientChannel);
             //原始通道切换为带壳的 session
             channel0.setSession(session);
-            console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
+            //console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
+            console.info(`Socket.D client successfully connected!`);
             return session;
         });
     }

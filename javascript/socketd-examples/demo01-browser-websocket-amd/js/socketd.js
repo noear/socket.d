@@ -3,6 +3,7 @@
  * (c) 2023-2024 noear.org and other contributors
  * Released under the Apache-2.0 License.
  */
+
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -2327,12 +2328,11 @@ define("transport/core/Processor", ["require", "exports", "transport/core/Listen
             }
         }
         onReceive(channel, frame) {
-            if (channel.getConfig().clientMode()) {
-                console.debug("C-REV:" + frame);
-            }
-            else {
-                console.debug("S-REV:" + frame);
-            }
+            // if (channel.getConfig().clientMode()) {
+            //     console.trace("C-REV:" + frame);
+            // } else {
+            //     console.trace("S-REV:" + frame);
+            // }
             if (frame.flag() == Constants_10.Flags.Connect) {
                 channel.setHandshake(new HandshakeDefault_1.HandshakeDefault(frame.message()));
                 channel.onOpenFuture((r, err) => {
@@ -2943,7 +2943,8 @@ define("transport/client/Client", ["require", "exports", "transport/core/Process
                 const session = new SessionDefault_1.SessionDefault(clientChannel);
                 //原始通道切换为带壳的 session
                 channel0.setSession(session);
-                console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
+                //console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
+                console.info(`Socket.D client successfully connected!`);
                 return session;
             });
         }
@@ -3236,12 +3237,11 @@ define("transport/core/ChannelDefault", ["require", "exports", "transport/core/F
             this.send(Frame_5.Frames.pongFrame(), null);
         }
         send(frame, stream) {
-            if (this.getConfig().clientMode()) {
-                console.debug("C-SEN:" + frame);
-            }
-            else {
-                console.debug("S-SEN:" + frame);
-            }
+            // if (this.getConfig().clientMode()) {
+            //     console.trace("C-SEN:" + frame);
+            // } else {
+            //     console.trace("S-SEN:" + frame);
+            // }
             if (frame.message()) {
                 const message = frame.message();
                 //注册流接收器

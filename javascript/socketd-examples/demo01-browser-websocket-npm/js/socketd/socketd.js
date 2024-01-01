@@ -3,6 +3,7 @@
  * (c) 2023-2024 noear.org and other contributors
  * Released under the Apache-2.0 License.
  */
+
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Metas = exports.newPipelineListener = exports.newPathListener = exports.newEventListener = exports.newSimpleListener = exports.newEntity = exports.createClusterClient = exports.createClientOrNull = exports.createClient = exports.protocolVersion = exports.version = void 0;

@@ -1,4 +1,4 @@
-import { socketd } from "./socketd/socketd.js";
+import { socketd } from "./socketd.js";
 
 window.SocketD = socketd();
 

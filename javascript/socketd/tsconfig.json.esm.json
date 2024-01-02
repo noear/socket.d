@@ -14,8 +14,7 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "strictPropertyInitialization": false,
-    "noImplicitReturns": true,
-    "importsNotUsedAsValues": "error"
+    "noImplicitReturns": true
   },
   "include": [
     "src"

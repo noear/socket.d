@@ -1,18 +1,8 @@
-requirejs.config({
-    baseUrl : "js",
-    paths : {
-        "socketd" : "socketd",
-    }
-});
-
-requirejs(['socketd'], () => {
-    main();
-});
-
-//==============
 
 
 let isOpen = false;
+
+window.onload = mainDo;
 
 async function open(callback) {
     let serverUrl = document.getElementById("serverUrl").value;
@@ -20,20 +10,14 @@ async function open(callback) {
         alert('serverUrl不能为空!');
         return;
     }
-    // window.clientSession = await SocketD.createClusterClient([serverUrl.trim(),serverUrl.trim()])
     window.clientSession = await SocketD.createClient(serverUrl.trim())
         .config(c => c.fragmentSize(1024 * 1024))
         .listen(SocketD.newEventListener().doOnMessage((s, m) => {
             appendToMessageList('收到推送', m.dataAsString());
-        }).doOnOpen(s => {
-            if (callback) {
-                callback()
-            }
-            ;
         }))
         .open();
-
     console.log('session', clientSession);
+    if (callback) callback();
 }
 
 function close(callback) {
@@ -78,12 +62,7 @@ function appendToMessageList(hint, msg) {
 
 }
 
-function main() {
-    require(['socketd'], (SocketD) => {
-        window.SocketD = SocketD;
-        mainDo();
-    });
-}
+
 
 function mainDo() {
     let openBtn = document.getElementById("openBtn");

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "outDir": "dist/esm",
-    "module": "esnext",
+    "outDir": "dist/build",
+    "module": "commonjs",
     "target": "es2017",
 
     "declaration": false,
@@ -14,8 +14,7 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "strictPropertyInitialization": false,
-    "noImplicitReturns": true,
-    "importsNotUsedAsValues": "error"
+    "noImplicitReturns": true
   },
   "include": [
     "src"

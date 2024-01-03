@@ -1,7 +1,7 @@
 import {EntityDefault, StringEntity} from "./Entity";
 import {EntityMetas, Flags} from "./Constants";
 import {Message, MessageBuilder, MessageInternal} from "./Message";
-import {protocolVersion} from "../../socketd";
+import {SocketD} from "../../SocketD";
 
 /**
  * 帧（帧[消息[实体]]）
@@ -57,7 +57,7 @@ export class Frames {
     static connectFrame(sid: string, url: string): Frame {
         const entity = new EntityDefault();
         //添加框架版本号
-        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, protocolVersion());
+        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connect, new MessageBuilder().sid(sid).event(url).entity(entity).build());
     }
 
@@ -69,7 +69,7 @@ export class Frames {
     static connackFrame(connectMessage: Message): Frame {
         const entity = new EntityDefault();
         //添加框架版本号
-        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, protocolVersion());
+        entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connack, new MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
     }
 

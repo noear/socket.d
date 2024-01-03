@@ -5,7 +5,7 @@ import type { Listener } from "../transport/core/Listener";
 import type { Session } from "../transport/core/Session";
 import type { IoConsumer } from "../transport/core/Typealias";
 import {ClusterClientSession} from "./ClusterClientSession";
-import {createClient} from "../socketd";
+import {SocketD} from "../SocketD";
 
 /**
  * 集群客户端
@@ -61,7 +61,7 @@ export class ClusterClient implements Client {
                     continue;
                 }
 
-                const client = createClient(url);
+                const client = SocketD.createClient(url);
 
                 if (this._listener != null) {
                     client.listen(this._listener);

@@ -4,7 +4,6 @@
   "description": "socket.d typescript project",
   "author": "noear",
   "license": "Apache-2.0",
-  "main": "socketd.js",
   "scripts": {
     "build": "webpack"
   },

@@ -1,12 +1,27 @@
-全局安装
+
+### 1、打包流程
+
+* 完成 ts 编译（多个文件）
+* 通过 webpack 打包成一个 js 文件（socket.d.js）
+* 用在线压缩工具压缩
+
+压缩工具
+
+https://www.wetools.com/js-compress/iYZtYekyTx3sWeGAA6jFE4GjKKnBBzNt
+
+### 2、webpack 安装参考
+
+* 全局安装
 
 ```
 cnpm i -g webpack
 cnpm i -g webpack-cli
 ```
 
-项目安装
+* 项目安装
+
 ```
 cnpm i -D webpack
 cnpm i -D webpack-cli
 ```
+

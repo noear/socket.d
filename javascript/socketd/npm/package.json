@@ -4,9 +4,17 @@
   "description": "@noear/socket.d typescript project",
   "author": "noear",
   "license": "Apache-2.0",
-  "scripts": {
-    "build": "webpack"
-  },
+  "main": "socket.d.js",
+  "keywords": [
+    "realtime",
+    "framework",
+    "websocket",
+    "ws",
+    "events",
+    "socket",
+    "socket.d",
+    "protocol"
+  ],
   "devDependencies": {
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"

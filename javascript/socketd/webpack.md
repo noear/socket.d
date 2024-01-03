@@ -4,10 +4,15 @@
 * 完成 ts 编译（多个文件）
 * 通过 webpack 打包成一个 js 文件（socket.d.js）
 * 用在线压缩工具压缩
+* 发布到 npm
 
 压缩工具
 
 https://www.wetools.com/js-compress/iYZtYekyTx3sWeGAA6jFE4GjKKnBBzNt
+
+发布说明
+
+https://www.jb51.net/article/278264.htm
 
 ### 2、webpack 安装参考
 

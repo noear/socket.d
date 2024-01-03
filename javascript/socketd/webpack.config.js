@@ -4,6 +4,7 @@ module.exports = {
     // JavaScript 执行入口文件
     entry: './dist/build/SocketD.js',
     mode: 'none', //'none' | 'development' | 'production'
+    target: 'web', //'node' | 'web'
     experiments: {
         outputModule: true,
     },

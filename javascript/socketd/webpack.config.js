@@ -3,8 +3,8 @@ const path = require('path');
 module.exports = {
     // JavaScript 执行入口文件
     entry: './dist/build/SocketD.js',
-    mode: 'none', //'none' | 'development' | 'production'
-    target: 'web', //'node' | 'web'
+    mode: 'production', //'none' | 'development' | 'production'
+    //target: 'node', //'node' | 'web'
     experiments: {
         outputModule: true,
     },

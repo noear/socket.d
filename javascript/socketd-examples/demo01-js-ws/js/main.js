@@ -1,5 +1,3 @@
-
-
 let isOpen = false;
 
 window.onload = mainDo;

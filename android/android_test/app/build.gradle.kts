@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "org.noear.android_test"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -41,9 +41,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
 
-    implementation("org.noear:socketd-transport-java-tcp:2.1.16")
-    implementation("org.noear:socketd-transport-java-udp:2.1.16")
-    implementation("org.noear:socketd-transport-java-websocket:2.1.16")
+    implementation("org.noear:socketd-transport-java-tcp:2.2.2")
+    implementation("org.noear:socketd-transport-java-udp:2.2.2")
+    implementation("org.noear:socketd-transport-java-websocket:2.2.2")
 
     implementation("com.github.tony19:logback-android:3.0.0")
 

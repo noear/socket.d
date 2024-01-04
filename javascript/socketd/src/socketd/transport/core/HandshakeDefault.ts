@@ -9,8 +9,14 @@ export class HandshakeDefault implements HandshakeInternal {
     private _paramMap: Map<string, string>
 
     constructor(source: MessageInternal) {
+        let linkUrl = source.dataAsString();
+        if(linkUrl == null || linkUrl == ''){
+            //兼容旧版本（@deprecated 2.2.2）
+            linkUrl = source.event();
+        }
+
         this._source = source;
-        this._url = new URL(source.event());
+        this._url = new URL(linkUrl);
         this._version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this._paramMap = new Map<string, string>();
 

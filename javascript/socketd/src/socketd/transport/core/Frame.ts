@@ -55,10 +55,13 @@ export class Frames {
      * @param url 连接地址
      */
     static connectFrame(sid: string, url: string): Frame {
-        const entity = new EntityDefault();
+        const entity = new StringEntity(url);
         //添加框架版本号
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
-        return new Frame(Flags.Connect, new MessageBuilder().sid(sid).event(url).entity(entity).build());
+        return new Frame(Flags.Connect, new MessageBuilder()
+            .sid(sid)
+            .event(url) //兼容旧版本（@deprecated 2.2.2）
+            .entity(entity).build());
     }
 
     /**
@@ -70,7 +73,11 @@ export class Frames {
         const entity = new EntityDefault();
         //添加框架版本号
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
-        return new Frame(Flags.Connack, new MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build());
+        entity.dataSet(connectMessage.data().getArray()!);
+        return new Frame(Flags.Connack, new MessageBuilder()
+            .sid(connectMessage.sid())
+            .event(connectMessage.event()) //兼容旧版本（@deprecated 2.2.2）
+            .entity(entity).build());
     }
 
     /**

@@ -1,61 +1,69 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>Socket.D-JS-WS测试</title>
+    <title>Socket.D-JS-WS</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8 " />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <script src="js/socket.d.js"></script>
     <script src="js/main.js"></script>
     <style>
-        table th {
-            text-align: right;
-        }
-        table input,textarea {
-            width: 500px;
-            margin-left: 10px;
-            margin-right: 10px;
-        }
-        table textarea {
-            resize: none;
-        }
+        body{max-width: 900px; margin: auto;}
+        table th {  text-align: right; }
+        table input,textarea {  width: 500px;  margin-left: 10px;  margin-right: 10px; }
+        table textarea {  resize: none;  }
     </style>
     <script>
 
     </script>
 </head>
 <body>
-<table>
-    <tr>
-        <th width="100px">ServerUrl:</th>
-        <td><input type="text" id="serverUrl" value="sd:ws://127.0.0.1:8602/?u=a&p=2"/></td>
-        <td><button id="openBtn">连接</button></td>
-    </tr>
-    <tr>
-        <th>Input:</th>
-        <td><input type="text" id="input" value="hello"/></td>
-        <td><button id="send">发送</button>
-            <button id="sendAndRequest">发送并请求</button>
-            <button id="sendAndSubscribe">发送并订阅</button>
-        </td>
-    </tr>
-    <tr>
-        <th></th>
-        <td></td>
-        <td><button id="push">接收推送</button>
-            <button id="unpush">取消推送</button></td>
-    </tr>
-    <tr>
-        <th></th>
-        <td><input type="file" id="file"></td>
-        <td><button id="uploadFile">上传文件</button>
-            <button id="downloadFile">下载文件</button>
-            <button id="uploadData">上传大文本块10M</button>
-        </td>
-    </tr>
-    <tr>
-        <th>Message:</th>
-        <td><textarea id="message" rows="15" cols="20" readonly></textarea></td>
-        <td></td>
-    </tr>
-</table>
+<main>
+    <center>
+        <h2>
+            socket.d protocol js-client demo
+        </h2>
+    </center>
+    <hr />
+    <table>
+        <tr>
+            <th width="100px">ServerUrl:</th>
+            <td><input type="text" id="serverUrl" value="sd:ws://127.0.0.1:8602/?u=a&p=2"/></td>
+            <td><button id="openBtn">连接</button></td>
+        </tr>
+        <tr>
+            <th>Input:</th>
+            <td><input type="text" id="input" value="hello"/></td>
+            <td><button id="send">发送</button>
+                <button id="sendAndRequest">发送并请求</button>
+                <button id="sendAndSubscribe">发送并订阅</button>
+            </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td></td>
+            <td><button id="push">接收推送</button>
+                <button id="unpush">取消推送</button></td>
+        </tr>
+        <tr>
+            <th></th>
+            <td><input type="file" id="file"></td>
+            <td><button id="uploadFile">上传文件</button>
+                <button id="downloadFile">下载文件</button>
+
+            </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td></td>
+            <td><button id="uploadData">提交大文本块10M</button>
+            </td>
+        </tr>
+        <tr>
+            <th>Message:</th>
+            <td><textarea id="message" rows="15" cols="20" readonly></textarea></td>
+            <td></td>
+        </tr>
+    </table>
 </body>
+</main>
 </html>

@@ -24,7 +24,10 @@ public class Frames {
         StringEntity entity = new StringEntity(url);
         //添加框架版本号
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
-        return new Frame(Flags.Connect, new MessageBuilder().sid(sid).entity(entity).build());
+        return new Frame(Flags.Connect, new MessageBuilder()
+                .sid(sid)
+                .event(url) //兼容旧版本（@deprecated 2.2.2）
+                .entity(entity).build());
     }
 
     /**
@@ -37,7 +40,10 @@ public class Frames {
         //添加框架版本号
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         entity.dataSet(connectMessage.entity().data());
-        return new Frame(Flags.Connack, new MessageBuilder().sid(connectMessage.sid()).entity(entity).build());
+        return new Frame(Flags.Connack, new MessageBuilder()
+                .sid(connectMessage.sid())
+                .event(connectMessage.event()) //兼容旧版本（@deprecated 2.2.2）
+                .entity(entity).build());
     }
 
     /**

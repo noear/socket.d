@@ -29,7 +29,7 @@ public class HandshakeDefault implements HandshakeInternal {
     public HandshakeDefault(MessageInternal source) {
         String linkUrl = source.dataAsString();
         if(StrUtils.isEmpty(linkUrl)){
-            //兼容旧版
+            //兼容旧版本（@deprecated 2.2）
             linkUrl = source.event();
         }
 

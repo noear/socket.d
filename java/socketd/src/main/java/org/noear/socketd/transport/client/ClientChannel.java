@@ -53,7 +53,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
 
         if (connector.autoReconnect()) {
-            heartbeatScheduledFuture = RunUtils.delayAndRepeat(() -> {
+            heartbeatScheduledFuture = RunUtils.scheduleWithFixedDelay(() -> {
                 try {
                     heartbeatHandle();
                 } catch (Exception e) {
@@ -61,7 +61,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                         log.warn("Client channel heartbeat error", e);
                     }
                 }
-            }, connector.getHeartbeatInterval());
+            }, connector.getHeartbeatInterval(), connector.getHeartbeatInterval());
         }
     }
 

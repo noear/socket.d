@@ -25,19 +25,6 @@ export class SocketD {
         for (const s of provider.schemas()) {
             this.clientProviderMap.set(s, provider);
         }
-
-        const globalThisShim = SocketD.globalThisShim();
-        globalThisShim.SocketD = SocketD;
-    }
-
-    static globalThisShim() {
-        if (typeof self !== "undefined") {
-            return self;
-        } else if (typeof window !== "undefined") {
-            return window;
-        } else {
-            return Function("return this")();
-        }
     }
 
     /**

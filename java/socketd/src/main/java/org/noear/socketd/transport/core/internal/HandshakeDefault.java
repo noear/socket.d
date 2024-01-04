@@ -27,8 +27,14 @@ public class HandshakeDefault implements HandshakeInternal {
     }
 
     public HandshakeDefault(MessageInternal source) {
+        String linkUrl = source.dataAsString();
+        if(StrUtils.isEmpty(linkUrl)){
+            //兼容旧版
+            linkUrl = source.event();
+        }
+
         this.source = source;
-        this.uri = URI.create(source.event());
+        this.uri = URI.create(linkUrl);
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this.paramMap = new ConcurrentHashMap<>();
 

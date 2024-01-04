@@ -29,3 +29,9 @@ cnpm i -D webpack
 cnpm i -D webpack-cli
 ```
 
+* 发包
+
+```
+npm publish
+```
+

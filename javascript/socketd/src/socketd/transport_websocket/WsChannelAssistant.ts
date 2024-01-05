@@ -2,7 +2,7 @@ import type {ChannelAssistant} from "../transport/core/ChannelAssistant";
 import type {Frame} from "../transport/core/Frame";
 import type {Config} from "../transport/core/Config";
 import {ArrayBufferCodecReader, ArrayBufferCodecWriter} from "../transport/core/Codec";
-import {BridgeWsClient} from "../bridge/BridgeWsClient";
+import {BridgeWsClient} from "./bridge/BridgeWsClient";
 
 export class WsChannelAssistant implements ChannelAssistant<BridgeWsClient> {
     _config: Config;

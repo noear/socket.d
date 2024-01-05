@@ -5,7 +5,7 @@ import type {ChannelInternal} from "../../transport/core/Channel";
 import {ChannelDefault} from "../../transport/core/ChannelDefault";
 import {Flags} from "../../transport/core/Constants";
 import {SocketdConnectionException} from "../../exception/SocketdException";
-import {createWsClient} from '../../bridge/Bridge'
+import {createWsClient} from '../bridge/Bridge'
 
 import {
     BridgeWsClient,
@@ -13,7 +13,7 @@ import {
     BridgeWsCloseEvent,
     BridgeWsEvent,
     BridgeWsMsgEvent
-} from "../../bridge/BridgeWsClient";
+} from "../bridge/BridgeWsClient";
 
 export class WebSocketClientImpl implements BridgeWsClientConnector {
     _real: BridgeWsClient;

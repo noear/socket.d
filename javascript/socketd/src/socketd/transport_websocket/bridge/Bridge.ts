@@ -1,4 +1,4 @@
-import {EnvUtils} from '../utils/EnvUtils';
+import {EnvUtils} from '../../utils/EnvUtils';
 import {BrowserWsClientImpl} from './impl/BridgeWsClientImpl.browser';
 import {NodeWsClientImpl} from './impl/BridgeWsClientImpl.node';
 import {BridgeWsClientConnector} from "./BridgeWsClient";

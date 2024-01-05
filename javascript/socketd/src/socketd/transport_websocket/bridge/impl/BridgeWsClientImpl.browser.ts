@@ -5,7 +5,7 @@ import {
     BridgeWsMsgEventImpl,
     BridgeWsCloseEventImpl
 } from "../BridgeWsClient";
-import {Logger} from "../../utils/LogUtils";
+import {Logger} from "../../../utils/LogUtils";
 
 export class BrowserWsClientImpl implements BridgeWsClient {
     private _real: WebSocket;

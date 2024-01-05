@@ -5,7 +5,7 @@ import {
     BridgeWsEventImpl,
     BridgeWsMsgEventImpl
 } from "../BridgeWsClient";
-import {Logger} from "../../utils/LogUtils";
+import {Logger} from "../../../utils/LogUtils";
 import NodeWebSocket from 'ws';
 
 export class NodeWsClientImpl implements BridgeWsClient {

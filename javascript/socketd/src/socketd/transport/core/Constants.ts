@@ -189,7 +189,7 @@ export const EntityMetas= {
     /**
      * 框架版本号
      */
-    META_SOCKETD_VERSION: "SocketD",
+    META_SOCKETD_VERSION: "Socket.D",
     /**
      * 数据长度
      */

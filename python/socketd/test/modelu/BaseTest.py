@@ -2,12 +2,12 @@ import uuid
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
-from socketd.transport.core.SocketD import SocketD
+from socketd.SocketD import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
-from socketd.transport.core.sync_api.AtomicRefer import AtomicRefer
 from socketd.transport.server.Server import Server
+from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.SimpleListenerTest import SimpleListenerTest
 from test.uitls import calc_async_time
 

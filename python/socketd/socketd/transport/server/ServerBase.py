@@ -4,7 +4,7 @@ from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.internal.ProcessorDefault import ProcessorDefault
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
-from socketd.transport.core.config.Config import Config
+from socketd.transport.core.Config import Config
 
 
 class ServerBase(Server):

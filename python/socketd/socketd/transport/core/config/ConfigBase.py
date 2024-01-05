@@ -1,16 +1,16 @@
 import os
 import ssl
 
-from typing import Callable
+from typing import Callable, Any
 from concurrent.futures import ThreadPoolExecutor
 
-from .Config import Config
+from socketd.transport.core.Config import Config
 from socketd.transport.core.Codec import Codec
 from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer
-from ..Costants import Constants
-from ..fragment.FragmentHandlerDefault import FragmentHandlerDefault
+from socketd.transport.core.Costants import Constants
+from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandlerDefault
 
-from .logConfig import logger
+from socketd.transport.core.config.logConfig import logger
 
 
 class ConfigBase(Config):
@@ -63,10 +63,10 @@ class ConfigBase(Config):
         self._fragmentHandler = fragmentHandler
         return self
 
-    def get_id_generator(self):
+    def get_id_generator(self) -> Callable[[None], Any]:
         return self._idGenerator
 
-    def id_generator(self, _idGenerator):
+    def id_generator(self, _idGenerator: Callable[[None], Any]):
         # assert _idGenerator is None
         self._idGenerator = _idGenerator
         return self
@@ -157,7 +157,7 @@ class ConfigBase(Config):
     def get_fragment_size(self) -> int:
         return self._fragment_size
 
-    def get_idle_timeout(self):
+    def get_idle_timeout(self) -> float:
         return self._idle_timeout
 
     def set_idle_timeout(self, _idle_timeout: float):
@@ -169,4 +169,3 @@ class ConfigBase(Config):
     def set_logger_level(self, __logger_level: str):
         self.__logger_level = __logger_level
         logger.setLevel(__logger_level)
-

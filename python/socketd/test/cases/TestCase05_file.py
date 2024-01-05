@@ -6,16 +6,16 @@ from websockets.legacy.server import WebSocketServer
 from loguru import logger
 from pathlib import Path
 
+from socketd.transport.core.Costants import EntityMetas
 from socketd.transport.core.Listener import Listener
 from socketd.transport.client.ClientConfig import ClientConfig
-from socketd.transport.core.entity.Entity import EntityMetas
 from socketd.transport.core.entity.FileEntity import FileEntity
-from socketd.transport.core.entity.Message import Message
-from socketd.transport.core.sync_api.AtomicRefer import AtomicRefer
+from socketd.transport.core.Message import Message
+from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session
-from socketd.transport.core.SocketD import SocketD
+from socketd.SocketD import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.server.Server import Server
 

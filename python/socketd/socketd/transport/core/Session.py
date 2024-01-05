@@ -4,8 +4,8 @@ from asyncio import Future
 
 from socket import gethostbyaddr
 from socketd.transport.core import Handshake
-from socketd.transport.core.entity.Message import Message
-from socketd.transport.core.entity.Entity import Entity
+from socketd.transport.core.Message import Message
+from socketd.transport.core.Entity import Entity
 
 
 class Session(abc.ABC):

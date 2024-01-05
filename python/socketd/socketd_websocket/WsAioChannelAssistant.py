@@ -4,8 +4,8 @@ import math
 from websockets import WebSocketClientProtocol, frames
 
 from socketd.transport.core.Buffer import Buffer
-from socketd.transport.core.config.Config import Config
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Config import Config
+from socketd.transport.core.Frame import Frame
 from websockets.server import WebSocketServerProtocol
 from websockets.protocol import State
 from socketd.transport.core.ChannelAssistant import ChannelAssistant

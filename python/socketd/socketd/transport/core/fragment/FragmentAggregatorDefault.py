@@ -1,20 +1,21 @@
 from io import BytesIO
 
 from socketd.transport.core.entity.EntityDefault import EntityDefault
-from socketd.transport.core.entity.Frame import Frame
-from socketd.transport.core.entity.Message import Message
-from .FragmentAggregator import FragmentAggregator
-from .FragmentHolder import FragmentHolder
-from ..entity.Entity import EntityMetas
-
-from ..entity.MessageDefault import MessageDefault
+from socketd.transport.core.Frame import Frame
+from socketd.transport.core.Message import Message
+from socketd.transport.core.Costants import EntityMetas
+from socketd.transport.core.FragmentAggregator import FragmentAggregator
+from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.exception.SocketdExecption import SocketDException
+
+from .FragmentHolder import FragmentHolder
 
 
 class FragmentAggregatorDefault(FragmentAggregator):
     """
     分片聚合器
     """
+
     def __init__(self, frame: Message):
         self.__fragments: list[FragmentHolder] = []
         self.__main: Message = frame

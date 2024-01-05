@@ -1,16 +1,16 @@
 import asyncio
 
+from socketd.SocketD import SocketD
 from test.modelu.BaseTestCase import BaseTestCase
 
 import time
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
-from socketd.transport.core.SocketD import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
-from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler, send_and_subscribe_test
+from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler
 from loguru import logger
 
 

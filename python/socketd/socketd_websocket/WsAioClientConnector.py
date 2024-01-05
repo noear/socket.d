@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 from websockets.client import WebSocketClientProtocol
 from socketd.transport.core.Channel import Channel
@@ -10,11 +11,10 @@ from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
 
 class WsAioClientConnector(ClientConnectorBase):
     def __init__(self, client):
-        self.real: AIOWebSocketClientImpl = None
+        self.real: Optional[AIOWebSocketClientImpl] = None
         self.__loop = asyncio.get_event_loop()
         self.__stop = asyncio.Future()
         super().__init__(client)
-        # nest_asyncio.apply()
 
     async def connect(self) -> Channel:
         logger.debug('Start connecting to: {}'.format(self.client.get_config().get_url()))

@@ -156,7 +156,7 @@ export class ProcessorDefault implements Processor {
         }
     }
 
-    onReceiveDo(channel: ChannelInternal, frame:Frame, isReply) {
+    onReceiveDo(channel: ChannelInternal, frame:Frame, isReply:boolean) {
         //如果启用了聚合!
         if(channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理

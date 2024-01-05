@@ -5,13 +5,14 @@
   "author": "noear",
   "license": "Apache-2.0",
   "scripts": {
-    "devNodeBuild": "webpack --mode development --env LIB_TARGET=commonjs2",
+    "devNodeBuild": "webpack --mode development --env LIB_TARGET=commonjs2 OUT_FILE_NAME=socket.d-node.js",
     "devBrowserBuild": "webpack --mode development --env LIB_TARGET=window",
-    "prodNodeBuild": "webpack --mode production --env LIB_TARGET=commonjs2",
+    "prodNodeBuild": "webpack --mode production --env LIB_TARGET=commonjs2 OUT_FILE_NAME=socket.d-node.js",
     "prodBrowserBuild": "webpack --mode production --env LIB_TARGET=window"
   },
   "devDependencies": {
     "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "ws": "^8.16.0"
   }
 }

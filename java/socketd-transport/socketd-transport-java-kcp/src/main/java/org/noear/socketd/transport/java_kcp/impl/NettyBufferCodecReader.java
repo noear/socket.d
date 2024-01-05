@@ -28,6 +28,11 @@ public class NettyBufferCodecReader implements CodecReader {
     }
 
     @Override
+    public void skipBytes(int length) {
+        source.skipBytes(length);
+    }
+
+    @Override
     public int remaining() {
         return source.readableBytes();
     }

@@ -92,6 +92,13 @@ public class CodecDefault implements Codec {
         int frameSize = buffer.getInt();
 
         if (frameSize > (buffer.remaining() + Integer.BYTES)) {
+            //如果未满，等
+            return null;
+        }
+
+        if (frameSize > config.getFragmentSize()) {
+            //如果超界，跳
+            buffer.skipBytes(frameSize - Integer.BYTES);
             return null;
         }
 

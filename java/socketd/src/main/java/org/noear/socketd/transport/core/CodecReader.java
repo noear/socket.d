@@ -24,6 +24,11 @@ public interface CodecReader {
     int getInt();
 
     /**
+     * 跳过
+     */
+    void skipBytes(int length);
+
+    /**
      * 剩余长度
      */
     int remaining();

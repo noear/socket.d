@@ -136,18 +136,18 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         final StreamInternal stream = streamManger.getStream(frame.message().sid());
 
         if (stream != null) {
-            if (stream.isSingle() || frame.flag() == Flags.ReplyEnd) {
+            if (stream.demands() < Constants.DEMANDS_MULTIPLE || frame.flag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
                 streamManger.removeStream(frame.message().sid());
             }
 
-            if (stream.isSingle()) {
+            if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
                 //单收时，内部已经是异步机制
-                stream.onAccept(frame.message(), this);
+                stream.onReply(frame.message(), this);
             } else {
                 //改为异步处理，避免卡死Io线程
                 getConfig().getChannelExecutor().submit(() -> {
-                    stream.onAccept(frame.message(), this);
+                    stream.onReply(frame.message(), this);
                 });
             }
         } else {

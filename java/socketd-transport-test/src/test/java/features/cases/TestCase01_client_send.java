@@ -5,6 +5,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.Reply;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
@@ -75,10 +76,10 @@ public class TestCase01_client_send extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl).open();
         clientSession.send("/user/created", new StringEntity("hi"));
 
-        Entity response = clientSession.sendAndRequest("/user/get", new StringEntity("hi"));
+        Reply response = clientSession.sendAndRequest("/user/get", new StringEntity("hi")).await();
         System.out.println("sendAndRequest====" + response);
 
-        clientSession.sendAndSubscribe("/user/sub", new StringEntity("hi"), message -> {
+        clientSession.sendAndSubscribe("/user/sub", new StringEntity("hi")).thenReply(message -> {
             clientSubscribeReplyCounter.incrementAndGet();
             System.out.println("sendAndSubscribe====" + message);
         });

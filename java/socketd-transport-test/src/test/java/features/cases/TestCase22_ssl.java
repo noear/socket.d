@@ -83,10 +83,10 @@ public class TestCase22_ssl extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl).config(c->c.sslContext(sslContext)).open();
         clientSession.send("/user/created", new StringEntity("hi"));
 
-        Entity response = clientSession.sendAndRequest("/user/get", new StringEntity("hi"));
+        Entity response = clientSession.sendAndRequest("/user/get", new StringEntity("hi")).await();
         System.out.println("sendAndRequest====" + response);
 
-        clientSession.sendAndSubscribe("/user/sub", new StringEntity("hi"), message -> {
+        clientSession.sendAndSubscribe("/user/sub", new StringEntity("hi")).thenReply(message -> {
             clientSubscribeReplyCounter.incrementAndGet();
             System.out.println("sendAndSubscribe====" + message);
         });

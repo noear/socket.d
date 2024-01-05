@@ -45,6 +45,11 @@ public class StreamMangerDefault implements StreamManger {
      */
     @Override
     public void addStream(String sid, StreamInternal stream) {
+        if (stream.demands() == Constants.DEMANDS_ZERO) {
+            //零需求，则不添加
+            return;
+        }
+
         Asserts.assertNull("stream", stream);
         streamMap.put(sid, stream);
 

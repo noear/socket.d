@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core.internal;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.utils.IoConsumer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -106,38 +105,18 @@ public class SessionWrapper implements Session {
     }
 
     @Override
-    public void send(String event, Entity content) throws IOException {
-        real.send(event, content);
+    public Stream send(String event, Entity content) throws IOException {
+        return real.send(event, content);
     }
 
     @Override
-    public Reply sendAndRequest(String event, Entity content) throws IOException {
-        return real.sendAndRequest(event, content);
-    }
-
-    @Override
-    public Reply sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException {
         return real.sendAndRequest(event, content, timeout);
     }
 
     @Override
-    public Stream sendAndRequest(String event, Entity content, IoConsumer<Reply> consumer) throws IOException {
-        return real.sendAndRequest(event, content, consumer);
-    }
-
-    @Override
-    public Stream sendAndRequest(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
-        return real.sendAndRequest(event, content, consumer, timeout);
-    }
-
-    @Override
-    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer) throws IOException {
-        return real.sendAndSubscribe(event, content, consumer);
-    }
-
-    @Override
-    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
-        return real.sendAndSubscribe(event, content, consumer, timeout);
+    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
+        return real.sendAndSubscribe(event, content, timeout);
     }
 
     @Override

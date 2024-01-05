@@ -63,7 +63,7 @@ public class TestCase13_sendAndRequest_timeout extends BaseTestCase {
         clientSession.send("/user/created", new StringEntity("hi"));
 
         try {
-            clientSession.sendAndRequest("/user/get", new StringEntity("hi"), 100);
+            clientSession.sendAndRequest("/user/get", new StringEntity("hi"), 100).await();
             assert false;
         } catch (SocketdTimeoutException e) {
             assert true;

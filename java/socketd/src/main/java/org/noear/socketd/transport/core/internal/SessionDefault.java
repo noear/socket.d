@@ -4,8 +4,9 @@ import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.stream.StreamRequest;
-import org.noear.socketd.transport.core.stream.StreamSubscribe;
+import org.noear.socketd.transport.core.stream.StreamImpl;
+import org.noear.socketd.transport.core.stream.StreamRequestImpl;
+import org.noear.socketd.transport.core.stream.StreamSubscribeImpl;
 import org.noear.socketd.utils.IoConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,16 +125,21 @@ public class SessionDefault extends SessionBase {
 
     /**
      * 发送
+     *
+     * @param event   事件
+     * @param content 内容
      */
     @Override
-    public void send(String event, Entity content) throws IOException {
+    public Stream send(String event, Entity content) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(content)
                 .build();
 
-        channel.send(new Frame(Flags.Message, message), null);
+        StreamImpl stream = new StreamImpl(channel, message.sid());
+        channel.send(new Frame(Flags.Message, message), stream);
+        return stream;
     }
 
     /**
@@ -144,7 +150,7 @@ public class SessionDefault extends SessionBase {
      * @param timeout 超时（毫秒）
      */
     @Override
-    public Reply sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException {
         if (timeout < 10) {
             timeout = channel.getConfig().getRequestTimeout();
         }
@@ -155,84 +161,28 @@ public class SessionDefault extends SessionBase {
                 .entity(content)
                 .build();
 
-        try {
-            CompletableFuture<Reply> future = new CompletableFuture<>();
-            StreamInternal stream = new StreamRequest(message.sid(), timeout, future);
-            channel.send(new Frame(Flags.Request, message), stream);
-
-            try {
-                return future.get(timeout, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException e) {
-                StringBuilder hint = new StringBuilder();
-                hint.append(", sessionId=").append(channel.getSession().sessionId());
-                hint.append(", event=").append(event);
-                hint.append(", sid=").append(message.sid());
-
-                if (channel.isValid()) {
-                    throw new SocketdTimeoutException("Request reply timeout > " + timeout + hint);
-                } else {
-                    throw new SocketdChannelException("This channel is closed" + hint);
-                }
-            } catch (Throwable e) {
-                StringBuilder hint = new StringBuilder();
-                hint.append(", sessionId=").append(channel.getSession().sessionId());
-                hint.append(", event=").append(event);
-                hint.append(", sid=").append(message.sid());
-
-                throw new SocketdException("Send and request failed" + hint, e);
-            }
-        } finally {
-            channel.getConfig().getStreamManger().removeStream(message.sid());
-        }
-    }
-
-    /**
-     * 发送并请求（限为一次答复；指定超时）
-     *
-     * @param event    事件
-     * @param content  内容
-     * @param consumer 回调消费者
-     * @param timeout 超时
-     */
-    @Override
-    public Stream sendAndRequest(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
-        //异步，用 streamTimeout
-        MessageInternal message = new MessageBuilder()
-                .sid(generateId())
-                .event(event)
-                .entity(content)
-                .build();
-
-        CompletableFuture<Reply> future = new CompletableFuture<>();
-        future.thenAccept((r) -> {
-            try {
-                consumer.accept(r);
-            } catch (Throwable eh) {
-                channel.onError(eh);
-            }
-        });
-        StreamInternal stream = new StreamRequest(message.sid(), timeout, future);
+        StreamRequestImpl stream = new StreamRequestImpl(channel, message.sid(), timeout);
         channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
 
+
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
-     * @param event    事件
-     * @param content  内容
-     * @param consumer 回调消费者
+     * @param event   事件
+     * @param content 内容
      * @param timeout 超时
      */
     @Override
-    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
+    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(content)
                 .build();
 
-        StreamInternal stream = new StreamSubscribe(message.sid(), timeout, consumer);
+        StreamSubscribeImpl stream = new StreamSubscribeImpl(channel, message.sid(), timeout);
         channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }

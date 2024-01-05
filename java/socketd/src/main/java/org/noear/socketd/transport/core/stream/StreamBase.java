@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.stream;
 
 import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Stream;
 import org.noear.socketd.transport.core.StreamInternal;
 import org.noear.socketd.transport.core.StreamManger;
@@ -16,19 +17,21 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.0
  */
-public abstract class StreamBase implements StreamInternal {
+public abstract class StreamBase<T extends Stream> implements StreamInternal<T> {
     //保险任务
     private ScheduledFuture<?> insuranceFuture;
+    private Channel channel;
 
     private final String sid;
-    private final boolean isSingle;
+    private final int demands;
     private final long timeout;
     private Consumer<Throwable> doOnError;
     private BiConsumer<Integer, Integer> doOnProgress;
 
-    public StreamBase(String sid, boolean isSingle, long timeout) {
+    public StreamBase(Channel channel, String sid, int demands, long timeout) {
+        this.channel = channel;
         this.sid = sid;
-        this.isSingle = isSingle;
+        this.demands = demands;
         this.timeout = timeout;
     }
 
@@ -38,11 +41,20 @@ public abstract class StreamBase implements StreamInternal {
     }
 
     /**
-     * 是否单发接收
+     * 需求数量（0，1，2）
      */
     @Override
-    public boolean isSingle() {
-        return isSingle;
+    public int demands() {
+        return demands;
+    }
+
+    @Override
+    public Channel channel() {
+        return channel;
+    }
+
+    protected void setChannel(Channel channel){
+        this.channel = channel;
     }
 
     /**
@@ -96,14 +108,14 @@ public abstract class StreamBase implements StreamInternal {
     }
 
     @Override
-    public Stream thenError(Consumer<Throwable> onError) {
+    public T thenError(Consumer<Throwable> onError) {
         this.doOnError = onError;
-        return this;
+        return (T) this;
     }
 
     @Override
-    public Stream thenProgress(BiConsumer<Integer, Integer> onProgress) {
+    public T thenProgress(BiConsumer<Integer, Integer> onProgress) {
         this.doOnProgress = onProgress;
-        return this;
+        return (T) this;
     }
 }

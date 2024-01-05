@@ -65,8 +65,8 @@ public class TestCase01 extends BaseTestCase {
         //单预热
         for (int i = 0; i < 10; i++) {
             clientSession.send("demo", new StringEntity("test"));
-            clientSession.sendAndRequest("demo", new StringEntity("test"));
-            clientSession.sendAndSubscribe("demo", new StringEntity("test"), e -> {
+            clientSession.sendAndRequest("demo", new StringEntity("test")).await();
+            clientSession.sendAndSubscribe("demo", new StringEntity("test")).thenReply(r->{
 
             });
         }
@@ -83,7 +83,7 @@ public class TestCase01 extends BaseTestCase {
     }
 
     public void sendAndSubscribe() throws Exception {
-        clientSession.sendAndSubscribe("demo", new StringEntity("test"), e -> {
+        clientSession.sendAndSubscribe("demo", new StringEntity("test")).thenReply(r -> {
 
         });
     }

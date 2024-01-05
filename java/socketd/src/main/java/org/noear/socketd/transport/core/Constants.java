@@ -70,4 +70,24 @@ public interface Constants {
      * 分片长度最小限制
      */
     int MIN_FRAGMENT_SIZE = 1024; //1k
+
+    /**
+     * 多需要
+     */
+    int DEMANDS_MORE = 2;
+
+    /**
+     * 零需求
+     */
+    int DEMANDS_ZERO = 0;
+
+    /**
+     * 单需求
+     */
+    int DEMANDS_SIGNLE = 1;
+
+    /**
+     * 多需要
+     */
+    int DEMANDS_MULTIPLE = 2;
 }

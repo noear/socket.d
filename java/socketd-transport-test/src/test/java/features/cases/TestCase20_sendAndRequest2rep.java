@@ -47,7 +47,7 @@ public class TestCase20_sendAndRequest2rep extends BaseTestCase {
                         System.out.println("server::" + message);
 
                         if (message.isRequest()) {
-                            Entity entity = session.sendAndRequest("/test", new StringEntity(""));
+                            Entity entity = session.sendAndRequest("/test", new StringEntity("")).await();
                             System.out.println("server::res::" + entity);
                             session.replyEnd(message, entity);
                             messageCounter.incrementAndGet();
@@ -76,7 +76,7 @@ public class TestCase20_sendAndRequest2rep extends BaseTestCase {
 
 
         try {
-            Entity entity = clientSession.sendAndRequest("/demo", new StringEntity("hi"), 100);
+            Entity entity = clientSession.sendAndRequest("/demo", new StringEntity("hi"), 100).await();
             System.out.println("client::res::" + entity);
             assert true;
         } catch (Exception e) {

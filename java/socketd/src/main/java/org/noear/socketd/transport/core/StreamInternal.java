@@ -6,7 +6,17 @@ package org.noear.socketd.transport.core;
  * @author noear
  * @since 2.1
  */
-public interface StreamInternal extends Stream {
+public interface StreamInternal<T extends Stream> extends Stream<T> {
+    /**
+     * 获取需求数量（0，1，2）
+     */
+    int demands();
+
+    /**
+     * 获取通道
+     */
+    Channel channel();
+
     /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
      *
@@ -21,12 +31,12 @@ public interface StreamInternal extends Stream {
     void insuranceCancel();
 
     /**
-     * 接收时
+     * 答复时
      *
      * @param reply   答复
      * @param channel 通道
      */
-    void onAccept(MessageInternal reply, Channel channel);
+    void onReply(MessageInternal reply, Channel channel);
 
     /**
      * 异常时

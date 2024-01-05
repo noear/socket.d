@@ -61,17 +61,21 @@ public class TestCase28_timeout extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl).open();
         clientSession.send("/user/created", new StringEntity("hi"));
 
-        clientSession.sendAndRequest("/user/req", new StringEntity("hi"), (message -> {
-            ;
-        }), 100).thenError(e->{
-            clientTimeoutCounter.incrementAndGet();
-        });
+        clientSession.sendAndRequest("/user/req", new StringEntity("hi"), 100)
+                .thenReply(message -> {
+                    ;
+                })
+                .thenError(e -> {
+                    clientTimeoutCounter.incrementAndGet();
+                });
 
-        clientSession.sendAndSubscribe("/user/sub", new StringEntity("hi"), (message -> {
-            ;
-        }), 100).thenError(e->{
-            clientTimeoutCounter.incrementAndGet();
-        });
+        clientSession.sendAndSubscribe("/user/sub", new StringEntity("hi"), 100)
+                .thenReply(message -> {
+                    ;
+                })
+                .thenError(e -> {
+                    clientTimeoutCounter.incrementAndGet();
+                });
 
         //休息下（发完，那边还得收）
         Thread.sleep(1000);

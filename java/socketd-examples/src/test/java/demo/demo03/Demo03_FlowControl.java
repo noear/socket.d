@@ -45,14 +45,15 @@ public class Demo03_FlowControl {
 
         //发送并请求
         clientSession.sendAndSubscribe("/demo", new EntityDefault()
-                .metaPut("videoId", "42E056E1-B4B7-4EF4-AC4B-AEE77EDB0B86")
-                .metaPut(EntityMetas.META_RANGE_START, "5")
-                .metaPut(EntityMetas.META_RANGE_SIZE, "5"), r -> {
-            if (r.dataSize() > 0) {
-                System.out.println(r);
-            }
-        }).thenError(err -> {
-            err.printStackTrace();
-        });
+                        .metaPut("videoId", "42E056E1-B4B7-4EF4-AC4B-AEE77EDB0B86")
+                        .metaPut(EntityMetas.META_RANGE_START, "5")
+                        .metaPut(EntityMetas.META_RANGE_SIZE, "5"))
+                .thenReply(r -> {
+                    if (r.dataSize() > 0) {
+                        System.out.println(r);
+                    }
+                }).thenError(err -> {
+                    err.printStackTrace();
+                });
     }
 }

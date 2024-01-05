@@ -11,16 +11,11 @@ import java.util.function.Consumer;
  * @author noear
  * @since 2.1
  */
-public interface Stream {
+public interface Stream<T extends Stream> {
     /**
      * 流Id
      */
     String sid();
-
-    /**
-     * 是否单收
-     */
-    boolean isSingle();
 
     /**
      * 是否完成
@@ -35,10 +30,10 @@ public interface Stream {
     /**
      * 异常发生时
      */
-    Stream thenError(Consumer<Throwable> onError);
+    T thenError(Consumer<Throwable> onError);
 
     /**
      * 进度发生时
      */
-    Stream thenProgress(BiConsumer<Integer, Integer> onProgress);
+    T thenProgress(BiConsumer<Integer, Integer> onProgress);
 }

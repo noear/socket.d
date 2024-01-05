@@ -1,10 +1,8 @@
 package org.noear.socketd.cluster;
 
 import org.noear.socketd.exception.SocketdException;
-import org.noear.socketd.transport.core.Entity;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.transport.core.Reply;
-import org.noear.socketd.transport.core.Stream;
 import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.StrUtils;
@@ -107,23 +105,12 @@ public class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    public void send(String event, Entity content) throws IOException {
+    public Stream send(String event, Entity content) throws IOException {
         ClientSession sender = getSessionOne();
 
-        sender.send(event, content);
+        return sender.send(event, content);
     }
 
-    /**
-     * 发送并请求
-     *
-     * @param event   事件
-     * @param content 内容
-     */
-    public Reply sendAndRequest(String event, Entity content) throws IOException {
-        ClientSession sender = getSessionOne();
-
-        return sender.sendAndRequest(event, content);
-    }
 
     /**
      * 发送并请求（限为一次答复；指定超时）
@@ -132,38 +119,24 @@ public class ClusterClientSession implements ClientSession {
      * @param content 内容
      * @param timeout 超时（毫秒）
      */
-    public Reply sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content, timeout);
     }
 
-    /**
-     * 发送并请求（限为一次答复；指定回调）
-     *
-     * @param event    事件
-     * @param content  内容
-     * @param consumer 回调消费者
-     * @param timeout  超时
-     */
-    public Stream sendAndRequest(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
-        ClientSession sender = getSessionOne();
-
-        return sender.sendAndRequest(event, content, consumer, timeout);
-    }
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
      * @param event    事件
      * @param content  内容
-     * @param consumer 回调消费者
      * @param timeout  超时
      */
-    public Stream sendAndSubscribe(String event, Entity content, IoConsumer<Reply> consumer, long timeout) throws IOException {
+    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.sendAndSubscribe(event, content, consumer, timeout);
+        return sender.sendAndSubscribe(event, content, timeout);
     }
 
     /**

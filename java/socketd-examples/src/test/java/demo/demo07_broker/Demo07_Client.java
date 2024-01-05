@@ -33,15 +33,15 @@ public class Demo07_Client {
         //
         session.send("hello", new StringEntity("world0").at("server"));
 
-        Entity entity = session.sendAndRequest("hello", new StringEntity("world1").at("server"));
+        Entity entity = session.sendAndRequest("hello", new StringEntity("world1").at("server")).await();
         System.out.println("sendAndRequest: " + entity);
 
-        session.sendAndRequest("hello", new StringEntity("world2").at("server"), e -> {
-            System.out.println("sendAndRequest2: " + entity);
+        session.sendAndRequest("hello", new StringEntity("world2").at("server")).thenReply(r -> {
+            System.out.println("sendAndRequest2: " + r);
         });
 
-        session.sendAndSubscribe("hello", new StringEntity("world3").at("server"), e -> {
-            System.out.println("sendAndSubscribe: " + entity);
+        session.sendAndSubscribe("hello", new StringEntity("world3").at("server")).thenReply(r -> {
+            System.out.println("sendAndSubscribe: " + r);
         });
     }
 }

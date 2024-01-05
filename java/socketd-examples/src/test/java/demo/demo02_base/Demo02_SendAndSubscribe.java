@@ -35,7 +35,7 @@ public class Demo02_SendAndSubscribe {
                 .open();
 
         //发送并订阅
-        clientSession.sendAndSubscribe("/demo", new StringEntity("hello wrold!"), reply->{
+        clientSession.sendAndSubscribe("/demo", new StringEntity("hello wrold!")).thenReply(reply->{
             System.out.println(reply);
             System.out.println(reply.dataAsString());
         });

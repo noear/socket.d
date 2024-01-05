@@ -65,7 +65,7 @@ public class TestCase26_sendAndRequest_async extends BaseTestCase {
 
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        clientSession.sendAndRequest("/user/get", new StringEntity("hi"), r -> {
+        clientSession.sendAndRequest("/user/get", new StringEntity("hi")).thenReply(r -> {
             countDownLatch.countDown();
         });
 

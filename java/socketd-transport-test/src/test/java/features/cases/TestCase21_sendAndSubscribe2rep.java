@@ -48,7 +48,7 @@ public class TestCase21_sendAndSubscribe2rep extends BaseTestCase {
                         System.out.println("server::" + message);
 
                         if (message.isSubscribe()) {
-                            session.sendAndSubscribe("/test", new StringEntity(""), entity -> {
+                            session.sendAndSubscribe("/test", new StringEntity("")).thenReply(entity -> {
                                 System.out.println("server::res::" + entity);
                                 session.replyEnd(message, entity);
                                 messageCounter.incrementAndGet();
@@ -79,7 +79,7 @@ public class TestCase21_sendAndSubscribe2rep extends BaseTestCase {
 
         CountDownLatch downLatch = new CountDownLatch(1);
 
-        clientSession.sendAndSubscribe("/demo", new StringEntity("hi"), entity -> {
+        clientSession.sendAndSubscribe("/demo", new StringEntity("hi")).thenReply(entity -> {
             System.out.println("client::res::" + entity);
             downLatch.countDown();
         });

@@ -104,13 +104,13 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
      */
     protected void forwardToSession(Session requester, Message message, Session responder) throws IOException {
         if (message.isRequest()) {
-            responder.sendAndRequest(message.event(), message, reply -> {
+            responder.sendAndRequest(message.event(), message).thenReply(reply -> {
                 if (requester.isValid()) {
                     requester.reply(message, reply);
                 }
             });
         } else if (message.isSubscribe()) {
-            responder.sendAndSubscribe(message.event(), message, reply -> {
+            responder.sendAndSubscribe(message.event(), message).thenReply(reply -> {
                 if (requester.isValid()) {
                     if (reply.isEnd()) {
                         requester.replyEnd(message, reply);

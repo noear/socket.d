@@ -82,7 +82,7 @@ public class TestCase02 extends BaseTestCase {
             clientSession.send("hot", new StringEntity("test"));
             clientSession.sendAndRequest("hot", new StringEntity("test"));
             sendAndRequestLatch.countDown();
-            clientSession.sendAndSubscribe("hot", new StringEntity("test"), e -> {
+            clientSession.sendAndSubscribe("hot", new StringEntity("test")).thenReply(r -> {
                 sendAndSubscribeLatch.countDown();
             });
         }
@@ -149,7 +149,7 @@ public class TestCase02 extends BaseTestCase {
         long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < count; i++) {
-            clientSession.sendAndSubscribe("demo", new StringEntity("test"), e -> {
+            clientSession.sendAndSubscribe("demo", new StringEntity("test")).thenReply(r -> {
                 sendAndSubscribeLatch.countDown();
             });
         }

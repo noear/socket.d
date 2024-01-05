@@ -34,4 +34,12 @@ public interface StreamInternal extends Stream {
      * @param error 异常
      */
     void onError(Throwable error);
+
+    /**
+     * 进度时
+     *
+     * @param val 当时值
+     * @param max 最大值
+     */
+    void onProgress(Integer val, Integer max);
 }

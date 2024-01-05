@@ -21,8 +21,13 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
      * @param message 总包消息
      */
     @Override
-    public void spliFragment(Channel channel, MessageInternal message, IoConsumer<Entity> consumer) throws IOException {
+    public void spliFragment(Channel channel, StreamInternal stream, MessageInternal message, IoConsumer<Entity> consumer) throws IOException {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
+            int fragmentTotal = message.dataSize() / channel.getConfig().getFragmentSize();
+            if (message.dataSize() % channel.getConfig().getFragmentSize() > 0) {
+                fragmentTotal++;
+            }
+
             int fragmentIndex = 0;
             while (true) {
                 //生产分片
@@ -39,9 +44,15 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
                 fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
 
                 consumer.accept(fragmentEntity);
+                if (stream != null) {
+                    stream.onProgress(fragmentIndex, fragmentTotal);
+                }
             }
         } else {
             consumer.accept(message);
+            if (stream != null) {
+                stream.onProgress(1, 1);
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import org.noear.socketd.transport.core.StreamManger;
 import org.noear.socketd.utils.RunUtils;
 
 import java.util.concurrent.ScheduledFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -23,6 +24,7 @@ public abstract class StreamBase implements StreamInternal {
     private final boolean isSingle;
     private final long timeout;
     private Consumer<Throwable> doOnError;
+    private BiConsumer<Integer, Integer> doOnProgress;
 
     public StreamBase(String sid, boolean isSingle, long timeout) {
         this.sid = sid;
@@ -45,7 +47,7 @@ public abstract class StreamBase implements StreamInternal {
 
     /**
      * 超时
-     * */
+     */
     @Override
     public long timeout() {
         return timeout;
@@ -71,7 +73,7 @@ public abstract class StreamBase implements StreamInternal {
 
     /**
      * 保险取消息
-     * */
+     */
     @Override
     public void insuranceCancel() {
         if (insuranceFuture != null) {
@@ -87,8 +89,21 @@ public abstract class StreamBase implements StreamInternal {
     }
 
     @Override
+    public void onProgress(Integer val, Integer max) {
+        if (doOnProgress != null) {
+            doOnProgress.accept(val, max);
+        }
+    }
+
+    @Override
     public Stream thenError(Consumer<Throwable> onError) {
         this.doOnError = onError;
+        return this;
+    }
+
+    @Override
+    public Stream thenProgress(BiConsumer<Integer, Integer> onProgress) {
+        this.doOnProgress = onProgress;
         return this;
     }
 }

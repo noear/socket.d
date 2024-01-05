@@ -1,5 +1,8 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.utils.IoConsumer;
+
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -33,4 +36,9 @@ public interface Stream {
      * 异常发生时
      */
     Stream thenError(Consumer<Throwable> onError);
+
+    /**
+     * 进度发生时
+     */
+    Stream thenProgress(BiConsumer<Integer, Integer> onProgress);
 }

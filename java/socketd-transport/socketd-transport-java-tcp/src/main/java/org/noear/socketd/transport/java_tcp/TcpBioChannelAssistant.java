@@ -75,6 +75,12 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
             return null;
         }
 
+        if(len > config.getFragmentSize()) {
+            //如果超时，跳
+            source.getInputStream().skip(len - Integer.BYTES);
+            return null;
+        }
+
         ByteBuffer buffer = ByteBuffer.allocate(len);
         buffer.putInt(len);
 

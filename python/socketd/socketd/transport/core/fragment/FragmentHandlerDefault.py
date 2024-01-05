@@ -1,13 +1,14 @@
 from io import BytesIO
 
-from socketd.transport.core.entity.Entity import Entity, EntityMetas
+from socketd.transport.core.Entity import Entity
 from socketd.transport.core.entity.EntityDefault import EntityDefault
-from socketd.transport.core.entity.Frame import Frame
-from .FragmentAggregatorDefault import FragmentAggregatorDefault
+from socketd.transport.core.Frame import Frame
+from socketd.transport.core.Channel import Channel
+from socketd.transport.core.Message import Message
+from socketd.transport.core.FragmentHandler import FragmentHandler
+from socketd.transport.core.Costants import EntityMetas
 
-from .FragmentHandler import FragmentHandler
-from ..Channel import Channel
-from ..entity.Message import Message
+from .FragmentAggregatorDefault import FragmentAggregatorDefault
 
 
 class FragmentHandlerDefault(FragmentHandler):

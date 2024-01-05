@@ -2,7 +2,7 @@ from typing import Callable, Union, Dict
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
-from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.Message import Message
 
 
 class EventListener(Listener):

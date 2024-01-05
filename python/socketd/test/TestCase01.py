@@ -25,7 +25,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case01_client_send(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase01_client_send(TestCase01.schemas[i], 9000 + i)
+            t = TestCase01_client_send(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -35,7 +35,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case02_auto_reconnect(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase02_auto_reconnect(TestCase01.schemas[i], 9000 + i)
+            t = TestCase02_auto_reconnect(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -45,7 +45,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case03_client_session_close(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase03_client_session_close(TestCase01.schemas[i], 9000 + i)
+            t = TestCase03_client_session_close(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -55,7 +55,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case04sendAndRequest_timeout(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase04_sendAndRequest_timeout(TestCase01.schemas[i], 9000 + i)
+            t = TestCase04_sendAndRequest_timeout(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -65,7 +65,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case05_file(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase05_file(TestCase01.schemas[i], 9000 + i)
+            t = TestCase05_file(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -75,7 +75,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case06_mete_size(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase06_meta_size(TestCase01.schemas[i], 9000 + i)
+            t = TestCase06_meta_size(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -85,7 +85,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case07_url_auth(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase07_url_auth(TestCase01.schemas[i], 9000 + i)
+            t = TestCase07_url_auth(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -95,7 +95,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case08_ping_timout(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase08_ping_timout(TestCase01.schemas[i], 9000 + i)
+            t = TestCase08_ping_timout(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()
@@ -105,7 +105,7 @@ class TestCase01(unittest.TestCase):
 
     def test_Case09_clientCloseReconnect(self):
         for i in range(len(TestCase01.schemas)):
-            t = TestCase09_clientCloseReconnect(TestCase01.schemas[i], 9000 + i)
+            t = TestCase09_clientCloseReconnect(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()

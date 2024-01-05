@@ -1,16 +1,16 @@
 from io import BytesIO
 from typing import Optional, Any, Dict
 
-from .Entity import Entity
-from .Message import Message
-from ..Costants import Constants, Flag
+from socketd.transport.core.Entity import Entity
+from socketd.transport.core.Message import Message
+from socketd.transport.core.Costants import Constants, Flag
 
 
 class MessageDefault(Message):
     def __init__(self):
         self.sid = Constants.DEF_SID
         self.event = Constants.DEF_EVENT
-        self.entity: Entity = None
+        self.entity: Optional[Entity] = None
         self.flag = Flag.Unknown
 
     def get_flag(self):

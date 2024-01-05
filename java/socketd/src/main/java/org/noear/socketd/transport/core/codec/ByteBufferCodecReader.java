@@ -41,6 +41,11 @@ public class ByteBufferCodecReader implements CodecReader {
         return buffer.getInt();
     }
 
+    @Override
+    public void skipBytes(int length) {
+        buffer.position(buffer.position() + length);
+    }
+
     /**
      * 剩余长度
      */

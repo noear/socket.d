@@ -1,13 +1,11 @@
 from typing import Callable
 from socketd.transport.core.Codec import Codec
 from socketd.transport.core.Costants import Constants, Flag
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.core.entity.EntityDefault import EntityDefault
-from socketd.transport.core.config.Config import Config
+from socketd.transport.core.Config import Config
 from socketd.transport.core.Buffer import Buffer
-
-import os
 
 
 def assert_size(name: str, size: int, limitSize: int) -> None:
@@ -77,7 +75,7 @@ class CodecByteBuffer(Codec):
 
             return target
 
-    def read(self, buffer: Buffer) -> Frame:
+    def read(self, buffer: Buffer) -> Frame | None:
         len0 = buffer.get_int()
 
         if len0 > (buffer.remaining() + 4):

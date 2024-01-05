@@ -1,7 +1,7 @@
 from socketd.transport.core.Costants import Flag
-from socketd.transport.core import SocketD
+from socketd import SocketD
 from socketd.transport.core.entity.EntityDefault import EntityDefault
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 
 

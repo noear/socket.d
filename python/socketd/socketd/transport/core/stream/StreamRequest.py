@@ -1,6 +1,6 @@
-from socketd.transport.core.entity.Message import Message
-from socketd.transport.core.CompletableFuture import CompletableFuture
+from socketd.transport.core.Message import Message
 from socketd.transport.core.stream.StreamBase import StreamBase
+from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 
 class StreamRequest(StreamBase):

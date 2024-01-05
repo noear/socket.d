@@ -3,17 +3,15 @@ import uuid
 import time
 from websockets.legacy.server import WebSocketServer
 
+from socketd.SocketD import SocketD
+from socketd.transport.core import Entity
 from socketd.transport.core.Session import Session
-from socketd.transport.core.SocketD import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
-from socketd.transport.core.entity.Entity import Entity
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
 from test.modelu.SimpleListenerTest import SimpleListenerTest
 from test.uitls import calc_async_time
 from loguru import logger
-
-
 
 
 def idGenerator(config):

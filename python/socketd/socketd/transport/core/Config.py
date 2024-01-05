@@ -1,7 +1,7 @@
 from concurrent.futures import Executor
+from typing import Callable, Any
 
 from socketd.transport.core.Codec import Codec
-from ..Costants import Function
 
 
 class Config:
@@ -31,7 +31,7 @@ class Config:
         """
         pass
 
-    def get_id_generator(self) -> Function:
+    def get_id_generator(self) -> Callable[[None], Any]:
         """
         返回ID生成器。
         """

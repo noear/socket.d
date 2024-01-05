@@ -1,12 +1,13 @@
 import time
+import threading
+
 from abc import ABC
 
-from socketd.transport.core.async_api.AtomicRefer import AtomicRefer
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Frames import Frames
-from socketd.transport.core.config.Config import Config
+from socketd.transport.core.Config import Config
 
-import threading
+from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
 
 class ChannelBase(Channel, ABC):

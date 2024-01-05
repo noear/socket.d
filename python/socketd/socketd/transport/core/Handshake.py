@@ -1,8 +1,8 @@
 from typing import Dict
 from urllib.parse import urlparse, parse_qsl
 
-from socketd.transport.core.entity.Entity import EntityMetas
-from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.Costants import EntityMetas
+from socketd.transport.core.Message import Message
 
 
 class Handshake:

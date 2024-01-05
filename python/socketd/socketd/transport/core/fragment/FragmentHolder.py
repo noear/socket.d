@@ -1,4 +1,4 @@
-from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.Message import Message
 
 
 class FragmentHolder:

@@ -1,7 +1,7 @@
 from typing import Callable
 
-from socketd.transport.core.entity.Entity import Entity
-from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.Entity import Entity
+from socketd.transport.core.Message import Message
 from socketd.transport.core.stream.StreamBase import StreamBase
 
 

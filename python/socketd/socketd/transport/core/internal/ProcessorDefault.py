@@ -6,10 +6,9 @@ from loguru import logger
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Handshake import Handshake
 from socketd.transport.core.Processor import Processor
-from socketd.transport.core.Costants import Flag
-from socketd.transport.core.SimpleListener import SimpleListener
-from socketd.transport.core.entity.Entity import EntityMetas
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Costants import Flag, EntityMetas
+from socketd.transport.core.Frame import Frame
+from socketd.transport.core.listener.SimpleListener import SimpleListener
 
 
 class ProcessorDefault(Processor, ABC):
@@ -63,7 +62,8 @@ class ProcessorDefault(Processor, ABC):
         fragmentIdxStr = frame.get_message().get_entity().get_meta(EntityMetas.META_DATA_FRAGMENT_IDX)
         if fragmentIdxStr is not None:
             index = int(fragmentIdxStr)
-            frameNew: Frame = channel.get_config().get_fragment_handler().aggrFragment(channel, index, frame.get_message())
+            frameNew: Frame = channel.get_config().get_fragment_handler().aggrFragment(channel, index,
+                                                                                       frame.get_message())
             if frameNew is None:
                 return
             else:
@@ -79,8 +79,8 @@ class ProcessorDefault(Processor, ABC):
 
     async def on_message(self, channel: Channel, message):
         await asyncio.get_running_loop().run_in_executor(channel.get_config().get_executor(),
-                                                   lambda: asyncio.run(self.listener.on_message(
-                                                       channel.get_session(), message)))
+                                                         lambda: asyncio.run(self.listener.on_message(
+                                                             channel.get_session(), message)))
 
     def on_close(self, session):
         self.listener.on_close(session)

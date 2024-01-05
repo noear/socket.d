@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from socketd.transport.core.Listener import Listener
 
 
-class Processor(Listener, ABC, ):
+class Processor(Listener, ABC):
 
     @abstractmethod
     def set_listener(self, listener):

@@ -1,13 +1,11 @@
-from abc import ABC
-import pickle
 from io import BytesIO
 from typing import Any
 
-from .Entity import Entity
-from ..Costants import Constants
+from socketd.transport.core.Entity import Entity
+from socketd.transport.core.Costants import Constants
 
 
-class EntityDefault(Entity, ABC):
+class EntityDefault(Entity):
     def __init__(self):
         self.meta_map = None
         self.meta_string = Constants.DEF_META_STRING

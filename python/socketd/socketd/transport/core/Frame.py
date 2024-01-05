@@ -1,5 +1,5 @@
 from .Message import Message
-from ..Costants import Flag
+from socketd.transport.core.Costants import Flag
 
 
 class Frame:

@@ -1,5 +1,5 @@
-from socketd.transport.core.entity.Frame import Frame
-from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.Frame import Frame
+from socketd.transport.core.Message import Message
 
 
 class FragmentAggregator:

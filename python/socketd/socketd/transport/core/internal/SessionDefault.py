@@ -6,15 +6,15 @@ from typing import Callable, Awaitable, Any, Coroutine, Optional
 from socketd.transport.core.internal.SessionBase import SessionBase
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Handshake import Handshake
-from socketd.transport.core.entity.Entity import Entity
-from socketd.transport.core.entity.Message import Message
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Entity import Entity
+from socketd.transport.core.Message import Message
+from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.exception.SocketdExecption import SocketDException
-from socketd.transport.core.CompletableFuture import CompletableFuture
 from socketd.transport.core.stream.StreamRequest import StreamRequest
 from socketd.transport.core.stream.StreamSubscribe import StreamSubscribe
+from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 
 class SessionDefault(SessionBase, ABC):
@@ -57,11 +57,12 @@ class SessionDefault(SessionBase, ABC):
         except asyncio.TimeoutError as e:
             if self._channel.is_valid():
                 raise SocketDException(f"Request reply timeout>{timeout} "
-                                f"sessionId={self._channel.get_session().get_session_id()} "
-                                f"event={event} sid={message.get_sid()}")
+                                       f"sessionId={self._channel.get_session().get_session_id()} "
+                                       f"event={event} sid={message.get_sid()}")
             else:
-                raise SocketDException(f"This channel is closed sessionId={self._channel.get_session().get_session_id()} "
-                                f"event={event} sid={message.get_sid()}")
+                raise SocketDException(
+                    f"This channel is closed sessionId={self._channel.get_session().get_session_id()} "
+                    f"event={event} sid={message.get_sid()} {str(e)}")
         except Exception as e:
             raise e
         finally:
@@ -113,7 +114,7 @@ class SessionDefault(SessionBase, ABC):
 
     def get_param(self, name: str):
         return self.get_handshake().get_param(name)
-    
+
     def pathNew(self, path: str):
         self.__path_new = path
 
@@ -121,6 +122,3 @@ class SessionDefault(SessionBase, ABC):
         if path_new := self.__path_new:
             return path_new
         return self.get_handshake().get_uri().__str__()
-
-
-

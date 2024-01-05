@@ -10,7 +10,7 @@ from socketd.transport.core.internal.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
 
 from socketd.transport.core.Costants import Flag
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Frame import Frame
 from socketd.transport.client.Client import Client
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 
@@ -60,7 +60,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     try:
                         await self.on_message()
                     except Exception as e:
-                        log.error(e)
+                        log.warning(e)
                         # raise e
 
         # 如果配置中设置了使用线程，则创建一个新的事件循环，并启动一个线程来处理读取操作

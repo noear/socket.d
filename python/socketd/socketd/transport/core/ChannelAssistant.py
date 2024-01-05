@@ -1,6 +1,6 @@
 from typing import Any
 from abc import ABC, abstractmethod
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Frame import Frame
 
 
 class ChannelAssistant(ABC):

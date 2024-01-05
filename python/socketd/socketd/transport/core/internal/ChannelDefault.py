@@ -1,17 +1,16 @@
 import asyncio
-from typing import  TypeVar
+from typing import TypeVar, Optional
 from loguru import logger
 
 from websockets import WebSocketCommonProtocol
 
-from socketd.transport.core.entity.Entity import EntityMetas
 from socketd.transport.utils.AssertsUtil import AssertsUtil
 from socketd.transport.core.internal.ChannelBase import ChannelBase
-from socketd.transport.core.Costants import Function, Flag
+from socketd.transport.core.Costants import Function, Flag, EntityMetas
 from socketd.transport.core.Session import Session
 from socketd.transport.core.internal.SessionDefault import SessionDefault
-from socketd.transport.core.config.Config import Config
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Config import Config
+from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.stream.StreamBase import StreamBase
@@ -28,7 +27,7 @@ class ChannelDefault(ChannelBase):
         self.source: WebSocketCommonProtocol = source
         self.assistant = assistant
         self.acceptorMap: dict[str:StreamBase] = dict()
-        self.session: Session = None
+        self.session: Optional[Session] = None
 
     def remove_acceptor(self, sid: str):
         if sid in self.acceptorMap:
@@ -104,4 +103,3 @@ class ChannelDefault(ChannelBase):
 
     def reconnect(self):
         pass
-

@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Callable
 
-from socketd.transport.core.entity.Message import Message
+from socketd.transport.core.Message import Message
 
 
 class Steam(ABC):

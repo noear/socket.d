@@ -2,6 +2,7 @@ package org.noear.socketd.transport.java_tcp;
 
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Config;
+import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
@@ -75,7 +76,7 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
             return null;
         }
 
-        if(len > config.getFragmentSize()) {
+        if(len > Constants.MAX_SIZE_FRAME) {
             //如果超时，跳
             source.getInputStream().skip(len - Integer.BYTES);
             return null;

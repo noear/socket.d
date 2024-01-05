@@ -96,7 +96,7 @@ public class CodecDefault implements Codec {
             return null;
         }
 
-        if (frameSize > config.getFragmentSize()) {
+        if (frameSize > Constants.MAX_SIZE_FRAME) {
             //如果超界，跳
             buffer.skipBytes(frameSize - Integer.BYTES);
             return null;

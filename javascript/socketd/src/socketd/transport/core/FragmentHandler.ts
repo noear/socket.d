@@ -5,6 +5,7 @@ import {Entity, EntityDefault} from "./Entity";
 import {EntityMetas} from "./Constants";
 import {FragmentAggregator, FragmentAggregatorDefault} from "./FragmentAggregator";
 import type {IoConsumer} from "./Typealias";
+import {StreamInternal} from "./Stream";
 
 /**
  * 数据分片处理（分片必须做，聚合可开关）
@@ -16,11 +17,12 @@ export interface FragmentHandler {
     /**
      * 拆割分片
      *
-     * @param channel       通道
-     * @param message       总包消息
+     * @param channel  通道
+     * @param stream   流
+     * @param message  总包消息
      * @param consumer 分片消费
      */
-    spliFragment(channel: Channel, message: MessageInternal, consumer: IoConsumer<Entity>);
+    spliFragment(channel: Channel, stream: StreamInternal|null, message: MessageInternal, consumer: IoConsumer<Entity>);
 
     /**
      * 聚合分片
@@ -51,22 +53,34 @@ export class FragmentHandlerDefault implements FragmentHandler {
      * @param message       总包消息
      * @param consumer 分片消费
      */
-    spliFragment(channel: Channel, message: MessageInternal, consumer: IoConsumer<Entity>) {
+    spliFragment(channel: Channel, stream: StreamInternal|null, message: MessageInternal, consumer: IoConsumer<Entity>) {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
             let fragmentIndex = 0;
-            this.spliFragmentDo(fragmentIndex, channel, message, consumer);
+            let fragmentTotal = message.dataSize() / channel.getConfig().getFragmentSize();
+            if(message.dataSize() % channel.getConfig().getFragmentSize() > 0){
+                fragmentTotal++;
+            }
+            this.spliFragmentDo(fragmentIndex, fragmentTotal, channel, stream, message, consumer);
         } else {
             if (message.data().getBlob() == null) {
                 consumer(message);
+
+                if(stream != null){
+                    stream.onProgress(1,1);
+                }
             } else {
                 message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
                     consumer(new EntityDefault().dataSet(dataBuffer).metaMapPut(message.metaMap()));
+
+                    if(stream != null){
+                        stream.onProgress(1,1);
+                    }
                 });
             }
         }
     }
 
-    spliFragmentDo( fragmentIndex:number, channel: Channel, message: MessageInternal, consumer: IoConsumer<Entity>) {
+    spliFragmentDo(fragmentIndex: number, fragmentTotal:number,channel: Channel, stream: StreamInternal|null, message: MessageInternal, consumer: IoConsumer<Entity>) {
         //获取分片
         fragmentIndex++;
 
@@ -78,8 +92,11 @@ export class FragmentHandlerDefault implements FragmentHandler {
             fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
 
             consumer(fragmentEntity);
+            if(stream != null){
+                stream.onProgress(fragmentIndex, fragmentIndex);
+            }
 
-            this.spliFragmentDo(fragmentIndex, channel, message, consumer);
+            this.spliFragmentDo(fragmentIndex, fragmentTotal, channel, stream, message, consumer);
         });
     }
 

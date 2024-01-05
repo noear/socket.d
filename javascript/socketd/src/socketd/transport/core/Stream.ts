@@ -1,9 +1,9 @@
 import type {Reply} from "./Entity";
 import type {MessageInternal} from "./Message";
 import type {Channel} from "./Channel";
-import type {IoConsumer} from "./Typealias";
-import {SocketdTimeoutException} from "../../exception/SocketdException";
+import type {IoBiConsumer, IoConsumer} from "./Typealias";
 import type {Config} from "./Config";
+import {SocketdTimeoutException} from "../../exception/SocketdException";
 import {Asserts} from "./Asserts";
 
 /**
@@ -37,6 +37,11 @@ export interface Stream {
      * 异常发生时
      */
     thenError(onError: IoConsumer<Error>): Stream;
+
+    /**
+     * 进度发生时
+     */
+    thenProgress(onProgress: IoBiConsumer<number, number>): Stream;
 }
 
 /**
@@ -49,7 +54,7 @@ export interface StreamInternal extends Stream {
     /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
      * */
-    insuranceStart(streamManger:StreamMangerDefault, streamTimeout:number);
+    insuranceStart(streamManger: StreamMangerDefault, streamTimeout: number);
 
     /**
      * 保险取消息
@@ -70,6 +75,14 @@ export interface StreamInternal extends Stream {
      * @param error 异常
      */
     onError(error: Error);
+
+    /**
+     * 进度时
+     *
+     * @param val 当时值
+     * @param max 最大值
+     */
+    onProgress(val: number, max: number);
 }
 
 /**
@@ -80,11 +93,12 @@ export interface StreamInternal extends Stream {
  */
 export abstract class StreamBase implements StreamInternal {
     //保险任务
-    private  _insuranceFuture: any;
+    private _insuranceFuture: any;
     private _sid: string;
     private _isSingle: boolean;
     private _timeout: number;
     private _doOnError: IoConsumer<Error>;
+    private _doOnProgress: IoBiConsumer<number, number>;
 
     constructor(sid: string, isSingle: boolean, timeout: number) {
         this._sid = sid;
@@ -95,7 +109,6 @@ export abstract class StreamBase implements StreamInternal {
     abstract onAccept(reply: MessageInternal, channel: Channel);
 
     abstract isDone(): boolean;
-
 
 
     sid(): string {
@@ -109,7 +122,6 @@ export abstract class StreamBase implements StreamInternal {
     timeout(): number {
         return this._timeout;
     }
-
 
 
     /**
@@ -144,13 +156,24 @@ export abstract class StreamBase implements StreamInternal {
      * @param error 异常
      */
     onError(error: Error) {
-        if (this._doOnError != null) {
+        if (this._doOnError) {
             this._doOnError(error);
+        }
+    }
+
+    onProgress(val: number, max: number) {
+        if(this._doOnProgress){
+            this._doOnProgress(val, max);
         }
     }
 
     thenError(onError: IoConsumer<Error>): Stream {
         this._doOnError = onError;
+        return this;
+    }
+
+    thenProgress(onProgress: IoBiConsumer<number, number>): Stream {
+        this._doOnProgress = onProgress;
         return this;
     }
 }

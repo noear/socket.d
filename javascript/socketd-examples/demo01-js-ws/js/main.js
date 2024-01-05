@@ -133,6 +133,8 @@ function mainDo() {
             clientSession.sendAndRequest("/upload", SocketD.newEntity(file1), reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
+            }).thenProgress((val,max)=> {
+                console.info("进度:" + val + "/" + max);
             });
         }
     });
@@ -165,6 +167,8 @@ function mainDo() {
             clientSession.sendAndRequest("/upload", SocketD.newEntity(str), reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
+            }).thenProgress((val,max)=> {
+                console.info("进度:" + val + "/" + max);
             });
         }
     });

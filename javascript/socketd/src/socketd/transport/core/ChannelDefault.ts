@@ -81,7 +81,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                     message.putMeta(EntityMetas.META_DATA_LENGTH, message.dataSize().toString());
                 }
 
-                this.getConfig().getFragmentHandler().spliFragment(this, message, fragmentEntity => {
+                this.getConfig().getFragmentHandler().spliFragment(this, stream, message, fragmentEntity => {
                     //主要是 sid 和 entity
                     const fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
                         .flag(frame.flag())
@@ -98,6 +98,9 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
         //不满足分片条件，直接发
         this._assistant.write(this._source, frame);
+        if(stream != null){
+            stream.onProgress(1,1);
+        }
     }
 
     retrieve(frame: Frame) {

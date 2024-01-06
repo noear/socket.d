@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * 会话
@@ -128,17 +129,41 @@ public interface Session extends ClientSession, Closeable {
      *
      * @param event   事件
      * @param content 内容
+     * @return 流
      */
-    StreamSend send(String event, Entity content) throws IOException;
+    default StreamSend send(String event, Entity content) throws IOException {
+        return send(event, content, null);
+    }
+
+    /**
+     * 发送
+     *
+     * @param event   事件
+     * @param content 内容
+     * @return 流
+     */
+    StreamSend send(String event, Entity content, Consumer<StreamSend> consumer) throws IOException;
 
     /**
      * 发送并请求
      *
      * @param event   事件
      * @param content 内容
+     * @return 流
      */
     default StreamRequest sendAndRequest(String event, Entity content) throws IOException {
-        return sendAndRequest(event, content, 0);
+        return sendAndRequest(event, content, 0, null);
+    }
+
+    /**
+     * 发送并请求
+     *
+     * @param event   事件
+     * @param content 内容
+     * @return 流
+     */
+    default StreamRequest sendAndRequest(String event, Entity content, Consumer<StreamRequest> consumer) throws IOException {
+        return sendAndRequest(event, content, 0, consumer);
     }
 
     /**
@@ -147,8 +172,21 @@ public interface Session extends ClientSession, Closeable {
      * @param event   事件
      * @param content 内容
      * @param timeout 超时（毫秒）
+     * @return 流
      */
-    StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException;
+    default StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException {
+        return sendAndRequest(event, content, timeout, null);
+    }
+
+    /**
+     * 发送并请求（限为一次答复；指定超时）
+     *
+     * @param event   事件
+     * @param content 内容
+     * @param timeout 超时（毫秒）
+     * @return 流
+     */
+    StreamRequest sendAndRequest(String event, Entity content, long timeout, Consumer<StreamRequest> consumer) throws IOException;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
@@ -158,7 +196,18 @@ public interface Session extends ClientSession, Closeable {
      * @return 流
      */
     default StreamSubscribe sendAndSubscribe(String event, Entity content) throws IOException {
-        return sendAndSubscribe(event, content, 0);
+        return sendAndSubscribe(event, content, 0, null);
+    }
+
+    /**
+     * 发送并订阅（答复结束之前，不限答复次数）
+     *
+     * @param event   事件
+     * @param content 内容
+     * @return 流
+     */
+    default StreamSubscribe sendAndSubscribe(String event, Entity content, Consumer<StreamSubscribe> consumer) throws IOException {
+        return sendAndSubscribe(event, content, 0, consumer);
     }
 
     /**
@@ -169,7 +218,20 @@ public interface Session extends ClientSession, Closeable {
      * @param timeout 超时（毫秒）
      * @return 流
      */
-    StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException;
+    default StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
+        return sendAndSubscribe(event, content, timeout, null);
+    }
+
+
+    /**
+     * 发送并订阅（答复结束之前，不限答复次数）
+     *
+     * @param event   事件
+     * @param content 内容
+     * @param timeout 超时（毫秒）
+     * @return 流
+     */
+    StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout, Consumer<StreamSubscribe> consumer) throws IOException;
 
     /**
      * 答复

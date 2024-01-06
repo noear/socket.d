@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.function.Consumer;
 
 /**
  * 会话默认实现
@@ -123,7 +124,7 @@ public class SessionDefault extends SessionBase {
      * @param content 内容
      */
     @Override
-    public StreamSend send(String event, Entity content) throws IOException {
+    public StreamSend send(String event, Entity content, Consumer<StreamSend> consumer) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
@@ -131,6 +132,9 @@ public class SessionDefault extends SessionBase {
                 .build();
 
         StreamSendImpl stream = new StreamSendImpl(message.sid());
+        if (consumer != null) {
+            consumer.accept(stream);
+        }
         channel.send(new Frame(Flags.Message, message), stream);
         return stream;
     }
@@ -143,7 +147,7 @@ public class SessionDefault extends SessionBase {
      * @param timeout 超时（毫秒）
      */
     @Override
-    public StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public StreamRequest sendAndRequest(String event, Entity content, long timeout, Consumer<StreamRequest> consumer) throws IOException {
         if (timeout < 10) {
             timeout = channel.getConfig().getRequestTimeout();
         }
@@ -155,6 +159,9 @@ public class SessionDefault extends SessionBase {
                 .build();
 
         StreamRequestImpl stream = new StreamRequestImpl(message.sid(), timeout);
+        if (consumer != null) {
+            consumer.accept(stream);
+        }
         channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -168,7 +175,7 @@ public class SessionDefault extends SessionBase {
      * @param timeout 超时
      */
     @Override
-    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
+    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout, Consumer<StreamSubscribe> consumer) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
@@ -176,6 +183,9 @@ public class SessionDefault extends SessionBase {
                 .build();
 
         StreamSubscribeImpl stream = new StreamSubscribeImpl(message.sid(), timeout);
+        if (consumer != null) {
+            consumer.accept(stream);
+        }
         channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }

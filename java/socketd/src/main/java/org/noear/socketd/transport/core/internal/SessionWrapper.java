@@ -5,6 +5,7 @@ import org.noear.socketd.transport.core.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Session 包装器（用于静态代理）
@@ -105,18 +106,18 @@ public class SessionWrapper implements Session {
     }
 
     @Override
-    public StreamSend send(String event, Entity content) throws IOException {
-        return real.send(event, content);
+    public StreamSend send(String event, Entity content, Consumer<StreamSend> consumer) throws IOException {
+        return real.send(event, content, consumer);
     }
 
     @Override
-    public StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException {
-        return real.sendAndRequest(event, content, timeout);
+    public StreamRequest sendAndRequest(String event, Entity content, long timeout, Consumer<StreamRequest> consumer) throws IOException {
+        return real.sendAndRequest(event, content, timeout, consumer);
     }
 
     @Override
-    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
-        return real.sendAndSubscribe(event, content, timeout);
+    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout, Consumer<StreamSubscribe> consumer) throws IOException {
+        return real.sendAndSubscribe(event, content, timeout, consumer);
     }
 
     @Override

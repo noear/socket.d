@@ -3,13 +3,13 @@ package org.noear.socketd.cluster;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.utils.IoConsumer;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.StrUtils;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -105,10 +105,10 @@ public class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    public StreamSend send(String event, Entity content) throws IOException {
+    public StreamSend send(String event, Entity content, Consumer<StreamSend> consumer) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.send(event, content);
+        return sender.send(event, content, consumer);
     }
 
 
@@ -119,10 +119,10 @@ public class ClusterClientSession implements ClientSession {
      * @param content 内容
      * @param timeout 超时（毫秒）
      */
-    public StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public StreamRequest sendAndRequest(String event, Entity content, long timeout, Consumer<StreamRequest> consumer) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.sendAndRequest(event, content, timeout);
+        return sender.sendAndRequest(event, content, timeout, consumer);
     }
 
 
@@ -133,10 +133,10 @@ public class ClusterClientSession implements ClientSession {
      * @param content  内容
      * @param timeout  超时
      */
-    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
+    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout, Consumer<StreamSubscribe> consumer) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.sendAndSubscribe(event, content, timeout);
+        return sender.sendAndSubscribe(event, content, timeout, consumer);
     }
 
     /**

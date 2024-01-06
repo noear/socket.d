@@ -6,6 +6,7 @@ import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.tcp.impl.ClientMessageProcessor;
+import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.IdleStatePlugin;
@@ -38,38 +39,16 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
         ClientMessageProcessor messageProcessor = new ClientMessageProcessor(client);
 
+
+        RunUtils.async(() -> {
+            try {
+                connectDo(messageProcessor);
+            } catch (Throwable e) {
+                messageProcessor.getHandshakeFuture().complete(new ClientHandshakeResult(null, e));
+            }
+        });
+
         try {
-            //支持 ssl
-            if (client.getConfig().getSslContext() != null) {
-                SslPlugin<Frame> sslPlugin = new SslPlugin<>(client.getConfig()::getSslContext, sslEngine -> {
-                    sslEngine.setUseClientMode(true);
-                });
-
-                messageProcessor.addPlugin(sslPlugin);
-            }
-
-            //闲置超时
-            if (client.getConfig().getIdleTimeout() > 0) {
-                messageProcessor.addPlugin(new IdleStatePlugin<>((int) client.getConfig().getIdleTimeout(), true, false));
-            }
-
-
-            real = new AioQuickClient(client.getConfig().getHost(), client.getConfig().getPort(), client.frameProtocol(), messageProcessor);
-
-            if (client.getConfig().getReadBufferSize() > 0) {
-                real.setReadBufferSize(client.getConfig().getReadBufferSize());
-            }
-
-            if (client.getConfig().getWriteBufferSize() > 0) {
-                real.setWriteBuffer(client.getConfig().getWriteBufferSize(), 16);
-            }
-
-            if (client.getConfig().getConnectTimeout() > 0) {
-                real.connectTimeout((int) client.getConfig().getConnectTimeout());
-            }
-
-            real.start();
-
             //等待握手结果
             ClientHandshakeResult handshakeResult = messageProcessor.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
@@ -90,6 +69,39 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
                 throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
+    }
+
+    private void connectDo(ClientMessageProcessor messageProcessor) throws Exception {
+        //支持 ssl
+        if (client.getConfig().getSslContext() != null) {
+            SslPlugin<Frame> sslPlugin = new SslPlugin<>(client.getConfig()::getSslContext, sslEngine -> {
+                sslEngine.setUseClientMode(true);
+            });
+
+            messageProcessor.addPlugin(sslPlugin);
+        }
+
+        //闲置超时
+        if (client.getConfig().getIdleTimeout() > 0) {
+            messageProcessor.addPlugin(new IdleStatePlugin<>((int) client.getConfig().getIdleTimeout(), true, false));
+        }
+
+
+        real = new AioQuickClient(client.getConfig().getHost(), client.getConfig().getPort(), client.frameProtocol(), messageProcessor);
+
+        if (client.getConfig().getReadBufferSize() > 0) {
+            real.setReadBufferSize(client.getConfig().getReadBufferSize());
+        }
+
+        if (client.getConfig().getWriteBufferSize() > 0) {
+            real.setWriteBuffer(client.getConfig().getWriteBufferSize(), 16);
+        }
+
+        if (client.getConfig().getConnectTimeout() > 0) {
+            real.connectTimeout((int) client.getConfig().getConnectTimeout());
+        }
+
+        real.start();
     }
 
     @Override

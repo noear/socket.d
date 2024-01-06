@@ -7,6 +7,7 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
+import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,40 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         //关闭之前的资源
         close();
 
+        CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
+
+        RunUtils.async(() -> {
+            try {
+                connectDo(handshakeFuture);
+            } catch (Throwable e) {
+                handshakeFuture.complete(new ClientHandshakeResult(null, e));
+            }
+        });
+
+        try {
+            //等待握手结果
+            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
+
+            if (handshakeResult.getThrowable() != null) {
+                throw handshakeResult.getThrowable();
+            } else {
+                return handshakeResult.getChannel();
+            }
+        } catch (TimeoutException e) {
+            close();
+            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
+        } catch (Throwable e) {
+            close();
+
+            if (e instanceof IOException) {
+                throw (IOException) e;
+            } else {
+                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
+            }
+        }
+    }
+
+    private void connectDo(CompletableFuture<ClientHandshakeResult> handshakeFuture) throws IOException {
         SocketAddress socketAddress = new InetSocketAddress(client.getConfig().getHost(), client.getConfig().getPort());
 
         //支持 ssl
@@ -69,7 +104,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
             real.connect(socketAddress);
         }
 
-        CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
+
         ChannelInternal channel = new ChannelDefault<>(real, client);
 
         clientThread = new Thread(() -> {
@@ -77,30 +112,8 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         });
         clientThread.start();
 
-        try {
-            //开始发连接包
-            channel.sendConnect(client.getConfig().getUrl());
-
-            //等待握手结果
-            ClientHandshakeResult handshakeResult = handshakeFuture.get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
-
-            if (handshakeResult.getThrowable() != null) {
-                throw handshakeResult.getThrowable();
-            } else {
-                return handshakeResult.getChannel();
-            }
-        } catch (TimeoutException e) {
-            close();
-            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
-        } catch (Throwable e) {
-            close();
-
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            } else {
-                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
-            }
-        }
+        //开始发连接包
+        channel.sendConnect(client.getConfig().getUrl());
     }
 
     private void receive(ChannelInternal channel, Socket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {

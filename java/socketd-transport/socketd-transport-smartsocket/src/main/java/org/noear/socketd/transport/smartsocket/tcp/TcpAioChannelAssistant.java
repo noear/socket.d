@@ -4,6 +4,7 @@ import org.noear.socketd.transport.core.*;
 import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
+import java.io.NotActiveException;
 import java.net.InetSocketAddress;
 
 /**
@@ -21,7 +22,12 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession> {
 
     @Override
     public void write(AioSession source, Frame frame) throws IOException {
-        config.getCodec().write(frame, i -> new TcpAioBufferWriter(source.writeBuffer()));
+        if (source.isInvalid()) {
+            //触发自动重链
+            throw new NotActiveException();
+        } else {
+            config.getCodec().write(frame, i -> new TcpAioBufferWriter(source.writeBuffer()));
+        }
     }
 
     @Override

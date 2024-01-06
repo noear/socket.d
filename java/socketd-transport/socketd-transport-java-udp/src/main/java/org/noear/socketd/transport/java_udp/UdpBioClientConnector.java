@@ -8,6 +8,7 @@ import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.internal.ChannelDefault;
+import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,31 +37,17 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         //关闭之前的资源
         close();
 
-        //不要复用旧的对象
-        real = new DatagramSocket();
-
-        SocketAddress socketAddress = new InetSocketAddress(client.getConfig().getHost(), client.getConfig().getPort());
-        real.connect(socketAddress);
-
-        DatagramTagert tagert = new DatagramTagert(real, null, true);
-        ChannelInternal channel = new ChannelDefault<>(tagert, client);
-
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
-        //定义接收线程
-        clientThread = new Thread(() -> {
+        RunUtils.async(() -> {
             try {
-                receive(channel, real, handshakeFuture);
+                connectDo(handshakeFuture);
             } catch (Throwable e) {
-                throw new IllegalStateException(e);
+                handshakeFuture.complete(new ClientHandshakeResult(null, e));
             }
         });
-        clientThread.start();
 
         try {
-            //开始发连接包
-            channel.sendConnect(client.getConfig().getUrl());
-
             //等待握手结果
             ClientHandshakeResult handshakeResult = handshakeFuture.get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 
@@ -81,6 +68,32 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                 throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
+    }
+
+    private void connectDo(CompletableFuture<ClientHandshakeResult> handshakeFuture) throws IOException{
+        //不要复用旧的对象
+        real = new DatagramSocket();
+
+        SocketAddress socketAddress = new InetSocketAddress(client.getConfig().getHost(), client.getConfig().getPort());
+        real.connect(socketAddress);
+
+        DatagramTagert tagert = new DatagramTagert(real, null, true);
+        ChannelInternal channel = new ChannelDefault<>(tagert, client);
+
+
+
+        //定义接收线程
+        clientThread = new Thread(() -> {
+            try {
+                receive(channel, real, handshakeFuture);
+            } catch (Throwable e) {
+                throw new IllegalStateException(e);
+            }
+        });
+        clientThread.start();
+
+        //开始发连接包
+        channel.sendConnect(client.getConfig().getUrl());
     }
 
     private void receive(ChannelInternal channel, DatagramSocket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {

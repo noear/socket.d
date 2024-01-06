@@ -90,6 +90,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
                 fragmentEntity.metaMapPut(message.metaMap());
             }
             fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, fragmentIndex.toString());
+            fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_TOTAL, fragmentTotal.toString());
 
             consumer(fragmentEntity);
             if(stream != null){

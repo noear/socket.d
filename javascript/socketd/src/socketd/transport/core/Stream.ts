@@ -346,7 +346,7 @@ export interface StreamManger {
      *
      * @param sid 流Id
      */
-    getStream(sid: string): StreamInternal<any> | undefined;
+    getStream(sid: string): StreamInternal<any> | null;
 
     /**
      * 移除流
@@ -371,7 +371,12 @@ export class StreamMangerDefault implements StreamManger{
      * @param sid 流Id
      */
     getStream(sid:string) {
-        return this._streamMap.get(sid);
+        const tmp = this._streamMap.get(sid);
+        if (tmp) {
+            return tmp;
+        } else {
+            return null;
+        }
     }
 
     /**

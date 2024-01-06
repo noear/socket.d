@@ -104,7 +104,7 @@ export interface Channel {
      *
      * @param frame 帧
      */
-    retrieve(frame: Frame);
+    retrieve(frame: Frame, stream: StreamInternal<any> | null);
 
     /**
      * 手动重连（一般是自动）
@@ -135,6 +135,11 @@ export interface ChannelInternal extends Channel {
     setSession(session: Session);
 
     /**
+     * 获取流
+     */
+    getStream(sid: string): StreamInternal<any> | null;
+
+    /**
      * 当打开时
      * */
     onOpenFuture(future: IoBiConsumer<boolean, any>);
@@ -149,7 +154,7 @@ export abstract class  ChannelBase implements Channel {
     protected _config: Config;
     private _attachments: Map<string, any>;
     private _handshake: HandshakeInternal;
-    private  _isClosed: number;
+    private _isClosed: number;
 
     constructor(config: Config) {
         this._config = config;
@@ -161,7 +166,7 @@ export abstract class  ChannelBase implements Channel {
         return this._attachments.get(name);
     }
 
-    putAttachment(name: string, val: object|null) {
+    putAttachment(name: string, val: object | null) {
         if (val == null) {
             this._attachments.delete(name);
         } else {
@@ -220,7 +225,7 @@ export abstract class  ChannelBase implements Channel {
 
     abstract send(frame: Frame, stream: StreamInternal<any> | null);
 
-    abstract retrieve(frame: Frame);
+    abstract retrieve(frame: Frame, stream: StreamInternal<any> | null);
 
     abstract reconnect();
 

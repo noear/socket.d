@@ -103,10 +103,8 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
     }
 
-    retrieve(frame: Frame) {
-        const stream = this._streamManger.getStream(frame.message()!.sid());
-
-        if (stream != null) {
+    retrieve(frame: Frame, stream:StreamInternal<any>|null) {
+        if (stream) {
             if (stream.demands() || frame.flag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
                 this._streamManger.removeStream(frame.message()!.sid());
@@ -137,6 +135,10 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         return this._session;
+    }
+
+    getStream(sid: string): StreamInternal<any> | null {
+        return this._streamManger.getStream(sid);
     }
 
     setSession(session: Session) {

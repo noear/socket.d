@@ -218,6 +218,10 @@ export const EntityMetas= {
      */
     META_DATA_FRAGMENT_IDX: "Data-Fragment-Idx",
     /**
+     * 数据分片总数
+     */
+    META_DATA_FRAGMENT_TOTAL: "Data-Fragment-Total",
+    /**
      * 数据描述之文件名
      */
     META_DATA_DISPOSITION_FILENAME: "Data-Disposition-Filename",

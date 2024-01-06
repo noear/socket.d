@@ -150,8 +150,8 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
-    retrieve(frame: Frame) {
-        this._real!.retrieve(frame);
+    retrieve(frame: Frame, stream: StreamInternal<any> | null) {
+        this._real!.retrieve(frame, stream);
     }
 
     reconnect() {

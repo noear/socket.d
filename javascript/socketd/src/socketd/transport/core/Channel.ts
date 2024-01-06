@@ -4,7 +4,7 @@ import type {HandshakeInternal} from "./Handshake";
 import type {Message} from "./Message";
 import  {Frames} from "./Frame";
 import type {Frame} from "./Frame";
-import type {StreamInternal} from "./Stream";
+import type {StreamInternal} from "../stream/Stream";
 import type {IoBiConsumer} from "./Typealias";
 
 /**

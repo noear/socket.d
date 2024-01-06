@@ -5,7 +5,7 @@ import {Entity, EntityDefault} from "./Entity";
 import {EntityMetas} from "./Constants";
 import {FragmentAggregator, FragmentAggregatorDefault} from "./FragmentAggregator";
 import type {IoConsumer} from "./Typealias";
-import {StreamInternal} from "./Stream";
+import {StreamInternal} from "../stream/Stream";
 
 /**
  * 数据分片处理（分片必须做，聚合可开关）

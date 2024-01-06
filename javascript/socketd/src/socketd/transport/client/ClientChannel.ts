@@ -1,7 +1,7 @@
 import { Channel, ChannelBase } from "../core/Channel";
 import type { Frame } from "../core/Frame";
 import type { Session } from "../core/Session";
-import type { StreamInternal } from "../core/Stream";
+import type { StreamInternal } from "../stream/Stream";
 import type { ClientConnector } from "./ClientConnector";
 import { HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
 import { Constants } from "../core/Constants";

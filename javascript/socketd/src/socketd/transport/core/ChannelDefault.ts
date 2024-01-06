@@ -1,6 +1,6 @@
 import type {Processor} from "./Processor";
 import type {ChannelAssistant} from "./ChannelAssistant";
-import type {StreamInternal, StreamManger} from "./Stream";
+import type {StreamInternal, StreamManger} from "../stream/Stream";
 import type {Session} from "./Session";
 import type {ChannelSupporter} from "./ChannelSupporter";
 import type {Config} from "./Config";

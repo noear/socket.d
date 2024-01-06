@@ -1,6 +1,6 @@
 import type {Codec} from "./Codec";
-import type {StreamManger} from "./Stream";
-import {StreamMangerDefault} from "./Stream";
+import type {StreamManger} from "../stream/Stream";
+import {StreamMangerDefault} from "../stream/Stream";
 import {GuidGenerator, IdGenerator} from "./IdGenerator";
 import {FragmentHandler, FragmentHandlerDefault} from "./FragmentHandler";
 import {Constants} from "./Constants";

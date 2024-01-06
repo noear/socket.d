@@ -5,7 +5,7 @@ import type {Frame} from "./Frame";
 import {Constants, EntityMetas, Flags} from "./Constants";
 import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
 import {HandshakeDefault} from "./HandshakeDefault";
-import {StreamInternal} from "./Stream";
+import {StreamInternal} from "../stream/Stream";
 
 /**
  * 处理器

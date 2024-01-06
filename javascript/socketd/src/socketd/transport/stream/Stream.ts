@@ -1,11 +1,11 @@
-import type {Reply} from "./Entity";
-import type {MessageInternal} from "./Message";
-import type {Channel} from "./Channel";
-import {IoBiConsumer, IoConsumer, IoTriConsumer} from "./Typealias";
-import type {Config} from "./Config";
+import {IoConsumer, IoTriConsumer} from "../core/Typealias";
+import {Reply} from "../core/Entity";
+import {MessageInternal} from "../core/Message";
 import {SocketdTimeoutException} from "../../exception/SocketdException";
-import {Asserts} from "./Asserts";
-import {Constants} from "./Constants";
+import {Config} from "../core/Config";
+import {Asserts} from "../core/Asserts";
+import {Constants} from "../core/Constants";
+
 
 /**
  * 流
@@ -46,7 +46,7 @@ export interface Stream <T extends Stream<any>> {
  * @author noear
  * @since 2.3
  */
-export interface StreamSend extends Stream<StreamSend>{
+export interface SendStream extends Stream<SendStream>{
 
 }
 
@@ -56,7 +56,7 @@ export interface StreamSend extends Stream<StreamSend>{
  * @author noear
  * @since 2.3
  */
-export interface StreamRequest extends Stream<StreamRequest> {
+export interface RequestStream extends Stream<RequestStream> {
     /**
      * 异步等待获取答复
      */
@@ -65,7 +65,7 @@ export interface StreamRequest extends Stream<StreamRequest> {
     /**
      * 答复发生时
      */
-    thenReply(onReply: IoConsumer<Reply>): StreamRequest;
+    thenReply(onReply: IoConsumer<Reply>): RequestStream;
 }
 
 /**
@@ -74,11 +74,11 @@ export interface StreamRequest extends Stream<StreamRequest> {
  * @author noear
  * @since 2.3
  */
-export interface StreamSubscribe extends Stream<StreamSubscribe> {
+export interface SubscribeStream extends Stream<SubscribeStream> {
     /**
      * 答复发生时
      */
-    thenReply(onReply: IoConsumer<Reply>): StreamSubscribe;
+    thenReply(onReply: IoConsumer<Reply>): SubscribeStream;
 }
 
 
@@ -221,7 +221,7 @@ export abstract class StreamBase<T extends Stream<any>> implements StreamInterna
     }
 }
 
-export class StreamSendImpl extends StreamBase<StreamSend> implements StreamSend{
+export class SendStreamImpl extends StreamBase<SendStream> implements SendStream{
     constructor(sid: string) {
         super(sid, Constants.DEMANDS_ZERO, 0);
     }
@@ -240,7 +240,7 @@ export class StreamSendImpl extends StreamBase<StreamSend> implements StreamSend
  * @author noear
  * @since 2.0
  */
-export class StreamRequestImpl extends StreamBase<StreamRequest> implements StreamRequest{
+export class RequestStreamImpl extends StreamBase<RequestStream> implements RequestStream{
     _doOnReply:IoConsumer<Reply>;
     _isDone:boolean;
     constructor(sid:string,  timeout:number) {
@@ -274,7 +274,7 @@ export class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
         })
     }
 
-    thenReply(onReply: IoConsumer<Reply>): StreamRequest {
+    thenReply(onReply: IoConsumer<Reply>): RequestStream {
         this._doOnReply = onReply;
         return this;
     }
@@ -286,7 +286,7 @@ export class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
  * @author noear
  * @since 2.0
  */
-export class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements StreamSubscribe{
+export class SubscribeStreamImpl extends StreamBase<SubscribeStream> implements SubscribeStream{
     _doOnReply:IoConsumer<Reply>;
     _isDone:boolean;
     constructor(sid:string,  timeout:number) {
@@ -310,7 +310,7 @@ export class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
         }
     }
 
-    thenReply(onReply: IoConsumer<Reply>): StreamSubscribe {
+    thenReply(onReply: IoConsumer<Reply>): SubscribeStream {
         this._doOnReply = onReply;
         return this;
     }

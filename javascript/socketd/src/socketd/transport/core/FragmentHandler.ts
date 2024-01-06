@@ -22,7 +22,7 @@ export interface FragmentHandler {
      * @param message  总包消息
      * @param consumer 分片消费
      */
-    spliFragment(channel: Channel, stream: StreamInternal|null, message: MessageInternal, consumer: IoConsumer<Entity>);
+    spliFragment(channel: Channel, stream: StreamInternal<any>|null, message: MessageInternal, consumer: IoConsumer<Entity>);
 
     /**
      * 聚合分片
@@ -53,7 +53,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
      * @param message       总包消息
      * @param consumer 分片消费
      */
-    spliFragment(channel: Channel, stream: StreamInternal|null, message: MessageInternal, consumer: IoConsumer<Entity>) {
+    spliFragment(channel: Channel, stream: StreamInternal<any>|null, message: MessageInternal, consumer: IoConsumer<Entity>) {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
             let fragmentIndex = 0;
             let fragmentTotal = message.dataSize() / channel.getConfig().getFragmentSize();
@@ -80,7 +80,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
         }
     }
 
-    spliFragmentDo(fragmentIndex: number, fragmentTotal:number,channel: Channel, stream: StreamInternal|null, message: MessageInternal, consumer: IoConsumer<Entity>) {
+    spliFragmentDo(fragmentIndex: number, fragmentTotal:number,channel: Channel, stream: StreamInternal<any>|null, message: MessageInternal, consumer: IoConsumer<Entity>) {
         //获取分片
         fragmentIndex++;
 

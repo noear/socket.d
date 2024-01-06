@@ -62,7 +62,22 @@ export const Constants = {
     /**
      * 分片长度最小限制
      */
-    MIN_FRAGMENT_SIZE: 1024
+    MIN_FRAGMENT_SIZE: 1024,
+
+    /**
+     * 零需求
+     */
+    DEMANDS_ZERO: 0,
+
+    /**
+     * 单需求
+     */
+    DEMANDS_SIGNLE: 1,
+
+    /**
+     * 多需要
+     */
+    DEMANDS_MULTIPLE: 2
 }
 
 /**

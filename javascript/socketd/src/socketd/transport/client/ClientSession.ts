@@ -1,5 +1,5 @@
 import type {IoConsumer} from "../core/Typealias";
-import type {Stream} from "../core/Stream";
+import type {Stream, StreamRequest, StreamSubscribe} from "../core/Stream";
 import type {Entity, Reply} from "../core/Entity";
 
 /**
@@ -29,7 +29,7 @@ export interface ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    send(event: string, content: Entity);
+    send(event: string, content: Entity):Stream<any>;
 
     /**
      * 发送并请求（限为一次答复；指定回调）
@@ -40,7 +40,7 @@ export interface ClientSession {
      * @param timeout  超时（毫秒）
      * @return 流
      */
-    sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout?: number): Stream;
+    sendAndRequest(event: string, content: Entity, timeout?: number): StreamRequest;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
@@ -51,7 +51,7 @@ export interface ClientSession {
      * @param timeout  超时（毫秒）
      * @return 流
      */
-    sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout?: number): Stream;
+    sendAndSubscribe(event: string, content: Entity, timeout?: number): StreamSubscribe;
 
     /**
      * 关闭

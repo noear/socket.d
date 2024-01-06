@@ -1,8 +1,7 @@
-import type {Entity, Reply} from "./Entity";
+import type {Entity} from "./Entity";
 import type {Message} from "./Message";
-import type {IoConsumer} from "./Typealias";
 import type {Channel} from "./Channel";
-import type {Stream} from "./Stream";
+import type {Stream, StreamRequest, StreamSubscribe} from "./Stream";
 import type {ClientSession} from "../client/ClientSession";
 import type {Handshake} from "./Handshake";
 
@@ -132,7 +131,7 @@ export abstract class SessionBase implements Session {
         return this._sessionId;
     }
 
-    name(): string | undefined{
+    name(): string | undefined {
         return this.param("@");
     }
 
@@ -191,11 +190,11 @@ export abstract class SessionBase implements Session {
 
     abstract reconnect();
 
-    abstract send(event: string, content: Entity);
+    abstract send(event: string, content: Entity): Stream<any>;
 
-    abstract sendAndRequest(event: string, content: Entity, callback: IoConsumer<Reply>, timeout?: number): Stream;
+    abstract sendAndRequest(event: string, content: Entity, timeout?: number): StreamRequest;
 
-    abstract sendAndSubscribe(event: string, content: Entity, callback: IoConsumer<Reply>, timeout?: number): Stream;
+    abstract sendAndSubscribe(event: string, content: Entity, timeout?: number): StreamSubscribe;
 
     abstract close();
 

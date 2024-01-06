@@ -97,7 +97,7 @@ export interface Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    send(frame: Frame, stream: StreamInternal | null);
+    send(frame: Frame, stream: StreamInternal<any> | null);
 
     /**
      * 接收（接收答复帧）
@@ -218,7 +218,7 @@ export abstract class  ChannelBase implements Channel {
         this.send(Frames.alarmFrame(from, alarm), null);
     }
 
-    abstract send(frame: Frame, stream: StreamInternal | null);
+    abstract send(frame: Frame, stream: StreamInternal<any> | null);
 
     abstract retrieve(frame: Frame);
 

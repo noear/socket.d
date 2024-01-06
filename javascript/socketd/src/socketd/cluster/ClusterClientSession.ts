@@ -1,10 +1,8 @@
 import type {ClientSession} from "../transport/client/ClientSession";
 import type { Entity, Reply } from "../transport/core/Entity";
-import type { Stream } from "../transport/core/Stream";
-import type { IoConsumer } from "../transport/core/Typealias";
+import type {Stream, StreamRequest, StreamSubscribe} from "../transport/core/Stream";
 import {StrUtils} from "../utils/StrUtils";
 import {SocketdException} from "../exception/SocketdException";
-import {ClientChannel} from "../transport/client/ClientChannel";
 import {RunUtils} from "../utils/RunUtils";
 
 /**
@@ -100,10 +98,10 @@ export class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    send(event: string, content: Entity) {
+    send(event: string, content: Entity): Stream<any> {
         const sender = this.getSessionOne();
 
-        sender.send(event, content);
+        return sender.send(event, content);
     }
 
 
@@ -112,13 +110,12 @@ export class ClusterClientSession implements ClientSession {
      *
      * @param event    事件
      * @param content  内容
-     * @param consumer 回调消费者
      * @param timeout  超时
      */
-    sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
+    sendAndRequest(event: string, content: Entity, timeout?: number): StreamRequest {
         const sender = this.getSessionOne();
 
-        return sender.sendAndRequest(event, content, consumer, timeout);
+        return sender.sendAndRequest(event, content, timeout);
     }
 
     /**
@@ -126,13 +123,12 @@ export class ClusterClientSession implements ClientSession {
      *
      * @param event    事件
      * @param content  内容
-     * @param consumer 回调消费者
      * @param timeout  超时
      */
-    sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
+    sendAndSubscribe(event: string, content: Entity, timeout: number): StreamSubscribe {
         const sender = this.getSessionOne();
 
-        return sender.sendAndSubscribe(event, content, consumer, timeout);
+        return sender.sendAndSubscribe(event, content, timeout);
     }
 
     /**

@@ -5,6 +5,7 @@ import type {IoBiConsumer, IoConsumer} from "./Typealias";
 import type {Config} from "./Config";
 import {SocketdTimeoutException} from "../../exception/SocketdException";
 import {Asserts} from "./Asserts";
+import {Constants} from "./Constants";
 
 /**
  * 流
@@ -12,16 +13,11 @@ import {Asserts} from "./Asserts";
  * @author noear
  * @since 2.1
  */
-export interface Stream {
+export interface Stream <T extends Stream<any>>{
     /**
      * 流Id
      */
     sid(): string;
-
-    /**
-     * 是否单收
-     */
-    isSingle(): boolean;
 
     /**
      * 是否完成
@@ -36,13 +32,46 @@ export interface Stream {
     /**
      * 异常发生时
      */
-    thenError(onError: IoConsumer<Error>): Stream;
+    thenError(onError: IoConsumer<Error>): T;
 
     /**
      * 进度发生时
      */
-    thenProgress(onProgress: IoBiConsumer<number, number>): Stream;
+    thenProgress(onProgress: IoBiConsumer<number, number>): T;
 }
+
+/**
+ * 请求流
+ *
+ * @author noear
+ * @since 2.2
+ */
+export interface StreamRequest extends Stream<StreamRequest> {
+    /**
+     * 异步等待获取答复
+     */
+    await(): Promise<Reply>;
+
+    /**
+     * 答复发生时
+     */
+    thenReply(onReply: IoConsumer<Reply>): StreamRequest;
+}
+
+/**
+ * 订阅流
+ *
+ * @author noear
+ * @since 2.2
+ */
+export interface StreamSubscribe extends Stream<StreamSubscribe> {
+    /**
+     * 答复发生时
+     */
+    thenReply(onReply: IoConsumer<Reply>): StreamSubscribe;
+}
+
+
 
 /**
  * 流内部接口
@@ -50,7 +79,17 @@ export interface Stream {
  * @author noear
  * @since 2.0
  */
-export interface StreamInternal extends Stream {
+export interface StreamInternal<T extends Stream<any>> extends Stream<T> {
+    /**
+     * 获取需求数量（0，1，2）
+     */
+    demands(): number;
+
+    /**
+     * 获取通道
+     */
+    channel() : Channel;
+
     /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
      * */
@@ -67,7 +106,7 @@ export interface StreamInternal extends Stream {
      * @param reply   答复
      * @param channel 通道
      */
-    onAccept(reply: MessageInternal, channel: Channel);
+    onReply(reply: MessageInternal, channel: Channel);
 
     /**
      * 异常时
@@ -91,32 +130,44 @@ export interface StreamInternal extends Stream {
  * @author noear
  * @since 2.0
  */
-export abstract class StreamBase implements StreamInternal {
+export abstract class StreamBase<T extends Stream<any>> implements StreamInternal<T> {
     //保险任务
     private _insuranceFuture: any;
+    private _channel:Channel;
     private _sid: string;
-    private _isSingle: boolean;
+    private _demands: number;
     private _timeout: number;
     private _doOnError: IoConsumer<Error>;
     private _doOnProgress: IoBiConsumer<number, number>;
 
-    constructor(sid: string, isSingle: boolean, timeout: number) {
+    constructor(channel: Channel,sid: string, demands: number, timeout: number) {
+        this._channel = channel;
         this._sid = sid;
-        this._isSingle = isSingle;
+        this._demands = demands;
         this._timeout = timeout;
     }
 
-    abstract onAccept(reply: MessageInternal, channel: Channel);
+    abstract onReply(reply: MessageInternal, channel: Channel);
 
     abstract isDone(): boolean;
+
 
 
     sid(): string {
         return this._sid;
     }
 
-    isSingle(): boolean {
-        return this._isSingle;
+    demands(): number {
+        return this._demands;
+    }
+
+
+    channel() : Channel {
+        return this._channel;
+    }
+
+    protected setChannel(channel : Channel){
+        this._channel = channel;
     }
 
     timeout(): number {
@@ -167,14 +218,27 @@ export abstract class StreamBase implements StreamInternal {
         }
     }
 
-    thenError(onError: IoConsumer<Error>): Stream {
+    thenError(onError: IoConsumer<Error>): any {
         this._doOnError = onError;
         return this;
     }
 
-    thenProgress(onProgress: IoBiConsumer<number, number>): Stream {
+    thenProgress(onProgress: IoBiConsumer<number, number>): any {
         this._doOnProgress = onProgress;
         return this;
+    }
+}
+
+export class StreamImpl extends StreamBase<StreamImpl> {
+    constructor(channel: Channel, sid: string) {
+        super(channel, sid, Constants.DEMANDS_ZERO, 0);
+    }
+
+    isDone(): boolean {
+        return true;
+    }
+
+    onReply(reply: MessageInternal, channel: Channel) {
     }
 }
 
@@ -184,12 +248,11 @@ export abstract class StreamBase implements StreamInternal {
  * @author noear
  * @since 2.0
  */
-export class StreamRequest extends StreamBase implements StreamInternal{
-    _future:IoConsumer<Reply>;
+export class StreamRequestImpl extends StreamBase<StreamRequest> implements StreamRequest{
+    _doOnReply:IoConsumer<Reply>;
     _isDone:boolean;
-    constructor( sid:string,  timeout:number,  future:IoConsumer<Reply>) {
-        super(sid,false,timeout);
-        this._future = future;
+    constructor(channel :Channel, sid:string,  timeout:number) {
+        super(channel, sid, Constants.DEMANDS_SIGNLE, timeout);
         this._isDone = false;
     }
 
@@ -197,14 +260,32 @@ export class StreamRequest extends StreamBase implements StreamInternal{
         return this._isDone;
     }
 
-    onAccept(reply: MessageInternal, channel: Channel) {
+    onReply(reply: MessageInternal, channel: Channel) {
+        this.setChannel(channel);
         this._isDone = true;
 
         try {
-            this._future(reply);
+            if(this._doOnReply){
+                this._doOnReply(reply);
+            }
         } catch (e) {
-            channel.onError(e);
+            this.channel().onError(e);
         }
+    }
+
+    await(): Promise<Reply> {
+        return new Promise<Reply>((resolve, reject) => {
+            this.thenReply(reply => {
+                resolve(reply);
+            }).thenError((err) => {
+                reject(err);
+            })
+        })
+    }
+
+    thenReply(onReply: IoConsumer<Reply>): StreamRequest {
+        this._doOnReply = onReply;
+        return this;
     }
 }
 
@@ -214,23 +295,34 @@ export class StreamRequest extends StreamBase implements StreamInternal{
  * @author noear
  * @since 2.0
  */
-export class StreamSubscribe extends StreamBase implements StreamInternal{
-    _future:IoConsumer<Reply>;
-    constructor( sid:string,  timeout:number,  future:IoConsumer<Reply>) {
-        super(sid,false,timeout);
-        this._future = future;
+export class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements StreamSubscribe{
+    _doOnReply:IoConsumer<Reply>;
+    _isDone:boolean;
+    constructor(channel:Channel, sid:string,  timeout:number) {
+        super(channel, sid, Constants.DEMANDS_SIGNLE, timeout);
+        this._isDone = false;
     }
 
     isDone(): boolean {
-        return false;
+        return this._isDone;
     }
 
-    onAccept(reply: MessageInternal, channel: Channel) {
+    onReply(reply: MessageInternal, channel: Channel) {
+        this.setChannel(channel);
+        this._isDone = reply.isEnd();
+
         try {
-            this._future(reply);
+            if(this._doOnReply){
+                this._doOnReply(reply);
+            }
         } catch (e) {
-            channel.onError(e);
+            this.channel().onError(e);
         }
+    }
+
+    thenReply(onReply: IoConsumer<Reply>): StreamSubscribe {
+        this._doOnReply = onReply;
+        return this;
     }
 }
 
@@ -247,14 +339,14 @@ export interface StreamManger {
      * @param sid    流Id
      * @param stream 流
      */
-    addStream(sid: string, stream: StreamInternal);
+    addStream(sid: string, stream: StreamInternal<any>);
 
     /**
      * 获取流
      *
      * @param sid 流Id
      */
-    getStream(sid: string): StreamInternal | undefined;
+    getStream(sid: string): StreamInternal<any> | undefined;
 
     /**
      * 移除流
@@ -266,11 +358,11 @@ export interface StreamManger {
 
 export class StreamMangerDefault implements StreamManger{
     _config:Config;
-    _streamMap: Map<string, StreamInternal>
+    _streamMap: Map<string, StreamInternal<any>>
 
     constructor(config:Config) {
         this._config = config;
-        this._streamMap = new Map<string, StreamInternal>();
+        this._streamMap = new Map<string, StreamInternal<any>>();
     }
 
     /**
@@ -288,8 +380,13 @@ export class StreamMangerDefault implements StreamManger{
      * @param sid    流Id
      * @param stream 流
      */
-    addStream(sid, stream: StreamInternal) {
+    addStream(sid, stream: StreamInternal<any>) {
         Asserts.assertNull("stream", stream);
+
+        if(stream.demands() == Constants.DEMANDS_ZERO){
+            //零需求，则不添加
+            return;
+        }
 
         this._streamMap.set(sid, stream);
 

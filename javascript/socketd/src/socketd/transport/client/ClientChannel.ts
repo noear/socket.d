@@ -133,7 +133,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    async send(frame: Frame, stream: StreamInternal) {
+    async send(frame: Frame, stream: StreamInternal<any>) {
         Asserts.assertClosedByUser(this._real);
 
         try {

@@ -33,14 +33,14 @@ function send(type) {
 
     if (type == 1) {
         appendToMessageList('发送并请求', input);
-        clientSession.sendAndRequest("/demo", SocketD.newEntity(input), reply => {
+        clientSession.sendAndRequest("/demo", SocketD.newEntity(input)).thenReply(reply => {
             console.log('reply', reply);
             appendToMessageList('答复', reply.dataAsString());
         });
     } else if (type == 2) {
         appendToMessageList('发送并订阅', input);
         clientSession.sendAndSubscribe("/demo", SocketD.newEntity(input)
-            .metaPut(SocketD.Metas.META_RANGE_SIZE,"3"), reply => {
+            .metaPut(SocketD.Metas.META_RANGE_SIZE,"3")).thenReply(reply => {
             console.log('reply', reply);
             if(reply.isEnd()){
                 appendToMessageList('答复结束', reply.dataAsString());
@@ -130,11 +130,11 @@ function mainDo() {
             const file1 = document.getElementById("file").files[0];
 
             appendToMessageList('发送文件并请求', file1.name);
-            clientSession.sendAndRequest("/upload", SocketD.newEntity(file1), reply => {
+            clientSession.sendAndRequest("/upload", SocketD.newEntity(file1)).thenReply(reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
-            }).thenProgress((val,max)=> {
-                console.info("进度:" + val + "/" + max);
+            }).thenProgress((val, max) => {
+                console.info("上传进度:" + val + "/" + max);
             });
         }
     });
@@ -142,7 +142,7 @@ function mainDo() {
     downloadFile.addEventListener("click", async () => {
         if (isOpen) {
             appendToMessageList('下载文件', "...");
-            clientSession.sendAndRequest("/download", SocketD.newEntity(), reply => {
+            clientSession.sendAndRequest("/download", SocketD.newEntity()).thenReply(reply => {
                 console.log('reply', reply);
 
                 const fileName = reply.meta(SocketD.Metas.META_DATA_DISPOSITION_FILENAME);
@@ -150,6 +150,10 @@ function mainDo() {
                     appendToMessageList('答复', "下载文件: file=" + fileName + ", size=" + reply.dataSize());
                 } else {
                     appendToMessageList('答复', "没有收到文件:(");
+                }
+            }).thenProgress((val,max)=>{
+                if(max > 1){
+                    console.info("下载进度:" + val + "/" + max);
                 }
             });
         }
@@ -164,11 +168,11 @@ function mainDo() {
             }
 
             appendToMessageList('上传大文本块10M', "...");
-            clientSession.sendAndRequest("/upload", SocketD.newEntity(str), reply => {
+            clientSession.sendAndRequest("/upload", SocketD.newEntity(str)).thenReply(reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
             }).thenProgress((val,max)=> {
-                console.info("进度:" + val + "/" + max);
+                console.info("上传进度:" + val + "/" + max);
             });
         }
     });

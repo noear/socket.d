@@ -6,7 +6,7 @@ import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
 import type {IoConsumer} from "./Typealias";
-import {Stream, StreamRequest, StreamSubscribe} from "./Stream";
+import {Stream, StreamImpl, StreamRequest, StreamRequestImpl, StreamSubscribe, StreamSubscribeImpl} from "./Stream";
 
 /**
  * 会话默认实现
@@ -87,14 +87,16 @@ export class SessionDefault extends SessionBase {
     /**
      * 发送
      */
-    send(event: string, content: Entity) {
+    send(event: string, content: Entity):Stream<any> {
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
             .entity(content)
             .build();
 
-        this._channel.send(new Frame(Flags.Message, message), null);
+        const stream = new StreamImpl(this._channel, message.sid());
+        this._channel.send(new Frame(Flags.Message, message), stream);
+        return stream;
     }
 
 
@@ -103,10 +105,9 @@ export class SessionDefault extends SessionBase {
      *
      * @param event    事件
      * @param content  内容
-     * @param consumer 回调消费者
      * @param timeout 超时
      */
-    sendAndRequest(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
+    sendAndRequest(event: string, content: Entity,  timeout?: number): StreamRequest {
         //异步，用 streamTimeout
         const message = new MessageBuilder()
             .sid(this.generateId())
@@ -114,7 +115,15 @@ export class SessionDefault extends SessionBase {
             .entity(content)
             .build();
 
-        const stream = new StreamRequest(message.sid(), timeout, consumer);
+        if (!timeout) {
+            timeout = 0;
+        }
+
+        if (timeout < 10) {
+            timeout = this._channel.getConfig().getRequestTimeout();
+        }
+
+        const stream = new StreamRequestImpl(this._channel, message.sid(), timeout);
         this._channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -124,17 +133,24 @@ export class SessionDefault extends SessionBase {
      *
      * @param event    事件
      * @param content  内容
-     * @param consumer 回调消费者
      * @param timeout 超时
      */
-    sendAndSubscribe(event: string, content: Entity, consumer: IoConsumer<Reply>, timeout: number): Stream {
+    sendAndSubscribe(event: string, content: Entity, timeout?: number): StreamSubscribe {
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
             .entity(content)
             .build();
 
-        const stream = new StreamSubscribe(message.sid(), timeout, consumer);
+        if (!timeout) {
+            timeout = 0;
+        }
+
+        if (timeout < 10) {
+            timeout = this._channel.getConfig().getStreamTimeout();
+        }
+
+        const stream = new StreamSubscribeImpl(this._channel, message.sid(), timeout);
         this._channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }

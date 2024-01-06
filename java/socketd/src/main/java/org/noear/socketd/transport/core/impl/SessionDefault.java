@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.function.Consumer;
 
 /**
  * 会话默认实现
@@ -125,9 +124,10 @@ public class SessionDefault extends SessionBase {
      *
      * @param event   事件
      * @param content 内容
+     * @return 流
      */
     @Override
-    public SendStream send(String event, Entity content, Consumer<SendStream> consumer) throws IOException {
+    public SendStream send(String event, Entity content) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
@@ -135,9 +135,6 @@ public class SessionDefault extends SessionBase {
                 .build();
 
         SendStreamImpl stream = new SendStreamImpl(message.sid());
-        if (consumer != null) {
-            consumer.accept(stream);
-        }
         channel.send(new Frame(Flags.Message, message), stream);
         return stream;
     }
@@ -147,24 +144,22 @@ public class SessionDefault extends SessionBase {
      *
      * @param event   事件
      * @param content 内容
-     * @param timeout 超时（毫秒）
+     * @param timeout 超时（单位：毫秒）
+     * @return 流
      */
     @Override
-    public RequestStream sendAndRequest(String event, Entity content, long timeout, Consumer<RequestStream> consumer) throws IOException {
-        if (timeout < 10) {
-            timeout = channel.getConfig().getRequestTimeout();
-        }
-
+    public RequestStream sendAndRequest(String event, Entity content, long timeout) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(content)
                 .build();
 
-        RequestStreamImpl stream = new RequestStreamImpl(message.sid(), timeout);
-        if (consumer != null) {
-            consumer.accept(stream);
+        if (timeout < 10) {
+            timeout = channel.getConfig().getRequestTimeout();
         }
+
+        RequestStreamImpl stream = new RequestStreamImpl(message.sid(), timeout);
         channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -175,20 +170,23 @@ public class SessionDefault extends SessionBase {
      *
      * @param event   事件
      * @param content 内容
-     * @param timeout 超时
+     * @param timeout 超时（单位：毫秒）
+     * @return 流
      */
     @Override
-    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout, Consumer<SubscribeStream> consumer) throws IOException {
+    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(content)
                 .build();
 
-        SubscribeStreamImpl stream = new SubscribeStreamImpl(message.sid(), timeout);
-        if (consumer != null) {
-            consumer.accept(stream);
+
+        if (timeout < 10) {
+            timeout = channel.getConfig().getStreamTimeout();
         }
+
+        SubscribeStreamImpl stream = new SubscribeStreamImpl(message.sid(), timeout);
         channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }

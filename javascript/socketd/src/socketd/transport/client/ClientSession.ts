@@ -28,30 +28,29 @@ export interface ClientSession {
      *
      * @param event   事件
      * @param content 内容
+     * @return 流
      */
-    send(event: string, content: Entity, consumer?: IoConsumer<SendStream>): SendStream;
+    send(event: string, content: Entity): SendStream;
 
     /**
      * 发送并请求（限为一次答复；指定回调）
      *
      * @param event    事件
      * @param content  内容
-     * @param consumer 回调消费者
      * @param timeout  超时（毫秒）
      * @return 流
      */
-    sendAndRequest(event: string, content: Entity, timeout?: number, consumer?: IoConsumer<RequestStream>): RequestStream;
+    sendAndRequest(event: string, content: Entity, timeout?: number): RequestStream;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
      * @param event    事件
      * @param content  内容
-     * @param consumer 回调消费者
      * @param timeout  超时（毫秒）
      * @return 流
      */
-    sendAndSubscribe(event: string, content: Entity, timeout?: number, consumer?: IoConsumer<SubscribeStream>): SubscribeStream;
+    sendAndSubscribe(event: string, content: Entity, timeout?: number): SubscribeStream;
 
     /**
      * 关闭

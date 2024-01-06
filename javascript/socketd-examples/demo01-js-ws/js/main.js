@@ -130,15 +130,13 @@ function mainDo() {
             const file1 = document.getElementById("file").files[0];
 
             appendToMessageList('发送文件并请求', file1.name);
-            clientSession.sendAndRequest("/upload", SocketD.newEntity(file1), 0, stream => {
-                stream.thenReply(reply => {
-                    console.log('reply', reply);
-                    appendToMessageList('答复', reply.dataAsString());
-                }).thenProgress((isSend, val, max) => {
-                    if (isSend) {
-                        appendToMessageList('发送进度', val + "/" + max);
-                    }
-                })
+            clientSession.sendAndRequest("/upload", SocketD.newEntity(file1)).thenReply(reply => {
+                console.log('reply', reply);
+                appendToMessageList('答复', reply.dataAsString());
+            }).thenProgress((isSend, val, max) => {
+                if (isSend) {
+                    appendToMessageList('发送进度', val + "/" + max);
+                }
             });
         }
     });

@@ -25,11 +25,6 @@ export interface Stream <T extends Stream<any>> {
     isDone(): boolean;
 
     /**
-     * 超时设定（单位：毫秒）
-     */
-    timeout(): number;
-
-    /**
      * 异常发生时
      */
     thenError(onError: IoConsumer<Error>): T;
@@ -94,6 +89,11 @@ export interface StreamInternal<T extends Stream<any>> extends Stream<T> {
      * 获取需求数量（0，1，2）
      */
     demands(): number;
+
+    /**
+     * 超时设定（单位：毫秒）
+     */
+    timeout(): number;
 
     /**
      * 保险开始（避免永久没有回调，造成内存不能释放）

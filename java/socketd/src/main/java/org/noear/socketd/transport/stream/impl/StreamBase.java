@@ -22,7 +22,8 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
 
     private final String sid;
     private final int demands;
-    private final long timeout;
+
+    private long timeout;
     private Consumer<Throwable> doOnError;
     private TriConsumer<Boolean, Integer, Integer> doOnProgress;
 
@@ -43,6 +44,14 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
     @Override
     public int demands() {
         return demands;
+    }
+
+    /**
+     * 配置超时
+     */
+    public T timeout(long timeout){
+        this.timeout = timeout;
+        return (T)this;
     }
 
     /**

@@ -7,7 +7,6 @@ import org.noear.socketd.transport.stream.SubscribeStream;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.function.Consumer;
 
 /**
  * 客户会话
@@ -37,18 +36,7 @@ public interface ClientSession extends Closeable {
      * @param content 内容
      * @return 流
      */
-    default SendStream send(String event, Entity content) throws IOException {
-        return send(event, content, null);
-    }
-
-    /**
-     * 发送
-     *
-     * @param event   事件
-     * @param content 内容
-     * @return 流
-     */
-    SendStream send(String event, Entity content, Consumer<SendStream> consumer) throws IOException;
+    SendStream send(String event, Entity content) throws IOException;
 
     /**
      * 发送并请求
@@ -58,7 +46,7 @@ public interface ClientSession extends Closeable {
      * @return 流
      */
     default RequestStream sendAndRequest(String event, Entity content) throws IOException {
-        return sendAndRequest(event, content, 0, null);
+        return sendAndRequest(event, content, 0L);
     }
 
     /**
@@ -66,33 +54,11 @@ public interface ClientSession extends Closeable {
      *
      * @param event   事件
      * @param content 内容
+     * @param timeout 超时（单位：毫秒）
      * @return 流
      */
-    default RequestStream sendAndRequest(String event, Entity content, Consumer<RequestStream> consumer) throws IOException {
-        return sendAndRequest(event, content, 0, consumer);
-    }
+    RequestStream sendAndRequest(String event, Entity content, long timeout) throws IOException;
 
-    /**
-     * 发送并请求（限为一次答复；指定超时）
-     *
-     * @param event   事件
-     * @param content 内容
-     * @param timeout 超时（毫秒）
-     * @return 流
-     */
-    default RequestStream sendAndRequest(String event, Entity content, long timeout) throws IOException {
-        return sendAndRequest(event, content, timeout, null);
-    }
-
-    /**
-     * 发送并请求（限为一次答复；指定超时）
-     *
-     * @param event   事件
-     * @param content 内容
-     * @param timeout 超时（毫秒）
-     * @return 流
-     */
-    RequestStream sendAndRequest(String event, Entity content, long timeout, Consumer<RequestStream> consumer) throws IOException;
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
@@ -102,7 +68,7 @@ public interface ClientSession extends Closeable {
      * @return 流
      */
     default SubscribeStream sendAndSubscribe(String event, Entity content) throws IOException {
-        return sendAndSubscribe(event, content, 0, null);
+        return sendAndSubscribe(event, content, 0L);
     }
 
     /**
@@ -110,32 +76,8 @@ public interface ClientSession extends Closeable {
      *
      * @param event   事件
      * @param content 内容
+     * @param timeout 超时（单位：毫秒）
      * @return 流
      */
-    default SubscribeStream sendAndSubscribe(String event, Entity content, Consumer<SubscribeStream> consumer) throws IOException {
-        return sendAndSubscribe(event, content, 0, consumer);
-    }
-
-    /**
-     * 发送并订阅（答复结束之前，不限答复次数）
-     *
-     * @param event   事件
-     * @param content 内容
-     * @param timeout 超时（毫秒）
-     * @return 流
-     */
-    default SubscribeStream sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
-        return sendAndSubscribe(event, content, timeout, null);
-    }
-
-
-    /**
-     * 发送并订阅（答复结束之前，不限答复次数）
-     *
-     * @param event   事件
-     * @param content 内容
-     * @param timeout 超时（毫秒）
-     * @return 流
-     */
-    SubscribeStream sendAndSubscribe(String event, Entity content, long timeout, Consumer<SubscribeStream> consumer) throws IOException;
+    SubscribeStream sendAndSubscribe(String event, Entity content, long timeout) throws IOException;
 }

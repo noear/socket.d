@@ -12,7 +12,6 @@ import org.noear.socketd.utils.StrUtils;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -107,39 +106,41 @@ public class ClusterClientSession implements ClientSession {
      *
      * @param event   事件
      * @param content 内容
+     * @return 流
      */
-    public SendStream send(String event, Entity content, Consumer<SendStream> consumer) throws IOException {
+    public SendStream send(String event, Entity content) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.send(event, content, consumer);
+        return sender.send(event, content);
     }
-
 
     /**
      * 发送并请求（限为一次答复；指定超时）
      *
      * @param event   事件
      * @param content 内容
-     * @param timeout 超时（毫秒）
+     * @param timeout 超时（单位：毫秒）
+     * @return 流
      */
-    public RequestStream sendAndRequest(String event, Entity content, long timeout, Consumer<RequestStream> consumer) throws IOException {
+    public RequestStream sendAndRequest(String event, Entity content, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.sendAndRequest(event, content, timeout, consumer);
+        return sender.sendAndRequest(event, content, timeout);
     }
 
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
-     * @param event    事件
-     * @param content  内容
-     * @param timeout  超时
+     * @param event   事件
+     * @param content 内容
+     * @param timeout 超时（单位：毫秒）
+     * @return 流
      */
-    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout, Consumer<SubscribeStream> consumer) throws IOException {
+    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.sendAndSubscribe(event, content, timeout, consumer);
+        return sender.sendAndSubscribe(event, content, timeout);
     }
 
     /**

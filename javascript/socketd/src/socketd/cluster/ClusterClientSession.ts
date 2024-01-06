@@ -99,10 +99,10 @@ export class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    send(event: string, content: Entity, consumer?: IoConsumer<SendStream>): SendStream {
+    send(event: string, content: Entity): SendStream {
         const sender = this.getSessionOne();
 
-        return sender.send(event, content, consumer);
+        return sender.send(event, content);
     }
 
 
@@ -113,10 +113,10 @@ export class ClusterClientSession implements ClientSession {
      * @param content  内容
      * @param timeout  超时
      */
-    sendAndRequest(event: string, content: Entity, timeout?: number, consumer?: IoConsumer<RequestStream>): RequestStream {
+    sendAndRequest(event: string, content: Entity, timeout?: number): RequestStream {
         const sender = this.getSessionOne();
 
-        return sender.sendAndRequest(event, content, timeout, consumer);
+        return sender.sendAndRequest(event, content, timeout);
     }
 
     /**
@@ -126,10 +126,10 @@ export class ClusterClientSession implements ClientSession {
      * @param content  内容
      * @param timeout  超时
      */
-    sendAndSubscribe(event: string, content: Entity, timeout: number, consumer?: IoConsumer<SubscribeStream>): SubscribeStream {
+    sendAndSubscribe(event: string, content: Entity, timeout: number): SubscribeStream {
         const sender = this.getSessionOne();
 
-        return sender.sendAndSubscribe(event, content, timeout, consumer);
+        return sender.sendAndSubscribe(event, content, timeout);
     }
 
     /**

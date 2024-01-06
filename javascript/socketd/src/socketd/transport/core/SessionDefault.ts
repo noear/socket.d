@@ -94,7 +94,7 @@ export class SessionDefault extends SessionBase {
     /**
      * 发送
      */
-    send(event: string, content: Entity, consumer?: IoConsumer<SendStream>): SendStream {
+    send(event: string, content: Entity): SendStream {
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
@@ -102,9 +102,6 @@ export class SessionDefault extends SessionBase {
             .build();
 
         const stream = new SendStreamImpl(message.sid());
-        if (consumer) {
-            consumer(stream);
-        }
         this._channel.send(new Frame(Flags.Message, message), stream);
         return stream;
     }
@@ -117,7 +114,7 @@ export class SessionDefault extends SessionBase {
      * @param content  内容
      * @param timeout 超时
      */
-    sendAndRequest(event: string, content: Entity, timeout?: number, consumer?: IoConsumer<RequestStream>): RequestStream {
+    sendAndRequest(event: string, content: Entity, timeout?: number): RequestStream {
         //异步，用 streamTimeout
         const message = new MessageBuilder()
             .sid(this.generateId())
@@ -134,9 +131,6 @@ export class SessionDefault extends SessionBase {
         }
 
         const stream = new RequestStreamImpl(message.sid(), timeout);
-        if (consumer) {
-            consumer(stream);
-        }
         this._channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -148,7 +142,7 @@ export class SessionDefault extends SessionBase {
      * @param content  内容
      * @param timeout 超时
      */
-    sendAndSubscribe(event: string, content: Entity, timeout?: number, consumer?: IoConsumer<SubscribeStream>): SubscribeStream {
+    sendAndSubscribe(event: string, content: Entity, timeout?: number): SubscribeStream {
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
@@ -164,9 +158,6 @@ export class SessionDefault extends SessionBase {
         }
 
         const stream = new SubscribeStreamImpl(message.sid(), timeout);
-        if (consumer) {
-            consumer(stream);
-        }
         this._channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }

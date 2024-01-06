@@ -22,11 +22,6 @@ public interface Stream<T extends Stream> {
     boolean isDone();
 
     /**
-     * 超时设定（单位：毫秒）
-     */
-    long timeout();
-
-    /**
      * 异常发生时
      */
     T thenError(Consumer<Throwable> onError);

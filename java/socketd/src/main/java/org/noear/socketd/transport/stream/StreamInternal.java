@@ -15,6 +15,11 @@ public interface StreamInternal<T extends Stream> extends Stream<T> {
     int demands();
 
     /**
+     * 超时设定（单位：毫秒）
+     */
+    long timeout();
+
+    /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
      *
      * @param streamManger  流管理器
@@ -30,7 +35,7 @@ public interface StreamInternal<T extends Stream> extends Stream<T> {
     /**
      * 答复时
      *
-     * @param reply   答复
+     * @param reply 答复
      */
     void onReply(MessageInternal reply);
 
@@ -45,8 +50,8 @@ public interface StreamInternal<T extends Stream> extends Stream<T> {
      * 进度时
      *
      * @param isSend 是否为发送进度
-     * @param val     当时值
-     * @param max     最大值
+     * @param val    当时值
+     * @param max    最大值
      */
     void onProgress(boolean isSend, int val, int max);
 }

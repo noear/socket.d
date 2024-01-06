@@ -192,10 +192,10 @@ export class ProcessorDefault implements Processor {
 
         //执行接收处理
         if (isReply) {
-            channel.retrieve(frame, stream);
             if(stream){
                 stream.onProgress(false, streamIndex, streamTotal);
             }
+            channel.retrieve(frame, stream);
         } else {
             this.onMessage(channel, frame.message());
         }

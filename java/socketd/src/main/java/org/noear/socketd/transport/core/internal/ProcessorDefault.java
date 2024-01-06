@@ -177,10 +177,10 @@ public class ProcessorDefault implements Processor {
 
         //执行接收处理
         if (isReply) {
-            channel.retrieve(frame, stream);
             if (stream != null) {
                 stream.onProgress(false, streamIndex, streamTotal);
             }
+            channel.retrieve(frame, stream);
         } else {
             onMessage(channel, frame.message());
         }

@@ -135,7 +135,7 @@ function mainDo() {
                 appendToMessageList('答复', reply.dataAsString());
             }).thenProgress((isSend, val, max) => {
                 if (isSend) {
-                    console.info("上传进度:" + val + "/" + max);
+                    appendToMessageList('发送进度', val + "/" + max);
                 }
             });
         }
@@ -149,13 +149,13 @@ function mainDo() {
 
                 const fileName = reply.meta(SocketD.Metas.META_DATA_DISPOSITION_FILENAME);
                 if (fileName) {
-                    appendToMessageList('答复', "下载文件: file=" + fileName + ", size=" + reply.dataSize());
+                    appendToMessageList('下载文件', "file=" + fileName + ", size=" + reply.dataSize());
                 } else {
-                    appendToMessageList('答复', "没有收到文件:(");
+                    appendToMessageList('下载文件', "没有收到文件:(");
                 }
             }).thenProgress((isSend,val,max)=>{
                 if(!isSend){
-                    console.info("下载进度:" + val + "/" + max);
+                    appendToMessageList('下载进度', val + "/" + max);
                 }
             });
         }
@@ -169,13 +169,13 @@ function mainDo() {
                 str += "1234567890"
             }
 
-            appendToMessageList('上传大文本块10M', "...");
+            appendToMessageList('提交大文本块10M', "...");
             clientSession.sendAndRequest("/upload", SocketD.newEntity(str)).thenReply(reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
             }).thenProgress((isSend, val,max)=> {
                 if(isSend){
-                    console.info("上传进度:" + val + "/" + max);
+                    appendToMessageList('提交进度', val + "/" + max);
                 }
             });
         }

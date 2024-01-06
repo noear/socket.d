@@ -1,7 +1,7 @@
 import type {Entity} from "./Entity";
 import type {Message} from "./Message";
 import type {Channel} from "./Channel";
-import type {Stream, StreamRequest, StreamSubscribe} from "./Stream";
+import type {StreamRequest, StreamSend, StreamSubscribe} from "./Stream";
 import type {ClientSession} from "../client/ClientSession";
 import type {Handshake} from "./Handshake";
 
@@ -190,7 +190,7 @@ export abstract class SessionBase implements Session {
 
     abstract reconnect();
 
-    abstract send(event: string, content: Entity): Stream<any>;
+    abstract send(event: string, content: Entity): StreamSend;
 
     abstract sendAndRequest(event: string, content: Entity, timeout?: number): StreamRequest;
 

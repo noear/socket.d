@@ -1,6 +1,5 @@
-import type {IoConsumer} from "../core/Typealias";
-import type {Stream, StreamRequest, StreamSubscribe} from "../core/Stream";
-import type {Entity, Reply} from "../core/Entity";
+import type {StreamRequest, StreamSend, StreamSubscribe} from "../core/Stream";
+import type {Entity} from "../core/Entity";
 
 /**
  * 客户会话
@@ -29,7 +28,7 @@ export interface ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    send(event: string, content: Entity):Stream<any>;
+    send(event: string, content: Entity): StreamSend;
 
     /**
      * 发送并请求（限为一次答复；指定回调）

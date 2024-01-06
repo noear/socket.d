@@ -1,6 +1,6 @@
 import type {ClientSession} from "../transport/client/ClientSession";
-import type { Entity, Reply } from "../transport/core/Entity";
-import type {Stream, StreamRequest, StreamSubscribe} from "../transport/core/Stream";
+import type { Entity } from "../transport/core/Entity";
+import type {StreamRequest, StreamSend, StreamSubscribe} from "../transport/core/Stream";
 import {StrUtils} from "../utils/StrUtils";
 import {SocketdException} from "../exception/SocketdException";
 import {RunUtils} from "../utils/RunUtils";
@@ -98,7 +98,7 @@ export class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    send(event: string, content: Entity): Stream<any> {
+    send(event: string, content: Entity): StreamSend {
         const sender = this.getSessionOne();
 
         return sender.send(event, content);

@@ -1,11 +1,18 @@
 import {SessionBase} from "./Session";
 import type {Channel} from "./Channel";
 import type {Handshake} from "./Handshake";
-import type {Entity, Reply} from "./Entity";
+import type {Entity} from "./Entity";
 import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
-import {Stream, StreamSendImpl, StreamRequest, StreamRequestImpl, StreamSubscribe, StreamSubscribeImpl} from "./Stream";
+import {
+    StreamSendImpl,
+    StreamRequest,
+    StreamRequestImpl,
+    StreamSubscribe,
+    StreamSubscribeImpl,
+    type StreamSend
+} from "./Stream";
 import * as repl from "repl";
 
 /**
@@ -15,7 +22,7 @@ import * as repl from "repl";
  * @since 2.0
  */
 export class SessionDefault extends SessionBase {
-    private  _pathNew: string;
+    private _pathNew: string;
 
     constructor(channel: Channel) {
         super(channel);
@@ -34,7 +41,7 @@ export class SessionDefault extends SessionBase {
      *
      * @param name 名字
      */
-    param(name: string): string | undefined{
+    param(name: string): string | undefined {
         return this.handshake().param(name);
     }
 
@@ -87,7 +94,7 @@ export class SessionDefault extends SessionBase {
     /**
      * 发送
      */
-    send(event: string, content: Entity):Stream<any> {
+    send(event: string, content: Entity): StreamSend {
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
@@ -110,7 +117,7 @@ export class SessionDefault extends SessionBase {
      * @param content  内容
      * @param timeout 超时
      */
-    sendAndRequest(event: string, content: Entity,  timeout?: number): StreamRequest {
+    sendAndRequest(event: string, content: Entity, timeout?: number): StreamRequest {
         //异步，用 streamTimeout
         const message = new MessageBuilder()
             .sid(this.generateId())

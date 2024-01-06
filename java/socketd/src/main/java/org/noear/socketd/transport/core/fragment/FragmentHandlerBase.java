@@ -42,6 +42,7 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
                     fragmentEntity.metaMapPut(message.metaMap());
                 }
                 fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+                fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_TOTAL, String.valueOf(fragmentTotal));
 
                 consumer.accept(fragmentEntity);
                 if (stream != null) {

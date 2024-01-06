@@ -142,14 +142,25 @@ public class ProcessorDefault implements Processor {
     }
 
     private void onReceiveDo(ChannelInternal channel, Frame frame, boolean isReply) throws IOException {
+        StreamInternal stream = null;
+        if (isReply) {
+            stream = channel.getStream(frame.message().sid());
+        }
+
         //如果启用了聚合!
-        if(channel.getConfig().getFragmentHandler().aggrEnable()) {
+        if (channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
             String fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
                 int index = Integer.parseInt(fragmentIdxStr);
                 Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.message());
+
+                if(stream != null){
+                    //解析分片总数
+                    int total = Integer.parseInt(frame.message().metaOrDefault(EntityMetas.META_DATA_FRAGMENT_TOTAL,"0"));
+                    stream.onProgress(index, total);
+                }
 
                 if (frameNew == null) {
                     return;
@@ -161,7 +172,7 @@ public class ProcessorDefault implements Processor {
 
         //执行接收处理
         if (isReply) {
-            channel.retrieve(frame);
+            channel.retrieve(frame, stream);
         } else {
             onMessage(channel, frame.message());
         }

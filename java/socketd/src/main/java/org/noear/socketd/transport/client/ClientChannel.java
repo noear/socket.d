@@ -176,11 +176,12 @@ public class ClientChannel extends ChannelBase implements Channel {
     /**
      * 接收（接收答复帧）
      *
-     * @param frame 帧
+     * @param frame  帧
+     * @param stream 流
      */
     @Override
-    public void retrieve(Frame frame) {
-        real.retrieve(frame);
+    public void retrieve(Frame frame, StreamInternal stream) {
+        real.retrieve(frame, stream);
     }
 
     /**

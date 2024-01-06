@@ -15,6 +15,11 @@ public interface ChannelInternal extends Channel {
     void setSession(Session session);
 
     /**
+     * 获取流
+     */
+    StreamInternal getStream(String sid);
+
+    /**
      * 当打开时
      */
     void onOpenFuture(BiConsumer<Boolean, Throwable> future);

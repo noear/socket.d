@@ -132,9 +132,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      * @param frame 帧
      */
     @Override
-    public void retrieve(Frame frame) {
-        final StreamInternal stream = streamManger.getStream(frame.message().sid());
-
+    public void retrieve(Frame frame, StreamInternal stream) {
         if (stream != null) {
             if (stream.demands() < Constants.DEMANDS_MULTIPLE || frame.flag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
@@ -186,6 +184,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     @Override
     public void setSession(Session session) {
         this.session = session;
+    }
+
+    @Override
+    public StreamInternal getStream(String sid) {
+        return streamManger.getStream(sid);
     }
 
     @Override

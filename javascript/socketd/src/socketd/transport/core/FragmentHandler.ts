@@ -57,7 +57,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
             let fragmentIndex = 0;
             let fragmentTotal = message.dataSize() / channel.getConfig().getFragmentSize();
-            if(message.dataSize() % channel.getConfig().getFragmentSize() > 0){
+            if (message.dataSize() % channel.getConfig().getFragmentSize() > 0) {
                 fragmentTotal++;
             }
             this.spliFragmentDo(fragmentIndex, fragmentTotal, channel, stream, message, consumer);
@@ -65,15 +65,15 @@ export class FragmentHandlerDefault implements FragmentHandler {
             if (message.data().getBlob() == null) {
                 consumer(message);
 
-                if(stream != null){
-                    stream.onProgress(1,1);
+                if (stream != null) {
+                    stream.onProgress(true, 1, 1);
                 }
             } else {
                 message.data().getBytes(channel.getConfig().getFragmentSize(), dataBuffer => {
                     consumer(new EntityDefault().dataSet(dataBuffer).metaMapPut(message.metaMap()));
 
-                    if(stream != null){
-                        stream.onProgress(1,1);
+                    if (stream != null) {
+                        stream.onProgress(true, 1, 1);
                     }
                 });
             }
@@ -93,8 +93,8 @@ export class FragmentHandlerDefault implements FragmentHandler {
             fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_TOTAL, fragmentTotal.toString());
 
             consumer(fragmentEntity);
-            if(stream != null){
-                stream.onProgress(fragmentIndex, fragmentIndex);
+            if (stream != null) {
+                stream.onProgress(true, fragmentIndex, fragmentIndex);
             }
 
             this.spliFragmentDo(fragmentIndex, fragmentTotal, channel, stream, message, consumer);

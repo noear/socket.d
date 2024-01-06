@@ -51,9 +51,9 @@ export class FragmentAggregatorDefault implements FragmentAggregator {
     //分片列表
     private _fragmentHolders: Array<FragmentHolder> = new Array<FragmentHolder>();
     //数据流大小
-    private _dataStreamSize: number;
+    private _dataStreamSize: number = 0;
     //数据总长度
-    private _dataLength: number;
+    private _dataLength: number = 0;
 
     constructor(main: MessageInternal) {
         this._main = main;

@@ -5,8 +5,8 @@ import type {Entity, Reply} from "./Entity";
 import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
-import type {IoConsumer} from "./Typealias";
-import {Stream, StreamImpl, StreamRequest, StreamRequestImpl, StreamSubscribe, StreamSubscribeImpl} from "./Stream";
+import {Stream, StreamSendImpl, StreamRequest, StreamRequestImpl, StreamSubscribe, StreamSubscribeImpl} from "./Stream";
+import * as repl from "repl";
 
 /**
  * 会话默认实现
@@ -94,8 +94,11 @@ export class SessionDefault extends SessionBase {
             .entity(content)
             .build();
 
-        const stream = new StreamImpl(this._channel, message.sid());
-        this._channel.send(new Frame(Flags.Message, message), stream);
+        const stream = new StreamSendImpl(message.sid());
+        new Promise(resolve => {
+            this._channel.send(new Frame(Flags.Message, message), stream);
+            resolve(1);
+        });
         return stream;
     }
 
@@ -123,8 +126,11 @@ export class SessionDefault extends SessionBase {
             timeout = this._channel.getConfig().getRequestTimeout();
         }
 
-        const stream = new StreamRequestImpl(this._channel, message.sid(), timeout);
-        this._channel.send(new Frame(Flags.Request, message), stream);
+        const stream = new StreamRequestImpl(message.sid(), timeout);
+        new Promise(resolve => {
+            this._channel.send(new Frame(Flags.Request, message), stream);
+            resolve(1);
+        });
         return stream;
     }
 
@@ -150,8 +156,11 @@ export class SessionDefault extends SessionBase {
             timeout = this._channel.getConfig().getStreamTimeout();
         }
 
-        const stream = new StreamSubscribeImpl(this._channel, message.sid(), timeout);
-        this._channel.send(new Frame(Flags.Subscribe, message), stream);
+        const stream = new StreamSubscribeImpl(message.sid(), timeout);
+        new Promise(resolve => {
+            this._channel.send(new Frame(Flags.Subscribe, message), stream);
+            resolve(1);
+        });
         return stream;
     }
 

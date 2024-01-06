@@ -6,7 +6,7 @@ import type {ChannelSupporter} from "./ChannelSupporter";
 import type {Config} from "./Config";
 import {Frame, Frames} from "./Frame";
 import {MessageBuilder} from "./Message";
-import {EntityMetas, Flags} from "./Constants";
+import {Constants, EntityMetas, Flags} from "./Constants";
 import {ChannelBase, ChannelInternal} from "./Channel";
 import {SessionDefault} from "./SessionDefault";
 import type { IoBiConsumer } from "./Typealias";
@@ -21,7 +21,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _streamManger: StreamManger;
     //会话（懒加载）
     private _session: Session;
-    private _onOpenFuture:IoBiConsumer<boolean, Error>;
+    private _onOpenFuture: IoBiConsumer<boolean, Error>;
 
     constructor(source: S, supporter: ChannelSupporter<S>) {
         super(supporter.getConfig());
@@ -34,7 +34,8 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     onOpenFuture(future: IoBiConsumer<boolean, Error>) {
         this._onOpenFuture = future;
     }
-    doOpenFuture(r:boolean, e:Error) {
+
+    doOpenFuture(r: boolean, e: Error) {
         if (this._onOpenFuture) {
             this._onOpenFuture(r, e);
         }
@@ -56,8 +57,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this.send(Frames.pongFrame(), null);
     }
 
-    send(frame: Frame, stream: StreamInternal<any> | null) {
-
+    send(frame: Frame, stream: StreamInternal<any> | null){
         // if (this.getConfig().clientMode()) {
         //     console.trace("C-SEN:" + frame);
         // } else {
@@ -98,29 +98,30 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
         //不满足分片条件，直接发
         this._assistant.write(this._source, frame);
-        if(stream != null){
-            stream.onProgress(1,1);
+        if (stream != null) {
+            stream.onProgress(true, 1, 1);
         }
     }
 
-    retrieve(frame: Frame, stream:StreamInternal<any>|null) {
+    retrieve(frame: Frame, stream: StreamInternal<any> | null) {
         if (stream) {
-            if (stream.demands() || frame.flag() == Flags.ReplyEnd) {
+            if (stream.demands() < Constants.DEMANDS_MULTIPLE || frame.flag() == Flags.ReplyEnd) {
                 //如果是单收或者答复结束，则移除流接收器
                 this._streamManger.removeStream(frame.message()!.sid());
             }
 
-            if (stream.demands()) {
+            if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
                 //单收时，内部已经是异步机制
-                stream.onReply(frame.message()!, this);
+                stream.onReply(frame.message()!);
             } else {
                 //改为异步处理，避免卡死Io线程
-                stream.onReply(frame.message()!, this);
+                stream.onReply(frame.message()!);
             }
         } else {
             console.debug(`${this.getConfig().getRoleName()} stream not found, sid=${frame.message()!.sid()}, sessionId=${this.getSession().sessionId()}`);
         }
     }
+
     reconnect() {
         //由 ClientChannel 实现
     }

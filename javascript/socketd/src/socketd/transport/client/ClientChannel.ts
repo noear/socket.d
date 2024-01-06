@@ -18,7 +18,7 @@ import {RunUtils} from "../../utils/RunUtils";
 export class ClientChannel extends ChannelBase implements Channel {
     private _connector: ClientConnector;
     private _real: Channel | null;
-    private  _heartbeatHandler: HeartbeatHandler;
+    private _heartbeatHandler: HeartbeatHandler;
     private _heartbeatScheduledFuture: any;
 
     constructor(real: Channel, connector: ClientConnector) {
@@ -133,7 +133,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    async send(frame: Frame, stream: StreamInternal<any>) {
+    async send(frame: Frame, stream: StreamInternal<any>){
         Asserts.assertClosedByUser(this._real);
 
         try {

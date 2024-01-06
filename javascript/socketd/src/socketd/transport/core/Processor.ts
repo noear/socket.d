@@ -159,6 +159,8 @@ export class ProcessorDefault implements Processor {
 
     onReceiveDo(channel: ChannelInternal, frame:Frame, isReply:boolean) {
         let stream: StreamInternal<any> | null = null;
+        let streamIndex = 1;
+        let streamTotal = 1;
         if (isReply) {
             stream = channel.getStream(frame.message()!.sid());
         }
@@ -168,17 +170,19 @@ export class ProcessorDefault implements Processor {
         if (channel.getConfig().getFragmentHandler().aggrEnable()) {
             //尝试聚合分片处理
             const fragmentIdxStr = frame.message()!.meta(EntityMetas.META_DATA_FRAGMENT_IDX);
-            if (fragmentIdxStr != null) {
+            if (fragmentIdxStr) {
                 //解析分片索引
-                const index = parseInt(fragmentIdxStr);
-                const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.message()!);
+                streamIndex = parseInt(fragmentIdxStr);
+                const frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, streamIndex, frame.message()!);
 
                 if (stream) {
-                    const total = parseInt(frame.message()!.metaOrDefault(EntityMetas.META_DATA_FRAGMENT_TOTAL, "0"));
-                    stream.onProgress(index, total);
+                    streamTotal = parseInt(frame.message()!.metaOrDefault(EntityMetas.META_DATA_FRAGMENT_TOTAL, "1"));
                 }
 
                 if (frameNew == null) {
+                    if(stream){
+                        stream.onProgress(false, streamIndex, streamTotal);
+                    }
                     return;
                 } else {
                     frame = frameNew;
@@ -189,6 +193,9 @@ export class ProcessorDefault implements Processor {
         //执行接收处理
         if (isReply) {
             channel.retrieve(frame, stream);
+            if(stream){
+                stream.onProgress(false, streamIndex, streamTotal);
+            }
         } else {
             this.onMessage(channel, frame.message());
         }

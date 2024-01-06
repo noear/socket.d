@@ -154,12 +154,11 @@ export abstract class  ChannelBase implements Channel {
     protected _config: Config;
     private _attachments: Map<string, any>;
     private _handshake: HandshakeInternal;
-    private _isClosed: number;
+    private _isClosed: number = 0;
 
     constructor(config: Config) {
         this._config = config;
         this._attachments = new Map<string, object>();
-        this._isClosed = 0;
     }
 
     getAttachment<T>(name: string): T | null {

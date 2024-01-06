@@ -133,8 +133,10 @@ function mainDo() {
             clientSession.sendAndRequest("/upload", SocketD.newEntity(file1)).thenReply(reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
-            }).thenProgress((val, max) => {
-                console.info("上传进度:" + val + "/" + max);
+            }).thenProgress((isSend, val, max) => {
+                if (isSend) {
+                    console.info("上传进度:" + val + "/" + max);
+                }
             });
         }
     });
@@ -151,8 +153,8 @@ function mainDo() {
                 } else {
                     appendToMessageList('答复', "没有收到文件:(");
                 }
-            }).thenProgress((val,max)=>{
-                if(max > 1){
+            }).thenProgress((isSend,val,max)=>{
+                if(!isSend){
                     console.info("下载进度:" + val + "/" + max);
                 }
             });
@@ -171,8 +173,10 @@ function mainDo() {
             clientSession.sendAndRequest("/upload", SocketD.newEntity(str)).thenReply(reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
-            }).thenProgress((val,max)=> {
-                console.info("上传进度:" + val + "/" + max);
+            }).thenProgress((isSend, val,max)=> {
+                if(isSend){
+                    console.info("上传进度:" + val + "/" + max);
+                }
             });
         }
     });

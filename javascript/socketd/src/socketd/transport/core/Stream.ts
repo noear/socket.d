@@ -1,7 +1,7 @@
 import type {Reply} from "./Entity";
 import type {MessageInternal} from "./Message";
 import type {Channel} from "./Channel";
-import type {IoBiConsumer, IoConsumer} from "./Typealias";
+import {IoBiConsumer, IoConsumer, IoTriConsumer} from "./Typealias";
 import type {Config} from "./Config";
 import {SocketdTimeoutException} from "../../exception/SocketdException";
 import {Asserts} from "./Asserts";
@@ -13,7 +13,7 @@ import {Constants} from "./Constants";
  * @author noear
  * @since 2.1
  */
-export interface Stream <T extends Stream<any>>{
+export interface Stream <T extends Stream<any>> {
     /**
      * 流Id
      */
@@ -37,14 +37,24 @@ export interface Stream <T extends Stream<any>>{
     /**
      * 进度发生时
      */
-    thenProgress(onProgress: IoBiConsumer<number, number>): T;
+    thenProgress(onProgress: IoTriConsumer<boolean, number, number>): T;
+}
+
+/**
+ * 发送流
+ *
+ * @author noear
+ * @since 2.3
+ */
+export interface StreamSend extends Stream<StreamSend>{
+
 }
 
 /**
  * 请求流
  *
  * @author noear
- * @since 2.2
+ * @since 2.3
  */
 export interface StreamRequest extends Stream<StreamRequest> {
     /**
@@ -62,7 +72,7 @@ export interface StreamRequest extends Stream<StreamRequest> {
  * 订阅流
  *
  * @author noear
- * @since 2.2
+ * @since 2.3
  */
 export interface StreamSubscribe extends Stream<StreamSubscribe> {
     /**
@@ -86,11 +96,6 @@ export interface StreamInternal<T extends Stream<any>> extends Stream<T> {
     demands(): number;
 
     /**
-     * 获取通道
-     */
-    channel() : Channel;
-
-    /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
      * */
     insuranceStart(streamManger: StreamMangerDefault, streamTimeout: number);
@@ -104,9 +109,8 @@ export interface StreamInternal<T extends Stream<any>> extends Stream<T> {
      * 接收时
      *
      * @param reply   答复
-     * @param channel 通道
      */
-    onReply(reply: MessageInternal, channel: Channel);
+    onReply(reply: MessageInternal);
 
     /**
      * 异常时
@@ -118,10 +122,11 @@ export interface StreamInternal<T extends Stream<any>> extends Stream<T> {
     /**
      * 进度时
      *
+     * @param isSend 是否为发送
      * @param val 当时值
      * @param max 最大值
      */
-    onProgress(val: number, max: number);
+    onProgress(isSend: boolean, val: number, max: number);
 }
 
 /**
@@ -133,24 +138,21 @@ export interface StreamInternal<T extends Stream<any>> extends Stream<T> {
 export abstract class StreamBase<T extends Stream<any>> implements StreamInternal<T> {
     //保险任务
     private _insuranceFuture: any;
-    private _channel:Channel;
     private _sid: string;
     private _demands: number;
     private _timeout: number;
     private _doOnError: IoConsumer<Error>;
-    private _doOnProgress: IoBiConsumer<number, number>;
+    private _doOnProgress: IoTriConsumer<boolean, number, number>;
 
-    constructor(channel: Channel,sid: string, demands: number, timeout: number) {
-        this._channel = channel;
+    constructor(sid: string, demands: number, timeout: number) {
         this._sid = sid;
         this._demands = demands;
         this._timeout = timeout;
     }
 
-    abstract onReply(reply: MessageInternal, channel: Channel);
+    abstract onReply(reply: MessageInternal);
 
     abstract isDone(): boolean;
-
 
 
     sid(): string {
@@ -161,19 +163,9 @@ export abstract class StreamBase<T extends Stream<any>> implements StreamInterna
         return this._demands;
     }
 
-
-    channel() : Channel {
-        return this._channel;
-    }
-
-    protected setChannel(channel : Channel){
-        this._channel = channel;
-    }
-
     timeout(): number {
         return this._timeout;
     }
-
 
     /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
@@ -206,15 +198,15 @@ export abstract class StreamBase<T extends Stream<any>> implements StreamInterna
      *
      * @param error 异常
      */
-    onError(error: Error) {
+    onError(error: any) {
         if (this._doOnError) {
             this._doOnError(error);
         }
     }
 
-    onProgress(val: number, max: number) {
-        if(this._doOnProgress){
-            this._doOnProgress(val, max);
+    onProgress(isSend: boolean, val: number, max: number) {
+        if (this._doOnProgress) {
+            this._doOnProgress(isSend, val, max);
         }
     }
 
@@ -223,22 +215,22 @@ export abstract class StreamBase<T extends Stream<any>> implements StreamInterna
         return this;
     }
 
-    thenProgress(onProgress: IoBiConsumer<number, number>): any {
+    thenProgress(onProgress: IoTriConsumer<boolean, number, number>): any {
         this._doOnProgress = onProgress;
         return this;
     }
 }
 
-export class StreamImpl extends StreamBase<StreamImpl> {
-    constructor(channel: Channel, sid: string) {
-        super(channel, sid, Constants.DEMANDS_ZERO, 0);
+export class StreamSendImpl extends StreamBase<StreamSend> implements StreamSend{
+    constructor(sid: string) {
+        super(sid, Constants.DEMANDS_ZERO, 0);
     }
 
     isDone(): boolean {
         return true;
     }
 
-    onReply(reply: MessageInternal, channel: Channel) {
+    onReply(reply: MessageInternal) {
     }
 }
 
@@ -251,8 +243,8 @@ export class StreamImpl extends StreamBase<StreamImpl> {
 export class StreamRequestImpl extends StreamBase<StreamRequest> implements StreamRequest{
     _doOnReply:IoConsumer<Reply>;
     _isDone:boolean;
-    constructor(channel :Channel, sid:string,  timeout:number) {
-        super(channel, sid, Constants.DEMANDS_SIGNLE, timeout);
+    constructor(sid:string,  timeout:number) {
+        super(sid, Constants.DEMANDS_SIGNLE, timeout);
         this._isDone = false;
     }
 
@@ -260,8 +252,7 @@ export class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
         return this._isDone;
     }
 
-    onReply(reply: MessageInternal, channel: Channel) {
-        this.setChannel(channel);
+    onReply(reply: MessageInternal) {
         this._isDone = true;
 
         try {
@@ -269,7 +260,7 @@ export class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
                 this._doOnReply(reply);
             }
         } catch (e) {
-            this.channel().onError(e);
+            this.onError(e);
         }
     }
 
@@ -298,8 +289,8 @@ export class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
 export class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements StreamSubscribe{
     _doOnReply:IoConsumer<Reply>;
     _isDone:boolean;
-    constructor(channel:Channel, sid:string,  timeout:number) {
-        super(channel, sid, Constants.DEMANDS_SIGNLE, timeout);
+    constructor(sid:string,  timeout:number) {
+        super(sid, Constants.DEMANDS_MULTIPLE, timeout);
         this._isDone = false;
     }
 
@@ -307,8 +298,7 @@ export class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
         return this._isDone;
     }
 
-    onReply(reply: MessageInternal, channel: Channel) {
-        this.setChannel(channel);
+    onReply(reply: MessageInternal) {
         this._isDone = reply.isEnd();
 
         try {
@@ -316,7 +306,7 @@ export class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
                 this._doOnReply(reply);
             }
         } catch (e) {
-            this.channel().onError(e);
+            this.onError(e);
         }
     }
 

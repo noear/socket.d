@@ -143,6 +143,9 @@ public class ProcessorDefault implements Processor {
 
     private void onReceiveDo(ChannelInternal channel, Frame frame, boolean isReply) throws IOException {
         StreamInternal stream = null;
+        int streamIndex = 0;
+        int streamTotal = 1;
+
         if (isReply) {
             stream = channel.getStream(frame.message().sid());
         }
@@ -153,16 +156,18 @@ public class ProcessorDefault implements Processor {
             String fragmentIdxStr = frame.message().meta(EntityMetas.META_DATA_FRAGMENT_IDX);
             if (fragmentIdxStr != null) {
                 //解析分片索引
-                int index = Integer.parseInt(fragmentIdxStr);
-                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, index, frame.message());
+                streamIndex = Integer.parseInt(fragmentIdxStr);
+                Frame frameNew = channel.getConfig().getFragmentHandler().aggrFragment(channel, streamIndex, frame.message());
 
-                if(stream != null){
+                if (stream != null) {
                     //解析分片总数
-                    int total = Integer.parseInt(frame.message().metaOrDefault(EntityMetas.META_DATA_FRAGMENT_TOTAL,"0"));
-                    stream.onProgress(index, total);
+                    streamTotal = Integer.parseInt(frame.message().metaOrDefault(EntityMetas.META_DATA_FRAGMENT_TOTAL, "0"));
                 }
 
                 if (frameNew == null) {
+                    if (stream != null) {
+                        stream.onProgress(false, streamIndex, streamTotal);
+                    }
                     return;
                 } else {
                     frame = frameNew;
@@ -173,6 +178,9 @@ public class ProcessorDefault implements Processor {
         //执行接收处理
         if (isReply) {
             channel.retrieve(frame, stream);
+            if (stream != null) {
+                stream.onProgress(false, streamIndex, streamTotal);
+            }
         } else {
             onMessage(channel, frame.message());
         }

@@ -1,8 +1,7 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.utils.IoConsumer;
+import org.noear.socketd.utils.TriConsumer;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -34,6 +33,8 @@ public interface Stream<T extends Stream> {
 
     /**
      * 进度发生时
+     *
+     * @param onProgress (isSend, val, max)
      */
-    T thenProgress(BiConsumer<Integer, Integer> onProgress);
+    T thenProgress(TriConsumer<Boolean, Integer, Integer> onProgress);
 }

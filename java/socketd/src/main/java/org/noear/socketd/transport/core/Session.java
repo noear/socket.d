@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.utils.IoConsumer;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -130,7 +129,7 @@ public interface Session extends ClientSession, Closeable {
      * @param event   事件
      * @param content 内容
      */
-    Stream send(String event, Entity content) throws IOException;
+    StreamSend send(String event, Entity content) throws IOException;
 
     /**
      * 发送并请求

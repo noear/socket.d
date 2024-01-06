@@ -13,11 +13,6 @@ public interface StreamInternal<T extends Stream> extends Stream<T> {
     int demands();
 
     /**
-     * 获取通道
-     */
-    Channel channel();
-
-    /**
      * 保险开始（避免永久没有回调，造成内存不能释放）
      *
      * @param streamManger  流管理器
@@ -34,9 +29,8 @@ public interface StreamInternal<T extends Stream> extends Stream<T> {
      * 答复时
      *
      * @param reply   答复
-     * @param channel 通道
      */
-    void onReply(MessageInternal reply, Channel channel);
+    void onReply(MessageInternal reply);
 
     /**
      * 异常时
@@ -48,8 +42,9 @@ public interface StreamInternal<T extends Stream> extends Stream<T> {
     /**
      * 进度时
      *
-     * @param val 当时值
-     * @param max 最大值
+     * @param isSend 是否为发送进度
+     * @param val     当时值
+     * @param max     最大值
      */
-    void onProgress(Integer val, Integer max);
+    void onProgress(boolean isSend, int val, int max);
 }

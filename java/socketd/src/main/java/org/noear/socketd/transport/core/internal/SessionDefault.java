@@ -1,21 +1,14 @@
 package org.noear.socketd.transport.core.internal;
 
-import org.noear.socketd.exception.SocketdChannelException;
-import org.noear.socketd.exception.SocketdException;
-import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.stream.StreamImpl;
+import org.noear.socketd.transport.core.stream.StreamSendImpl;
 import org.noear.socketd.transport.core.stream.StreamRequestImpl;
 import org.noear.socketd.transport.core.stream.StreamSubscribeImpl;
-import org.noear.socketd.utils.IoConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * 会话默认实现
@@ -130,14 +123,14 @@ public class SessionDefault extends SessionBase {
      * @param content 内容
      */
     @Override
-    public Stream send(String event, Entity content) throws IOException {
+    public StreamSend send(String event, Entity content) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(content)
                 .build();
 
-        StreamImpl stream = new StreamImpl(channel, message.sid());
+        StreamSendImpl stream = new StreamSendImpl(message.sid());
         channel.send(new Frame(Flags.Message, message), stream);
         return stream;
     }
@@ -161,7 +154,7 @@ public class SessionDefault extends SessionBase {
                 .entity(content)
                 .build();
 
-        StreamRequestImpl stream = new StreamRequestImpl(channel, message.sid(), timeout);
+        StreamRequestImpl stream = new StreamRequestImpl(message.sid(), timeout);
         channel.send(new Frame(Flags.Request, message), stream);
         return stream;
     }
@@ -182,7 +175,7 @@ public class SessionDefault extends SessionBase {
                 .entity(content)
                 .build();
 
-        StreamSubscribeImpl stream = new StreamSubscribeImpl(channel, message.sid(), timeout);
+        StreamSubscribeImpl stream = new StreamSubscribeImpl(message.sid(), timeout);
         channel.send(new Frame(Flags.Subscribe, message), stream);
         return stream;
     }

@@ -105,7 +105,7 @@ public class SessionWrapper implements Session {
     }
 
     @Override
-    public Stream send(String event, Entity content) throws IOException {
+    public StreamSend send(String event, Entity content) throws IOException {
         return real.send(event, content);
     }
 

@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.core.stream;
 
-import org.noear.socketd.exception.SocketdChannelException;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
@@ -9,7 +8,6 @@ import org.noear.socketd.utils.IoConsumer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
 /**
  * 请求流
@@ -20,8 +18,8 @@ import java.util.function.Consumer;
 public class StreamRequestImpl extends StreamBase<StreamRequest> implements StreamRequest {
     private final CompletableFuture<Reply> future;
 
-    public StreamRequestImpl(Channel channel, String sid, long timeout) {
-        super(channel, sid, Constants.DEMANDS_SIGNLE, timeout);
+    public StreamRequestImpl(String sid, long timeout) {
+        super(sid, Constants.DEMANDS_SIGNLE, timeout);
         this.future = new CompletableFuture<>();
     }
 
@@ -37,9 +35,7 @@ public class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
      * 答复时
      */
     @Override
-    public void onReply(MessageInternal reply, Channel channel) {
-        setChannel(channel);
-
+    public void onReply(MessageInternal reply) {
         future.complete(reply);
     }
 
@@ -48,13 +44,9 @@ public class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
         try {
             return future.get(timeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            if (channel().isValid()) {
-                throw new SocketdTimeoutException("Request reply timeout > " + timeout() + ", sid=" + sid());
-            } else {
-                throw new SocketdChannelException("This channel is closed, sid=" + sid());
-            }
+            throw new SocketdTimeoutException("Request reply timeout > " + timeout() + ", sid=" + sid());
         } catch (Throwable e) {
-            throw new SocketdException("Send and request failed, sid=" + sid(), e);
+            throw new SocketdException("Request failed, sid=" + sid(), e);
         }
     }
 
@@ -63,8 +55,8 @@ public class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
         future.thenAccept((r) -> {
             try {
                 onReply.accept(r);
-            } catch (Throwable eh) {
-                channel().onError(eh);
+            } catch (Throwable e) {
+                onError(e);
             }
         });
 

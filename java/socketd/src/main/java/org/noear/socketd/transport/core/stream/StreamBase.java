@@ -6,9 +6,9 @@ import org.noear.socketd.transport.core.Stream;
 import org.noear.socketd.transport.core.StreamInternal;
 import org.noear.socketd.transport.core.StreamManger;
 import org.noear.socketd.utils.RunUtils;
+import org.noear.socketd.utils.TriConsumer;
 
 import java.util.concurrent.ScheduledFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -20,16 +20,14 @@ import java.util.function.Consumer;
 public abstract class StreamBase<T extends Stream> implements StreamInternal<T> {
     //保险任务
     private ScheduledFuture<?> insuranceFuture;
-    private Channel channel;
 
     private final String sid;
     private final int demands;
     private final long timeout;
     private Consumer<Throwable> doOnError;
-    private BiConsumer<Integer, Integer> doOnProgress;
+    private TriConsumer<Boolean, Integer, Integer> doOnProgress;
 
-    public StreamBase(Channel channel, String sid, int demands, long timeout) {
-        this.channel = channel;
+    public StreamBase(String sid, int demands, long timeout) {
         this.sid = sid;
         this.demands = demands;
         this.timeout = timeout;
@@ -46,15 +44,6 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
     @Override
     public int demands() {
         return demands;
-    }
-
-    @Override
-    public Channel channel() {
-        return channel;
-    }
-
-    protected void setChannel(Channel channel){
-        this.channel = channel;
     }
 
     /**
@@ -101,9 +90,9 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
     }
 
     @Override
-    public void onProgress(Integer val, Integer max) {
+    public void onProgress(boolean isSend, int val, int max) {
         if (doOnProgress != null) {
-            doOnProgress.accept(val, max);
+            doOnProgress.accept(isSend, val, max);
         }
     }
 
@@ -114,7 +103,7 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
     }
 
     @Override
-    public T thenProgress(BiConsumer<Integer, Integer> onProgress) {
+    public T thenProgress(TriConsumer<Boolean, Integer, Integer> onProgress) {
         this.doOnProgress = onProgress;
         return (T) this;
     }

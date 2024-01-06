@@ -6,7 +6,7 @@ import org.noear.socketd.utils.IoConsumer;
  * 请求流
  *
  * @author noear
- * @since 2.2
+ * @since 2.3
  */
 public interface StreamRequest extends Stream<StreamRequest> {
     /**

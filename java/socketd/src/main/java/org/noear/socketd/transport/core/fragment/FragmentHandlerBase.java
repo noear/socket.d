@@ -46,13 +46,13 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
 
                 consumer.accept(fragmentEntity);
                 if (stream != null) {
-                    stream.onProgress(fragmentIndex, fragmentTotal);
+                    stream.onProgress(true, fragmentIndex, fragmentTotal);
                 }
             }
         } else {
             consumer.accept(message);
             if (stream != null) {
-                stream.onProgress(1, 1);
+                stream.onProgress(true, 1, 1);
             }
         }
     }

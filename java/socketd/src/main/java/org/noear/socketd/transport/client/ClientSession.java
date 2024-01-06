@@ -31,14 +31,16 @@ public interface ClientSession extends Closeable {
      *
      * @param event   事件
      * @param content 内容
+     * @return 流
      */
-    Stream send(String event, Entity content) throws IOException;
+    StreamSend send(String event, Entity content) throws IOException;
 
     /**
      * 发送并请求
      *
      * @param event   事件
      * @param content 内容
+     * @return 流
      */
     default StreamRequest sendAndRequest(String event, Entity content) throws IOException {
         return sendAndRequest(event, content, 0);
@@ -50,6 +52,7 @@ public interface ClientSession extends Closeable {
      * @param event   事件
      * @param content 内容
      * @param timeout 超时（毫秒）
+     * @return 流
      */
     StreamRequest sendAndRequest(String event, Entity content, long timeout) throws IOException;
 

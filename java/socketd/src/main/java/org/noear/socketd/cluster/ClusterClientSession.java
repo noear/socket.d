@@ -105,7 +105,7 @@ public class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    public Stream send(String event, Entity content) throws IOException {
+    public StreamSend send(String event, Entity content) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.send(event, content);

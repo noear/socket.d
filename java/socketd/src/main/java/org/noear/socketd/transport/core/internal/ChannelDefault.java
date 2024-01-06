@@ -120,7 +120,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             //不满足分片条件，直接发
             assistant.write(source, frame);
             if (stream != null) {
-                stream.onProgress(1, 1);
+                stream.onProgress(true, 1, 1);
             }
         }
     }
@@ -141,11 +141,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
             if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
                 //单收时，内部已经是异步机制
-                stream.onReply(frame.message(), this);
+                stream.onReply(frame.message());
             } else {
                 //改为异步处理，避免卡死Io线程
                 getConfig().getChannelExecutor().submit(() -> {
-                    stream.onReply(frame.message(), this);
+                    stream.onReply(frame.message());
                 });
             }
         } else {

@@ -13,8 +13,8 @@ public class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
     private IoConsumer<Reply> doOnReply;
     private boolean isDone;
 
-    public StreamSubscribeImpl(Channel channel, String sid, long timeout) {
-        super(channel, sid, Constants.DEMANDS_MULTIPLE, timeout);
+    public StreamSubscribeImpl(String sid, long timeout) {
+        super(sid, Constants.DEMANDS_MULTIPLE, timeout);
     }
 
     /**
@@ -29,8 +29,7 @@ public class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
      * 答复时
      */
     @Override
-    public void onReply(MessageInternal reply, Channel channel) {
-        setChannel(channel);
+    public void onReply(MessageInternal reply) {
         isDone = reply.isEnd();
 
         try {
@@ -38,7 +37,7 @@ public class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
                 doOnReply.accept(reply);
             }
         } catch (Throwable e) {
-            channel().onError(e);
+            onError(e);
         }
     }
 

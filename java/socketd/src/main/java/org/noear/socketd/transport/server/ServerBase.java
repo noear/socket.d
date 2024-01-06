@@ -3,7 +3,7 @@ package org.noear.socketd.transport.server;
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.ChannelAssistant;
 import org.noear.socketd.transport.core.Processor;
-import org.noear.socketd.transport.core.internal.ProcessorDefault;
+import org.noear.socketd.transport.core.impl.ProcessorDefault;
 
 /**
  * 服务端基类

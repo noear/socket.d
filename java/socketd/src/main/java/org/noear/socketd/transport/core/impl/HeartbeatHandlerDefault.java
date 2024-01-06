@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.HeartbeatHandler;
 import org.noear.socketd.transport.core.Session;

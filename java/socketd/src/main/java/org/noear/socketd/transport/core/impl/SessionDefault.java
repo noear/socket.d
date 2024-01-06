@@ -1,9 +1,12 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.stream.StreamSendImpl;
-import org.noear.socketd.transport.core.stream.StreamRequestImpl;
-import org.noear.socketd.transport.core.stream.StreamSubscribeImpl;
+import org.noear.socketd.transport.stream.impl.SendStreamImpl;
+import org.noear.socketd.transport.stream.impl.RequestStreamImpl;
+import org.noear.socketd.transport.stream.impl.SubscribeStreamImpl;
+import org.noear.socketd.transport.stream.RequestStream;
+import org.noear.socketd.transport.stream.SendStream;
+import org.noear.socketd.transport.stream.SubscribeStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,14 +127,14 @@ public class SessionDefault extends SessionBase {
      * @param content 内容
      */
     @Override
-    public StreamSend send(String event, Entity content, Consumer<StreamSend> consumer) throws IOException {
+    public SendStream send(String event, Entity content, Consumer<SendStream> consumer) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(content)
                 .build();
 
-        StreamSendImpl stream = new StreamSendImpl(message.sid());
+        SendStreamImpl stream = new SendStreamImpl(message.sid());
         if (consumer != null) {
             consumer.accept(stream);
         }
@@ -147,7 +150,7 @@ public class SessionDefault extends SessionBase {
      * @param timeout 超时（毫秒）
      */
     @Override
-    public StreamRequest sendAndRequest(String event, Entity content, long timeout, Consumer<StreamRequest> consumer) throws IOException {
+    public RequestStream sendAndRequest(String event, Entity content, long timeout, Consumer<RequestStream> consumer) throws IOException {
         if (timeout < 10) {
             timeout = channel.getConfig().getRequestTimeout();
         }
@@ -158,7 +161,7 @@ public class SessionDefault extends SessionBase {
                 .entity(content)
                 .build();
 
-        StreamRequestImpl stream = new StreamRequestImpl(message.sid(), timeout);
+        RequestStreamImpl stream = new RequestStreamImpl(message.sid(), timeout);
         if (consumer != null) {
             consumer.accept(stream);
         }
@@ -175,14 +178,14 @@ public class SessionDefault extends SessionBase {
      * @param timeout 超时
      */
     @Override
-    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout, Consumer<StreamSubscribe> consumer) throws IOException {
+    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout, Consumer<SubscribeStream> consumer) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(content)
                 .build();
 
-        StreamSubscribeImpl stream = new StreamSubscribeImpl(message.sid(), timeout);
+        SubscribeStreamImpl stream = new SubscribeStreamImpl(message.sid(), timeout);
         if (consumer != null) {
             consumer.accept(stream);
         }

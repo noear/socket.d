@@ -1,6 +1,9 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.stream.RequestStream;
+import org.noear.socketd.transport.stream.SendStream;
+import org.noear.socketd.transport.stream.SubscribeStream;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -106,17 +109,17 @@ public class SessionWrapper implements Session {
     }
 
     @Override
-    public StreamSend send(String event, Entity content, Consumer<StreamSend> consumer) throws IOException {
+    public SendStream send(String event, Entity content, Consumer<SendStream> consumer) throws IOException {
         return real.send(event, content, consumer);
     }
 
     @Override
-    public StreamRequest sendAndRequest(String event, Entity content, long timeout, Consumer<StreamRequest> consumer) throws IOException {
+    public RequestStream sendAndRequest(String event, Entity content, long timeout, Consumer<RequestStream> consumer) throws IOException {
         return real.sendAndRequest(event, content, timeout, consumer);
     }
 
     @Override
-    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout, Consumer<StreamSubscribe> consumer) throws IOException {
+    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout, Consumer<SubscribeStream> consumer) throws IOException {
         return real.sendAndSubscribe(event, content, timeout, consumer);
     }
 

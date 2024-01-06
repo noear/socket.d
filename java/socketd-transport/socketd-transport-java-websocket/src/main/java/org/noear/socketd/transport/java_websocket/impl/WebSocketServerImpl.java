@@ -6,9 +6,8 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_websocket.WsNioServer;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.internal.ChannelDefault;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -80,11 +80,13 @@ public class TestCase14_file extends BaseTestCase {
         AtomicInteger fileCount = new AtomicInteger();
         AtomicInteger fileTotal = new AtomicInteger();
         FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov"));
-        clientSession.send("/user/upload", fileEntity).thenProgress((isSend, val, max) -> {
-            if (isSend) {
-                fileCount.incrementAndGet();
-                fileTotal.set(max.intValue());
-            }
+        clientSession.send("/user/upload", fileEntity, stream -> {
+            stream.thenProgress((isSend, val, max) -> {
+                if (isSend) {
+                    fileCount.incrementAndGet();
+                    fileTotal.set(max.intValue());
+                }
+            });
         });
         fileEntity.release();
 

@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.fragment;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.utils.IoConsumer;
 
 import java.io.IOException;

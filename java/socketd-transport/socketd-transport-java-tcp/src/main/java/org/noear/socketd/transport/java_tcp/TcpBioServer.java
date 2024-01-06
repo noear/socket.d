@@ -4,7 +4,7 @@ import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.internal.ChannelDefault;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;

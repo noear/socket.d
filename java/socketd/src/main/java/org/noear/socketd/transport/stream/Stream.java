@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.stream;
 
 import org.noear.socketd.utils.TriConsumer;
 

@@ -1,4 +1,6 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.stream;
+
+import org.noear.socketd.transport.core.MessageInternal;
 
 /**
  * 流内部接口

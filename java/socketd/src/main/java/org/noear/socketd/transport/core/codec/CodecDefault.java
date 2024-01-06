@@ -2,7 +2,7 @@ package org.noear.socketd.transport.core.codec;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
-import org.noear.socketd.transport.core.internal.MessageBuilder;
+import org.noear.socketd.transport.core.impl.MessageBuilder;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

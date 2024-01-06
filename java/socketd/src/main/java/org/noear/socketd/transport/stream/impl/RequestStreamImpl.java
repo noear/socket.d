@@ -1,8 +1,9 @@
-package org.noear.socketd.transport.core.stream;
+package org.noear.socketd.transport.stream.impl;
 
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.exception.SocketdTimeoutException;
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.stream.RequestStream;
 import org.noear.socketd.utils.IoConsumer;
 
 import java.util.concurrent.CompletableFuture;
@@ -15,10 +16,10 @@ import java.util.concurrent.TimeoutException;
  * @author noear
  * @since 2.0
  */
-public class StreamRequestImpl extends StreamBase<StreamRequest> implements StreamRequest {
+public class RequestStreamImpl extends StreamBase<RequestStream> implements RequestStream {
     private final CompletableFuture<Reply> future;
 
-    public StreamRequestImpl(String sid, long timeout) {
+    public RequestStreamImpl(String sid, long timeout) {
         super(sid, Constants.DEMANDS_SIGNLE, timeout);
         this.future = new CompletableFuture<>();
     }
@@ -51,7 +52,7 @@ public class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
     }
 
     @Override
-    public StreamRequest thenReply(IoConsumer<Reply> onReply) {
+    public RequestStream thenReply(IoConsumer<Reply> onReply) {
         future.thenAccept((r) -> {
             try {
                 onReply.accept(r);

@@ -10,7 +10,7 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.java_websocket.WsNioClient;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.internal.ChannelDefault;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

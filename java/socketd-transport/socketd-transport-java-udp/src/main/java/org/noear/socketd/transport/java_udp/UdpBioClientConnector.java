@@ -7,7 +7,7 @@ import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.core.Flags;
-import org.noear.socketd.transport.core.internal.ChannelDefault;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

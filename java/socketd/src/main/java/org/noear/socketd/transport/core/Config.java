@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.stream.StreamManger;
+
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;

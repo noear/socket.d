@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.core;
+package org.noear.socketd.transport.stream;
 
 /**
  * 流管理器

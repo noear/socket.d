@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.stream.StreamInternal;
+
 import java.util.function.BiConsumer;
 
 /**

@@ -1,10 +1,11 @@
-package org.noear.socketd.transport.core.internal;
+package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.codec.CodecDefault;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
-import org.noear.socketd.transport.core.stream.StreamMangerDefault;
+import org.noear.socketd.transport.stream.impl.StreamMangerDefault;
+import org.noear.socketd.transport.stream.StreamManger;
 import org.noear.socketd.utils.NamedThreadFactory;
 
 import javax.net.ssl.SSLContext;

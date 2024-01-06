@@ -6,9 +6,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.tcp.TcpNioServer;
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.internal.ChannelDefault;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 
 /**
  * @author noear

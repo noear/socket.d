@@ -3,6 +3,9 @@ package org.noear.socketd.cluster;
 import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.client.ClientSession;
+import org.noear.socketd.transport.stream.SendStream;
+import org.noear.socketd.transport.stream.RequestStream;
+import org.noear.socketd.transport.stream.SubscribeStream;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.StrUtils;
 
@@ -105,7 +108,7 @@ public class ClusterClientSession implements ClientSession {
      * @param event   事件
      * @param content 内容
      */
-    public StreamSend send(String event, Entity content, Consumer<StreamSend> consumer) throws IOException {
+    public SendStream send(String event, Entity content, Consumer<SendStream> consumer) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.send(event, content, consumer);
@@ -119,7 +122,7 @@ public class ClusterClientSession implements ClientSession {
      * @param content 内容
      * @param timeout 超时（毫秒）
      */
-    public StreamRequest sendAndRequest(String event, Entity content, long timeout, Consumer<StreamRequest> consumer) throws IOException {
+    public RequestStream sendAndRequest(String event, Entity content, long timeout, Consumer<RequestStream> consumer) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndRequest(event, content, timeout, consumer);
@@ -133,7 +136,7 @@ public class ClusterClientSession implements ClientSession {
      * @param content  内容
      * @param timeout  超时
      */
-    public StreamSubscribe sendAndSubscribe(String event, Entity content, long timeout, Consumer<StreamSubscribe> consumer) throws IOException {
+    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout, Consumer<SubscribeStream> consumer) throws IOException {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndSubscribe(event, content, timeout, consumer);

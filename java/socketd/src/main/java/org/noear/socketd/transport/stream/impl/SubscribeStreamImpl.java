@@ -1,6 +1,7 @@
-package org.noear.socketd.transport.core.stream;
+package org.noear.socketd.transport.stream.impl;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.stream.SubscribeStream;
 import org.noear.socketd.utils.IoConsumer;
 
 /**
@@ -9,11 +10,11 @@ import org.noear.socketd.utils.IoConsumer;
  * @author noear
  * @since 2.0
  */
-public class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements StreamSubscribe {
+public class SubscribeStreamImpl extends StreamBase<SubscribeStream> implements SubscribeStream {
     private IoConsumer<Reply> doOnReply;
     private boolean isDone;
 
-    public StreamSubscribeImpl(String sid, long timeout) {
+    public SubscribeStreamImpl(String sid, long timeout) {
         super(sid, Constants.DEMANDS_MULTIPLE, timeout);
     }
 
@@ -42,7 +43,7 @@ public class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
     }
 
     @Override
-    public StreamSubscribe thenReply(IoConsumer<Reply> onReply) {
+    public SubscribeStream thenReply(IoConsumer<Reply> onReply) {
         this.doOnReply = onReply;
         return this;
     }

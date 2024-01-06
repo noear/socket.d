@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.transport.core.internal.ConfigBase;
+import org.noear.socketd.transport.core.impl.ConfigBase;
 
 import java.net.URI;
 

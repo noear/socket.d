@@ -1,8 +1,8 @@
 package org.noear.socketd.transport.client;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.internal.ProcessorDefault;
-import org.noear.socketd.transport.core.internal.SessionDefault;
+import org.noear.socketd.transport.core.impl.ProcessorDefault;
+import org.noear.socketd.transport.core.impl.SessionDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

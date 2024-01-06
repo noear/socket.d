@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.stream;
 
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.MessageInternal;
 import org.noear.socketd.transport.core.Stream;
 
@@ -10,7 +11,7 @@ import org.noear.socketd.transport.core.Stream;
  */
 public class StreamImpl extends StreamBase implements Stream {
     public StreamImpl(Channel channel, String sid) {
-        super(channel, sid, 0, 0);
+        super(channel, sid, Constants.DEMANDS_ZERO, 0);
     }
 
     /**

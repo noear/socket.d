@@ -21,7 +21,7 @@ public class StreamRequestImpl extends StreamBase<StreamRequest> implements Stre
     private final CompletableFuture<Reply> future;
 
     public StreamRequestImpl(Channel channel, String sid, long timeout) {
-        super(channel, sid, 1, timeout);
+        super(channel, sid, Constants.DEMANDS_SIGNLE, timeout);
         this.future = new CompletableFuture<>();
     }
 

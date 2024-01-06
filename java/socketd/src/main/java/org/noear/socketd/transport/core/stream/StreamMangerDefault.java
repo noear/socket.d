@@ -45,12 +45,13 @@ public class StreamMangerDefault implements StreamManger {
      */
     @Override
     public void addStream(String sid, StreamInternal stream) {
+        Asserts.assertNull("stream", stream);
+
         if (stream.demands() == Constants.DEMANDS_ZERO) {
             //零需求，则不添加
             return;
         }
 
-        Asserts.assertNull("stream", stream);
         streamMap.put(sid, stream);
 
         //增加流超时处理（做为后备保险）

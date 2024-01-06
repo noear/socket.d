@@ -72,11 +72,6 @@ public interface Constants {
     int MIN_FRAGMENT_SIZE = 1024; //1k
 
     /**
-     * 多需要
-     */
-    int DEMANDS_MORE = 2;
-
-    /**
      * 零需求
      */
     int DEMANDS_ZERO = 0;

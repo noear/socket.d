@@ -14,7 +14,7 @@ public class StreamSubscribeImpl extends StreamBase<StreamSubscribe> implements 
     private boolean isDone;
 
     public StreamSubscribeImpl(Channel channel, String sid, long timeout) {
-        super(channel, sid, 2, timeout);
+        super(channel, sid, Constants.DEMANDS_MULTIPLE, timeout);
     }
 
     /**

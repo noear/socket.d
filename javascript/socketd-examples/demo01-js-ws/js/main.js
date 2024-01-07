@@ -40,7 +40,7 @@ function send(type) {
     } else if (type == 2) {
         appendToMessageList('发送并订阅', input);
         clientSession.sendAndSubscribe("/demo", SocketD.newEntity(input)
-            .metaPut(SocketD.Metas.META_RANGE_SIZE,"3")).thenReply(reply => {
+            .metaPut(SocketD.EntityMetas.META_RANGE_SIZE,"3")).thenReply(reply => {
             console.log('reply', reply);
             if(reply.isEnd()){
                 appendToMessageList('答复结束', reply.dataAsString());
@@ -147,7 +147,7 @@ function mainDo() {
             clientSession.sendAndRequest("/download", SocketD.newEntity()).thenReply(reply => {
                 console.log('reply', reply);
 
-                const fileName = reply.meta(SocketD.Metas.META_DATA_DISPOSITION_FILENAME);
+                const fileName = reply.meta(SocketD.EntityMetas.META_DATA_DISPOSITION_FILENAME);
                 if (fileName) {
                     appendToMessageList('下载文件', "file=" + fileName + ", size=" + reply.dataSize());
                 } else {

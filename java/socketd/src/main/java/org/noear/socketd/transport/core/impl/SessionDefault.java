@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.stream.impl.SendStreamImpl;
 import org.noear.socketd.transport.stream.impl.RequestStreamImpl;
 import org.noear.socketd.transport.stream.impl.SubscribeStreamImpl;

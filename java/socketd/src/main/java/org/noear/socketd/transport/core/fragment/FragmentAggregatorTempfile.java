@@ -6,7 +6,7 @@ import org.noear.socketd.transport.core.FragmentAggregator;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.MessageInternal;
 import org.noear.socketd.transport.core.entity.TempfileEntity;
-import org.noear.socketd.transport.core.impl.MessageBuilder;
+import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.utils.StrUtils;
 
 import java.io.File;

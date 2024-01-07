@@ -5,6 +5,7 @@ import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
+import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.StrUtils;
 
@@ -26,7 +27,7 @@ public class ServerTest {
      */
     public static void main(String[] args) throws Exception {
         String s1 = schemas[3];
-        SocketD.createServer(s1)
+        Server server = SocketD.createServer(s1)
                 .config(c -> c.port(8602).fragmentSize(1024 * 1024))
                 .listen(new EventListener()
                         .doOnOpen(s -> {
@@ -72,7 +73,7 @@ public class ServerTest {
                                 }
 
                                 s.send("/push", new StringEntity("push test"));
-                                RunUtils.runAndTry(() -> Thread.sleep(1000));
+                                RunUtils.runAndTry(() -> Thread.sleep(200));
                             }
                         }).doOn("/unpush", (s, m) -> {
                             s.attrMap().remove("push");
@@ -84,5 +85,9 @@ public class ServerTest {
                             err.printStackTrace();
                         }))
                 .start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+            RunUtils.runAndTry(server::stop);
+        }));
     }
 }

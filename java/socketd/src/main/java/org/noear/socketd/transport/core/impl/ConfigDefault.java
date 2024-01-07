@@ -1,6 +1,4 @@
-package org.noear.socketd.transport.core;
-
-import org.noear.socketd.transport.core.impl.ConfigBase;
+package org.noear.socketd.transport.core.impl;
 
 /**
  * 基础配置实现

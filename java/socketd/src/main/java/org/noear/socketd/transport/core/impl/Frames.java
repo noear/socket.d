@@ -6,6 +6,7 @@ import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.core.entity.StringEntity;
 
 /**

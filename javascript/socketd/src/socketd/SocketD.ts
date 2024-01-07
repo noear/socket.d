@@ -16,7 +16,7 @@ export class SocketD {
     /**
      * 元信息字典
      * */
-    static Metas = EntityMetas;
+    static EntityMetas = EntityMetas;
 
     private static clientProviderMap: Map<String, ClientProvider> = new Map<String, ClientProvider>();
 

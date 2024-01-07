@@ -56,10 +56,8 @@ export class FragmentHandlerDefault implements FragmentHandler {
     spliFragment(channel: Channel, stream: StreamInternal<any>|null, message: MessageInternal, consumer: IoConsumer<Entity>) {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
             let fragmentIndex = 0;
-            let fragmentTotal = message.dataSize() / channel.getConfig().getFragmentSize();
-            if (message.dataSize() % channel.getConfig().getFragmentSize() > 0) {
-                fragmentTotal++;
-            }
+            let fragmentTotal = Math.ceil(message.dataSize() / channel.getConfig().getFragmentSize());
+
             this.spliFragmentDo(fragmentIndex, fragmentTotal, channel, stream, message, consumer);
         } else {
             if (message.data().getBlob() == null) {
@@ -94,7 +92,7 @@ export class FragmentHandlerDefault implements FragmentHandler {
 
             consumer(fragmentEntity);
             if (stream != null) {
-                stream.onProgress(true, fragmentIndex, fragmentIndex);
+                stream.onProgress(true, fragmentIndex, fragmentTotal);
             }
 
             this.spliFragmentDo(fragmentIndex, fragmentTotal, channel, stream, message, consumer);

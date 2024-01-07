@@ -1,5 +1,5 @@
 
-import {Constants, Flags} from "./Constants";
+import {Constants, EntityMetas, Flags} from "./Constants";
 import type {Entity, Reply} from "./Entity";
 import type {CodecReader} from "./Codec";
 import type {Buffer} from "./Buffer";
@@ -21,6 +21,16 @@ export interface Message extends Entity {
      * 是否为订阅
      */
     isSubscribe(): boolean;
+
+    /**
+     * 范围开始
+     * */
+    rangeStart(): number;
+
+    /**
+     * 范围大小
+     * */
+    rangeSize():number;
 
     /**
      * 获取消息流Id（用于消息交互、分片）
@@ -128,6 +138,14 @@ export class MessageDefault implements MessageInternal {
 
     at() {
         return this._entity!.at();
+    }
+
+    rangeStart(): number {
+        return this.metaAsInt(EntityMetas.META_RANGE_START);
+    }
+
+    rangeSize(): number {
+        return this.metaAsInt(EntityMetas.META_RANGE_SIZE);
     }
 
     /**

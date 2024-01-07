@@ -33,5 +33,7 @@ cnpm i -D webpack-cli
 
 ```
 npm publish
+
+npm unpublish
 ```
 

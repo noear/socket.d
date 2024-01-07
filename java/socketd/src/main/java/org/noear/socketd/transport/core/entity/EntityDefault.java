@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core.entity;
 
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Entity;
+import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.utils.StrUtils;
 
 import java.io.IOException;
@@ -29,15 +30,24 @@ public class EntityDefault implements Entity {
 
     /**
      * At
-     * */
+     */
     public EntityDefault at(String name) {
         metaPut("@", name);
         return this;
     }
 
     /**
+     * Range
+     */
+    public EntityDefault range(int start, int size) {
+        metaPut(EntityMetas.META_RANGE_START, String.valueOf(start));
+        metaPut(EntityMetas.META_RANGE_SIZE, String.valueOf(size));
+        return this;
+    }
+
+    /**
      * 设置元信息字符串
-     * */
+     */
     public EntityDefault metaStringSet(String metaString) {
         this.metaMap = null;
         this.metaString = metaString;

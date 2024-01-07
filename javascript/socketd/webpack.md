@@ -34,6 +34,14 @@ cnpm i -D webpack-cli
 ```
 npm publish
 
-npm unpublish
+npm unpublish @noear/socket.d@2.3.1
+```
+
+* 取消发布，并重新发布
+
+```
+npm unpublish @noear/socket.d@2.3.1
+npm version patch
+npm publish
 ```
 

@@ -74,7 +74,7 @@ public class TestCase29_download extends BaseTestCase {
         });
 
 
-        Thread.sleep(1000);
+        Thread.sleep(4000);
 
         System.out.println("counter: " + messageCounter.get());
         System.out.println("fileCount: " + fileCount.get() + ", fileTotal: " + fileTotal.get());

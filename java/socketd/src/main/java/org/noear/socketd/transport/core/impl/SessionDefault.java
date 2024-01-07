@@ -123,16 +123,16 @@ public class SessionDefault extends SessionBase {
     /**
      * 发送
      *
-     * @param event   事件
-     * @param content 内容
+     * @param event  事件
+     * @param entity 实体
      * @return 流
      */
     @Override
-    public SendStream send(String event, Entity content) throws IOException {
+    public SendStream send(String event, Entity entity) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
-                .entity(content)
+                .entity(entity)
                 .build();
 
         SendStreamImpl stream = new SendStreamImpl(message.sid());
@@ -144,16 +144,16 @@ public class SessionDefault extends SessionBase {
      * 发送并请求（限为一次答复；指定超时）
      *
      * @param event   事件
-     * @param content 内容
+     * @param entity  实体
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
     @Override
-    public RequestStream sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
-                .entity(content)
+                .entity(entity)
                 .build();
 
         if (timeout < 10) {
@@ -170,16 +170,16 @@ public class SessionDefault extends SessionBase {
      * 发送并订阅（答复结束之前，不限答复次数）
      *
      * @param event   事件
-     * @param content 内容
+     * @param entity  实体
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
     @Override
-    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
+    public SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
-                .entity(content)
+                .entity(entity)
                 .build();
 
 
@@ -195,15 +195,15 @@ public class SessionDefault extends SessionBase {
     /**
      * 答复
      *
-     * @param from    来源消息
-     * @param content 内容
+     * @param from   来源消息
+     * @param entity 实体
      */
     @Override
-    public void reply(Message from, Entity content) throws IOException {
+    public void reply(Message from, Entity entity) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())
-                .entity(content)
+                .entity(entity)
                 .build();
 
         channel.send(new Frame(Flags.Reply, message), null);
@@ -212,15 +212,15 @@ public class SessionDefault extends SessionBase {
     /**
      * 答复并结束（即最后一次答复）
      *
-     * @param from    来源消息
-     * @param content 内容
+     * @param from   来源消息
+     * @param entity 实体
      */
     @Override
-    public void replyEnd(Message from, Entity content) throws IOException {
+    public void replyEnd(Message from, Entity entity) throws IOException {
         MessageInternal message = new MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())
-                .entity(content)
+                .entity(entity)
                 .build();
 
         channel.send(new Frame(Flags.ReplyEnd, message), null);

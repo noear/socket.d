@@ -104,28 +104,28 @@ public class ClusterClientSession implements ClientSession {
     /**
      * 发送
      *
-     * @param event   事件
-     * @param content 内容
+     * @param event  事件
+     * @param entity 实体
      * @return 流
      */
-    public SendStream send(String event, Entity content) throws IOException {
+    public SendStream send(String event, Entity entity) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.send(event, content);
+        return sender.send(event, entity);
     }
 
     /**
      * 发送并请求（限为一次答复；指定超时）
      *
      * @param event   事件
-     * @param content 内容
+     * @param entity  实体
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
-    public RequestStream sendAndRequest(String event, Entity content, long timeout) throws IOException {
+    public RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.sendAndRequest(event, content, timeout);
+        return sender.sendAndRequest(event, entity, timeout);
     }
 
 
@@ -133,14 +133,14 @@ public class ClusterClientSession implements ClientSession {
      * 发送并订阅（答复结束之前，不限答复次数）
      *
      * @param event   事件
-     * @param content 内容
+     * @param entity  实体
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
-    public SubscribeStream sendAndSubscribe(String event, Entity content, long timeout) throws IOException {
+    public SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
-        return sender.sendAndSubscribe(event, content, timeout);
+        return sender.sendAndSubscribe(event, entity, timeout);
     }
 
     /**

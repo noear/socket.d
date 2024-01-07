@@ -127,16 +127,16 @@ public interface Session extends ClientSession, Closeable {
     /**
      * 答复
      *
-     * @param from    来源消息
-     * @param content 内容
+     * @param from   来源消息
+     * @param entity 实体
      */
-    void reply(Message from, Entity content) throws IOException;
+    void reply(Message from, Entity entity) throws IOException;
 
     /**
      * 答复并结束（即最后一次答复）
      *
-     * @param from    来源消息
-     * @param content 内容
+     * @param from   来源消息
+     * @param entity 实体
      */
-    void replyEnd(Message from, Entity content) throws IOException;
+    void replyEnd(Message from, Entity entity) throws IOException;
 }

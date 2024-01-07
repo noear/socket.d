@@ -32,52 +32,52 @@ public interface ClientSession extends Closeable {
     /**
      * 发送
      *
-     * @param event   事件
-     * @param content 内容
+     * @param event  事件
+     * @param entity 实体
      * @return 流
      */
-    SendStream send(String event, Entity content) throws IOException;
+    SendStream send(String event, Entity entity) throws IOException;
 
     /**
      * 发送并请求
      *
-     * @param event   事件
-     * @param content 内容
+     * @param event  事件
+     * @param entity 实体
      * @return 流
      */
-    default RequestStream sendAndRequest(String event, Entity content) throws IOException {
-        return sendAndRequest(event, content, 0L);
+    default RequestStream sendAndRequest(String event, Entity entity) throws IOException {
+        return sendAndRequest(event, entity, 0L);
     }
 
     /**
      * 发送并请求
      *
      * @param event   事件
-     * @param content 内容
+     * @param entity  实体
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
-    RequestStream sendAndRequest(String event, Entity content, long timeout) throws IOException;
+    RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException;
 
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
-     * @param event   事件
-     * @param content 内容
+     * @param event  事件
+     * @param entity 实体
      * @return 流
      */
-    default SubscribeStream sendAndSubscribe(String event, Entity content) throws IOException {
-        return sendAndSubscribe(event, content, 0L);
+    default SubscribeStream sendAndSubscribe(String event, Entity entity) throws IOException {
+        return sendAndSubscribe(event, entity, 0L);
     }
 
     /**
      * 发送并订阅（答复结束之前，不限答复次数）
      *
      * @param event   事件
-     * @param content 内容
+     * @param entity  实体
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
-    SubscribeStream sendAndSubscribe(String event, Entity content, long timeout) throws IOException;
+    SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException;
 }

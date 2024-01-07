@@ -5,8 +5,8 @@
   "author": "noear",
   "license": "Apache-2.0",
   "scripts": {
-    "devBuild": "webpack --mode none --env LIB_TARGET=commonjs2",
-    "prodBuild": "webpack --mode production --env LIB_TARGET=commonjs2"
+    "devBuild": "webpack --mode none",
+    "prodBuild": "webpack --mode production"
   },
   "devDependencies": {
     "webpack": "^5.89.0",

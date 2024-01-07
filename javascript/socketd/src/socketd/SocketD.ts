@@ -29,6 +29,10 @@ export class SocketD {
         if (typeof window != 'undefined') {
             window["SocketD"] = SocketD;
         }
+
+        if (typeof module != 'undefined' && module.exports) {
+            module.exports = SocketD;
+        }
     }
 
     /**

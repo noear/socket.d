@@ -21,16 +21,16 @@ public class Demo03_FlowControl {
                     }
 
                     long videoId = m.metaAsLong("videoId");
-                    int start = m.metaAsInt(EntityMetas.META_RANGE_START);
-                    int size = m.metaAsInt(EntityMetas.META_RANGE_SIZE);
+                    int rangeStart = m.rangeStart();
+                    int rangeSize = m.rangeSize();
 
-                    if (videoId == 0 || size == 0) {
+                    if (videoId == 0 || rangeSize == 0) {
                         s.sendAlarm(m, "参数不合规");
                         return;
                     }
 
-                    ByteBuffer[] fragments = new ByteBuffer[size];
-                    for (int i = 0; i < size; i++) {
+                    ByteBuffer[] fragments = new ByteBuffer[rangeSize];
+                    for (int i = 0; i < rangeSize; i++) {
                         s.reply(m, new EntityDefault().dataSet(fragments[i]));
                     }
                     s.replyEnd(m, new EntityDefault());
@@ -44,10 +44,8 @@ public class Demo03_FlowControl {
                 .open();
 
         //发送并请求
-        clientSession.sendAndSubscribe("/demo", new EntityDefault()
-                        .metaPut("videoId", "42E056E1-B4B7-4EF4-AC4B-AEE77EDB0B86")
-                        .metaPut(EntityMetas.META_RANGE_START, "5")
-                        .metaPut(EntityMetas.META_RANGE_SIZE, "5"))
+        clientSession.sendAndSubscribe("/demo", new EntityDefault().range(5,5)
+                        .metaPut("videoId", "42E056E1-B4B7-4EF4-AC4B-AEE77EDB0B86"))
                 .thenReply(r -> {
                     if (r.dataSize() > 0) {
                         System.out.println(r);

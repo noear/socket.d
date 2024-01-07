@@ -1,7 +1,8 @@
 import {SdWebSocketListener} from "./SdWebSocket";
 import {SdWebSocketBrowserImpl} from "./SdWebSocketBrowserImpl";
-import {SdWebSocketNodeImpl} from "./SdWebSocketNodeImpl";
+import {SdWebSocketNodeJsImpl} from "./SdWebSocketNodeJsImpl";
 import {SdWebSocketUniappImpl} from "./SdWebSocketUniappImpl";
+import {SdWebSocketWeixinImpl} from "./SdWebSocketWeixinImpl";
 
 export enum Runtime {
     Unknown = 0,
@@ -35,12 +36,15 @@ export class EnvBridge {
     static createSdWebSocketClient(url: string, connector: SdWebSocketListener) {
         let runtime = this.getRuntime();
 
-        if (runtime == Runtime.Uniapp) {
+        if (runtime == Runtime.Weixin) {
+            console.info("Client channel use xeixin api!");
+            return new SdWebSocketWeixinImpl(url, connector);
+        } else if (runtime == Runtime.Uniapp) {
             console.info("Client channel use uniapp api!");
             return new SdWebSocketUniappImpl(url, connector);
         } else if (runtime == Runtime.NodeJs) {
             console.info("Client channel use nodejs api");
-            return new SdWebSocketNodeImpl(url, connector);
+            return new SdWebSocketNodeJsImpl(url, connector);
         } else {
             console.info("Client channel use browser api");
             return new SdWebSocketBrowserImpl(url, connector);

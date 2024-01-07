@@ -7,7 +7,7 @@ import {
 } from "./SdWebSocket";
 import NodeWebSocket from 'ws';
 
-export class SdWebSocketNodeImpl implements SdWebSocket {
+export class SdWebSocketNodeJsImpl implements SdWebSocket {
     private _real: NodeWebSocket;
     private _connector: SdWebSocketListener;
 

@@ -10,7 +10,7 @@ import {
 } from "./impl/SdWebSocket";
 import type {IoConsumer} from "../transport/core/Typealias";
 import {ClientHandshakeResult} from "../transport/client/ClientHandshakeResult";
-import {createSdWebSocketClient} from "./impl/EnvBridge";
+import {EnvBridge} from "./impl/EnvBridge";
 import {ChannelDefault} from "../transport/core/ChannelDefault";
 import {Flags} from "../transport/core/Constants";
 import {SocketdConnectionException} from "../exception/SocketdException";
@@ -57,7 +57,7 @@ export class WebSocketClientImpl implements SdWebSocketListener {
     _handshakeFuture: IoConsumer<ClientHandshakeResult>;
 
     constructor(url: string, client: WsClient, handshakeFuture: IoConsumer<ClientHandshakeResult>) {
-        this._real = createSdWebSocketClient(url, this);
+        this._real = EnvBridge.createSdWebSocketClient(url, this);
         this._client = client;
         this._channel = new ChannelDefault(this._real, client);
         this._handshakeFuture = handshakeFuture;
@@ -80,7 +80,7 @@ export class WebSocketClientImpl implements SdWebSocketListener {
 
                 if (frame != null) {
                     if (frame.flag() == Flags.Connack) {
-                        this._channel.onOpenFuture((r,err)=>{
+                        this._channel.onOpenFuture((r, err) => {
                             if (err == null) {
                                 this._handshakeFuture(new ClientHandshakeResult(this._channel, null));
                             } else {
@@ -91,8 +91,8 @@ export class WebSocketClientImpl implements SdWebSocketListener {
 
                     this._client.getProcessor().onReceive(this._channel, frame);
                 }
-            } catch ( e) {
-                if(e instanceof SocketdConnectionException){
+            } catch (e) {
+                if (e instanceof SocketdConnectionException) {
                     this._handshakeFuture(new ClientHandshakeResult(this._channel, e));
                 }
 

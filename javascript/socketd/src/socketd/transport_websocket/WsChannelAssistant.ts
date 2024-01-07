@@ -2,9 +2,9 @@ import type {ChannelAssistant} from "../transport/core/ChannelAssistant";
 import type {Frame} from "../transport/core/Frame";
 import type {Config} from "../transport/core/Config";
 import {ArrayBufferCodecReader, ArrayBufferCodecWriter} from "../transport/core/Codec";
-import {BridgeWsClient} from "./bridge/BridgeWsClient";
+import {SdWebSocket} from "./impl/SdWebSocket";
 
-export class WsChannelAssistant implements ChannelAssistant<BridgeWsClient> {
+export class WsChannelAssistant implements ChannelAssistant<SdWebSocket> {
     _config: Config;
 
     constructor(config: Config) {
@@ -15,25 +15,25 @@ export class WsChannelAssistant implements ChannelAssistant<BridgeWsClient> {
         return this._config.getCodec().read(new ArrayBufferCodecReader(buffer));
     }
 
-    write(target: BridgeWsClient, frame: Frame) {
+    write(target: SdWebSocket, frame: Frame) {
         let tmp = this._config.getCodec()
             .write(frame, n => new ArrayBufferCodecWriter(n));
         target.send(tmp.getBuffer());
     }
 
-    isValid(target: BridgeWsClient): boolean {
+    isValid(target: SdWebSocket): boolean {
         return target.isOpen();
     }
 
-    close(target: BridgeWsClient) {
+    close(target: SdWebSocket) {
         target.close();
     }
 
-    getRemoteAddress(target: BridgeWsClient): string {
+    getRemoteAddress(target: SdWebSocket): string {
         throw new Error("Method not implemented.");
     }
 
-    getLocalAddress(target: BridgeWsClient): string {
+    getLocalAddress(target: SdWebSocket): string {
         throw new Error("Method not implemented.");
     }
 }

@@ -2,6 +2,8 @@ export enum Runtime {
     None = -1,
     Browser = 1,
     Node = 2,
+    Uniapp = 3,
+    Weixin=4
 }
 
 export class EnvUtils {

@@ -4,9 +4,9 @@ import {WsChannelAssistant} from "./WsChannelAssistant";
 import type {ClientConnector } from "../transport/client/ClientConnector";
 import {WsClientConnector} from "./WsClientConnector";
 import type {ChannelSupporter} from "../transport/core/ChannelSupporter";
-import {BridgeWsClient} from "./bridge/BridgeWsClient";
+import {SdWebSocket} from "./impl/SdWebSocket";
 
-export class WsClient extends ClientBase<WsChannelAssistant> implements ChannelSupporter<BridgeWsClient> {
+export class WsClient extends ClientBase<WsChannelAssistant> implements ChannelSupporter<SdWebSocket> {
     constructor(clientConfig: ClientConfig) {
         super(clientConfig, new WsChannelAssistant(clientConfig));
     }

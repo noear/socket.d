@@ -1,19 +1,19 @@
 import {
-    BridgeWsClient,
-    BridgeWsClientConnector,
-    BridgeWsCloseEventImpl,
-    BridgeWsEventImpl,
-    BridgeWsMsgEventImpl
-} from "../BridgeWsClient";
-import {Logger} from "../../../utils/LogUtils";
+    SdWebSocket,
+    SdWebSocketListener,
+    SdWebSocketCloseEventImpl,
+    SdWebSocketEventImpl,
+    SdWebSocketMessageEventImpl
+} from "./SdWebSocket";
+import {Logger} from "../../utils/LogUtils";
 import NodeWebSocket from 'ws';
 
-export class NodeWsClientImpl implements BridgeWsClient {
+export class SdWebSocketNodeImpl implements SdWebSocket {
     private _real: NodeWebSocket;
-    private _connector: BridgeWsClientConnector;
+    private _connector: SdWebSocketListener;
     private _logger: Logger;
 
-    constructor(url: string, connector: BridgeWsClientConnector) {
+    constructor(url: string, connector: SdWebSocketListener) {
         this._logger = new Logger("BridgeWsClientImpl.node");
         this._logger.debug("实例化...");
         this._real = new NodeWebSocket(url);
@@ -46,20 +46,20 @@ export class NodeWsClientImpl implements BridgeWsClient {
 
     onOpen() {
         this._logger.debug("onOpen");
-        let evt = new BridgeWsEventImpl();
+        let evt = new SdWebSocketEventImpl();
         // TODO event细节待完善
         this._connector.onOpen(evt);
     }
 
     onMessage(msg) {
-        let evt = new BridgeWsMsgEventImpl(msg);
+        let evt = new SdWebSocketMessageEventImpl(msg);
         // TODO event细节待完善
         this._connector.onMessage(evt);
     }
 
     onClose() {
         this._logger.debug("onClose");
-        let evt = new BridgeWsCloseEventImpl();
+        let evt = new SdWebSocketCloseEventImpl();
         // TODO event细节待完善
         this._connector.onClose(evt);
     }

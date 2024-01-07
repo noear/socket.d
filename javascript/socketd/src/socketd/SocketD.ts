@@ -11,6 +11,7 @@ import type {IoBiConsumer} from "./transport/core/Typealias";
 import type {Session} from "./transport/core/Session";
 import type {Message} from "./transport/core/Message";
 import {EntityMetas} from "./transport/core/Constants";
+import {Logger} from './utils/LogUtils'
 
 export class SocketD {
     /**
@@ -132,6 +133,14 @@ export class SocketD {
      * */
     static newPipelineListener(): PipelineListener {
         return new PipelineListener();
+    }
+
+    static newLogger(name: string): Logger {
+        return new Logger(name);
+    }
+
+    static setLogLevel(level: string) {
+        Logger.setLevel(level);
     }
 }
 

@@ -25,6 +25,10 @@ export class SocketD {
         for (const s of provider.schemas()) {
             this.clientProviderMap.set(s, provider);
         }
+
+        if (typeof window != 'undefined') {
+            window["SocketD"] = SocketD;
+        }
     }
 
     /**

@@ -5,10 +5,8 @@
   "author": "noear",
   "license": "Apache-2.0",
   "scripts": {
-    "devNodeJsBuild": "webpack --mode none --env LIB_TARGET=commonjs2",
-    "devBrowserBuild": "webpack --mode none --env LIB_TARGET=window",
-    "prodNodeJsBuild": "webpack --mode production --env LIB_TARGET=commonjs2",
-    "prodBrowserBuild": "webpack --mode production --env LIB_TARGET=window"
+    "devBuild": "webpack --mode none --env LIB_TARGET=commonjs2",
+    "prodBuild": "webpack --mode production --env LIB_TARGET=commonjs2"
   },
   "devDependencies": {
     "webpack": "^5.89.0",

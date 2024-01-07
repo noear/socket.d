@@ -123,6 +123,15 @@ export class EntityDefault implements Entity {
     }
 
     /**
+     * Range
+     * */
+     range(start:number, size:number):EntityDefault {
+        this.metaPut(EntityMetas.META_RANGE_START, start.toString());
+        this.metaPut(EntityMetas.META_RANGE_SIZE, size.toString());
+        return this;
+    }
+
+    /**
      * 设置元信息字符串
      * */
     metaStringSet(metaString: string): EntityDefault {

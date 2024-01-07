@@ -93,12 +93,16 @@ export class SessionDefault extends SessionBase {
 
     /**
      * 发送
+     *
+     * @param event    事件
+     * @param entity   实体
+     * @return 流
      */
-    send(event: string, content: Entity): SendStream {
+    send(event: string, entity: Entity): SendStream {
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
-            .entity(content)
+            .entity(entity)
             .build();
 
         const stream = new SendStreamImpl(message.sid());
@@ -111,15 +115,16 @@ export class SessionDefault extends SessionBase {
      * 发送并请求（限为一次答复；指定超时）
      *
      * @param event    事件
-     * @param content  内容
-     * @param timeout 超时
+     * @param entity   实体
+     * @param timeout  超时
+     * @return 流
      */
-    sendAndRequest(event: string, content: Entity, timeout?: number): RequestStream {
+    sendAndRequest(event: string, entity: Entity, timeout?: number): RequestStream {
         //异步，用 streamTimeout
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
-            .entity(content)
+            .entity(entity)
             .build();
 
         if (!timeout) {
@@ -139,14 +144,15 @@ export class SessionDefault extends SessionBase {
      * 发送并订阅（答复结束之前，不限答复次数）
      *
      * @param event    事件
-     * @param content  内容
-     * @param timeout 超时
+     * @param entity   实体
+     * @param timeout  超时
+     * @return 流
      */
-    sendAndSubscribe(event: string, content: Entity, timeout?: number): SubscribeStream {
+    sendAndSubscribe(event: string, entity: Entity, timeout?: number): SubscribeStream {
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
-            .entity(content)
+            .entity(entity)
             .build();
 
         if (!timeout) {
@@ -166,13 +172,13 @@ export class SessionDefault extends SessionBase {
      * 答复
      *
      * @param from    来源消息
-     * @param content 内容
+     * @param entity  实体
      */
-    reply(from: Message, content: Entity) {
+    reply(from: Message, entity: Entity) {
         const message = new MessageBuilder()
             .sid(from.sid())
             .event(from.event())
-            .entity(content)
+            .entity(entity)
             .build();
 
         this._channel.send(new Frame(Flags.Reply, message), null);
@@ -182,13 +188,13 @@ export class SessionDefault extends SessionBase {
      * 答复并结束（即最后一次答复）
      *
      * @param from    来源消息
-     * @param content 内容
+     * @param entity  实体
      */
-    replyEnd(from: Message, content: Entity) {
+    replyEnd(from: Message, entity: Entity) {
         const message = new MessageBuilder()
             .sid(from.sid())
             .event(from.event())
-            .entity(content)
+            .entity(entity)
             .build();
 
         this._channel.send(new Frame(Flags.ReplyEnd, message), null);

@@ -99,17 +99,17 @@ export interface Session extends ClientSession {
      * 答复
      *
      * @param from    来源消息
-     * @param content 内容
+     * @param entity  实体
      */
-    reply(from: Message, content: Entity);
+    reply(from: Message, entity: Entity);
 
     /**
      * 答复并结束（即最后一次答复）
      *
      * @param from    来源消息
-     * @param content 内容
+     * @param entity  实体
      */
-    replyEnd(from: Message, content: Entity);
+    replyEnd(from: Message, entity: Entity);
 }
 
 /**
@@ -190,11 +190,11 @@ export abstract class SessionBase implements Session {
 
     abstract reconnect();
 
-    abstract send(event: string, content: Entity): SendStream;
+    abstract send(event: string, entity: Entity): SendStream;
 
-    abstract sendAndRequest(event: string, content: Entity, timeout?: number): RequestStream;
+    abstract sendAndRequest(event: string, entity: Entity, timeout?: number): RequestStream;
 
-    abstract sendAndSubscribe(event: string, content: Entity, timeout?: number): SubscribeStream;
+    abstract sendAndSubscribe(event: string, entity: Entity, timeout?: number): SubscribeStream;
 
     abstract close();
 

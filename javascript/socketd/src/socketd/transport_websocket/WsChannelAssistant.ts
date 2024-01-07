@@ -2,8 +2,9 @@ import type {ChannelAssistant} from "../transport/core/ChannelAssistant";
 import type {Frame} from "../transport/core/Frame";
 import type {Config} from "../transport/core/Config";
 import {ArrayBufferCodecReader, ArrayBufferCodecWriter} from "../transport/core/Codec";
+import {BridgeWsClient} from "./bridge/BridgeWsClient";
 
-export class WsChannelAssistant implements ChannelAssistant<WebSocket> {
+export class WsChannelAssistant implements ChannelAssistant<BridgeWsClient> {
     _config: Config;
 
     constructor(config: Config) {
@@ -14,25 +15,25 @@ export class WsChannelAssistant implements ChannelAssistant<WebSocket> {
         return this._config.getCodec().read(new ArrayBufferCodecReader(buffer));
     }
 
-    write(target: WebSocket, frame: Frame) {
+    write(target: BridgeWsClient, frame: Frame) {
         let tmp = this._config.getCodec()
             .write(frame, n => new ArrayBufferCodecWriter(n));
         target.send(tmp.getBuffer());
     }
 
-    isValid(target: WebSocket): boolean {
-        return target.readyState === WebSocket.OPEN
+    isValid(target: BridgeWsClient): boolean {
+        return target.isOpen();
     }
 
-    close(target: WebSocket) {
+    close(target: BridgeWsClient) {
         target.close();
     }
 
-    getRemoteAddress(target: WebSocket): string {
+    getRemoteAddress(target: BridgeWsClient): string {
         throw new Error("Method not implemented.");
     }
 
-    getLocalAddress(target: WebSocket): string {
+    getLocalAddress(target: BridgeWsClient): string {
         throw new Error("Method not implemented.");
     }
 }

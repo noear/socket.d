@@ -18,11 +18,10 @@ export class SdWebSocketUniappImpl implements SdWebSocket {
         this._connector = connector;
         this._real.binaryType = "arraybuffer";
 
-
-        this._real.onOpen(this.onOpen);
-        this._real.onMessage(this.onMessage);
-        this._real.onClose(this.onClose);
-        this._real.onError(this.onError);
+        this._real.onOpen(this.onOpen.bind(this));
+        this._real.onMessage(this.onMessage.bind(this));
+        this._real.onClose(this.onClose.bind(this));
+        this._real.onError(this.onError.bind(this));
     }
 
     isConnecting(): boolean {

@@ -16,11 +16,11 @@ export class EnvBridge {
     private static getRuntime(): Runtime {
         if (typeof window != 'undefined') {
             // @ts-ignore
-            if (typeof wx != 'undefined' && wx.request) {
+            if (typeof wx != 'undefined' && wx.connectSocket) {
                 //如果有微信，优先微信接口
                 return Runtime.Weixin;
                 // @ts-ignore
-            } else if (typeof uni != 'undefined') {
+            } else if (typeof uni != 'undefined' && uni.connectSocket) {
                 //如果有 Uniapp，优先 Uniapp 接口
                 return Runtime.Uniapp;
             } else {

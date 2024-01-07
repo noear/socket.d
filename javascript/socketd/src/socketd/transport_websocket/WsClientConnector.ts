@@ -10,7 +10,7 @@ import {
 } from "./impl/SdWebSocket";
 import type {IoConsumer} from "../transport/core/Typealias";
 import {ClientHandshakeResult} from "../transport/client/ClientHandshakeResult";
-import {createSdWebSocketClient} from "./impl/Bridge";
+import {createSdWebSocketClient} from "./impl/EnvBridge";
 import {ChannelDefault} from "../transport/core/ChannelDefault";
 import {Flags} from "../transport/core/Constants";
 import {SocketdConnectionException} from "../exception/SocketdException";

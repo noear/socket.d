@@ -1,4 +1,4 @@
-import {EnvUtils} from '../../utils/EnvUtils';
+import {EnvUtils} from './EnvUtils';
 import {SdWebSocketListener} from "./SdWebSocket";
 import {SdWebSocketBrowserImpl} from "./SdWebSocketBrowserImpl";
 import {SdWebSocketNodeImpl} from "./SdWebSocketNodeImpl";

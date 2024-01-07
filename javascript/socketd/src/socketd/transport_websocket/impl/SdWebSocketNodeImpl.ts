@@ -5,17 +5,13 @@ import {
     SdWebSocketEventImpl,
     SdWebSocketMessageEventImpl
 } from "./SdWebSocket";
-import {Logger} from "../../utils/LogUtils";
 import NodeWebSocket from 'ws';
 
 export class SdWebSocketNodeImpl implements SdWebSocket {
     private _real: NodeWebSocket;
     private _connector: SdWebSocketListener;
-    private _logger: Logger;
 
     constructor(url: string, connector: SdWebSocketListener) {
-        this._logger = new Logger("BridgeWsClientImpl.node");
-        this._logger.debug("实例化...");
         this._real = new NodeWebSocket(url);
         this._connector = connector;
         this._real.binaryType = "arraybuffer";
@@ -45,7 +41,6 @@ export class SdWebSocketNodeImpl implements SdWebSocket {
     }
 
     onOpen() {
-        this._logger.debug("onOpen");
         let evt = new SdWebSocketEventImpl();
         // TODO event细节待完善
         this._connector.onOpen(evt);
@@ -58,14 +53,12 @@ export class SdWebSocketNodeImpl implements SdWebSocket {
     }
 
     onClose() {
-        this._logger.debug("onClose");
         let evt = new SdWebSocketCloseEventImpl();
         // TODO event细节待完善
         this._connector.onClose(evt);
     }
 
     onError(e) {
-        this._logger.debug("onError", e);
         this._connector.onError(e);
     }
 

@@ -20,6 +20,20 @@ public interface Message extends Entity{
     boolean isSubscribe();
 
     /**
+     * 范围开始
+     * */
+    default int rangeStart(){
+        return metaAsInt(EntityMetas.META_RANGE_START);
+    }
+
+    /**
+     * 范围大小
+     * */
+    default int rangeSize(){
+        return metaAsInt(EntityMetas.META_RANGE_SIZE);
+    }
+
+    /**
      * 获取消息流Id（用于消息交互、分片）
      */
     String sid();

@@ -1,3 +1,4 @@
+
 export class StrUtils {
     static guid(): string {
         let guid = "";
@@ -8,13 +9,53 @@ export class StrUtils {
         return guid;
     }
 
+    private static parseUriOptions = {
+        strictMode: false,
+        key: ["source", "protocol", "authority", "userInfo", "user", "password", "host", "port", "relative", "path", "directory", "file", "query", "anchor"],
+        q: {
+            name: "queryKey",
+            parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+        },
+        parser: {
+            strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+            loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+        }
+    };
+
+    static parseUri(str):any {
+        if (!str) {
+            return '';
+        }
+
+        let o = StrUtils.parseUriOptions,
+            m = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+            uri = {},
+            i = 14;
+
+        while (i--) { // @ts-ignore
+            uri[o.key[i]] = m[i] || "";
+        }
+
+        uri[o.q.name] = {};
+        uri[o.key[12]].replace(o.q.parser, function($0, $1, $2) {
+            if ($1) uri[o.q.name][$1] = $2;
+        });
+
+        return uri;
+    }
+
     static strToBuf(str: string, charet?: string): ArrayBuffer {
         if (!charet) {
             charet = 'utf-8';
         }
 
-        const encoder = new TextEncoder(); // 使用 UTF-8 编码器进行编码
-        return encoder.encode(str).buffer; // 将字符串编码成 ArrayBuffer,
+        var data = unescape(encodeURIComponent(str))
+            .split('')
+            .map(val => val.charCodeAt(0));
+        return new Uint8Array(data).buffer;
+
+        //const encoder = new TextEncoder(); // 使用 UTF-8 编码器进行编码
+        //return encoder.encode(str).buffer; // 将字符串编码成 ArrayBuffer,
     }
 
     static bufToStr(buf: ArrayBuffer, start: number, length: number, charet?: string): string {
@@ -42,7 +83,9 @@ export class StrUtils {
             charet = 'utf-8';
         }
 
-        const decoder = new TextDecoder(charet)
-        return decoder.decode(buf);
+        // @ts-ignore
+        return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(buf))));
+        //const decoder = new TextDecoder(charet)
+        //return decoder.decode(buf);
     }
 }

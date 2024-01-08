@@ -27,7 +27,7 @@ export interface Entity {
     /**
      * 获取元信息字典
      */
-    metaMap(): URLSearchParams;
+    metaMap(): Map<string,string>;
 
     /**
      * 获取元信息
@@ -105,7 +105,7 @@ export interface Reply extends Entity {
  * @since 2.0
  */
 export class EntityDefault implements Entity {
-    private _metaMap: URLSearchParams | null;
+    private _metaMap: Map<string, string> | null;
     private _data: Buffer;
     private _dataAsReader: CodecReader | null;
 
@@ -135,7 +135,18 @@ export class EntityDefault implements Entity {
      * 设置元信息字符串
      * */
     metaStringSet(metaString: string): EntityDefault {
-        this._metaMap = new URLSearchParams(metaString);
+        this._metaMap = new Map<string, string>();
+
+        //此处要优化
+        if (metaString) {
+            for (const kvStr of metaString.split("&")) {
+                const idx = kvStr.indexOf('=');
+                if (idx > 0) {
+                    this._metaMap.set(kvStr.substring(0, idx), kvStr.substring(idx + 1));
+                }
+            }
+        }
+
         return this;
     }
 
@@ -145,9 +156,8 @@ export class EntityDefault implements Entity {
      * @param map 元信息字典
      */
     metaMapPut(map:any): EntityDefault {
-        if (map instanceof URLSearchParams) {
-            const tmp = map as URLSearchParams;
-            tmp.forEach((val, key, p) => {
+        if (map instanceof Map) {
+            map.forEach((val, key, p) => {
                 this.metaMap().set(key, val);
             })
         } else {
@@ -180,9 +190,9 @@ export class EntityDefault implements Entity {
     /**
      * 获取元信息字典
      */
-    metaMap(): URLSearchParams {
+    metaMap(): Map<string,string> {
         if (this._metaMap == null) {
-            this._metaMap = new URLSearchParams();
+            this._metaMap = new Map<string, string>();
         }
 
         return this._metaMap;
@@ -194,7 +204,8 @@ export class EntityDefault implements Entity {
      * @param name 名字
      */
     meta(name: string): string | null {
-        return this.metaMap().get(name);
+        let tmp = this.metaMap().get(name);
+        return tmp ? tmp : null;
     }
 
     /**

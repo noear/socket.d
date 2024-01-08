@@ -1,27 +1,37 @@
 import type {HandshakeInternal} from "./Handshake";
 import type {MessageInternal} from "./Message";
 import {EntityMetas} from "./Constants";
+import {StrUtils} from "../../utils/StrUtils";
 
 export class HandshakeDefault implements HandshakeInternal {
-    private _source: MessageInternal
-    private _url: URL
-    private _version: string | null
-    private _paramMap: Map<string, string>
+    private _source: MessageInternal;
+    private _url: string;
+    private _path: string;
+    private _version: string | null;
+    private _paramMap: Map<string, string>;
 
     constructor(source: MessageInternal) {
         let linkUrl = source.dataAsString();
-        if(linkUrl == null || linkUrl == ''){
+        if (linkUrl == null || linkUrl == '') {
             //兼容旧版本（@deprecated 2.2.2）
             linkUrl = source.event();
         }
 
         this._source = source;
-        this._url = new URL(linkUrl);
+        this._url = linkUrl;
         this._version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this._paramMap = new Map<string, string>();
 
-        for (const [k, v] of this._url.searchParams) {
-            this._paramMap.set(k, v);
+        let _uri = StrUtils.parseUri(linkUrl);
+        this._path = _uri.path;
+        const queryStr = _uri.query;
+        if (queryStr) {
+            for (const kvStr of queryStr.split("&")) {
+                const idx = kvStr.indexOf('=');
+                if (idx > 0) {
+                    this._paramMap.set(kvStr.substring(0, idx), kvStr.substring(idx + 1));
+                }
+            }
         }
     }
 
@@ -46,8 +56,12 @@ export class HandshakeDefault implements HandshakeInternal {
         this._paramMap.set(name, value);
     }
 
-    uri(): URL {
+    uri(): string {
         return this._url;
+    }
+
+    path(): string {
+        return this._path;
     }
 
     version(): string | null{

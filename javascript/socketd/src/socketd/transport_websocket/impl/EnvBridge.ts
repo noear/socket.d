@@ -22,16 +22,22 @@ export class EnvBridge {
             } else {
                 //如果是 Weixin 接口
                 var ua = window.navigator.userAgent.toLowerCase();
-                if(ua.indexOf("MicroMessenger")<0){
+                if (ua.indexOf("MicroMessenger") < 0) {
                     return Runtime.Browser;
-                }else{
+                } else {
                     return Runtime.Weixin;
                 }
             }
         } else if (typeof process !== 'undefined' && process.versions && process.versions.node) {
             return Runtime.NodeJs;
         } else {
-            return Runtime.Unknown;
+            // @ts-ignore
+            if (typeof uni != 'undefined' && uni.connectSocket) {
+                //如果有 Uniapp，优先 Uniapp 接口
+                return Runtime.Uniapp;
+            } else {
+                return Runtime.Unknown;
+            }
         }
     }
 

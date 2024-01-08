@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "dist/build",
     "module": "commonjs",
-    "target": "es2017",
+    "target": "es6",
 
     "declaration": true,
     "esModuleInterop": true,

@@ -1,4 +1,5 @@
 import {ConfigBase} from "../core/Config";
+import {StrUtils} from "../../utils/StrUtils";
 
 export class ClientConfig extends ConfigBase {
     //通讯架构（tcp, ws, udp）
@@ -7,7 +8,7 @@ export class ClientConfig extends ConfigBase {
     //连接地址
     private _linkUrl: string;
     private _url: string;
-    private _uri: URL;
+    private _host: string;
     private _port: number;
 
     //心跳间隔（毫秒）
@@ -28,10 +29,12 @@ export class ClientConfig extends ConfigBase {
         }
 
         this._url = url;
-        this._uri = new URL(url);
-        this._port = parseInt(this._uri.port);
-        this._schema = this._uri.protocol;
         this._linkUrl = "sd:" + url;
+
+        let _uri = StrUtils.parseUri(url);
+
+        this._port = parseInt(_uri.port);
+        this._schema = _uri.protocol;
 
         if (this._port < 0) {
             this._port = 8602;
@@ -60,13 +63,6 @@ export class ClientConfig extends ConfigBase {
     }
 
     /**
-     * 获取连接地址
-     */
-    getUri(): URL {
-        return this._uri;
-    }
-
-    /**
      * 获取链接地址
      */
     getLinkUrl(): string {
@@ -77,7 +73,7 @@ export class ClientConfig extends ConfigBase {
      * 获取连接主机
      */
     getHost(): string {
-        return this._uri.host;
+        return this._host;
     }
 
     /**

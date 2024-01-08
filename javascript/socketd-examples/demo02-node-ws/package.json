@@ -1,0 +1,8 @@
+{
+  "name": "@noear/socket.d",
+  "description": "@noear/socket.d typescript project",
+  "author": "noear",
+  "dependencies": {
+    "@noear/socket.d": "2.3.1-r14"
+  }
+}

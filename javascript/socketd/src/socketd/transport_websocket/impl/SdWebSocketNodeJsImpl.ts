@@ -22,22 +22,23 @@ export class SdWebSocketNodeJsImpl implements SdWebSocket {
     }
 
     close(): void {
+        this._real.close();
     }
 
     isClosed(): boolean {
-        return false;
+        return this._real.readyState == NodeWebSocket.CLOSED;
     }
 
     isClosing(): boolean {
-        return false;
+        return this._real.readyState == NodeWebSocket.CLOSING;
     }
 
     isConnecting(): boolean {
-        return false;
+        return this._real.readyState == NodeWebSocket.CONNECTING;
     }
 
     isOpen(): boolean {
-        return false;
+        return this._real.readyState == NodeWebSocket.OPEN;
     }
 
     onOpen() {

@@ -98,6 +98,8 @@ export class SocketD {
     static newEntity(data?: String | Blob | ArrayBuffer): EntityDefault {
         if (!data) {
             return new EntityDefault();
+        } else if (toString.call(data) === '[object String]') {
+            return new StringEntity(data.toString());
         } else if (data instanceof File) {
             return new FileEntity(data);
         } else if (data instanceof ArrayBuffer) {

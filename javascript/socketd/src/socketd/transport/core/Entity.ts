@@ -241,8 +241,8 @@ export class EntityDefault implements Entity {
      *
      * @param data 数据
      */
-    dataSet(data: Blob | ArrayBuffer): EntityDefault {
-        if (data instanceof Blob) {
+    dataSet(data): EntityDefault {
+        if (toString.call(data) === '[object Object]') {
             this._data = new BlobBuffer(data);
         } else {
             this._data = new ByteBuffer(data);

@@ -16,15 +16,17 @@ export class EnvBridge {
     private static getRuntime(): Runtime {
         if (typeof window != 'undefined') {
             // @ts-ignore
-            if (typeof wx != 'undefined' && wx.connectSocket) {
-                //如果有微信，优先微信接口
-                return Runtime.Weixin;
-                // @ts-ignore
-            } else if (typeof uni != 'undefined' && uni.connectSocket) {
+            if (typeof uni != 'undefined' && uni.connectSocket) {
                 //如果有 Uniapp，优先 Uniapp 接口
                 return Runtime.Uniapp;
             } else {
-                return Runtime.Browser;
+                //如果是 Weixin 接口
+                var ua = window.navigator.userAgent.toLowerCase();
+                if(ua.indexOf("MicroMessenger")<0){
+                    return Runtime.Browser;
+                }else{
+                    return Runtime.Weixin;
+                }
             }
         } else if (typeof process !== 'undefined' && process.versions && process.versions.node) {
             return Runtime.NodeJs;

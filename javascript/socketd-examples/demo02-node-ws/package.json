@@ -3,6 +3,6 @@
   "description": "SocketD Node Test Project",
   "author": "aoshiguchen",
   "dependencies": {
-    "@noear/socket.d": "2.3.1-r16"
+    "@noear/socket.d": "2.3.2-M1"
   }
 }

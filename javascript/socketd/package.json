@@ -1,6 +1,5 @@
 {
   "name": "@noear/socket.d",
-  "version": "2.3.1",
   "description": "@noear/socket.d typescript project",
   "author": "noear",
   "license": "Apache-2.0",

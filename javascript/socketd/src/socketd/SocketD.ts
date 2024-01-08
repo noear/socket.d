@@ -35,7 +35,7 @@ export class SocketD {
      * 框架版本号
      */
     static version(): string {
-        return "2.3.1";
+        return "2.3.2";
     }
 
     /**

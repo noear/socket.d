@@ -8,11 +8,12 @@ import {
 
 export class SdWebSocketBrowserImpl implements SdWebSocket {
     private _real: WebSocket;
-    private _connector: SdWebSocketListener;
-    constructor(url: string, connector: SdWebSocketListener) {
+    private _listener: SdWebSocketListener;
+    constructor(url: string, listener: SdWebSocketListener) {
         this._real = new WebSocket(url);
-        this._connector = connector;
+        this._listener = listener;
         this._real.binaryType = "arraybuffer";
+
         this._real.onopen = this.onOpen.bind(this);
         this._real.onmessage = this.onMessage.bind(this);
         this._real.onclose = this.onClose.bind(this);
@@ -37,24 +38,21 @@ export class SdWebSocketBrowserImpl implements SdWebSocket {
 
     onOpen(e: Event) {
         let evt = new SdWebSocketEventImpl();
-        // TODO event细节待完善
-        this._connector.onOpen(evt);
+        this._listener.onOpen(evt);
     }
 
     onMessage(e: MessageEvent) {
         let evt = new SdWebSocketMessageEventImpl(e.data);
-        // TODO event细节待完善
-        this._connector.onMessage(evt);
+        this._listener.onMessage(evt);
     }
 
     onClose(e: CloseEvent) {
         let evt = new SdWebSocketCloseEventImpl();
-        // TODO event细节待完善
-        this._connector.onClose(evt);
+        this._listener.onClose(evt);
     }
 
     onError(e) {
-        this._connector.onError(e);
+        this._listener.onError(e);
     }
 
     close(): void {

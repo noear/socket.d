@@ -1,6 +1,6 @@
 {
   "name": "@noear/socket.d",
-  "version": "2.3.1-r12",
+  "version": "2.3.1-r13",
   "description": "@noear/socket.d typescript project",
   "author": "noear",
   "main": "socket.d.js",
@@ -22,5 +22,9 @@
   "devDependencies": {
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

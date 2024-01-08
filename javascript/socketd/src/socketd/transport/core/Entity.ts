@@ -241,11 +241,11 @@ export class EntityDefault implements Entity {
      *
      * @param data 数据
      */
-    dataSet(data): EntityDefault {
-        if (toString.call(data) === '[object Object]') {
-            this._data = new BlobBuffer(data);
-        } else {
+    dataSet(data: Blob | ArrayBuffer): EntityDefault {
+        if (data instanceof ArrayBuffer) {
             this._data = new ByteBuffer(data);
+        } else {
+            this._data = new BlobBuffer(data);
         }
 
         return this;

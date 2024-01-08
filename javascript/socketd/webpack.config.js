@@ -11,6 +11,6 @@ module.exports = {
         filename: 'socket.d.js',
         // 输出文件都放到 dist 目录下
         path: path.resolve(__dirname, './dist/release'),
-        libraryTarget: 'commonjs2'
+        libraryTarget: 'window'//'commonjs2'
     }
 }

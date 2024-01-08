@@ -1,4 +1,4 @@
-const {SocketD}  = require('@noear/socket.d-node');
+const {SocketD}  = require('@noear/socket.d');
 
 async function main() {
     let clientSession = await SocketD.createClient('sd:ws://127.0.0.1:8602/?u=a&p=2')

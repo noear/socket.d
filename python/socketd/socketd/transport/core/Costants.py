@@ -87,6 +87,8 @@ class Constants:
     DEMANDS_SINGLE = 1
     # 多需求
     DEMANDS_MULTIPLE = 2
+    DEMANDS_ZERO = 0
+
 
 
 class EntityMetas:
@@ -106,3 +108,4 @@ class EntityMetas:
     META_RANGE_START = "Data-Range-Start"
     # 数据范围长度
     META_RANGE_SIZE = "Data-Range-Size"
+

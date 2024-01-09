@@ -12,11 +12,6 @@ class Stream(ABC):
         ...
 
     @abstractmethod
-    def is_single(self):
-        """是否单发接收"""
-        ...
-
-    @abstractmethod
     def is_done(self):
         """是否结束接收"""
         ...
@@ -37,5 +32,3 @@ class Stream(ABC):
 
     @abstractmethod
     def then_progress(self, on_progress: Callable[[bool, int, int], None]): ...
-
-

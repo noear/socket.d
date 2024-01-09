@@ -12,6 +12,7 @@ from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandl
 
 from socketd.transport.core.config.logConfig import logger
 from socketd.transport.core.stream.StreamManger import StreamManger
+from socketd.transport.core.stream.StreamMangerDefault import StreamMangerDefault
 
 
 class ConfigBase(Config):
@@ -36,8 +37,9 @@ class ConfigBase(Config):
         # ws最大传输大小
         self._ws_max_size = 2 ** 20
         self.__is_thread = False
+
         self.__logger_level = "INFO"
-        self._streamManger: Optional[StreamManger] = None
+        self._streamManger: Optional[StreamManger] = StreamMangerDefault(self)
 
     def client_mode(self):
         return self._client_mode

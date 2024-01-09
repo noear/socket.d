@@ -12,6 +12,7 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.exception.SocketdExecption import SocketDException
+from socketd.transport.core.stream.SendStreamImpl import SendStreamImpl
 from socketd.transport.core.stream.StreamRequest import StreamRequest
 from socketd.transport.core.stream.StreamSubscribe import StreamSubscribe
 from socketd.transport.utils.CompletableFuture import CompletableFuture
@@ -43,7 +44,9 @@ class SessionDefault(SessionBase, ABC):
 
     async def send(self, topic: str, content: Entity):
         message = MessageDefault().set_sid(self.generate_id()).set_event(topic).set_entity(content)
-        await self._channel.send(Frame(Flag.Message, message), None)
+
+        stream: SendStreamImpl = SendStreamImpl(message.get_sid())
+        await self._channel.send(Frame(Flag.Message, message), stream)
 
     async def send_and_request(self, event: str, content: Entity,
                                timeout: int = 100) -> Entity:
@@ -67,8 +70,6 @@ class SessionDefault(SessionBase, ABC):
                     f"event={event} sid={message.get_sid()} {str(e)}")
         except Exception as e:
             raise e
-        finally:
-            self._channel.remove_acceptor(message.get_sid())
 
     async def send_stream_and_request(self, event: str, content: Entity,
                                       consumer: Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Any, None],

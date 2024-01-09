@@ -18,7 +18,6 @@ from socketd.transport.core.Session import Session
 from socketd.transport.core.internal.SessionDefault import SessionDefault
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
-from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 S = TypeVar("S", bound=WebSocketCommonProtocol)

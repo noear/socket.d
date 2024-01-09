@@ -81,11 +81,11 @@ class Channel:
         ...
 
     @abstractmethod
-    async def send(self, frame: 'Frame', acceptor: 'Acceptor') -> None:
+    async def send(self, frame: 'Frame', stream: 'StreamInternal') -> None:
         ...
 
     @abstractmethod
-    async def retrieve(self, frame: Frame, on_error: Function) -> None:
+    async def retrieve(self, frame: Frame, stream: 'StreamInternal') -> None:
         ...
 
     @abstractmethod

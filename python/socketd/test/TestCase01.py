@@ -115,6 +115,7 @@ class TestCase01(unittest.TestCase):
                 raise e
 
     def test_Case10_clientCloseReconnect(self):
+        # todo 底层ws组件不适配当前逻辑，需要修改底层
         for i in range(len(TestCase01.schemas)):
             t = TestCase10_serverCloseReconnect(TestCase01.schemas[i], 9100 + i)
             try:

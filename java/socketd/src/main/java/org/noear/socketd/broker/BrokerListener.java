@@ -33,7 +33,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
 
     @Override
     public void onMessage(Session requester, Message message) throws IOException {
-        String atName = message.at();
+        String atName = message.atName();
 
         if (atName == null) {
             requester.sendAlarm(message, "Broker message require '@' meta");

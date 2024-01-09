@@ -1,3 +1,7 @@
+### 2.3.4
+* 调整 Entity:at() 更名为 Message:atName() （方便跨语言迁移）
+* 完成 wx 原生接口兼容测试
+
 ### 2.3.3
 
 * 完成 uniapp（h5,android,ios）, node.js 兼容测试

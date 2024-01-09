@@ -17,15 +17,15 @@ export class EnvBridge {
         if (typeof window != 'undefined') {
             // @ts-ignore
             if (typeof uni != 'undefined' && uni.connectSocket) {
-                //如果有 Uniapp，优先 Uniapp 接口
+                //如果有 Uniapp
                 return Runtime.Uniapp;
             } else {
-                //如果是 Weixin 接口
-                var ua = window.navigator.userAgent.toLowerCase();
-                if (ua.indexOf("MicroMessenger") < 0) {
-                    return Runtime.Browser;
-                } else {
+                // @ts-ignore
+                if (typeof wx != 'undefined' && wx.connectSocket && wx.request) {
+                    //如果是 Weixin 接口
                     return Runtime.Weixin;
+                } else {
+                    return Runtime.Browser;
                 }
             }
         } else if (typeof process !== 'undefined' && process.versions && process.versions.node) {

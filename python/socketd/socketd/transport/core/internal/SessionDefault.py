@@ -16,6 +16,8 @@ from socketd.transport.core.stream.StreamRequest import StreamRequest
 from socketd.transport.core.stream.StreamSubscribe import StreamSubscribe
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
+from loguru import logger
+
 
 class SessionDefault(SessionBase, ABC):
 
@@ -109,8 +111,11 @@ class SessionDefault(SessionBase, ABC):
 
     async def close(self):
         if self._channel.is_valid():
-            await self._channel.send_close()
-            await self._channel.close()
+            try:
+                await self._channel.send_close()
+            except Exception as e:
+                logger.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
+        await self._channel.close()
 
     def get_param(self, name: str):
         return self.get_handshake().get_param(name)

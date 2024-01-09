@@ -1,7 +1,7 @@
 import asyncio
 import unittest
 
-from socketd.transport.core.CompletableFuture import CompletableFuture
+from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 
 class CompletableFutureTest(unittest.TestCase):

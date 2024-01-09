@@ -32,7 +32,6 @@ class AIOServe(Serve):
                  ping_timeout: Optional[float] = 20, close_timeout: Optional[float] = None,
                  max_size: Optional[int] = 2 ** 20, max_queue: Optional[int] = 2 ** 5, read_limit: int = 2 ** 16,
                  write_limit: int = 2 ** 16,**kwargs: Any) -> None:
-        _loop: Optional[asyncio.AbstractEventLoop] = asyncio.get_event_loop()
         super().__init__(ws_handler, host, port, create_protocol=create_protocol, logger=logger,
                          compression=compression, origins=origins, extensions=extensions, subprotocols=subprotocols,
                          extra_headers=extra_headers, server_header=server_header, process_request=process_request,
@@ -40,7 +39,7 @@ class AIOServe(Serve):
                          ping_timeout=ping_timeout, close_timeout=close_timeout, max_size=max_size, max_queue=max_queue,
                          read_limit=read_limit, write_limit=write_limit, **kwargs)
         legacy_recv: bool = kwargs.pop("legacy_recv", False)
-
+        _loop = asyncio.get_event_loop()
         # Backwards compatibility: the loop parameter used to be supported.
 
         ws_server = WebSocketServer(logger=logger)

@@ -1,4 +1,7 @@
 import asyncio
+import typing
+from concurrent.futures import ThreadPoolExecutor
+from threading import Thread
 
 
 class AsyncUtil(object):
@@ -12,6 +15,18 @@ class AsyncUtil(object):
             _loop (EventLoop): 事件循环对象，用于控制协程的执行。
             fn (Coroutine): 需要运行的协程函数。
         """
+        # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         asyncio.set_event_loop(_loop)
         _loop.run_until_complete(fn)
+
+    @staticmethod
+    def thread_loop(core: typing.Coroutine, thread=None, pool: ThreadPoolExecutor=None):
+        loop = asyncio.new_event_loop()
+        if thread:
+            t = Thread(target=lambda: AsyncUtil.thread_handler(loop, loop.create_task(core)))
+            t.start()
+        if pool:
+            pool.submit(lambda: loop.run_until_complete(core))
+
+
 

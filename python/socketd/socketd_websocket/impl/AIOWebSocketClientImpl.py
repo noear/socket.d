@@ -11,18 +11,18 @@ from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
 
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.Frame import Frame
-from socketd.transport.client.Client import Client
 from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd_websocket import WsAioClient
 
 log = logger.opt()
 
 
 class AIOWebSocketClientImpl(WebSocketClientProtocol):
-    def __init__(self, client: Client, *args, **kwargs):
+    def __init__(self, client: WsAioClient, *args, **kwargs):
         WebSocketClientProtocol.__init__(self, *args, **kwargs)
         self.status_state = Flag.Unknown
         self.client = client
-        self.channel = ChannelDefault(self, client.get_config(), client.get_assistant())
+        self.channel = ChannelDefault(self, client)
         self.connect_read_thread: Thread | None = None
 
     def get_channel(self):
@@ -67,7 +67,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         if self.client.get_config().get_is_thread():
             loop = asyncio.new_event_loop()
             if self.connect_read_thread is None:
-                self.connect_read_thread = Thread(target=AsyncUtil.thread_handler, args=(loop,))
+                self.connect_read_thread = Thread(target=AsyncUtil.thread_handler, args=(loop, loop.create_task(_handler())))
                 self.connect_read_thread.start()
         else:
             # 否则，使用异步运行此协程，并在当前线程中运行。
@@ -99,7 +99,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 if frame.get_flag() == Flag.Close:
                     """服务端主动关闭"""
                     await self.close()
-                    log.debug("{sessionId} 主动退出",
+                    log.debug("{sessionId} 服务端主动关闭",
                               sessionId=self.channel.get_session().get_session_id())
         except CancelledError as c:
             # 超时自动推出
@@ -109,20 +109,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             raise e
 
     def on_close(self):
-        self.client.get_processor().on_close(self.channel.get_session())
+        self.client.get_processor().on_close(self.channel)
 
     def on_error(self, e):
-        self.client.get_processor().on_error(self.channel.get_session(), e)
+        self.client.get_processor().on_error(self.channel, e)
 
-
-# async def read_frame(protocol: WebSocketCommonProtocol, max_size):
-#     __data = bytearray()
-#     while True:
-#         _frame: frames.Frame = await protocol.read_data_frame(max_size=max_size)
-#         if _frame is None:
-#             return
-#         __data.extend(_frame.data)
-#         if _frame.fin:
-#             # 如果是最后一帧
-#             break
-#     return __data

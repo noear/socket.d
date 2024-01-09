@@ -1,109 +1,134 @@
+from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 from typing import Callable, Any
 
 from socketd.transport.core.Codec import Codec
+from socketd.transport.core.fragment import FragmentHandler
+from socketd.transport.core.stream.StreamManger import StreamManger
 
 
-class Config:
+class Config(ABC):
     # 流ID大小限制
 
+    @abstractmethod
     def client_mode(self) -> bool:
         """
         返回一个布尔值，指示配置是否为客户端模式。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_schema(self) -> str:
         """
         返回协议架构。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_charset(self) -> str:
         """
         返回字符集。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_codec(self) -> Codec:
         """
         返回编解码器。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_id_generator(self) -> Callable[[None], Any]:
         """
         返回ID生成器。
         """
-        pass
+        ...
 
-    def get_fragment_handler(self):
+    @abstractmethod
+    def get_fragment_handler(self) -> FragmentHandler.FragmentHandler:
         """
         返回分片处理器。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_ssl_context(self):
         """
         返回_s_sL上下文。
         """
-        pass
+        ...
 
     def get_executor(self) -> Executor:
         """
         返回执行器（第一优先级，某些底层可能不支持）。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_core_threads(self) -> int:
         """
         返回核心线程数（第二优先级）。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_max_threads(self) -> int:
         """
         返回最大线程数。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_reply_timeout(self) -> int:
         """
         返回答复超时时间（单位：毫秒）。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_max_requests(self) -> int:
         """
         返回允许的最大请求数。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_max_udp_size(self) -> int:
         """
         返回允许的最大_uDP包大小。
         """
-        pass
+        ...
 
+    @abstractmethod
     def get_request_timeout(self) -> float:
         """获取请求超时（单位：毫秒）"""
-        pass
+        ...
 
+    @abstractmethod
     def get_stream_timeout(self) -> float:
         """获取消息流超时（单位：毫秒）"""
-        pass
+        ...
 
+    @abstractmethod
     def get_role_name(self) -> str:
         """获取角色名"""
-        pass
+        ...
 
+    @abstractmethod
     def get_fragment_size(self) -> int:
         """获取分片大小"""
-        pass
+        ...
 
+    @abstractmethod
     def get_idle_timeout(self) -> float:
         """闲置超时"""
-        pass
+        ...
 
+    @abstractmethod
     def get_logger_level(self) -> str:
-        pass
+        ...
+
+    @abstractmethod
+    def get_stream_manger(self) -> StreamManger:
+        ...

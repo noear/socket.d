@@ -21,10 +21,6 @@ class Channel:
         ...
 
     @abstractmethod
-    def remove_acceptor(self, sid: str) -> None:
-        ...
-
-    @abstractmethod
     def is_valid(self) -> bool:
         ...
 

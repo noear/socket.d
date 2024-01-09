@@ -2,6 +2,8 @@ import asyncio
 from typing import Optional
 
 from websockets.client import WebSocketClientProtocol
+
+from socketd.transport.client.Client import Client
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.config.logConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
@@ -10,7 +12,7 @@ from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
 
 
 class WsAioClientConnector(ClientConnectorBase):
-    def __init__(self, client):
+    def __init__(self, client: Client):
         self.real: Optional[AIOWebSocketClientImpl] = None
         self.__loop = asyncio.get_event_loop()
         self.__stop = asyncio.Future()

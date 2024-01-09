@@ -1,27 +1,32 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Callable
 
 from socketd.transport.core.Message import Message
 
 
-class Steam(ABC):
+class Stream(ABC):
 
+    @abstractmethod
     def get_sid(self) -> str:
         """流ID"""
         ...
 
+    @abstractmethod
     def is_single(self):
         """是否单发接收"""
         ...
 
+    @abstractmethod
     def is_done(self):
         """是否结束接收"""
         ...
 
+    @abstractmethod
     def timeout(self):
         """超时设定（单位：毫秒）"""
         ...
 
+    @abstractmethod
     def then_error(self, onError: Callable[[Exception], None]):
         """
         异常发生
@@ -30,23 +35,7 @@ class Steam(ABC):
         """
         ...
 
+    @abstractmethod
+    def then_progress(self, on_progress: Callable[[bool, int, int], None]): ...
 
-class StreamInternal(Steam):
-    """流接收器"""
 
-    def on_accept(self, message: Message, onError) -> None:
-        """
-        接收答复流
-
-        Args:
-            message (Message): 消息对象
-            onError: 错误处理函数
-
-        Returns:
-            None
-        """
-        ...
-
-    def on_error(self, error: Exception):
-        """异常时"""
-        ...

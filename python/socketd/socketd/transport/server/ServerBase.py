@@ -42,7 +42,7 @@ class ServerBase(Server):
             self._processor = processor
         return self
 
-    def get_process(self):
+    def get_processor(self):
         return self._processor
 
     def listen(self, listener):

@@ -1,6 +1,6 @@
 from typing import Callable
 
-from socketd.transport.core.Steam import StreamInternal
+from socketd.transport.core.stream.StreamManger import StreamInternal
 
 
 class StreamBase(StreamInternal):

@@ -1,7 +1,7 @@
 import os
 import ssl
 
-from typing import Callable, Any
+from typing import Callable, Any, Optional
 from concurrent.futures import ThreadPoolExecutor
 
 from socketd.transport.core.Config import Config
@@ -11,6 +11,7 @@ from socketd.transport.core.Costants import Constants
 from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandlerDefault
 
 from socketd.transport.core.config.logConfig import logger
+from socketd.transport.core.stream.StreamManger import StreamManger
 
 
 class ConfigBase(Config):
@@ -36,6 +37,7 @@ class ConfigBase(Config):
         self._ws_max_size = 2 ** 20
         self.__is_thread = False
         self.__logger_level = "INFO"
+        self._streamManger: Optional[StreamManger] = None
 
     def client_mode(self):
         return self._client_mode
@@ -169,3 +171,7 @@ class ConfigBase(Config):
     def set_logger_level(self, __logger_level: str):
         self.__logger_level = __logger_level
         logger.setLevel(__logger_level)
+
+    def get_stream_manger(self) -> StreamManger:
+        return self._streamManger
+

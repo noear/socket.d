@@ -28,6 +28,7 @@ class Message(Entity, ABC):
     def get_entity(self) -> Entity:
         ...
 
+
+class MessageInternal(Message, ABC):
     @abstractmethod
-    def get_flag(self) -> int:
-        ...
+    def get_flag(self) -> int: ...

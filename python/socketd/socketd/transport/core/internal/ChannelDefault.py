@@ -1,105 +1,139 @@
 import asyncio
-from typing import TypeVar, Optional
+from typing import TypeVar, Optional, Callable
 from loguru import logger
 
 from websockets import WebSocketCommonProtocol
 
+from socketd.transport.core import Entity
+from socketd.transport.core.ChannelInternal import ChannelInternal
+from socketd.transport.core.ChannelSupporter import ChannelSupporter
+from socketd.transport.core.Message import MessageInternal
+from socketd.transport.core.Processor import Processor
+from socketd.transport.core.stream.Stream import Stream
+from socketd.transport.core.stream.StreamManger import StreamManger, StreamInternal
 from socketd.transport.utils.AssertsUtil import AssertsUtil
 from socketd.transport.core.internal.ChannelBase import ChannelBase
-from socketd.transport.core.Costants import Function, Flag, EntityMetas
+from socketd.transport.core.Costants import Function, Flag, EntityMetas, Constants
 from socketd.transport.core.Session import Session
 from socketd.transport.core.internal.SessionDefault import SessionDefault
-from socketd.transport.core.Config import Config
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
-from socketd.transport.core.ChannelAssistant import ChannelAssistant
-from socketd.transport.core.stream.StreamBase import StreamBase
+from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 S = TypeVar("S", bound=WebSocketCommonProtocol)
 
-_acceptorMap = {}
 
+class ChannelDefault(ChannelBase, ChannelInternal):
 
-class ChannelDefault(ChannelBase):
-
-    def __init__(self, source: S, config: Config, assistant: ChannelAssistant):
-        ChannelBase.__init__(self, config)
-        self.source: WebSocketCommonProtocol = source
-        self.assistant = assistant
-        self.acceptorMap: dict[str:StreamBase] = dict()
-        self.session: Optional[Session] = None
-
-    def remove_acceptor(self, sid: str):
-        if sid in self.acceptorMap:
-            self.acceptorMap.pop(sid)
+    def __init__(self, source: S, supporter: ChannelSupporter[S]):
+        ChannelBase.__init__(self, supporter.get_config())
+        self.onOpenFuture: Optional[CompletableFuture] = None
+        self._source: WebSocketCommonProtocol = source
+        self._assistant = supporter.get_assistant()
+        self._processor: Optional[Processor] = supporter.get_processor()
+        self._streamManger: StreamManger = supporter.get_config().get_stream_manger()
+        self._session: Optional[Session] = None
 
     def is_valid(self) -> bool:
-        return self.assistant.is_valid(self.source)
+        return self.is_closed() == 0 and self._assistant.is_valid(self._source)
 
     def get_remote_address(self) -> str:
-        return self.assistant.get_remote_address(self.source)
+        return self._assistant.get_remote_address(self._source)
 
     def get_local_address(self) -> str:
-        return self.assistant.get_local_address(self.source)
+        return self._assistant.get_local_address(self._source)
 
-    async def send(self, frame: Frame, acceptor: StreamBase) -> None:
+    async def send(self, frame: Frame, stream: StreamInternal) -> None:
         AssertsUtil.assert_closed(self)
-        if frame.get_message() is not None:
-            message = frame.get_message()
-            with self:
-                if acceptor is not None:
-                    self.acceptorMap[message.get_sid()] = acceptor
+        if self.get_config().client_mode():
+            logger.debug(f"C-SEN:{frame}")
+        else:
+            logger.debug(f"S-SEN:{frame}")
+        with self:
+            if frame.get_message() is not None:
+                message = frame.get_message()
+                # 注册流接收器
+                if stream is not None:
+                    self._streamManger.add_stream(message.get_sid(), stream)
+
+                # 实体进行分片
                 if message.get_entity() is not None:
                     if message.get_entity().get_data_size() > self.get_config().get_fragment_size():
                         message.get_meta_map()[EntityMetas.META_DATA_LENGTH] = str(message.get_data_size())
 
-                        fragmentIndex = 0
-                        while True:
-                            fragmentIndex += 1
-                            fragmentEntity = self.get_config().get_fragment_handler().nextFragment(self,
-                                                                                                   fragmentIndex,
-                                                                                                   message)
-                            if fragmentEntity is not None:
-                                fragmentFrame = Frame(frame.get_flag(), MessageDefault()
-                                                      .set_flag(frame.get_flag())
-                                                      .set_sid(message.get_sid())
-                                                      .set_entity(fragmentEntity))
-                                await self.assistant.write(self.source, fragmentFrame)
-                            else:
-                                return
-                    else:
-                        await self.assistant.write(self.source, frame)
-                        return
+                    def __consumer(fragmentEntity: Entity):
+                        fragmentFrame: Frame
+                        if isinstance(fragmentEntity, MessageInternal):
+                            fragmentFrame = Frame(frame.get_flag(), fragmentEntity)
+                        else:
+                            fragmentFrame = Frame(frame.get_flag(), MessageDefault()
+                                                  .set_flag(frame.get_flag())
+                                                  .set_sid(message.get_sid())
+                                                  .set_entity(fragmentEntity))
+                        # 携程中调用普通，然后调用携程
+                        asyncio.run_coroutine_threadsafe(self._assistant.write(self._source, fragmentFrame),
+                                                         asyncio.get_event_loop())
 
-        await self.assistant.write(self.source, frame)
+                    self.get_config().get_fragment_handler().split_fragment(self,
+                                                                            stream, message,
+                                                                            __consumer)
+                return
+            await self._assistant.write(self._source, frame)
+            if stream:
+                stream.on_progress(True, 1, 1)
 
-    async def retrieve(self, frame: Frame, onError: Function) -> None:
-        acceptor: StreamBase = self.acceptorMap.get(frame.get_message().get_sid())
+    async def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
+        """接收（接收答复帧）"""
+        if stream:
+            if stream.demands() < Constants.DEMANDS_MULTIPLE or frame.get_flag() == Flag.ReplyEnd:
+                # 如果是单收或者答复结束，则移除流接收器
+                self._streamManger.remove_stream(frame.get_message().get_sid())
 
-        if acceptor is not None:
-            if acceptor.is_single() or frame.get_flag() == Flag.ReplyEnd:
-                self.acceptorMap.pop(frame.get_message().get_sid())
-            await asyncio.get_event_loop().run_in_executor(self.get_config().get_executor(),
-                                                           lambda _m: acceptor.on_accept(_m, onError),
-                                                           frame.get_message())
+            if stream.demands() < Constants.DEMANDS_MULTIPLE:
+                stream.on_reply(frame.get_message())
+            else:
+                await asyncio.get_event_loop().run_in_executor(self.get_config().get_executor(),
+                                                               lambda _m: stream.on_reply(_m),
+                                                               frame.get_message())
         else:
             logger.debug(
                 f"{self.get_config().get_role_name()} stream not found, sid={frame.get_message().get_sid()}, sessionId={self.get_session().get_session_id()}")
 
     def get_session(self) -> Session:
-        if self.session is None:
-            self.session = SessionDefault(self)
+        if self._session is None:
+            self._session = SessionDefault(self)
 
-        return self.session
+        return self._session
 
     async def close(self, code: int = 1000,
                     reason: str = "", ):
-        await super().close()
-        self.acceptorMap.clear()
-        await self.assistant.close(self.source)
+        try:
+            await super().close()
+            await self._assistant.close(self._source)
+        except Exception as e:
+            logger.warning(f"{self.get_config().get_role_name()} channel close error, "
+                           f"sessionId={self.get_session().get_session_id()} : {e}")
+
+    def set_session(self, __session: Session):
+        self._session = __session
+
+    def get_stream(self, sid: str) -> Stream:
+        return self._streamManger.get_stream(sid)
+
+    def on_open_future(self, future: Callable[[bool, Exception], None]):
+        self.onOpenFuture = CompletableFuture(future)
+        return self.onOpenFuture
+
+    def do_open_future(self, is_ok: bool, e: Exception):
+        if is_ok:
+            self.onOpenFuture.set_result(is_ok)
+        else:
+            self.onOpenFuture.cancel()
+            raise e
 
     def on_error(self, error: Exception):
-        pass
+        self._processor.on_error(self, error)
 
     def reconnect(self):
         pass

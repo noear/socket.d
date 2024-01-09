@@ -43,14 +43,14 @@ class EventListener(Listener):
 
     async def on_message(self, session: Session, message: Message):
         if self._do_on_message_handler:
-            self._do_on_open_handler(session)
+            self._do_on_message_handler(session, message)
 
         if message_handler := self._do_on_message_routing.get(message.get_event()):
             message_handler(session, message)
 
     def on_close(self, session: Session):
-        if self._do_on_open_handler:
-            self._do_on_open_handler(session)
+        if self._do_on_close_handler:
+            self._do_on_close_handler(session)
 
     def on_error(self, session: Session, error: Exception):
         if self._do_on_error_handler:

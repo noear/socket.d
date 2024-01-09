@@ -12,9 +12,12 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.exception.SocketdExecption import SocketDException
-from socketd.transport.core.stream.SendStreamImpl import SendStreamImpl
+from socketd.transport.core.stream.RequestStream import RequestStream
+from socketd.transport.core.stream.SendStream import SendStream
 from socketd.transport.core.stream.StreamRequest import StreamRequest
 from socketd.transport.core.stream.StreamSubscribe import StreamSubscribe
+
+from socketd.transport.core.stream.SubscribeStream import SubscribeStream
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 from loguru import logger
@@ -45,20 +48,21 @@ class SessionDefault(SessionBase, ABC):
     async def send(self, topic: str, content: Entity):
         message = MessageDefault().set_sid(self.generate_id()).set_event(topic).set_entity(content)
 
-        stream: SendStreamImpl = SendStreamImpl(message.get_sid())
+        stream: SendStream = SendStream(message.get_sid())
         await self._channel.send(Frame(Flag.Message, message), stream)
+        return stream
 
     async def send_and_request(self, event: str, content: Entity,
-                               timeout: int = 100) -> Entity:
+                               timeout: int = 100) -> RequestStream:
 
         if timeout < 100:
             timeout = self._channel.get_config().get_reply_timeout()
-        future: CompletableFuture[Entity] = CompletableFuture()
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         try:
+            stream = RequestStream(message.get_sid(), timeout)
             await self._channel.send(Frame(Flag.Request, message),
-                                     StreamRequest(message.get_sid(), timeout, future))
-            return await future.get(timeout)
+                                     RequestStream(message.get_sid(), timeout))
+            return stream
         except asyncio.TimeoutError as e:
             if self._channel.is_valid():
                 raise SocketDException(f"Request reply timeout>{timeout} "
@@ -89,9 +93,9 @@ class SessionDefault(SessionBase, ABC):
 
     async def send_and_subscribe(self, event: str, content: Entity, consumer: Callable[[Entity], Any], timeout: int):
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
-        streamAcceptor = StreamSubscribe(message.get_sid(), timeout, consumer)
-        await self._channel.send(Frame(Flag.Subscribe, message), streamAcceptor)
-        return streamAcceptor
+        stream = SubscribeStream(message.get_sid(), timeout)
+        await self._channel.send(Frame(Flag.Subscribe, message), SubscribeStream)
+        return stream
 
     async def reply(self, from_msg: Message, content: Entity):
         await self._channel.send(Frame(Flag.Reply,

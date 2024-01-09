@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Dict, Optional, Any
 from io import BytesIO
 
@@ -28,7 +29,8 @@ class Entity:
         raise NotImplementedError
 
 
-
-class Reply:
+class Reply(Entity, ABC):
 
     def is_end(self) -> bool: ...
+
+    def get_sid(self): ...

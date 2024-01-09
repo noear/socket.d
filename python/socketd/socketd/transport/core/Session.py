@@ -6,6 +6,9 @@ from socket import gethostbyaddr
 from socketd.transport.core import Handshake
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Entity import Entity
+from socketd.transport.core.stream.RequestStream import RequestStream
+from socketd.transport.core.stream.SendStream import SendStream
+from socketd.transport.core.stream.SubscribeStream import SubscribeStream
 
 
 class Session(abc.ABC):
@@ -53,11 +56,11 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def send(self, event: str, content: Entity) -> None:
+    async def send(self, event: str, content: Entity) -> SendStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_request(self, event: str, content: Entity, timeout: int) -> Entity:
+    async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
         ...
 
     @abc.abstractmethod
@@ -80,7 +83,7 @@ class Session(abc.ABC):
 
     @abc.abstractmethod
     async def send_and_subscribe(self, topic: str, content: Entity, consumer: Callable[[Entity], Any],
-                                 timeout: int) -> None:
+                                 timeout: int) -> SubscribeStream:
         ...
 
     @abc.abstractmethod

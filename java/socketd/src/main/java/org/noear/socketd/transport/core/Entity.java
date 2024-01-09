@@ -11,14 +11,6 @@ import java.util.Map;
  * @since 2.0
  */
 public interface Entity {
-    /**
-     * at
-     *
-     * @since 2.1
-     */
-    default String at() {
-        return meta("@");
-    }
 
     /**
      * 获取元信息字符串（queryString style）

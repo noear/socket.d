@@ -3,7 +3,7 @@
 		<!-- Table 1 -->
 
 		<view style="text-align: center">
-			<h2>socket.d uniapp demo</h2>
+			<h2>socket.d js uniapp demo</h2>
 		</view>
 		<hr />
 		<form class="form">
@@ -44,7 +44,7 @@
 				<button class="btn" @click="unpush">取消推送</button>
 				<!-- <button class="btn" @click="uploadFile">上传文件</button> -->
 				<button class="btn" @click="downloadFile">下载文件</button>
-				<button class="btn" @click="uploadData">提交大文件</button>
+				<button class="btn" @click="uploadData">提交大文本</button>
 			</view>
 		</form>
 	</div>
@@ -88,7 +88,7 @@ export default {
 				.config((c) => c.fragmentSize(1024 * 1024))
 				.listen(
 					SocketD.newEventListener().doOnMessage((s, m) => {
-						appendToMessageList('收到推送', m.dataAsString());
+						this.appendToMessageList('收到推送', m.dataAsString());
 					})
 				)
 				.open();
@@ -160,8 +160,6 @@ export default {
 				});
 			} else {
 				this.open(() => {
-					debugger
-
 					this.openBtnText = '关闭';
 					this.isOpen = true;
 				});
@@ -218,7 +216,7 @@ export default {
 			}
 		},
 		downloadFile() {
-			if (isOpen) {
+			if (this.isOpen) {
 				this.appendToMessageList('下载文件', '...');
 				this.clientSession
 					.sendAndRequest('/download', SocketD.newEntity())
@@ -254,7 +252,7 @@ export default {
 			}
 		},
 		uploadData() {
-			if (isOpen) {
+			if (this.isOpen) {
 				const strSize = 1024 * 1024 * 10;
 				let str = '';
 				while (str.length < strSize) {
@@ -341,11 +339,9 @@ export default {
 
 .btn {
 	/* width: 200upx; */
-	width: 23%;
-	margin: 0 0.5%;
-	/* height: 200px; */
-	/* background-color: red; */
-	margin-bottom: 20px;
+	width: 46%;
+	margin: 0 2%;
+	margin-bottom: 10px;
 }
 
 .content {

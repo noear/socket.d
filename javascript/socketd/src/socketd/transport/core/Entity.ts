@@ -184,7 +184,15 @@ export class EntityDefault implements Entity {
      * 获取元信息字符串（queryString style）
      */
     metaString(): string {
-        return this.metaMap().toString();
+        let str = "";
+        this.metaMap().forEach((val, key,p) => {
+            str += `${key}=${val}&`;
+        });
+        if (str.length > 0) {
+            return str.substring(0, str.length - 1);
+        } else {
+            return str;
+        }
     }
 
     /**

@@ -1,0 +1,8 @@
+{
+  "name": "demo03-uniapp-ws",
+  "description": "SocketD Uniapp Test Project",
+  "author": "ZhangQi",
+  "dependencies": {
+    "@noear/socket.d": "2.3.3"
+  }
+}

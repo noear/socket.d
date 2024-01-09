@@ -20,7 +20,7 @@ public class RequestStreamImpl extends StreamBase<RequestStream> implements Requ
     private final CompletableFuture<Reply> future;
 
     public RequestStreamImpl(String sid, long timeout) {
-        super(sid, Constants.DEMANDS_SIGNLE, timeout);
+        super(sid, Constants.DEMANDS_SINGLE, timeout);
         this.future = new CompletableFuture<>();
     }
 

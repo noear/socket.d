@@ -79,10 +79,10 @@ public interface Constants {
     /**
      * 单需求
      */
-    int DEMANDS_SIGNLE = 1;
+    int DEMANDS_SINGLE = 1;
 
     /**
-     * 多需要
+     * 多需求
      */
     int DEMANDS_MULTIPLE = 2;
 }

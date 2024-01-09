@@ -100,7 +100,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                         message.putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(message.dataSize()));
                     }
 
-                    getConfig().getFragmentHandler().spliFragment(this, stream, message, fragmentEntity -> {
+                    getConfig().getFragmentHandler().splitFragment(this, stream, message, fragmentEntity -> {
                         //主要是 sid 和 entity
                         Frame fragmentFrame;
                         if (fragmentEntity instanceof MessageInternal) {

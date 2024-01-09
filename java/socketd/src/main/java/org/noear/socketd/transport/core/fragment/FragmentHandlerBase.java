@@ -22,7 +22,7 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
      * @param message 总包消息
      */
     @Override
-    public void spliFragment(Channel channel, StreamInternal stream, MessageInternal message, IoConsumer<Entity> consumer) throws IOException {
+    public void splitFragment(Channel channel, StreamInternal stream, MessageInternal message, IoConsumer<Entity> consumer) throws IOException {
         if (message.dataSize() > channel.getConfig().getFragmentSize()) {
             int fragmentTotal = message.dataSize() / channel.getConfig().getFragmentSize();
             if (message.dataSize() % channel.getConfig().getFragmentSize() > 0) {

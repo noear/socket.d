@@ -9,14 +9,13 @@ import {
 export class SdWebSocketUniappImpl implements SdWebSocket {
     private _real: any;
     private _state: SdWebSocketState;
-    private _connector: SdWebSocketListener;
+    private _listener: SdWebSocketListener;
 
-    constructor(url: string, connector: SdWebSocketListener) {
+    constructor(url: string, listener: SdWebSocketListener) {
         this._state = SdWebSocketState.CONNECTING;
         // @ts-ignore
-        this._real = uni.connectSocket({url: url});//SocketTask
-        this._connector = connector;
-        this._real.binaryType = "arraybuffer";
+        this._real = uni.connectSocket({url: url, success:(r)=>{}});//SocketTask
+        this._listener = listener;
 
         this._real.onOpen(this.onOpen.bind(this));
         this._real.onMessage(this.onMessage.bind(this));
@@ -43,22 +42,22 @@ export class SdWebSocketUniappImpl implements SdWebSocket {
     onOpen(e: Event) {
         let evt = new SdWebSocketEventImpl();
         this._state = SdWebSocketState.OPEN;
-        this._connector.onOpen(evt);
+        this._listener.onOpen(evt);
     }
 
     onMessage(e: MessageEvent) {
         let evt = new SdWebSocketMessageEventImpl(e.data);
-        this._connector.onMessage(evt);
+        this._listener.onMessage(evt);
     }
 
     onClose(e: CloseEvent) {
         let evt = new SdWebSocketCloseEventImpl();
         this._state = SdWebSocketState.CLOSED;
-        this._connector.onClose(evt);
+        this._listener.onClose(evt);
     }
 
     onError(e) {
-        this._connector.onError(e);
+        this._listener.onError(e);
     }
 
     close(): void {

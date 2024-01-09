@@ -130,7 +130,7 @@ function mainDo() {
             const file1 = document.getElementById("file").files[0];
 
             appendToMessageList('发送文件并请求', file1.name);
-            clientSession.sendAndRequest("/upload", SocketD.newEntity(file1)).thenReply(reply => {
+            clientSession.sendAndRequest("/upload", SocketD.newEntity(file1), 100_000).thenReply(reply => {
                 console.log('reply', reply);
                 appendToMessageList('答复', reply.dataAsString());
             }).thenProgress((isSend, val, max) => {

@@ -17,7 +17,12 @@ export interface Handshake {
      *
      * @return tcp://192.168.0.1/path?user=1&path=2
      */
-    uri(): URL;
+    uri(): string;
+
+    /**
+     * 获取路径
+     * */
+    path(): string;
 
     /**
      * 获取参数集合

@@ -1,3 +1,7 @@
+### 2.3.3
+
+* 完成 uniapp（h5,android,ios）, node.js 兼容测试
+
 ### 2.3.1
 * 添加 range 元信息快捷方式
 

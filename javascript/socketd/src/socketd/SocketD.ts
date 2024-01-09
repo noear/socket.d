@@ -29,17 +29,13 @@ export class SocketD {
         if (typeof window != 'undefined') {
             window["SocketD"] = SocketD;
         }
-
-        if (typeof module != 'undefined' && module.exports) {
-            module.exports = SocketD;
-        }
     }
 
     /**
      * 框架版本号
      */
     static version(): string {
-        return "2.3.1";
+        return "2.3.3";
     }
 
     /**
@@ -102,6 +98,8 @@ export class SocketD {
     static newEntity(data?: String | Blob | ArrayBuffer): EntityDefault {
         if (!data) {
             return new EntityDefault();
+        } else if (toString.call(data) === '[object String]') {
+            return new StringEntity(data.toString());
         } else if (data instanceof File) {
             return new FileEntity(data);
         } else if (data instanceof ArrayBuffer) {

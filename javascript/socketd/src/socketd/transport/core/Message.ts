@@ -209,7 +209,7 @@ export class MessageDefault implements MessageInternal {
         return this._entity!.metaString();
     }
 
-    metaMap(): URLSearchParams {
+    metaMap(): Map<string,string> {
         return this._entity!.metaMap();
     }
 

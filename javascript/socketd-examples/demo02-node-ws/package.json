@@ -1,0 +1,8 @@
+{
+  "name": "demo02-node-ws",
+  "description": "SocketD Node Test Project",
+  "author": "aoshiguchen",
+  "dependencies": {
+    "@noear/socket.d": "2.3.3"
+  }
+}

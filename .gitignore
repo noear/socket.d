@@ -16,6 +16,7 @@ target/
 *.ipr
 *.log
 *.flattened-pom.xml
+*/package-lock.json
 
 ### NetBeans ###
 nbproject/private/
@@ -27,6 +28,7 @@ nbdist/
 obj/
 bin/
 node_modules/
+.hbuilderx/
 
 ### Mac files ###
 *.DS_Store

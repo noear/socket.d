@@ -60,7 +60,7 @@ export class SessionDefault extends SessionBase {
      */
     path(): string {
         if (this._pathNew == null) {
-            return this.handshake().uri().pathname;
+            return this.handshake().path();
         } else {
             return this._pathNew;
         }

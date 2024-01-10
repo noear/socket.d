@@ -7,7 +7,7 @@ type Config struct {
 	Debug    bool
 }
 
-func (c *Config) WithSchema(schema string) {
+func (c *Config) WithSchema(schema string) *Config {
 	// if strings.HasPrefix(schema, "sd:") {
 	// 	schema = schema[3:]
 	// }
@@ -16,6 +16,7 @@ func (c *Config) WithSchema(schema string) {
 	c.Protocol = "tcp"
 	c.Host = "0.0.0.0"
 	c.Port = 8602
+	return c
 }
 
 func (c *Config) DebugMode() {

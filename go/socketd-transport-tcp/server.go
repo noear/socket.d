@@ -4,79 +4,84 @@ import (
 	"fmt"
 	"net"
 
+	"socketd"
 	"socketd/transport/core"
 	"socketd/transport/core/impl"
 	"socketd/transport/server"
 )
 
-type Server struct {
-	*server.ServerBase
+type TcpServer struct {
+	*server.ServerBase[*net.TCPConn] //继承ServerBase
 
-	codec    core.Codec
-	connChan chan net.Conn
+	cfg      *server.Config
+	listener *net.TCPListener
+	connChan chan *net.TCPConn
 }
 
-func (s *Server) GetTitle() string {
-	return "tcp"
+func NewTcpServer(cfg *server.Config) *TcpServer {
+	var s = &TcpServer{}
+	s.cfg = cfg
+	s.ServerBase = server.NewServerBase[*net.TCPConn](cfg)
+	return s
 }
 
-func (s *Server) Debug() {
-	s.GetConfig().Debug = true
+func (s *TcpServer) GetTitle() string {
+	return "tcp/go-tcp/" + (&socketd.SocketD{}).Version()
 }
 
-func (s *Server) Start() (err error) {
-	// 启动前初始化
-	if s.codec == nil {
-		s.codec = &impl.CodecDefault{}
-	}
-	if s.connChan == nil {
-		s.connChan = make(chan net.Conn)
-	}
+func (s *TcpServer) CreateServer() (err error) {
+	return
+}
 
-	go s.HandleConn()
+func (s *TcpServer) GetConfig() *server.Config {
+	return s.cfg
+}
 
-	var cfg = s.GetConfig()
-
-	tcpAddr, err := net.ResolveTCPAddr(cfg.Protocol, fmt.Sprintf("%v:%v", cfg.Host, cfg.Port))
+func (s *TcpServer) Start() (err error) {
+	tcpAddr, err := net.ResolveTCPAddr(s.cfg.Protocol, fmt.Sprintf("%v:%v", s.cfg.Host, s.cfg.Port))
 	if err != nil {
 		return err
 	}
-	listener, err := net.ListenTCP(cfg.Protocol, tcpAddr)
-	if err != nil {
-		return err
-	}
-	defer listener.Close()
+	s.listener, err = net.ListenTCP(s.cfg.Protocol, tcpAddr)
 
-	// 接受连接并放到 channel 中
+	s.connChan = make(chan *net.TCPConn)
+	go s.Receive()
+
 	for {
-		conn, err := listener.AcceptTCP()
+		conn, err := s.listener.AcceptTCP()
 		if err != nil {
-			fmt.Println("accept error:", err)
+			// TODO 日志记录
+			fmt.Println(err)
 			continue
 		}
 		s.connChan <- conn
 	}
 }
 
-func (s *Server) HandleConn() {
-	// 处理连接
+func (s *TcpServer) Receive() {
+	var codec = s.ConfigBase.GetCodec()
+
 	for conn := range s.connChan {
-		go func(conn net.Conn) {
+		go func(conn *net.TCPConn) {
 			// 处理来自 conn 的数据
 			defer conn.Close()
 
 			for {
-				// 读缓冲暂定1024
-				buf := make([]byte, 1024)
+				// 读缓冲
+				buf := make([]byte, s.ConfigBase.GetReadBufferSize())
 				n, err := conn.Read(buf)
 				if err != nil {
+					// TODO 日志记录
+					fmt.Println(err)
 					return
 				}
 
 				var frame = new(core.Frame)
-				s.codec.Decode(frame, buf[:n])
-
+				codec.Decode(frame, buf[:n])
 				fmt.Println("Frame", frame)
+
+				var channel = impl.NewChannel()
+				s.GetProcessor().OnReceive()
 
 				// var conn2 = impl.NewChannel()
 				// var session = new(core.Session)
@@ -86,6 +91,9 @@ func (s *Server) HandleConn() {
 	}
 }
 
-func (s *Server) Receive(channel core.ChannelInternal, conn net.Conn) {
-
+func (s *TcpServer) Close() {
+	if err := s.listener.Close(); err != nil {
+		// TODO 日志记录
+		fmt.Println(err)
+	}
 }

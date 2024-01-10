@@ -104,7 +104,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
      */
     protected void forwardToSession(Session requester, Message message, Session responder) throws IOException {
         if (message.isRequest()) {
-            responder.sendAndRequest(message.event(), message).thenReply(reply -> {
+            responder.sendAndRequest(message.event(), message, -1).thenReply(reply -> {
                 if (requester.isValid()) {
                     requester.reply(message, reply);
                 }

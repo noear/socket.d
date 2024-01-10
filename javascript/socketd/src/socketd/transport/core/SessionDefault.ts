@@ -131,7 +131,11 @@ export class SessionDefault extends SessionBase {
             timeout = 0;
         }
 
-        if (timeout < 10) {
+        if (timeout < 0) {
+            timeout = this._channel.getConfig().getStreamTimeout();
+        }
+
+        if (timeout == 0) {
             timeout = this._channel.getConfig().getRequestTimeout();
         }
 
@@ -159,7 +163,7 @@ export class SessionDefault extends SessionBase {
             timeout = 0;
         }
 
-        if (timeout < 10) {
+        if (timeout <= 0) {
             timeout = this._channel.getConfig().getStreamTimeout();
         }
 

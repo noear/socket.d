@@ -18,20 +18,20 @@ import java.util.function.Consumer;
  */
 public class EventListener implements Listener {
     private IoConsumer<Session> doOnOpenHandler;
-    private IoBiConsumer<Session, Message> doOnMessageHandler;
+    private MessageHandler doOnMessageHandler;
     private Consumer<Session> doOnCloseHandler;
     private BiConsumer<Session, Throwable> doOnErrorHandler;
 
     /**
      * 事件路由选择器
      * */
-    private final RouteSelector<IoBiConsumer<Session, Message>> eventRouteSelector;
+    private final RouteSelector<MessageHandler> eventRouteSelector;
 
     public EventListener(){
         eventRouteSelector = new RouteSelectorDefault<>();
     }
 
-    public EventListener(RouteSelector<IoBiConsumer<Session, Message>> routeSelector){
+    public EventListener(RouteSelector<MessageHandler> routeSelector){
         eventRouteSelector = routeSelector;
     }
 
@@ -41,7 +41,7 @@ public class EventListener implements Listener {
         return this;
     }
 
-    public EventListener doOnMessage(IoBiConsumer<Session, Message> onMessage) {
+    public EventListener doOnMessage(MessageHandler onMessage) {
         this.doOnMessageHandler = onMessage;
         return this;
     }
@@ -56,7 +56,7 @@ public class EventListener implements Listener {
         return this;
     }
 
-    public EventListener doOn(String event, IoBiConsumer<Session, Message> handler) {
+    public EventListener doOn(String event, MessageHandler handler) {
         eventRouteSelector.put(event, handler);
         return this;
     }
@@ -74,12 +74,12 @@ public class EventListener implements Listener {
     @Override
     public void onMessage(Session session, Message message) throws IOException {
         if (doOnMessageHandler != null) {
-            doOnMessageHandler.accept(session, message);
+            doOnMessageHandler.handle(session, message);
         }
 
-        IoBiConsumer<Session, Message> messageHandler = eventRouteSelector.select(message.event());
+        MessageHandler messageHandler = eventRouteSelector.select(message.event());
         if (messageHandler != null) {
-            messageHandler.accept(session, message);
+            messageHandler.handle(session, message);
         }
     }
 

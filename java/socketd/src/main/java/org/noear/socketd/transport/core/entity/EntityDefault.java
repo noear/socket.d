@@ -29,7 +29,7 @@ public class EntityDefault implements Entity {
     private int dataSize = 0;
 
     /**
-     * At
+     * At player name
      */
     public EntityDefault at(String name) {
         metaPut("@", name);

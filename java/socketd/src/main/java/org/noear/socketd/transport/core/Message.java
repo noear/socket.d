@@ -8,16 +8,14 @@ package org.noear.socketd.transport.core;
  * @since 2.0
  */
 public interface Message extends Entity{
-
     /**
-     * 是否为请求
+     * At player name
+     *
+     * @since 2.3
      */
-    boolean isRequest();
-
-    /**
-     * 是否为订阅
-     */
-    boolean isSubscribe();
+    default String atName() {
+        return meta("@");
+    }
 
     /**
      * 范围开始
@@ -32,6 +30,17 @@ public interface Message extends Entity{
     default int rangeSize(){
         return metaAsInt(EntityMetas.META_RANGE_SIZE);
     }
+
+
+    /**
+     * 是否为请求
+     */
+    boolean isRequest();
+
+    /**
+     * 是否为订阅
+     */
+    boolean isSubscribe();
 
     /**
      * 获取消息流Id（用于消息交互、分片）

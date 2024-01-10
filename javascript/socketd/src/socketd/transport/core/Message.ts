@@ -13,14 +13,11 @@ import type {Buffer} from "./Buffer";
  */
 export interface Message extends Entity {
     /**
-     * 是否为请求
+     * At player name
+     *
+     * @since 2.1
      */
-    isRequest(): boolean;
-
-    /**
-     * 是否为订阅
-     */
-    isSubscribe(): boolean;
+    atName();
 
     /**
      * 范围开始
@@ -31,6 +28,16 @@ export interface Message extends Entity {
      * 范围大小
      * */
     rangeSize():number;
+
+    /**
+     * 是否为请求
+     */
+    isRequest(): boolean;
+
+    /**
+     * 是否为订阅
+     */
+    isSubscribe(): boolean;
 
     /**
      * 获取消息流Id（用于消息交互、分片）
@@ -136,14 +143,23 @@ export class MessageDefault implements MessageInternal {
         this._entity = entity;
     }
 
-    at() {
-        return this._entity!.at();
+    /**
+     * At player name
+     * */
+    atName() {
+        return this.meta("@");
     }
 
+    /**
+     * 范围开始
+     * */
     rangeStart(): number {
         return this.metaAsInt(EntityMetas.META_RANGE_START);
     }
 
+    /**
+     * 范围大小
+     * */
     rangeSize(): number {
         return this.metaAsInt(EntityMetas.META_RANGE_SIZE);
     }

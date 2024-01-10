@@ -156,7 +156,11 @@ public class SessionDefault extends SessionBase {
                 .entity(entity)
                 .build();
 
-        if (timeout < 10) {
+        if (timeout < 0) {
+            timeout = channel.getConfig().getStreamTimeout();
+        }
+
+        if (timeout == 0) {
             timeout = channel.getConfig().getRequestTimeout();
         }
 
@@ -183,7 +187,7 @@ public class SessionDefault extends SessionBase {
                 .build();
 
 
-        if (timeout < 10) {
+        if (timeout <= 0) {
             timeout = channel.getConfig().getStreamTimeout();
         }
 

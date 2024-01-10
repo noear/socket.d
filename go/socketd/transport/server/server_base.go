@@ -5,23 +5,35 @@ import (
 	"socketd/transport/core/impl"
 )
 
-type ServerBase struct {
-	processor core.Processor
-	serverCfg *Config
-	IsStarted bool
+type ServerBase[T any] struct {
+	*impl.ConfigBase
+
+	processor    core.Processor
+	serverConfig *Config
+	assistant    core.ChannelAssistant[T]
+	IsStarted    bool
 }
 
-func NewServerBase(cfg *Config) *ServerBase {
-	return &ServerBase{
-		serverCfg: cfg,
-		processor: impl.NewProcessor(),
-	}
+func NewServerBase[T any](cfg *Config) *ServerBase[T] {
+	var s = &ServerBase[T]{}
+	s.serverConfig = cfg
+	s.processor = impl.NewProcessor()
+	s.ConfigBase = impl.DefualtConfig(false)
+	return s
 }
 
-func (s *ServerBase) GetConfig() *Config {
-	return s.serverCfg
+func (s *ServerBase[T]) GetConfig() core.Config {
+	return s.ConfigBase
 }
 
-func (s *ServerBase) Listen(listener core.Listener) {
+func (s *ServerBase[T]) Listen(listener core.Listener) {
 	s.processor.SetListener(listener)
+}
+
+func (s *ServerBase[T]) GetChannelAssistant() core.ChannelAssistant[T] {
+	return s.assistant
+}
+
+func (s *ServerBase[T]) GetProcessor() core.Processor {
+	return s.processor
 }

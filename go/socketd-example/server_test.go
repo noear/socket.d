@@ -3,23 +3,27 @@ package main
 import (
 	"log/slog"
 	"os"
-	"socketd/transport/server"
 	"testing"
 
 	socketd "socketd-transport-tcp"
+	"socketd/transport/server"
 )
 
 // 测试服务器启动
 func TestServer(t *testing.T) {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, nil)))
 
-	var srv = socketd.Server{}
-	srv.ServerBase = server.NewServerBase(new(server.Config))
+	var cfg = &server.Config{
+		Protocol: "tcp",
+		Host:     "127.0.0.1",
+		Port:     8602,
+		Debug:    true,
+	}
 
-	var cfg = srv.GetConfig()
-	cfg.WithSchema("tcp://0.0.0.0:8602")
-	cfg.DebugMode()
+	var srv = socketd.NewTcpServer(cfg)
+	srv.Listen(new(MyListner))
 
-	srv.Listen(&MyListner{})
-	srv.Start()
+	if err := srv.Start(); err != nil {
+		t.Error(err)
+	}
 }

@@ -9,6 +9,8 @@ import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.core.entity.StringEntity;
 
+import java.util.Map;
+
 /**
  * 帧工厂
  *
@@ -21,9 +23,10 @@ public class Frames {
      *
      * @param url 连接地址
      */
-    public static final Frame connectFrame(String sid, String url) {
+    public static final Frame connectFrame(String sid, String url, Map<String, String> metaMap) {
         StringEntity entity = new StringEntity(url);
         //添加框架版本号
+        entity.metaMapPut(metaMap);
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connect, new MessageBuilder()
                 .sid(sid)

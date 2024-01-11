@@ -25,6 +25,10 @@ public interface Constants {
      * 默认数据（占位）
      */
     ByteBuffer DEF_DATA = ByteBuffer.wrap(new byte[]{});
+    /**
+     * 默认端口
+     * */
+    int DEF_PORT = 8602;
 
 
     /**

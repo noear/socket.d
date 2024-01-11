@@ -87,8 +87,10 @@ public class EntityDefault implements Entity {
      * @param metaMap 元信息字典
      */
     public EntityDefault metaMapPut(Map<String, String> metaMap) {
-        this.metaMap().putAll(metaMap);
-        this.metaStringChanged = true;
+        if (metaMap != null && metaMap.size() > 0) {
+            this.metaMap().putAll(metaMap);
+            this.metaStringChanged = true;
+        }
         return this;
     }
 

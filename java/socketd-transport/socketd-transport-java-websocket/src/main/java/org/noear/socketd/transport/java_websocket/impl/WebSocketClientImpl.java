@@ -55,7 +55,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         try {
-            channel.sendConnect(client.getConfig().getUrl());
+            channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
         } catch (Throwable e) {
             if (log.isWarnEnabled()) {
                 log.warn("Client channel sendConnect error", e);

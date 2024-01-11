@@ -21,9 +21,10 @@ export class HandshakeDefault implements HandshakeInternal {
         this._url = linkUrl;
         this._version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this._paramMap = new Map<string, string>();
-
         let _uri = StrUtils.parseUri(linkUrl);
         this._path = _uri.path;
+
+        //添加连接参数
         const queryStr = _uri.query;
         if (queryStr) {
             for (const kvStr of queryStr.split("&")) {
@@ -33,6 +34,11 @@ export class HandshakeDefault implements HandshakeInternal {
                 }
             }
         }
+
+        //添加元信息参数
+        source.metaMap().forEach((val, key, p) => {
+            this._paramMap.set(key, val);
+        });
     }
 
     getSource(): MessageInternal {

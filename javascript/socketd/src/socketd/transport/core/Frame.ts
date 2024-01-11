@@ -54,9 +54,10 @@ export class Frames {
      * @param sid 流Id
      * @param url 连接地址
      */
-    static connectFrame(sid: string, url: string): Frame {
+    static connectFrame(sid: string, url: string, metaMap: Map<string, string>): Frame {
         const entity = new StringEntity(url);
         //添加框架版本号
+        entity.metaMapPut(metaMap);
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         return new Frame(Flags.Connect, new MessageBuilder()
             .sid(sid)

@@ -150,13 +150,15 @@ export class EntityDefault implements Entity {
      * @param map 元信息字典
      */
     metaMapPut(map: any): EntityDefault {
-        if (map instanceof Map) {
-            map.forEach((val, key, p) => {
-                this.metaMap().set(key, val);
-            })
-        } else {
-            for (const name of map.prototype) {
-                this.metaMap().set(name, map[name]);
+        if (map) {
+            if (map instanceof Map) {
+                map.forEach((val, key, p) => {
+                    this.metaMap().set(key, val);
+                })
+            } else {
+                for (const name of map.prototype) {
+                    this.metaMap().set(name, map[name]);
+                }
             }
         }
 

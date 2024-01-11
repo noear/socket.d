@@ -85,7 +85,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public String path() {
         if (pathNew == null) {
-            return handshake().uri().getPath();
+            return handshake().path();
         } else {
             return pathNew;
         }

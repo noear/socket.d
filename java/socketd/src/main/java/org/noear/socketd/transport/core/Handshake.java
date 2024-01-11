@@ -23,6 +23,11 @@ public interface Handshake {
     URI uri();
 
     /**
+     * 请求路径
+     * */
+    String path();
+
+    /**
      * 获取参数集合
      */
     Map<String, String> paramMap();

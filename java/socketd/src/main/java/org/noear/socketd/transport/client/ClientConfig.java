@@ -17,7 +17,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     //连接地址
     private final String linkUrl;
     private final String url;
-    private final URI uri;
+    private final String host;
     private int port;
 
     //心跳间隔（毫秒）
@@ -38,8 +38,10 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
             url = url.substring(3);
         }
 
+        URI uri = URI.create(url);
+
         this.url = url;
-        this.uri = URI.create(url);
+        this.host = uri.getHost();
         this.port = uri.getPort();
         this.schema = uri.getScheme();
         this.linkUrl = "sd:" + url;
@@ -71,13 +73,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     }
 
     /**
-     * 获取连接地址
-     */
-    public URI getUri() {
-        return uri;
-    }
-
-    /**
      * 获取链接地址
      */
     public String getLinkUrl() {
@@ -88,7 +83,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
      * 获取连接主机
      */
     public String getHost() {
-        return uri.getHost();
+        return host;
     }
 
     /**

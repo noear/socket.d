@@ -4,15 +4,18 @@ import (
 	"time"
 
 	"socketd/transport/core"
+	"socketd/transport/core/fragment"
 )
+
+var _ core.Config = new(ConfigBase)
 
 type ConfigBase struct {
 	clientMode bool
 	// streamManager StreamManager
-	codec core.Codec
-	// fragmentHandler FragmentHandler
-	// fragmentSize int
-	charset string
+	codec           core.Codec
+	fragmentHandler core.FragmentHandler
+	fragmentSize    int
+	charset         string
 
 	readBufferSize  int
 	writeBufferSize int
@@ -28,8 +31,8 @@ func DefualtConfig(clientMode bool) *ConfigBase {
 	c.clientMode = clientMode
 	c.codec = &CodecDefault{}
 	c.charset = "utf-8"
-	// c.fragmentHandler = &FragmentHandler{}
-	// c.fragmentSize =
+	c.fragmentHandler = fragment.NewFragmentHandlerDefault()
+	c.fragmentSize = core.MAX_SIZE_DATA
 
 	c.readBufferSize = 512
 	c.writeBufferSize = 512
@@ -56,9 +59,11 @@ func (c *ConfigBase) GetCharset() string {
 func (c *ConfigBase) GetCodec() core.Codec {
 	return c.codec
 }
+func (c *ConfigBase) GetFragmentHandler() core.FragmentHandler {
+	return c.fragmentHandler
+}
 func (c *ConfigBase) GetFragmentSize() int {
-	//TODO implement me
-	panic("implement me")
+	return c.fragmentSize
 }
 func (c *ConfigBase) GetReadBufferSize() int {
 	return c.readBufferSize

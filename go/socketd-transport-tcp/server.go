@@ -5,13 +5,13 @@ import (
 	"net"
 
 	"socketd"
-	"socketd/transport/core"
 	"socketd/transport/core/impl"
+	"socketd/transport/core/message"
 	"socketd/transport/server"
 )
 
 type TcpServer struct {
-	*server.ServerBase[*net.TCPConn] //继承ServerBase
+	*server.ServerBase[*ChannelAssistant, *net.TCPConn] //继承ServerBase
 
 	cfg      *server.Config
 	listener *net.TCPListener
@@ -21,7 +21,7 @@ type TcpServer struct {
 func NewTcpServer(cfg *server.Config) *TcpServer {
 	var s = &TcpServer{}
 	s.cfg = cfg
-	s.ServerBase = server.NewServerBase[*net.TCPConn](cfg)
+	s.ServerBase = server.NewServerBase[*ChannelAssistant, *net.TCPConn](cfg, NewChannelAssistant(cfg))
 	return s
 }
 
@@ -33,9 +33,9 @@ func (s *TcpServer) CreateServer() (err error) {
 	return
 }
 
-func (s *TcpServer) GetConfig() *server.Config {
-	return s.cfg
-}
+//func (s *TcpServer) GetConfig() *server.Config {
+//	return s.cfg
+//}
 
 func (s *TcpServer) Start() (err error) {
 	tcpAddr, err := net.ResolveTCPAddr(s.cfg.Protocol, fmt.Sprintf("%v:%v", s.cfg.Host, s.cfg.Port))
@@ -59,33 +59,22 @@ func (s *TcpServer) Start() (err error) {
 }
 
 func (s *TcpServer) Receive() {
-	var codec = s.ConfigBase.GetCodec()
-
 	for conn := range s.connChan {
 		go func(conn *net.TCPConn) {
 			// 处理来自 conn 的数据
 			defer conn.Close()
 
+			var channel = impl.NewChannelDefault[*ChannelAssistant, *net.TCPConn](conn, s)
+
 			for {
-				// 读缓冲
-				buf := make([]byte, s.ConfigBase.GetReadBufferSize())
-				n, err := conn.Read(buf)
-				if err != nil {
-					// TODO 日志记录
+				var frame = message.NewFrame()
+				if err := s.GetAssistant().Read(conn, frame); err != nil {
 					fmt.Println(err)
-					return
+					continue
 				}
-
-				var frame = new(core.Frame)
-				codec.Decode(frame, buf[:n])
-				fmt.Println("Frame", frame)
-
-				var channel = impl.NewChannel()
-				s.GetProcessor().OnReceive()
-
-				// var conn2 = impl.NewChannel()
-				// var session = new(core.Session)
-				// s.processor.OnReceive(conn2, *frame)
+				if frame.Len != 0 {
+					s.GetProcessor().OnReceive(channel, frame)
+				}
 			}
 		}(conn)
 	}

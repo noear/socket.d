@@ -5,12 +5,12 @@ import (
 	"encoding/binary"
 	"net/url"
 
-	"socketd/transport/core"
+	"socketd/transport/core/message"
 )
 
 type CodecDefault struct{}
 
-func (cd *CodecDefault) Decode(f *core.Frame, body []byte) {
+func (cd *CodecDefault) Decode(f *message.Frame, body []byte) {
 	f.Len = binary.BigEndian.Uint32(body[0:4])
 	f.Flag = binary.BigEndian.Uint32(body[4:8])
 	lines := bytes.Split(body[8:], []byte{'\n'})
@@ -29,17 +29,21 @@ func (cd *CodecDefault) Decode(f *core.Frame, body []byte) {
 	}
 }
 
-func (cd *CodecDefault) Encode(f *core.Frame) []byte {
+func (cd *CodecDefault) Encode(f *message.Frame) []byte {
 	var buf = new(bytes.Buffer)
 	binary.Write(buf, binary.BigEndian, uint32(0))
 	binary.Write(buf, binary.BigEndian, f.Flag)
-	buf.WriteString(f.Sid)
-	buf.WriteByte('\n')
-	buf.WriteString(f.Event)
-	buf.WriteByte('\n')
-	buf.WriteString(f.Meta.Encode())
-	buf.WriteByte('\n')
-	buf.Write(f.Data)
+	if f.Message != nil {
+		buf.WriteString(f.Sid)
+		buf.WriteByte('\n')
+		buf.WriteString(f.Event)
+		buf.WriteByte('\n')
+	}
+	if f.Entity != nil {
+		buf.WriteString(f.Meta.Encode())
+		buf.WriteByte('\n')
+		buf.Write(f.Data)
+	}
 
 	var bs = buf.Bytes()
 	binary.BigEndian.PutUint32(bs[:4], uint32(len(bs)))

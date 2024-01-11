@@ -1,6 +1,10 @@
 package core
 
+import (
+	"socketd/transport/core/message"
+)
+
 type Codec interface {
-	Decode(f *Frame, body []byte)
-	Encode(f *Frame) []byte
+	Decode(f *message.Frame, body []byte)
+	Encode(f *message.Frame) []byte
 }

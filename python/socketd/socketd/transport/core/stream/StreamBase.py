@@ -45,10 +45,11 @@ class StreamBase(StreamInternal, ABC):
             return
 
         async def __insuranceFuture():
+            await asyncio.sleep(streamTimeout)
             streamManger.remove_stream(self.__sid)
             self.on_error(SocketdTimeoutException(f"The stream response timeout, sid={self.__sid}"))
 
-        self.__insuranceFuture = CompletableFuture(__insuranceFuture)
+        self.__insuranceFuture = CompletableFuture(__insuranceFuture())
         asyncio.run_coroutine_threadsafe(self.__insuranceFuture.get(streamTimeout), asyncio.get_event_loop())
 
     def insurance_cancel(self) -> None:

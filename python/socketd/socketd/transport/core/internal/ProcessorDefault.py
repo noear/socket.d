@@ -1,13 +1,19 @@
 import asyncio
 from abc import ABC
+from typing import Optional, Union
+
 from loguru import logger
 
+from socketd.exception.SocketdExecption import SocketdAlarmException
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Handshake import Handshake
+from socketd.transport.core.Message import Message
 from socketd.transport.core.Processor import Processor
-from socketd.transport.core.Costants import Flag, EntityMetas
+from socketd.transport.core.Costants import Flag, EntityMetas, Constants
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.listener.SimpleListener import SimpleListener
+from socketd.transport.core.stream.Stream import Stream
+from socketd.transport.core.stream.StreamManger import StreamInternal
 
 
 class ProcessorDefault(Processor, ABC):
@@ -21,10 +27,27 @@ class ProcessorDefault(Processor, ABC):
             self.listener = listener
 
     async def on_receive(self, channel: ChannelInternal, frame):
+        if channel.get_config().client_mode():
+            logger.debug(f"C-REV:{frame}")
+        else:
+            logger.debug(f"S-REV:{frame}")
+
         if frame.get_flag() == Flag.Connect:
             connectMessage = frame.get_message()
             channel.set_handshake(Handshake(connectMessage))
-            await channel.send_connack(connectMessage)
+
+            async def _future(b: bool, e: Exception):
+                if channel.is_valid():
+                    if e is None:
+                        try:
+                            await channel.send_connack(connectMessage)
+                        except Exception as _e:
+                            self.on_error(channel, _e)
+                    else:
+                        # 如果还有效，则关闭通道
+                        await channel.close(Constants.CLOSE3_ERROR)
+                        self.on_close_internal(channel)
+            await channel.on_open_future(_future)
             await self.on_open(channel)
         elif frame.get_flag() == Flag.Connack:
             message = frame.get_message()
@@ -46,6 +69,15 @@ class ProcessorDefault(Processor, ABC):
                 elif frame.get_flag() == Flag.Close:
                     await channel.close()
                     self.on_close(channel)
+                elif frame.get_flag() == Flag.Alarm:
+                    e = SocketdAlarmException(frame.get_message())
+                    stream: Union[StreamInternal, Stream] = channel.get_config().get_stream_manger() \
+                        .get_stream(frame.get_message().get_sid())
+                    if stream:
+                        self.on_error(channel, e)
+                    else:
+                        channel.get_config().get_stream_manger().remove_stream(frame.message().sid())
+                        stream.on_error(e)
                 elif frame.get_flag() in [Flag.Message, Flag.Request, Flag.Subscribe]:
                     await self.on_receive_do(channel, frame, False)
                 elif frame.get_flag() in [Flag.Reply, Flag.ReplyEnd]:
@@ -58,25 +90,46 @@ class ProcessorDefault(Processor, ABC):
                 self.on_error(channel, e)
 
     async def on_receive_do(self, channel: ChannelInternal, frame: Frame, isReply):
-        fragmentIdxStr = frame.get_message().get_entity().get_meta(EntityMetas.META_DATA_FRAGMENT_IDX)
-        if fragmentIdxStr is not None:
-            index = int(fragmentIdxStr)
-            frameNew: Frame = channel.get_config().get_fragment_handler().aggrFragment(channel, index,
-                                                                                       frame.get_message())
-            if frameNew is None:
-                return
-            else:
-                frame = frameNew
+        stream: Optional[StreamInternal] = None
+        streamTotal: int = 1
+        streamIndex: int = 0
+        if isReply:
+            stream = channel.get_stream(frame.get_message().get_sid())
+
+        if channel.get_config().get_fragment_handler().aggrEnable():
+            fragmentIdxStr = frame.get_message().get_entity().get_meta(EntityMetas.META_DATA_FRAGMENT_IDX)
+            if fragmentIdxStr is not None:
+                del streamIndex
+                streamIndex = int(fragmentIdxStr)
+                frameNew: Frame = channel.get_config().get_fragment_handler().aggrFragment(channel,
+                                                                                           streamIndex,
+                                                                                           frame.get_message())
+                if stream:
+                    del streamTotal
+                    streamTotal = int(frame.get_message().get_meta_or_default(EntityMetas.META_DATA_FRAGMENT_TOTAL, 0))
+                if frameNew is None:
+                    if stream:
+                        stream.on_progress(False, streamIndex, streamTotal)
+                    return
+                else:
+                    del frame
+                    frame = frameNew
 
         if isReply:
-            await channel.retrieve(frame, lambda error: self.on_error(channel, error))
+            if stream:
+                stream.on_progress(False, streamIndex, streamTotal)
+            await channel.retrieve(frame, stream)
         else:
             await self.on_message(channel, frame.get_message())
 
     async def on_open(self, channel: ChannelInternal):
-        await self.listener.on_open(channel.get_session())
+        try:
+            await self.listener.on_open(channel.get_session())
+            channel.do_open_future(True, None)
+        except Exception as e:
+            await channel.do_open_future(True, e)
 
-    async def on_message(self, channel: ChannelInternal, message):
+    async def on_message(self, channel: ChannelInternal, message: Message):
         await asyncio.get_running_loop().run_in_executor(channel.get_config().get_executor(),
                                                          lambda: asyncio.run(self.listener.on_message(
                                                              channel.get_session(), message)))
@@ -86,3 +139,6 @@ class ProcessorDefault(Processor, ABC):
 
     def on_error(self, channel: ChannelInternal, error):
         self.listener.on_error(channel.get_session(), error)
+
+    def on_close_internal(self, channel: ChannelInternal):
+        self.listener.on_close(channel.get_session())

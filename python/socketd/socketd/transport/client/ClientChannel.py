@@ -30,10 +30,6 @@ class ClientChannel(ChannelBase, ABC):
         if self._loop:
             self._loop.close()
 
-    def remove_acceptor(self, sid):
-        if self.real is not None:
-            self.real.remove_acceptor(sid)
-
     def is_valid(self):
         if self.real is None:
             return False
@@ -67,10 +63,12 @@ class ClientChannel(ChannelBase, ABC):
                 while True:
                     await asyncio.sleep(self.connector.heartbeatInterval())
                     await self.heartbeat_handle()
+
             self._heartbeatScheduledFuture = asyncio.create_task(_heartbeatScheduled())
 
             self.get_config().get_executor().submit(lambda:
-                                                    AsyncUtil.thread_handler(self._loop, self._heartbeatScheduledFuture))
+                                                    AsyncUtil.thread_handler(self._loop,
+                                                                             self._heartbeatScheduledFuture))
 
     def heartbeat_handle(self):
         AssertsUtil.assert_closed(self.real)
@@ -95,7 +93,7 @@ class ClientChannel(ChannelBase, ABC):
                 if self.connector.autoReconnect():
                     await self.real.close()
                     self.real = None
-                raise e
+                # raise e
 
     async def retrieve(self, frame, on_error):
         await self.real.retrieve(frame, on_error)

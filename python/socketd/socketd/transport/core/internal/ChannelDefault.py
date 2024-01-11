@@ -27,7 +27,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
     def __init__(self, source: S, supporter: ChannelSupporter[S]):
         ChannelBase.__init__(self, supporter.get_config())
-        self.onOpenFuture: Optional[CompletableFuture] = None
+        self.onOpenFuture: Optional[CompletableFuture] = CompletableFuture()
         self._source: WebSocketCommonProtocol = source
         self._assistant = supporter.get_assistant()
         self._processor: Optional[Processor] = supporter.get_processor()
@@ -61,7 +61,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                     if message.get_entity().get_data_size() > self.get_config().get_fragment_size():
                         message.get_meta_map()[EntityMetas.META_DATA_LENGTH] = str(message.get_data_size())
 
-                    def __consumer(fragmentEntity: Entity):
+                    async def __consumer(fragmentEntity: Entity):
                         fragmentFrame: Frame
                         if isinstance(fragmentEntity, MessageInternal):
                             fragmentFrame = Frame(frame.get_flag(), fragmentEntity)
@@ -70,13 +70,10 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                                                   .set_flag(frame.get_flag())
                                                   .set_sid(message.get_sid())
                                                   .set_entity(fragmentEntity))
-                        # 携程中调用普通，然后调用携程
-                        asyncio.run_coroutine_threadsafe(self._assistant.write(self._source, fragmentFrame),
-                                                         asyncio.get_event_loop())
-
-                    self.get_config().get_fragment_handler().split_fragment(self,
-                                                                            stream, message,
-                                                                            __consumer)
+                        await self._assistant.write(self._source, fragmentFrame)
+                    await self.get_config().get_fragment_handler().split_fragment(self,
+                                                                                  stream, message,
+                                                                                  __consumer)
                 return
             await self._assistant.write(self._source, frame)
             if stream:
@@ -120,16 +117,19 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     def get_stream(self, sid: str) -> Stream:
         return self._streamManger.get_stream(sid)
 
-    def on_open_future(self, future: Callable[[bool, Exception], None]):
-        self.onOpenFuture = CompletableFuture(future)
+    async def on_open_future(self, future):
+        try:
+            self.onOpenFuture.then_async_callback(future)
+        except Exception as e:
+            await future(None, e)
         return self.onOpenFuture
 
     def do_open_future(self, is_ok: bool, e: Exception):
         if is_ok:
-            self.onOpenFuture.set_result(is_ok)
+            self.onOpenFuture.accept(is_ok,None)
         else:
             self.onOpenFuture.cancel()
-            raise e
+            self.onOpenFuture.set_e(e)
 
     def on_error(self, error: Exception):
         self._processor.on_error(self, error)

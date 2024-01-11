@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Optional
 
 from socketd.transport.core.Channel import Channel
+from socketd.transport.core.Costants import Function
 from socketd.transport.core.Session import Session
 
 
@@ -14,7 +15,7 @@ class ChannelInternal(Channel, ABC):
     def get_stream(self, sid: str): ...
 
     @abstractmethod
-    def on_open_future(self, future: Callable[[bool, Exception], None]): ...
+    def on_open_future(self, future: Function): ...
 
     @abstractmethod
-    def do_open_future(self, is_ok: bool, e: Exception): ...
+    def do_open_future(self, is_ok: bool, e: Optional[Exception]): ...

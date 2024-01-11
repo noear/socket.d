@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Optional, Callable
+from typing import Optional, Callable, Coroutine
 
 from socketd.transport.core import Entity
 from socketd.transport.core.Costants import EntityMetas
@@ -16,8 +16,8 @@ from socketd.transport.core.stream.StreamManger import StreamInternal
 
 class FragmentHandlerBase(FragmentHandler, ABC):
 
-    def split_fragment(self, channel: Channel, stream: StreamInternal, message: Message,
-                       consumer: Callable[[Entity], None]):
+    async def split_fragment(self, channel: Channel, stream: StreamInternal, message: Message,
+                             consumer: Callable):
         if message.get_data_size() > channel.get_config().get_fragment_size():
             fragment_total = message.get_data_size()  # channel.get_config().fragment_size
             if message.get_data_size() % channel.get_config().get_fragment_size() > 0:
@@ -38,12 +38,12 @@ class FragmentHandlerBase(FragmentHandler, ABC):
                 fragment_entity.meta_put(EntityMetas.META_DATA_FRAGMENT_IDX, str(fragment_index))
                 fragment_entity.meta_put(EntityMetas.META_DATA_FRAGMENT_TOTAL, str(fragment_total))
 
-                consumer(fragment_entity)
+                await consumer(fragment_entity)
                 if stream is not None:
                     stream.on_progress(True, fragment_index, fragment_total)
 
         else:
-            consumer(message)
+            await consumer(message)
             if stream is not None:
                 stream.on_progress(True, 1, 1)
 

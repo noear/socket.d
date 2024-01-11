@@ -34,16 +34,13 @@ class TestCase01_client_send(BaseTestCase):
             .config(config_handler).open()
         await self.client_session.send_and_request("demo", StringEntity("test"), 100)
 
-        start_time = time.monotonic()
         for _ in range(100):
             await self.client_session.send("demo", StringEntity("test"))
 
         # await self.client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
-        end_time = time.monotonic()
-        logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
         logger.info(
-            f" message {s.message_counter.get()}")
+            f" message {s.server_counter.get()}")
 
     def start(self):
         super().start()

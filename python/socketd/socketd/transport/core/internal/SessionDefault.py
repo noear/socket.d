@@ -14,8 +14,6 @@ from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.exception.SocketdExecption import SocketDException
 from socketd.transport.core.stream.RequestStream import RequestStream
 from socketd.transport.core.stream.SendStream import SendStream
-from socketd.transport.core.stream.StreamRequest import StreamRequest
-from socketd.transport.core.stream.StreamSubscribe import StreamSubscribe
 
 from socketd.transport.core.stream.SubscribeStream import SubscribeStream
 from socketd.transport.utils.CompletableFuture import CompletableFuture
@@ -61,7 +59,7 @@ class SessionDefault(SessionBase, ABC):
         try:
             stream = RequestStream(message.get_sid(), timeout)
             await self._channel.send(Frame(Flag.Request, message),
-                                     RequestStream(message.get_sid(), timeout))
+                                     stream)
             return stream
         except asyncio.TimeoutError as e:
             if self._channel.is_valid():
@@ -75,26 +73,10 @@ class SessionDefault(SessionBase, ABC):
         except Exception as e:
             raise e
 
-    async def send_stream_and_request(self, event: str, content: Entity,
-                                      consumer: Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Any, None],
-                                      timeout: int):
-        message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
-        future: CompletableFuture[Entity] = CompletableFuture()
-        try:
-            if asyncio.iscoroutinefunction(consumer):
-                await consumer(content)
-            else:
-                self._channel.get_config().get_executor().submit(fn=consumer, args=(content,))
-        except Exception as e:
-            self._channel.on_error(e)
-        streamAcceptor = StreamRequest(message.get_sid(), timeout, future)
-        await self._channel.send(Frame(Flag.Request, message), streamAcceptor)
-        return streamAcceptor
-
     async def send_and_subscribe(self, event: str, content: Entity, consumer: Callable[[Entity], Any], timeout: int):
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         stream = SubscribeStream(message.get_sid(), timeout)
-        await self._channel.send(Frame(Flag.Subscribe, message), SubscribeStream)
+        await self._channel.send(Frame(Flag.Subscribe, message), stream)
         return stream
 
     async def reply(self, from_msg: Message, content: Entity):

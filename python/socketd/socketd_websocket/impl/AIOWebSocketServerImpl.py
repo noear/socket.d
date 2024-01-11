@@ -51,9 +51,10 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             channel: Channel = conn.get_attachment()
             if channel is not None:
                 # 有可能未 onOpen，就 onError 了；此时通道未成
-                self.ws_aio_server.get_processor().on_error(channel.get_session(), ex)
+                self.ws_aio_server.get_processor().on_error(channel, ex)
         except Exception as e:
             log.error(e)
+            raise e
 
     async def on_message(self, conn: 'AIOWebSocketServerImpl', path: str):
         """ws_handler"""

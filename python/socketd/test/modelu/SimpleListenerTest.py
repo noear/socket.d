@@ -29,11 +29,11 @@ class SimpleListenerTest(Listener, ABC):
             with self.message_counter:
                 self.message_counter.set(self.message_counter.get() + 1)
             await session.reply(message, StringEntity("reply"))
-            await session.reply_end(message, StringEntity("ok test.png"))
+            await session.reply_end(message, StringEntity("ok test"))
             await session.reply(message, StringEntity("reply"))
         elif message.is_subscribe():
             await session.reply(message, StringEntity("reply"))
-            await session.reply_end(message, StringEntity("ok test.png"))
+            await session.reply_end(message, StringEntity("ok test"))
             await session.reply(message, StringEntity("reply"))
 
     def on_close(self, session):
@@ -46,11 +46,12 @@ class SimpleListenerTest(Listener, ABC):
 
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
-    config.set_is_thread(False)
+    config.set_is_thread(True)
     config.set_idle_timeout(10)
     config.set_logger_level("DEBUG")
-    return config.id_generator(uuid.uuid4)
+    config.id_generator(uuid.uuid4)
+    return config
 
 
-def send_and_subscribe_test(e: Entity):
+async def send_and_subscribe_test(e: Entity):
     logger.info(e)

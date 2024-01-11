@@ -11,6 +11,7 @@ class Flag:
     Ping = 20
     Pong = 21
     Close = 30
+    Alarm = 31
     Message = 40
     Request = 41
     Subscribe = 42
@@ -88,6 +89,8 @@ class Constants:
     # 多需求
     DEMANDS_MULTIPLE = 2
     DEMANDS_ZERO = 0
+    # 因异常关闭
+    CLOSE3_ERROR = 3
 
 
 

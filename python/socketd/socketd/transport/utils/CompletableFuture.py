@@ -1,6 +1,6 @@
 import asyncio
 import functools
-from typing import Generic, TypeVar, Callable
+from typing import Generic, TypeVar, Callable, Coroutine
 
 from loguru import logger
 
@@ -29,11 +29,20 @@ class CompletableFuture(Generic[T]):
     def accept(self, result: T, onError):
         self._future.set_result(result)
 
-    def then_callback(self, _fn, **kwargs):
-        self._future.add_done_callback(functools.partial(_callback, _fn, **kwargs))
+    def then_callback(self, _fn: Callable[[T], None], *args, **kwargs):
+        self._future.add_done_callback(functools.partial(_fn, *args, **kwargs))
+
+    def then_async_callback(self, _fn: Callable):
+        def callback(fn:asyncio.Future):
+            asyncio.run_coroutine_threadsafe(_fn(fn.result(), fn.exception()), asyncio.get_running_loop())
+
+        self._future.add_done_callback(functools.partial(callback))
 
     def set_result(self, t: T):
         self._future.set_result(t)
+
+    def set_e(self, e: Exception):
+        self._future.set_exception(e)
 
     def done(self):
         self._future.done()

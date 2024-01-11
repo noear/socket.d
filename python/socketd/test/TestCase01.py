@@ -13,11 +13,11 @@ from test.cases.TestCase07_url_auth import TestCase07_url_auth
 from test.cases.TestCase08_ping_timout import TestCase08_ping_timout
 from test.cases.TestCase09_clientCloseReconnect import TestCase09_clientCloseReconnect
 from test.cases.TestCase10_serverCloseReconnect import TestCase10_serverCloseReconnect
-from test.modelu.BaseTest import BaseTest
+from test.cases.TestCase11_sendAndRequest2rep import TestCase11_sendAndRequest2rep
 
 
 class TestCase01(unittest.TestCase):
-    schemas = ["ws"]
+    schemas = ["std:ws"]
 
     def __init__(self, *args, **kwargs):
         logger.remove()
@@ -118,6 +118,16 @@ class TestCase01(unittest.TestCase):
         # todo 底层ws组件不适配当前逻辑，需要修改底层
         for i in range(len(TestCase01.schemas)):
             t = TestCase10_serverCloseReconnect(TestCase01.schemas[i], 9100 + i)
+            try:
+                t.start()
+                t.stop()
+            except Exception as e:
+                t.on_error()
+                raise e
+
+    def test_Case11_sendAndRequest2rep(self):
+        for i in range(len(TestCase01.schemas)):
+            t = TestCase11_sendAndRequest2rep(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()

@@ -10,7 +10,7 @@ class FragmentHandler:
     数据分片处理
     """
 
-    def split_fragment(self, channel: 'Channel', stream: StreamInternal,
+    async def split_fragment(self, channel: 'Channel', stream: StreamInternal,
                        message: Message, consumer: Callable[[Entity], None]):
         """拆割分片"""
         ...

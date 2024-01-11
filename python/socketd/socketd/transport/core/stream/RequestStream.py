@@ -11,16 +11,19 @@ class RequestStream(StreamBase):
 
     def __init__(self, sid: str, timeout: int):
         super().__init__(sid, Constants.DEMANDS_SINGLE, timeout)
-        self.__future: CompletableFuture[Reply] = CompletableFuture()
+        self._future: CompletableFuture = CompletableFuture()
 
     def is_done(self):
-        return self.__future.done()
+        return self._future.done()
 
     def __await__(self):
-        return await self.__future.get(self.timeout())
+        return self._future.get(self.timeout())
+
+    def await_result(self):
+        return self.__await__()
 
     def on_reply(self, message: Reply):
-        return self.__future.set_result(message)
+        return self._future.set_result(message)
 
     def then_reply(self, onReply: Callable[[Reply], None]):
-        self.__future.then_callback(onReply)
+        self._future.then_callback(onReply)

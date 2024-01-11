@@ -61,7 +61,9 @@ class EntityDefault(Entity):
         return self.get_meta_map().get(name)
 
     def get_meta_or_default(self, name, default_val):
-        return self.get_meta_map().get(name, default_val)
+        if data := self.get_meta_map().get(name):
+            return data
+        return default_val
 
     def set_data(self, data: bytes | bytearray | memoryview | BytesIO):
         if type(data) == BytesIO:

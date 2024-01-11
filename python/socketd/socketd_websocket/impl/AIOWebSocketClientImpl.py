@@ -75,13 +75,12 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
 
     async def on_open(self):
         try:
+            log.info("Client:Websocket onOpen...")
             await self.channel.send_connect(self.client.get_config().get_url())
             await self.on_message()
         except Exception as e:
             log.error(str(e), exc_info=True)
             raise e
-        finally:
-            log.info("Client:Websocket onOpen...")
 
     async def on_message(self):
         """处理消息"""
@@ -104,9 +103,10 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         except CancelledError as c:
             # 超时自动推出
             log.debug(c)
+            # raise c
         except Exception as e:
             self.on_error(e)
-            raise e
+            # raise e
 
     def on_close(self):
         self.client.get_processor().on_close(self.channel)

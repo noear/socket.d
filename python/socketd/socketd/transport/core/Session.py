@@ -64,24 +64,6 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def send_stream_and_request(self, event: str, content: Entity,
-                                      consumer: Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Any, None],
-                                      timeout: int):
-        """
-        发送流和请求的抽象方法。
-
-        Args:
-            event (str): 事件名称。
-            content (Entity): 内容实体。
-            consumer (Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Awaitable[Any]]): 消费函数或协程，用来处理内容实体并返回异步结果。
-            timeout (int): 超时时间。
-
-        Returns:
-            Awaitable[Any]: 消费函数或协程的异步结果。
-        """
-        ...
-
-    @abc.abstractmethod
     async def send_and_subscribe(self, topic: str, content: Entity, consumer: Callable[[Entity], Any],
                                  timeout: int) -> SubscribeStream:
         ...

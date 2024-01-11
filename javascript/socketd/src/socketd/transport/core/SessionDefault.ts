@@ -1,7 +1,7 @@
 import {SessionBase} from "./Session";
 import type {Channel} from "./Channel";
 import type {Handshake} from "./Handshake";
-import type {Entity} from "./Entity";
+import {Entity, EntityDefault} from "./Entity";
 import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
 import {Constants, Flags} from "./Constants";
@@ -13,7 +13,6 @@ import {
     SubscribeStreamImpl,
     type SendStream
 } from "../stream/Stream";
-import {IoConsumer} from "./Typealias";
 
 /**
  * 会话默认实现
@@ -99,6 +98,10 @@ export class SessionDefault extends SessionBase {
      * @return 流
      */
     send(event: string, entity: Entity): SendStream {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
@@ -120,6 +123,10 @@ export class SessionDefault extends SessionBase {
      * @return 流
      */
     sendAndRequest(event: string, entity: Entity, timeout?: number): RequestStream {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         //异步，用 streamTimeout
         const message = new MessageBuilder()
             .sid(this.generateId())
@@ -153,6 +160,10 @@ export class SessionDefault extends SessionBase {
      * @return 流
      */
     sendAndSubscribe(event: string, entity: Entity, timeout?: number): SubscribeStream {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         const message = new MessageBuilder()
             .sid(this.generateId())
             .event(event)
@@ -179,6 +190,10 @@ export class SessionDefault extends SessionBase {
      * @param entity  实体
      */
     reply(from: Message, entity: Entity) {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         const message = new MessageBuilder()
             .sid(from.sid())
             .event(from.event())
@@ -195,6 +210,10 @@ export class SessionDefault extends SessionBase {
      * @param entity  实体
      */
     replyEnd(from: Message, entity: Entity) {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         const message = new MessageBuilder()
             .sid(from.sid())
             .event(from.event())

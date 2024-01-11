@@ -76,7 +76,7 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
 
         insuranceFuture = RunUtils.delay(() -> {
             streamManger.removeStream(sid);
-            this.onError(new SocketdTimeoutException("" + sid));
+            this.onError(new SocketdTimeoutException("The stream response timeout, sid=" + sid));
         }, streamTimeout);
     }
 

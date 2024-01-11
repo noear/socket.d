@@ -3,8 +3,10 @@ package fragment
 import (
 	"bytes"
 	"fmt"
-	"socketd/transport/core"
 	"strconv"
+
+	"socketd/transport/core"
+	"socketd/transport/core/message"
 )
 
 //var _ core.FragmentHandler = new(HandlerBase)
@@ -17,14 +19,14 @@ type HandlerBase struct {
  * @Description 获取下个分片
  * @Date 2024-01-10 22:31:25
  */
-func (h HandlerBase) SplitFragment(channel core.Channel, stream any, message *core.Message, accept func(entity *core.Entity) (err error)) (err error) {
-	if message.DataSize() > channel.GetConfig().GetFragmentSize() {
-		var fragmentTotal = message.DataSize() / channel.GetConfig().GetFragmentSize()
-		if message.DataSize()%channel.GetConfig().GetFragmentSize() > 0 {
+func (h HandlerBase) SplitFragment(channel core.Channel, stream any, msg *message.Message, accept func(entity *message.Entity) (err error)) (err error) {
+	if msg.DataSize() > channel.GetConfig().GetFragmentSize() {
+		var fragmentTotal = msg.DataSize() / channel.GetConfig().GetFragmentSize()
+		if msg.DataSize()%channel.GetConfig().GetFragmentSize() > 0 {
 			fragmentTotal += 1
 		}
 
-		reader := bytes.NewReader(message.Data)
+		reader := bytes.NewReader(msg.Data)
 		var fragmentIndex = 0
 
 		for {
@@ -33,12 +35,12 @@ func (h HandlerBase) SplitFragment(channel core.Channel, stream any, message *co
 			var data = make([]byte, 0, channel.GetConfig().GetFragmentSize())
 			n, err := reader.Read(data)
 			if err == nil {
-				var fragmentEntity = &core.Entity{Data: data[:n-1]}
+				var fragmentEntity = &message.Entity{Data: data[:n-1]}
 				if fragmentIndex == 1 {
-					fragmentEntity.MetaMapPut(message.Meta)
+					fragmentEntity.MetaMapPut(msg.Meta)
 				}
-				fragmentEntity.MetaPut(core.META_DATA_FRAGMENT_IDX, strconv.Itoa(fragmentIndex))
-				fragmentEntity.MetaPut(core.META_DATA_FRAGMENT_TOTAL, strconv.Itoa(fragmentTotal))
+				fragmentEntity.MetaPut(message.META_DATA_FRAGMENT_IDX, strconv.Itoa(fragmentIndex))
+				fragmentEntity.MetaPut(message.META_DATA_FRAGMENT_TOTAL, strconv.Itoa(fragmentTotal))
 				if err := accept(fragmentEntity); err != nil {
 					//TODO 日志记录
 					fmt.Println(err)
@@ -51,7 +53,7 @@ func (h HandlerBase) SplitFragment(channel core.Channel, stream any, message *co
 		}
 		return
 	}
-	if err := accept(message.Entity); err != nil {
+	if err := accept(msg.Entity); err != nil {
 		//TODO 日志记录
 		fmt.Println(err)
 	}
@@ -66,7 +68,7 @@ func (h HandlerBase) SplitFragment(channel core.Channel, stream any, message *co
  * @Description 聚合所有分片
  * @Date 2024-01-10 22:31:38
  */
-func (h HandlerBase) AggrFragment(channel core.Channel, fragmentIndex int, message *core.Message) (result *core.Message, err error) {
+func (h HandlerBase) AggrFragment(channel core.Channel, fragmentIndex int, message *message.Message) (result *message.Message, err error) {
 	aggregator, ok := channel.GetAttachment(message.Sid).(core.FragmentAggregator)
 	if !ok {
 		aggregator, err = NewAggregatorDefault(message)

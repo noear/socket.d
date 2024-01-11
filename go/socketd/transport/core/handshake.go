@@ -1,6 +1,10 @@
 package core
 
-import "net/url"
+import (
+	"net/url"
+
+	"socketd/transport/core/message"
+)
 
 // // 握手信息
 // type Handshake interface {
@@ -16,10 +20,10 @@ type Handshake struct {
 	uri     string
 	version string
 	params  url.Values
-	source  Message
+	source  *message.Message
 }
 
-func NewHandshake(source Message) *Handshake {
+func NewHandshake(source *message.Message) *Handshake {
 	var hs = new(Handshake)
 
 	hs.source = source

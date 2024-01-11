@@ -1,6 +1,12 @@
 package server
 
+import (
+	"socketd/transport/core"
+)
+
 type Config struct {
+	core.Config
+
 	Protocol string
 	Host     string
 	Port     int

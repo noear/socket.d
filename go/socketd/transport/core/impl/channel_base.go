@@ -3,20 +3,20 @@ package impl
 import (
 	"strings"
 
-	"socketd/transport/core"
-
 	"github.com/google/uuid"
+	"socketd/transport/core"
+	"socketd/transport/core/message"
 )
 
 var _ core.Channel = new(ChannelBase)
 
 type ChannelBase struct {
+	core.Channel
+
 	config      core.Config
 	attachments map[string]any
 	handshake   *core.Handshake
 	isClosed    int
-
-	channel core.Channel
 }
 
 func NewChannelBase(config core.Config) *ChannelBase {
@@ -47,7 +47,7 @@ func (c *ChannelBase) IsClosed() int {
 	return c.isClosed
 }
 
-func (c *ChannelBase) close(code int) {
+func (c *ChannelBase) Close(code int) {
 	c.isClosed = code
 	//for k := range c.attachments {
 	//	delete(c.attachments, k)
@@ -63,37 +63,37 @@ func (c *ChannelBase) GetHandshake() *core.Handshake {
 }
 
 func (c *ChannelBase) SendConnect(uri string) (err error) {
-	var frame = core.Frame{}
+	var frame = &message.Frame{}
 	frame.Sid = strings.Replace(uuid.NewString(), "-", "", -1)
-	frame.Flag = core.ConnectFrame
-	return c.channel.Send(frame, nil)
+	frame.Flag = message.ConnectFrame
+	return c.Send(frame, nil)
 }
 
-func (c *ChannelBase) SendConnectAck(connectMsg *core.Message) (err error) {
-	var frame = core.Frame{}
-	frame.Flag = core.ConnackFrame
+func (c *ChannelBase) SendConnectAck(connectMsg *message.Message) (err error) {
+	var frame = &message.Frame{}
+	frame.Flag = message.ConnackFrame
 	frame.Message = connectMsg
-	return c.channel.Send(frame, nil)
+	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendPing() (err error) {
-	var frame = core.Frame{}
-	frame.Flag = core.PingFrame
-	return c.channel.Send(frame, nil)
+	var frame = &message.Frame{}
+	frame.Flag = message.PingFrame
+	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendPong() (err error) {
-	var frame = core.Frame{}
-	frame.Flag = core.PongFrame
-	return c.channel.Send(frame, nil)
+	var frame = &message.Frame{}
+	frame.Flag = message.PongFrame
+	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendClose() (err error) {
-	var frame = core.Frame{}
-	frame.Flag = core.CloseFrame
-	return c.channel.Send(frame, nil)
+	var frame = &message.Frame{}
+	frame.Flag = message.CloseFrame
+	return c.Send(frame, nil)
 }
 
-func (c *ChannelBase) SendAlarm(from *core.Message, alarm string) (err error) {
+func (c *ChannelBase) SendAlarm(from *message.Message, alarm string) (err error) {
 	return nil
 }

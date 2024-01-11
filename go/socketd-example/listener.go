@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"strings"
+
 	"socketd/transport/core"
+	"socketd/transport/core/message"
 )
 
 type MyListner struct {
@@ -18,7 +21,14 @@ func (l *MyListner) OnOpen(session core.Session) error {
 	fmt.Println("OnOpen")
 	return nil
 }
-func (l *MyListner) OnMessage(session core.Session, message core.Message) error {
+func (l *MyListner) OnMessage(session core.Session, message *message.Message) error {
 	fmt.Println("OnMessage")
+	if strings.HasPrefix(message.Event, "/demo") {
+		err := session.Reply(message, message.Entity)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
 	return nil
 }

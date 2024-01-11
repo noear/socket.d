@@ -1,6 +1,8 @@
 package fragment
 
-import "socketd/transport/core"
+import (
+	"socketd/transport/core/message"
+)
 
 // Holder
 /**
@@ -9,10 +11,10 @@ import "socketd/transport/core"
  */
 type Holder struct {
 	index   int
-	message *core.Message
+	message *message.Message
 }
 
-func NewHolder(index int, message *core.Message) *Holder {
+func NewHolder(index int, message *message.Message) *Holder {
 	return &Holder{index, message}
 }
 
@@ -20,6 +22,6 @@ func (h *Holder) GetIndex() int {
 	return h.index
 }
 
-func (h *Holder) GetMessage() *core.Message {
+func (h *Holder) GetMessage() *message.Message {
 	return h.message
 }

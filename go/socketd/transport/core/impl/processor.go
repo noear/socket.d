@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"socketd/transport/core"
+	"socketd/transport/core/message"
 )
 
 type Processor struct {
@@ -19,11 +20,11 @@ func (p *Processor) SetListener(listener core.Listener) {
 	p.listener = listener
 }
 
-func (p *Processor) OnReceive(channel core.Channel, frame core.Frame) {
+func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 	//TODO 日志记录
 	fmt.Println("OnReceive", frame)
 	switch frame.Flag {
-	case core.ConnectFrame:
+	case message.ConnectFrame:
 		var handshake = core.NewHandshake(frame.Message)
 		channel.SetHandshake(handshake)
 
@@ -42,7 +43,7 @@ func (p *Processor) OnReceive(channel core.Channel, frame core.Frame) {
 
 		})
 		p.OnOpen(channel)
-	case core.ConnackFrame:
+	case message.ConnackFrame:
 		var handshake = core.NewHandshake(frame.Message)
 		channel.SetHandshake(handshake)
 
@@ -52,7 +53,7 @@ func (p *Processor) OnReceive(channel core.Channel, frame core.Frame) {
 			channel.Close(1)
 
 			// 握手失败
-			if frame.Flag == core.CloseFrame {
+			if frame.Flag == message.CloseFrame {
 				channel.SendPong()
 			}
 
@@ -61,24 +62,24 @@ func (p *Processor) OnReceive(channel core.Channel, frame core.Frame) {
 		}
 
 		switch frame.Flag {
-		case core.PingFrame:
+		case message.PingFrame:
 			channel.SendPong()
-		case core.PongFrame:
+		case message.PongFrame:
 			channel.SendPong()
-		case core.CloseFrame:
+		case message.CloseFrame:
 			channel.Close(1)
 			p.OnCloseInternal(channel)
-		case core.AlarmFrame:
+		case message.AlarmFrame:
 			//TODO
-		case core.MessageFrame:
+		case message.MessageFrame:
 			fallthrough
-		case core.RequestFrame:
+		case message.RequestFrame:
 			fallthrough
-		case core.SubscribeFrame:
+		case message.SubscribeFrame:
 			p.OnReceiveDo(channel, frame, false)
-		case core.ReplyFrame:
+		case message.ReplyFrame:
 			p.OnReceiveDo(channel, frame, true)
-		case core.ReplyEndFrame:
+		case message.ReplyEndFrame:
 			p.OnReceiveDo(channel, frame, true)
 		default:
 			channel.Close(2)
@@ -88,7 +89,7 @@ func (p *Processor) OnReceive(channel core.Channel, frame core.Frame) {
 
 }
 
-func (p *Processor) OnReceiveDo(channel core.Channel, frame core.Frame, reply bool) {
+func (p *Processor) OnReceiveDo(channel core.Channel, frame *message.Frame, reply bool) {
 	var buf = &bytes.Buffer{}
 
 	// TODO 聚合，分片
@@ -105,7 +106,7 @@ func (p *Processor) OnOpen(channel core.Channel) {
 	channel.DoOpenFuture(true, nil)
 }
 
-func (p *Processor) OnMessage(channel core.Channel, message core.Message) {
+func (p *Processor) OnMessage(channel core.Channel, message *message.Message) {
 	var err = p.listener.OnMessage(channel.GetSession(), message)
 	if err != nil {
 		p.OnError(channel, err)

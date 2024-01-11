@@ -3,7 +3,7 @@ from typing import Optional
 
 from websockets.client import WebSocketClientProtocol
 
-from socketd.transport.client.Client import Client
+from socketd.transport.client.Client import Client, ClientInternal
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.config.logConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
@@ -12,7 +12,7 @@ from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
 
 
 class WsAioClientConnector(ClientConnectorBase):
-    def __init__(self, client: Client):
+    def __init__(self, client: ClientInternal):
         self.real: Optional[AIOWebSocketClientImpl] = None
         self.__loop = asyncio.get_event_loop()
         self.__stop = asyncio.Future()
@@ -22,7 +22,7 @@ class WsAioClientConnector(ClientConnectorBase):
         logger.debug('Start connecting to: {}'.format(self.client.get_config().get_url()))
 
         # 处理自定义架构的影响
-        ws_url = self.client.get_config().get_url().replace("std:", "")
+        ws_url = self.client.get_config().get_url().replace("std:", "").replace("-python", "")
 
         # 支持 ssl
         if self.client.get_config().get_ssl_context() is not None:

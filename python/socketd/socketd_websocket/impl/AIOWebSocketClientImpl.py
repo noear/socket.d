@@ -77,7 +77,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         try:
             log.info("Client:Websocket onOpen...")
             await self.channel.send_connect(self.client.get_config().get_url())
-            await self.on_message()
+            while self.status_state == Flag.Connect:
+                await self.on_message()
         except Exception as e:
             log.error(str(e), exc_info=True)
             raise e
@@ -87,6 +88,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         if self.status_state == Flag.Close:
             return
         try:
+            # if self.status_state != Flag.Connect and not self.transfer_data_task.done():
+            #     return
             message = await self.recv()
             if message is None:
                 # 结束握手
@@ -103,10 +106,10 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         except CancelledError as c:
             # 超时自动推出
             log.debug(c)
-            # raise c
+            raise c
         except Exception as e:
             self.on_error(e)
-            # raise e
+            raise e
 
     def on_close(self):
         self.client.get_processor().on_close(self.channel)

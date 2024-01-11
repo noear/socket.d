@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from socketd.transport.core import Buffer
 from socketd.transport.core.Costants import Flag
 from socketd.transport.server.ServerConfig import ServerConfig
-from socketd.transport.core.entity.Frame import Frame
+from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer

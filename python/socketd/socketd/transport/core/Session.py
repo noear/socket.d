@@ -3,7 +3,7 @@ from typing import Union, Dict, Any, Callable, Awaitable, Coroutine, Optional
 from asyncio import Future
 
 from socket import gethostbyaddr
-from socketd.transport.core import Handshake
+from socketd.transport.core import HandshakeDefault
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.stream.RequestStream import RequestStream
@@ -25,7 +25,7 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def get_handshake(self) -> Handshake:
+    def get_handshake(self) -> HandshakeDefault:
         ...
 
     @abc.abstractmethod
@@ -69,11 +69,11 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def reply(self, from_msg: Message, content: Entity) -> None:
+    async def reply(self, from_msg: Message, content: Entity) -> None:
         ...
 
     @abc.abstractmethod
-    def reply_end(self, from_msg: Message, content: Entity) -> None:
+    async def reply_end(self, from_msg: Message, content: Entity) -> None:
         ...
 
     @abc.abstractmethod

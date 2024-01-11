@@ -7,7 +7,7 @@ class ClientConnector(ABC):
         pass
 
     @abstractmethod
-    def heartbeatInterval(self):
+    def heartbeatInterval(self) -> int:
         pass
 
     @abstractmethod
@@ -15,5 +15,5 @@ class ClientConnector(ABC):
         pass
 
     @abstractmethod
-    def connect(self):
+    async def connect(self):
         pass

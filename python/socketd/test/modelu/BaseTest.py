@@ -36,7 +36,7 @@ class BaseTest:
         self.__server_session: WebSocketServer = await self.__server.config(self.s_config).listen(
             SimpleListenerTest()).start()
 
-        self.__client_session: Session = await SocketD.create_client("ws://127.0.0.1:9999") \
+        self.__client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9999") \
             .config(self.c_config).open()
 
     @calc_async_time

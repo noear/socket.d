@@ -41,11 +41,14 @@ class SocketD:
 
     @staticmethod
     def create_client(server_url: str) -> Client:
-        schema = SocketD.__get_schema(server_url)
+        index = server_url.index("://")
+        if index <= 0:
+            raise SocketDException(f"The serverUrl invalid: {server_url}")
+        schema = server_url[:index]
         if schema is None:
             raise ValueError("Invalid server URL.")
 
-        client_config = ClientConfig(server_url)
+        client_config = ClientConfig(server_url[4:])
         factory = SocketD.client_factory_map.get(schema)
         if factory is None:
             raise RuntimeError(f"No ClientBroker providers were found. {client_config.get_schema()}")

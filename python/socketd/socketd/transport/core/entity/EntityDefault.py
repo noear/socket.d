@@ -78,7 +78,7 @@ class EntityDefault(Entity):
         return self.data
 
     def get_data_as_string(self):
-        return str(self.data.getvalue(), 'utf-8')  # _assuming data is of type bytes
+        return self.data.getvalue().decode('utf-8')  # _assuming data is of type bytes
 
     def get_data_as_bytes(self) -> bytes:
         return self.data.getvalue()

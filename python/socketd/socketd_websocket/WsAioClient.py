@@ -21,9 +21,5 @@ class WsAioClient(ClientBase, ChannelSupporter):
         self.log = logger.opt()
         self.__loop = asyncio.get_event_loop()
 
-    async def open(self) -> Session:
-        client = WsAioClientConnector(self)
-        self.log.info(f"open {self._config.get_url()}")
-        self.client = await client.connect()
-        channel: Channel = ClientChannel(self.client, client)
-        return SessionDefault(channel)
+    def create_connector(self) -> WsAioClientConnector:
+        return WsAioClientConnector(self)

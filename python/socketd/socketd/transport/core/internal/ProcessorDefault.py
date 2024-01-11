@@ -6,7 +6,7 @@ from loguru import logger
 
 from socketd.exception.SocketdExecption import SocketdAlarmException
 from socketd.transport.core.ChannelInternal import ChannelInternal
-from socketd.transport.core.Handshake import Handshake
+from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Processor import Processor
 from socketd.transport.core.Costants import Flag, EntityMetas, Constants
@@ -14,6 +14,7 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.listener.SimpleListener import SimpleListener
 from socketd.transport.core.stream.Stream import Stream
 from socketd.transport.core.stream.StreamManger import StreamInternal
+from socketd.transport.utils.AsyncUtil import AsyncUtil
 
 
 class ProcessorDefault(Processor, ABC):
@@ -34,7 +35,7 @@ class ProcessorDefault(Processor, ABC):
 
         if frame.get_flag() == Flag.Connect:
             connectMessage = frame.get_message()
-            channel.set_handshake(Handshake(connectMessage))
+            channel.set_handshake(HandshakeDefault(connectMessage))
 
             async def _future(b: bool, e: Exception):
                 if channel.is_valid():
@@ -47,11 +48,12 @@ class ProcessorDefault(Processor, ABC):
                         # 如果还有效，则关闭通道
                         await channel.close(Constants.CLOSE3_ERROR)
                         self.on_close_internal(channel)
+
             await channel.on_open_future(_future)
             await self.on_open(channel)
         elif frame.get_flag() == Flag.Connack:
             message = frame.get_message()
-            channel.set_handshake(Handshake(message))
+            channel.set_handshake(HandshakeDefault(message))
             await self.on_open(channel)
         else:
             if channel.get_handshake() is None:
@@ -130,9 +132,13 @@ class ProcessorDefault(Processor, ABC):
             await channel.do_open_future(True, e)
 
     async def on_message(self, channel: ChannelInternal, message: Message):
-        await asyncio.get_running_loop().run_in_executor(channel.get_config().get_executor(),
-                                                         lambda: asyncio.run(self.listener.on_message(
-                                                             channel.get_session(), message)))
+        await self.listener.on_message(channel.get_session(), message)
+        # AsyncUtil.thread_loop(self.listener.on_message(
+        #     channel.get_session(), message),
+        #     pool=channel.get_config().get_executor())
+        # await asyncio.get_running_loop().run_in_executor(channel.get_config().get_executor(),
+        #                                                  lambda: asyncio.run(self.listener.on_message(
+        #                                                      channel.get_session(), message)))
 
     def on_close(self, channel: ChannelInternal):
         self.listener.on_close(channel.get_session())

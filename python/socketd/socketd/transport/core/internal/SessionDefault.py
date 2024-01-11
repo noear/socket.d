@@ -5,7 +5,7 @@ from typing import Callable, Awaitable, Any, Coroutine, Optional
 
 from socketd.transport.core.internal.SessionBase import SessionBase
 from socketd.transport.core.Channel import Channel
-from socketd.transport.core.Handshake import Handshake
+from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Frame import Frame
@@ -37,7 +37,7 @@ class SessionDefault(SessionBase, ABC):
     def get_local_address(self) -> str:
         return self._channel.get_local_address()
 
-    def get_handshake(self) -> Handshake:
+    def get_handshake(self) -> HandshakeDefault:
         return self._channel.get_handshake()
 
     async def send_ping(self):

@@ -32,11 +32,11 @@ class Channel(ABC):
         pass
 
     @abstractmethod
-    def set_handshake(self, handshake: 'Handshake') -> None:
+    def set_handshake(self, handshake: 'HandshakeDefault') -> None:
         pass
 
     @abstractmethod
-    def get_handshake(self) -> 'Handshake':
+    def get_handshake(self) -> 'HandshakeDefault':
         pass
 
     @abstractmethod

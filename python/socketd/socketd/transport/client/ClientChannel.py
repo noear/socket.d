@@ -65,21 +65,20 @@ class ClientChannel(ChannelBase, ABC):
                     await self.heartbeat_handle()
 
             self._heartbeatScheduledFuture = asyncio.create_task(_heartbeatScheduled())
-
             self.get_config().get_executor().submit(lambda:
                                                     AsyncUtil.thread_handler(self._loop,
                                                                              self._heartbeatScheduledFuture))
 
-    def heartbeat_handle(self):
+    async def heartbeat_handle(self):
         AssertsUtil.assert_closed(self.real)
 
         with self:
             try:
-                self.prepare_check()
-                self.heartbeatHandler.heartbeat(self.get_session())
+                await self.prepare_check()
+                await self.heartbeatHandler.heartbeat(self.get_session())
             except Exception as e:
                 if self.connector.autoReconnect():
-                    self.real.close()
+                    await self.real.close()
                     self.real = None
                 raise e
 

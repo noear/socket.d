@@ -1,12 +1,12 @@
 from abc import ABC
 
-from .Client import Client
+from .Client import Client, ClientInternal
 from .ClientConnector import ClientConnector
 
 
 class ClientConnectorBase(ClientConnector, ABC):
 
-    def __init__(self, client: Client):
+    def __init__(self, client: ClientInternal):
         self.client = client
 
     def heartbeatHandler(self):

@@ -11,7 +11,7 @@ from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.core.listener.EventListener import EventListener
 from socketd.transport.utils.AsyncUtil import AsyncUtil
-from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
+from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session
@@ -33,10 +33,10 @@ class SimpleListenerTest(Listener):
         pass
 
     async def on_message(self, session: Session, message: Message):
-        async with self.server_counter:
-            await self.server_counter.set(await self.server_counter.get() + 1)
+        with self.server_counter:
+            self.server_counter.set(self.server_counter.get() + 1)
             logger.info(f":: {message}")
-        if await self.server_counter.get() == 1:
+        if self.server_counter.get() == 1:
             try:
                 await session.close()
                 pass
@@ -55,13 +55,17 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.top: Optional[asyncio.Future]  = None
-        self.server: Server
-        self.server_session: WebSocketServer
-        self.client_session: Session
+        self.server: Optional[Server] = None
+        self.server_session: Optional[WebSocketServer] = None
+        self.client_session: Optional[Session] = None
         self.loop = asyncio.get_event_loop()
         self._simple = SimpleListenerTest()
 
     async def _start(self):
+        self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
+        _server = self.server.config(config_handler).listen(self._simple)
+        self.server_session: WebSocketServer = await _server.start()
+
         def do_on_close(session: Session):
             logger.debug("do_on_close")
             # if asyncio.run(self._simple.message_counter.get()) == 1:
@@ -81,18 +85,6 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
 
     def start(self):
         super().start()
-        loop = asyncio.new_event_loop()
-
-        async def _handle():
-
-            self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
-            _server = self.server.config(config_handler).listen(self._simple)
-            self.server_session: WebSocketServer = await _server.start()
-            self.top = asyncio.Future()
-            await self.top
-            self.server_session.close()
-        Thread(target=AsyncUtil.thread_handler, args=(loop, _handle())).start()
-        time.sleep(2)
         self.loop.run_until_complete(self._start())
         logger.info(
             f" message {self._simple.message_counter.get()}")

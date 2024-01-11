@@ -1,6 +1,6 @@
 import asyncio
 import typing
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Executor
 from threading import Thread
 
 
@@ -20,7 +20,7 @@ class AsyncUtil(object):
         _loop.run_until_complete(fn)
 
     @staticmethod
-    def thread_loop(core: typing.Coroutine, thread=None, pool: ThreadPoolExecutor=None):
+    def thread_loop(core: typing.Coroutine, thread=None, pool: Executor=None):
         loop = asyncio.new_event_loop()
         if thread:
             t = Thread(target=lambda: AsyncUtil.thread_handler(loop, loop.create_task(core)))

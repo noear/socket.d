@@ -30,6 +30,8 @@ class Client(ABC):
     @abstractmethod
     def get_assistant(self) -> ChannelAssistant: ...
 
+
+class ClientInternal(Client):
     @abstractmethod
     def get_heartbeatInterval(self): ...
 

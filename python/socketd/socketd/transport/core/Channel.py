@@ -37,11 +37,11 @@ class Channel:
         ...
 
     @abstractmethod
-    def set_handshake(self, handshake: 'Handshake') -> None:
+    def set_handshake(self, handshake: 'HandshakeDefault') -> None:
         ...
 
     @abstractmethod
-    def get_handshake(self) -> 'Handshake':
+    def get_handshake(self) -> 'HandshakeDefault':
         ...
 
     @abstractmethod

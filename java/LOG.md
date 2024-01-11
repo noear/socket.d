@@ -1,5 +1,6 @@
 ### 2.3.4
 * 调整 Entity:at() 更名为 Message:atName() （方便跨语言迁移）
+* 调整 sendAndRequest(timeout=-1)时，表示为流超时
 * 添加 MessageHandler 接口，方便做IOC容器组件化控制
 
 ### 2.3.1

@@ -33,6 +33,7 @@ export class ClientConfig extends ConfigBase {
 
         let _uri = StrUtils.parseUri(url);
 
+        this._host = _uri.host;
         this._port = parseInt(_uri.port);
         this._schema = _uri.protocol;
 

@@ -91,7 +91,7 @@ public class Demo06_Im_Client {
 
         if (token == null) {
             //进入用户频道
-            clientSession = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=" + user).listen(new EventListener().doOnMessage((s, m) -> {
+            clientSession = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=" + user).listen(new EventListener().doOnMessage((s, m) -> {
                 System.err.println("聊到室：" + m.dataAsString());
             }).doOn("cmd.t", (s, m)->{
                 //把房间置空
@@ -100,7 +100,7 @@ public class Demo06_Im_Client {
         } else {
             System.out.println("进入管理频道");
             //进入管理频道
-            clientSession = SocketD.createClient("sd:udp://127.0.0.1:8602/admin?u=" + user + "&t=" + token).open();
+            clientSession = SocketD.createClient("sd:ws://127.0.0.1:8602/admin?u=" + user + "&t=" + token).open();
             // 群主上身
             adminStart();
         }

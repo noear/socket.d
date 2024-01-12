@@ -16,7 +16,7 @@ import java.util.Map;
 public class Demo06_Im_Server {
     static Map<String, Session> userList = new HashMap<>();
     public static void main(String[] args) throws Exception {
-        SocketD.createServer("sd:udp")
+        SocketD.createServer("sd:ws")
                 .config(c -> c.port(8602))
                 .listen(new PathListener()
                         //::::::::::用户频道处理

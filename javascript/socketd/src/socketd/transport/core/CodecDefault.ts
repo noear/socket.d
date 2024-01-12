@@ -14,7 +14,7 @@ import type {Codec, CodecReader, CodecWriter} from "./Codec";
  * @author noear
  * @since 2.0
  */
-export class CodecByteBuffer implements Codec {
+export class CodecDefault implements Codec {
     private _config: Config;
 
     constructor(config: Config) {
@@ -91,7 +91,7 @@ export class CodecByteBuffer implements Codec {
      *
      * @param buffer 缓冲
      */
-    read(buffer: CodecReader): Frame|null { //=>Frame
+    read(buffer: CodecReader): Frame | null { //=>Frame
         const frameSize = buffer.getInt();
 
         if (frameSize > (buffer.remaining() + 4)) {
@@ -155,17 +155,16 @@ export class CodecByteBuffer implements Codec {
         while (true) {
             const c = reader.getByte();
 
-            if (c == 10) { //10:'\n'
+            if (c == 0 && reader.peekByte() == 10) { //x0a:'\n'
+                reader.skipBytes(1);
                 break;
             }
 
             if (maxLen > 0 && maxLen <= bufViewIdx) {
                 //超界了，空读。必须读，不然协议流会坏掉
             } else {
-                if (c != 0) { //32:' '
-                    bufView.setInt8(bufViewIdx, c);
-                    bufViewIdx++;
-                }
+                bufView.setInt8(bufViewIdx, c);
+                bufViewIdx++;
             }
         }
 

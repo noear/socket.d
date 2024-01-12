@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>Socket.D-JS-WS</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8 " />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <script src="https://cdn.jsdelivr.net/gh/noear/socket.d@2.3.4/javascript/release/socket.d.js"></script>
+    <style>
+        body{max-width: 900px; margin: auto;}
+        table th {  text-align: right; }
+        table input,textarea {  width: 500px;  margin-left: 10px;  margin-right: 10px; }
+        table textarea {  resize: none;  }
+    </style>
+    <script>
+        let user = null;
+        let token = null;
+        let room ="c1";
+        let clientSession = null;
+
+        async function charJoin() {
+            user = document.getElementById("name").value;
+            console.info("开始登录服务器...");
+
+            if (clientSession) {
+                clientSession.close();
+            }
+
+            //进入用户频道
+            clientSession = await SocketD.createClient("sd:ws://127.0.0.1:8602/?u=" + user)
+                .listen(SocketD.newEventListener().doOnOpen(s=>{
+                    s.send("cmd.join", SocketD.newEntity().metaPut("room", room));
+                    alert("成功加入");
+                }).doOnMessage((s, m) => {
+                    appendToMessageList("聊到室：", m.dataAsString());
+                }).doOn("cmd.t", (s, m) => {
+                    //把房间置空
+                    room = null;
+                })).open();
+        }
+
+        function chatSend(){
+            if(clientSession == null){
+                alert("要先加入聊天室");
+                return;
+            }
+
+            clientSession.send("cmd.chat", SocketD.newEntity(document.getElementById("input").value)
+                .metaPut("room", room)
+                .metaPut("sender", user));
+        }
+
+        function appendToMessageList(hint, msg) {
+            let ele = document.getElementById("message");
+            ele.value = `[${dateFormat(new Date(), 'yyyy-MM-dd hh:mm:ss.SSS')}] ${hint}：${msg}\n` + ele.value;
+        }
+
+        // 日期格式化
+        function dateFormat(date,fmt) {
+            // 默认格式
+            fmt = fmt ? fmt : 'yyyy-MM-dd hh:mm:ss';
+
+            var o = {
+                "M+" : date.getMonth()+1,                 // 月份
+                "d+" : date.getDate(),                    // 日
+                "h+" : date.getHours(),                   // 小时
+                "m+" : date.getMinutes(),                 // 分
+                "s+" : date.getSeconds(),                 // 秒
+                "q+" : Math.floor((date.getMonth()+3)/3), // 季度
+                "S+"  : date.getMilliseconds()             // 毫秒
+            };
+            if(/(y+)/.test(fmt)) {
+                fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+            }
+            for(var k in o) {
+                if(new RegExp("("+ k +")").test(fmt)){
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) :
+                        RegExp.$1.length==2 ? (("00"+ o[k]).substr((""+ o[k]).length)) : (("000"+ o[k]).substr((""+ o[k]).length))
+                    );
+                }
+            }
+            return fmt;
+        }
+    </script>
+</head>
+<body>
+<main>
+    <table>
+        <tr>
+            <td width="200"></td>
+            <td width="500" align="center"><h2>
+                socket.d im demo
+            </h2></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th width="200">Name:</th>
+            <td><input id="name" value="noear" type="text"></td>
+            <td><button onclick="charJoin()">加入</button></td>
+        </tr>
+        <tr>
+            <th width="200">Send:</th>
+            <td><input id="input" value="test" type="text"></td>
+            <td><button onclick="chatSend()">发送</button></td>
+        </tr>
+        <tr>
+            <th>Message List:</th>
+            <td><textarea id="message" rows="15" cols="20" readonly></textarea></td>
+            <td></td>
+        </tr>
+    </table>
+</main>
+</body>
+</main>
+</html>

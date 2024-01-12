@@ -2,12 +2,11 @@ package impl
 
 import (
 	"fmt"
-	"io"
 	"net"
-	"strconv"
 	"sync"
 
 	"socketd/transport/core"
+	"socketd/transport/core/constant"
 	"socketd/transport/core/message"
 	"socketd/transport/stream"
 )
@@ -60,30 +59,30 @@ func (c *ChannelDefault[T, U]) Send(frame *message.Frame, stream stream.StreamIn
 	c.send_lock.Lock()
 	defer c.send_lock.Unlock()
 
-	if frame.Message != nil {
-
-		// 注册流接收器
-		if stream != nil {
-			c.streamManager.Add(frame.Sid, stream)
-		}
-
-		// 如果有实体（尝试分片）
-		if frame.Entity != nil {
-			//确保用完自动关闭
-
-			if frame.DataSize() > c.GetConfig().GetFragmentSize() {
-				frame.MetaPut(message.META_DATA_LENGTH, strconv.Itoa(frame.DataSize()))
-			}
-
-			err = c.GetConfig().GetFragmentHandler().SplitFragment(c, stream, frame.Message, func(entity *message.Entity) (err error) {
-				var f = message.NewFrame()
-				f.Flag = frame.Flag
-				f.CopyEntity(entity)
-				return c.assistant.Write(c.source, f)
-			})
-			return
-		}
-	}
+	//if frame.Message != nil {
+	//
+	//	// 注册流接收器
+	//	if stream != nil {
+	//		c.streamManager.Add(frame.Sid, stream)
+	//	}
+	//
+	//	// 如果有实体（尝试分片）
+	//	if frame.Entity != nil {
+	//		//确保用完自动关闭
+	//
+	//		if frame.DataSize() > c.GetConfig().GetFragmentSize() {
+	//			frame.MetaPut(message.META_DATA_LENGTH, strconv.Itoa(frame.DataSize()))
+	//		}
+	//
+	//		err = c.GetConfig().GetFragmentHandler().SplitFragment(c, stream, frame.Message, func(entity *message.Entity) (err error) {
+	//			var f = message.NewFrame()
+	//			f.Flag = frame.Flag
+	//			f.CopyEntity(entity)
+	//			return c.assistant.Write(c.source, f)
+	//		})
+	//		return
+	//	}
+	//}
 
 	err = c.assistant.Write(c.source, frame)
 	if stream != nil {
@@ -97,8 +96,25 @@ func (c *ChannelDefault[T, U]) Send(frame *message.Frame, stream stream.StreamIn
  * @Description 接收（接收答复帧）
  * @Date 2024-01-11 10:14:42
  */
-func (c *ChannelDefault[T, U]) Retrieve(frame *message.Frame, stream io.Reader) {
+func (c *ChannelDefault[T, U]) Retrieve(frame *message.Frame, stream stream.StreamInternal) {
+	if stream != nil {
+		if stream.Demands() < constant.DEMANDS_MULTIPLE || frame.Flag == constant.FrameReplyEnd {
+			//如果是单收或者答复结束，则移除流接收器
+			c.streamManager.Remove(frame.Message.Sid)
+		}
 
+		if stream.Demands() < constant.DEMANDS_MULTIPLE {
+			stream.OnReply(frame)
+			return
+		}
+		go func() {
+			stream.OnReply(frame)
+		}()
+
+		return
+	}
+	fmt.Printf("%s stream not found, sid=%s, sessionId=%s",
+		c.GetConfig().GetRoleName(), frame.Message.Sid, c.seesion.SessionId())
 }
 
 func (c *ChannelDefault[T, U]) Reconnect() error {
@@ -110,11 +126,13 @@ func (c *ChannelDefault[T, U]) OnError(err error) {
 }
 
 func (c *ChannelDefault[T, U]) SetSession(session core.Session) {
-	//TODO implement me
-	panic("implement me")
+	c.seesion = session
 }
 
 func (c *ChannelDefault[T, U]) GetSession() core.Session {
+	if c.seesion == nil {
+		c.seesion = NewSessionDefault(c.Channel)
+	}
 	return c.seesion
 }
 
@@ -136,7 +154,7 @@ func (c *ChannelDefault[T, U]) DoOpenFuture(isOk bool, err error) {
 
 func (c *ChannelDefault[T, U]) Close(code int) {
 	//TODO 日志记录
-	fmt.Printf("%s channel will be closed, sessionId = %s/n", c.GetConfig().GetRoleName(), c.GetSession().SessionId())
+	fmt.Printf("%s channel will be closed, sessionId = %s\n", c.GetConfig().GetRoleName(), c.GetSession().SessionId())
 
 	c.ChannelBase.Close(code)
 	if err := c.assistant.Close(c.source); err != nil {

@@ -18,6 +18,7 @@ import (
 
 type Handshake struct {
 	uri     string
+	path    string
 	version string
 	params  url.Values
 	source  *message.Message
@@ -39,6 +40,10 @@ func (h *Handshake) Version() string {
 
 func (h *Handshake) Uri() string {
 	return h.uri
+}
+
+func (h *Handshake) Path() string {
+	return h.path
 }
 
 func (h *Handshake) Param(name string) string {

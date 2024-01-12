@@ -12,19 +12,20 @@ type MyListner struct {
 }
 
 func (l *MyListner) OnClose(session core.Session) {
-	fmt.Println("OnClose")
+	fmt.Println("-> OnClose")
 }
 func (l *MyListner) OnError(session core.Session, err error) {
-	fmt.Println("OnError")
+	fmt.Println("-> OnError")
 }
 func (l *MyListner) OnOpen(session core.Session) error {
-	fmt.Println("OnOpen")
+	fmt.Println("-> OnOpen")
 	return nil
 }
-func (l *MyListner) OnMessage(session core.Session, message *message.Message) error {
-	fmt.Println("OnMessage")
-	if strings.HasPrefix(message.Event, "/demo") {
-		err := session.Reply(message, message.Entity)
+func (l *MyListner) OnMessage(session core.Session, msg *message.Frame) error {
+	fmt.Println("-> OnMessage")
+	if strings.HasPrefix(msg.Message.Event, "/demo") {
+
+		err := session.Reply(msg, msg.Message.Entity)
 		if err != nil {
 			fmt.Println(err)
 			return err

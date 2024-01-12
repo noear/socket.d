@@ -35,7 +35,7 @@ func (s StreamManagerDefault) Remove(sid string) {
 	if ok {
 		stm.InsuranceCancel()
 		// TODO 日志记录
-		fmt.Printf("%s stream removed, sid = %s/n", s.config.GetRoleName(), sid)
+		fmt.Printf("%s stream removed, sid = %s\n", s.config.GetRoleName(), sid)
 	}
 	delete(s.streamMap, sid)
 }

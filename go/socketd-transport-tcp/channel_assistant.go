@@ -41,15 +41,14 @@ func (c *ChannelAssistant) Write(conn *net.TCPConn, frame *message.Frame) (err e
 	return
 }
 
-func (c *ChannelAssistant) Read(conn *net.TCPConn, frame *message.Frame) (err error) {
+func (c *ChannelAssistant) Read(conn *net.TCPConn) (*message.Frame, error) {
 	// 读缓冲
 	buf := make([]byte, c.Config.GetReadBufferSize())
 	n, err := conn.Read(buf)
 	if err != nil {
 		// TODO 日志记录
 		fmt.Println(err)
-		return
+		return nil, err
 	}
-	c.Config.GetCodec().Decode(frame, buf[:n])
-	return nil
+	return c.Config.GetCodec().Decode(buf[:n]), nil
 }

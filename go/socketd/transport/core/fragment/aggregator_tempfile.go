@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"socketd/transport/core/constant"
 	"socketd/transport/core/message"
 )
 
@@ -23,9 +24,9 @@ func NewAggregatorTempfile(main *message.Message) (ad *AggregatorTempfile, err e
 	ad = new(AggregatorTempfile)
 	ad.main = main
 
-	var dataLenStr = main.Meta.Get(message.META_DATA_LENGTH)
+	var dataLenStr = main.Meta.Get(constant.META_DATA_LENGTH)
 	if dataLenStr == "" {
-		err = fmt.Errorf("missing %s meta, event=%s", message.META_DATA_LENGTH, main.Event)
+		err = fmt.Errorf("missing %s meta, event=%s", constant.META_DATA_LENGTH, main.Event)
 	}
 	ad.dataLength, err = strconv.Atoi(dataLenStr)
 	return

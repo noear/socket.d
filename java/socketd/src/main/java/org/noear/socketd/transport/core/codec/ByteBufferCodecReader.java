@@ -41,6 +41,16 @@ public class ByteBufferCodecReader implements CodecReader {
         return buffer.getInt();
     }
 
+
+    @Override
+    public byte peekByte() {
+        if (buffer.remaining() > 0) {
+            return buffer.get(buffer.position());
+        } else {
+            return -1;
+        }
+    }
+
     @Override
     public void skipBytes(int length) {
         buffer.position(buffer.position() + length);

@@ -161,20 +161,18 @@ public class CodecDefault implements Codec {
      */
     protected String decodeString(CodecReader reader, ByteBuffer buf, int maxLen) {
         buf.clear();
-
         while (true) {
             byte c = reader.getByte();
 
-            if (c == 10) { //10:'\n'
+            if (c == 0 && reader.peekByte() == 10) { //x0a:'\n'
+                reader.skipBytes(1);
                 break;
             }
 
             if (maxLen > 0 && maxLen <= buf.position()) {
                 //超界了，空读。必须读，不然协议流会坏掉
             } else {
-                if (c != 0) { //32:' '
-                    buf.put(c);
-                }
+                buf.put(c);
             }
         }
 

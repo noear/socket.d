@@ -23,6 +23,11 @@ public interface CodecReader {
      */
     int getInt();
 
+    /*
+     * 预看 byte
+     * */
+    byte peekByte();
+
     /**
      * 跳过
      */

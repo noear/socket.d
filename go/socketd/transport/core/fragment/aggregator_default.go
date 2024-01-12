@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strconv"
 
+	"socketd/transport/core/constant"
 	"socketd/transport/core/message"
 )
 
@@ -25,9 +26,9 @@ func NewAggregatorDefault(main *message.Message) (ad *AggregatorDefault, err err
 	ad = new(AggregatorDefault)
 	ad.main = main
 
-	var dataLenStr = main.Meta.Get(message.META_DATA_LENGTH)
+	var dataLenStr = main.Meta.Get(constant.META_DATA_LENGTH)
 	if dataLenStr == "" {
-		err = fmt.Errorf("missing %s meta, event=%s", message.META_DATA_LENGTH, main.Event)
+		err = fmt.Errorf("missing %s meta, event=%s", constant.META_DATA_LENGTH, main.Event)
 	}
 	ad.dataLength, err = strconv.Atoi(dataLenStr)
 	return
@@ -72,8 +73,6 @@ func (a AggregatorDefault) Get() (msg *message.Message, err error) {
 		data = append(data, v.message.Data...)
 	}
 
-	msg = message.NewMessage()
-	msg.CopyMessage(a.main)
-	msg.Data = data
+	msg = message.NewMessage(a.main.Sid, a.main.Event, message.NewEntity(msg.Meta, data))
 	return
 }

@@ -1,8 +1,11 @@
 package impl
 
 import (
-	"bytes"
 	"fmt"
+	"strconv"
+
+	"socketd/transport/core/constant"
+	"socketd/transport/stream"
 
 	"socketd/transport/core"
 	"socketd/transport/core/message"
@@ -12,7 +15,7 @@ type Processor struct {
 	listener core.Listener
 }
 
-func NewProcessor() core.Processor {
+func NewProcessor() *Processor {
 	return &Processor{}
 }
 
@@ -24,14 +27,14 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 	//TODO 日志记录
 	fmt.Println("OnReceive", frame)
 	switch frame.Flag {
-	case message.ConnectFrame:
+	case constant.FrameConnect:
 		var handshake = core.NewHandshake(frame.Message)
 		channel.SetHandshake(handshake)
 
 		channel.OnOpenFuture(func(r bool, e error) {
 			if channel.IsValid() {
 				if e != nil {
-					channel.Close(3)
+					channel.Close(constant.CLOSE3_ERROR)
 					p.OnCloseInternal(channel)
 				} else {
 					var err = channel.SendConnectAck(frame.Message)
@@ -43,17 +46,17 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 
 		})
 		p.OnOpen(channel)
-	case message.ConnackFrame:
+	case constant.FrameConnack:
 		var handshake = core.NewHandshake(frame.Message)
 		channel.SetHandshake(handshake)
 
 		p.OnOpen(channel)
 	default:
 		if channel.GetHandshake() == nil {
-			channel.Close(1)
+			channel.Close(constant.CLOSE1_PROTOCOL)
 
 			// 握手失败
-			if frame.Flag == message.CloseFrame {
+			if frame.Flag == constant.FrameClose {
 				channel.SendPong()
 			}
 
@@ -62,27 +65,27 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 		}
 
 		switch frame.Flag {
-		case message.PingFrame:
+		case constant.FramePing:
 			channel.SendPong()
-		case message.PongFrame:
+		case constant.FramePong:
 			channel.SendPong()
-		case message.CloseFrame:
-			channel.Close(1)
+		case constant.FrameClose:
+			channel.Close(constant.CLOSE1_PROTOCOL)
 			p.OnCloseInternal(channel)
-		case message.AlarmFrame:
+		case constant.FrameAlarm:
 			//TODO
-		case message.MessageFrame:
+		case constant.FrameMessage:
 			fallthrough
-		case message.RequestFrame:
+		case constant.FrameRequest:
 			fallthrough
-		case message.SubscribeFrame:
+		case constant.FrameSubscribe:
 			p.OnReceiveDo(channel, frame, false)
-		case message.ReplyFrame:
+		case constant.FrameReply:
 			p.OnReceiveDo(channel, frame, true)
-		case message.ReplyEndFrame:
+		case constant.FrameReplyEnd:
 			p.OnReceiveDo(channel, frame, true)
 		default:
-			channel.Close(2)
+			channel.Close(constant.CLOSE2_PROTOCOL_ILLEGAL)
 			p.OnCloseInternal(channel)
 		}
 	}
@@ -90,14 +93,39 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 }
 
 func (p *Processor) OnReceiveDo(channel core.Channel, frame *message.Frame, reply bool) {
-	var buf = &bytes.Buffer{}
-
-	// TODO 聚合，分片
-
+	var stm stream.StreamInternal
+	var streamIndex = 0
+	var streamTotal = 1
 	if reply {
-		channel.Retrieve(frame, buf)
+		stm = channel.GetStream(frame.Message.Sid)
+	}
+	if channel.GetConfig().GetFragmentHandler().AggrEnable() {
+		var fragmentIdxStr = frame.Message.Meta.Get(constant.META_DATA_FRAGMENT_IDX)
+		if fragmentIdxStr != "" {
+			streamIndex, _ = strconv.Atoi(fragmentIdxStr)
+			frameNew, _ := channel.GetConfig().GetFragmentHandler().AggrFragment(channel, streamIndex, frame.Message)
+
+			if stm != nil {
+				streamTotal, _ = strconv.Atoi(frame.Message.Meta.Get(constant.META_DATA_FRAGMENT_TOTAL))
+			}
+			if frameNew == nil {
+				if stm != nil {
+					stm.OnProgress(false, streamIndex, streamTotal)
+				}
+				return
+			}
+			frame.Message = frameNew
+		}
+	}
+
+	//执行接收处理
+	if reply {
+		if stm != nil {
+			stm.OnProgress(false, streamIndex, streamTotal)
+		}
+		channel.Retrieve(frame, stm)
 	} else {
-		p.OnMessage(channel, frame.Message)
+		p.OnMessage(channel, frame)
 	}
 }
 
@@ -106,7 +134,7 @@ func (p *Processor) OnOpen(channel core.Channel) {
 	channel.DoOpenFuture(true, nil)
 }
 
-func (p *Processor) OnMessage(channel core.Channel, message *message.Message) {
+func (p *Processor) OnMessage(channel core.Channel, message *message.Frame) {
 	var err = p.listener.OnMessage(channel.GetSession(), message)
 	if err != nil {
 		p.OnError(channel, err)

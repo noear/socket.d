@@ -5,10 +5,11 @@ import (
 
 	"github.com/google/uuid"
 	"socketd/transport/core"
+	"socketd/transport/core/constant"
 	"socketd/transport/core/message"
 )
 
-var _ core.Channel = new(ChannelBase)
+//var _ core.Channel = new(ChannelBase)
 
 type ChannelBase struct {
 	core.Channel
@@ -62,38 +63,39 @@ func (c *ChannelBase) GetHandshake() *core.Handshake {
 	return c.handshake
 }
 
-func (c *ChannelBase) SendConnect(uri string) (err error) {
-	var frame = &message.Frame{}
-	frame.Sid = strings.Replace(uuid.NewString(), "-", "", -1)
-	frame.Flag = message.ConnectFrame
+func (c *ChannelBase) SendConnect(event string) (err error) {
+	sid := strings.Replace(uuid.NewString(), "-", "", -1)
+	frame := message.NewFrame(constant.FrameConnect, message.NewMessage(sid, event, nil))
 	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendConnectAck(connectMsg *message.Message) (err error) {
 	var frame = &message.Frame{}
-	frame.Flag = message.ConnackFrame
+	frame.Flag = constant.FrameConnack
 	frame.Message = connectMsg
 	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendPing() (err error) {
 	var frame = &message.Frame{}
-	frame.Flag = message.PingFrame
+	frame.Flag = constant.FramePing
 	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendPong() (err error) {
 	var frame = &message.Frame{}
-	frame.Flag = message.PongFrame
+	frame.Flag = constant.FramePong
 	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendClose() (err error) {
 	var frame = &message.Frame{}
-	frame.Flag = message.CloseFrame
+	frame.Flag = constant.FrameClose
 	return c.Send(frame, nil)
 }
 
 func (c *ChannelBase) SendAlarm(from *message.Message, alarm string) (err error) {
+	// TODO panic("implement me")
+	panic("implement me")
 	return nil
 }

@@ -5,6 +5,6 @@ import (
 )
 
 type Codec interface {
-	Decode(f *message.Frame, body []byte)
+	Decode(r []byte) *message.Frame
 	Encode(f *message.Frame) []byte
 }

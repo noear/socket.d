@@ -5,8 +5,8 @@ import (
 	"net"
 
 	"socketd"
+	"socketd/transport/core/constant"
 	"socketd/transport/core/impl"
-	"socketd/transport/core/message"
 	"socketd/transport/server"
 )
 
@@ -67,10 +67,12 @@ func (s *TcpServer) Receive() {
 			var channel = impl.NewChannelDefault[*ChannelAssistant, *net.TCPConn](conn, s)
 
 			for {
-				var frame = message.NewFrame()
-				if err := s.GetAssistant().Read(conn, frame); err != nil {
+
+				frame, err := s.GetAssistant().Read(conn)
+				if err != nil {
 					fmt.Println(err)
-					continue
+					channel.Close(constant.CLOSE3_ERROR)
+					return
 				}
 				if frame.Len != 0 {
 					s.GetProcessor().OnReceive(channel, frame)

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"socketd/transport/core"
+	"socketd/transport/core/constant"
 	"socketd/transport/core/fragment"
 )
 
@@ -32,7 +33,7 @@ func DefualtConfig(clientMode bool) *ConfigBase {
 	c.codec = &CodecDefault{}
 	c.charset = "utf-8"
 	c.fragmentHandler = fragment.NewFragmentHandlerDefault()
-	c.fragmentSize = core.MAX_SIZE_DATA
+	c.fragmentSize = constant.MAX_SIZE_DATA
 
 	c.readBufferSize = 512
 	c.writeBufferSize = 512

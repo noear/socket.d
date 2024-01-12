@@ -1,7 +1,6 @@
 package core
 
 import (
-	"io"
 	"net"
 
 	"socketd/transport/core/message"
@@ -40,8 +39,8 @@ type Channel interface {
 	SendAlarm(from *message.Message, alarm string) (err error)           //发送告警
 	Send(frame *message.Frame, stream stream.StreamInternal) (err error) //发送帧、流
 
-	Retrieve(frame *message.Frame, stream io.Reader) //接收答复
-	OnError(err error)                               //出错时错误处理
+	Retrieve(frame *message.Frame, stream stream.StreamInternal) //接收答复
+	OnError(err error)                                           //出错时错误处理
 }
 
 type ChannelAssistant[T any] interface {

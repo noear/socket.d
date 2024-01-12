@@ -6,7 +6,7 @@ import (
 
 type Listener interface {
 	OnOpen(session Session) error
-	OnMessage(session Session, message *message.Message) error
+	OnMessage(session Session, message *message.Frame) error
 	OnClose(session Session)
 	OnError(session Session, err error)
 }

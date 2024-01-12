@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"socketd/transport/core"
+	"socketd/transport/core/constant"
 	"socketd/transport/core/message"
 )
 
@@ -39,8 +40,8 @@ func (h HandlerBase) SplitFragment(channel core.Channel, stream any, msg *messag
 				if fragmentIndex == 1 {
 					fragmentEntity.MetaMapPut(msg.Meta)
 				}
-				fragmentEntity.MetaPut(message.META_DATA_FRAGMENT_IDX, strconv.Itoa(fragmentIndex))
-				fragmentEntity.MetaPut(message.META_DATA_FRAGMENT_TOTAL, strconv.Itoa(fragmentTotal))
+				fragmentEntity.MetaPut(constant.META_DATA_FRAGMENT_IDX, strconv.Itoa(fragmentIndex))
+				fragmentEntity.MetaPut(constant.META_DATA_FRAGMENT_TOTAL, strconv.Itoa(fragmentTotal))
 				if err := accept(fragmentEntity); err != nil {
 					//TODO 日志记录
 					fmt.Println(err)

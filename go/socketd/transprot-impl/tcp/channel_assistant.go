@@ -1,4 +1,4 @@
-package socketd_transport_tcp
+package tcp
 
 import (
 	"fmt"

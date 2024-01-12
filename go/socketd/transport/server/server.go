@@ -6,8 +6,8 @@ import (
 
 type Server interface {
 	GetTitle() string
-	//GetConfig() *Config
-	Listen(listener core.Listener) error
+	GetConfig() core.Config
+	Listen(listener core.Listener) Server
 	Start() error
 	//Stop()
 }

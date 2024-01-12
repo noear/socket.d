@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <title>Socket.D-JS-WS</title>
+    <title>Socket.D-im demo</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8 " />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <script src="https://cdn.jsdelivr.net/gh/noear/socket.d@2.3.4/javascript/release/socket.d.js"></script>
@@ -12,21 +12,18 @@
         table textarea {  resize: none;  }
     </style>
     <script>
-        let user = null;
-        let token = null;
         let room ="c1";
         let clientSession = null;
 
         async function charJoin() {
-            user = document.getElementById("name").value;
-            console.info("开始登录服务器...");
+            window.user = document.getElementById("name").value;
 
             if (clientSession) {
                 clientSession.close();
             }
 
             //进入用户频道
-            clientSession = await SocketD.createClient("sd:ws://127.0.0.1:8602/?u=" + user)
+            clientSession = await SocketD.createClient("sd:ws://127.0.0.1:8602/?u=" + window.user)
                 .listen(SocketD.newEventListener().doOnOpen(s=>{
                     s.send("cmd.join", SocketD.newEntity().metaPut("room", room));
                     alert("成功加入");
@@ -44,9 +41,11 @@
                 return;
             }
 
-            clientSession.send("cmd.chat", SocketD.newEntity(document.getElementById("input").value)
+            let msg = document.getElementById("input").value;
+
+            clientSession.send("cmd.chat", SocketD.newEntity(msg)
                 .metaPut("room", room)
-                .metaPut("sender", user));
+                .metaPut("sender", window.user));
         }
 
         function appendToMessageList(hint, msg) {

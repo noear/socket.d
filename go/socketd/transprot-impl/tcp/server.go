@@ -1,10 +1,10 @@
-package socketd_transport_tcp
+package tcp
 
 import (
 	"fmt"
 	"net"
 
-	"socketd"
+	"socketd/transport/core"
 	"socketd/transport/core/constant"
 	"socketd/transport/core/impl"
 	"socketd/transport/server"
@@ -26,11 +26,16 @@ func NewTcpServer(cfg *server.Config) *TcpServer {
 }
 
 func (s *TcpServer) GetTitle() string {
-	return "tcp/go-tcp/" + (&socketd.SocketD{}).Version()
+	return "tcp/go-tcp/"
 }
 
 func (s *TcpServer) CreateServer() (err error) {
 	return
+}
+
+func (s *TcpServer) Listen(listener core.Listener) server.Server {
+	s.ServerBase.Listen(listener)
+	return s
 }
 
 //func (s *TcpServer) GetConfig() *server.Config {

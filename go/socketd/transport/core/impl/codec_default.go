@@ -11,15 +11,7 @@ import (
 
 type CodecDefault struct{}
 
-func (cd *CodecDefault) ReadLine(buf []byte) (n int, line []byte) {
-	for i := range buf {
-		if buf[i] == '\n' {
-			return n, buf[:i]
-		}
-		n += 1
-	}
-	return n, buf
-}
+var LF = []byte{0x00, 0x0a} //两字节换行符
 
 func (cd *CodecDefault) Decode(buf []byte) (f *message.Frame) {
 	if len(buf) < 8 {
@@ -33,7 +25,7 @@ func (cd *CodecDefault) Decode(buf []byte) (f *message.Frame) {
 		return
 	}
 
-	lines := bytes.Split(buf[8:], []byte{'\n'})
+	lines := bytes.Split(buf[8:], LF)
 	if len(lines) >= 1 {
 		f.Message = &message.Message{}
 		f.Message.Sid = string(lines[0])
@@ -51,23 +43,20 @@ func (cd *CodecDefault) Decode(buf []byte) (f *message.Frame) {
 	return f
 }
 
-func (cd *CodecDefault) Encode(f *message.Frame) []byte {
-	var buf = new(bytes.Buffer)
-	binary.Write(buf, binary.BigEndian, uint32(0))
-	binary.Write(buf, binary.BigEndian, f.Flag)
+func (cd *CodecDefault) Encode(f *message.Frame) (buf []byte) {
+	buf = make([]byte, 8)
+	binary.BigEndian.PutUint32(buf[4:8], f.Flag)
 	if f.Message != nil {
-		buf.WriteString(f.Message.Sid)
-		buf.WriteByte('\n')
-		buf.WriteString(f.Message.Event)
-		buf.WriteByte('\n')
+		buf = append(buf, []byte(f.Message.Sid)...)
+		buf = append(buf, LF...)
+		buf = append(buf, []byte(f.Message.Event)...)
+		buf = append(buf, LF...)
 		if f.Message.Entity != nil {
-			buf.WriteString(f.Message.Meta.Encode())
-			buf.WriteByte('\n')
-			buf.Write(f.Message.Data)
+			buf = append(buf, f.Message.Meta.Encode()...)
+			buf = append(buf, LF...)
+			buf = append(buf, f.Message.Data...)
 		}
 	}
-
-	var bs = buf.Bytes()
-	binary.BigEndian.PutUint32(bs[:4], uint32(len(bs)))
-	return bs
+	binary.BigEndian.PutUint32(buf[:4], uint32(len(buf)))
+	return
 }

@@ -18,7 +18,7 @@ func NewEntity(meta url.Values, data []byte) *Entity {
 }
 
 func (e *Entity) String() string {
-	return fmt.Sprintf("{Meta:%s, Data:%s}", e.Meta, e.Data)
+	return fmt.Sprintf("{Meta:%s, Data:%s}", e.MetaString(), e.Data)
 }
 
 func (e *Entity) At(name string) *Entity {

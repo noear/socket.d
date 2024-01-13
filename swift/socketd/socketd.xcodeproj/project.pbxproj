@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD150FDA2B514D82004CAD78 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FD92B514D82004CAD78 /* Client.swift */; };
+		CD150FDC2B514DF0004CAD78 /* ClientConfigHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FDB2B514DF0004CAD78 /* ClientConfigHandler.swift */; };
+		CD150FDE2B514E16004CAD78 /* ClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FDD2B514E16004CAD78 /* ClientConfig.swift */; };
+		CD150FE02B514E46004CAD78 /* ClientConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FDF2B514E46004CAD78 /* ClientConnector.swift */; };
+		CD150FE32B514F62004CAD78 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FE22B514F62004CAD78 /* Stream.swift */; };
+		CD150FE52B515357004CAD78 /* SendStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FE42B515357004CAD78 /* SendStream.swift */; };
+		CD150FE72B5153CD004CAD78 /* RequestStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FE62B5153CD004CAD78 /* RequestStream.swift */; };
+		CD150FE92B5153D9004CAD78 /* SubscribeStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FE82B5153D9004CAD78 /* SubscribeStream.swift */; };
+		CD150FED2B51557A004CAD78 /* StreamBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FEC2B51557A004CAD78 /* StreamBase.swift */; };
+		CD150FEF2B5158AE004CAD78 /* SendStreamImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FEE2B5158AE004CAD78 /* SendStreamImpl.swift */; };
+		CD150FF12B515943004CAD78 /* SubscribeStreamImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FF02B515943004CAD78 /* SubscribeStreamImpl.swift */; };
+		CD150FF32B52219A004CAD78 /* RequestStreamImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD150FF22B52219A004CAD78 /* RequestStreamImpl.swift */; };
 		CD1AF0932B3C015800A769FE /* SocketD.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0922B3C015800A769FE /* SocketD.swift */; };
 		CD1AF0972B3C019300A769FE /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0962B3C019300A769FE /* Channel.swift */; };
 		CD1AF0992B3C031200A769FE /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0982B3C031200A769FE /* Config.swift */; };
@@ -35,7 +47,6 @@
 		CD1AF0C82B3C1A2D00A769FE /* ChannelSupporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0C72B3C1A2D00A769FE /* ChannelSupporter.swift */; };
 		CD1AF0CA2B3C1A5100A769FE /* ChannelAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0C92B3C1A5100A769FE /* ChannelAssistant.swift */; };
 		CD1AF0CD2B3C1BE800A769FE /* ClientSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0CC2B3C1BE800A769FE /* ClientSession.swift */; };
-		CD1AF0CF2B3C1C0D00A769FE /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0CE2B3C1C0D00A769FE /* Stream.swift */; };
 		CD1AF0D32B3D8C5600A769FE /* RouteSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0D22B3D8C5600A769FE /* RouteSelector.swift */; };
 		CD1AF0D52B3D8E6700A769FE /* RouteSelectorDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0D42B3D8E6700A769FE /* RouteSelectorDefault.swift */; };
 		CD1AF0D72B3D926E00A769FE /* EventListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1AF0D62B3D926E00A769FE /* EventListener.swift */; };
@@ -60,6 +71,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CD150FD92B514D82004CAD78 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		CD150FDB2B514DF0004CAD78 /* ClientConfigHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientConfigHandler.swift; sourceTree = "<group>"; };
+		CD150FDD2B514E16004CAD78 /* ClientConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientConfig.swift; sourceTree = "<group>"; };
+		CD150FDF2B514E46004CAD78 /* ClientConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientConnector.swift; sourceTree = "<group>"; };
+		CD150FE22B514F62004CAD78 /* Stream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
+		CD150FE42B515357004CAD78 /* SendStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendStream.swift; sourceTree = "<group>"; };
+		CD150FE62B5153CD004CAD78 /* RequestStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestStream.swift; sourceTree = "<group>"; };
+		CD150FE82B5153D9004CAD78 /* SubscribeStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeStream.swift; sourceTree = "<group>"; };
+		CD150FEC2B51557A004CAD78 /* StreamBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamBase.swift; sourceTree = "<group>"; };
+		CD150FEE2B5158AE004CAD78 /* SendStreamImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendStreamImpl.swift; sourceTree = "<group>"; };
+		CD150FF02B515943004CAD78 /* SubscribeStreamImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeStreamImpl.swift; sourceTree = "<group>"; };
+		CD150FF22B52219A004CAD78 /* RequestStreamImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestStreamImpl.swift; sourceTree = "<group>"; };
 		CD1AF0922B3C015800A769FE /* SocketD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketD.swift; sourceTree = "<group>"; };
 		CD1AF0962B3C019300A769FE /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		CD1AF0982B3C031200A769FE /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -88,7 +111,6 @@
 		CD1AF0C72B3C1A2D00A769FE /* ChannelSupporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSupporter.swift; sourceTree = "<group>"; };
 		CD1AF0C92B3C1A5100A769FE /* ChannelAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAssistant.swift; sourceTree = "<group>"; };
 		CD1AF0CC2B3C1BE800A769FE /* ClientSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSession.swift; sourceTree = "<group>"; };
-		CD1AF0CE2B3C1C0D00A769FE /* Stream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
 		CD1AF0D22B3D8C5600A769FE /* RouteSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSelector.swift; sourceTree = "<group>"; };
 		CD1AF0D42B3D8E6700A769FE /* RouteSelectorDefault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSelectorDefault.swift; sourceTree = "<group>"; };
 		CD1AF0D62B3D926E00A769FE /* EventListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListener.swift; sourceTree = "<group>"; };
@@ -122,6 +144,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CD150FE12B514F4C004CAD78 /* stream */ = {
+			isa = PBXGroup;
+			children = (
+				CD150FEB2B51556B004CAD78 /* impl */,
+				CD150FE62B5153CD004CAD78 /* RequestStream.swift */,
+				CD150FE42B515357004CAD78 /* SendStream.swift */,
+				CD150FE22B514F62004CAD78 /* Stream.swift */,
+				CD1AF0A02B3C04CC00A769FE /* StreamInternal.swift */,
+				CD1AF0B12B3C0DA100A769FE /* StreamManger.swift */,
+				CD150FE82B5153D9004CAD78 /* SubscribeStream.swift */,
+			);
+			path = stream;
+			sourceTree = "<group>";
+		};
+		CD150FEB2B51556B004CAD78 /* impl */ = {
+			isa = PBXGroup;
+			children = (
+				CD150FEC2B51557A004CAD78 /* StreamBase.swift */,
+				CD150FEE2B5158AE004CAD78 /* SendStreamImpl.swift */,
+				CD150FF02B515943004CAD78 /* SubscribeStreamImpl.swift */,
+				CD150FF22B52219A004CAD78 /* RequestStreamImpl.swift */,
+			);
+			path = impl;
+			sourceTree = "<group>";
+		};
 		CD1AF0902B3C010C00A769FE /* src */ = {
 			isa = PBXGroup;
 			children = (
@@ -142,6 +189,7 @@
 		CD1AF0942B3C017600A769FE /* transport */ = {
 			isa = PBXGroup;
 			children = (
+				CD150FE12B514F4C004CAD78 /* stream */,
 				CD1AF0CB2B3C1BDB00A769FE /* client */,
 				CD1AF0952B3C017B00A769FE /* core */,
 			);
@@ -175,9 +223,6 @@
 				CD1AF0C12B3C18E200A769FE /* Processor.swift */,
 				CD1AF0AD2B3C076A00A769FE /* Reply.swift */,
 				CD1AF0A22B3C050400A769FE /* Session.swift */,
-				CD1AF0CE2B3C1C0D00A769FE /* Stream.swift */,
-				CD1AF0A02B3C04CC00A769FE /* StreamInternal.swift */,
-				CD1AF0B12B3C0DA100A769FE /* StreamManger.swift */,
 				CD1AF0DE2B3D943100A769FE /* Typealias.swift */,
 				CD1AF0D02B3CFFEC00A769FE /* codec */,
 				CD1AF0D12B3D8C4300A769FE /* listener */,
@@ -189,6 +234,10 @@
 			isa = PBXGroup;
 			children = (
 				CD1AF0CC2B3C1BE800A769FE /* ClientSession.swift */,
+				CD150FD92B514D82004CAD78 /* Client.swift */,
+				CD150FDB2B514DF0004CAD78 /* ClientConfigHandler.swift */,
+				CD150FDD2B514E16004CAD78 /* ClientConfig.swift */,
+				CD150FDF2B514E46004CAD78 /* ClientConnector.swift */,
 			);
 			path = client;
 			sourceTree = "<group>";
@@ -359,6 +408,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD1AF0C62B3C19A500A769FE /* ChannelInternal.swift in Sources */,
+				CD150FF12B515943004CAD78 /* SubscribeStreamImpl.swift in Sources */,
 				CD1AF0B02B3C078400A769FE /* MessageInternal.swift in Sources */,
 				CD1AF0AA2B3C05B900A769FE /* CodecWriter.swift in Sources */,
 				CD1AF0A12B3C04CC00A769FE /* StreamInternal.swift in Sources */,
@@ -371,26 +421,36 @@
 				CD1AF0D52B3D8E6700A769FE /* RouteSelectorDefault.swift in Sources */,
 				CD1AF0B82B3C0EC300A769FE /* EntityMetas.swift in Sources */,
 				CD1AF0AE2B3C076B00A769FE /* Reply.swift in Sources */,
+				CD150FE32B514F62004CAD78 /* Stream.swift in Sources */,
 				CD1AF0BC2B3C105300A769FE /* Constants.swift in Sources */,
 				CD1AF0DF2B3D943100A769FE /* Typealias.swift in Sources */,
+				CD150FED2B51557A004CAD78 /* StreamBase.swift in Sources */,
+				CD150FEF2B5158AE004CAD78 /* SendStreamImpl.swift in Sources */,
 				CD1AF0C82B3C1A2D00A769FE /* ChannelSupporter.swift in Sources */,
+				CD150FDA2B514D82004CAD78 /* Client.swift in Sources */,
 				CD1AF0992B3C031200A769FE /* Config.swift in Sources */,
+				CD150FDC2B514DF0004CAD78 /* ClientConfigHandler.swift in Sources */,
 				CD1AF0C02B3C17F900A769FE /* HeartbeatHandler.swift in Sources */,
 				CD1AF0C42B3C18FC00A769FE /* Listener.swift in Sources */,
+				CD150FF32B52219A004CAD78 /* RequestStreamImpl.swift in Sources */,
 				CD1AF0BE2B3C174C00A769FE /* Handshake.swift in Sources */,
 				CD1AF09D2B3C039900A769FE /* Message.swift in Sources */,
-				CD1AF0CF2B3C1C0D00A769FE /* Stream.swift in Sources */,
 				CD1AF09F2B3C04A400A769FE /* Frame.swift in Sources */,
+				CD150FE72B5153CD004CAD78 /* RequestStream.swift in Sources */,
 				CD1AF0CA2B3C1A5100A769FE /* ChannelAssistant.swift in Sources */,
+				CD150FDE2B514E16004CAD78 /* ClientConfig.swift in Sources */,
 				CD1AF0B42B3C0DD700A769FE /* IdGenerator.swift in Sources */,
 				CD1AF0D92B3D928A00A769FE /* PathListener.swift in Sources */,
+				CD150FE52B515357004CAD78 /* SendStream.swift in Sources */,
 				CD1AF0C22B3C18E200A769FE /* Processor.swift in Sources */,
 				CD1AF0972B3C019300A769FE /* Channel.swift in Sources */,
 				CD1AF0DB2B3D929800A769FE /* PipelineListener.swift in Sources */,
+				CD150FE92B5153D9004CAD78 /* SubscribeStream.swift in Sources */,
 				CD1AF0B62B3C0DF900A769FE /* FragmentHandler.swift in Sources */,
 				CD1AF0D32B3D8C5600A769FE /* RouteSelector.swift in Sources */,
 				CD1AF0CD2B3C1BE800A769FE /* ClientSession.swift in Sources */,
 				CD1AF0DD2B3D92A600A769FE /* SimpleListener.swift in Sources */,
+				CD150FE02B514E46004CAD78 /* ClientConnector.swift in Sources */,
 				CD1AF0AC2B3C075700A769FE /* Entity.swift in Sources */,
 				CD1AF0932B3C015800A769FE /* SocketD.swift in Sources */,
 				CD1AF0D72B3D926E00A769FE /* EventListener.swift in Sources */,

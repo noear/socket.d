@@ -27,7 +27,7 @@ protocol StreamManger{
      *
      * @param sid 流Id
      */
-    func getStream(_ sid:String) -> any StreamInternal;
+    func getStream(_ sid:String) -> any StreamInternal?;
     
     /**
      * 移除流

@@ -57,7 +57,7 @@ protocol Config{
     /**
      * 获取 ssl 上下文
      */
-    func getSslContext() -> SSLContext;
+    func getSslContext() -> SSLContext?;
     
     
     /**

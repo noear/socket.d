@@ -8,6 +8,7 @@
 import Foundation
 
 class StreamBase : StreamInternal{
+    private var _insuranceFuture:any;
     private var _sid:String!;
     private var _demands:Int32!;
     private var _timeout:Int64!;
@@ -36,6 +37,9 @@ class StreamBase : StreamInternal{
     
     func insuranceStart(_ streamManger: StreamManger, _ streamTimeout: Int64) {
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(streamTimeout)), execute: {
+            
+        })
     }
     
     func insuranceCancel() {

@@ -3,7 +3,6 @@ import asyncio
 from socketd.SocketD import SocketD
 from test.modelu.BaseTestCase import BaseTestCase
 
-import time
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
@@ -28,7 +27,7 @@ class TestCase01_client_send(BaseTestCase):
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
         self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
             s).start()
-
+        await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
@@ -44,7 +43,6 @@ class TestCase01_client_send(BaseTestCase):
 
     def start(self):
         super().start()
-
         self.loop.run_until_complete(self._start())
 
     async def _stop(self):

@@ -10,7 +10,7 @@ from socketd.transport.server.ServerConfig import ServerConfig
 from test.modelu.SimpleListenerTest import config_handler
 
 # logger.remove()
-# logger.add(sys.stderr, level="INFO")
+# logger.add(sys.stderr, level="DEBUG")
 
 from test.cases.TestCase11_sendAndRequest2rep import SimpleListenerTest
 
@@ -20,7 +20,7 @@ async def main():
     server_session: WebSocketServer = await server.config(config_handler).listen(
         SimpleListenerTest()).start()
     await asyncio.Future()
-    server_session.close()
+    # server_session.close()
 
 
 if __name__ == "__main__":

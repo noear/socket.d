@@ -1,29 +1,31 @@
 import asyncio
 from asyncio import CancelledError
-from threading import Thread
 from typing import Optional, Sequence
 from loguru import logger
 from websockets.extensions import ClientExtensionFactory
 from websockets.uri import WebSocketURI
 
+from socketd.exception.SocketdExecption import SocketdConnectionException
+from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.internal.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
 
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.Frame import Frame
-from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.CompletableFuture import CompletableFuture
 from socketd_websocket import WsAioClient
 
 log = logger.opt()
 
 
 class AIOWebSocketClientImpl(WebSocketClientProtocol):
-    def __init__(self, client: WsAioClient, *args, **kwargs):
-        WebSocketClientProtocol.__init__(self, *args, **kwargs)
+    def __init__(self, client: WsAioClient, loop: asyncio.AbstractEventLoop = None, *args, **kwargs):
+        WebSocketClientProtocol.__init__(self, loop=loop, *args, **kwargs)
         self.status_state = Flag.Unknown
         self.client = client
         self.channel = ChannelDefault(self, client)
-        self.connect_read_thread: Thread | None = None
+        self.__loop = loop
+        self.handshake_future: Optional[CompletableFuture] = None
 
     def get_channel(self):
         return self.channel
@@ -36,7 +38,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         return_data = await super().handshake(wsuri, origin, available_extensions, available_subprotocols,
                                               extra_headers)
         log.debug("AIOWebSocketClientImpl handshake")
-        self.status_state = Flag.Connect
+        self.handshake_future: Optional[CompletableFuture] = CompletableFuture()
         await self.on_open()
         return return_data
 
@@ -52,26 +54,18 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             """
             异步处理函数，用于处理握手完成后的消息处理逻辑。
             """
+
             while True:
                 await asyncio.sleep(0)
                 if self.closed or self.status_state == Flag.Close:
                     break
-                if self.status_state > Flag.Connect:
-                    try:
-                        await self.on_message()
-                    except Exception as e:
-                        log.warning(e)
-                        # raise e
+                try:
+                    await self.on_message()
+                except Exception as e:
+                    log.warning(e)
+                    # raise e
 
-        # 如果配置中设置了使用线程，则创建一个新的事件循环，并启动一个线程来处理读取操作
-        if self.client.get_config().get_is_thread():
-            loop = asyncio.new_event_loop()
-            if self.connect_read_thread is None:
-                self.connect_read_thread = Thread(target=AsyncUtil.thread_handler, args=(loop, loop.create_task(_handler())))
-                self.connect_read_thread.start()
-        else:
-            # 否则，使用异步运行此协程，并在当前线程中运行。
-            asyncio.run_coroutine_threadsafe(_handler(), asyncio.get_event_loop())
+        asyncio.run_coroutine_threadsafe(_handler(), self.__loop)
 
     async def on_open(self):
         try:
@@ -97,6 +91,15 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             frame: Frame = self.client.get_assistant().read(message)
             if frame is not None:
                 self.status_state = frame.get_flag()
+                if frame.get_flag() == Flag.Connack:
+                    async def __future(b:bool, e: Exception):
+                        if e:
+                            self.handshake_future.set_e(e)
+                            self.handshake_future.cancel()
+                        else:
+                            self.handshake_future.accept(ClientHandshakeResult(self.channel, None))
+
+                    await self.channel.on_open_future(__future)
                 await self.client.get_processor().on_receive(self.channel, frame)
                 if frame.get_flag() == Flag.Close:
                     """服务端主动关闭"""
@@ -107,6 +110,9 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             # 超时自动推出
             log.debug(c)
             raise c
+        except SocketdConnectionException as s:
+            self.handshake_future.accept(ClientHandshakeResult(self.channel, s))
+            logger.warning(s)
         except Exception as e:
             self.on_error(e)
             raise e
@@ -116,4 +122,3 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
 
     def on_error(self, e):
         self.client.get_processor().on_error(self.channel, e)
-

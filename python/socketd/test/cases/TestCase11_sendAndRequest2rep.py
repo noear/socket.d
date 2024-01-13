@@ -1,6 +1,8 @@
 import asyncio
+import uuid
 
 from socketd.SocketD import SocketD
+from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.Message import Message
 from socketd.transport.core.stream.RequestStream import RequestStream
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
@@ -14,8 +16,15 @@ from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
 from socketd.transport.core.Listener import Listener
 
-from test.modelu.SimpleListenerTest import config_handler
 from loguru import logger
+
+
+def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+    config.set_is_thread(False)
+    config.set_idle_timeout(10)
+    config.set_logger_level("DEBUG")
+    config.id_generator(uuid.uuid4)
+    return config
 
 
 class SimpleListenerTest(Listener):
@@ -31,7 +40,7 @@ class SimpleListenerTest(Listener):
     async def on_message(self, session, message: Message):
         with self.server_counter:
             self.server_counter.set(self.server_counter.get() + 1)
-        logger.info(f"server::: {message}")
+        logger.info(f"server::{message.get_data_as_string()} :: {message}")
         if message.is_request():
             req: RequestStream = await session.send_and_request("demo", StringEntity("今天不好"), 100)
             entity = await req.await_result()
@@ -68,6 +77,7 @@ class ClientListenerTest(Listener):
     async def on_message(self, session: Session, message: Message):
         logger.info(f"client: {message} {message.get_data_as_string()}")
         if message.is_request():
+            # await session.reply(message, StringEntity("你不好"))
             await session.reply_end(message, StringEntity("很好"))
 
 
@@ -81,10 +91,10 @@ class TestCase11_sendAndRequest2rep(BaseTestCase):
         self.loop = asyncio.get_event_loop()
 
     async def _start(self):
-        # s = SimpleListenerTest()
-        # self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
-        # self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
-        #     s).start()
+        s = SimpleListenerTest()
+        self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
+        self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
+            s).start()
 
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \

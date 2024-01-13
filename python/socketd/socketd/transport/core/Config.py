@@ -132,3 +132,6 @@ class Config(ABC):
     @abstractmethod
     def get_stream_manger(self) -> StreamManger:
         ...
+
+    @abstractmethod
+    def get_is_thread(self) -> bool: ...

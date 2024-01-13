@@ -126,7 +126,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
     def do_open_future(self, is_ok: bool, e: Exception):
         if is_ok:
-            self.onOpenFuture.accept(is_ok,None)
+            self.onOpenFuture.accept(is_ok)
         else:
             self.onOpenFuture.cancel()
             self.onOpenFuture.set_e(e)

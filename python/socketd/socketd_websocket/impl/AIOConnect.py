@@ -4,8 +4,8 @@ import functools
 from typing import Callable, Any, Optional, Sequence
 
 from websockets import LoggerLike, Origin, Subprotocol, WebSocketClientProtocol, HeadersLike
-from websockets.extensions import  ClientExtensionFactory
-from websockets.extensions.permessage_deflate import  enable_client_permessage_deflate
+from websockets.extensions import ClientExtensionFactory
+from websockets.extensions.permessage_deflate import enable_client_permessage_deflate
 from websockets.headers import validate_subprotocols
 from websockets.http import USER_AGENT
 from websockets.legacy.client import Connect
@@ -25,11 +25,6 @@ class AIOConnect(Connect):
                  close_timeout: Optional[float] = None, max_size: Optional[int] = 2 ** 20,
                  max_queue: Optional[int] = 2 ** 5, read_limit: int = 2 ** 16, write_limit: int = 2 ** 16,
                  **kwargs: Any) -> None:
-        super().__init__(uri, create_protocol=create_protocol, logger=logger, compression=compression, origin=origin,
-                         extensions=extensions, subprotocols=subprotocols, extra_headers=extra_headers,
-                         user_agent_header=user_agent_header, open_timeout=open_timeout, ping_interval=ping_interval,
-                         ping_timeout=ping_timeout, close_timeout=close_timeout, max_size=max_size, max_queue=max_queue,
-                         read_limit=read_limit, write_limit=write_limit, **kwargs)
 
         timeout: Optional[float] = 10
         # If both are specified, timeout is ignored.
@@ -40,8 +35,11 @@ class AIOConnect(Connect):
         legacy_recv: bool = kwargs.pop("legacy_recv", False)
 
         # Backwards compatibility: the loop parameter used to be supported.
-        _loop: Optional[asyncio.AbstractEventLoop] = asyncio.get_event_loop()
-        loop = _loop
+        _loop: Optional[asyncio.AbstractEventLoop] = kwargs.get("loop")
+        if _loop is None:
+            loop = asyncio.get_event_loop()
+        else:
+            loop = _loop
 
         wsuri = parse_uri(uri)
         if wsuri.secure:
@@ -80,7 +78,7 @@ class AIOConnect(Connect):
             port=wsuri.port,
             secure=wsuri.secure,
             legacy_recv=legacy_recv,
-            loop=_loop,
+            loop=loop,
         )
 
         if kwargs.pop("unix", False):

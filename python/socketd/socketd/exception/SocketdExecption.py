@@ -11,3 +11,7 @@ class SocketDException(RuntimeError):
 
 class SocketdAlarmException(SocketDException):
     ...
+
+
+class SocketdConnectionException(SocketDException):
+    ...

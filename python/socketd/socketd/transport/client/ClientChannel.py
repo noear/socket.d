@@ -27,8 +27,11 @@ class ClientChannel(ChannelBase, ABC):
         self.initHeartbeat()
 
     def __del__(self):
-        if self._loop:
-            self._loop.close()
+        try:
+            if self._loop:
+                self._loop.stop()
+        except Exception as e:
+            logger.warning(e)
 
     def is_valid(self):
         if self.real is None:

@@ -48,7 +48,6 @@ class ProcessorDefault(Processor, ABC):
                         # 如果还有效，则关闭通道
                         await channel.close(Constants.CLOSE3_ERROR)
                         self.on_close_internal(channel)
-
             await channel.on_open_future(_future)
             await self.on_open(channel)
         elif frame.get_flag() == Flag.Connack:
@@ -90,6 +89,7 @@ class ProcessorDefault(Processor, ABC):
             except Exception as e:
                 logger.error(e)
                 self.on_error(channel, e)
+                raise e
 
     async def on_receive_do(self, channel: ChannelInternal, frame: Frame, isReply):
         stream: Optional[StreamInternal] = None

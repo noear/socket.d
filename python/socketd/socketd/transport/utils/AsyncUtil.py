@@ -7,7 +7,7 @@ from threading import Thread
 class AsyncUtil(object):
 
     @staticmethod
-    def thread_handler(_loop, fn: asyncio.Task):
+    def thread_handler(_loop: asyncio.AbstractEventLoop, fn: asyncio.Task):
         """
         静态方法 thread_handler 用于在指定的事件循环中运行一个协程函数。
 
@@ -17,16 +17,31 @@ class AsyncUtil(object):
         """
         # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         asyncio.set_event_loop(_loop)
-        _loop.run_until_complete(fn)
+        return _loop.run_until_complete(fn)
 
     @staticmethod
-    def thread_loop(core: typing.Coroutine, thread=None, pool: Executor=None):
+    def run_forever(loop: asyncio.AbstractEventLoop):
+        future = None
+
+        def _main(_loop: asyncio.AbstractEventLoop):
+            nonlocal future
+            asyncio.set_event_loop(_loop)
+            future = asyncio.Future()
+
+            async def _run():
+                await future
+
+            _loop.run_until_complete(_run())
+
+        t = Thread(target=_main, args=(loop,))
+        t.start()
+        return future
+
+    @staticmethod
+    def thread_loop(core: typing.Coroutine, thread=None, pool: Executor = None):
         loop = asyncio.new_event_loop()
         if thread:
             t = Thread(target=lambda: AsyncUtil.thread_handler(loop, loop.create_task(core)))
             t.start()
         if pool:
             pool.submit(lambda: loop.run_until_complete(core))
-
-
-

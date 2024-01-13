@@ -35,9 +35,17 @@ class CompletableFuture(Generic[T]):
 
     def then_async_callback(self, _fn: Callable):
         def callback(fn: asyncio.Future):
-            asyncio.run_coroutine_threadsafe(_fn(fn.result(), fn.exception()), asyncio.get_running_loop())
+            asyncio.run_coroutine_threadsafe(_fn(fn.result(), fn.exception()), asyncio.get_event_loop())
 
         self._future.add_done_callback(functools.partial(callback))
+
+    async def then_success_callback(self, callback):
+        try:
+            result = await self._future
+            await callback(result, None)
+            return result
+        except Exception as e:
+            await callback(self._future.result(), e)
 
     def set_result(self, t: T):
         self._future.set_result(t)

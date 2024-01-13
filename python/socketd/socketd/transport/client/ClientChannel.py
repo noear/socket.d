@@ -110,6 +110,7 @@ class ClientChannel(ChannelBase, ABC):
             self._heartbeatScheduledFuture.cancel()
             if self.real is not None:
                 await self.real.close()
+            await self.connector.close()
         except Exception as e:
             logger.error(e)
 

@@ -8,11 +8,11 @@ from websockets.extensions import ClientExtensionFactory
 from websockets.extensions.permessage_deflate import enable_client_permessage_deflate
 from websockets.headers import validate_subprotocols
 from websockets.http import USER_AGENT
-from websockets.legacy.client import Connect
+from websockets.legacy.client import connect
 from websockets.uri import parse_uri
 
 
-class AIOConnect(Connect):
+class AIOConnect(connect):
     MAX_REDIRECTS_ALLOWED = 10
 
     def __init__(self, uri: str, client: 'WsAioClient', *,
@@ -24,6 +24,7 @@ class AIOConnect(Connect):
                  ping_interval: Optional[float] = 20, ping_timeout: Optional[float] = 20,
                  close_timeout: Optional[float] = None, max_size: Optional[int] = 2 ** 20,
                  max_queue: Optional[int] = 2 ** 5, read_limit: int = 2 ** 16, write_limit: int = 2 ** 16,
+                 message_loop = None,
                  **kwargs: Any) -> None:
 
         timeout: Optional[float] = 10
@@ -79,6 +80,7 @@ class AIOConnect(Connect):
             secure=wsuri.secure,
             legacy_recv=legacy_recv,
             loop=loop,
+            message_loop=message_loop
         )
 
         if kwargs.pop("unix", False):
@@ -117,6 +119,3 @@ class AIOConnect(Connect):
     def get_channel(self):
         return self.channel
 
-    async def close(self):
-        """完成握手"""
-        await self.protocol.close()

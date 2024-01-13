@@ -5,6 +5,7 @@ from socketd.SocketD import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.Message import Message
 from socketd.transport.core.stream.RequestStream import RequestStream
+from socketd.transport.core.stream.SubscribeStream import SubscribeStream
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
@@ -41,14 +42,15 @@ class SimpleListenerTest(Listener):
         with self.server_counter:
             self.server_counter.set(self.server_counter.get() + 1)
         logger.info(f"server::{message.get_data_as_string()} :: {message}")
-        if message.is_request():
-            req: RequestStream = await session.send_and_request("demo", StringEntity("今天不好"), 100)
-            await asyncio.sleep(1)
-            entity = await req.await_result()
-            await session.reply_end(message, entity)
-            logger.info(f"server::res::: {entity}")
-            with self.message_counter:
+        if message.is_subscribe():
+            req: SubscribeStream = await session.send_and_request("demo", StringEntity("今天不好"))
+
+            async def _then_reply(entity):
+                logger.info(f"server::res:: {entity}")
+                await session.reply_end(entity)
                 self.message_counter.set(self.message_counter.get() + 1)
+
+            req.then_reply(lambda e: asyncio.run_coroutine_threadsafe(_then_reply(e), asyncio.get_event_loop()))
 
     def on_close(self, session):
         logger.debug("客户端主动关闭了")
@@ -77,16 +79,15 @@ class ClientListenerTest(Listener):
 
     async def on_message(self, session: Session, message: Message):
         logger.info(f"client: {message} {message.get_data_as_string()}")
-        if message.is_request():
+        if message.is_subscribe():
             await session.reply_end(message, StringEntity("很好"))
 
 
-class TestCase11_sendAndRequest2rep(BaseTestCase):
+class TestCase12_sendAndSubscribe2rep(BaseTestCase):
 
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server = None
-        self.client = None
         self.server_session: WebSocketServer = None
         self.client_session: Session = None
         self.loop = asyncio.get_event_loop()
@@ -103,9 +104,12 @@ class TestCase11_sendAndRequest2rep(BaseTestCase):
             .config(config_handler)
         self.client_session: Session = await self.client.open()
         await asyncio.sleep(1)
-        req: RequestStream = await self.client_session.send_and_request("demo", StringEntity("你好"), 100)
-        entity = await req.await_result()
-        logger.info(f"c: res{entity} {entity.get_data_as_string()}")
+
+        async def send_and_subscribe_test(entity):
+            logger.debug(entity)
+
+        req: SubscribeStream = await self.client_session.send_and_subscribe("demo", StringEntity("你好"),
+                                                                            send_and_subscribe_test, 100)
         await asyncio.sleep(1)
 
     def start(self):

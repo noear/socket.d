@@ -14,6 +14,7 @@ from test.cases.TestCase08_ping_timout import TestCase08_ping_timout
 from test.cases.TestCase09_clientCloseReconnect import TestCase09_clientCloseReconnect
 from test.cases.TestCase10_serverCloseReconnect import TestCase10_serverCloseReconnect
 from test.cases.TestCase11_sendAndRequest2rep import TestCase11_sendAndRequest2rep
+from test.cases.TestCase12_sendAndSubscribe2rep import TestCase12_sendAndSubscribe2rep
 
 
 class TestCase01(unittest.TestCase):
@@ -127,6 +128,16 @@ class TestCase01(unittest.TestCase):
     def test_Case11_sendAndRequest2rep(self):
         for i in range(len(TestCase01.schemas)):
             t = TestCase11_sendAndRequest2rep(TestCase01.schemas[i], 9100 + i)
+            try:
+                t.start()
+                t.stop()
+            except Exception as e:
+                t.on_error()
+                raise e
+
+    def test_Case12_sendAndSubscribe2rep(self):
+        for i in range(len(TestCase01.schemas)):
+            t = TestCase12_sendAndSubscribe2rep(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()

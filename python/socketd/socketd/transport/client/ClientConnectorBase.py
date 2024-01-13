@@ -17,3 +17,4 @@ class ClientConnectorBase(ClientConnector, ABC):
 
     def autoReconnect(self):
         return self.client.get_config().is_auto_reconnect()
+

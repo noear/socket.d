@@ -20,7 +20,7 @@ class AsyncUtil(object):
         return _loop.run_until_complete(fn)
 
     @staticmethod
-    def run_forever(loop: asyncio.AbstractEventLoop):
+    def run_forever(loop: asyncio.AbstractEventLoop) -> typing.Optional[asyncio.Future]:
         future = None
 
         def _main(_loop: asyncio.AbstractEventLoop):
@@ -40,8 +40,13 @@ class AsyncUtil(object):
     @staticmethod
     def thread_loop(core: typing.Coroutine, thread=None, pool: Executor = None):
         loop = asyncio.new_event_loop()
+
+        async def _run():
+            await core
+            loop.stop()
+
         if thread:
-            t = Thread(target=lambda: AsyncUtil.thread_handler(loop, loop.create_task(core)))
+            t = Thread(target=lambda: AsyncUtil.thread_handler(loop, loop.create_task(_run())))
             t.start()
         if pool:
-            pool.submit(lambda: loop.run_until_complete(core))
+            pool.submit(lambda: AsyncUtil.thread_handler(loop, loop.create_task(_run())))

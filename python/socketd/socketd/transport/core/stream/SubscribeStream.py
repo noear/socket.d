@@ -23,6 +23,6 @@ class SubscribeStream(StreamBase):
     def is_done(self):
         return self.__isDone
 
-    def thenReply(self, __doOnReply: Callable[[Reply], None]):
+    def then_reply(self, __doOnReply: Callable[[Reply], None]):
         self.__doOnReply = __doOnReply
         return self

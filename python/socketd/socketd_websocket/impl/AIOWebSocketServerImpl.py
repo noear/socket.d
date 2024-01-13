@@ -75,12 +75,12 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 # frame: Frame = await self.__loop.run_in_executor(self.ws_aio_server.get_config(
                 # ).get_executor(), lambda _message: self.ws_aio_server.get_assistant().read( _message), message)
                 if frame is not None:
-                    if conn.get_attachment().get_config().get_is_thread():
-                        asyncio.run_coroutine_threadsafe(
-                            self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame),
-                            self._loop)
-                    else:
-                        await self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)
+                    # if conn.get_attachment().get_config().get_is_thread():
+                    # asyncio.run_coroutine_threadsafe(
+                    #     self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame),
+                    #     self._loop)
+                    # else:
+                    await self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)
                     if frame.get_flag() == Flag.Close:
                         """客户端主动关闭"""
                         await self.on_close(conn)

@@ -1,5 +1,4 @@
 import asyncio
-from threading import Thread
 from typing import Optional
 
 from websockets.server import WebSocketServer, serve as Serve, WebSocketServerProtocol
@@ -62,7 +61,4 @@ class WsAioServer(ServerBase):
         self.server.ws_server.close()
         self.__is_started = False
         self.__top.set_result(1)
-
-        async def __stop():
-            self.__loop.stop()
-        asyncio.run_coroutine_threadsafe(__stop(), self.__loop)
+        self.__loop.stop()

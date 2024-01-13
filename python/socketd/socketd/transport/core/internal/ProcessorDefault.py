@@ -126,19 +126,16 @@ class ProcessorDefault(Processor, ABC):
 
     async def on_open(self, channel: ChannelInternal):
         try:
-            await self.listener.on_open(channel.get_session())
             channel.do_open_future(True, None)
+            await self.listener.on_open(channel.get_session())
         except Exception as e:
-            await channel.do_open_future(True, e)
+            channel.do_open_future(True, e)
+            logger.warning(e)
 
     async def on_message(self, channel: ChannelInternal, message: Message):
-        await self.listener.on_message(channel.get_session(), message)
-        # AsyncUtil.thread_loop(self.listener.on_message(
-        #     channel.get_session(), message),
-        #     pool=channel.get_config().get_executor())
-        # await asyncio.get_running_loop().run_in_executor(channel.get_config().get_executor(),
-        #                                                  lambda: asyncio.run(self.listener.on_message(
-        #                                                      channel.get_session(), message)))
+        AsyncUtil.thread_loop(self.listener.on_message(
+            channel.get_session(), message),
+            thread=channel.get_config().get_executor())
 
     def on_close(self, channel: ChannelInternal):
         self.listener.on_close(channel.get_session())

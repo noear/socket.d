@@ -2,6 +2,7 @@ package impl
 
 import (
 	"fmt"
+	"log/slog"
 
 	"socketd/transport/core"
 	"socketd/transport/stream"
@@ -34,8 +35,7 @@ func (s StreamManagerDefault) Remove(sid string) {
 	stm, ok := s.streamMap[sid]
 	if ok {
 		stm.InsuranceCancel()
-		// TODO 日志记录
-		fmt.Printf("%s stream removed, sid = %s\n", s.config.GetRoleName(), sid)
+		slog.Debug(fmt.Sprintf("%s stream removed, sid = %s", s.config.GetRoleName(), sid))
 	}
 	delete(s.streamMap, sid)
 }

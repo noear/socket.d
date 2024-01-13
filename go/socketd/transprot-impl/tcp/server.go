@@ -2,6 +2,7 @@ package tcp
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
 
 	"socketd/transport/core"
@@ -48,6 +49,7 @@ func (s *TcpServer) Start() (err error) {
 		return err
 	}
 	s.listener, err = net.ListenTCP(s.cfg.Protocol, tcpAddr)
+	slog.Info(fmt.Sprintf("Socket.D server listening: %s", s.listener.Addr()))
 
 	s.connChan = make(chan *net.TCPConn)
 	go s.Receive()
@@ -55,8 +57,7 @@ func (s *TcpServer) Start() (err error) {
 	for {
 		conn, err := s.listener.AcceptTCP()
 		if err != nil {
-			// TODO 日志记录
-			fmt.Println(err)
+			slog.Warn("conn interrupt", "err", err)
 			continue
 		}
 		s.connChan <- conn
@@ -75,8 +76,10 @@ func (s *TcpServer) Receive() {
 
 				frame, err := s.GetAssistant().Read(conn)
 				if err != nil {
-					fmt.Println(err)
+					slog.Debug("conn interrupt", "err", err)
 					channel.Close(constant.CLOSE3_ERROR)
+					s.GetProcessor().OnError(channel, err)
+					s.GetProcessor().OnClose(channel)
 					return
 				}
 				if frame.Len != 0 {
@@ -89,7 +92,6 @@ func (s *TcpServer) Receive() {
 
 func (s *TcpServer) Close() {
 	if err := s.listener.Close(); err != nil {
-		// TODO 日志记录
-		fmt.Println(err)
+		slog.Error("server stop", "err", err)
 	}
 }

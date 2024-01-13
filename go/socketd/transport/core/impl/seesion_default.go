@@ -2,6 +2,7 @@ package impl
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
 	"time"
 
@@ -153,12 +154,11 @@ func (d *SessionDefault) ReplyEnd(from *message.Frame, entity *message.Entity) e
 }
 
 func (d *SessionDefault) Close() {
-	//TODO log
-	fmt.Printf("%s  session will be closed, sessionId = %s", d.channel.GetConfig().GetRoleName(), d.sessionId)
+	slog.Debug(fmt.Sprintf("%s  session will be closed, sessionId = %s", d.channel.GetConfig().GetRoleName(), d.sessionId))
 
 	if d.channel.IsValid() {
 		if err := d.channel.SendClose(); err != nil {
-			fmt.Printf("%s channel send_close, error %s", d.channel.GetConfig().GetRoleName(), d.sessionId)
+			slog.Warn(fmt.Sprintf("%s channel send_close, error %s", d.channel.GetConfig().GetRoleName(), d.sessionId))
 		}
 	}
 	d.channel.Close(constant.CLOSE4_USER)

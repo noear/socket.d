@@ -2,6 +2,7 @@ package core
 
 import (
 	"socketd/transport/core/message"
+	"socketd/transport/stream"
 )
 
 // FragmentHandler
@@ -10,7 +11,7 @@ import (
  * @Date 2024-01-10 20:59:58
  */
 type FragmentHandler interface {
-	SplitFragment(channel Channel, stream any, message *message.Message, accept func(entity *message.Entity) (err error)) (err error) //拆割分片
-	AggrFragment(channel Channel, fragmentIndex int, message *message.Message) (frame *message.Message, err error)                    //聚合分片
+	SplitFragment(channel Channel, stream stream.StreamInternal, message *message.Message, accept func(entity *message.Entity) (err error)) (err error) //拆割分片
+	AggrFragment(channel Channel, fragmentIndex int, message *message.Message) (frame *message.Message, err error)                                      //聚合分片
 	AggrEnable() bool
 }

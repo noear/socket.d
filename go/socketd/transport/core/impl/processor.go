@@ -1,7 +1,9 @@
 package impl
 
 import (
+	"errors"
 	"fmt"
+	"log/slog"
 	"strconv"
 
 	"socketd/transport/core/constant"
@@ -23,9 +25,9 @@ func (p *Processor) SetListener(listener core.Listener) {
 	p.listener = listener
 }
 
-func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
-	//TODO 日志记录
-	fmt.Println("OnReceive", frame)
+func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) error {
+	slog.Debug("OnReceive", "frame", frame)
+
 	switch frame.Flag {
 	case constant.FrameConnect:
 		var handshake = core.NewHandshake(frame.Message)
@@ -57,11 +59,11 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 
 			// 握手失败
 			if frame.Flag == constant.FrameClose {
-				channel.SendPong()
+				return errors.New("connection request was rejected")
 			}
 
-			// TODO 日志记录
-			return
+			slog.Warn(fmt.Sprintf("%s channel handshake is null, sessionId = %s", channel.GetConfig().GetRoleName(), channel.GetSession().SessionId()))
+			return nil
 		}
 
 		switch frame.Flag {
@@ -89,7 +91,7 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 			p.OnCloseInternal(channel)
 		}
 	}
-
+	return nil
 }
 
 func (p *Processor) OnReceiveDo(channel core.Channel, frame *message.Frame, reply bool) {

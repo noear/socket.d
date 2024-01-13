@@ -1,3 +1,10 @@
+### 2.3.5
+* 添加 连接协议对 meta 传递的支持
+* 添加 Handshake:path 方法
+* 添加 CodecReader::peekByte 方法
+* 调啵 发送时允许实体为 null（总有不需要传的时候）
+* 优化 Codec::decodeString 处理方式
+
 ### 2.3.4
 * 调整 Entity:at() 更名为 Message:atName() （方便跨语言迁移）
 * 调整 sendAndRequest(timeout=-1)时，表示为流超时

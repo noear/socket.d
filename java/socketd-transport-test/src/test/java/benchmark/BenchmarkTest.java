@@ -18,8 +18,8 @@ public class BenchmarkTest {
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
             "sd:ws-java",
-//            "sd:udp-java",
-//            "sd:udp-netty",
+            "sd:udp-java",
+            "sd:udp-netty",
             "sd:kcp-java",
     };
 

@@ -36,7 +36,7 @@ public class ServerTest {
                             System.out.println("onMessage: " + m);
                         }).doOn("/demo", (s, m) -> {
                             if (m.isRequest()) {
-                                s.reply(m, new StringEntity("me to!"));
+                                s.reply(m, new StringEntity("me to! ref:" + m.dataAsString()));
                             }
 
                             if (m.isSubscribe()) {

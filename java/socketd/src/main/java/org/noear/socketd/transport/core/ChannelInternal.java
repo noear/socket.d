@@ -17,6 +17,11 @@ public interface ChannelInternal extends Channel {
     void setSession(Session session);
 
     /**
+     * 更新最后活动时间
+     * */
+    void setLiveTimeAsNow();
+
+    /**
      * 获取流
      */
     StreamInternal getStream(String sid);

@@ -94,6 +94,11 @@ public abstract class SessionBase implements Session {
         return sessionId;
     }
 
+    @Override
+    public long liveTime() {
+        return channel.getLiveTime();
+    }
+
     protected String generateId() {
         return channel.getConfig().getIdGenerator().generate();
     }

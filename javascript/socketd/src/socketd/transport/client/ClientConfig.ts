@@ -10,6 +10,7 @@ export class ClientConfig extends ConfigBase {
     private _url: string;
     private _host: string;
     private _port: number;
+    private _metaMap: Map<string, string> = new Map<string, string>();
 
     //心跳间隔（毫秒）
     private _heartbeatInterval: number;
@@ -33,6 +34,7 @@ export class ClientConfig extends ConfigBase {
 
         let _uri = StrUtils.parseUri(url);
 
+        this._host = _uri.host;
         this._port = parseInt(_uri.port);
         this._schema = _uri.protocol;
 
@@ -54,19 +56,18 @@ export class ClientConfig extends ConfigBase {
         return this._schema;
     }
 
+    /**
+     * 获取链接地址
+     */
+    getLinkUrl(): string {
+        return this._linkUrl;
+    }
 
     /**
      * 获取连接地址
      */
     getUrl(): string {
         return this._url;
-    }
-
-    /**
-     * 获取链接地址
-     */
-    getLinkUrl(): string {
-        return this._linkUrl;
     }
 
     /**
@@ -84,6 +85,19 @@ export class ClientConfig extends ConfigBase {
     }
 
     /**
+     * 获取连接元信息字典
+     */
+    getMetaMap(): Map<string, string> {
+        return this._metaMap;
+    }
+
+    metaPut(name: string, val: string): this {
+        this._metaMap.set(name, val);
+        return this;
+    }
+
+
+    /**
      * 获取心跳间隔（单位毫秒）
      */
     getHeartbeatInterval(): number {
@@ -93,7 +107,7 @@ export class ClientConfig extends ConfigBase {
     /**
      * 配置心跳间隔（单位毫秒）
      */
-    heartbeatInterval(heartbeatInterval: number): ClientConfig {
+    heartbeatInterval(heartbeatInterval: number): this {
         this._heartbeatInterval = heartbeatInterval;
         return this;
     }
@@ -139,7 +153,7 @@ export class ClientConfig extends ConfigBase {
         }
     }
 
-    toString(): string{
+    toString(): string {
         return "ClientConfig{" +
             "schema='" + this._schema + '\'' +
             ", charset=" + this._charset +

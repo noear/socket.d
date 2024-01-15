@@ -4,6 +4,7 @@ import org.noear.socketd.transport.stream.StreamInternal;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
 
 /**
  * 通道
@@ -67,9 +68,10 @@ public interface Channel {
     /**
      * 发送连接（握手）
      *
-     * @param url 连接地址
+     * @param url     连接地址
+     * @param metaMap 元信息
      */
-    void sendConnect(String url) throws IOException;
+    void sendConnect(String url, Map<String, String> metaMap) throws IOException;
 
     /**
      * 发送连接确认（握手）

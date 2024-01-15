@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HandshakeDefault implements HandshakeInternal {
     private final MessageInternal source;
     private final URI uri;
+    private final String path;
     private final String version;
     private final Map<String, String> paramMap;
 
@@ -35,9 +36,11 @@ public class HandshakeDefault implements HandshakeInternal {
 
         this.source = source;
         this.uri = URI.create(linkUrl);
+        this.path = uri.getPath();
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
         this.paramMap = new ConcurrentHashMap<>();
 
+        //添加连接参数
         String queryString = uri.getQuery();
         if (StrUtils.isNotEmpty(queryString)) {
             for (String kvStr : queryString.split("&")) {
@@ -47,6 +50,9 @@ public class HandshakeDefault implements HandshakeInternal {
                 }
             }
         }
+
+        //添加元信息参数
+        paramMap.putAll(source.metaMap());
     }
 
     /**
@@ -65,6 +71,14 @@ public class HandshakeDefault implements HandshakeInternal {
     @Override
     public URI uri() {
         return uri;
+    }
+
+    /**
+     * 请求路径
+     * */
+    @Override
+    public String path() {
+        return path;
     }
 
     /**

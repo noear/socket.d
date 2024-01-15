@@ -31,12 +31,12 @@ public class ServerTest {
                 .config(c -> c.port(8602).fragmentSize(1024 * 1024))
                 .listen(new EventListener()
                         .doOnOpen(s -> {
-                            System.out.println("onOpen: " + s.sessionId());
+                            System.out.println("onOpen: " + s.sessionId()+", meta="+s.handshake().paramMap());
                         }).doOnMessage((s, m) -> {
                             System.out.println("onMessage: " + m);
                         }).doOn("/demo", (s, m) -> {
                             if (m.isRequest()) {
-                                s.reply(m, new StringEntity("me to!"));
+                                s.reply(m, new StringEntity("me to! ref:" + m.dataAsString()));
                             }
 
                             if (m.isSubscribe()) {

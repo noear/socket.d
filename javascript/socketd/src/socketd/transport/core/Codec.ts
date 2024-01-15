@@ -27,6 +27,16 @@ export interface CodecReader {
      */
     getInt(): number;
 
+    /*
+     * 预看 byte
+     * */
+    peekByte(): number;
+
+    /**
+     * 跳过
+     */
+    skipBytes(length: number);
+
     /**
      * 剩余长度
      */
@@ -40,7 +50,7 @@ export interface CodecReader {
     /**
      * 长度
      * */
-    size():number;
+    size(): number;
 
     /**
      * 重置索引
@@ -142,6 +152,18 @@ export class ArrayBufferCodecReader implements CodecReader {
         const tmp = this._bufView.getInt32(this._bufViewIdx);
         this._bufViewIdx += 4;
         return tmp;
+    }
+
+    peekByte(): number {
+        if (this.remaining() > 0) {
+            return this._bufView.getInt8(this._bufViewIdx)
+        } else {
+            return -1;
+        }
+    }
+
+    skipBytes(length: number) {
+        this._bufViewIdx =  this.position() + length
     }
 
     remaining(): number {

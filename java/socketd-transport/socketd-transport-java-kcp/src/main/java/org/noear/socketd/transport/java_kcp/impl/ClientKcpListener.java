@@ -36,7 +36,7 @@ public class ClientKcpListener implements KcpListener {
 
         //开始握手
         try {
-            channel.sendConnect(client.getConfig().getUrl());
+            channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
         } catch (Throwable e) {
             channel.onError(e);
         }

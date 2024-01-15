@@ -13,13 +13,6 @@ import {SocketdException} from "../../exception/SocketdException";
  */
 export interface Entity {
     /**
-     * at
-     *
-     * @since 2.1
-     */
-    at();
-
-    /**
      * 获取元信息字符串（queryString style）
      */
     metaString(): string;
@@ -116,16 +109,17 @@ export class EntityDefault implements Entity {
     }
 
     /**
-     * At
-     * */
-    at() {
-        return this.meta("@");
+     * At player name
+     */
+    at(name: string): EntityDefault {
+        this.metaPut("@", name);
+        return this;
     }
 
     /**
      * Range
      * */
-     range(start:number, size:number):EntityDefault {
+    range(start: number, size: number): EntityDefault {
         this.metaPut(EntityMetas.META_RANGE_START, start.toString());
         this.metaPut(EntityMetas.META_RANGE_SIZE, size.toString());
         return this;
@@ -155,14 +149,16 @@ export class EntityDefault implements Entity {
      *
      * @param map 元信息字典
      */
-    metaMapPut(map:any): EntityDefault {
-        if (map instanceof Map) {
-            map.forEach((val, key, p) => {
-                this.metaMap().set(key, val);
-            })
-        } else {
-            for (const name of map.prototype) {
-                this.metaMap().set(name, map[name]);
+    metaMapPut(map: any): EntityDefault {
+        if (map) {
+            if (map instanceof Map) {
+                map.forEach((val, key, p) => {
+                    this.metaMap().set(key, val);
+                })
+            } else {
+                for (const name of map.prototype) {
+                    this.metaMap().set(name, map[name]);
+                }
             }
         }
 
@@ -185,7 +181,7 @@ export class EntityDefault implements Entity {
      */
     metaString(): string {
         let str = "";
-        this.metaMap().forEach((val, key,p) => {
+        this.metaMap().forEach((val, key, p) => {
             str += `${key}=${val}&`;
         });
         if (str.length > 0) {
@@ -198,7 +194,7 @@ export class EntityDefault implements Entity {
     /**
      * 获取元信息字典
      */
-    metaMap(): Map<string,string> {
+    metaMap(): Map<string, string> {
         if (this._metaMap == null) {
             this._metaMap = new Map<string, string>();
         }
@@ -234,14 +230,14 @@ export class EntityDefault implements Entity {
     /**
      * 获取元信息并转为 int
      */
-    metaAsInt(name:string):number {
+    metaAsInt(name: string): number {
         return parseInt(this.metaOrDefault(name, '0'));
     }
 
     /**
      * 获取元信息并转为 float
      */
-    metaAsFloat(name:string):number {
+    metaAsFloat(name: string): number {
         return parseFloat(this.metaOrDefault(name, '0'));
     }
 
@@ -278,7 +274,7 @@ export class EntityDefault implements Entity {
     }
 
     dataAsReader(): CodecReader {
-        if(this._data.getArray() == null){
+        if (this._data.getArray() == null) {
             throw new SocketdException("Blob does not support dataAsReader");
         }
 

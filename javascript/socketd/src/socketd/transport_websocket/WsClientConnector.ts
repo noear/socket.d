@@ -65,7 +65,7 @@ export class WebSocketClientImpl implements SdWebSocketListener {
 
     onOpen(e: SdWebSocketEvent) {
         try {
-            this._channel.sendConnect(this._client.getConfig().getUrl());
+            this._channel.sendConnect(this._client.getConfig().getUrl(), this._client.getConfig().getMetaMap());
         } catch (err) {
             console.warn("Client channel sendConnect error", err);
         }

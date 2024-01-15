@@ -61,7 +61,7 @@ export interface Channel {
      *
      * @param url 连接地址
      */
-    sendConnect(url: string);
+    sendConnect(url: string, metaMap:Map<string,string>);
 
     /**
      * 发送连接确认（握手）
@@ -198,8 +198,8 @@ export abstract class  ChannelBase implements Channel {
         return this._handshake;
     }
 
-    sendConnect(url: string) {
-        this.send(Frames.connectFrame(this.getConfig().getIdGenerator().generate(), url), null)
+    sendConnect(url: string, metaMap: Map<string, string>) {
+        this.send(Frames.connectFrame(this.getConfig().getIdGenerator().generate(), url, metaMap), null)
     }
 
     sendConnack(connectMessage: Message) {

@@ -70,7 +70,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             case NEW_SESSION: {
                 ChannelInternal channel = getChannel(s);
                 try {
-                    channel.sendConnect(client.getConfig().getUrl());
+                    channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
                 } catch (Throwable ex) {
                     client.getProcessor().onError(channel, ex);
                 }

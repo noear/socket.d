@@ -29,7 +29,7 @@ public class EntityDefault implements Entity {
     private int dataSize = 0;
 
     /**
-     * At
+     * At player name
      */
     public EntityDefault at(String name) {
         metaPut("@", name);
@@ -87,8 +87,10 @@ public class EntityDefault implements Entity {
      * @param metaMap 元信息字典
      */
     public EntityDefault metaMapPut(Map<String, String> metaMap) {
-        this.metaMap().putAll(metaMap);
-        this.metaStringChanged = true;
+        if (metaMap != null && metaMap.size() > 0) {
+            this.metaMap().putAll(metaMap);
+            this.metaStringChanged = true;
+        }
         return this;
     }
 

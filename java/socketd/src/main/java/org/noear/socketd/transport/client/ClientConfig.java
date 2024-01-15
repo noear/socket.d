@@ -1,8 +1,11 @@
 package org.noear.socketd.transport.client;
 
+import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.impl.ConfigBase;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 客记端配置（单位：毫秒）
@@ -17,8 +20,9 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     //连接地址
     private final String linkUrl;
     private final String url;
-    private final URI uri;
-    private int port;
+    private final String host;
+    private final int port;
+    private final Map<String, String> metaMap = new LinkedHashMap<>();
 
     //心跳间隔（毫秒）
     private long heartbeatInterval;
@@ -29,7 +33,6 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     //是否自动重链
     private boolean autoReconnect;
 
-
     public ClientConfig(String url) {
         super(true);
 
@@ -38,15 +41,13 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
             url = url.substring(3);
         }
 
-        this.url = url;
-        this.uri = URI.create(url);
-        this.port = uri.getPort();
-        this.schema = uri.getScheme();
-        this.linkUrl = "sd:" + url;
+        URI uri = URI.create(url);
 
-        if (this.port < 0) {
-            this.port = 8602;
-        }
+        this.linkUrl = "sd:" + url;
+        this.url = url;
+        this.host = uri.getHost();
+        this.port = (uri.getPort() < 0 ? Constants.DEF_PORT : uri.getPort());
+        this.schema = uri.getScheme();
 
         this.connectTimeout = 10_000;
         this.heartbeatInterval = 20_000;
@@ -54,6 +55,20 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
         this.autoReconnect = true;
     }
 
+
+    /**
+     * 获取链接地址
+     */
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    /**
+     * 获取连接地址
+     */
+    public String getUrl() {
+        return url;
+    }
 
     /**
      * 获取通讯架构（tcp, ws, udp）
@@ -64,31 +79,10 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
 
 
     /**
-     * 获取连接地址
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * 获取连接地址
-     */
-    public URI getUri() {
-        return uri;
-    }
-
-    /**
-     * 获取链接地址
-     */
-    public String getLinkUrl() {
-        return linkUrl;
-    }
-
-    /**
      * 获取连接主机
      */
     public String getHost() {
-        return uri.getHost();
+        return host;
     }
 
     /**
@@ -96,6 +90,21 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
      */
     public int getPort() {
         return port;
+    }
+
+    /**
+     * 获取连接元信息字典
+     */
+    public Map<String, String> getMetaMap() {
+        return metaMap;
+    }
+
+    /**
+     * 配置连接元信息
+     * */
+    public ClientConfig metaPut(String name, String val){
+        metaMap.put(name, val);
+        return this;
     }
 
     /**

@@ -40,7 +40,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
         ctx.attr(CHANNEL_KEY).set(channel);
 
         //开始握手
-        channel.sendConnect(client.getConfig().getUrl());
+        channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
     }
 
     @Override

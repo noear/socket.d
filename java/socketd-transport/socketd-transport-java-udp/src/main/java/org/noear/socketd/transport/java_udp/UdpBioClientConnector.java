@@ -93,7 +93,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
         clientThread.start();
 
         //开始发连接包
-        channel.sendConnect(client.getConfig().getUrl());
+        channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
     }
 
     private void receive(ChannelInternal channel, DatagramSocket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {

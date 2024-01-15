@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.stream.impl.SendStreamImpl;
 import org.noear.socketd.transport.stream.impl.RequestStreamImpl;
@@ -85,7 +86,7 @@ public class SessionDefault extends SessionBase {
     @Override
     public String path() {
         if (pathNew == null) {
-            return handshake().uri().getPath();
+            return handshake().path();
         } else {
             return pathNew;
         }
@@ -129,6 +130,10 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public SendStream send(String event, Entity entity) throws IOException {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
@@ -150,13 +155,21 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
                 .entity(entity)
                 .build();
 
-        if (timeout < 10) {
+        if (timeout < 0) {
+            timeout = channel.getConfig().getStreamTimeout();
+        }
+
+        if (timeout == 0) {
             timeout = channel.getConfig().getRequestTimeout();
         }
 
@@ -176,6 +189,10 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         MessageInternal message = new MessageBuilder()
                 .sid(generateId())
                 .event(event)
@@ -183,7 +200,7 @@ public class SessionDefault extends SessionBase {
                 .build();
 
 
-        if (timeout < 10) {
+        if (timeout <= 0) {
             timeout = channel.getConfig().getStreamTimeout();
         }
 
@@ -200,6 +217,10 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void reply(Message from, Entity entity) throws IOException {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         MessageInternal message = new MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())
@@ -217,6 +238,10 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void replyEnd(Message from, Entity entity) throws IOException {
+        if(entity == null){
+            entity = new EntityDefault();
+        }
+
         MessageInternal message = new MessageBuilder()
                 .sid(from.sid())
                 .event(from.event())

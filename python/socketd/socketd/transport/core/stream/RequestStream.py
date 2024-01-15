@@ -22,7 +22,7 @@ class RequestStream(StreamBase):
     def await_result(self):
         return self.__await__()
 
-    def on_reply(self, message: Reply):
+    async def on_reply(self, message: Reply):
         return self._future.set_result(message)
 
     def then_reply(self, onReply: Callable[[Reply], None]):

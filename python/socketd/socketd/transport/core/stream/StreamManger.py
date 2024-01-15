@@ -1,3 +1,4 @@
+import asyncio
 from abc import ABC, abstractmethod
 
 from socketd.transport.core.stream.Stream import Stream
@@ -30,7 +31,7 @@ class StreamInternal(Stream, ABC):
     def insurance_cancel(self) -> None: ...
 
     @abstractmethod
-    def on_reply(self, reply): ...
+    async def on_reply(self, reply) -> None | asyncio.Future: ...
 
     @abstractmethod
     def on_error(self, error): ...

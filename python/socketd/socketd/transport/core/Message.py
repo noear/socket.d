@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from .Entity import Entity
+from .Entity import Entity, Reply
 
 
-class Message(Entity, ABC):
+class Message(Reply, ABC):
     @abstractmethod
     def is_request(self) -> bool:
         ...

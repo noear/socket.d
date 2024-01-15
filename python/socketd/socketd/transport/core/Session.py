@@ -64,8 +64,8 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def send_and_subscribe(self, event: str, content: Entity, consumer: Callable[[Entity], Any],
-                                 timeout: int) -> SubscribeStream:
+    async def send_and_subscribe(self, event: str, content: Entity,
+                                 timeout: int = 0) -> SubscribeStream:
         ...
 
     @abc.abstractmethod

@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Coroutine
 
 from socketd.transport.core.Entity import Reply
 from socketd.transport.core.Costants import Constants
@@ -12,11 +12,11 @@ class SubscribeStream(StreamBase):
         self.__isDone: Optional[bool] = None
         self.__doOnReply: Optional[Callable[[Reply], None]] = None
 
-    def on_reply(self, reply):
+    async def on_reply(self, reply: Reply):
         self.__isDone = reply.is_end()
         try:
             if self.__doOnReply:
-                self.__doOnReply(reply)
+                await self.__doOnReply(reply)
         except Exception as e:
             self.on_error(e)
 

@@ -87,10 +87,10 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                 self._streamManger.remove_stream(frame.get_message().get_sid())
 
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
-                stream.on_reply(frame.get_message())
+                await stream.on_reply(frame.get_message())
             else:
                 await asyncio.get_event_loop().run_in_executor(self.get_config().get_executor(),
-                                                               lambda _m: stream.on_reply(_m),
+                                                               lambda _m: asyncio.run(stream.on_reply(_m)),
                                                                frame.get_message())
         else:
             logger.debug(

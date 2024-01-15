@@ -12,6 +12,7 @@ from socketd_websocket.impl.AIOServe import AIOServe
 from socketd_websocket.impl.AIOWebSocketServerImpl import AIOWebSocketServerImpl
 
 from socketd.transport.core.config.logConfig import logger
+from loguru import logger as log
 
 
 class WsAioServer(ServerBase):
@@ -42,7 +43,7 @@ class WsAioServer(ServerBase):
                            max_size=self.get_config().get_ws_max_size(),
                            )
         self.server = _server
-        logger.info("Server started: {server=" + self.get_config().get_local_url() + "}")
+        log.info("Server started: {server=" + self.get_config().get_local_url() + "}")
         return await self.server
 
     def message_all(self, message: str):
@@ -57,8 +58,9 @@ class WsAioServer(ServerBase):
         return self.__loop
 
     async def stop(self):
-        logger.info("WsAioServer stop...")
+        log.info("WsAioServer stop...")
         self.server.ws_server.close()
         self.__is_started = False
-        self.__top.set_result(1)
+        if self.__top and not self.__top.done():
+            self.__top.set_result(1)
         self.__loop.stop()

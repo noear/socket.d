@@ -20,7 +20,7 @@ class StreamBase(StreamInternal, ABC):
 
     def on_error(self, error: Exception):
         if error:
-            self.on_error(error)
+            self.__doOnError(error)
 
     def is_done(self):
         return True

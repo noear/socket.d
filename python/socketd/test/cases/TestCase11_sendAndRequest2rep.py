@@ -43,6 +43,7 @@ class SimpleListenerTest(Listener):
         logger.info(f"server::{message.get_data_as_string()} :: {message}")
         if message.is_request():
             req: RequestStream = await session.send_and_request("demo", StringEntity("今天不好"), 100)
+            # todo 存在异步阻塞问题，需要阻塞1s，猜测是主线程和read线程，存在阻塞，无锁状态
             await asyncio.sleep(1)
             entity = await req.await_result()
             await session.reply_end(message, entity)

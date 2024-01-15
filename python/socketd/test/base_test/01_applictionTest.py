@@ -40,7 +40,7 @@ async def application_test():
     logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
     await client_session.close()
     server_session.close()
-    # await server.stop()
+    await server.stop()
 
 
 if __name__ == "__main__":

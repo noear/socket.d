@@ -75,12 +75,10 @@ class ConfigBase(Config):
         self._idGenerator = _idGenerator
         return self
 
-    def get_ssl_context(self):
+    def get_ssl_context(self) -> ssl.SSLContext:
         return self._sslContext
 
-    def ssl_context(self, localhost_pem: str):
-        self._sslContext = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        self._sslContext.load_cert_chain(localhost_pem)
+    def ssl_context(self, ssl_context: ssl.SSLContext):
         return self
 
     def get_executor(self):

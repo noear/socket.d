@@ -42,7 +42,7 @@ class SimpleListenerTest(Listener, ABC):
             self.close_counter.set(self.close_counter.get() + 1)
 
     def on_error(self, session, error):
-        pass
+        logger.error(error)
 
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:

@@ -4,7 +4,6 @@ import uuid
 from socketd.SocketD import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.Message import Message
-from socketd.transport.core.stream.RequestStream import RequestStream
 from socketd.transport.core.stream.SubscribeStream import SubscribeStream
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
@@ -43,14 +42,14 @@ class SimpleListenerTest(Listener):
             self.server_counter.set(self.server_counter.get() + 1)
         logger.info(f"server::{message.get_data_as_string()} :: {message}")
         if message.is_subscribe():
-            req: SubscribeStream = await session.send_and_request("demo", StringEntity("今天不好"))
+            req: SubscribeStream = await session.send_and_subscribe("demo", StringEntity("今天不好"))
 
             async def _then_reply(entity):
                 logger.info(f"server::res:: {entity}")
-                await session.reply_end(entity)
+                await session.reply_end(message ,entity)
                 self.message_counter.set(self.message_counter.get() + 1)
 
-            req.then_reply(lambda e: asyncio.run_coroutine_threadsafe(_then_reply(e), asyncio.get_event_loop()))
+            req.then_reply(_then_reply)
 
     def on_close(self, session):
         logger.debug("客户端主动关闭了")
@@ -78,9 +77,9 @@ class ClientListenerTest(Listener):
         self.message_counter = AtomicRefer(0)
 
     async def on_message(self, session: Session, message: Message):
-        logger.info(f"client: {message} {message.get_data_as_string()}")
+        logger.info(f"client::  {message.get_data_as_string()} {message}")
         if message.is_subscribe():
-            await session.reply_end(message, StringEntity("很好"))
+            await session.reply_end(message, StringEntity("你好"))
 
 
 class TestCase12_sendAndSubscribe2rep(BaseTestCase):
@@ -106,10 +105,10 @@ class TestCase12_sendAndSubscribe2rep(BaseTestCase):
         await asyncio.sleep(1)
 
         async def send_and_subscribe_test(entity):
-            logger.debug(entity)
+            logger.debug(f"c::subscribe::{entity.get_data_as_string()} {entity}")
 
-        req: SubscribeStream = await self.client_session.send_and_subscribe("demo", StringEntity("你好"),
-                                                                            send_and_subscribe_test, 100)
+        req: SubscribeStream = await self.client_session.send_and_subscribe("demo", StringEntity("hi"), 100)
+        req.then_reply(send_and_subscribe_test)
         await asyncio.sleep(1)
 
     def start(self):

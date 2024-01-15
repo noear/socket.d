@@ -16,7 +16,6 @@ from socketd.transport.core.stream.RequestStream import RequestStream
 from socketd.transport.core.stream.SendStream import SendStream
 
 from socketd.transport.core.stream.SubscribeStream import SubscribeStream
-from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 from loguru import logger
 
@@ -73,7 +72,7 @@ class SessionDefault(SessionBase, ABC):
         except Exception as e:
             raise e
 
-    async def send_and_subscribe(self, event: str, content: Entity, consumer: Callable[[Entity], Any], timeout: int):
+    async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0):
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         stream = SubscribeStream(message.get_sid(), timeout)
         await self._channel.send(Frame(Flag.Subscribe, message), stream)

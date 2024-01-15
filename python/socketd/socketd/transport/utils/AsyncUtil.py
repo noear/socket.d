@@ -29,7 +29,10 @@ class AsyncUtil(object):
             future = asyncio.Future()
 
             async def _run():
-                await future
+                while True:
+                    await asyncio.sleep(0)
+                    if future.done():
+                        break
 
             _loop.run_until_complete(_run())
 

@@ -1,3 +1,7 @@
+### 2.3.6
+* 添加 Session::liveTime 接口
+* 添加 Entity.of 快捷方法
+
 ### 2.3.5
 * 添加 连接协议对 meta 传递的支持
 * 添加 Handshake:path 方法

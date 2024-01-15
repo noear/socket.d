@@ -19,7 +19,7 @@ public interface FragmentHandler {
      * @param message  总包消息
      * @param consumer 分片消费
      */
-    void splitFragment(Channel channel, StreamInternal stream, MessageInternal message, IoConsumer<Entity> consumer) throws IOException;
+    void spliFragment(Channel channel, StreamInternal stream, MessageInternal message, IoConsumer<Entity> consumer) throws IOException;
 
     /**
      * 聚合分片

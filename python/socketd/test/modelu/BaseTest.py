@@ -36,7 +36,7 @@ class BaseTest:
         self.__server_session: WebSocketServer = await self.__server.config(self.s_config).listen(
             SimpleListenerTest()).start()
 
-        self.__client_session: Session = await SocketD.create_client("ws://127.0.0.1:9999") \
+        self.__client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9999") \
             .config(self.c_config).open()
 
     @calc_async_time
@@ -56,7 +56,7 @@ class BaseTest:
     @calc_async_time
     async def send_and_subscribe(self, count=100000):
         for _ in range(count):
-            await self.__client_session.send_and_subscribe("demo", StringEntity("test"), lambda e: print(e), 100)
+            await self.__client_session.send_and_subscribe("demo", StringEntity("test"),  100)
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
 

@@ -7,3 +7,11 @@ class SocketDException(RuntimeError):
 
     def __str__(self):
         return self.message
+
+
+class SocketdAlarmException(SocketDException):
+    ...
+
+
+class SocketdConnectionException(SocketDException):
+    ...

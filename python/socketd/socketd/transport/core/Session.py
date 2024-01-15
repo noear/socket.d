@@ -3,9 +3,12 @@ from typing import Union, Dict, Any, Callable, Awaitable, Coroutine, Optional
 from asyncio import Future
 
 from socket import gethostbyaddr
-from socketd.transport.core import Handshake
+from socketd.transport.core import HandshakeDefault
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Entity import Entity
+from socketd.transport.core.stream.RequestStream import RequestStream
+from socketd.transport.core.stream.SendStream import SendStream
+from socketd.transport.core.stream.SubscribeStream import SubscribeStream
 
 
 class Session(abc.ABC):
@@ -22,7 +25,7 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def get_handshake(self) -> Handshake:
+    def get_handshake(self) -> HandshakeDefault:
         ...
 
     @abc.abstractmethod
@@ -53,42 +56,24 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def send(self, event: str, content: Entity) -> None:
+    async def send(self, event: str, content: Entity) -> SendStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_request(self, event: str, content: Entity, timeout: int) -> Entity:
+    async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
         ...
 
     @abc.abstractmethod
-    async def send_stream_and_request(self, event: str, content: Entity,
-                                      consumer: Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Any, None],
-                                      timeout: int):
-        """
-        发送流和请求的抽象方法。
-
-        Args:
-            event (str): 事件名称。
-            content (Entity): 内容实体。
-            consumer (Callable[[Entity], Awaitable[Any]] | Coroutine[Entity, Awaitable[Any]]): 消费函数或协程，用来处理内容实体并返回异步结果。
-            timeout (int): 超时时间。
-
-        Returns:
-            Awaitable[Any]: 消费函数或协程的异步结果。
-        """
+    async def send_and_subscribe(self, event: str, content: Entity,
+                                 timeout: int = 0) -> SubscribeStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_subscribe(self, topic: str, content: Entity, consumer: Callable[[Entity], Any],
-                                 timeout: int) -> None:
+    async def reply(self, from_msg: Message, content: Entity) -> None:
         ...
 
     @abc.abstractmethod
-    def reply(self, from_msg: Message, content: Entity) -> None:
-        ...
-
-    @abc.abstractmethod
-    def reply_end(self, from_msg: Message, content: Entity) -> None:
+    async def reply_end(self, from_msg: Message, content: Entity) -> None:
         ...
 
     @abc.abstractmethod

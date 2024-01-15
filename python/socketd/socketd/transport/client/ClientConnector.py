@@ -4,16 +4,19 @@ from abc import ABC, abstractmethod
 class ClientConnector(ABC):
     @abstractmethod
     def heartbeatHandler(self):
-        pass
+        ...
 
     @abstractmethod
-    def heartbeatInterval(self):
-        pass
+    def heartbeatInterval(self) -> int:
+        ...
 
     @abstractmethod
     def autoReconnect(self):
-        pass
+        ...
 
     @abstractmethod
-    def connect(self):
-        pass
+    async def connect(self):
+        ...
+
+    async def close(self):
+        ...

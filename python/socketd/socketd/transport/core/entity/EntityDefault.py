@@ -61,7 +61,9 @@ class EntityDefault(Entity):
         return self.get_meta_map().get(name)
 
     def get_meta_or_default(self, name, default_val):
-        return self.get_meta_map().get(name, default_val)
+        if data := self.get_meta_map().get(name):
+            return data
+        return default_val
 
     def set_data(self, data: bytes | bytearray | memoryview | BytesIO):
         if type(data) == BytesIO:
@@ -76,7 +78,7 @@ class EntityDefault(Entity):
         return self.data
 
     def get_data_as_string(self):
-        return str(self.data.getvalue(), 'utf-8')  # _assuming data is of type bytes
+        return self.data.getvalue().decode('utf-8')  # _assuming data is of type bytes
 
     def get_data_as_bytes(self) -> bytes:
         return self.data.getvalue()

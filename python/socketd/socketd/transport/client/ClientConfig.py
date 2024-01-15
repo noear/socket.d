@@ -3,12 +3,17 @@ from socketd.transport.core.config.ConfigBase import ConfigBase
 
 
 class ClientConfig(ConfigBase):
-    def __init__(self, __url):
+    def __init__(self, url: str):
         super().__init__(True)
-        self.__url = __url
-        self.__uri = urlparse(__url)
+
+        if url.startswith("sd:"):
+            url = url[3:]
+
+        self.__url = url
+        self.__uri = urlparse(url)
         self.__port = self.__uri.port
         self.__schema = self.__uri.scheme
+        self.__link_uri = "sd:" + url
 
         if self.__port is None:
             self.__port = 8602
@@ -68,6 +73,9 @@ class ClientConfig(ConfigBase):
     def auto_reconnect(self, __auto_reconnect):
         self.__auto_reconnect = __auto_reconnect
         return self
+
+    def get_link_url(self):
+        return self.__link_uri
 
     def __str__(self):
         return f"ClientConfig{{__schema='{self.__schema}', __url='{self.__url}', " \

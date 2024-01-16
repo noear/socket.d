@@ -1,7 +1,9 @@
+import asyncio
 import time
 import threading
 
 from abc import ABC
+from typing import Optional
 
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Frames import Frames
@@ -19,6 +21,7 @@ class ChannelBase(Channel, ABC):
         self.attachments = {}
         self._is_closed = False
         self.__lock: threading.Lock = threading.Lock()
+        self.loop: Optional[asyncio.AbstractEventLoop] = None
 
     def __enter__(self):
         return self.__lock.acquire()
@@ -72,3 +75,13 @@ class ChannelBase(Channel, ABC):
 
     def get_config(self) -> 'Config':
         return self.config
+
+    def is_valid(self) -> bool:
+        pass
+
+    def get_loop(self) -> asyncio.AbstractEventLoop:
+        return self.loop
+
+    def set_loop(self, loop) -> None:
+        self.loop = loop
+

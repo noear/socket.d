@@ -14,7 +14,6 @@ from socketd.transport.core.ChannelAssistant import ChannelAssistant
 class WsAioChannelAssistant(ChannelAssistant):
     def __init__(self, config: Config):
         self.config = config
-        self.__loop = asyncio.get_event_loop()
 
     async def write(self, source: WebSocketClientProtocol, frame: Frame) -> None:
         writer: Buffer = self.config.get_codec().write(frame, lambda size: Buffer(limit=size))

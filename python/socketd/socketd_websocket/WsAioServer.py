@@ -6,6 +6,7 @@ from websockets import broadcast
 
 from socketd.transport.server.ServerBase import ServerBase
 from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 from socketd_websocket.WsAioChannelAssistant import WsAioChannelAssistant
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd_websocket.impl.AIOServe import AIOServe
@@ -20,8 +21,8 @@ class WsAioServer(ServerBase):
     def __init__(self, config: ServerConfig):
         super().__init__(config, WsAioChannelAssistant(config))
         self.__loop = asyncio.new_event_loop()
-        self.__top: Optional[asyncio.Future] = None
-        self.server: Serve = None
+        self.__top: Optional[AtomicRefer[asyncio.Future]] = None
+        self.server: Optional[Serve] = None
         self.__is_started = False
 
     async def start(self) -> 'WebSocketServer':
@@ -30,7 +31,7 @@ class WsAioServer(ServerBase):
         else:
             self.__is_started = True
         if self.__top is None:
-            self.__top = AsyncUtil.run_forever(self.__loop)
+            self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
         _server = AIOServe(ws_handler=None,
                            host="0.0.0.0" if self.get_config().get_host() is None else self.get_config().get_host(),
                            port=self.get_config().get_port(),
@@ -61,6 +62,8 @@ class WsAioServer(ServerBase):
         log.info("WsAioServer stop...")
         self.server.ws_server.close()
         self.__is_started = False
-        if self.__top and not self.__top.done():
-            self.__top.set_result(1)
-        self.__loop.stop()
+        async with self.__top:
+            __top = await self.__top.get()
+            if not __top.done():
+                __top.set_result(1)
+            self.__loop.stop()

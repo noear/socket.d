@@ -15,7 +15,6 @@ class AsyncUtil(object):
             _loop (EventLoop): 事件循环对象，用于控制协程的执行。
             fn (Coroutine): 需要运行的协程函数。
         """
-        # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         asyncio.set_event_loop(_loop)
         return _loop.run_until_complete(fn)
 
@@ -34,7 +33,10 @@ class AsyncUtil(object):
                     if future.done():
                         break
 
-            _loop.run_until_complete(_run())
+            try:
+                _loop.run_until_complete(_run())
+            except Exception as e:
+                raise e
 
         t = Thread(target=_main, args=(loop,))
         t.start()
@@ -49,7 +51,7 @@ class AsyncUtil(object):
             loop.stop()
 
         if thread:
-            t = Thread(target=lambda: AsyncUtil.thread_handler(loop, loop.create_task(_run())))
+            t = Thread(target=AsyncUtil.thread_handler, args=(loop, loop.create_task(_run())))
             t.start()
         if pool:
-            pool.submit(lambda: AsyncUtil.thread_handler(loop, loop.create_task(_run())))
+            pool.submit(lambda x: AsyncUtil.thread_handler(*x), (loop, loop.create_task(_run())))

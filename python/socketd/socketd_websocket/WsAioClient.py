@@ -15,7 +15,6 @@ class WsAioClient(ClientBase, ChannelSupporter):
         ClientBase.__init__(self, config, WsAioChannelAssistant(config))
         self.client = None
         self.log = logger.opt()
-        self.__loop = asyncio.get_event_loop()
 
     def create_connector(self) -> WsAioClientConnector:
         return WsAioClientConnector(self)

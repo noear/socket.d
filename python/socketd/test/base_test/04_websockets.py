@@ -6,10 +6,18 @@ import time
 from loguru import logger
 from websockets import serve, WebSocketServerProtocol, connect
 
+from socketd.transport.utils.AsyncUtil import AsyncUtil
 from test.uitls import calc_async_time
 
 
-class websockets_Test(unittest.TestCase):
+class Test_websockets(unittest.TestCase):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._loop = asyncio.get_event_loop()
+        # self.top = AsyncUtil.run_forever(self._loop)
+        # self._loop2 = asyncio.new_event_loop()
+        # self.top2 = AsyncUtil.run_forever(self._loop2)
 
     async def on_message(self, websocket: WebSocketServerProtocol, path: str):
         """ws_handler"""
@@ -24,7 +32,7 @@ class websockets_Test(unittest.TestCase):
 
     async def _server(self):
         # set this future to exit the server
-        __server = await serve(ws_handler=self.on_message, host="0.0.0.0", port=7780)
+        __server = await serve(ws_handler=self.on_message, host="0.0.0.0", port=7780, loop=asyncio.get_running_loop())
 
     async def client(self):
         uri = "ws://localhost:7780"
@@ -40,14 +48,20 @@ class websockets_Test(unittest.TestCase):
     def test_application(self):
         logger.remove()
         logger.add(sys.stderr, level="INFO")
+
         @calc_async_time
         async def _main():
             stop = asyncio.Future()
             await asyncio.gather(self._server(), self.client())
             stop.set_result(1)
             await stop
+            # self.top.set_result(1)
+            # self._loop.stop()
+            # self.top2.set_result(1)
+            # self._loop2.stop()
+
         asyncio.run(_main())
 
 
 if __name__ == "__main__":
-    websockets_Test().test_application()
+    Test_websockets().test_application()

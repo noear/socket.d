@@ -89,7 +89,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
                 await stream.on_reply(frame.get_message())
             else:
-                await asyncio.get_event_loop().run_in_executor(self.get_config().get_executor(),
+                await asyncio.get_running_loop().run_in_executor(self.get_config().get_executor(),
                                                                lambda _m: asyncio.run(stream.on_reply(_m)),
                                                                frame.get_message())
         else:

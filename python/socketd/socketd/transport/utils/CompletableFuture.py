@@ -1,14 +1,10 @@
 import asyncio
 import functools
-from typing import Generic, TypeVar, Callable, Coroutine
+from typing import Generic, TypeVar, Callable
 
 from loguru import logger
 
 T = TypeVar('T')
-
-
-def _callback(future, core: Callable, **kwargs):
-    core(future.result(), **kwargs)
 
 
 class CompletableFuture(Generic[T]):
@@ -18,6 +14,7 @@ class CompletableFuture(Generic[T]):
             logger.warning("{name}对象不是协程对象", name=_future.__name__)
             return
         self._future: asyncio.Task = asyncio.create_task(_future) if _future else asyncio.Future()
+        self._lock = asyncio.Lock()
 
     def get(self, timeout):
         async def _get():
@@ -35,7 +32,7 @@ class CompletableFuture(Generic[T]):
 
     def then_async_callback(self, _fn: Callable):
         def callback(fn: asyncio.Future):
-            asyncio.run_coroutine_threadsafe(_fn(fn.result(), fn.exception()), asyncio.get_event_loop())
+            asyncio.run_coroutine_threadsafe(_fn(fn.result(), fn.exception()), asyncio.get_running_loop())
 
         self._future.add_done_callback(functools.partial(callback))
 

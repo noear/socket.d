@@ -28,7 +28,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         if message_loop := message_loop:
             self.__loop = message_loop
         else:
-            self.__loop = asyncio.get_event_loop()
+            self.__loop = asyncio.get_running_loop()
         self.handshake_future: Optional[CompletableFuture] = None
 
     def get_channel(self):
@@ -70,7 +70,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     log.warning(e)
                     # raise e
 
-        asyncio.run_coroutine_threadsafe(_handler(), asyncio.get_event_loop())
+        asyncio.run_coroutine_threadsafe(_handler(), asyncio.get_running_loop())
 
     async def on_open(self):
         try:
@@ -105,9 +105,12 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                             self.handshake_future.accept(ClientHandshakeResult(self.channel, None))
 
                     await self.channel.on_open_future(__future)
+                # if self.channel.get_config().get_is_thread():
+                #     # todo 开启单独线程后，在open确认连接后，会停留10s(线程可见性不佳)，但是可以解决线程阻塞问题
+                #     asyncio.run_coroutine_threadsafe(self.client.get_processor().on_receive(self.channel, frame),
+                #                                      self.__loop)
+                # else:
                 await self.client.get_processor().on_receive(self.channel, frame)
-                # asyncio.run_coroutine_threadsafe(self.client.get_processor().on_receive(self.channel, frame),
-                #                                  self.__loop)
                 if frame.get_flag() == Flag.Close:
                     """服务端主动关闭"""
                     await self.close()

@@ -9,13 +9,14 @@ from socketd.transport.core.Channel import Channel
 from socketd.transport.core.config.logConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 from socketd_websocket.impl.AIOConnect import AIOConnect
 from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
 
 
 class WsAioClientConnector(ClientConnectorBase):
     def __init__(self, client: ClientInternal):
-        self.__top: Optional[asyncio.Future] = None
+        self.__top: Optional[AtomicRefer[asyncio.Future]] = None
         self.__real: Optional[AIOWebSocketClientImpl] = None
         self.__con: Optional[AIOConnect] = None
         self.__loop = asyncio.new_event_loop()
@@ -31,7 +32,7 @@ class WsAioClientConnector(ClientConnectorBase):
         if self.client.get_config().get_ssl_context() is not None:
             ws_url = ws_url.replace("ws", "wss")
         if self.__top is None:
-            self.__top = AsyncUtil.run_forever(self.__loop)
+            self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
         try:
             self.__con: AIOConnect = AIOConnect(ws_url, client=self.client,
                                                 ssl=self.client.get_config().get_ssl_context(),
@@ -55,7 +56,10 @@ class WsAioClientConnector(ClientConnectorBase):
         if self.__real is None:
             return
         try:
-            self.__top.set_result(1)
+            async with self.__top:
+                __top = await self.__top.get()
+                if not __top.done():
+                    __top.set_result(1)
             self.__real.on_close()
             self.__loop.stop()
         except Exception as e:

@@ -46,4 +46,4 @@ async def application_test():
 if __name__ == "__main__":
     # logger.remove()
     # logger.add(sys.stderr, level="INFO")
-    asyncio.get_event_loop().run_until_complete(application_test())
+    asyncio.run(application_test())

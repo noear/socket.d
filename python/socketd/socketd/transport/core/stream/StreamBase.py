@@ -50,7 +50,7 @@ class StreamBase(StreamInternal, ABC):
             self.on_error(SocketdTimeoutException(f"The stream response timeout, sid={self.__sid}"))
 
         self.__insuranceFuture = CompletableFuture(__insuranceFuture())
-        asyncio.run_coroutine_threadsafe(self.__insuranceFuture.get(streamTimeout), asyncio.get_event_loop())
+        asyncio.run_coroutine_threadsafe(self.__insuranceFuture.get(streamTimeout), asyncio.get_running_loop())
 
     def insurance_cancel(self) -> None:
         if self.__insuranceFuture:

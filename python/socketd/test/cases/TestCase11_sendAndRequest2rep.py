@@ -20,7 +20,7 @@ from loguru import logger
 
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
-    config.set_is_thread(False)
+    config.set_is_thread(True)
     config.set_idle_timeout(10)
     config.set_logger_level("DEBUG")
     config.id_generator(uuid.uuid4)
@@ -43,8 +43,8 @@ class SimpleListenerTest(Listener):
         logger.info(f"server::{message.get_data_as_string()} :: {message}")
         if message.is_request():
             req: RequestStream = await session.send_and_request("demo", StringEntity("今天不好"), 100)
-            # todo 存在异步阻塞问题，需要阻塞1s，猜测是主线程和read线程，存在阻塞，无锁状态
-            await asyncio.sleep(1)
+            # todo 开启单独线程后，在open确认连接后，会停留10s(线程可见性不佳)，但是可以解决线程阻塞问题
+            # await asyncio.sleep(1)
             entity = await req.await_result()
             await session.reply_end(message, entity)
             logger.info(f"server::res::: {entity}")

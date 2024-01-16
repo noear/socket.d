@@ -1,7 +1,7 @@
+import asyncio
 from typing import Any
 from asyncio import Future
 
-from socketd.transport.core.Costants import Function
 from socketd.transport.core.Session import Session
 from socketd.transport.core.Config import Config
 from socketd.transport.core.Frame import Frame
@@ -100,3 +100,7 @@ class Channel:
         ...
 
     def reconnect(self) -> Future | None: ...
+
+    def get_loop(self) -> asyncio.AbstractEventLoop: ...
+
+    def set_loop(self, loop) -> None: ...

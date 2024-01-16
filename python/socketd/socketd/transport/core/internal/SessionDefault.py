@@ -25,7 +25,6 @@ class SessionDefault(SessionBase, ABC):
     def __init__(self, channel: Channel):
         super().__init__(channel)
         self.__path_new = None
-        self.__loop = asyncio.get_event_loop()
 
     def is_valid(self) -> bool:
         return self._channel.is_valid()

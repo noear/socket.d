@@ -50,8 +50,6 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             channel = ChannelDefault(conn, self.ws_aio_server)
             self.set_attachment(channel)
 
-
-
     async def on_error(self, conn: Union['AIOWebSocketServerImpl', WebSocketServerProtocol], ex: Exception):
         try:
             channel: Channel = conn.get_attachment()
@@ -96,7 +94,6 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             except Exception as e:
                 log.error(e)
                 await self.on_error(conn, e)
-                raise e
 
     async def on_close(self, conn: Union['AIOWebSocketServerImpl', WebSocketServerProtocol]):
         """关闭tcp,结束握手"""

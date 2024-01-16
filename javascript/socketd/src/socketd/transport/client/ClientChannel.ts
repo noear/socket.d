@@ -127,6 +127,14 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    getLiveTime(): number {
+        if (this._real) {
+            return this._real!.getLiveTime();
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * 发送
      *

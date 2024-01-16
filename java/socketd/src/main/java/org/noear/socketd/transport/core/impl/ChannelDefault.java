@@ -31,6 +31,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final StreamManger streamManger;
     //会话（懒加载）
     private Session session;
+    //最后活动时间
+    private long liveTime;
     //打开前景（用于构建 onOpen 异步处理）
     private final CompletableFuture<Boolean> onOpenFuture = new CompletableFuture<>();
 
@@ -48,6 +50,17 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     @Override
     public boolean isValid() {
         return isClosed() == 0 && assistant.isValid(source);
+    }
+
+
+    @Override
+    public long getLiveTime() {
+        return liveTime;
+    }
+
+    @Override
+    public void setLiveTimeAsNow() {
+        liveTime = System.currentTimeMillis();
     }
 
     /**

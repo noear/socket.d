@@ -14,6 +14,11 @@ import type {Handshake} from "./Handshake";
  */
 export interface Session extends ClientSession {
     /**
+     * 最后活动时间
+     */
+    liveTime(): number;
+
+    /**
      * 获取握手信息
      */
     handshake(): Handshake;
@@ -129,6 +134,10 @@ export abstract class SessionBase implements Session {
 
     sessionId(): string {
         return this._sessionId;
+    }
+
+    liveTime(): number {
+        return this._channel.getLiveTime();
     }
 
     name(): string | undefined {

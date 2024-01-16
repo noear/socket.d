@@ -40,6 +40,11 @@ export interface Channel {
     close(code: number);
 
     /**
+     * 最后活动时间
+     */
+    getLiveTime(): number;
+
+    /**
      * 获取配置
      */
     getConfig(): Config;
@@ -135,6 +140,11 @@ export interface ChannelInternal extends Channel {
     setSession(session: Session);
 
     /**
+     * 更新最后活动时间
+     * */
+    setLiveTimeAsNow();
+
+    /**
      * 获取流
      */
     getStream(sid: string): StreamInternal<any> | null;
@@ -160,6 +170,8 @@ export abstract class  ChannelBase implements Channel {
         this._config = config;
         this._attachments = new Map<string, object>();
     }
+
+    abstract getLiveTime(): number;
 
     getAttachment<T>(name: string): T | null {
         return this._attachments.get(name);

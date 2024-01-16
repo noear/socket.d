@@ -39,6 +39,11 @@ public interface Channel {
     void close(int code);
 
     /**
+     * 最后活动时间
+     */
+    long getLiveTime();
+
+    /**
      * 获取配置
      */
     Config getConfig();

@@ -46,7 +46,7 @@ public class TestCase01_client_send extends BaseTestCase {
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
-                        System.out.println("::" + message);
+                        System.out.println("::" + session.liveTime() +"::" + message);
                         serverOnMessageCounter.incrementAndGet();
 
                         if (message.isRequest()) {

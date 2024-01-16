@@ -90,6 +90,15 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    @Override
+    public long getLiveTime() {
+        if (real == null) {
+            return 0L;
+        } else {
+            return real.getLiveTime();
+        }
+    }
+
     /**
      * 获取远程地址
      */

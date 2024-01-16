@@ -39,6 +39,7 @@
         <module>../socketd-transport/socketd-transport-java-websocket</module>
         <module>../socketd-transport/socketd-transport-netty</module>
         <module>../socketd-transport/socketd-transport-smartsocket</module>
+        <module>../socketd-transport/socketd-transport-spring-websocket</module>
     </modules>
 
     <dependencyManagement>

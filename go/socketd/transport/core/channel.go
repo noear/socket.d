@@ -2,6 +2,7 @@ package core
 
 import (
 	"net"
+	"net/url"
 
 	"socketd/transport/core/message"
 	"socketd/transport/stream"
@@ -31,7 +32,7 @@ type Channel interface {
 	GetHandshake() *Handshake          //获取握手信息
 
 	Reconnect() (err error)                                              //手动重新连接
-	SendConnect(url string, metas map[string]string) (err error)         //发送握手
+	SendConnect(url string, metas url.Values) (err error)                //发送握手
 	SendConnectAck(connectMsg *message.Message) (err error)              //发送握手应答
 	SendPing() (err error)                                               //发送ping（心跳）
 	SendPong() (err error)                                               //发送pong（心跳）

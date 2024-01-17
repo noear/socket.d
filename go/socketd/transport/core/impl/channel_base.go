@@ -64,13 +64,9 @@ func (c *ChannelBase) GetHandshake() *core.Handshake {
 	return c.handshake
 }
 
-func (c *ChannelBase) SendConnect(event string, metas map[string]string) (err error) {
+func (c *ChannelBase) SendConnect(event string, metas url.Values) (err error) {
 	sid := strings.Replace(uuid.NewString(), "-", "", -1)
-	var uv = url.Values{}
-	for k, v := range metas {
-		uv.Set(k, v)
-	}
-	frame := message.NewFrame(constant.FrameConnect, message.NewMessage(sid, event, message.NewEntity(uv, nil)))
+	frame := message.NewFrame(constant.FrameConnect, message.NewMessage(sid, event, message.NewEntity(metas, nil)))
 	return c.Send(frame, nil)
 }
 

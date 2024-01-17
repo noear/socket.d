@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"strconv"
 	"sync"
 
 	"socketd/transport/core"
@@ -29,11 +30,12 @@ type ChannelDefault[T core.ChannelAssistant[U], U any] struct {
 
 func NewChannelDefault[T core.ChannelAssistant[U], U any, V core.Config](source U, su core.ChannelSupporter[T, U, V]) *ChannelDefault[T, U] {
 	var cd = &ChannelDefault[T, U]{
-		ChannelBase: NewChannelBase(su.GetConfig()),
-		source:      source,
-		processor:   su.GetProcessor(),
-		assistant:   su.GetAssistant(),
-		send_lock:   new(sync.Mutex),
+		ChannelBase:   NewChannelBase(su.GetConfig()),
+		source:        source,
+		processor:     su.GetProcessor(),
+		assistant:     su.GetAssistant(),
+		send_lock:     new(sync.Mutex),
+		streamManager: su.GetConfig().GetStreamManager(),
 	}
 	cd.ChannelBase.Channel = cd
 	return cd
@@ -60,28 +62,28 @@ func (c *ChannelDefault[T, U]) Send(frame *message.Frame, stream stream.StreamIn
 	c.send_lock.Lock()
 	defer c.send_lock.Unlock()
 
-	//if frame.Message != nil {
-	//
-	//	// 注册流接收器
-	//	if stream != nil {
-	//		c.streamManager.Add(frame.Message.Sid, stream)
-	//	}
-	//
-	//	// 如果有实体（尝试分片）
-	//	if frame.Message.Entity != nil {
-	//		//确保用完自动关闭
-	//
-	//		if frame.Message.DataSize() > c.GetConfig().GetFragmentSize() {
-	//			frame.Message.MetaPut(constant.META_DATA_LENGTH, strconv.Itoa(frame.Message.DataSize()))
-	//		}
-	//
-	//		err = c.GetConfig().GetFragmentHandler().SplitFragment(c, stream, frame.Message, func(entity *message.Entity) (err error) {
-	//			frame.Message.Entity = entity
-	//			return c.assistant.Write(c.source, frame)
-	//		})
-	//		return
-	//	}
-	//}
+	if frame.Message != nil {
+
+		// 注册流接收器
+		if stream != nil {
+			c.streamManager.Add(frame.Message.Sid, stream)
+		}
+
+		// 如果有实体（尝试分片）
+		if frame.Message.Entity != nil {
+			//确保用完自动关闭
+
+			if frame.Message.DataSize() > c.GetConfig().GetFragmentSize() {
+				frame.Message.MetaPut(constant.META_DATA_LENGTH, strconv.Itoa(frame.Message.DataSize()))
+			}
+
+			err = c.GetConfig().GetFragmentHandler().SplitFragment(c, stream, frame.Message, func(entity *message.Entity) (err error) {
+				frame.Message.Entity = entity
+				return c.assistant.Write(c.source, frame)
+			})
+			return
+		}
+	}
 
 	err = c.assistant.Write(c.source, frame)
 	if stream != nil {

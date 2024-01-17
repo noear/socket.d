@@ -11,7 +11,7 @@ type Config struct {
 	schema  string
 	host    string
 	port    int
-	metaMap map[string]string
+	metaMap url.Values
 }
 
 func (c *Config) GetSchema() string {
@@ -30,12 +30,12 @@ func (c *Config) GetAddress() string {
 	return fmt.Sprintf("%s:%d", c.host, c.port)
 }
 
-func (c *Config) GetMetaMap() map[string]string {
+func (c *Config) GetMetaMap() url.Values {
 	return c.metaMap
 }
 
 func (c *Config) MetaPut(name, val string) {
-	c.metaMap[name] = val
+	c.metaMap.Set(name, val)
 }
 
 type ConfigOption func(config *Config)
@@ -68,6 +68,10 @@ func WithLink(link string) ConfigOption {
 		if len(split) == 2 {
 			config.host = split[0]
 			config.port, _ = strconv.Atoi(split[1])
+			index := strings.Index(link, "?")
+			if index != -1 {
+				config.metaMap, _ = url.ParseQuery(link[index+1:])
+			}
 		}
 	}
 }

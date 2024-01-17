@@ -34,7 +34,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     //最后活动时间
     private long liveTime;
     //打开前景（用于构建 onOpen 异步处理）
-    private final CompletableFuture<Boolean> onOpenFuture = new CompletableFuture<>();
+    private BiConsumer<Boolean, Throwable> onOpenFuture;
 
     public ChannelDefault(S source, ChannelSupporter<S> supporter) {
         super(supporter.getConfig());
@@ -209,15 +209,13 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     @Override
     public void onOpenFuture(BiConsumer<Boolean, Throwable> future) {
-        onOpenFuture.whenComplete(future);
+        onOpenFuture = future;
     }
 
     @Override
     public void doOpenFuture(boolean isOk, Throwable error) {
-        if (isOk) {
-            onOpenFuture.complete(isOk);
-        } else {
-            onOpenFuture.completeExceptionally(error);
+        if (onOpenFuture != null) {
+            onOpenFuture.accept(isOk, error);
         }
     }
 

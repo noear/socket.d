@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"net/url"
 	"strings"
 
 	"github.com/google/uuid"
@@ -63,9 +64,13 @@ func (c *ChannelBase) GetHandshake() *core.Handshake {
 	return c.handshake
 }
 
-func (c *ChannelBase) SendConnect(event string) (err error) {
+func (c *ChannelBase) SendConnect(event string, metas map[string]string) (err error) {
 	sid := strings.Replace(uuid.NewString(), "-", "", -1)
-	frame := message.NewFrame(constant.FrameConnect, message.NewMessage(sid, event, nil))
+	var uv = url.Values{}
+	for k, v := range metas {
+		uv.Set(k, v)
+	}
+	frame := message.NewFrame(constant.FrameConnect, message.NewMessage(sid, event, message.NewEntity(uv, nil)))
 	return c.Send(frame, nil)
 }
 

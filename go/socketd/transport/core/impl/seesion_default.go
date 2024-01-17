@@ -2,6 +2,7 @@ package impl
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
 	"time"
 
@@ -125,7 +126,7 @@ func (d *SessionDefault) Send(event string, entity *message.Entity) (stream.Send
 	return stm, err
 }
 
-func (d *SessionDefault) SendAndRequest(event string, entity *message.Entity, timeout time.Duration) (stream.SendStream, error) {
+func (d *SessionDefault) SendAndRequest(event string, entity *message.Entity, timeout time.Duration) (stream.RequestStream, error) {
 	var frame = message.NewFrame(constant.FrameMessage, message.NewMessage(d.GenerateId(), event, entity))
 
 	if timeout < 0 {
@@ -138,6 +139,11 @@ func (d *SessionDefault) SendAndRequest(event string, entity *message.Entity, ti
 	stm := impl.NewRequestStream(frame.Message.Sid, timeout)
 	err := d.channel.Send(frame, stm)
 	return stm, err
+}
+
+func (d *SessionDefault) SendAndSubscribe(event string, entity *message.Entity, timeout time.Duration) (stream stream.SubscribeStream, err error) {
+	panic("impl me")
+	return nil, nil
 }
 
 func (d *SessionDefault) Reply(from *message.Frame, entity *message.Entity) error {
@@ -153,12 +159,11 @@ func (d *SessionDefault) ReplyEnd(from *message.Frame, entity *message.Entity) e
 }
 
 func (d *SessionDefault) Close() {
-	//TODO log
-	fmt.Printf("%s  session will be closed, sessionId = %s", d.channel.GetConfig().GetRoleName(), d.sessionId)
+	slog.Debug(fmt.Sprintf("%s  session will be closed, sessionId = %s", d.channel.GetConfig().GetRoleName(), d.sessionId))
 
 	if d.channel.IsValid() {
 		if err := d.channel.SendClose(); err != nil {
-			fmt.Printf("%s channel send_close, error %s", d.channel.GetConfig().GetRoleName(), d.sessionId)
+			slog.Warn(fmt.Sprintf("%s channel send_close, error %s", d.channel.GetConfig().GetRoleName(), d.sessionId))
 		}
 	}
 	d.channel.Close(constant.CLOSE4_USER)

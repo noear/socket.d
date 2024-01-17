@@ -2,6 +2,7 @@ package tcp
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
 
 	"socketd/transport/core"
@@ -46,8 +47,7 @@ func (c *ChannelAssistant) Read(conn *net.TCPConn) (*message.Frame, error) {
 	buf := make([]byte, c.Config.GetReadBufferSize())
 	n, err := conn.Read(buf)
 	if err != nil {
-		// TODO 日志记录
-		fmt.Println(err)
+		slog.Warn(fmt.Sprintf("connect read error %s", err))
 		return nil, err
 	}
 	return c.Config.GetCodec().Decode(buf[:n]), nil

@@ -8,7 +8,7 @@ import (
 	"socketd/transport/core/fragment"
 )
 
-var _ core.Config = new(ConfigBase)
+//var _ core.Config = new(ConfigBase)
 
 type ConfigBase struct {
 	clientMode bool
@@ -26,7 +26,7 @@ type ConfigBase struct {
 	maxUdpSize      int
 }
 
-func DefualtConfig(clientMode bool) *ConfigBase {
+func DefaultConfig(clientMode bool) *ConfigBase {
 	var c = &ConfigBase{}
 
 	c.clientMode = clientMode

@@ -2,6 +2,7 @@ package impl
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
 	"sync"
 
@@ -20,13 +21,13 @@ type ChannelDefault[T core.ChannelAssistant[U], U any] struct {
 	processor     core.Processor //处理器
 	assistant     T              //助力
 	streamManager stream.StreamManager
-	seesion       core.Session
+	session       core.Session
 	onOpenFuture  func(bool, error)
 
 	send_lock *sync.Mutex
 }
 
-func NewChannelDefault[T core.ChannelAssistant[U], U any](source U, su core.ChannelSupporter[T, U]) *ChannelDefault[T, U] {
+func NewChannelDefault[T core.ChannelAssistant[U], U any, V core.Config](source U, su core.ChannelSupporter[T, U, V]) *ChannelDefault[T, U] {
 	var cd = &ChannelDefault[T, U]{
 		ChannelBase: NewChannelBase(su.GetConfig()),
 		source:      source,
@@ -63,22 +64,20 @@ func (c *ChannelDefault[T, U]) Send(frame *message.Frame, stream stream.StreamIn
 	//
 	//	// 注册流接收器
 	//	if stream != nil {
-	//		c.streamManager.Add(frame.Sid, stream)
+	//		c.streamManager.Add(frame.Message.Sid, stream)
 	//	}
 	//
 	//	// 如果有实体（尝试分片）
-	//	if frame.Entity != nil {
+	//	if frame.Message.Entity != nil {
 	//		//确保用完自动关闭
 	//
-	//		if frame.DataSize() > c.GetConfig().GetFragmentSize() {
-	//			frame.MetaPut(message.META_DATA_LENGTH, strconv.Itoa(frame.DataSize()))
+	//		if frame.Message.DataSize() > c.GetConfig().GetFragmentSize() {
+	//			frame.Message.MetaPut(constant.META_DATA_LENGTH, strconv.Itoa(frame.Message.DataSize()))
 	//		}
 	//
 	//		err = c.GetConfig().GetFragmentHandler().SplitFragment(c, stream, frame.Message, func(entity *message.Entity) (err error) {
-	//			var f = message.NewFrame()
-	//			f.Flag = frame.Flag
-	//			f.CopyEntity(entity)
-	//			return c.assistant.Write(c.source, f)
+	//			frame.Message.Entity = entity
+	//			return c.assistant.Write(c.source, frame)
 	//		})
 	//		return
 	//	}
@@ -113,11 +112,12 @@ func (c *ChannelDefault[T, U]) Retrieve(frame *message.Frame, stream stream.Stre
 
 		return
 	}
-	fmt.Printf("%s stream not found, sid=%s, sessionId=%s",
-		c.GetConfig().GetRoleName(), frame.Message.Sid, c.seesion.SessionId())
+	slog.Debug(fmt.Sprintf("%s stream not found, sid=%s, sessionId=%s",
+		c.GetConfig().GetRoleName(), frame.Message.Sid, c.session.SessionId()))
 }
 
 func (c *ChannelDefault[T, U]) Reconnect() error {
+	//由 ClientChannel 实现
 	return nil
 }
 
@@ -126,14 +126,14 @@ func (c *ChannelDefault[T, U]) OnError(err error) {
 }
 
 func (c *ChannelDefault[T, U]) SetSession(session core.Session) {
-	c.seesion = session
+	c.session = session
 }
 
 func (c *ChannelDefault[T, U]) GetSession() core.Session {
-	if c.seesion == nil {
-		c.seesion = NewSessionDefault(c.Channel)
+	if c.session == nil {
+		c.session = NewSessionDefault(c.Channel)
 	}
-	return c.seesion
+	return c.session
 }
 
 func (c *ChannelDefault[T, U]) GetStream(sid string) stream.StreamInternal {
@@ -153,11 +153,10 @@ func (c *ChannelDefault[T, U]) DoOpenFuture(isOk bool, err error) {
 }
 
 func (c *ChannelDefault[T, U]) Close(code int) {
-	//TODO 日志记录
-	fmt.Printf("%s channel will be closed, sessionId = %s\n", c.GetConfig().GetRoleName(), c.GetSession().SessionId())
+	slog.Debug(fmt.Sprintf("%s channel will be closed, sessionId = %s", c.GetConfig().GetRoleName(), c.GetSession().SessionId()))
 
 	c.ChannelBase.Close(code)
 	if err := c.assistant.Close(c.source); err != nil {
-		fmt.Printf("%s channel close error, sessionId=%s", c.GetConfig().GetRoleName(), c.GetSession().SessionId())
+		slog.Warn(fmt.Sprintf("%s channel close error, sessionId = %s", c.GetConfig().GetRoleName(), c.GetSession().SessionId()))
 	}
 }

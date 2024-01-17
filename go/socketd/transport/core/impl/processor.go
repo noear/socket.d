@@ -1,7 +1,9 @@
 package impl
 
 import (
+	"errors"
 	"fmt"
+	"log/slog"
 	"strconv"
 
 	"socketd/transport/core/constant"
@@ -23,9 +25,9 @@ func (p *Processor) SetListener(listener core.Listener) {
 	p.listener = listener
 }
 
-func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
-	//TODO 日志记录
-	fmt.Println("OnReceive", frame)
+func (p *Processor) OnReceive(channel core.ChannelInternal, frame *message.Frame) error {
+	slog.Debug("OnReceive", "frame", frame)
+
 	switch frame.Flag {
 	case constant.FrameConnect:
 		var handshake = core.NewHandshake(frame.Message)
@@ -43,7 +45,6 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 					}
 				}
 			}
-
 		})
 		p.OnOpen(channel)
 	case constant.FrameConnack:
@@ -57,11 +58,11 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 
 			// 握手失败
 			if frame.Flag == constant.FrameClose {
-				channel.SendPong()
+				return errors.New("connection request was rejected")
 			}
 
-			// TODO 日志记录
-			return
+			slog.Warn(fmt.Sprintf("%s channel handshake is null, sessionId = %s", channel.GetConfig().GetRoleName(), channel.GetSession().SessionId()))
+			return nil
 		}
 
 		switch frame.Flag {
@@ -89,10 +90,10 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) {
 			p.OnCloseInternal(channel)
 		}
 	}
-
+	return nil
 }
 
-func (p *Processor) OnReceiveDo(channel core.Channel, frame *message.Frame, reply bool) {
+func (p *Processor) OnReceiveDo(channel core.ChannelInternal, frame *message.Frame, reply bool) {
 	var stm stream.StreamInternal
 	var streamIndex = 0
 	var streamTotal = 1
@@ -129,28 +130,28 @@ func (p *Processor) OnReceiveDo(channel core.Channel, frame *message.Frame, repl
 	}
 }
 
-func (p *Processor) OnOpen(channel core.Channel) {
+func (p *Processor) OnOpen(channel core.ChannelInternal) {
 	p.listener.OnOpen(channel.GetSession())
 	channel.DoOpenFuture(true, nil)
 }
 
-func (p *Processor) OnMessage(channel core.Channel, message *message.Frame) {
+func (p *Processor) OnMessage(channel core.ChannelInternal, message *message.Frame) {
 	var err = p.listener.OnMessage(channel.GetSession(), message)
 	if err != nil {
 		p.OnError(channel, err)
 	}
 }
 
-func (p *Processor) OnClose(channel core.Channel) {
+func (p *Processor) OnClose(channel core.ChannelInternal) {
 	if channel.IsClosed() == 0 {
 		p.OnCloseInternal(channel)
 	}
 }
 
-func (p *Processor) OnCloseInternal(channel core.Channel) {
+func (p *Processor) OnCloseInternal(channel core.ChannelInternal) {
 	p.listener.OnClose(channel.GetSession())
 }
 
-func (p *Processor) OnError(channel core.Channel, err error) {
+func (p *Processor) OnError(channel core.ChannelInternal, err error) {
 	p.listener.OnError(channel.GetSession(), err)
 }

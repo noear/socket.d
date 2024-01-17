@@ -13,7 +13,7 @@ type Frame struct {
 func NewFrame(flag uint32, msg *Message) *Frame {
 	return &Frame{
 		Len:     0,
-		Flag:    0,
+		Flag:    flag,
 		Message: msg,
 	}
 }

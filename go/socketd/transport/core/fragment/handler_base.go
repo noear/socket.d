@@ -2,7 +2,8 @@ package fragment
 
 import (
 	"bytes"
-	"fmt"
+	"log/slog"
+	"socketd/transport/stream"
 	"strconv"
 
 	"socketd/transport/core"
@@ -20,7 +21,7 @@ type HandlerBase struct {
  * @Description 获取下个分片
  * @Date 2024-01-10 22:31:25
  */
-func (h HandlerBase) SplitFragment(channel core.Channel, stream any, msg *message.Message, accept func(entity *message.Entity) (err error)) (err error) {
+func (h HandlerBase) SplitFragment(channel core.Channel, stream stream.StreamInternal, msg *message.Message, accept func(entity *message.Entity) (err error)) (err error) {
 	if msg.DataSize() > channel.GetConfig().GetFragmentSize() {
 		var fragmentTotal = msg.DataSize() / channel.GetConfig().GetFragmentSize()
 		if msg.DataSize()%channel.GetConfig().GetFragmentSize() > 0 {
@@ -43,20 +44,16 @@ func (h HandlerBase) SplitFragment(channel core.Channel, stream any, msg *messag
 				fragmentEntity.MetaPut(constant.META_DATA_FRAGMENT_IDX, strconv.Itoa(fragmentIndex))
 				fragmentEntity.MetaPut(constant.META_DATA_FRAGMENT_TOTAL, strconv.Itoa(fragmentTotal))
 				if err := accept(fragmentEntity); err != nil {
-					//TODO 日志记录
-					fmt.Println(err)
+					slog.Warn(err.Error())
 				}
 				if stream != nil {
-					//stream.onProgress(true, fragmentIndex, fragmentTotal);
+					stream.OnProgress(true, fragmentIndex, fragmentTotal)
 				}
 			}
-
 		}
-		return
 	}
 	if err := accept(msg.Entity); err != nil {
-		//TODO 日志记录
-		fmt.Println(err)
+		slog.Warn(err.Error())
 	}
 	//if stream != nil {
 	//	stream.onProgress(true, fragmentIndex, fragmentTotal);

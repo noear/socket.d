@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"socketd/transport/stream"
 	"time"
 
 	"socketd/transport/core/constant"
@@ -25,10 +26,12 @@ func (s *RequestStream) OnReply(frame *message.Frame) {
 
 }
 
-func (s *RequestStream) Await() {
-
+func (s *RequestStream) Await() *message.Message {
+	panic("impl me!")
+	return nil
 }
 
-func (s *RequestStream) ThenReply(onReply func(t any)) {
-
+func (s *RequestStream) ThenReply(onReply func(message *message.Message)) stream.RequestStream {
+	panic("impl me!")
+	return nil
 }

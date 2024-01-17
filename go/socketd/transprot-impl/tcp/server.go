@@ -2,6 +2,7 @@ package tcp
 
 import (
 	"fmt"
+	"log/slog"
 	"net"
 
 	"socketd/transport/core"
@@ -18,12 +19,19 @@ type TcpServer struct {
 	connChan chan *net.TCPConn
 }
 
-func NewTcpServer(cfg *server.Config) *TcpServer {
+func NewTcpServer(preCfg core.PreConfig) *TcpServer {
 	var s = &TcpServer{}
-	s.cfg = cfg
-	s.ServerBase = server.NewServerBase[*ChannelAssistant, *net.TCPConn](cfg, NewChannelAssistant(cfg))
+	s.cfg = &server.Config{
+		Config:    impl.DefaultConfig(false),
+		PreConfig: preCfg,
+	}
+	s.ServerBase = server.NewServerBase[*ChannelAssistant, *net.TCPConn](s.cfg, NewChannelAssistant(s.cfg))
 	return s
 }
+
+//func (s *TcpServer) GetConfig() *server.Config {
+//	return s.cfg
+//}
 
 func (s *TcpServer) GetTitle() string {
 	return "tcp/go-tcp/"
@@ -43,11 +51,12 @@ func (s *TcpServer) Listen(listener core.Listener) server.Server {
 //}
 
 func (s *TcpServer) Start() (err error) {
-	tcpAddr, err := net.ResolveTCPAddr(s.cfg.Protocol, fmt.Sprintf("%v:%v", s.cfg.Host, s.cfg.Port))
+	tcpAddr, err := net.ResolveTCPAddr(s.cfg.GetSchema(), s.cfg.GetAddress())
 	if err != nil {
 		return err
 	}
-	s.listener, err = net.ListenTCP(s.cfg.Protocol, tcpAddr)
+	s.listener, err = net.ListenTCP(s.cfg.GetSchema(), tcpAddr)
+	slog.Info(fmt.Sprintf("Socket.D server listening: %s", s.listener.Addr()))
 
 	s.connChan = make(chan *net.TCPConn)
 	go s.Receive()
@@ -55,8 +64,7 @@ func (s *TcpServer) Start() (err error) {
 	for {
 		conn, err := s.listener.AcceptTCP()
 		if err != nil {
-			// TODO 日志记录
-			fmt.Println(err)
+			slog.Warn("conn interrupt", "err", err)
 			continue
 		}
 		s.connChan <- conn
@@ -69,14 +77,16 @@ func (s *TcpServer) Receive() {
 			// 处理来自 conn 的数据
 			defer conn.Close()
 
-			var channel = impl.NewChannelDefault[*ChannelAssistant, *net.TCPConn](conn, s)
+			var channel = impl.NewChannelDefault[*ChannelAssistant, *net.TCPConn, *server.Config](conn, s)
 
 			for {
 
 				frame, err := s.GetAssistant().Read(conn)
 				if err != nil {
-					fmt.Println(err)
+					slog.Debug("conn interrupt", "err", err)
 					channel.Close(constant.CLOSE3_ERROR)
+					s.GetProcessor().OnError(channel, err)
+					s.GetProcessor().OnClose(channel)
 					return
 				}
 				if frame.Len != 0 {
@@ -89,7 +99,6 @@ func (s *TcpServer) Receive() {
 
 func (s *TcpServer) Close() {
 	if err := s.listener.Close(); err != nil {
-		// TODO 日志记录
-		fmt.Println(err)
+		slog.Error("server stop", "err", err)
 	}
 }

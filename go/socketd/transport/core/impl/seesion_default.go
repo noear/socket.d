@@ -127,7 +127,7 @@ func (d *SessionDefault) Send(event string, entity *message.Entity) (stream.Send
 }
 
 func (d *SessionDefault) SendAndRequest(event string, entity *message.Entity, timeout time.Duration) (stream.RequestStream, error) {
-	var frame = message.NewFrame(constant.FrameMessage, message.NewMessage(d.GenerateId(), event, entity))
+	var frame = message.NewFrame(constant.FrameRequest, message.NewMessage(d.GenerateId(), event, entity))
 
 	if timeout < 0 {
 		timeout = d.channel.GetConfig().GetStreamTimeout()

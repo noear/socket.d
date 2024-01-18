@@ -62,6 +62,7 @@ func (c *ChannelDefault[T, U]) Send(frame *message.Frame, stream stream.StreamIn
 	c.send_lock.Lock()
 	defer c.send_lock.Unlock()
 
+	slog.Debug("Channel.Send", slog.String("frame", frame.String()))
 	if frame.Message != nil {
 
 		// 注册流接收器

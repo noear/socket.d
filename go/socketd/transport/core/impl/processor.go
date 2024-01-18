@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"time"
 
 	"socketd/transport/core/constant"
 	"socketd/transport/stream"
@@ -26,7 +27,7 @@ func (p *Processor) SetListener(listener core.Listener) {
 }
 
 func (p *Processor) OnReceive(channel core.ChannelInternal, frame *message.Frame) error {
-	slog.Debug("OnReceive", "frame", frame)
+	slog.Debug("Processor.OnReceive", "frame", frame)
 
 	switch frame.Flag {
 	case constant.FrameConnect:

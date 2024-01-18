@@ -30,7 +30,7 @@ func NewClientConnector(clt *Client) *ClientConnector {
 	return cc
 }
 
-func (cc *ClientConnector) Connect() (core.Channel, error) {
+func (cc *ClientConnector) Connect() (core.ChannelInternal, error) {
 	tcpAddr, err := net.ResolveTCPAddr(cc.cfg.GetSchema(), cc.cfg.GetAddress())
 	if err != nil {
 		return nil, err
@@ -90,7 +90,6 @@ func (cc *ClientConnector) Receive(ctx context.Context, channel core.ChannelInte
 			if frame != nil {
 				if frame.Flag == constant.FrameConnack {
 					cc.connackChan <- struct{}{}
-					continue
 				}
 				err := _client.GetProcessor().OnReceive(channel, frame)
 				if err != nil {

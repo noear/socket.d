@@ -2,11 +2,29 @@ package demo01_helloworld
 
 import (
 	"fmt"
+	"log/slog"
+	"os"
 	"strings"
+	"time"
 
 	"socketd/transport/core"
 	"socketd/transport/core/message"
 )
+
+func SetLog() {
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		//AddSource: true,
+		Level: slog.LevelDebug,
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.TimeKey {
+				if t, ok := a.Value.Any().(time.Time); ok {
+					a.Value = slog.StringValue(t.Format(time.DateTime))
+				}
+			}
+			return a
+		},
+	})))
+}
 
 type MyListner struct {
 }
@@ -25,7 +43,9 @@ func (l *MyListner) OnMessage(session core.Session, msg *message.Frame) error {
 	fmt.Println("-> OnMessage")
 	if strings.HasPrefix(msg.Message.Event, "/demo") {
 
-		err := session.Reply(msg, msg.Message.Entity)
+		ent := message.NewEntity(nil, []byte("Nice to meet U :)"))
+
+		err := session.Reply(msg, ent)
 		if err != nil {
 			fmt.Println(err)
 			return err

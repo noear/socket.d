@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"time"
+
 	"socketd/transport/core"
 	"socketd/transport/core/constant"
 	"socketd/transport/core/impl"
@@ -12,17 +14,17 @@ import (
 	"socketd/transport/stream"
 )
 
-type Channel struct {
-	*impl.ChannelBase //继承
+type ClientChannel[T core.ChannelAssistant[U], U any] struct {
+	*impl.ChannelBase
 
-	connector        Connector             //连接器
 	real             core.Channel          //真实通道
+	connector        Connector             //连接器
 	heartbeatHandler core.HeartbeatHandler //心跳处理
 	heartbeatCancel  context.CancelFunc
 }
 
-func NewClientChannel(real core.Channel, connector Connector) *Channel {
-	var cb = &Channel{}
+func NewClientChannel[T core.ChannelAssistant[U], U any](real core.Channel, connector Connector) core.Channel {
+	var cb = &ClientChannel[T, U]{}
 	cb.ChannelBase = impl.NewChannelBase(real.GetConfig())
 	cb.connector = connector
 	cb.real = real
@@ -30,37 +32,60 @@ func NewClientChannel(real core.Channel, connector Connector) *Channel {
 	if cb.heartbeatHandler == nil {
 		cb.heartbeatHandler = impl.HeartbeatHandlerDefault
 	}
+	cb.InitHeartbeat()
 	return cb
 }
 
-func (cc *Channel) InitHeartbeat() {
+func (cc *ClientChannel[T, U]) InitHeartbeat() {
+	if cc.heartbeatCancel != nil {
+		cc.heartbeatCancel()
+	}
 
+	var ctx context.Context
+	ctx, cc.heartbeatCancel = context.WithCancel(context.Background())
+	timer := time.NewTicker(cc.connector.GetHeartbeatInterval())
+
+	if cc.connector.AutoReconnect() {
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-timer.C:
+					if err := cc.HeartbeatHandle(); err != nil {
+						slog.Warn(fmt.Sprintf("client channel heartbeat error:%s", err))
+					}
+				}
+			}
+		}()
+	}
 }
 
-func (cc *Channel) IsValid() bool {
+func (cc *ClientChannel[T, U]) IsValid() bool {
 	if cc.real == nil {
 		return false
 	}
 	return cc.real.IsValid()
 }
 
-func (cc *Channel) IsClosed() int {
+func (cc *ClientChannel[T, U]) IsClosed() int {
 	if cc.real == nil {
 		return 0
 	}
 	return cc.real.IsClosed()
 }
 
-func (cc *Channel) GetLocalAddress() net.Addr {
+func (cc *ClientChannel[T, U]) GetLocalAddress() net.Addr {
 	return cc.real.GetLocalAddress()
 }
 
-func (cc *Channel) GetRemoteAddress() net.Addr {
+func (cc *ClientChannel[T, U]) GetRemoteAddress() net.Addr {
 	return cc.real.GetRemoteAddress()
 }
 
-func (cc *Channel) HeartbeatHandle() (err error) {
+func (cc *ClientChannel[T, U]) HeartbeatHandle() (err error) {
 	if cc.real != nil {
+		//说明握手未成功
 		if cc.real.GetHandshake() == nil {
 			return
 		}
@@ -78,12 +103,12 @@ func (cc *Channel) HeartbeatHandle() (err error) {
 			cc.real.Close(constant.CLOSE3_ERROR)
 			cc.real = nil
 		}
-		return fmt.Errorf("Client channel heartbeat failed %v", err)
+		return fmt.Errorf("client channel heartbeat failed %v", err)
 	}
 	return nil
 }
 
-func (cc *Channel) Send(frame *message.Frame, stream stream.StreamInternal) (err error) {
+func (cc *ClientChannel[T, U]) Send(frame *message.Frame, stream stream.StreamInternal) (err error) {
 
 	if cc.PrepareCheck() {
 		return
@@ -98,15 +123,15 @@ func (cc *Channel) Send(frame *message.Frame, stream stream.StreamInternal) (err
 	return
 }
 
-func (cc *Channel) Retrieve(frame *message.Frame, stream stream.StreamInternal) {
+func (cc *ClientChannel[T, U]) Retrieve(frame *message.Frame, stream stream.StreamInternal) {
 	cc.real.Retrieve(frame, stream)
 }
 
-func (cc *Channel) GetSession() core.Session {
+func (cc *ClientChannel[T, U]) GetSession() core.Session {
 	return cc.real.GetSession()
 }
 
-func (cc *Channel) Reconnect() (err error) {
+func (cc *ClientChannel[T, U]) Reconnect() (err error) {
 	//if err = cc.InitHeartbeat; err != nil {
 	//	return
 	//}
@@ -114,14 +139,14 @@ func (cc *Channel) Reconnect() (err error) {
 	return
 }
 
-func (cc *Channel) Close(code int) {
+func (cc *ClientChannel[T, U]) Close(code int) {
 	go func() {
 		cc.real.Close(code)
 		cc.connector.Close()
 	}()
 }
 
-func (cc *Channel) PrepareCheck() bool {
+func (cc *ClientChannel[T, U]) PrepareCheck() bool {
 	if cc.real == nil || !cc.IsValid() {
 		cc.real, _ = cc.connector.Connect()
 		return true

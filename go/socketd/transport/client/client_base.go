@@ -63,12 +63,14 @@ func (cb *ClientBase[T, U]) Listen(listener core.Listener) Client {
 }
 
 func (cb *ClientBase[T, U]) Open() (Session, error) {
-	conn, err := cb.connect.Connect()
+	channel, err := cb.connect.Connect()
 	if err != nil {
 		return nil, err
 	}
-	clientChannel := NewClientChannel(conn, cb.connect)
-	clientChannel.SetHandshake(conn.GetHandshake())
-	session := impl.NewSessionDefault(clientChannel)
+	clientChannel := NewClientChannel[T, U](channel, cb.connect)
+	clientChannel.SetHandshake(channel.GetHandshake())
+	session := impl.NewSessionDefault(channel)
+	channel.SetSession(session)
+
 	return session, nil
 }

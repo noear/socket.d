@@ -108,6 +108,7 @@ public class ClusterClientSession implements ClientSession {
      * @param entity 实体
      * @return 流
      */
+    @Override
     public SendStream send(String event, Entity entity) throws IOException {
         ClientSession sender = getSessionOne();
 
@@ -122,6 +123,7 @@ public class ClusterClientSession implements ClientSession {
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
+    @Override
     public RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 
@@ -137,6 +139,7 @@ public class ClusterClientSession implements ClientSession {
      * @param timeout 超时（单位：毫秒）
      * @return 流
      */
+    @Override
     public SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException {
         ClientSession sender = getSessionOne();
 

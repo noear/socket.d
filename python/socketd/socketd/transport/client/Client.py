@@ -4,6 +4,7 @@ from typing import Callable
 from asyncio.futures import Future
 
 from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.core import Listener
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.Processor import Processor
 from socketd.transport.core.Session import Session
@@ -21,7 +22,7 @@ class Client(ABC):
     def process(self, processor: Callable) -> 'Client': ...
 
     @abstractmethod
-    def listen(self, listener: Callable) -> 'Client': ...
+    def listen(self, listener: Listener) -> 'Client': ...
 
     @abstractmethod
     def open(self) -> Session | Future: ...
@@ -29,6 +30,8 @@ class Client(ABC):
     @abstractmethod
     def get_assistant(self) -> ChannelAssistant: ...
 
+
+class ClientInternal(Client):
     @abstractmethod
     def get_heartbeatInterval(self): ...
 

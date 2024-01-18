@@ -76,3 +76,6 @@ class MessageDefault(Message):
 
     def get_data_as_bytes(self) -> bytes:
         return self.entity.get_data_as_bytes()
+
+    def is_end(self) -> bool:
+        return self.flag == Flag.ReplyEnd

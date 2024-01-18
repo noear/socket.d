@@ -1,5 +1,6 @@
-import asyncio
 import functools
+import asyncio
+
 from types import TracebackType
 from typing import Callable, Union, Awaitable, Any, Optional, Sequence, Type, Generator
 from wsgiref.headers import Headers
@@ -9,14 +10,19 @@ from websockets.extensions import ServerExtensionFactory
 from websockets.extensions.permessage_deflate import enable_server_permessage_deflate
 from websockets.headers import validate_subprotocols
 from websockets.http import USER_AGENT
-from websockets.legacy.server import HeadersLikeOrCallable, HTTPResponse, remove_path_argument, WebSocketServer, Serve
+from websockets import WebSocketServer
+from websockets.legacy.server import HeadersLikeOrCallable, HTTPResponse, remove_path_argument
 
 
-class AIOServe(Serve):
+class AIOServe:
+    """
+    重写Serve内部逻
+    辑
+    """
 
     def __init__(self, ws_handler: Union[
         Callable[[WebSocketServerProtocol], Awaitable[Any]],
-        Callable[[WebSocketServerProtocol, str], Awaitable[Any]],  # deprecated
+        Callable[[WebSocketServerProtocol, str], Awaitable[Any]],
     ], host: Optional[Union[str, Sequence[str]]] = None, port: Optional[int] = None, ws_aio_server=None, *,
                  create_protocol: Optional[Callable[..., WebSocketServerProtocol]] = None,
                  logger: Optional[LoggerLike] = None, compression: Optional[str] = "deflate",
@@ -31,17 +37,31 @@ class AIOServe(Serve):
             ] = None, open_timeout: Optional[float] = 10, ping_interval: Optional[float] = 20,
                  ping_timeout: Optional[float] = 20, close_timeout: Optional[float] = None,
                  max_size: Optional[int] = 2 ** 20, max_queue: Optional[int] = 2 ** 5, read_limit: int = 2 ** 16,
-                 write_limit: int = 2 ** 16,**kwargs: Any) -> None:
-        _loop: Optional[asyncio.AbstractEventLoop] = asyncio.get_event_loop()
-        super().__init__(ws_handler, host, port, create_protocol=create_protocol, logger=logger,
-                         compression=compression, origins=origins, extensions=extensions, subprotocols=subprotocols,
-                         extra_headers=extra_headers, server_header=server_header, process_request=process_request,
-                         select_subprotocol=select_subprotocol, open_timeout=open_timeout, ping_interval=ping_interval,
-                         ping_timeout=ping_timeout, close_timeout=close_timeout, max_size=max_size, max_queue=max_queue,
-                         read_limit=read_limit, write_limit=write_limit, **kwargs)
+                 write_limit: int = 2 ** 16, **kwargs: Any) -> None:
+        timeout: Optional[float] = kwargs.pop("timeout", None)
+        if timeout is None:
+            timeout = 10
+        # If both are specified, timeout is ignored.
+        if close_timeout is None:
+            close_timeout = timeout
+
+        # Backwards compatibility: create_protocol used to be called klass.
+        klass: Optional[Type[WebSocketServerProtocol]] = kwargs.pop("klass", None)
+        if klass is None:
+            klass = WebSocketServerProtocol
+        # If both are specified, klass is ignored.
+        if create_protocol is None:
+            create_protocol = klass
+
+        # Backwards compatibility: recv() used to return None on closed connections
         legacy_recv: bool = kwargs.pop("legacy_recv", False)
 
         # Backwards compatibility: the loop parameter used to be supported.
+        _loop: Optional[asyncio.AbstractEventLoop] = kwargs.pop("loop", None)
+        if _loop is None:
+            loop = asyncio.get_event_loop()
+        else:
+            loop = _loop
 
         ws_server = WebSocketServer(logger=logger)
 
@@ -75,7 +95,7 @@ class AIOServe(Serve):
             max_queue=max_queue,
             read_limit=read_limit,
             write_limit=write_limit,
-            loop=_loop,
+            loop=loop,
             legacy_recv=legacy_recv,
             origins=origins,
             extensions=extensions,
@@ -92,11 +112,11 @@ class AIOServe(Serve):
             # unix_serve(path) must not specify host and port parameters.
             assert host is None and port is None
             create_server = functools.partial(
-                _loop.create_unix_server, factory, path, **kwargs
+                loop.create_unix_server, factory, path, **kwargs
             )
         else:
             create_server = functools.partial(
-                _loop.create_server, factory, host, port, **kwargs
+                loop.create_server, factory, host, port, **kwargs
             )
 
         # This is a coroutine function.

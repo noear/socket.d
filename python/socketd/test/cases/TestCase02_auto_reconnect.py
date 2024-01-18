@@ -41,7 +41,7 @@ class TestCase02_auto_reconnect(BaseTestCase):
         for _ in range(3):
             await self.client_session.send("demo", StringEntity("test"))
 
-        await self.client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
+        await self.client_session.send_and_subscribe("demo", StringEntity("test"), 100)
         await asyncio.sleep(1)
         logger.info(f"counter {_simple.server_counter.get()} ")
 

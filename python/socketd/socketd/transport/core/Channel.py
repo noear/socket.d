@@ -21,10 +21,6 @@ class Channel:
         ...
 
     @abstractmethod
-    def remove_acceptor(self, sid: str) -> None:
-        ...
-
-    @abstractmethod
     def is_valid(self) -> bool:
         ...
 
@@ -41,11 +37,11 @@ class Channel:
         ...
 
     @abstractmethod
-    def set_handshake(self, handshake: 'Handshake') -> None:
+    def set_handshake(self, handshake: 'HandshakeDefault') -> None:
         ...
 
     @abstractmethod
-    def get_handshake(self) -> 'Handshake':
+    def get_handshake(self) -> 'HandshakeDefault':
         ...
 
     @abstractmethod
@@ -85,11 +81,11 @@ class Channel:
         ...
 
     @abstractmethod
-    async def send(self, frame: 'Frame', acceptor: 'Acceptor') -> None:
+    async def send(self, frame: 'Frame', stream: 'StreamInternal') -> None:
         ...
 
     @abstractmethod
-    async def retrieve(self, frame: Frame, on_error: Function) -> None:
+    async def retrieve(self, frame: Frame, stream: 'StreamInternal') -> None:
         ...
 
     @abstractmethod

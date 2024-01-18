@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from .Entity import Entity
+from .Entity import Entity, Reply
 
 
-class Message(Entity, ABC):
+class Message(Reply, ABC):
     @abstractmethod
     def is_request(self) -> bool:
         ...
@@ -28,6 +28,7 @@ class Message(Entity, ABC):
     def get_entity(self) -> Entity:
         ...
 
+
+class MessageInternal(Message, ABC):
     @abstractmethod
-    def get_flag(self) -> int:
-        ...
+    def get_flag(self) -> int: ...

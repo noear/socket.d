@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 from urllib.parse import urlparse
 
+from socketd.exception.SocketdExecption import SocketDException
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientFactory import ClientFactory
@@ -26,28 +27,31 @@ class SocketD:
 
     @staticmethod
     def __get_schema(url: str) -> Optional[str]:
-        parsed_url = urlparse(url)
-        if parsed_url:
-            return parsed_url.scheme
-        return None
+        index = url.index("://")
+        if index <= 0:
+            raise SocketDException(f"The serverUrl invalid: {url}")
+        return url[:index]
 
     @staticmethod
     def create_server(server_config: ServerConfig) -> Server:
         factory = SocketD.server_factory_map.get(server_config.get_schema())
         if factory is None:
-            raise RuntimeError("No ServerBroker providers were found.")
+            raise RuntimeError(f"No ServerBroker providers were found. {server_config.get_schema()}")
         return factory.create_server(server_config)
 
     @staticmethod
     def create_client(server_url: str) -> Client:
-        schema = SocketD.__get_schema(server_url)
+        index = server_url.index("://")
+        if index <= 0:
+            raise SocketDException(f"The serverUrl invalid: {server_url}")
+        schema = server_url[:index]
         if schema is None:
             raise ValueError("Invalid server URL.")
 
-        client_config = ClientConfig(server_url)
-        factory = SocketD.client_factory_map.get(client_config.get_schema())
+        client_config = ClientConfig(server_url[4:])
+        factory = SocketD.client_factory_map.get(schema)
         if factory is None:
-            raise RuntimeError("No ClientBroker providers were found.")
+            raise RuntimeError(f"No ClientBroker providers were found. {client_config.get_schema()}")
         return factory.create_client(client_config)
 
 

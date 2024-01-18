@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Dict, Optional, Any
 from io import BytesIO
 
@@ -12,7 +13,7 @@ class Entity:
     def get_meta(self, name: str) -> Optional[Any]:
         raise NotImplementedError
 
-    def get_meta_or_default(self, name: str, default: str) -> str:
+    def get_meta_or_default(self, name: str, default: Any) -> str:
         raise NotImplementedError
 
     def get_data(self) -> BytesIO:
@@ -28,7 +29,8 @@ class Entity:
         raise NotImplementedError
 
 
-
-class Reply:
+class Reply(Entity, ABC):
 
     def is_end(self) -> bool: ...
+
+    def get_sid(self): ...

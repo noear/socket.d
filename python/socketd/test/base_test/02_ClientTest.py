@@ -5,7 +5,7 @@ from loguru import logger
 
 from socketd.transport.core.Session import Session
 from socketd.SocketD import SocketD
-from socketd.transport.core.entity.Entity import Entity
+from socketd.transport.core.Entity import Entity
 from socketd.transport.core.entity.StringEntity import StringEntity
 from test.uitls import calc_async_time
 
@@ -22,9 +22,9 @@ def send_and_subscribe_test(e: Entity):
 
 @calc_async_time
 async def main():
-    client_session: Session = await SocketD.create_client("ws://127.0.0.1:7779").config(config_handler).open()
+    client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9100").config(config_handler).open()
     start_time = time.monotonic()
-    for _ in range(100):
+    for _ in range(10):
         await client_session.send("demo", StringEntity("test.png"))
         # e = await client_session.send_and_request("demo", StringEntity("test.png"), 100)
         # await client_session.send_and_subscribe("demo", StringEntity("test.png"), send_and_subscribe_test, 100)

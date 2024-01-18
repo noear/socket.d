@@ -49,7 +49,7 @@ class SimpleListenerTest(Listener, ABC):
         path = Path(out_file_name)
         assert path.exists()
 
-    def on_close(self, session):
+    async def on_close(self, session):
         pass
 
     def on_error(self, session, error):

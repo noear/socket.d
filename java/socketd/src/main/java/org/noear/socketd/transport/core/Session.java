@@ -109,6 +109,11 @@ public interface Session extends ClientSession, Closeable {
     String sessionId();
 
     /**
+     * 最后活动时间
+     */
+    long liveTime();
+
+    /**
      * 手动重连（一般是自动）
      */
     void reconnect() throws IOException;

@@ -5,7 +5,7 @@ import {GuidGenerator, IdGenerator} from "./IdGenerator";
 import {FragmentHandler, FragmentHandlerDefault} from "./FragmentHandler";
 import {Constants} from "./Constants";
 import {Asserts} from "./Asserts";
-import {CodecByteBuffer} from "./CodecByteBuffer";
+import {CodecDefault} from "./CodecDefault";
 
 /**
  * 配置接口
@@ -133,7 +133,7 @@ export abstract class ConfigBase implements Config {
     constructor(clientMode: boolean) {
         this._clientMode = clientMode;
         this._streamManger = new StreamMangerDefault(this);
-        this._codec = new CodecByteBuffer(this);
+        this._codec = new CodecDefault(this);
 
         this._charset = "utf-8";
 

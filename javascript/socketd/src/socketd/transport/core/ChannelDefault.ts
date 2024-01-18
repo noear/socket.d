@@ -21,6 +21,8 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _streamManger: StreamManger;
     //会话（懒加载）
     private _session: Session;
+    //最后活动时间
+    private _liveTime: number = 0;
     private _onOpenFuture: IoBiConsumer<boolean, Error>;
 
     constructor(source: S, supporter: ChannelSupporter<S>) {
@@ -128,6 +130,14 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     onError(error: Error) {
         this._processor.onError(this, error);
+    }
+
+    getLiveTime(): number {
+        return this._liveTime;
+    }
+
+    setLiveTimeAsNow() {
+        this._liveTime = new Date().getTime();
     }
 
     getSession(): Session {

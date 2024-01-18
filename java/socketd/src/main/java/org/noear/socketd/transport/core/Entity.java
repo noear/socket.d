@@ -1,5 +1,10 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.core.entity.EntityDefault;
+import org.noear.socketd.transport.core.entity.FileEntity;
+import org.noear.socketd.transport.core.entity.StringEntity;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -11,6 +16,27 @@ import java.util.Map;
  * @since 2.0
  */
 public interface Entity {
+    // >>> 不需要迁移
+    static StringEntity of(String data){
+        return Entity.of(data);
+    }
+
+    static FileEntity of(File data) throws IOException {
+        return new FileEntity(data);
+    }
+
+    static EntityDefault of(byte[] data){
+        return new EntityDefault().dataSet(data);
+    }
+
+    static EntityDefault of(ByteBuffer data){
+        return new EntityDefault().dataSet(data);
+    }
+
+    static EntityDefault of(){
+        return new EntityDefault();
+    }
+    // <<< 不需要迁移
 
     /**
      * 获取元信息字符串（queryString style）

@@ -42,9 +42,10 @@ class websockets_Test(unittest.TestCase):
         logger.add(sys.stderr, level="INFO")
         @calc_async_time
         async def _main():
-            # stop = asyncio.Future()
+            stop = asyncio.Future()
             await asyncio.gather(self._server(), self.client())
-            # await stop
+            stop.set_result(1)
+            await stop
         asyncio.run(_main())
 
 

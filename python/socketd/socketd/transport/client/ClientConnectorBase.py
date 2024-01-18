@@ -1,11 +1,12 @@
 from abc import ABC
+
+from .Client import Client, ClientInternal
 from .ClientConnector import ClientConnector
-from .ClientBase import ClientBase
 
 
 class ClientConnectorBase(ClientConnector, ABC):
 
-    def __init__(self, client: ClientBase):
+    def __init__(self, client: ClientInternal):
         self.client = client
 
     def heartbeatHandler(self):
@@ -16,3 +17,4 @@ class ClientConnectorBase(ClientConnector, ABC):
 
     def autoReconnect(self):
         return self.client.get_config().is_auto_reconnect()
+

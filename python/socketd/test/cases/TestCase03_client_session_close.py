@@ -37,7 +37,7 @@ class TestCase03_client_session_close(BaseTestCase):
         try:
             await self.client_session.close()
             await self.client_session.send("demo", StringEntity("test"))
-            await self.client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
+            await self.client_session.send_and_subscribe("demo", StringEntity("test"), 100)
         except Exception as e:
             pass
         await asyncio.sleep(5)

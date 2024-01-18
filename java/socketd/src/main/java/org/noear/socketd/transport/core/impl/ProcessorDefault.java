@@ -93,6 +93,9 @@ public class ProcessorDefault implements Processor {
                 return;
             }
 
+            //更新最后活动时间
+            channel.setLiveTimeAsNow();
+
             try {
                 switch (frame.flag()) {
                     case Flags.Ping: {

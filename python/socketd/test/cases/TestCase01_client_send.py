@@ -3,7 +3,6 @@ import asyncio
 from socketd.SocketD import SocketD
 from test.modelu.BaseTestCase import BaseTestCase
 
-import time
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
@@ -28,26 +27,22 @@ class TestCase01_client_send(BaseTestCase):
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
         self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
             s).start()
-
+        await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
         await self.client_session.send_and_request("demo", StringEntity("test"), 100)
 
-        start_time = time.monotonic()
         for _ in range(100):
             await self.client_session.send("demo", StringEntity("test"))
 
         # await self.client_session.send_and_subscribe("demo", StringEntity("test"), send_and_subscribe_test, 100)
-        end_time = time.monotonic()
-        logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
         logger.info(
-            f" message {s.message_counter.get()}")
+            f" message {s.server_counter.get()}")
 
     def start(self):
         super().start()
-
         self.loop.run_until_complete(self._start())
 
     async def _stop(self):

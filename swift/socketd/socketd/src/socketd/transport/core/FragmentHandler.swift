@@ -21,7 +21,7 @@ protocol FragmentHandler{
      * @param fragmentIndex 分片索引（由导引安排，从1按序递进）
      * @param message       总包消息
      */
-    func nextFragment(_ channel:Channel, _ fragmentIndex:Int32, _ message:MessageInternal) -> Entity;
+    func nextFragment(_ channel:Channel, _ stream:StreamInternal, _ message:MessageInternal,_ consumer:IoConsumer<Entity>);
     
     /**
      * 聚合所有分片
@@ -30,7 +30,7 @@ protocol FragmentHandler{
      * @param fragmentIndex 分片索引（传过来信息，不一定有顺序）
      * @param message       分片消息
      */
-    func aggrFragment(_ channel:Channel, _ fragmentIndex:Int32, _ message:MessageInternal) -> Frame;
+    func aggrFragment(_ channel:Channel, _ fragmentIndex:Int32, _ message:MessageInternal) -> Frame?;
     
     /**
      * 聚合启用

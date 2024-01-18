@@ -39,8 +39,8 @@ class WsAioChannelAssistant(ChannelAssistant):
         return target.state == State.OPEN
 
     async def close(self, target: WebSocketServerProtocol) -> None:
-        # await target.wait_closed()  # 等待消息
         await target.close()
+        await target.wait_closed()  # 等待消息
 
     def get_remote_address(self, target: WebSocketServerProtocol) -> str:
         return target.remote_address

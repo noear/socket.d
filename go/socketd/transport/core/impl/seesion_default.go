@@ -126,8 +126,8 @@ func (d *SessionDefault) Send(event string, entity *message.Entity) (stream.Send
 	return stm, err
 }
 
-func (d *SessionDefault) SendAndRequest(event string, entity *message.Entity, timeout time.Duration) (stream.SendStream, error) {
-	var frame = message.NewFrame(constant.FrameMessage, message.NewMessage(d.GenerateId(), event, entity))
+func (d *SessionDefault) SendAndRequest(event string, entity *message.Entity, timeout time.Duration) (stream.RequestStream, error) {
+	var frame = message.NewFrame(constant.FrameRequest, message.NewMessage(d.GenerateId(), event, entity))
 
 	if timeout < 0 {
 		timeout = d.channel.GetConfig().GetStreamTimeout()
@@ -139,6 +139,11 @@ func (d *SessionDefault) SendAndRequest(event string, entity *message.Entity, ti
 	stm := impl.NewRequestStream(frame.Message.Sid, timeout)
 	err := d.channel.Send(frame, stm)
 	return stm, err
+}
+
+func (d *SessionDefault) SendAndSubscribe(event string, entity *message.Entity, timeout time.Duration) (stream stream.SubscribeStream, err error) {
+	panic("impl me")
+	return nil, nil
 }
 
 func (d *SessionDefault) Reply(from *message.Frame, entity *message.Entity) error {

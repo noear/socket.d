@@ -2,12 +2,15 @@ package core
 
 import (
 	"net"
+	"net/url"
 
 	"socketd/transport/core/message"
 	"socketd/transport/stream"
 )
 
 type ChannelInternal interface {
+	Channel
+
 	SetSession(session Session)
 	GetStream(sid string) stream.StreamInternal
 	OnOpenFuture(future func(bool, error))
@@ -15,8 +18,6 @@ type ChannelInternal interface {
 }
 
 type Channel interface {
-	ChannelInternal
-
 	GetAttachment(name string) any      //获取附件
 	PutAttachment(name string, val any) //放置附件
 	Close(int)                          //1协议关 2用户关
@@ -31,7 +32,7 @@ type Channel interface {
 	GetHandshake() *Handshake          //获取握手信息
 
 	Reconnect() (err error)                                              //手动重新连接
-	SendConnect(url string) (err error)                                  //发送握手
+	SendConnect(url string, metas url.Values) (err error)                //发送握手
 	SendConnectAck(connectMsg *message.Message) (err error)              //发送握手应答
 	SendPing() (err error)                                               //发送ping（心跳）
 	SendPong() (err error)                                               //发送pong（心跳）
@@ -51,8 +52,8 @@ type ChannelAssistant[T any] interface {
 	GetRemoteAddress(target T) net.Addr         // 获取远程地址
 }
 
-type ChannelSupporter[T ChannelAssistant[U], U any] interface {
+type ChannelSupporter[T ChannelAssistant[U], U any, V Config] interface {
 	GetProcessor() Processor // 获取处理器
-	GetConfig() Config       // 获取配置
+	GetConfig() V            // 获取配置
 	GetAssistant() T         // 获取通道辅助器
 }

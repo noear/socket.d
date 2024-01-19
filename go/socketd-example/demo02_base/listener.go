@@ -1,4 +1,4 @@
-package demo01_helloworld
+package demo02_base
 
 import (
 	"fmt"

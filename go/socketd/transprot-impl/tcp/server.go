@@ -19,12 +19,19 @@ type TcpServer struct {
 	connChan chan *net.TCPConn
 }
 
-func NewTcpServer(cfg *server.Config) *TcpServer {
+func NewTcpServer(preCfg core.PreConfig) *TcpServer {
 	var s = &TcpServer{}
-	s.cfg = cfg
-	s.ServerBase = server.NewServerBase[*ChannelAssistant, *net.TCPConn](cfg, NewChannelAssistant(cfg))
+	s.cfg = &server.Config{
+		Config:    impl.DefaultConfig(false),
+		PreConfig: preCfg,
+	}
+	s.ServerBase = server.NewServerBase[*ChannelAssistant, *net.TCPConn](s.cfg, NewChannelAssistant(s.cfg))
 	return s
 }
+
+//func (s *TcpServer) GetConfig() *server.Config {
+//	return s.cfg
+//}
 
 func (s *TcpServer) GetTitle() string {
 	return "tcp/go-tcp/"
@@ -44,11 +51,15 @@ func (s *TcpServer) Listen(listener core.Listener) server.Server {
 //}
 
 func (s *TcpServer) Start() (err error) {
-	tcpAddr, err := net.ResolveTCPAddr(s.cfg.Protocol, fmt.Sprintf("%v:%v", s.cfg.Host, s.cfg.Port))
+	tcpAddr, err := net.ResolveTCPAddr(s.cfg.GetSchema(), s.cfg.GetAddress())
 	if err != nil {
 		return err
 	}
-	s.listener, err = net.ListenTCP(s.cfg.Protocol, tcpAddr)
+	s.listener, err = net.ListenTCP(s.cfg.GetSchema(), tcpAddr)
+	if err != nil {
+		slog.Error(fmt.Sprintf("Socket.D server start error: %s", err))
+		return err
+	}
 	slog.Info(fmt.Sprintf("Socket.D server listening: %s", s.listener.Addr()))
 
 	s.connChan = make(chan *net.TCPConn)
@@ -70,7 +81,7 @@ func (s *TcpServer) Receive() {
 			// 处理来自 conn 的数据
 			defer conn.Close()
 
-			var channel = impl.NewChannelDefault[*ChannelAssistant, *net.TCPConn](conn, s)
+			var channel = impl.NewChannelDefault[*ChannelAssistant, *net.TCPConn, *server.Config](conn, s)
 
 			for {
 

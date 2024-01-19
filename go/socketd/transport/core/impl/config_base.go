@@ -6,13 +6,15 @@ import (
 	"socketd/transport/core"
 	"socketd/transport/core/constant"
 	"socketd/transport/core/fragment"
+	"socketd/transport/stream"
+	"socketd/transport/stream/impl"
 )
 
-var _ core.Config = new(ConfigBase)
+//var _ core.Config = new(ConfigBase)
 
 type ConfigBase struct {
-	clientMode bool
-	// streamManager StreamManager
+	clientMode      bool
+	streamManager   stream.StreamManager
 	codec           core.Codec
 	fragmentHandler core.FragmentHandler
 	fragmentSize    int
@@ -26,12 +28,15 @@ type ConfigBase struct {
 	maxUdpSize      int
 }
 
-func DefualtConfig(clientMode bool) *ConfigBase {
+func DefaultConfig(clientMode bool) *ConfigBase {
 	var c = &ConfigBase{}
 
 	c.clientMode = clientMode
 	c.codec = &CodecDefault{}
 	c.charset = "utf-8"
+
+	c.streamManager = impl.NewStreamManagerDefault(c)
+
 	c.fragmentHandler = fragment.NewFragmentHandlerDefault()
 	c.fragmentSize = constant.MAX_SIZE_DATA
 
@@ -53,6 +58,9 @@ func (c *ConfigBase) GetRoleName() string {
 		return "client"
 	}
 	return "server"
+}
+func (c *ConfigBase) GetStreamManager() stream.StreamManager {
+	return c.streamManager
 }
 func (c *ConfigBase) GetCharset() string {
 	return c.charset

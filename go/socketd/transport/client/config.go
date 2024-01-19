@@ -31,7 +31,7 @@ func (c *Config) GetLinkUrl() string {
 }
 
 func (c *Config) GetUrl() string {
-	return fmt.Sprintf("sd:%s://%s:%d", c.GetSchema(), c.GetHost(), c.GetPort())
+	return fmt.Sprintf("%s://%s:%d", c.GetSchema(), c.GetHost(), c.GetPort())
 }
 
 //func (c *Config) GetSchema() string {

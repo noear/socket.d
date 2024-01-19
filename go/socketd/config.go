@@ -19,15 +19,21 @@ func (c *Config) GetSchema() string {
 }
 
 func (c *Config) GetHost() string {
+	if c.host == "" {
+		c.host = "0.0.0.0"
+	}
 	return c.host
 }
 
 func (c *Config) GetPort() int {
+	if c.port == 0 {
+		c.port = 8602
+	}
 	return c.port
 }
 
 func (c *Config) GetAddress() string {
-	return fmt.Sprintf("%s:%d", c.host, c.port)
+	return fmt.Sprintf("%s:%d", c.GetHost(), c.GetPort())
 }
 
 func (c *Config) GetMetaMap() url.Values {
@@ -53,6 +59,7 @@ func WithHost(host string) ConfigOption {
 }
 
 func WithSchema(schema string) ConfigOption {
+	schema, _ = strings.CutPrefix(schema, "sd:")
 	return func(config *Config) {
 		config.schema = schema
 	}

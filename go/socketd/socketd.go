@@ -6,6 +6,7 @@ import (
 	"socketd/transport/client"
 	"socketd/transport/server"
 	"socketd/transprot-impl/tcp"
+	"socketd/transprot-impl/ws"
 )
 
 var SocketD = new(socketD)
@@ -37,6 +38,8 @@ func (sd *socketD) CreateServer() server.Server {
 	switch sd.cfg.GetSchema() {
 	case "tcp":
 		return tcp.NewTcpServer(sd.cfg)
+	case "ws":
+		return ws.NewWebsocketServer(sd.cfg)
 	}
 	panic(fmt.Errorf("%s server not implement", sd.cfg.schema))
 }
@@ -48,6 +51,8 @@ func (sd *socketD) CreateClient() client.Client {
 	switch sd.cfg.GetSchema() {
 	case "tcp":
 		return tcp.NewTcpClient(sd.cfg)
+	case "ws":
+		return ws.NewWebsocketClient(sd.cfg)
 	}
 	panic(fmt.Errorf("%s server not implement", sd.cfg.schema))
 }

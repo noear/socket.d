@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
-	"time"
-
-	"socketd/transport/core/constant"
-	"socketd/transport/stream"
 
 	"socketd/transport/core"
+	"socketd/transport/core/constant"
+	"socketd/transport/core/listener"
 	"socketd/transport/core/message"
+	"socketd/transport/stream"
 )
 
 type Processor struct {
@@ -19,7 +18,7 @@ type Processor struct {
 }
 
 func NewProcessor() *Processor {
-	return &Processor{}
+	return &Processor{listener: listener.SimpleListener{}}
 }
 
 func (p *Processor) SetListener(listener core.Listener) {
@@ -27,7 +26,7 @@ func (p *Processor) SetListener(listener core.Listener) {
 }
 
 func (p *Processor) OnReceive(channel core.ChannelInternal, frame *message.Frame) error {
-	slog.Debug("Processor.OnReceive", "frame", frame)
+	slog.Debug("Processor.OnReceive", "client", channel.GetConfig().ClientMode(), "frame", frame)
 
 	switch frame.Flag {
 	case constant.FrameConnect:

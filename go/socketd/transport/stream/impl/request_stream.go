@@ -32,7 +32,7 @@ func (s *RequestStream) OnReply(frame *message.Frame) {
 }
 
 func (s *RequestStream) Await() (*message.Message, error) {
-	timer := time.NewTimer(time.Millisecond * 30) // 30毫秒超时
+	timer := time.NewTimer(s.StreamBase.Timeout())
 	for {
 		select {
 		case <-timer.C:

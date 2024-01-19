@@ -48,4 +48,7 @@ func TestDemo01(t *testing.T) {
 	} else {
 		fmt.Println("msg:", msg)
 	}
+
+	stopChan := make(chan struct{})
+	<-stopChan
 }

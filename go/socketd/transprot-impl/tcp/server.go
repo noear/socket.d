@@ -56,6 +56,10 @@ func (s *TcpServer) Start() (err error) {
 		return err
 	}
 	s.listener, err = net.ListenTCP(s.cfg.GetSchema(), tcpAddr)
+	if err != nil {
+		slog.Error(fmt.Sprintf("Socket.D server start error: %s", err))
+		return err
+	}
 	slog.Info(fmt.Sprintf("Socket.D server listening: %s", s.listener.Addr()))
 
 	s.connChan = make(chan *net.TCPConn)

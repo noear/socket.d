@@ -61,14 +61,16 @@ func (cc *ClientConnector) Connect() (core.ChannelInternal, error) {
 	go cc.Receive(ctx, channel, cc.real)
 
 	err = channel.SendConnect(cc.cfg.GetLinkUrl(), cc.cfg.GetMetaMap())
-
+	if err != nil {
+		return nil, err
+	}
 	timer := time.NewTimer(cc.GetClient().GetConfig().GetConnectTimeout())
 	select {
 	case <-timer.C:
 		return nil, errors.New("connect timeout")
 	case <-cc.connackChan:
+		return channel, nil
 	}
-	return channel, nil
 }
 
 func (cc *ClientConnector) Receive(ctx context.Context, channel core.ChannelInternal, conn *net.TCPConn) {
@@ -89,6 +91,7 @@ func (cc *ClientConnector) Receive(ctx context.Context, channel core.ChannelInte
 			}
 			if frame != nil {
 				if frame.Flag == constant.FrameConnack {
+					channel.OnOpenFuture(func(b bool, err error) {})
 					cc.connackChan <- struct{}{}
 				}
 				err := _client.GetProcessor().OnReceive(channel, frame)

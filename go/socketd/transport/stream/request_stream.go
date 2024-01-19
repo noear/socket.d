@@ -7,6 +7,6 @@ import (
 type RequestStream interface {
 	Stream
 
-	Await() *message.Message
+	Await() (*message.Message, error)
 	ThenReply(onReply func(message *message.Message)) RequestStream
 }

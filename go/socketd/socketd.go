@@ -3,14 +3,16 @@ package socketd
 import (
 	"fmt"
 
+	"socketd/transport/client"
 	"socketd/transport/server"
 	"socketd/transprot-impl/tcp"
+	"socketd/transprot-impl/ws"
 )
 
 var SocketD = new(socketD)
 
 type socketD struct {
-	cfg *server.Config
+	cfg *Config
 }
 
 func (sd *socketD) Version() string {
@@ -22,7 +24,7 @@ func (sd *socketD) ProtocolVersion() string {
 }
 
 func (sd *socketD) Config(options ...ConfigOption) *socketD {
-	sd.cfg = new(server.Config)
+	sd.cfg = new(Config)
 	for _, opts := range options {
 		opts(sd.cfg)
 	}
@@ -33,9 +35,24 @@ func (sd *socketD) CreateServer() server.Server {
 	if sd.cfg == nil {
 		panic("use Config(…) before creating")
 	}
-	switch sd.cfg.Protocol {
+	switch sd.cfg.GetSchema() {
 	case "tcp":
 		return tcp.NewTcpServer(sd.cfg)
+	case "ws":
+		return ws.NewWebsocketServer(sd.cfg)
 	}
-	panic(fmt.Errorf("%s server not implement"))
+	panic(fmt.Errorf("%s server not implement", sd.cfg.schema))
+}
+
+func (sd *socketD) CreateClient() client.Client {
+	if sd.cfg == nil {
+		panic("use Config(…) before creating")
+	}
+	switch sd.cfg.GetSchema() {
+	case "tcp":
+		return tcp.NewTcpClient(sd.cfg)
+	case "ws":
+		return ws.NewWebsocketClient(sd.cfg)
+	}
+	panic(fmt.Errorf("%s server not implement", sd.cfg.schema))
 }

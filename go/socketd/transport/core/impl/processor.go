@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"strconv"
 
-	"socketd/transport/core/constant"
-	"socketd/transport/stream"
-
 	"socketd/transport/core"
+	"socketd/transport/core/constant"
+	"socketd/transport/core/listener"
 	"socketd/transport/core/message"
+	"socketd/transport/stream"
 )
 
 type Processor struct {
@@ -18,15 +18,15 @@ type Processor struct {
 }
 
 func NewProcessor() *Processor {
-	return &Processor{}
+	return &Processor{listener: listener.SimpleListener{}}
 }
 
 func (p *Processor) SetListener(listener core.Listener) {
 	p.listener = listener
 }
 
-func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) error {
-	slog.Debug("OnReceive", "frame", frame)
+func (p *Processor) OnReceive(channel core.ChannelInternal, frame *message.Frame) error {
+	slog.Debug("Processor.OnReceive", "client", channel.GetConfig().ClientMode(), "frame", frame)
 
 	switch frame.Flag {
 	case constant.FrameConnect:
@@ -45,7 +45,6 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) error 
 					}
 				}
 			}
-
 		})
 		p.OnOpen(channel)
 	case constant.FrameConnack:
@@ -94,7 +93,7 @@ func (p *Processor) OnReceive(channel core.Channel, frame *message.Frame) error 
 	return nil
 }
 
-func (p *Processor) OnReceiveDo(channel core.Channel, frame *message.Frame, reply bool) {
+func (p *Processor) OnReceiveDo(channel core.ChannelInternal, frame *message.Frame, reply bool) {
 	var stm stream.StreamInternal
 	var streamIndex = 0
 	var streamTotal = 1
@@ -131,28 +130,28 @@ func (p *Processor) OnReceiveDo(channel core.Channel, frame *message.Frame, repl
 	}
 }
 
-func (p *Processor) OnOpen(channel core.Channel) {
+func (p *Processor) OnOpen(channel core.ChannelInternal) {
 	p.listener.OnOpen(channel.GetSession())
 	channel.DoOpenFuture(true, nil)
 }
 
-func (p *Processor) OnMessage(channel core.Channel, message *message.Frame) {
+func (p *Processor) OnMessage(channel core.ChannelInternal, message *message.Frame) {
 	var err = p.listener.OnMessage(channel.GetSession(), message)
 	if err != nil {
 		p.OnError(channel, err)
 	}
 }
 
-func (p *Processor) OnClose(channel core.Channel) {
+func (p *Processor) OnClose(channel core.ChannelInternal) {
 	if channel.IsClosed() == 0 {
 		p.OnCloseInternal(channel)
 	}
 }
 
-func (p *Processor) OnCloseInternal(channel core.Channel) {
+func (p *Processor) OnCloseInternal(channel core.ChannelInternal) {
 	p.listener.OnClose(channel.GetSession())
 }
 
-func (p *Processor) OnError(channel core.Channel, err error) {
+func (p *Processor) OnError(channel core.ChannelInternal, err error) {
 	p.listener.OnError(channel.GetSession(), err)
 }

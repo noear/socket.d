@@ -13,14 +13,14 @@ type Frame struct {
 func NewFrame(flag uint32, msg *Message) *Frame {
 	return &Frame{
 		Len:     0,
-		Flag:    0,
+		Flag:    flag,
 		Message: msg,
 	}
 }
 
 func (f *Frame) String() string {
 	if f.Message != nil {
-		return fmt.Sprintf("%+v", f.Message)
+		return fmt.Sprintf("{Len: %d, Flag: %d, Message: %s}", f.Len, f.Flag, f.Message)
 	}
 	return fmt.Sprintf("{Len: %d, Flag: %d}", f.Len, f.Flag)
 }

@@ -10,8 +10,19 @@ class SocketdException(RuntimeError):
 
 
 class SocketdAlarmException(SocketdException):
-    ...
+    pass
 
+class SocketdChannelException(SocketdException):
+    pass
+
+class SocketdCodecException(SocketdException):
+    pass
 
 class SocketdConnectionException(SocketdException):
-    ...
+    pass
+
+class SocketdSizeLimitException(SocketdException):
+    pass
+
+class SocketdTimeoutException(SocketdException):
+    pass

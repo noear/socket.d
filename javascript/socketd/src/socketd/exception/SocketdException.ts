@@ -19,15 +19,15 @@ export class SocketdException extends Error {
  * @since 2.0
  */
 export class SocketdAlarmException extends SocketdException {
-    private  _from: Message;
+    private  _alarm: Message;
 
-    constructor(from: Message) {
-        super(from.entity()!.dataAsString());
-        this._from = from;
+    constructor(alarm: Message) {
+        super(alarm.entity()!.dataAsString());
+        this._alarm = alarm;
     }
 
-    getFrom(): Message {
-        return this._from;
+    getAlarm(): Message {
+        return this._alarm;
     }
 }
 

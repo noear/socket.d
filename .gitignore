@@ -17,6 +17,7 @@ target/
 *.log
 *.flattened-pom.xml
 */package-lock.json
+*.pyc
 
 ### NetBeans ###
 nbproject/private/
@@ -29,6 +30,7 @@ obj/
 bin/
 node_modules/
 .hbuilderx/
+venv/
 
 ### Mac files ###
 *.DS_Store

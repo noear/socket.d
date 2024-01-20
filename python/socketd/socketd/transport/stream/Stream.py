@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Callable
 
-from socketd.transport.core.Message import Message
-
-
 class Stream(ABC):
 
     @abstractmethod

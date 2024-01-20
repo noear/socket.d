@@ -3,7 +3,7 @@ from abc import ABC
 from typing import Callable, Optional
 
 from socketd.exception.SocketdException import SocketdTimeoutException
-from socketd.transport.core.stream.StreamManger import StreamInternal, StreamManger
+from socketd.transport.stream.StreamManger import StreamInternal, StreamManger
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 

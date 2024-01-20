@@ -4,7 +4,7 @@ import uuid
 from socketd.SocketD import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.Message import Message
-from socketd.transport.core.stream.RequestStream import RequestStream
+from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 

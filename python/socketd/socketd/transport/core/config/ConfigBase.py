@@ -11,8 +11,8 @@ from socketd.transport.core.Costants import Constants
 from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandlerDefault
 
 from socketd.transport.core.config.logConfig import logger
-from socketd.transport.core.stream.StreamManger import StreamManger
-from socketd.transport.core.stream.StreamMangerDefault import StreamMangerDefault
+from socketd.transport.stream.StreamManger import StreamManger
+from socketd.transport.stream import StreamMangerDefault
 
 
 class ConfigBase(Config):

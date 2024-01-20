@@ -1,9 +1,8 @@
-from abc import ABC
-from typing import Coroutine, Callable
+from typing import Callable
 
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Entity import Reply
-from socketd.transport.core.stream.StreamBase import StreamBase
+from socketd.transport.stream.StreamBase import StreamBase
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 

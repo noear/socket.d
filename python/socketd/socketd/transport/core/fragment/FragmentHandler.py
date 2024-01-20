@@ -2,7 +2,7 @@ from typing import Callable
 
 from socketd.transport.core import Entity
 from socketd.transport.core.Message import Message
-from socketd.transport.core.stream.StreamManger import StreamInternal
+from socketd.transport.stream.StreamManger import StreamInternal
 
 
 class FragmentHandler:

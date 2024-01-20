@@ -1,14 +1,14 @@
 import abc
-from typing import Union, Dict, Any, Callable, Awaitable, Coroutine, Optional
+from typing import Union, Dict, Any, Callable, Coroutine, Optional
 from asyncio import Future
 
 from socket import gethostbyaddr
 from socketd.transport.core import HandshakeDefault
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Entity import Entity
-from socketd.transport.core.stream.RequestStream import RequestStream
-from socketd.transport.core.stream.SendStream import SendStream
-from socketd.transport.core.stream.SubscribeStream import SubscribeStream
+from socketd.transport.stream.RequestStream import RequestStream
+from socketd.transport.stream.SendStream import SendStream
+from socketd.transport.stream import SubscribeStream
 
 
 class Session(abc.ABC):

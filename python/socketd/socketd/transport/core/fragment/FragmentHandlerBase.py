@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Optional, Callable, Coroutine
+from typing import Optional, Callable
 
-from socketd.transport.core import Entity
 from socketd.transport.core.Costants import EntityMetas
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Channel import Channel
@@ -11,7 +10,7 @@ from socketd.transport.core.entity.EntityDefault import EntityDefault
 from socketd.transport.core.fragment.FragmentAggregator import FragmentAggregator
 from socketd.transport.core.fragment.FragmentAggregatorDefault import FragmentAggregatorDefault
 from socketd.transport.core.fragment.FragmentHandler import FragmentHandler
-from socketd.transport.core.stream.StreamManger import StreamInternal
+from socketd.transport.stream.StreamManger import StreamInternal
 
 
 class FragmentHandlerBase(FragmentHandler, ABC):

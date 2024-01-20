@@ -4,7 +4,7 @@ from typing import Callable, Any
 
 from socketd.transport.core.Codec import Codec
 from socketd.transport.core.fragment import FragmentHandler
-from socketd.transport.core.stream.StreamManger import StreamManger
+from socketd.transport.stream.StreamManger import StreamManger
 
 
 class Config(ABC):

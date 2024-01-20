@@ -1,7 +1,7 @@
 import asyncio
 from abc import ABC, abstractmethod
 
-from socketd.transport.core.stream.Stream import Stream
+from socketd.transport.stream.Stream import Stream
 
 
 class StreamManger(ABC):

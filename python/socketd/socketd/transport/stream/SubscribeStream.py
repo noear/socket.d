@@ -1,8 +1,8 @@
-from typing import Callable, Optional, Coroutine
+from typing import Callable, Optional
 
 from socketd.transport.core.Entity import Reply
 from socketd.transport.core.Costants import Constants
-from socketd.transport.core.stream.StreamBase import StreamBase
+from socketd.transport.stream.StreamBase import StreamBase
 
 
 class SubscribeStream(StreamBase):

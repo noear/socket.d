@@ -1,5 +1,5 @@
 from socketd.transport.core.Costants import Constants
-from socketd.transport.core.stream.StreamBase import StreamBase
+from socketd.transport.stream.StreamBase import StreamBase
 
 
 class SendStream(StreamBase):

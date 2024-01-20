@@ -56,15 +56,15 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def send(self, event: str, content: Entity) -> SendStream:
+    def send(self, event: str, content: Entity) -> SendStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
+    def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_subscribe(self, event: str, content: Entity,
+    def send_and_subscribe(self, event: str, content: Entity,
                                  timeout: int = 0) -> SubscribeStream:
         ...
 

@@ -1,5 +1,5 @@
 
-class SocketDException(RuntimeError):
+class SocketdException(RuntimeError):
 
     def __init__(self, message):
         super().__init__(self)
@@ -9,9 +9,9 @@ class SocketDException(RuntimeError):
         return self.message
 
 
-class SocketdAlarmException(SocketDException):
+class SocketdAlarmException(SocketdException):
     ...
 
 
-class SocketdConnectionException(SocketDException):
+class SocketdConnectionException(SocketdException):
     ...

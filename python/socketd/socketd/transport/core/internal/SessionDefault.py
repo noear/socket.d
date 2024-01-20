@@ -11,7 +11,7 @@ from socketd.transport.core.Message import Message
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.entity.MessageDefault import MessageDefault
-from socketd.exception.SocketdExecption import SocketDException
+from socketd.exception.SocketdExecption import SocketdException
 from socketd.transport.core.stream.RequestStream import RequestStream
 from socketd.transport.core.stream.SendStream import SendStream
 
@@ -61,11 +61,11 @@ class SessionDefault(SessionBase, ABC):
             return stream
         except asyncio.TimeoutError as e:
             if self._channel.is_valid():
-                raise SocketDException(f"Request reply timeout>{timeout} "
+                raise SocketdException(f"Request reply timeout>{timeout} "
                                        f"sessionId={self._channel.get_session().get_session_id()} "
                                        f"event={event} sid={message.get_sid()}")
             else:
-                raise SocketDException(
+                raise SocketdException(
                     f"This channel is closed sessionId={self._channel.get_session().get_session_id()} "
                     f"event={event} sid={message.get_sid()} {str(e)}")
         except Exception as e:

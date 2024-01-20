@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from urllib.parse import urlparse
 
-from socketd.exception.SocketdExecption import SocketDException
+from socketd.exception.SocketdExecption import SocketdException
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientFactory import ClientFactory
@@ -29,7 +29,7 @@ class SocketD:
     def __get_schema(url: str) -> Optional[str]:
         index = url.index("://")
         if index <= 0:
-            raise SocketDException(f"The serverUrl invalid: {url}")
+            raise SocketdException(f"The serverUrl invalid: {url}")
         return url[:index]
 
     @staticmethod
@@ -43,7 +43,7 @@ class SocketD:
     def create_client(server_url: str) -> Client:
         index = server_url.index("://")
         if index <= 0:
-            raise SocketDException(f"The serverUrl invalid: {server_url}")
+            raise SocketdException(f"The serverUrl invalid: {server_url}")
         schema = server_url[:index]
         if schema is None:
             raise ValueError("Invalid server URL.")

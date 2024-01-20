@@ -1,5 +1,5 @@
-from socketd.exception.SocketdExecption import SocketDException
+from socketd.exception.SocketdExecption import SocketdException
 
 
-class SocketdTimeoutException(SocketDException):
+class SocketdTimeoutException(SocketdException):
     pass

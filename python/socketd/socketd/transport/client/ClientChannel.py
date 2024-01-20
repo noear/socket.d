@@ -3,13 +3,13 @@ from abc import ABC
 from asyncio import Future
 
 from socketd.transport.utils.AssertsUtil import AssertsUtil
-from socketd.transport.core.internal.ChannelBase import ChannelBase
+from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.client.ClientConnector import ClientConnector
 from loguru import logger
 
 from socketd.transport.core.Channel import Channel
 from socketd.transport.utils.AsyncUtil import AsyncUtil
-from socketd.transport.core.internal.HeartbeatHandlerDefault import HeartbeatHandlerDefault
+from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandlerDefault
 
 
 class ClientChannel(ChannelBase, ABC):

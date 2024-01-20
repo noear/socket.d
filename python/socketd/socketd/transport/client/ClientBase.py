@@ -6,9 +6,9 @@ from socketd.transport.client.ClientChannel import ClientChannel
 from socketd.transport.client.ClientConnector import ClientConnector
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Session import Session
-from socketd.transport.core.internal.ProcessorDefault import ProcessorDefault
+from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.client.ClientConfig import ClientConfig
-from socketd.transport.core.internal.SessionDefault import SessionDefault
+from socketd.transport.core.impl.SessionDefault import SessionDefault
 
 from loguru import logger
 

@@ -3,7 +3,7 @@ import asyncio
 from abc import ABC
 from typing import Callable, Awaitable, Any, Coroutine, Optional
 
-from socketd.transport.core.internal.SessionBase import SessionBase
+from socketd.transport.core.impl.SessionBase import SessionBase
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Entity import Entity

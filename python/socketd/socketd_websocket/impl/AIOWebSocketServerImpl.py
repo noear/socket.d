@@ -6,7 +6,7 @@ from websockets import ConnectionClosedError
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
-from socketd.transport.core.internal.ChannelDefault import ChannelDefault
+from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.Frame import Frame
 from loguru import logger

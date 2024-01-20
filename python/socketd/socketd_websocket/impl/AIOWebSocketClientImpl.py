@@ -7,7 +7,7 @@ from websockets.uri import WebSocketURI
 
 from socketd.exception.SocketdExecption import SocketdConnectionException
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
-from socketd.transport.core.internal.ChannelDefault import ChannelDefault
+from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
 
 from socketd.transport.core.Costants import Flag

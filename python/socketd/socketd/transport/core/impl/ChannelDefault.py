@@ -12,10 +12,10 @@ from socketd.transport.core.Processor import Processor
 from socketd.transport.core.stream.Stream import Stream
 from socketd.transport.core.stream.StreamManger import StreamManger, StreamInternal
 from socketd.transport.utils.AssertsUtil import AssertsUtil
-from socketd.transport.core.internal.ChannelBase import ChannelBase
+from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.core.Costants import Function, Flag, EntityMetas, Constants
 from socketd.transport.core.Session import Session
-from socketd.transport.core.internal.SessionDefault import SessionDefault
+from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.utils.CompletableFuture import CompletableFuture

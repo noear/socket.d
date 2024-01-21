@@ -15,7 +15,7 @@ public class Demo07_Client {
                 .listen(new EventListener().doOn("hello", (s, m) -> {
                     System.out.println("Client: " + m);
                 }))
-                .open();
+                .openOrThow();
 
 
         //at * 号结尾，表示群发

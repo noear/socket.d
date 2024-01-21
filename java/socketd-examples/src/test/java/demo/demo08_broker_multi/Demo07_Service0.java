@@ -24,6 +24,6 @@ public class Demo07_Service0 {
         SocketD.createClusterClient("sd:tcp://127.0.0.1:8601/?@=server",
                         "sd:tcp://127.0.0.1:8602/?@=server")
                 .listen(listener)
-                .open();
+                .openOrThow();
     }
 }

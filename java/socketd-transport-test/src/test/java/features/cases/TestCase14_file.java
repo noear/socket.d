@@ -6,14 +6,12 @@ import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.FileEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
-import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -75,7 +73,7 @@ public class TestCase14_file extends BaseTestCase {
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
                 .config(c -> c.fragmentSize(1024 * 1024))
-                .open();
+                .openOrThow();
 
         AtomicInteger fileCount = new AtomicInteger();
         AtomicInteger fileTotal = new AtomicInteger();

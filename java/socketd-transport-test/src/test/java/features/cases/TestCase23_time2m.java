@@ -68,7 +68,7 @@ public class TestCase23_time2m extends BaseTestCase {
                     public void onError(Session session, Throwable error) {
                         error.printStackTrace();
                     }
-                }).open();
+                }).openOrThow();
 
         Thread.sleep(60 * 1000 * 2);
 

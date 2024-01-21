@@ -21,13 +21,13 @@ public class Demo {
                 .listen(new EventListener().doOn("hello", (s, m) -> {
                     System.out.println(m);
                 }))
-                .open();
+                .openOrThow();
     }
 
     public void client() throws Exception {
         //演客户端，不需要带 @
         ClientSession session  = SocketD.createClient("sd:tcp://127.0.0.1:5001")
-                .open();
+                .openOrThow();
 
         //使用 at 符，给目标服务器发信息（就像给它私信）
         session.send("hello", new StringEntity("world").at("demoapp"));
@@ -39,7 +39,7 @@ public class Demo {
                 .listen(new EventListener().doOn("hello", (s, m) -> {
                     System.out.println(m);
                 }))
-                .open();
+                .openOrThow();
 
         //使用 at 符，给目标服务器发信息（就像给它私信）
         session.send("hello", new StringEntity("world").at("demoapp"));

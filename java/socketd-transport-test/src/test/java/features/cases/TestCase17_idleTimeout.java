@@ -67,7 +67,7 @@ public class TestCase17_idleTimeout extends BaseTestCase {
                     public void onError(Session session, Throwable error) {
                         error.printStackTrace();
                     }
-                }).open();
+                }).openOrThow();
 
         Thread.sleep(2 * 1000);
 

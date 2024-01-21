@@ -74,7 +74,7 @@ public class TestCase21_sendAndSubscribe2rep extends BaseTestCase {
                         }
                     }
                 })
-                .open();
+                .openOrThow();
 
 
         CountDownLatch downLatch = new CountDownLatch(1);

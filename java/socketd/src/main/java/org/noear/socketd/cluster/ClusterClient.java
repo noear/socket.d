@@ -57,12 +57,12 @@ public class ClusterClient implements Client {
      * 打开
      */
     @Override
-    public ClientSession open() throws IOException {
+    public ClientSession openOrThow() throws IOException {
         return openDo(true);
     }
 
     @Override
-    public ClientSession openAndTry() throws IOException {
+    public ClientSession open() throws IOException {
         return openDo(false);
     }
 
@@ -99,9 +99,9 @@ public class ClusterClient implements Client {
                 }
 
                 if (isThow) {
-                    sessionList.add(client.open());
+                    sessionList.add(client.openOrThow());
                 } else {
-                    sessionList.add(client.openAndTry());
+                    sessionList.add(client.open());
                 }
             }
         }

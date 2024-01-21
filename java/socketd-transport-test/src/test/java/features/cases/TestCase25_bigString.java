@@ -60,7 +60,7 @@ public class TestCase25_bigString extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl).openOrThow();
 
         StringBuilder bigStr = new StringBuilder();
         int  bigSize = 1024*1024 * 30;

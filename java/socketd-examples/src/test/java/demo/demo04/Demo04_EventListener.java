@@ -28,7 +28,7 @@ public class Demo04_EventListener {
                 }).doOn("/demo2", (s, m)->{
 
                 }))
-                .open();
+                .openOrThow();
 
         clientSession.send("/order", new StringEntity("Hi"));
         clientSession.send("/user", new StringEntity("Hi"));

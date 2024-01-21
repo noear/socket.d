@@ -57,7 +57,7 @@ public class TestCase15_size extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl).openOrThow();
 
         StringBuilder meta = new StringBuilder(4000);
         while (meta.length() < 50000) {

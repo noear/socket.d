@@ -72,7 +72,7 @@ public class TestCase20_sendAndRequest2rep extends BaseTestCase {
                         }
                     }
                 })
-                .open();
+                .openOrThow();
 
 
         try {

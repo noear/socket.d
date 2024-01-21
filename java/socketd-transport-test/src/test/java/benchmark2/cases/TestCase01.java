@@ -60,7 +60,7 @@ public class TestCase01 extends BaseTestCase {
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
                 .config(config -> config.idGenerator(new TimeidGenerator()))
-                .open();
+                .openOrThow();
 
         //单预热
         for (int i = 0; i < 10; i++) {

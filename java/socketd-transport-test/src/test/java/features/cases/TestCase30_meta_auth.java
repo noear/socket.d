@@ -72,12 +72,12 @@ public class TestCase30_meta_auth extends BaseTestCase {
         //会成功
         clientSession = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/")
                 .config(c->c.metaPut("u","noear").metaPut("p","2"))
-                .open();
+                .openOrThow();
         clientSession.send("/demo", new StringEntity("hi"));
 
         //会失败
         try {
-            ClientSession session2 = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=solon&p=1").open();
+            ClientSession session2 = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=solon&p=1").openOrThow();
             session2.send("/demo2", new StringEntity("hi"));
         } catch (SocketdConnectionException e) {
             e.printStackTrace();

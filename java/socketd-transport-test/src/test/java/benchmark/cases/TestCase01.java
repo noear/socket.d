@@ -75,7 +75,7 @@ public class TestCase01 extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl)
                 .config(config -> config.idGenerator(new TimeidGenerator())
                         .requestTimeout(5000))
-                .open();
+                .openOrThow();
 
         //单预热
         for (int i = 0; i < 10; i++) {

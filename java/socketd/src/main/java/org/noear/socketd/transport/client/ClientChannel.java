@@ -173,6 +173,11 @@ public class ClientChannel extends ChannelBase implements Channel {
         try {
             internalCheck();
 
+            if (real == null) {
+                //有可能此时仍未连接
+                throw new SocketdChannelException("Client channel is not connected");
+            }
+
             real.send(frame, stream);
         } catch (SocketdException e) {
             throw e;

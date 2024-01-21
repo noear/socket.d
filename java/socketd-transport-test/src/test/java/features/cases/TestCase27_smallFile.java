@@ -78,7 +78,7 @@ public class TestCase27_smallFile extends BaseTestCase {
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
-                .open();
+                .openOrThow();
 
         FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/upload_test.png"));
         clientSession.send("/user/upload", fileEntity);

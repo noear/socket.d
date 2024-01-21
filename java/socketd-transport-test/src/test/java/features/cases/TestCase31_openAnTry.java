@@ -2,7 +2,6 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
@@ -54,7 +53,12 @@ public class TestCase31_openAnTry extends BaseTestCase {
 
                     openLatch.countDown();
                 }))
-                .openAndTry();
+                .open();
+
+
+
+        clientSession.send("/demo", new StringEntity("hi"));
+
 
 
         Thread.sleep(3000);

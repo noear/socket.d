@@ -53,7 +53,7 @@ public class Demo03_Send2 {
                         session.send("/demo3", new StringEntity("Hi!"));
                     }
                 })
-                .open();
+                .openOrThow();
 
         //发送并请求
         clientSession.sendAndRequest("/demo", new StringEntity("hello wrold!"));

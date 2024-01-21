@@ -109,12 +109,12 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 打开会话
      */
     @Override
-    public ClientSession open() throws IOException {
+    public ClientSession openOrThow() throws IOException {
         return openDo(true);
     }
 
     @Override
-    public ClientSession openAndTry() throws IOException {
+    public ClientSession open() throws IOException {
         return openDo(false);
     }
 

@@ -24,7 +24,7 @@ public class Demo04_PipelineListener {
 
         //::打开客户端会话
         ClientSession clientSession  = SocketD.createClient("sd:udp://127.0.0.1:8602/hello?u=a&p=2")
-                .open();
+                .openOrThow();
 
         clientSession.send("/demo", new StringEntity("Hi"));
     }

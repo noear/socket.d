@@ -85,7 +85,7 @@ public class TestCase24_bigFile_1g extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl).openOrThow();
 
         FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/[Socket.D 实战] 直播手写 FolkMQ (4).mov"));
         clientSession.send("/user/upload", fileEntity);

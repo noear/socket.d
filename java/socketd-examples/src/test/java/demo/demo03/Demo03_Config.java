@@ -2,7 +2,6 @@ package demo.demo03;
 
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.client.ClientSession;
 
 public class Demo03_Config {
     public static void main(String[] args) throws Throwable {
@@ -17,6 +16,6 @@ public class Demo03_Config {
         //::打开客户端会话
         SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
                 .config(cc->cc.sslContext(null))
-                .open();
+                .openOrThow();
     }
 }

@@ -31,7 +31,7 @@ public class Demo01_Helloworld {
 
         //::打开客户端会话
         ClientSession clientSession  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d")
-                .open();
+                .openOrThow();
 
         //发送并请求（且，收回答复）
         Entity reply = clientSession.sendAndRequest("/demo", new StringEntity("Hello wrold!").metaPut("user","noear")).await();

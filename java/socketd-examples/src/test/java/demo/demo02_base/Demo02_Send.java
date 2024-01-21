@@ -26,7 +26,7 @@ public class Demo02_Send {
 
         //::打开客户端会话
         ClientSession clientSession  = SocketD.createClient("sd:ws://127.0.0.1:8602/?u=a&p=2")
-                .open();
+                .openOrThow();
 
         //发送（单线程约为 200万/秒 的速率，2020年的 macbook。新电脑估计会更快）
         clientSession.send("/demo", new StringEntity("hello wrold!"));

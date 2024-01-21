@@ -17,6 +17,6 @@ public class Demo07_Service1 {
                         s.replyEnd(m, new StringEntity("me to!" + m.dataAsString()));
                     }
                 }))
-                .open();
+                .openOrThow();
     }
 }

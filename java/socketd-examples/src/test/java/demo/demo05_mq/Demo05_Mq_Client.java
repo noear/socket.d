@@ -54,7 +54,7 @@ public class Demo05_Mq_Client {
                                     listener.accept(m.dataAsString());
                                 }
                             }))
-                    .open();
+                    .openOrThow();
         }
 
         /**

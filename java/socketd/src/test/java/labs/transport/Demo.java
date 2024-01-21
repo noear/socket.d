@@ -19,7 +19,7 @@ public class Demo {
                 .config(c -> c.autoReconnect(true)) //配置
                 .listen(null) //如果要监听，加一下
                 .heartbeatHandler(null) //如果要替代 ping,pong 心跳，加一下
-                .open();
+                .openOrThow();
 
         session.send("demo", new StringEntity("Hi").metaPut("Content-Type", "text/json"));
         Entity response = session.sendAndRequest("demo", new StringEntity("Hi")).await();

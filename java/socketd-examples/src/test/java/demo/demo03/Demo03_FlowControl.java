@@ -2,10 +2,8 @@ package demo.demo03;
 
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.listener.EventListener;
-import org.noear.socketd.utils.StrUtils;
 
 import java.nio.ByteBuffer;
 
@@ -41,7 +39,7 @@ public class Demo03_FlowControl {
 
         //::打开客户端会话
         ClientSession clientSession = SocketD.createClient("sd:udp://127.0.0.1:8602/?u=a&p=2")
-                .open();
+                .openOrThow();
 
         //发送并请求
         clientSession.sendAndSubscribe("/demo", new EntityDefault().range(5,5)

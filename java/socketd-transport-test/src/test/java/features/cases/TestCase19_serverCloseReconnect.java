@@ -72,7 +72,7 @@ public class TestCase19_serverCloseReconnect extends BaseTestCase {
                         });
                     }
                 }))
-                .open();
+                .openOrThow();
 
         clientSession.send("/demo", new StringEntity("hi"));
 

@@ -59,7 +59,7 @@ public class TestCase26_sendAndRequest_async extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl).openOrThow();
 
         clientSession.send("/user/created", new StringEntity("hi"));
 

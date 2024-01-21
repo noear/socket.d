@@ -30,11 +30,11 @@ public class Demo04_PathListener {
 
         //::打开客户端会话
         //用户频道（链接地址的 path ，算为频道）
-        ClientSession clientSession1 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2").open();
+        ClientSession clientSession1 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2").openOrThow();
         clientSession1.send("/demo", new StringEntity("Hi"));
 
         //管理员频道（链接地址的 path ，算为频道）
-        ClientSession clientSession2 = SocketD.createClient("sd:tcp://127.0.0.1:8602/admin?u=a&p=2").open();
+        ClientSession clientSession2 = SocketD.createClient("sd:tcp://127.0.0.1:8602/admin?u=a&p=2").openOrThow();
         clientSession2.send("/demo", new StringEntity("Hi"));
     }
 }

@@ -43,7 +43,7 @@ public class Demo03_File {
 
         //::打开客户端会话
         ClientSession clientSession  = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=a&p=2")
-                .open();
+                .openOrThow();
 
         //发送 + 元信息
         clientSession.send("/demo", new StringEntity("{user:'noear'}").metaPut("Trace-Id", UUID.randomUUID().toString()));

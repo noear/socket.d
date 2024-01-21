@@ -3,7 +3,6 @@ package features.cases;
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 /**
  * 以客户端为主的基本消息测试
@@ -58,7 +56,7 @@ public class TestCase28_timeout extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl).openOrThow();
         clientSession.send("/user/created", new StringEntity("hi"));
 
         clientSession.sendAndRequest("/user/req", new StringEntity("hi"), 100)

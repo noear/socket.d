@@ -33,7 +33,7 @@ public class BigUploadClient {
 
         ClientSession clientSession = SocketD.createClient(serverUrl)
                 .config(c -> c.fragmentSize(1024 * 1024)) //1m
-                .open();
+                .openOrThow();
         int count = 0;
         while (true) {
             FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/[Socket.D 实战] 直播手写 FolkMQ (4).mov"));

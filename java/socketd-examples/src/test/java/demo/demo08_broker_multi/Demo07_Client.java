@@ -23,7 +23,7 @@ public class Demo07_Client {
                         "sd:tcp://127.0.0.1:8601/?@=client",
                         "sd:tcp://127.0.0.1:8602/?@=client")
                 .listen(listener)
-                .open();
+                .openOrThow();
 
 
         //at * 号结尾，表示群发

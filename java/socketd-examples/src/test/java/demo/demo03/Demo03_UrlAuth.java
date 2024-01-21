@@ -34,11 +34,11 @@ public class Demo03_UrlAuth {
 
         //::打开客户端会话
         //会成功
-        ClientSession clientSession1 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=noear&p=2").open();
+        ClientSession clientSession1 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=noear&p=2").openOrThow();
         clientSession1.send("/demo", new StringEntity("hi"));
 
         //会失败
-        ClientSession clientSession2 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=solon&p=1").open();
+        ClientSession clientSession2 = SocketD.createClient("sd:tcp://127.0.0.1:8602/?u=solon&p=1").openOrThow();
         clientSession2.send("/demo2", new StringEntity("hi"));
     }
 }

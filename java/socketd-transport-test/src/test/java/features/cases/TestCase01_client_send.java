@@ -3,7 +3,6 @@ package features.cases;
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
-import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Reply;
 import org.noear.socketd.transport.core.Session;
@@ -73,7 +72,7 @@ public class TestCase01_client_send extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).open();
+        clientSession = SocketD.createClient(serverUrl).openOrThow();
         clientSession.send("/user/created", new StringEntity("hi"));
 
         Reply response = clientSession.sendAndRequest("/user/get", new StringEntity("hi")).await();

@@ -28,7 +28,7 @@ export class ClientChannel extends ChannelBase implements Channel {
     //心跳调度
     private _heartbeatScheduledFuture: any;
     //连接状态
-    private _isConnecting:boolean = false;
+    private _isConnecting: boolean = false;
 
     constructor(connector: ClientConnector) {
         super(connector.getConfig());
@@ -136,6 +136,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param stream 流（没有则为 null）
      */
     async send(frame: Frame, stream: StreamInternal<any>) {
+        //todo:下版可以改成回调模式
         Asserts.assertClosedByUser(this._real);
 
         try {
@@ -160,10 +161,10 @@ export class ClientChannel extends ChannelBase implements Channel {
         this._real!.retrieve(frame, stream);
     }
 
-    reconnect() {
+    async reconnect() {
         this.initHeartbeat();
 
-        this.internalCheck();
+        await this.internalCheck();
     }
 
     onError(error: any) {
@@ -183,7 +184,7 @@ export class ClientChannel extends ChannelBase implements Channel {
         return this._sessionShell;
     }
 
-   async connect() {
+    async connect() {
         if (this._isConnecting) {
             return;
         } else {
@@ -219,7 +220,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      */
     private async internalCheck(): Promise<boolean> {
         if (this._real == null || this._real.isValid() == false) {
-            this.connect();
+            await this.connect();
 
             return true;
         } else {

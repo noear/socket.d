@@ -30,4 +30,9 @@ public interface Client {
      * 打开会话
      */
     ClientSession open() throws IOException;
+
+    /**
+     * 守试打开会话
+     */
+    ClientSession openAndTry() throws IOException;
 }

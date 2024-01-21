@@ -5,6 +5,7 @@ import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ChannelBase;
 import org.noear.socketd.transport.core.impl.HeartbeatHandlerDefault;
+import org.noear.socketd.transport.core.impl.SessionDefault;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
@@ -25,17 +26,18 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     //连接器
     private final ClientConnector connector;
+    private final Session sessionShell;
     //真实通道
-    private Channel real;
+    private ChannelInternal real;
     //心跳处理
     private HeartbeatHandler heartbeatHandler;
     //心跳调度
     private ScheduledFuture<?> heartbeatScheduledFuture;
 
-    public ClientChannel(Channel real, ClientConnector connector) {
-        super(real.getConfig());
+    public ClientChannel(ClientConnector connector) {
+        super(connector.getConfig());
         this.connector = connector;
-        this.real = real;
+        this.sessionShell = new SessionDefault(this);
         this.heartbeatHandler = connector.getHeartbeatHandler();
 
         if (heartbeatHandler == null) {
@@ -203,6 +205,14 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
+     * 获取会话壳
+     */
+    public Session getSessionShell() {
+        return sessionShell;
+    }
+
+
+    /**
      * 重新连接
      */
     @Override
@@ -230,6 +240,17 @@ public class ClientChannel extends ChannelBase implements Channel {
         RunUtils.runAndTry(() -> real.close(code));
     }
 
+    /**
+     * 连接
+     */
+    protected void connect() throws IOException {
+        real = connector.connect();
+        //原始 session 切换为带壳的 session
+        real.setSession(sessionShell);
+        //同步握手信息
+        this.setHandshake(real.getHandshake());
+    }
+
 
     /**
      * 预备检测
@@ -238,7 +259,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     private boolean prepareCheck() throws IOException {
         if (real == null || real.isValid() == false) {
-            real = connector.connect();
+            this.connect();
 
             return true;
         } else {

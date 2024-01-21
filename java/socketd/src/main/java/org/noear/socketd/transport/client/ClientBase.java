@@ -2,7 +2,6 @@ package org.noear.socketd.transport.client;
 
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ProcessorDefault;
-import org.noear.socketd.transport.core.impl.SessionDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,22 +109,32 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 打开会话
      */
     @Override
-    public Session open() throws IOException {
+    public ClientSession open() throws IOException {
+        return openDo(true);
+    }
+
+    @Override
+    public ClientSession openAndTry() throws IOException {
+        return openDo(false);
+    }
+
+    private Session openDo(boolean isThow) throws IOException {
         ClientConnector connector = createConnector();
+        ClientChannel clientChannel = new ClientChannel(connector);
 
-        //连接
-        ChannelInternal channel0 = connector.connect();
-        //新建客户端通道
-        ClientChannel clientChannel = new ClientChannel(channel0, connector);
-        //同步握手信息
-        clientChannel.setHandshake(channel0.getHandshake());
-        Session session = new SessionDefault(clientChannel);
-        //原始通道切换为带壳的 session
-        channel0.setSession(session);
+        try {
+            clientChannel.connect();
 
-        log.info("Socket.D client successfully connected: {link={}}", getConfig().getLinkUrl());
+            log.info("Socket.D client successfully connected: {link={}}", getConfig().getLinkUrl());
+        } catch (IOException e) {
+            if (isThow) {
+                throw e;
+            } else {
+                log.info("Socket.D client Connection failed: {link={}}", getConfig().getLinkUrl());
+            }
+        }
 
-        return session;
+        return clientChannel.getSessionShell();
     }
 
     /**

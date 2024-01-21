@@ -18,8 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class ChannelBase implements Channel {
     //最大请求数（根据请求、响应加减计数）
     private final Config config;
-
+    //附件
     private final Map<String, Object> attachments = new ConcurrentHashMap<>();
+    //握手信息
     private HandshakeInternal handshake;
     //是否已关闭（用于做关闭异常提醒）//可能协议关；可能用户关
     private int isClosed;
@@ -63,7 +64,9 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public void setHandshake(HandshakeInternal handshake) {
-        this.handshake = handshake;
+        if(handshake != null) {
+            this.handshake = handshake;
+        }
     }
 
 

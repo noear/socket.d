@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.client;
 
+import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.HeartbeatHandler;
 
 /**
@@ -12,6 +13,11 @@ public abstract class ClientConnectorBase<T extends ClientInternal> implements C
     protected final T client;
     public ClientConnectorBase(T client){
         this.client = client;
+    }
+
+    @Override
+    public Config getConfig(){
+        return client.getConfig();
     }
 
     /**

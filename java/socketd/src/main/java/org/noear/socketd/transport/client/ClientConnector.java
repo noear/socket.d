@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.client;
 
 import org.noear.socketd.transport.core.ChannelInternal;
+import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.HeartbeatHandler;
 
 import java.io.IOException;
@@ -12,6 +13,11 @@ import java.io.IOException;
  * @since 2.0
  */
 public interface ClientConnector {
+    /**
+     * 获取配置
+     * */
+    Config getConfig();
+
     /**
      * 获取心跳处理
      */

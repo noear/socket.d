@@ -58,6 +58,15 @@ public class ClusterClient implements Client {
      */
     @Override
     public ClientSession open() throws IOException {
+        return openDo(true);
+    }
+
+    @Override
+    public ClientSession openAndTry() throws IOException {
+        return openDo(false);
+    }
+
+    private ClientSession openDo(boolean isThow) throws IOException {
         List<ClientSession> sessionList = new ArrayList<>();
         ExecutorService channelExecutor = null;
 
@@ -89,7 +98,11 @@ public class ClusterClient implements Client {
                     client.getConfig().channelExecutor(channelExecutor);
                 }
 
-                sessionList.add(client.open());
+                if (isThow) {
+                    sessionList.add(client.open());
+                } else {
+                    sessionList.add(client.openAndTry());
+                }
             }
         }
 

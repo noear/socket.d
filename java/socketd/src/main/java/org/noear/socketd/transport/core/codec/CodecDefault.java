@@ -25,20 +25,20 @@ public class CodecDefault implements Codec {
      * 编码
      */
     @Override
-    public <T extends CodecWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException {
+    public <T extends CodecWriter> T write(Frame frame, Function<Integer, T> writerFactory) throws IOException {
         if (frame.message() == null) {
             //length (len[int] + flag[int])
             int frameSize = Integer.BYTES + Integer.BYTES;
-            T target = targetFactory.apply(frameSize);
+            T writer = writerFactory.apply(frameSize);
 
             //长度
-            target.putInt(frameSize);
+            writer.putInt(frameSize);
 
             //flag
-            target.putInt(frame.flag());
-            target.flush();
+            writer.putInt(frame.flag());
+            writer.flush();
 
-            return target;
+            return writer;
         } else {
             //sid
             byte[] sidB = frame.message().sid().getBytes(config.getCharset());
@@ -55,32 +55,32 @@ public class CodecDefault implements Codec {
             Asserts.assertSize("metaString", metaStringB.length, Constants.MAX_SIZE_META_STRING);
             Asserts.assertSize("data", frame.message().dataSize(), Constants.MAX_SIZE_DATA);
 
-            T target = targetFactory.apply(frameSize);
+            T writer = writerFactory.apply(frameSize);
 
             //长度
-            target.putInt(frameSize);
+            writer.putInt(frameSize);
 
             //flag
-            target.putInt(frame.flag());
+            writer.putInt(frame.flag());
 
             //sid
-            target.putBytes(sidB);
-            target.putChar('\n');
+            writer.putBytes(sidB);
+            writer.putChar('\n');
 
             //event
-            target.putBytes(eventB);
-            target.putChar('\n');
+            writer.putBytes(eventB);
+            writer.putChar('\n');
 
             //metaString
-            target.putBytes(metaStringB);
-            target.putChar('\n');
+            writer.putBytes(metaStringB);
+            writer.putChar('\n');
 
             //data
-            target.putBytes(frame.message().dataAsBytes());
+            writer.putBytes(frame.message().dataAsBytes());
 
-            target.flush();
+            writer.flush();
 
-            return target;
+            return writer;
         }
     }
 
@@ -88,55 +88,55 @@ public class CodecDefault implements Codec {
      * 解码
      */
     @Override
-    public Frame read(CodecReader buffer) {
-        int frameSize = buffer.getInt();
+    public Frame read(CodecReader reader) {
+        int frameSize = reader.getInt();
 
-        if (frameSize > (buffer.remaining() + Integer.BYTES)) {
+        if (frameSize > (reader.remaining() + Integer.BYTES)) {
             //如果未满，等
             return null;
         }
 
         if (frameSize > Constants.MAX_SIZE_FRAME) {
             //如果超界，跳
-            buffer.skipBytes(frameSize - Integer.BYTES);
+            reader.skipBytes(frameSize - Integer.BYTES);
             return null;
         }
 
-        int flag = buffer.getInt();
+        int flag = reader.getInt();
 
         if (frameSize == 8) {
             //len[int] + flag[int]
             return new Frame(Flags.of(flag), null);
         } else {
 
-            int metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, buffer.remaining());
+            int metaBufSize = Math.min(Constants.MAX_SIZE_META_STRING, reader.remaining());
 
             //1.解码 sid and event
             ByteBuffer buf = ByteBuffer.allocate(metaBufSize);
 
             //sid
-            String sid = decodeString(buffer, buf, Constants.MAX_SIZE_SID);
+            String sid = decodeString(reader, buf, Constants.MAX_SIZE_SID);
 
             //event
-            String event = decodeString(buffer, buf, Constants.MAX_SIZE_EVENT);
+            String event = decodeString(reader, buf, Constants.MAX_SIZE_EVENT);
 
             //metaString
-            String metaString = decodeString(buffer, buf, Constants.MAX_SIZE_META_STRING);
+            String metaString = decodeString(reader, buf, Constants.MAX_SIZE_META_STRING);
 
             //2.解码 body
-            int dataRealSize = frameSize - buffer.position();
+            int dataRealSize = frameSize - reader.position();
             byte[] data;
             if (dataRealSize > Constants.MAX_SIZE_DATA) {
                 //超界了，空读。必须读，不然协议流会坏掉
                 data = new byte[Constants.MAX_SIZE_DATA];
-                buffer.getBytes(data, 0, Constants.MAX_SIZE_DATA);
+                reader.getBytes(data, 0, Constants.MAX_SIZE_DATA);
                 for (int i = dataRealSize - Constants.MAX_SIZE_DATA; i > 0; i--) {
-                    buffer.getByte();
+                    reader.getByte();
                 }
             } else {
                 data = new byte[dataRealSize];
                 if (dataRealSize > 0) {
-                    buffer.getBytes(data, 0, dataRealSize);
+                    reader.getBytes(data, 0, dataRealSize);
                 }
             }
 

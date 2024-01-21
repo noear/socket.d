@@ -38,6 +38,7 @@
         <module>../socketd-transport/socketd-transport-java-udp</module>
         <module>../socketd-transport/socketd-transport-java-websocket</module>
         <module>../socketd-transport/socketd-transport-netty</module>
+        <module>../socketd-transport/socketd-transport-neta</module>
         <module>../socketd-transport/socketd-transport-smartsocket</module>
         <module>../socketd-transport/socketd-transport-spring-websocket</module>
     </modules>

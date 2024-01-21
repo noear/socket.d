@@ -64,7 +64,7 @@ public class ProcessorDefault implements Processor {
                     //如果有异常
                     if (channel.isValid()) {
                         //如果还有效，则关闭通道
-                        channel.close(Constants.CLOSE3_ERROR);
+                        channel.close(Constants.CLOSE21_ERROR);
                         onCloseInternal(channel);
                     }
                 }
@@ -78,7 +78,7 @@ public class ProcessorDefault implements Processor {
             onOpen(channel);
         } else {
             if (channel.getHandshake() == null) {
-                channel.close(Constants.CLOSE1_PROTOCOL);
+                channel.close(Constants.CLOSE11_PROTOCOL);
 
                 if(frame.flag() == Flags.Close){
                     //说明握手失败了
@@ -107,7 +107,7 @@ public class ProcessorDefault implements Processor {
                     }
                     case Flags.Close: {
                         //关闭通道
-                        channel.close(Constants.CLOSE1_PROTOCOL);
+                        channel.close(Constants.CLOSE11_PROTOCOL);
                         onCloseInternal(channel);
                         break;
                     }
@@ -135,7 +135,7 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close(Constants.CLOSE2_PROTOCOL_ILLEGAL);
+                        channel.close(Constants.CLOSE12_PROTOCOL_ILLEGAL);
                         onCloseInternal(channel);
                     }
                 }

@@ -34,23 +34,27 @@ public interface Constants {
     /**
      * 因协议指令关闭
      */
-    int CLOSE1_PROTOCOL = 1;
+    int CLOSE11_PROTOCOL = 11;
     /**
      * 因协议非法关闭
      */
-    int CLOSE2_PROTOCOL_ILLEGAL = 2;
+    int CLOSE12_PROTOCOL_ILLEGAL = 12;
+    /**
+     * 因协议指令用户主动关闭（不可再重连）
+     */
+    int CLOSE19_PROTOCOL_USER = 19;
     /**
      * 因异常关闭
      */
-    int CLOSE3_ERROR = 3;
+    int CLOSE21_ERROR = 21;
     /**
-     * 因异常关闭
+     * 因重连关闭
      */
-    int CLOSE4_RECONNECT = 4;
+    int CLOSE22_RECONNECT = 22;
     /**
-     * 因用户主动关闭
+     * 因用户主动关闭（不可再重连）
      */
-    int CLOSE9_USER = 9;
+    int CLOSE29_USER = 29;
 
 
     /**

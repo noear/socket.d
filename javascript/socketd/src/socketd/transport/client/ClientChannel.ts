@@ -8,6 +8,7 @@ import { Constants } from "../core/Constants";
 import { Asserts } from "../core/Asserts";
 import { SocketdChannelException, SocketdException } from "../../exception/SocketdException";
 import {RunUtils} from "../../utils/RunUtils";
+import {SessionDefault} from "../core/SessionDefault";
 
 /**
  * 客户端通道
@@ -16,21 +17,27 @@ import {RunUtils} from "../../utils/RunUtils";
  * @since 2.0
  */
 export class ClientChannel extends ChannelBase implements Channel {
+    //连接器
     private _connector: ClientConnector;
+    //会话壳
+    private _sessionShell: Session;
+    //真实通道
     private _real: Channel | null;
+    //心跳处理
     private _heartbeatHandler: HeartbeatHandler;
+    //心跳调度
     private _heartbeatScheduledFuture: any;
 
-    constructor(real: Channel, connector: ClientConnector) {
-        super(real.getConfig());
+    constructor(connector: ClientConnector) {
+        super(connector.getConfig());
 
         this._connector = connector;
-        this._real = real;
+        this._sessionShell = new SessionDefault(this);
 
-        if (connector.heartbeatHandler() == null) {
+        if (connector.getHeartbeatHandler() == null) {
             this._heartbeatHandler = new HeartbeatHandlerDefault(null);
         } else {
-            this._heartbeatHandler = new HeartbeatHandlerDefault(connector.heartbeatHandler());
+            this._heartbeatHandler = new HeartbeatHandlerDefault(connector.getHeartbeatHandler());
         }
 
         this.initHeartbeat();
@@ -51,7 +58,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 } catch (e) {
                     console.warn("Client channel heartbeat error", e);
                 }
-            }, this._connector.heartbeatInterval());
+            }, this._connector.getHeartbeatInterval());
         }
     }
 
@@ -66,14 +73,14 @@ export class ClientChannel extends ChannelBase implements Channel {
             }
 
             //手动关闭
-            if (this._real.isClosed() == Constants.CLOSE4_USER) {
+            if (this._real.isClosed() == Constants.CLOSE29_USER) {
                 console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
                 return;
             }
         }
 
         try {
-            await this.prepareCheck();
+            await this.internalCheck();
 
             this._heartbeatHandler.heartbeat(this.getSession());
         } catch (e) {
@@ -82,7 +89,7 @@ export class ClientChannel extends ChannelBase implements Channel {
             }
 
             if (this._connector.autoReconnect()) {
-                this._real!.close(Constants.CLOSE3_ERROR);
+                this._real!.close(Constants.CLOSE21_ERROR);
                 this._real = null;
             }
 
@@ -90,20 +97,6 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
-    /**
-     * 预备检测
-     *
-     * @return 是否为新链接
-     */
-    async prepareCheck(): Promise<boolean> {
-        if (this._real == null || this._real.isValid() == false) {
-            this._real = await this._connector.connect();
-
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /**
      * 是否有效
@@ -141,16 +134,16 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    async send(frame: Frame, stream: StreamInternal<any>){
+    async send(frame: Frame, stream: StreamInternal<any>) {
         Asserts.assertClosedByUser(this._real);
 
         try {
-            await this.prepareCheck();
+            await this.internalCheck();
 
             this._real!.send(frame, stream);
         } catch (e) {
             if (this._connector.autoReconnect()) {
-                this._real!.close(Constants.CLOSE3_ERROR);
+                this._real!.close(Constants.CLOSE21_ERROR);
                 this._real = null;
             }
 
@@ -165,7 +158,7 @@ export class ClientChannel extends ChannelBase implements Channel {
     reconnect() {
         this.initHeartbeat();
 
-        this.prepareCheck();
+        this.internalCheck();
     }
 
     onError(error: any) {
@@ -183,5 +176,27 @@ export class ClientChannel extends ChannelBase implements Channel {
 
     getSession(): Session {
         return this._real!.getSession();
+    }
+
+    private internalCloseIfError() {
+        if (this._real != null) {
+            this._real.close(Constants.CLOSE21_ERROR);
+            this._real = null;
+        }
+    }
+
+    /**
+     * 预备检测
+     *
+     * @return 是否为新链接
+     */
+    private async internalCheck(): Promise<boolean> {
+        if (this._real == null || this._real.isValid() == false) {
+            this._real = await this._connector.connect();
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

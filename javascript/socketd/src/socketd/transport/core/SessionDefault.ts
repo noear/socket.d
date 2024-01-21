@@ -237,6 +237,6 @@ export class SessionDefault extends SessionBase {
             }
         }
 
-        this._channel.close(Constants.CLOSE4_USER);
+        this._channel.close(Constants.CLOSE29_USER);
     }
 }

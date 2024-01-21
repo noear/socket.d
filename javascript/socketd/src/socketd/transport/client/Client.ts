@@ -34,6 +34,11 @@ export interface Client {
     /**
      * 打开会话
      */
+    openAndTry(): Promise<ClientSession>;
+
+    /**
+     * 打开会话或出异常（即要求第一次是连接成功的）
+     */
     open(): Promise<ClientSession>;
 }
 
@@ -152,10 +157,19 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
         return this;
     }
 
+
+    async openAndTry(): Promise<ClientSession> {
+        return this.openDo(false);
+    }
+
     /**
      * 打开会话
      */
     async open(): Promise<ClientSession> {
+        return this.openDo(true);
+    }
+
+    private async openDo(isThow: boolean): Promise<ClientSession> {
         const connector = this.createConnector();
 
         //连接

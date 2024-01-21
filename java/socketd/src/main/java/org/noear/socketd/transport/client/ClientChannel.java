@@ -27,6 +27,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     //连接器
     private final ClientConnector connector;
+    //会话壳
     private final Session sessionShell;
     //真实通道
     private ChannelInternal real;
@@ -34,15 +35,18 @@ public class ClientChannel extends ChannelBase implements Channel {
     private HeartbeatHandler heartbeatHandler;
     //心跳调度
     private ScheduledFuture<?> heartbeatScheduledFuture;
+    //连接状态
+    private AtomicBoolean isConnecting = new AtomicBoolean(false);
 
     public ClientChannel(ClientConnector connector) {
         super(connector.getConfig());
         this.connector = connector;
         this.sessionShell = new SessionDefault(this);
-        this.heartbeatHandler = connector.getHeartbeatHandler();
 
-        if (heartbeatHandler == null) {
-            heartbeatHandler = new HeartbeatHandlerDefault();
+        if (connector.getHeartbeatHandler() == null) {
+            this.heartbeatHandler = new HeartbeatHandlerDefault();
+        } else {
+            this.heartbeatHandler = connector.getHeartbeatHandler();
         }
 
         initHeartbeat();
@@ -137,7 +141,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             }
 
             //手动关闭
-            if (real.isClosed() == Constants.CLOSE9_USER) {
+            if (real.isClosed() == Constants.CLOSE29_USER) {
                 if (log.isDebugEnabled()) {
                     log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }
@@ -200,14 +204,6 @@ public class ClientChannel extends ChannelBase implements Channel {
         real.retrieve(frame, stream);
     }
 
-    /**
-     * 获取会话
-     */
-    @Override
-    public Session getSession() {
-        return sessionShell;
-    }
-
 
     /**
      * 重新连接
@@ -237,7 +233,14 @@ public class ClientChannel extends ChannelBase implements Channel {
         RunUtils.runAndTry(() -> real.close(code));
     }
 
-    private AtomicBoolean isConnecting = new AtomicBoolean(false);
+    /**
+     * 获取会话
+     */
+    @Override
+    public Session getSession() {
+        return sessionShell;
+    }
+
 
     /**
      * 连接
@@ -250,6 +253,10 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
 
         try {
+            if (real != null) {
+                real.close(Constants.CLOSE22_RECONNECT);
+            }
+
             real = connector.connect();
             //原始 session 切换为带壳的 session
             real.setSession(sessionShell);
@@ -260,9 +267,9 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
-    private void internalCloseIfError(){
-        if(real != null){
-            real.close(Constants.CLOSE3_ERROR);
+    private void internalCloseIfError() {
+        if (real != null) {
+            real.close(Constants.CLOSE21_ERROR);
             real = null;
         }
     }

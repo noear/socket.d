@@ -48,10 +48,18 @@ export class ClusterClient implements Client {
         return this;
     }
 
+    async openAndTry(): Promise<ClientSession> {
+        return this.openDo(false);
+    }
+
     /**
      * 打开
      */
     async open(): Promise<ClientSession> {
+        return this.openDo(true);
+    }
+
+    async openDo(isThow: boolean): Promise<ClientSession> {
         const sessionList = new Array<ClientSession>();
 
         for (const urls of this._serverUrls) {
@@ -75,8 +83,12 @@ export class ClusterClient implements Client {
                     client.heartbeatHandler(this._heartbeatHandler);
                 }
 
-                const session = await client.open();
-                sessionList.push(session);
+                if (isThow) {
+                    sessionList.push(await client.open());
+                } else {
+                    sessionList.push(await client.openAndTry());
+                }
+
             }
         }
 

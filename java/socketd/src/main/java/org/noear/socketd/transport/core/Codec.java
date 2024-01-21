@@ -13,15 +13,15 @@ public interface Codec {
     /**
      * 编码读取
      *
-     * @param buffer 缓冲
+     * @param reader 读取器
      */
-    Frame read(CodecReader buffer);
+    Frame read(CodecReader reader);
 
     /**
      * 解码写入
      *
      * @param frame         帧
-     * @param targetFactory 目标工厂
+     * @param writerFactory 书写器工厂
      */
-    <T extends CodecWriter> T write(Frame frame, Function<Integer, T> targetFactory) throws IOException;
+    <T extends CodecWriter> T write(Frame frame, Function<Integer, T> writerFactory) throws IOException;
 }

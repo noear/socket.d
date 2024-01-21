@@ -1,24 +1,40 @@
 package org.noear.socketd.transport.neta.tcp.impl;
 
 import net.hasor.neta.bytebuf.ByteBuf;
+import net.hasor.neta.channel.NetChannel;
 import net.hasor.neta.channel.PipeContext;
 import net.hasor.neta.handler.*;
-import org.noear.socketd.transport.core.Config;
-import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.impl.ChannelDefault;
 
 /**
  * @author noear
  * @since 2.3
  */
 public class FramePipeLayer implements PipeLayer<ByteBuf, Frame, Frame, ByteBuf> {
-    private Config config;
+    private ChannelSupporter<NetChannel> supporter;
     private FrameDecoderHandler decoderHandler;
     private FrameEncoderHandler encoderHandler;
 
-    public FramePipeLayer(Config config) {
-        this.config = config;
-        this.encoderHandler = new FrameEncoderHandler(config);
-        this.decoderHandler = new FrameDecoderHandler(config);
+    public FramePipeLayer(ChannelSupporter<NetChannel> supporter) {
+        this.supporter = supporter;
+        this.encoderHandler = new FrameEncoderHandler(supporter.getConfig());
+        this.decoderHandler = new FrameDecoderHandler(supporter.getConfig());
+    }
+
+    @Override
+    public void init(PipeContext context) throws Throwable {
+        ChannelInternal channel = new ChannelDefault<>((NetChannel) context.getChannel(), supporter);
+
+        context.getChannel().setAttribute("SESSION_KEY", channel);
+    }
+
+    @Override
+    public void release(PipeContext context) {
+        ChannelInternal channel = (ChannelInternal) context.getChannel().getAttribute("SESSION_KEY");
+        if (channel != null) {
+            supporter.getProcessor().onClose(channel);
+        }
     }
 
     @Override

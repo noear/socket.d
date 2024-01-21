@@ -56,7 +56,9 @@ export class ClientChannel extends ChannelBase implements Channel {
         if (this._connector.autoReconnect()) {
             this._heartbeatScheduledFuture = setInterval(() => {
                 try {
-                    this.heartbeatHandle();
+                    this.heartbeatHandle().catch(e => {
+                        console.warn("Client channel heartbeat error", e);
+                    })
                 } catch (e) {
                     console.warn("Client channel heartbeat error", e);
                 }
@@ -87,14 +89,14 @@ export class ClientChannel extends ChannelBase implements Channel {
             this._heartbeatHandler.heartbeat(this.getSession());
         } catch (e) {
             if (e instanceof SocketdException) {
-                throw e;
+                return Promise.reject(e);
             }
 
             if (this._connector.autoReconnect()) {
                 this.internalCloseIfError();
             }
 
-            throw new SocketdChannelException(e);
+            return Promise.reject(new SocketdChannelException(e));
         }
     }
 
@@ -135,26 +137,35 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param frame  帧
      * @param stream 流（没有则为 null）
      */
-    async send(frame: Frame, stream: StreamInternal<any>) {
-        //todo:下版可以改成回调模式
+    send(frame: Frame, stream: StreamInternal<any>) {
         Asserts.assertClosedByUser(this._real);
 
-        try {
-            await this.internalCheck();
-
-            if (this._real == null) {
+        this.internalCheck().then(res => {
+            if (this._real) {
+                try {
+                    this._real!.send(frame, stream);
+                } catch (err) {
+                    if (stream) {
+                        // @ts-ignore
+                        stream.onError(err);
+                    }
+                }
+            } else {
                 //有可能此时仍未连接
-                throw new SocketdChannelException("Client channel is not connected");
+                const err = new SocketdChannelException("Client channel is not connected");
+                if (stream) {
+                    stream.onError(err);
+                }
             }
-
-            this._real!.send(frame, stream);
-        } catch (e) {
+        }, err => {
             if (this._connector.autoReconnect()) {
                 this.internalCloseIfError();
             }
 
-            throw e;
-        }
+            if (stream) {
+                stream.onError(err);
+            }
+        });
     }
 
     retrieve(frame: Frame, stream: StreamInternal<any> | null) {

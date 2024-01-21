@@ -29,10 +29,10 @@ public interface Client {
     /**
      * 打开会话
      */
-    ClientSession openOrThow() throws IOException;
+    ClientSession open() throws IOException;
 
     /**
-     * 守试打开会话
+     * 打开会话或出异常
      */
-    ClientSession open() throws IOException;
+    ClientSession openOrThow() throws IOException;
 }

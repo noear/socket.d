@@ -21,7 +21,7 @@ public class DebugTest {
 
     public static void main(String[] args) throws Exception {
         String s1 = schemas[0];
-        BaseTestCase testCase = new TestCase14_file(s1, 2100);
+        BaseTestCase testCase = new TestCase31_openAnTry(s1, 2100);
         try {
             testCase.start();
             //testCase.stop();

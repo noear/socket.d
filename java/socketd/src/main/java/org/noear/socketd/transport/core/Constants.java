@@ -44,9 +44,13 @@ public interface Constants {
      */
     int CLOSE3_ERROR = 3;
     /**
+     * 因异常关闭
+     */
+    int CLOSE4_RECONNECT = 4;
+    /**
      * 因用户主动关闭
      */
-    int CLOSE4_USER = 4;
+    int CLOSE9_USER = 9;
 
 
     /**

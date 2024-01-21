@@ -368,4 +368,21 @@ public class CaseTest {
             }
         }
     }
+
+    @Test
+    public void TestCase31_openAnTry() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase31_openAnTry(s1, 3100 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
 }

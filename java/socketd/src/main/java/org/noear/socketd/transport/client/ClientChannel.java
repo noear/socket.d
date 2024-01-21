@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 客户端通道
@@ -136,7 +137,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             }
 
             //手动关闭
-            if (real.isClosed() == Constants.CLOSE4_USER) {
+            if (real.isClosed() == Constants.CLOSE9_USER) {
                 if (log.isDebugEnabled()) {
                     log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }
@@ -240,15 +241,27 @@ public class ClientChannel extends ChannelBase implements Channel {
         RunUtils.runAndTry(() -> real.close(code));
     }
 
+    private AtomicBoolean isConnecting = new AtomicBoolean(false);
+
     /**
      * 连接
      */
-    protected void connect() throws IOException {
-        real = connector.connect();
-        //原始 session 切换为带壳的 session
-        real.setSession(sessionShell);
-        //同步握手信息
-        this.setHandshake(real.getHandshake());
+    public void connect() throws IOException {
+        if (isConnecting.get()) {
+            return;
+        } else {
+            isConnecting.set(true);
+        }
+
+        try {
+            real = connector.connect();
+            //原始 session 切换为带壳的 session
+            real.setSession(sessionShell);
+            //同步握手信息
+            this.setHandshake(real.getHandshake());
+        } finally {
+            isConnecting.set(false);
+        }
     }
 
 

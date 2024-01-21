@@ -32,7 +32,7 @@
                 }).doOn("cmd.t", (s, m) => {
                     //把房间置空
                     room = null;
-                })).open();
+                })).openOrThow();
         }
 
         function chatSend(){

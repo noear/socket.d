@@ -34,12 +34,12 @@ export interface Client {
     /**
      * 打开会话
      */
-    openAndTry(): Promise<ClientSession>;
+    open(): Promise<ClientSession>;
 
     /**
      * 打开会话或出异常（即要求第一次是连接成功的）
      */
-    open(): Promise<ClientSession>;
+    openOrThow(): Promise<ClientSession>;
 }
 
 
@@ -158,34 +158,35 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
     }
 
 
-    async openAndTry(): Promise<ClientSession> {
+    open(): Promise<ClientSession> {
         return this.openDo(false);
     }
 
     /**
      * 打开会话
      */
-    async open(): Promise<ClientSession> {
+    openOrThow(): Promise<ClientSession> {
         return this.openDo(true);
     }
 
-    private async openDo(isThow: boolean): Promise<ClientSession> {
+    private openDo(isThow: boolean): Promise<ClientSession> {
         const connector = this.createConnector();
+        const clientChannel = new ClientChannel(connector);
 
-        //连接
-        const channel0 = await connector.connect();
-        //新建客户端通道
-        const clientChannel = new ClientChannel(channel0, connector);
-        //同步握手信息
-        clientChannel.setHandshake(channel0.getHandshake());
-        const session = new SessionDefault(clientChannel);
-        //原始通道切换为带壳的 session
-        channel0.setSession(session);
-
-        //console.info(`Socket.D client successfully connected: {link=${this.getConfig().getLinkUrl()}`);
-        console.info(`Socket.D client successfully connected!`);
-
-        return session;
+        return new Promise<ClientSession>((resolve, reject) => {
+            // @ts-ignore
+            clientChannel.connect().then(res => {
+                console.info("Socket.D client successfully connected!");
+                resolve(clientChannel.getSession());
+            }, err => {
+                if (isThow) {
+                    reject(err);
+                } else {
+                    console.warn("Socket.D client Connection failed!");
+                    resolve(clientChannel.getSession());
+                }
+            })
+        });
     }
 
     /**

@@ -31,13 +31,17 @@ export class WsClientConnector extends ClientConnectorBase<WsClient> {
 
 
         return new Promise<ChannelInternal>((resolve, reject) => {
-            this._real = new WebSocketClientImpl(url, this._client, (r) => {
-                if (r.getThrowable()) {
-                    reject(r.getThrowable());
-                } else {
-                    resolve(r.getChannel());
-                }
-            });
+            try {
+                this._real = new WebSocketClientImpl(url, this._client, (r) => {
+                    if (r.getThrowable()) {
+                        reject(r.getThrowable());
+                    } else {
+                        resolve(r.getChannel()!);
+                    }
+                });
+            } catch (err) {
+                reject(err);
+            }
         })
     }
 
@@ -51,13 +55,18 @@ export class WsClientConnector extends ClientConnectorBase<WsClient> {
 
 
 export class WebSocketClientImpl implements SdWebSocketListener {
-    _real: SdWebSocket;
-    _client: WsClient;
-    _channel: ChannelInternal;
-    _handshakeFuture: IoConsumer<ClientHandshakeResult>;
+    private _real: SdWebSocket;
+    private _client: WsClient;
+    private _channel: ChannelInternal;
+    private _handshakeFuture: IoConsumer<ClientHandshakeResult> | null;
 
     constructor(url: string, client: WsClient, handshakeFuture: IoConsumer<ClientHandshakeResult>) {
-        this._real = EnvBridge.createSdWebSocketClient(url, this);
+        try {
+            this._real = EnvBridge.createSdWebSocketClient(url, this);
+        } catch (err) {
+            //首次连接有可能会失败
+            handshakeFuture(new ClientHandshakeResult(null, err));
+        }
         this._client = client;
         this._channel = new ChannelDefault(this._real, client);
         this._handshakeFuture = handshakeFuture;
@@ -81,11 +90,7 @@ export class WebSocketClientImpl implements SdWebSocketListener {
                 if (frame != null) {
                     if (frame.flag() == Flags.Connack) {
                         this._channel.onOpenFuture((r, err) => {
-                            if (err == null) {
-                                this._handshakeFuture(new ClientHandshakeResult(this._channel, null));
-                            } else {
-                                this._handshakeFuture(new ClientHandshakeResult(this._channel, err));
-                            }
+                            this.handshakeFutureDo(err);
                         });
                     }
 
@@ -93,7 +98,7 @@ export class WebSocketClientImpl implements SdWebSocketListener {
                 }
             } catch (e) {
                 if (e instanceof SocketdConnectionException) {
-                    this._handshakeFuture(new ClientHandshakeResult(this._channel, e));
+                    this.handshakeFutureDo(e);
                 }
 
 
@@ -107,7 +112,16 @@ export class WebSocketClientImpl implements SdWebSocketListener {
     }
 
     onError(e) {
+        this.handshakeFutureDo(e);
         this._client.getProcessor().onError(this._channel, e);
+    }
+
+    private handshakeFutureDo(e) {
+        if (this._handshakeFuture) {
+            this._handshakeFuture(new ClientHandshakeResult(this._channel, e));
+        } else {
+            this._handshakeFuture = null;
+        }
     }
 
 

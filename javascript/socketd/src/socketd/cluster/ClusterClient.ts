@@ -48,14 +48,14 @@ export class ClusterClient implements Client {
         return this;
     }
 
-    async openAndTry(): Promise<ClientSession> {
+    async open(): Promise<ClientSession> {
         return this.openDo(false);
     }
 
     /**
      * 打开
      */
-    async open(): Promise<ClientSession> {
+    async openOrThow(): Promise<ClientSession> {
         return this.openDo(true);
     }
 
@@ -84,9 +84,9 @@ export class ClusterClient implements Client {
                 }
 
                 if (isThow) {
-                    sessionList.push(await client.open());
+                    sessionList.push(await client.openOrThow());
                 } else {
-                    sessionList.push(await client.openAndTry());
+                    sessionList.push(await client.open());
                 }
 
             }

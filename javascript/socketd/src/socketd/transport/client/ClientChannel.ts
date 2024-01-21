@@ -1,4 +1,4 @@
-import { Channel, ChannelBase } from "../core/Channel";
+import {Channel, ChannelBase, ChannelInternal} from "../core/Channel";
 import type { Frame } from "../core/Frame";
 import type { Session } from "../core/Session";
 import type { StreamInternal } from "../stream/Stream";
@@ -22,11 +22,13 @@ export class ClientChannel extends ChannelBase implements Channel {
     //会话壳
     private _sessionShell: Session;
     //真实通道
-    private _real: Channel | null;
+    private _real: ChannelInternal | null;
     //心跳处理
     private _heartbeatHandler: HeartbeatHandler;
     //心跳调度
     private _heartbeatScheduledFuture: any;
+    //连接状态
+    private _isConnecting:boolean = false;
 
     constructor(connector: ClientConnector) {
         super(connector.getConfig());
@@ -66,7 +68,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      * 心跳处理
      */
     async heartbeatHandle() {
-        if (this._real != null) {
+        if (this._real) {
             //说明握手未成
             if (this._real.getHandshake() == null) {
                 return;
@@ -89,8 +91,7 @@ export class ClientChannel extends ChannelBase implements Channel {
             }
 
             if (this._connector.autoReconnect()) {
-                this._real!.close(Constants.CLOSE21_ERROR);
-                this._real = null;
+                this.internalCloseIfError();
             }
 
             throw new SocketdChannelException(e);
@@ -140,11 +141,15 @@ export class ClientChannel extends ChannelBase implements Channel {
         try {
             await this.internalCheck();
 
+            if (this._real == null) {
+                //有可能此时仍未连接
+                throw new SocketdChannelException("Client channel is not connected");
+            }
+
             this._real!.send(frame, stream);
         } catch (e) {
             if (this._connector.autoReconnect()) {
-                this._real!.close(Constants.CLOSE21_ERROR);
-                this._real = null;
+                this.internalCloseIfError();
             }
 
             throw e;
@@ -175,7 +180,29 @@ export class ClientChannel extends ChannelBase implements Channel {
     }
 
     getSession(): Session {
-        return this._real!.getSession();
+        return this._sessionShell;
+    }
+
+   async connect() {
+        if (this._isConnecting) {
+            return;
+        } else {
+            this._isConnecting = true;
+        }
+
+        try {
+            if (this._real != null) {
+                this._real.close(Constants.CLOSE22_RECONNECT);
+            }
+
+            this._real = await this._connector.connect();
+            //原始 session 切换为带壳的 session
+            this._real.setSession(this._sessionShell);
+            //同步握手信息
+            this.setHandshake(this._real.getHandshake());
+        } finally {
+            this._isConnecting = false;
+        }
     }
 
     private internalCloseIfError() {
@@ -192,7 +219,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      */
     private async internalCheck(): Promise<boolean> {
         if (this._real == null || this._real.isValid() == false) {
-            this._real = await this._connector.connect();
+            this.connect();
 
             return true;
         } else {

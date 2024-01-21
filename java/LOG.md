@@ -1,3 +1,8 @@
+### 2.3.7
+* 添加 Client::openOrThow() 方法，原 open() 不再出异常
+* 调整 ClientChannel 内部处理，支持首次连接失败后仍可用
+* 简化 ClientBase::open() 处理
+
 ### 2.3.6
 * 添加 Session::liveTime 接口
 * 添加 Entity.of 快捷方法

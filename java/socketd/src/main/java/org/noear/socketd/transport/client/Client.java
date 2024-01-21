@@ -32,7 +32,7 @@ public interface Client {
     ClientSession open() throws IOException;
 
     /**
-     * 打开会话或出异常
+     * 打开会话或出异常（即要求第一次是连接成功的）
      */
     ClientSession openOrThow() throws IOException;
 }

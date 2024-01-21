@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author noear
  * @since 2.0
  */
-public class TestCase31_openAnTry extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase31_openAnTry.class);
+public class TestCase32_openAnTry2 extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase32_openAnTry2.class);
 
-    public TestCase31_openAnTry(String schema, int port) {
+    public TestCase32_openAnTry2(String schema, int port) {
         super(schema, port);
     }
 
@@ -42,7 +42,7 @@ public class TestCase31_openAnTry extends BaseTestCase {
 
         CountDownLatch openLatch = new CountDownLatch(1);
 
-        clientSession = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/")
+        clientSession = SocketD.createClusterClient(getSchema() + "://127.0.0.1:" + getPort() + "/")
                 .config(c -> c.heartbeatInterval(1000 * 2))
                 .listen(new EventListener().doOnOpen(s -> {
                     openCounter.incrementAndGet();
@@ -54,7 +54,7 @@ public class TestCase31_openAnTry extends BaseTestCase {
                     openLatch.countDown();
                 }))
                 .open();
-
+        
 
         Thread.sleep(3000);
 

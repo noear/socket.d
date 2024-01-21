@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.client;
 
+import org.noear.socketd.exception.SocketdException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ProcessorDefault;
 import org.slf4j.Logger;
@@ -105,17 +106,21 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
         return this;
     }
 
+
     /**
      * 打开会话
      */
     @Override
-    public ClientSession openOrThow() throws IOException {
-        return openDo(true);
-    }
-
-    @Override
     public ClientSession open() throws IOException {
         return openDo(false);
+    }
+
+    /**
+     * 打开会话或出异常
+     */
+    @Override
+    public ClientSession openOrThow() throws IOException {
+        return openDo(true);
     }
 
     private Session openDo(boolean isThow) throws IOException {
@@ -126,9 +131,13 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
             clientChannel.connect();
 
             log.info("Socket.D client successfully connected: {link={}}", getConfig().getLinkUrl());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (isThow) {
-                throw e;
+                if (e instanceof RuntimeException || e instanceof IOException) {
+                    throw e;
+                } else {
+                    throw new SocketdException("Socket.D client Connection failed", e);
+                }
             } else {
                 log.info("Socket.D client Connection failed: {link={}}", getConfig().getLinkUrl());
             }

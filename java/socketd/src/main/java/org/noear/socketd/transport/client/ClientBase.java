@@ -126,7 +126,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
             clientChannel.connect();
 
             log.info("Socket.D client successfully connected: {link={}}", getConfig().getLinkUrl());
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (isThow) {
                 throw e;
             } else {
@@ -134,7 +134,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
             }
         }
 
-        return clientChannel.getSessionShell();
+        return clientChannel.getSession();
     }
 
     /**

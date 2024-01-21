@@ -20,7 +20,7 @@ public class DebugTest {
      */
 
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[0];
+        String s1 = schemas[1];
         BaseTestCase testCase = new TestCase31_openAnTry(s1, 2100);
         try {
             testCase.start();

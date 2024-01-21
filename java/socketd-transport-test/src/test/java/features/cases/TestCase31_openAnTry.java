@@ -34,6 +34,7 @@ public class TestCase31_openAnTry extends BaseTestCase {
     private ClientSession clientSession;
 
     private AtomicInteger messageCounter = new AtomicInteger();
+    private AtomicInteger openCounter = new AtomicInteger();
 
     @Override
     public void start() throws Exception {
@@ -43,8 +44,10 @@ public class TestCase31_openAnTry extends BaseTestCase {
         CountDownLatch openLatch = new CountDownLatch(1);
 
         clientSession = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/")
-                .config(c->c.heartbeatInterval(1000*2))
-                .listen(new EventListener().doOnOpen(s->{
+                .config(c -> c.heartbeatInterval(1000 * 2))
+                .listen(new EventListener().doOnOpen(s -> {
+                    openCounter.incrementAndGet();
+
                     System.out.println("客户端打开:" + s.sessionId());
 
                     s.send("/demo", new StringEntity("hi"));
@@ -54,7 +57,7 @@ public class TestCase31_openAnTry extends BaseTestCase {
                 .openAndTry();
 
 
-        Thread.sleep(1000);
+        Thread.sleep(3000);
 
         //server
         server = SocketD.createServer(getSchema())
@@ -74,8 +77,9 @@ public class TestCase31_openAnTry extends BaseTestCase {
 
         Thread.sleep(1000);
 
-        System.out.println("counter: " + messageCounter.get());
+        System.out.println("counter: " + messageCounter.get() + ", open=" + openCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
+        Assertions.assertEquals(openCounter.get(), 1, getSchema() + ":client 打开数量对不上");
 
     }
 

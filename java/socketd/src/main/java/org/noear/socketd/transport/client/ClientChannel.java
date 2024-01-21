@@ -146,15 +146,14 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
 
         try {
-            prepareCheck();
+            internalCheck();
 
             heartbeatHandler.heartbeat(getSession());
         } catch (SocketdException e) {
             throw e;
         } catch (Throwable e) {
             if (connector.autoReconnect()) {
-                real.close(Constants.CLOSE3_ERROR);
-                real = null;
+                internalCloseIfError();
             }
 
             throw new SocketdChannelException("Client channel heartbeat failed", e);
@@ -172,15 +171,14 @@ public class ClientChannel extends ChannelBase implements Channel {
         Asserts.assertClosedByUser(real);
 
         try {
-            prepareCheck();
+            internalCheck();
 
             real.send(frame, stream);
         } catch (SocketdException e) {
             throw e;
         } catch (Throwable e) {
             if (connector.autoReconnect()) {
-                real.close(Constants.CLOSE3_ERROR);
-                real = null;
+                internalCloseIfError();
             }
             throw new SocketdChannelException("Client channel send failed", e);
         }
@@ -202,13 +200,6 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     @Override
     public Session getSession() {
-        return real.getSession();
-    }
-
-    /**
-     * 获取会话壳
-     */
-    public Session getSessionShell() {
         return sessionShell;
     }
 
@@ -220,7 +211,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     public void reconnect() throws IOException {
         initHeartbeat();
 
-        prepareCheck();
+        internalCheck();
     }
 
     /**
@@ -264,13 +255,20 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    private void internalCloseIfError(){
+        if(real != null){
+            real.close(Constants.CLOSE3_ERROR);
+            real = null;
+        }
+    }
+
 
     /**
      * 预备检测
      *
      * @return 是否为新链接
      */
-    private boolean prepareCheck() throws IOException {
+    private boolean internalCheck() throws IOException {
         if (real == null || real.isValid() == false) {
             this.connect();
 

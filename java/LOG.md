@@ -11,7 +11,7 @@
 * 添加 连接协议对 meta 传递的支持
 * 添加 Handshake:path 方法
 * 添加 CodecReader::peekByte 方法
-* 调啵 发送时允许实体为 null（总有不需要传的时候）
+* 调整 发送时允许实体为 null（总有不需要传的时候）
 * 优化 Codec::decodeString 处理方式
 
 ### 2.3.4

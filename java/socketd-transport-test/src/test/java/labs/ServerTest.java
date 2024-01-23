@@ -15,11 +15,12 @@ public class ServerTest {
     static final String[] schemas = new String[]{
             "sd:tcp-java",
             "sd:tcp-netty",
-            "sd:tcp-smartsocket",//2
+            "sd:tcp-smartsocket",
+            "sd:tcp-neta",//3
             "sd:ws-java",
-            "sd:udp-java", //4
+            "sd:udp-java",//5
             "sd:udp-netty",
-            "sd:kcp-java",
+            "sd:kcp-java",//7
     };
 
     /**

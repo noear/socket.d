@@ -69,6 +69,13 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
                 }catch (Exception e){
                     channel.doOpenFuture(false,e);
                 }
+            }).onFailed(f -> {
+                ChannelInternal channel=null;
+                try{
+                    channel = f.get().findPipeContext(ChannelInternal.class);
+                }catch (Exception e){
+                }
+                channel.doOpenFuture(false,f.getCause());
             });
 
 

@@ -54,11 +54,9 @@ export class ClientChannel extends ChannelBase implements Channel {
         }
 
         if (this._connector.autoReconnect()) {
-            this._heartbeatScheduledFuture = setInterval(() => {
+            this._heartbeatScheduledFuture = setInterval(async () => {
                 try {
-                    this.heartbeatHandle().catch(e => {
-                        console.warn("Client channel heartbeat error", e);
-                    })
+                    await this.heartbeatHandle();
                 } catch (e) {
                     console.warn("Client channel heartbeat error", e);
                 }
@@ -89,14 +87,14 @@ export class ClientChannel extends ChannelBase implements Channel {
             this._heartbeatHandler.heartbeat(this.getSession());
         } catch (e) {
             if (e instanceof SocketdException) {
-                return Promise.reject(e);
+                throw e;
             }
 
             if (this._connector.autoReconnect()) {
                 this.internalCloseIfError();
             }
 
-            return Promise.reject(new SocketdChannelException(e));
+            throw new SocketdChannelException(e);
         }
     }
 

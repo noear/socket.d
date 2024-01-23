@@ -76,8 +76,8 @@ export class ClientChannel extends ChannelBase implements Channel {
                 return;
             }
 
-            //手动关闭
-            if (this._real.isClosed() == Constants.CLOSE29_USER) {
+            //关闭并结束了
+            if (Asserts.isClosedAndEnd(this._real)) {
                 console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
                 return;
             }
@@ -138,7 +138,7 @@ export class ClientChannel extends ChannelBase implements Channel {
      * @param stream 流（没有则为 null）
      */
     send(frame: Frame, stream: StreamInternal<any>) {
-        Asserts.assertClosedByUser(this._real);
+        Asserts.assertClosedAndEnd(this._real);
 
         this.internalCheck().then(res => {
             if (this._real) {

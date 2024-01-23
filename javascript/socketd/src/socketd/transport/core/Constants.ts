@@ -46,6 +46,10 @@ export const Constants = {
      */
     CLOSE22_RECONNECT: 22,
     /**
+     * 因打开失败关闭
+     */
+    CLOSE28_OPEN_FAIL :28,
+    /**
      * 因用户主动关闭（不可再重连）
      */
     CLOSE29_USER: 29,

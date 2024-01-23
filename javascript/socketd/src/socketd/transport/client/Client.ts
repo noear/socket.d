@@ -7,7 +7,7 @@ import type {ChannelAssistant} from "../core/ChannelAssistant";
 import type {Session} from "../core/Session";
 import type {ClientConnector} from "./ClientConnector";
 import {ClientChannel} from "./ClientChannel";
-import {SessionDefault} from "../core/SessionDefault";
+import {Constants} from "../core/Constants";
 
 /**
  * 客户端（用于构建会话）
@@ -180,6 +180,7 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
                 resolve(clientChannel.getSession());
             }, err => {
                 if (isThow) {
+                    clientChannel.close(Constants.CLOSE28_OPEN_FAIL);
                     reject(err);
                 } else {
                     console.warn("Socket.D client Connection failed!");

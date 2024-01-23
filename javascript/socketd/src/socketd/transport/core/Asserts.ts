@@ -18,11 +18,17 @@ export class Asserts {
         }
     }
 
+     static  isClosedAndEnd( channel:Channel) {
+         return channel.isClosed() == Constants.CLOSE29_USER
+             || channel.isClosed() == Constants.CLOSE28_OPEN_FAIL
+             || channel.isClosed() == Constants.CLOSE19_PROTOCOL_USER;
+     }
+
     /**
      * 断言关闭
      */
-    static assertClosedByUser(channel: Channel | null) {
-        if (channel != null && channel.isClosed() == Constants.CLOSE29_USER) {
+    static assertClosedAndEnd(channel: Channel | null) {
+        if (channel != null && Asserts.isClosedAndEnd(channel)) {
             throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }

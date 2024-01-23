@@ -24,11 +24,14 @@ public class FrameDecoderHandler implements PipeHandler<ByteBuf, Frame> {
 
     @Override
     public PipeStatus doHandler(PipeContext context, PipeRcvQueue<ByteBuf> src, PipeSndQueue<Frame> dst) throws IOException {
-        boolean hasAny;
-        for (hasAny = false; src.hasMore(); hasAny = true) {
+        boolean hasAny = false;
+        while (src.hasMore()) {
             ByteBuf byteBuf = src.takeMessage();
-            Frame frame = config.getCodec().read(new ByteBufCodecReader(byteBuf));
-            dst.offerMessage(frame);
+            if (byteBuf != null) {
+                Frame frame = config.getCodec().read(new ByteBufCodecReader(byteBuf));
+                dst.offerMessage(frame);
+                hasAny = true;
+            }
         }
 
         return hasAny ? PipeStatus.Next : PipeStatus.Exit;

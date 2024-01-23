@@ -6,6 +6,7 @@ import net.hasor.neta.handler.PipeHandler;
 import net.hasor.neta.handler.PipeRcvQueue;
 import net.hasor.neta.handler.PipeSndQueue;
 import net.hasor.neta.handler.PipeStatus;
+import net.hasor.neta.handler.codec.string.StringPipeLayer;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 
@@ -24,14 +25,16 @@ public class FrameEncoderHandler implements PipeHandler<Frame, ByteBuf> {
 
     @Override
     public PipeStatus doHandler(PipeContext context, PipeRcvQueue<Frame> src, PipeSndQueue<ByteBuf> dst) throws IOException {
-        boolean hasAny;
-        for (hasAny = false; src.hasMore(); hasAny = true) {
+        boolean hasAny = false;
+        while (src.hasMore()) {
             Frame frame = src.takeMessage();
-            ByteBufCodecWriter writer = config.getCodec().write(frame, (n) -> new ByteBufCodecWriter(n));
+            if (frame != null) {
+                ByteBufCodecWriter writer = config.getCodec().write(frame, (n) -> new ByteBufCodecWriter(n));
 
-            dst.offerMessage(writer.buffer());
+                dst.offerMessage(writer.buffer());
+                hasAny = true;
+            }
         }
-
         return hasAny ? PipeStatus.Next : PipeStatus.Exit;
     }
 }

@@ -51,6 +51,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
                 .bindReceive(new ServerFramePipeListener(this)).build();
 
         SoConfig soConfig = new SoConfig();
+        soConfig.setSoKeepAlive(false);
         server = new CobbleSocket(soConfig);
 
         if (StrUtils.isEmpty(getConfig().getHost())) {

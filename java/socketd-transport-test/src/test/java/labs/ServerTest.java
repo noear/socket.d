@@ -27,7 +27,7 @@ public class ServerTest {
      * 启动服务，给别的客户端调试
      */
     public static void main(String[] args) throws Exception {
-        String s1 = schemas[3];
+        String s1 = schemas[4];
         Server server = SocketD.createServer(s1)
                 .config(c -> c.port(8602).fragmentSize(1024 * 1024))
                 .listen(new EventListener()

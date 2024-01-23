@@ -47,6 +47,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
                 .bindReceive(pipeListener).build();
 
         SoConfig soConfig = new SoConfig();
+        soConfig.setSoKeepAlive(false);
         real = new CobbleSocket(soConfig);
 
 

@@ -140,8 +140,8 @@ public class ClientChannel extends ChannelBase implements Channel {
                 return;
             }
 
-            //手动关闭
-            if (real.isClosed() == Constants.CLOSE29_USER) {
+            //关闭并结束了
+            if (Asserts.isClosedAndEnd(real)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }
@@ -172,7 +172,7 @@ public class ClientChannel extends ChannelBase implements Channel {
      */
     @Override
     public void send(Frame frame, StreamInternal stream) throws IOException {
-        Asserts.assertClosedByUser(real);
+        Asserts.assertClosedAndEnd(real);
 
         try {
             internalCheck();

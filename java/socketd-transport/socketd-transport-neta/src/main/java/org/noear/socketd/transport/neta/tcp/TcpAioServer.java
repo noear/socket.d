@@ -9,8 +9,8 @@ import net.hasor.neta.handler.codec.LimitFrameHandler;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.neta.tcp.impl.FramePipeLayer;
-import org.noear.socketd.transport.neta.tcp.impl.FramePipeListener;
+import org.noear.socketd.transport.neta.tcp.impl.ServerFramePipeLayer;
+import org.noear.socketd.transport.neta.tcp.impl.ServerFramePipeListener;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
@@ -47,8 +47,8 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
 
         PipelineFactory pipeline = PipeInitializer.builder()
                 .nextToDecoder(new LimitFrameHandler(Constants.MAX_SIZE_FRAME))
-                .nextTo(new FramePipeLayer(this))
-                .bindReceive(new FramePipeListener(this)).build();
+                .nextTo(new ServerFramePipeLayer(this))
+                .bindReceive(new ServerFramePipeListener(this)).build();
 
         SoConfig soConfig = new SoConfig();
         server = new CobbleSocket(soConfig);

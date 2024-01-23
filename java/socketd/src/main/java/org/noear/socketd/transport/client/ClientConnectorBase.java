@@ -16,7 +16,7 @@ public abstract class ClientConnectorBase<T extends ClientInternal> implements C
     }
 
     @Override
-    public Config getConfig(){
+    public ClientConfig getConfig(){
         return client.getConfig();
     }
 

@@ -30,6 +30,10 @@ public interface Constants {
      * */
     int DEF_PORT = 8602;
 
+    /**
+     * 附件键-通道
+     * */
+    String ATT_KEY_CHANNEL = "ATT_KEY_SD_CHANNEL";
 
     /**
      * 因协议指令关闭

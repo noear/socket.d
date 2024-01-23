@@ -83,6 +83,12 @@
 
             <dependency>
                 <groupId>org.noear</groupId>
+                <artifactId>socketd-transport-neta</artifactId>
+                <version>${socketd.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
                 <artifactId>socketd-transport-smartsocket</artifactId>
                 <version>${socketd.version}</version>
             </dependency>

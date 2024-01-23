@@ -11,12 +11,12 @@ import org.noear.socketd.transport.core.impl.ChannelDefault;
  * @author noear
  * @since 2.3
  */
-public class FramePipeLayer implements PipeLayer<ByteBuf, Frame, Frame, ByteBuf> {
+public class ServerFramePipeLayer implements PipeLayer<ByteBuf, Frame, Frame, ByteBuf> {
     private ChannelSupporter<NetChannel> supporter;
     private FrameDecoderHandler decoderHandler;
     private FrameEncoderHandler encoderHandler;
 
-    public FramePipeLayer(ChannelSupporter<NetChannel> supporter) {
+    public ServerFramePipeLayer(ChannelSupporter<NetChannel> supporter) {
         this.supporter = supporter;
         this.encoderHandler = new FrameEncoderHandler(supporter.getConfig());
         this.decoderHandler = new FrameDecoderHandler(supporter.getConfig());
@@ -26,15 +26,25 @@ public class FramePipeLayer implements PipeLayer<ByteBuf, Frame, Frame, ByteBuf>
     public void init(PipeContext context) throws Throwable {
         ChannelInternal channel = new ChannelDefault<>((NetChannel) context.getChannel(), supporter);
 
-        context.getChannel().setAttribute("SESSION_KEY", channel);
+        context.getChannel().setAttribute(Constants.ATT_KEY_CHANNEL, channel);
     }
 
     @Override
     public void release(PipeContext context) {
-        ChannelInternal channel = (ChannelInternal) context.getChannel().getAttribute("SESSION_KEY");
+        ChannelInternal channel = (ChannelInternal) context.getChannel().getAttribute(Constants.ATT_KEY_CHANNEL);
         if (channel != null) {
             supporter.getProcessor().onClose(channel);
         }
+    }
+
+    @Override
+    public PipeStatus doError(PipeContext context, boolean isRcv, Throwable e, PipeExceptionHolder eh) throws Throwable {
+        ChannelInternal channel = (ChannelInternal) context.getChannel().getAttribute(Constants.ATT_KEY_CHANNEL);
+        if (channel != null) {
+            supporter.getProcessor().onError(channel, e);
+        }
+
+        return PipeStatus.Next;
     }
 
     @Override

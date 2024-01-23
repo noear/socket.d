@@ -16,7 +16,7 @@ public interface ClientConnector {
     /**
      * 获取配置
      * */
-    Config getConfig();
+    ClientConfig getConfig();
 
     /**
      * 获取心跳处理

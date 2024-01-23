@@ -12,10 +12,11 @@ public class CaseTest {
             "sd:tcp-java",
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
+            "sd:tcp-neta",//3
             "sd:ws-java",
-            "sd:udp-java",
-//            "sd:udp-netty",
-            "sd:kcp-java",
+            "sd:udp-java",//5
+            "sd:udp-netty",
+            "sd:kcp-java",//7
     };
 
     @Test

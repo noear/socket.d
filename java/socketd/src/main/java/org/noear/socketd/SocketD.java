@@ -70,7 +70,7 @@ public class SocketD {
     public static Server createServer(String schema) {
         Server server = createServerOrNull(schema);
         if (server == null) {
-            throw new IllegalStateException("No socketd server providers were found.");
+            throw new IllegalStateException("No socketd server providers were found: " + schema);
         } else {
             return server;
         }
@@ -98,7 +98,7 @@ public class SocketD {
     public static Client createClient(String serverUrl) {
         Client client = createClientOrNull(serverUrl);
         if (client == null) {
-            throw new IllegalStateException("No socketd client providers were found.");
+            throw new IllegalStateException("No socketd client providers were found: " + serverUrl);
         } else {
             return client;
         }

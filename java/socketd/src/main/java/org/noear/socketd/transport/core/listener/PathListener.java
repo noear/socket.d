@@ -15,7 +15,7 @@ import java.io.IOException;
 public class PathListener implements Listener {
     /**
      * 路径路由选择器
-     * */
+     */
     protected final RouteSelector<Listener> pathRouteSelector;
 
     public PathListener() {
@@ -28,10 +28,28 @@ public class PathListener implements Listener {
 
     /**
      * 路由
+     *
+     * @param path     路径
+     * @param listener 监听器
+     * @return this
+     * @since 2.3
      */
-    public PathListener of(String path, Listener listener) {
+    public PathListener doOf(String path, Listener listener) {
         pathRouteSelector.put(path, listener);
         return this;
+    }
+
+    /**
+     * 路由
+     *
+     * @param path 路径
+     * @return 事件监听器
+     * @since 2.3
+     */
+    public EventListener of(String path) {
+        EventListener listener = new EventListener();
+        pathRouteSelector.put(path, listener);
+        return listener;
     }
 
     /**

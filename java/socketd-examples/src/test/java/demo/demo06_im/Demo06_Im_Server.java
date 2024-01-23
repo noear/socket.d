@@ -20,7 +20,7 @@ public class Demo06_Im_Server {
                 .config(c -> c.port(8602))
                 .listen(new PathListener()
                         //::::::::::用户频道处理
-                        .of("/", new EventListener()
+                        .doOf("/", new EventListener()
                                 .doOnOpen(s -> {
                                     //用户连接
                                     String user = s.param("u");
@@ -61,7 +61,7 @@ public class Demo06_Im_Server {
                                     }
                                 }))
                         //::::::::::管理频道处理
-                        .of("/admin", new EventListener()
+                        .doOf("/admin", new EventListener()
                                 .doOnOpen((session) -> {
                                     //管理员签权
                                     String user = session.param("u");

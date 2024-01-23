@@ -12,11 +12,11 @@ public class Demo04_PathListener {
         SocketD.createServer("sd:tcp")
                 .config(c -> c.port(8602))
                 .listen(new PathListener()
-                        .of("/", new EventListener().doOnMessage((s, m) -> {
+                        .doOf("/", new EventListener().doOnMessage((s, m) -> {
                             //用户频道
                             System.out.println("user::" + m);
                         }))
-                        .of("/admin", new EventListener().doOnOpen(s -> {
+                        .doOf("/admin", new EventListener().doOnOpen(s -> {
                             //管理员频道
                             if ("admin".equals(s.param("u")) == false) {
                                 s.close();

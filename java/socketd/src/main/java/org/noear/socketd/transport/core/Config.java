@@ -14,9 +14,14 @@ import java.util.concurrent.ExecutorService;
  */
 public interface Config {
     /**
-     * 是否客户端模式
+     * 是否客户模式
      */
     boolean clientMode();
+
+    /**
+     * 是否顺序模式
+     * */
+    boolean sequenceMode();
 
     /**
      * 获取流管理器

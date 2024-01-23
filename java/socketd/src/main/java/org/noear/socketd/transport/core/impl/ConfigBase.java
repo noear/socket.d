@@ -20,12 +20,14 @@ import java.util.concurrent.*;
  * @since 2.0
  */
 public abstract class ConfigBase<T extends Config> implements Config {
-    //是否客户端模式
+    //客户模式
     private final boolean clientMode;
     //流管理器
     private final StreamManger streamManger;
     //编解码器
     private final Codec codec;
+    //顺序模式（指发送有序）
+    private boolean sequenceMode;
 
     //id生成器
     private IdGenerator idGenerator;
@@ -63,6 +65,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
+        this.sequenceMode = false;
         this.streamManger = new StreamMangerDefault(this);
         this.codec = new CodecDefault(this);
 
@@ -90,6 +93,22 @@ public abstract class ConfigBase<T extends Config> implements Config {
     @Override
     public boolean clientMode() {
         return clientMode;
+    }
+
+    /**
+     * 顺序模式
+     * */
+    @Override
+    public boolean sequenceMode() {
+        return sequenceMode;
+    }
+
+    /**
+     * 配置顺序模式
+     * */
+    public T sequenceMode(boolean sequenceMode) {
+        this.sequenceMode = sequenceMode;
+        return (T) this;
     }
 
     /**

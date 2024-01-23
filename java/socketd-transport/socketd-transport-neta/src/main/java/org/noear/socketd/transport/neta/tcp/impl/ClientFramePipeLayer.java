@@ -47,7 +47,7 @@ public class ClientFramePipeLayer implements PipeLayer<ByteBuf, Frame, Frame, By
             supporter.getProcessor().onError(channel, e);
         }
 
-        return PipeStatus.Next;
+        return PipeStatus.Exit;
     }
 
     @Override

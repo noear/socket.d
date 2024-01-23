@@ -4,44 +4,48 @@ import net.hasor.neta.bytebuf.ByteBuf;
 import org.noear.socketd.transport.core.CodecReader;
 
 /**
- * @author noear 2024/1/21 created
+ * @author noear
+ * @since 2.6
  */
 public class ByteBufCodecReader implements CodecReader {
-    public ByteBufCodecReader(ByteBuf byteBuf){
+    private ByteBuf byteBuf;
 
+    public ByteBufCodecReader(ByteBuf byteBuf) {
+        this.byteBuf = byteBuf;
     }
+
     @Override
     public byte getByte() {
-        return 0;
+        return byteBuf.readByte();
     }
 
     @Override
     public void getBytes(byte[] dst, int offset, int length) {
-
+        byteBuf.readBytes(dst, offset, length);
     }
 
     @Override
     public int getInt() {
-        return 0;
+        return byteBuf.readInt32();
     }
 
     @Override
     public byte peekByte() {
-        return 0;
+        return byteBuf.getByte(byteBuf.readerIndex());
     }
 
     @Override
     public void skipBytes(int length) {
-
+        byteBuf.skipReadableBytes(length);
     }
 
     @Override
     public int remaining() {
-        return 0;
+        return byteBuf.readableBytes();
     }
 
     @Override
     public int position() {
-        return 0;
+        return byteBuf.readerIndex();
     }
 }

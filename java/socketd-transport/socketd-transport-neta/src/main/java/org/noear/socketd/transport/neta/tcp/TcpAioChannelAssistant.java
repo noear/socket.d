@@ -19,7 +19,7 @@ public class TcpAioChannelAssistant implements ChannelAssistant<NetChannel> {
 
     @Override
     public boolean isValid(NetChannel target) {
-        return target.isClose() == false;
+        return !target.isClose();
     }
 
     @Override

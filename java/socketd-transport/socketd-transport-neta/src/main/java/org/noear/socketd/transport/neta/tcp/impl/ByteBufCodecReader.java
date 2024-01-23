@@ -8,7 +8,7 @@ import org.noear.socketd.transport.core.CodecReader;
  * @since 2.6
  */
 public class ByteBufCodecReader implements CodecReader {
-    private ByteBuf byteBuf;
+    private final ByteBuf byteBuf;
 
     public ByteBufCodecReader(ByteBuf byteBuf) {
         this.byteBuf = byteBuf;

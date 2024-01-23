@@ -9,8 +9,9 @@ import net.hasor.neta.handler.codec.LimitFrameHandler;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.neta.tcp.impl.FramePipeLayer;
-import org.noear.socketd.transport.neta.tcp.impl.ServerFramePipeListener;
+import org.noear.socketd.transport.neta.tcp.impl.FrameDecoder;
+import org.noear.socketd.transport.neta.tcp.impl.FrameEncoder;
+import org.noear.socketd.transport.neta.tcp.impl.ServerPipeListener;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
@@ -45,10 +46,13 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             isStarted = true;
         }
 
+        FrameDecoder decoder = new FrameDecoder(this.getConfig(), this);
+        FrameEncoder encoder = new FrameEncoder(this.getConfig(), this);
+
         PipelineFactory pipeline = PipeInitializer.builder()
                 .nextToDecoder(new LimitFrameHandler(Constants.MAX_SIZE_FRAME))
-                .nextTo(new FramePipeLayer(this))
-                .bindReceive(new ServerFramePipeListener(this)).build();
+                .nextTo(decoder,encoder)
+                .bindReceive(new ServerPipeListener(this)).build();
 
         SoConfig soConfig = new SoConfig();
         soConfig.setSoKeepAlive(false);

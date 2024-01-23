@@ -10,8 +10,9 @@ import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.neta.tcp.impl.ClientFramePipeListener;
-import org.noear.socketd.transport.neta.tcp.impl.FramePipeLayer;
+import org.noear.socketd.transport.neta.tcp.impl.ClientPipeListener;
+import org.noear.socketd.transport.neta.tcp.impl.FrameDecoder;
+import org.noear.socketd.transport.neta.tcp.impl.FrameEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,15 +38,16 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         //关闭之前的资源
         close();
 
-        ClientFramePipeListener pipeListener = new ClientFramePipeListener(client);
+        FrameDecoder decoder = new FrameDecoder(client.getConfig(), client);
+        FrameEncoder encoder = new FrameEncoder(client.getConfig(), client);
+        ClientPipeListener pipeListener = new ClientPipeListener(client);
 
         PipelineFactory pipeline = PipeInitializer.builder()
                 .nextToDecoder(new LimitFrameHandler(Constants.MAX_SIZE_FRAME))
-                .nextTo(new FramePipeLayer(client))
+                .nextTo(decoder,encoder)
                 .bindReceive(pipeListener).build();
 
         SoConfig soConfig = new SoConfig();
-        soConfig.setSoKeepAlive(false);
         real = new CobbleSocket(soConfig);
 
 

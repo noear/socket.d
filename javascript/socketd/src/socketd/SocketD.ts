@@ -35,7 +35,7 @@ export class SocketD {
      * 框架版本号
      */
     static version(): string {
-        return "2.3.7";
+        return "2.3.8";
     }
 
     /**
@@ -53,7 +53,7 @@ export class SocketD {
     static createClient(serverUrl: string): Client {
         const client = this.createClientOrNull(serverUrl);
         if (client == null) {
-            throw new Error("No socketd client providers were found.");
+            throw new Error("No socketd client providers were found: " + serverUrl);
         } else {
             return client;
         }

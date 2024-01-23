@@ -1,3 +1,8 @@
+### 2.3.8
+* 添加 CLOSE28_OPEN_FAIL 关闭码，优化关闭处理
+* 调整 SocketD.createXxx 的异常提示，带上协议架构信息
+* 调整 PathListener::of 更名为 doOf，并添加 of 函数（应用不同）
+
 ### 2.3.7
 * 添加 Client::openOrThow() 方法，原 open() 不再出异常
 * 调整 ClientChannel 内部处理，支持首次连接失败后仍可用

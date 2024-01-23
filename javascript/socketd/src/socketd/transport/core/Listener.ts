@@ -165,10 +165,27 @@ export class PathListener implements Listener {
 
     /**
      * 路由
+     *
+     * @param path     路径
+     * @param listener 监听器
+     * @return self
      */
-    of(path: string, listener: Listener): PathListener {
+    doOf(path: string, listener: Listener): PathListener {
         this._pathRouteSelector.put(path, listener);
         return this;
+    }
+
+    /**
+     * 路由
+     *
+     * @param path 路径
+     * @return 事件监听器
+     * @since 2.3
+     */
+    of(path: string): EventListener {
+        const listener = new EventListener();
+        this._pathRouteSelector.put(path, listener);
+        return listener;
     }
 
     /**

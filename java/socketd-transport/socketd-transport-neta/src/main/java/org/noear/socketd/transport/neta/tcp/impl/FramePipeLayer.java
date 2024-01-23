@@ -11,12 +11,12 @@ import org.noear.socketd.transport.core.impl.ChannelDefault;
  * @author noear
  * @since 2.3
  */
-public class ServerFramePipeLayer implements PipeLayer<ByteBuf, Frame, Frame, ByteBuf> {
+public class FramePipeLayer implements PipeLayer<ByteBuf, Frame, Frame, ByteBuf> {
     private ChannelSupporter<NetChannel> supporter;
     private FrameDecoderHandler decoderHandler;
     private FrameEncoderHandler encoderHandler;
 
-    public ServerFramePipeLayer(ChannelSupporter<NetChannel> supporter) {
+    public FramePipeLayer(ChannelSupporter<NetChannel> supporter) {
         this.supporter = supporter;
         this.encoderHandler = new FrameEncoderHandler(supporter.getConfig());
         this.decoderHandler = new FrameDecoderHandler(supporter.getConfig());

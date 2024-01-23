@@ -10,10 +10,8 @@ import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.neta.tcp.impl.ClientFramePipeLayer;
 import org.noear.socketd.transport.neta.tcp.impl.ClientFramePipeListener;
-import org.noear.socketd.transport.neta.tcp.impl.ServerFramePipeLayer;
-import org.noear.socketd.transport.neta.tcp.impl.ServerFramePipeListener;
+import org.noear.socketd.transport.neta.tcp.impl.FramePipeLayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +41,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
         PipelineFactory pipeline = PipeInitializer.builder()
                 .nextToDecoder(new LimitFrameHandler(Constants.MAX_SIZE_FRAME))
-                .nextTo(new ClientFramePipeLayer(client))
+                .nextTo(new FramePipeLayer(client))
                 .bindReceive(pipeListener).build();
 
         SoConfig soConfig = new SoConfig();

@@ -31,7 +31,7 @@ public class ByteBufCodecReader implements CodecReader {
 
     @Override
     public byte peekByte() {
-        return byteBuf.getByte(byteBuf.readerIndex());
+        return byteBuf.getByte(0);
     }
 
     @Override

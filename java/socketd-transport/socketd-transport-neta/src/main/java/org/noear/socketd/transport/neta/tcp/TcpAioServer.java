@@ -1,9 +1,6 @@
 package org.noear.socketd.transport.neta.tcp;
 
-import net.hasor.neta.channel.CobbleSocket;
-import net.hasor.neta.channel.NetChannel;
-import net.hasor.neta.channel.PipelineFactory;
-import net.hasor.neta.channel.SoConfig;
+import net.hasor.neta.channel.*;
 import net.hasor.neta.handler.PipeInitializer;
 import net.hasor.neta.handler.codec.LimitFrameHandler;
 import org.noear.socketd.SocketD;
@@ -56,6 +53,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
 
         SoConfig soConfig = new SoConfig();
         soConfig.setSoKeepAlive(false);
+        soConfig.setNetlog(true);
         server = new CobbleSocket(soConfig);
 
         if (StrUtils.isEmpty(getConfig().getHost())) {

@@ -25,9 +25,13 @@ public class FrameDecoder extends BasedPipeHandler<ByteBuf, Frame> {
     public PipeStatus doHandler(PipeContext context, PipeRcvQueue<ByteBuf> src, PipeSndQueue<Frame> dst) throws IOException {
         boolean hasAny = false;
         while (src.hasMore()) {
-            ByteBuf byteBuf = src.takeMessage();
+            ByteBuf byteBuf = src.peekMessage();
             if (byteBuf != null) {
                 Frame frame = config.getCodec().read(new ByteBufCodecReader(byteBuf));
+                if (!byteBuf.hasReadable()) {
+                    src.skipMessage(1);
+                }
+
                 dst.offerMessage(frame);
                 hasAny = true;
             }

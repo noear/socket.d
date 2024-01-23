@@ -28,7 +28,7 @@ public class ClientPipeListener implements PipeListener<Frame> {
 
     @Override
     public void onReceive(SoChannel<?> soChannel, Frame frame) {
-        ChannelInternal channel = (ChannelInternal) soChannel.getAttribute(Constants.ATT_KEY_CHANNEL);
+        ChannelInternal channel = soChannel.findPipeContext(ChannelInternal.class);
 
         if (frame.flag() == Flags.Connack) {
             channel.onOpenFuture((r, e) -> {
@@ -41,7 +41,7 @@ public class ClientPipeListener implements PipeListener<Frame> {
 
     @Override
     public void onError(SoChannel<?> soChannel, Throwable e, boolean isRcv) {
-        ChannelInternal channel = (ChannelInternal) soChannel.getAttribute(Constants.ATT_KEY_CHANNEL);
+        ChannelInternal channel = soChannel.findPipeContext(ChannelInternal.class);
 
         if (e instanceof SoCloseException) {
             processor.onClose(channel);

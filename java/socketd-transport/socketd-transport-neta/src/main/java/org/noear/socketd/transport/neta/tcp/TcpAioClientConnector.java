@@ -1,6 +1,9 @@
 package org.noear.socketd.transport.neta.tcp;
 
+import net.hasor.cobble.concurrent.future.Future;
+import net.hasor.cobble.concurrent.future.FutureListener;
 import net.hasor.neta.channel.CobbleSocket;
+import net.hasor.neta.channel.NetChannel;
 import net.hasor.neta.channel.PipelineFactory;
 import net.hasor.neta.channel.SoConfig;
 import net.hasor.neta.handler.PipeInitializer;
@@ -48,11 +51,34 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
                 .bindReceive(pipeListener).build();
 
         SoConfig soConfig = new SoConfig();
+        soConfig.setNetlog(true);
         real = new CobbleSocket(soConfig);
 
 
         try {
-            real.connect(getConfig().getHost(), getConfig().getPort(), pipeline);
+            Future<NetChannel> connect = real.connect(getConfig().getHost(), getConfig().getPort(), pipeline);
+            connect.onCompleted(f -> {
+                ChannelInternal channel=null;
+                try{
+                     channel = f.get().findPipeContext(ChannelInternal.class);
+                }catch (Exception e){
+                }
+                //开始握手
+                try{
+                    channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
+                }catch (Exception e){
+                    channel.doOpenFuture(false,e);
+                }
+            }).onFailed(f -> {
+                ChannelInternal channel=null;
+                try{
+                    channel = f.get().findPipeContext(ChannelInternal.class);
+                }catch (Exception e){
+                }
+                channel.doOpenFuture(false,f.getCause());
+            });
+
+
             //等待握手结果
             ClientHandshakeResult handshakeResult = pipeListener.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);
 

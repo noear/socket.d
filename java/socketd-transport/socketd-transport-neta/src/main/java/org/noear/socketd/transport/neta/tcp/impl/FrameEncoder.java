@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.neta.tcp.impl;
 
 import net.hasor.neta.bytebuf.ByteBuf;
+import net.hasor.neta.bytebuf.ByteBufAllocator;
 import net.hasor.neta.channel.NetChannel;
 import net.hasor.neta.channel.PipeContext;
 import net.hasor.neta.handler.PipeRcvQueue;
@@ -27,7 +28,8 @@ public class FrameEncoder extends BasedPipeHandler<Frame, ByteBuf> {
         while (src.hasMore()) {
             Frame frame = src.takeMessage();
             if (frame != null) {
-                ByteBufCodecWriter writer = config.getCodec().write(frame, (n) -> new ByteBufCodecWriter(context.getConfig().getBufAllocator().buffer(n)));
+                ByteBufAllocator bufAllocator = context.getSoContext().getResourceManager().getByteBufAllocator();
+                ByteBufCodecWriter writer = config.getCodec().write(frame, (n) -> new ByteBufCodecWriter(bufAllocator.buffer(n)));
 
                 dst.offerMessage(writer.buffer());
                 hasAny = true;

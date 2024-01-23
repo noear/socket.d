@@ -10,10 +10,12 @@ import java.io.IOException;
  * @since 2.6
  */
 public class ByteBufCodecWriter implements CodecWriter {
-    private ByteBuf byteBuf;
-    public ByteBufCodecWriter(ByteBuf byteBuf){
+    private final ByteBuf byteBuf;
+
+    public ByteBufCodecWriter(ByteBuf byteBuf) {
         this.byteBuf = byteBuf;
     }
+
     @Override
     public void putBytes(byte[] bytes) throws IOException {
         byteBuf.writeBytes(bytes);
@@ -34,7 +36,7 @@ public class ByteBufCodecWriter implements CodecWriter {
         byteBuf.flush();
     }
 
-    public ByteBuf buffer(){
+    public ByteBuf buffer() {
         return byteBuf;
     }
 }

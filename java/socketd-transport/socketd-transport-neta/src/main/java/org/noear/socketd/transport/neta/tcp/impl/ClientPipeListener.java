@@ -2,6 +2,8 @@ package org.noear.socketd.transport.neta.tcp.impl;
 
 import net.hasor.neta.channel.NetChannel;
 import net.hasor.neta.channel.SoChannel;
+import net.hasor.neta.channel.SoCloseException;
+import net.hasor.neta.channel.SoTimeoutException;
 import net.hasor.neta.handler.PipeListener;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.*;
@@ -12,11 +14,11 @@ import java.util.concurrent.CompletableFuture;
  * @author noear
  * @since 2.3
  */
-public class ClientFramePipeListener implements PipeListener<Frame> {
-    private Processor processor;
-    private CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
+public class ClientPipeListener implements PipeListener<Frame> {
+    private final Processor                                processor;
+    private final CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
-    public ClientFramePipeListener(ChannelSupporter<NetChannel> supporter) {
+    public ClientPipeListener(ChannelSupporter<NetChannel> supporter) {
         this.processor = supporter.getProcessor();
     }
 
@@ -40,6 +42,13 @@ public class ClientFramePipeListener implements PipeListener<Frame> {
     @Override
     public void onError(SoChannel<?> soChannel, Throwable e, boolean isRcv) {
         ChannelInternal channel = (ChannelInternal) soChannel.getAttribute(Constants.ATT_KEY_CHANNEL);
-        processor.onError(channel, e);
+
+        if (e instanceof SoCloseException) {
+            processor.onClose(channel);
+        } else if (e instanceof SoTimeoutException) {
+            processor.onError(channel, e);
+        } else {
+            processor.onError(channel, e);
+        }
     }
 }

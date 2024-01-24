@@ -26,7 +26,7 @@ class FragmentHandlerBase(FragmentHandler, ABC):
             while True:
                 # Generate fragment
                 fragment_index += 1
-                data_buffer = FragmentHandlerBase.__read_fragment_data(message.get_data(),
+                data_buffer = FragmentHandlerBase.__read_fragment_data(message.get_data(), message.get_data_size(),
                                                                        channel.get_config().get_fragment_size())
                 if data_buffer is None or len(data_buffer.getbuffer()) == 0:
                     return
@@ -40,6 +40,7 @@ class FragmentHandlerBase(FragmentHandler, ABC):
                 await consumer(fragment_entity)
                 if stream is not None:
                     stream.on_progress(True, fragment_index, fragment_total)
+                data_buffer.close()
 
         else:
             await consumer(message)
@@ -66,8 +67,8 @@ class FragmentHandlerBase(FragmentHandler, ABC):
         ...
 
     @staticmethod
-    def __read_fragment_data(ins: BytesIO, max_size: int) -> BytesIO:
-        size = min(len(ins.getbuffer()) - ins.tell(), max_size)
+    def __read_fragment_data(ins: BytesIO, ins_size: int, max_size: int) -> BytesIO:
+        size = min(ins_size - ins.tell(), max_size)
         buf = BytesIO()
         buf.write(ins.read(size))
         return buf

@@ -1,5 +1,4 @@
-
-class SocketdException(RuntimeError):
+class SocketDException(RuntimeError):
 
     def __init__(self, message):
         super().__init__(self)
@@ -9,20 +8,30 @@ class SocketdException(RuntimeError):
         return self.message
 
 
-class SocketdAlarmException(SocketdException):
+class SocketDAlarmException(SocketDException):
     pass
 
-class SocketdChannelException(SocketdException):
+
+class SocketDChannelException(SocketDException):
+    """ 通道"""
     pass
 
-class SocketdCodecException(SocketdException):
+
+class SocketDCodecException(SocketDException):
+    """ 编码"""
     pass
 
-class SocketdConnectionException(SocketdException):
+
+class SocketDConnectionException(SocketDException):
+    """连接"""
     pass
 
-class SocketdSizeLimitException(SocketdException):
+
+class SocketDSizeLimitException(SocketDException):
+    """ 超长"""
     pass
 
-class SocketdTimeoutException(SocketdException):
+
+class SocketDTimeoutException(SocketDException):
+    """ 超时"""
     pass

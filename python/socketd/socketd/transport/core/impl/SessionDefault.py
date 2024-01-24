@@ -1,4 +1,3 @@
-import asyncio
 
 from abc import ABC
 from typing import Optional
@@ -11,11 +10,10 @@ from socketd.transport.core.Message import Message
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.entity.MessageDefault import MessageDefault
-from socketd.exception.SocketdExecption import SocketdException
 from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.stream.SendStream import SendStream
 
-from socketd.transport.stream import SubscribeStream
+from socketd.transport.stream.SubscribeStream import SubscribeStream
 
 from loguru import logger
 
@@ -38,48 +36,30 @@ class SessionDefault(SessionBase, ABC):
     def get_handshake(self) -> HandshakeDefault:
         return self._channel.get_handshake()
 
-    def send_ping(self):
-        # 取消 await(让它异步运行)
-        self._channel.send_ping()
+    async def send_ping(self):
+        await self._channel.send_ping()
 
-    def send(self, topic: str, content: Entity) -> SendStream:
+    async def send(self, topic: str, content: Entity) -> SendStream:
         message = MessageDefault().set_sid(self.generate_id()).set_event(topic).set_entity(content)
 
         stream: SendStream = SendStream(message.get_sid())
-        #取消 await(让它异步运行) //就不会挡住 stream 的输出
-        self._channel.send(Frame(Flag.Message, message), stream)
+        await self._channel.send(Frame(Flag.Message, message), stream)
         return stream
 
-    def send_and_request(self, event: str, content: Entity,
+    async def send_and_request(self, event: str, content: Entity,
                                timeout: int = 100) -> RequestStream:
 
         if timeout < 100:
             timeout = self._channel.get_config().get_reply_timeout()
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
-        try:
-            stream = RequestStream(message.get_sid(), timeout)
-            #取消 await(让它异步运行)
-            self._channel.send(Frame(Flag.Request, message),
-                                     stream)
-            return stream
-        # 这几行的异常处理，参考 java 移到 RequestStream::__await__
-        # except asyncio.TimeoutError as e:
-        #     if self._channel.is_valid():
-        #         raise SocketdException(f"Request reply timeout>{timeout} "
-        #                                f"sessionId={self._channel.get_session().get_session_id()} "
-        #                                f"event={event} sid={message.get_sid()}")
-        #     else:
-        #         raise SocketdException(
-        #             f"This channel is closed sessionId={self._channel.get_session().get_session_id()} "
-        #             f"event={event} sid={message.get_sid()} {str(e)}")
-        except Exception as e:
-            raise e
+        stream = RequestStream(message.get_sid(), timeout)
+        await self._channel.send(Frame(Flag.Request, message), stream)
+        return stream
 
-    def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0):
+    async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0):
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         stream = SubscribeStream(message.get_sid(), timeout)
-        # 取消 await(让它异步运行)
-        self._channel.send(Frame(Flag.Subscribe, message), stream)
+        await self._channel.send(Frame(Flag.Subscribe, message), stream)
         return stream
 
     async def reply(self, from_msg: Message, content: Entity):

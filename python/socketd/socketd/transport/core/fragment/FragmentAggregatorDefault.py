@@ -6,7 +6,7 @@ from socketd.transport.core.Message import Message, MessageInternal
 from socketd.transport.core.Costants import EntityMetas
 from socketd.transport.core.fragment.FragmentAggregator import FragmentAggregator
 from socketd.transport.core.entity.MessageDefault import MessageDefault
-from socketd.exception.SocketdExecption import SocketdException
+from socketd.exception.SocketdExecption import SocketDException
 
 from .FragmentHolder import FragmentHolder
 
@@ -21,7 +21,7 @@ class FragmentAggregatorDefault(FragmentAggregator):
         self.__main: MessageInternal = frame
         data_length: str = frame.get_meta(EntityMetas.META_DATA_LENGTH)
         if data_length is None or not data_length.isalnum():
-            raise SocketdException(f"Missing {EntityMetas.META_DATA_LENGTH} meta, event= {frame.get_event()}")
+            raise SocketDException(f"Missing {EntityMetas.META_DATA_LENGTH} meta, event= {frame.get_event()}")
         self.__data_length = int(data_length)
         self.__data_stream_size = 0
 

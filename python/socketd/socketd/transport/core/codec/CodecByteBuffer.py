@@ -1,11 +1,12 @@
-from typing import Callable
-from socketd.transport.core.Codec import Codec
+from io import BytesIO
+from typing import Callable, Optional
+from socketd.transport.core.Codec import Codec, CodecReader, CodecWriter
 from socketd.transport.core.Costants import Constants, Flag
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.core.entity.EntityDefault import EntityDefault
 from socketd.transport.core.Config import Config
-from socketd.transport.core.Buffer import Buffer
+from socketd.transport.core.codec.Buffer import Buffer
 
 
 def assert_size(name: str, size: int, limitSize: int) -> None:
@@ -14,15 +15,63 @@ def assert_size(name: str, size: int, limitSize: int) -> None:
         raise RuntimeError(buf)
 
 
+class ByteBufferCodecReader(CodecReader):
+
+    def __init__(self, buffer: Buffer):
+        self.__buffer = buffer
+
+    def get_bytes(self) -> bytes:
+        return self.__buffer.getvalue()
+
+    def get_int(self) -> int:
+        return int.from_bytes(self.__buffer.read1(4), byteorder='little', signed=False)
+
+    def skip_bytes(self, size):
+        self.__buffer.seek(self.__buffer.tell() + size)
+
+    def remaining(self):
+        return self.__buffer.remaining()
+
+    def position(self):
+        return self.__buffer.tell()
+
+    def get_buffer(self) -> BytesIO:
+        return self.__buffer
+
+    def close(self):
+        self.__buffer.close()
+
+
+class ByteBufferCodecWriter(CodecWriter):
+
+    def __init__(self, buffer: Buffer):
+        self.__buffer = buffer
+
+    def put_bytes(self, _bytes: bytearray | memoryview | bytes):
+        self.__buffer.write(_bytes)
+
+    def put_int(self, _num: int):
+        self.__buffer.write(_num.to_bytes(length=4, byteorder='little', signed=False))
+
+    def flush(self):
+        self.__buffer.flush()
+
+    def get_buffer(self) -> BytesIO:
+        return self.__buffer
+
+    def close(self):
+        self.__buffer.close()
+
+
 class CodecByteBuffer(Codec):
     def __init__(self, config: Config):
         self.config = config
 
-    def write(self, frame: Frame, factory: Callable[[int], Buffer]) -> Buffer:
+    def write(self, frame: Frame, factory: Callable[[int], CodecWriter]) -> CodecWriter:
         if frame.message is None:
             # length (flag + int.bytes)
             _len = 2 * 4
-            target = factory(_len)
+            target: CodecWriter = factory(_len)
 
             # length
             target.put_int(_len)
@@ -48,7 +97,7 @@ class CodecByteBuffer(Codec):
             assert_size("metaString", len(metaStringB), Constants.MAX_SIZE_META_STRING)
             assert_size("data", frame.message.get_entity().get_data_size(), Constants.MAX_SIZE_FRAGMENT)
 
-            target: Buffer = factory(len1)
+            target: CodecWriter = factory(len1)
 
             # length
             target.put_int(len1)
@@ -57,63 +106,64 @@ class CodecByteBuffer(Codec):
             target.put_int(frame.flag)
 
             # sid
-            target.write(sidB)
-            target.write(b'\n')
+            target.put_bytes(sidB)
+            target.put_bytes(b'\n')
 
             # event
-            target.write(event)
-            target.write(b'\n')
+            target.put_bytes(event)
+            target.put_bytes(b'\n')
 
             # metaString
-            target.write(metaStringB)
-            target.write(b'\n')
+            target.put_bytes(metaStringB)
+            target.put_bytes(b'\n')
 
             # data
             if frame.message.get_entity().get_data() is not None:
-                target.write(frame.message.get_entity().get_data().getvalue())
+                target.put_bytes(frame.message.get_entity().get_data().getvalue())
             target.flush()
 
             return target
 
-    def read(self, buffer: Buffer) -> Frame | None:
-        len0 = buffer.get_int()
+    def read(self, _reader: CodecReader) -> Frame | None:
+        len0 = _reader.get_int()
 
-        if len0 > (buffer.remaining() + 4):
+        if len0 > (_reader.remaining() + 4):
             return None
 
-        flag = buffer.get_int()  # 取前一位数据
+        flag = _reader.get_int()  # 取前一位数据
 
         if len0 == 8:
             # len + flag
             return Frame(Flag.of(flag), None)
         else:
-            metaBufSize = min(Constants.MAX_SIZE_META_STRING, buffer.remaining())
+            metaBufSize = min(Constants.MAX_SIZE_META_STRING, _reader.remaining())
             # 1. decode sid and event
             by = Buffer(limit=metaBufSize)
-            sid = self.decodeString(buffer, by, Constants.MAX_SIZE_SID)
-            event = self.decodeString(buffer, by, Constants.MAX_SIZE_EVENT)
-            metaString = self.decodeString(buffer, by, Constants.MAX_SIZE_META_STRING)
+            sid = self.decodeString(_reader, by, Constants.MAX_SIZE_SID)
+            event = self.decodeString(_reader, by, Constants.MAX_SIZE_EVENT)
+            metaString = self.decodeString(_reader, by, Constants.MAX_SIZE_META_STRING)
 
             # 2. decode body
-            dataRealSize = len0 - buffer.tell()
-            data: bytearray = None
+            dataRealSize = len0 - _reader.position()
+            data: Optional[bytearray] = None
             if dataRealSize > Constants.MAX_SIZE_FRAGMENT:
                 # exceeded the limit, read and discard the bytes
                 data = bytearray(Constants.MAX_SIZE_FRAGMENT)
-                buffer.readinto(data)
+                _reader.get_buffer().readinto(data)
                 for i in range(dataRealSize - Constants.MAX_SIZE_FRAGMENT):
-                    buffer.read()
+                    _reader.get_buffer().read()
             else:
-                data = bytearray(buffer.read(dataRealSize))
+                data = bytearray(_reader.get_buffer().read(dataRealSize))
 
             message = MessageDefault().set_sid(sid).set_event(event).set_entity(
                 EntityDefault().set_meta_string(metaString).set_data(data)
             )
             message.flag = Flag.of(flag)
+            _reader.close()
             return Frame(message.flag, message)
 
-    def decodeString(self, reader: Buffer, buf: Buffer, maxLen: int) -> str:
-        b = bytearray(reader.readline(maxLen).replace(b'\n', b''))
+    def decodeString(self, reader: CodecReader, buf: Buffer, maxLen: int) -> str:
+        b = bytearray(reader.get_buffer().readline(maxLen).replace(b'\n', b''))
         if buf.limit() < 1:
             return ""
         return b.decode(self.config.get_charset())

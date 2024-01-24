@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 from loguru import logger
 
-from socketd.exception.SocketdExecption import SocketdAlarmException
+from socketd.exception.SocketdExecption import SocketDAlarmException
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Message import Message
@@ -70,7 +70,7 @@ class ProcessorDefault(Processor, ABC):
                     await channel.close()
                     self.on_close(channel)
                 elif frame.get_flag() == Flag.Alarm:
-                    e = SocketdAlarmException(frame.get_message())
+                    e = SocketDAlarmException(frame.get_message())
                     stream: Union[StreamInternal, Stream] = channel.get_config().get_stream_manger() \
                         .get_stream(frame.get_message().get_sid())
                     if stream:

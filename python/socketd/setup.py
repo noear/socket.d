@@ -26,9 +26,9 @@ setup(
         'License :: OSI Approved :: BSD License',  # BSD认证
         'Programming Language :: Python',  # 支持的语言
         'Programming Language :: Python :: 3',  # python版本 。。。
-        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries'
     ],
     zip_safe=True,
-    python_requires='>3.8',
+    python_requires='>=3.10',
 )

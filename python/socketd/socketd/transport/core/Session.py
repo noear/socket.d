@@ -52,19 +52,19 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def send_ping(self) -> Callable | Coroutine:
+    async def send_ping(self) -> Callable | Coroutine:
         ...
 
     @abc.abstractmethod
-    def send(self, event: str, content: Entity) -> SendStream:
+    async def send(self, event: str, content: Entity) -> SendStream:
         ...
 
     @abc.abstractmethod
-    def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
+    async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
         ...
 
     @abc.abstractmethod
-    def send_and_subscribe(self, event: str, content: Entity,
+    async def send_and_subscribe(self, event: str, content: Entity,
                                  timeout: int = 0) -> SubscribeStream:
         ...
 

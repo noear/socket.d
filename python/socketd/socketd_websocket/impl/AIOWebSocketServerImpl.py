@@ -62,22 +62,19 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
 
     async def on_message(self, conn: Union['AIOWebSocketServerImpl', WebSocketServerProtocol], path: str):
         """ws_handler"""
+        loop = asyncio.get_running_loop()
         while True:
             if conn.closed:
                 break
             try:
                 message = await self.recv()
-                frame: Frame = self.ws_aio_server.get_assistant().read(
-                    message)
+                # frame: Frame = self.ws_aio_server.get_assistant().read(
+                #     message)
                 # # 采用线程池执行IO耗时任务
-                # frame: Frame = await self.__loop.run_in_executor(self.ws_aio_server.get_config(
-                # ).get_executor(), lambda _message: self.ws_aio_server.get_assistant().read( _message), message)
+                frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_executor(),
+                                                          lambda _message: self.ws_aio_server.get_assistant().read(_message), message)
                 if frame is not None:
-                    # if conn.get_attachment().get_config().get_is_thread():
-                    # asyncio.run_coroutine_threadsafe(
-                    #     self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame),
-                    #     self._loop)
-                    # else:
+
                     await self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)
                     if frame.get_flag() == Flag.Close:
                         """客户端主动关闭"""
@@ -87,6 +84,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                         break
             except asyncio.CancelledError as c:
                 logger.warning(c)
+                break
             except ConnectionClosedError as e:
                 # 客户端异常关闭
                 log.error(e)

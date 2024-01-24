@@ -11,7 +11,7 @@ class FragmentHandler:
     """
 
     async def split_fragment(self, channel: 'Channel', stream: StreamInternal,
-                       message: Message, consumer: Callable[[Entity], None]):
+                             message: Message, consumer: Callable):
         """拆割分片"""
         ...
 

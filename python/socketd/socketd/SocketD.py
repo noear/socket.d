@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from urllib.parse import urlparse
 
-from socketd.exception.SocketdExecption import SocketdException
+from socketd.exception.SocketdExecption import SocketDException
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientFactory import ClientFactory
@@ -14,7 +14,11 @@ from socketd_websocket.WsAioFactoy import WsAioFactory
 class SocketD:
     @staticmethod
     def version() -> str:
-        return "0.1"
+        return "2.3.6"
+
+    @staticmethod
+    def protocol_version() -> str:
+        return "1.0"
 
     client_factory_map: Dict[str, ClientFactory] = {}
     server_factory_map: Dict[str, ServerFactory] = {}
@@ -29,7 +33,7 @@ class SocketD:
     def __get_schema(url: str) -> Optional[str]:
         index = url.index("://")
         if index <= 0:
-            raise SocketdException(f"The serverUrl invalid: {url}")
+            raise SocketDException(f"The serverUrl invalid: {url}")
         return url[:index]
 
     @staticmethod
@@ -43,7 +47,7 @@ class SocketD:
     def create_client(server_url: str) -> Client:
         index = server_url.index("://")
         if index <= 0:
-            raise SocketdException(f"The serverUrl invalid: {server_url}")
+            raise SocketDException(f"The serverUrl invalid: {server_url}")
         schema = server_url[:index]
         if schema is None:
             raise ValueError("Invalid server URL.")

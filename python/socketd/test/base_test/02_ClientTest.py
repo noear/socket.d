@@ -26,8 +26,8 @@ async def main():
     start_time = time.monotonic()
     for _ in range(10):
         await client_session.send("demo", StringEntity("test.png"))
-        # e = await client_session.send_and_request("demo", StringEntity("test.png"), 100)
-        # await client_session.send_and_subscribe("demo", StringEntity("test.png"), send_and_subscribe_test, 100)
+        e = await client_session.send_and_request("demo", StringEntity("test.png"), 100)
+        await client_session.send_and_subscribe("demo", StringEntity("test.png"), 100)
         # logger.debug("send_and_request={e}", e=e)
     # await asyncio.gather(*[client_session.send("demo", StringEntity("test.png")) for _ in range(10000)])
     end_time = time.monotonic()

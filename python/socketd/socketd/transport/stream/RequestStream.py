@@ -1,5 +1,7 @@
+import asyncio
 from typing import Callable
 
+from socketd.exception.SocketdExecption import SocketDTimeoutException, SocketDException
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Entity import Reply
 from socketd.transport.stream.StreamBase import StreamBase
@@ -16,7 +18,12 @@ class RequestStream(StreamBase):
         return self._future.done()
 
     def __await__(self):
-        return self._future.get(self.timeout())
+        try:
+            return self._future.get(self.timeout())
+        except asyncio.TimeoutError as _e:
+            raise SocketDTimeoutException(f"Request reply timeout>{self.timeout()}  sid={self.get_sid()}")
+        except Exception as _e:
+            raise SocketDException(f"Request failed, sid= sid={self.get_sid()} {str(_e)}")
 
     def await_result(self):
         return self.__await__()

@@ -40,3 +40,4 @@ venv/
 *.DS_Store
 /python/socketd/socketD.egg-info/
 
+/python/socketd/test/cases/ssl/

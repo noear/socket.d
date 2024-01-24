@@ -44,7 +44,7 @@ class SimpleListenerTest(Listener):
         if message.is_request():
             req: RequestStream = await session.send_and_request("demo", StringEntity("今天不好"), 100)
             # todo 开启单独线程后，在open确认连接后，会停留10s(线程可见性不佳)，但是可以解决线程阻塞问题
-            # await asyncio.sleep(1)
+            await asyncio.sleep(1)
             entity = await req.await_result()
             await session.reply_end(message, entity)
             logger.info(f"server::res::: {entity}")

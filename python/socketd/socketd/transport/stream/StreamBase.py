@@ -2,7 +2,7 @@ import asyncio
 from abc import ABC
 from typing import Callable, Optional
 
-from socketd.exception.SocketdException import SocketdTimeoutException
+from socketd.exception.SocketdExecption import SocketDTimeoutException
 from socketd.transport.stream.StreamManger import StreamInternal, StreamManger
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
@@ -47,7 +47,7 @@ class StreamBase(StreamInternal, ABC):
         async def __insuranceFuture():
             await asyncio.sleep(streamTimeout)
             streamManger.remove_stream(self.__sid)
-            self.on_error(SocketdTimeoutException(f"The stream response timeout, sid={self.__sid}"))
+            self.on_error(SocketDTimeoutException(f"The stream response timeout, sid={self.__sid}"))
 
         self.__insuranceFuture = CompletableFuture(__insuranceFuture())
         asyncio.run_coroutine_threadsafe(self.__insuranceFuture.get(streamTimeout), asyncio.get_running_loop())

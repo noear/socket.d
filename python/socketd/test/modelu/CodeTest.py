@@ -3,7 +3,7 @@ import unittest
 from asyncio import Queue
 from concurrent.futures import ThreadPoolExecutor
 
-from socketd.transport.core import Buffer
+from socketd.transport.core.codec import Buffer
 from socketd.transport.core.Costants import Flag
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.Frame import Frame

@@ -1,5 +1,6 @@
 import os
 import ssl
+from abc import ABC
 
 from typing import Callable, Any, Optional
 from concurrent.futures import ThreadPoolExecutor
@@ -12,10 +13,10 @@ from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandl
 
 from socketd.transport.core.config.logConfig import logger
 from socketd.transport.stream.StreamManger import StreamManger
-from socketd.transport.stream import StreamMangerDefault
+from socketd.transport.stream.StreamMangerDefault import StreamMangerDefault
 
 
-class ConfigBase(Config):
+class ConfigBase(Config, ABC):
 
     def __init__(self, client_mode: bool):
         self._fragment_size = Constants.MAX_SIZE_FRAGMENT

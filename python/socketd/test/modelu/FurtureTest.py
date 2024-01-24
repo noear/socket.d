@@ -1,4 +1,5 @@
 import asyncio
+import functools
 import sys
 import time
 
@@ -9,6 +10,7 @@ from socketd.transport.utils.AsyncUtil import AsyncUtil
 from loguru import logger
 
 from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
+from test.uitls import calc_async_time
 
 
 class FutureTest(unittest.TestCase):
@@ -141,4 +143,36 @@ class FutureTest(unittest.TestCase):
             logger.info(f"运行结束 {await num.get()}")
 
         asyncio.run(main())
+
+    def test_task(self):
+        async def function_A():
+            print("Function A started at", time.strftime('%X'))
+            await asyncio.sleep(1)
+            print("Function A ended at", time.strftime('%X'))
+
+        async def function_B():
+            print("Function B started at", time.strftime('%X'))
+            await asyncio.sleep(3)
+            print("Function B ended at", time.strftime('%X'))
+
+        @calc_async_time
+        async def main():
+            # 启动两个函数的协程
+            task_A = asyncio.create_task(function_A())
+            task_B = asyncio.create_task(function_B())
+            print(" await ...")
+            # 等待两个函数完成
+            await task_A
+            await task_B
+        asyncio.run(main())
+
+    def test_warp(self):
+
+        async def get(data):
+            print(data)
+
+        async def _main(func):
+            await func(1)
+
+        asyncio.run(_main(get))
 

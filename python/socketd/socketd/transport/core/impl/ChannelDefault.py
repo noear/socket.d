@@ -7,7 +7,7 @@ from websockets import WebSocketCommonProtocol
 from socketd.transport.core import Entity
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
-from socketd.transport.core.Message import MessageInternal
+from socketd.transport.core.Message import MessageInternal, Message
 from socketd.transport.core.Processor import Processor
 from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
@@ -51,7 +51,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
             logger.debug(f"S-SEN:{frame}")
         with self:
             if frame.get_message() is not None:
-                message = frame.get_message()
+                message: Message = frame.get_message()
                 # 注册流接收器
                 if stream is not None:
                     self._streamManger.add_stream(message.get_sid(), stream)

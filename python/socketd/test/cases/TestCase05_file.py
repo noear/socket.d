@@ -77,7 +77,7 @@ class TestCase05_file(BaseTestCase):
         try:
             with open(r"C:\Users\bai\Pictures\飞书20230728-180708.mp4",
                       "rb") as f:
-                await self.client_session.send("/path?u=a&p=2", FileEntity(f.read(), "test.png"))
+                await self.client_session.send("/path?u=a&p=2", FileEntity(f, "test.png"))
         except Exception as e:
             logger.error(e)
             raise e

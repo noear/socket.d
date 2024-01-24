@@ -1,8 +1,11 @@
-from io import BytesIO
+import os
+
+from io import BytesIO, TextIOWrapper, BufferedReader
 from typing import Any
 
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.Costants import Constants
+from loguru import logger
 
 
 class EntityDefault(Entity):
@@ -10,7 +13,7 @@ class EntityDefault(Entity):
         self.meta_map = None
         self.meta_string = Constants.DEF_META_STRING
         self.meta_stringChanged = False
-        self.data: BytesIO = Constants.DEF_DATA
+        self.data: BytesIO | TextIOWrapper = Constants.DEF_DATA
         self.data_size = 0
 
     def set_meta_string(self, meta_string):
@@ -65,10 +68,15 @@ class EntityDefault(Entity):
             return data
         return default_val
 
-    def set_data(self, data: bytes | bytearray | memoryview | BytesIO):
-        if type(data) == BytesIO:
+    def set_data(self, data: bytes | bytearray | memoryview | BytesIO | BufferedReader):
+        _type = type(data)
+        if _type == BytesIO:
             self.data = data
             self.data_size = len(data.getvalue())
+        elif _type == BufferedReader:
+            self.data = data
+            self.data_size = data.seek(0, os.SEEK_END)
+            data.seek(0)
         else:
             self.data = BytesIO(data)
             self.data_size = len(data)
@@ -88,5 +96,3 @@ class EntityDefault(Entity):
 
     def __str__(self):
         return f"Entity(meta='{self.get_meta_string()}', data=byte[{self.data_size}])"
-
-

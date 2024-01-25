@@ -23,7 +23,7 @@ def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | Client
     config.set_is_thread(True)
     config.set_idle_timeout(10)
     config.set_logger_level("DEBUG")
-    config.id_generator(uuid.uuid4)
+    config.id_generator(lambda: str(uuid.uuid4()))
     return config
 
 
@@ -111,6 +111,7 @@ class TestCase11_sendAndRequest2rep(BaseTestCase):
 
     def start(self):
         super().start()
+        self.loop.set_debug(True)
         self.loop.run_until_complete(self._start())
 
     async def _stop(self):

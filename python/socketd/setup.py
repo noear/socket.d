@@ -1,11 +1,10 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*_
-from distutils.core import setup
 import setuptools
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-setup(
+setuptools.setup(
     name='socketD',  # 包的名字
     version='0.0.1',  # 版本号
     description=long_description,  # 描述
@@ -30,5 +29,5 @@ setup(
         'Topic :: Software Development :: Libraries'
     ],
     zip_safe=True,
-    python_requires='>=3.10',
+    python_requires='>=3.10', # 建议使用3.12及以上
 )

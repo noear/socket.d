@@ -69,10 +69,10 @@ class ConfigBase(Config, ABC):
         self._fragmentHandler = fragmentHandler
         return self
 
-    def get_id_generator(self) -> Callable[[None], Any]:
+    def get_id_generator(self) -> Callable[[], Any]:
         return self._idGenerator
 
-    def id_generator(self, _idGenerator: Callable[[None], Any]):
+    def id_generator(self, _idGenerator: Callable[[], Any]):
         # assert _idGenerator is None
         self._idGenerator = _idGenerator
         return self

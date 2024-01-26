@@ -96,8 +96,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 return
             # frame: Frame = self.client.get_assistant().read(message)
             frame: Frame = await _loop.run_in_executor(None,
-                                                             lambda _message: self.client.get_assistant().read(_message),
-                                                             message)
+                                                       lambda _message: self.client.get_assistant().read(_message),
+                                                       message)
             if frame is not None:
                 self.status_state = frame.get_flag()
                 if frame.get_flag() == Flag.Connack:

@@ -1,6 +1,6 @@
 import logging
 
-from socketd.transport.stream.StreamManger import StreamManger
+from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
 
 logger = logging.getLogger(__name__)
 
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class StreamMangerDefault(StreamManger):
     def __init__(self, config):
         self.config = config
-        self.stream_map = {}
+        self.stream_map:[str, StreamInternal] = {}
 
     def get_stream(self, sid):
         return self.stream_map.get(sid)
@@ -26,7 +26,7 @@ class StreamMangerDefault(StreamManger):
             stream.insurance_start(self, stream_timeout)
 
     def remove_stream(self, sid):
-        stream = self.stream_map.pop(sid, None)
+        stream: StreamInternal = self.stream_map.pop(sid, None)
         if stream:
             stream.insurance_cancel()
             logger.debug(f"{self.config.get_role_name()} stream removed, sid={sid}")

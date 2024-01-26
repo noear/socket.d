@@ -162,8 +162,7 @@ class FutureTest(unittest.TestCase):
             task_B = asyncio.create_task(function_B())
             print(" await ...")
             # 等待两个函数完成
-            await task_A
-            await task_B
+            await asyncio.gather(task_A, task_B)
         asyncio.run(main())
 
     def test_warp(self):

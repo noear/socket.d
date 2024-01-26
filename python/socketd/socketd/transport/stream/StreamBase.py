@@ -11,6 +11,7 @@ class StreamBase(StreamInternal, ABC):
     """流接收器基类"""
 
     def __init__(self, sid: str, demands: int, timeout: int):
+        self.__onError: Callable[[Exception], None] = None
         self.__sid = sid
         self.__timeout = timeout
         self.__demands = demands
@@ -49,8 +50,8 @@ class StreamBase(StreamInternal, ABC):
             streamManger.remove_stream(self.__sid)
             self.on_error(SocketDTimeoutException(f"The stream response timeout, sid={self.__sid}"))
 
-        self.__insuranceFuture = asyncio.create_task(__insuranceFuture())
-        asyncio.run_coroutine_threadsafe(self.__insuranceFuture, asyncio.get_running_loop())
+        self.__insuranceFuture = CompletableFuture(__insuranceFuture())
+        asyncio.run_coroutine_threadsafe(self.__insuranceFuture.get(streamTimeout), asyncio.get_running_loop())
 
     def insurance_cancel(self) -> None:
         if self.__insuranceFuture:

@@ -37,7 +37,7 @@ class ConfigBase(Config, ABC):
         self._max_udp_size = 2048
         # ws最大传输大小
         # socket.d 分片最小16m
-        self._ws_max_size = 2 ** 20 * 17
+        self._ws_max_size = (2 << 19) * 17
         self.__is_thread = False
 
         self.__logger_level = "INFO"

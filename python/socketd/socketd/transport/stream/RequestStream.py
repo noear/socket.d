@@ -1,7 +1,7 @@
 import asyncio
 from typing import Callable
 
-from socketd.exception.SocketdExecption import SocketDTimeoutException, SocketDException
+from socketd.exception.SocketDExecption import SocketDTimeoutException, SocketDException
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Entity import Reply
 from socketd.transport.stream.StreamBase import StreamBase

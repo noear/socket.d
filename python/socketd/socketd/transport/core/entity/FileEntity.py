@@ -1,7 +1,7 @@
 from io import BufferedReader
 from typing import BinaryIO
 
-from socketd.exception.SocketdExecption import SocketDCodecException
+from socketd.exception.SocketDExecption import SocketDCodecException
 from socketd.transport.core.Costants import EntityMetas
 from socketd.transport.core.entity.EntityDefault import EntityDefault
 

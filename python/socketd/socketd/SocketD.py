@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from urllib.parse import urlparse
 
-from socketd.exception.SocketdExecption import SocketDException
+from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientFactory import ClientFactory

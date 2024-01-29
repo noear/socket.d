@@ -3,7 +3,7 @@ from typing import Optional, Union
 
 from loguru import logger
 
-from socketd.exception.SocketdExecption import SocketDAlarmException
+from socketd.exception.SocketDExecption import SocketDAlarmException
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Message import Message

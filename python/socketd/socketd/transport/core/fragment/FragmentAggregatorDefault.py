@@ -6,7 +6,7 @@ from socketd.transport.core.Message import Message, MessageInternal
 from socketd.transport.core.Costants import EntityMetas
 from socketd.transport.core.fragment.FragmentAggregator import FragmentAggregator
 from socketd.transport.core.entity.MessageDefault import MessageDefault
-from socketd.exception.SocketdExecption import SocketDException
+from socketd.exception.SocketDExecption import SocketDException
 
 from .FragmentHolder import FragmentHolder
 

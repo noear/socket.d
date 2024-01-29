@@ -5,7 +5,7 @@ from loguru import logger
 from websockets.extensions import ClientExtensionFactory
 from websockets.uri import WebSocketURI
 
-from socketd.exception.SocketdExecption import SocketDConnectionException
+from socketd.exception.SocketDExecption import SocketDConnectionException
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike, ConnectionClosedOK

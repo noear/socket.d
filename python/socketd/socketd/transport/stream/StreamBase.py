@@ -2,7 +2,7 @@ import asyncio
 from abc import ABC
 from typing import Callable, Optional
 
-from socketd.exception.SocketdExecption import SocketDTimeoutException
+from socketd.exception.SocketDExecption import SocketDTimeoutException
 from socketd.transport.stream.StreamManger import StreamInternal, StreamManger
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 

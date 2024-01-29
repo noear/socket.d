@@ -11,6 +11,7 @@ class StreamBase(StreamInternal, ABC):
     """流接收器基类"""
 
     def __init__(self, sid: str, demands: int, timeout: int):
+        self.__onError: Callable[[Exception], None] = None
         self.__sid = sid
         self.__timeout = timeout
         self.__demands = demands

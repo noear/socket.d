@@ -18,10 +18,10 @@ class CompletableFuture(Generic[T]):
         self._lock = Lock()
 
     def get(self, timeout):
-        async def _get():
-            await asyncio.wait_for(self._future, timeout)
-            return self._future.result()
-
+        with self._lock:
+            async def _get():
+                await asyncio.wait_for(self._future, timeout)
+                return self._future.result()
         return _get()
 
     def accept(self, result: T):
@@ -46,9 +46,10 @@ class CompletableFuture(Generic[T]):
         except Exception as e:
             await callback(self._future.result(), e)
 
-    def set_result(self, t: T):
+    async def set_result(self, t: T):
         with self._lock:
             self._future.set_result(t)
+        await self._future
 
     def set_e(self, e: Exception):
         self._future.set_exception(e)

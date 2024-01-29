@@ -2,7 +2,7 @@ import asyncio
 from threading import Thread
 from typing import Optional, Union
 
-from websockets import ConnectionClosedError
+from websockets import ConnectionClosedError, ConnectionClosedOK
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
@@ -84,6 +84,9 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                         break
             except asyncio.CancelledError as c:
                 logger.warning(c)
+                break
+            except ConnectionClosedOK as e:
+                # received 1000 (OK); then sent 1000 (OK) 或者 1001  成功直接忽略
                 break
             except ConnectionClosedError as e:
                 # 客户端异常关闭

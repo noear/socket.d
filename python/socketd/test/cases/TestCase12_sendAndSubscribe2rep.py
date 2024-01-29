@@ -109,7 +109,7 @@ class TestCase12_sendAndSubscribe2rep(BaseTestCase):
 
         req: SubscribeStream = await self.client_session.send_and_subscribe("demo", StringEntity("hi"), 100)
         req.then_reply(send_and_subscribe_test)
-        await asyncio.sleep(1)
+        await asyncio.sleep(3)
 
     def start(self):
         super().start()

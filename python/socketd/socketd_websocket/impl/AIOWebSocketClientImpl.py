@@ -8,7 +8,7 @@ from websockets.uri import WebSocketURI
 from socketd.exception.SocketdExecption import SocketDConnectionException
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
-from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
+from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike, ConnectionClosedOK
 
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.Frame import Frame
@@ -96,8 +96,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 return
             # frame: Frame = self.client.get_assistant().read(message)
             frame: Frame = await _loop.run_in_executor(None,
-                                                             lambda _message: self.client.get_assistant().read(_message),
-                                                             message)
+                                                       lambda _message: self.client.get_assistant().read(_message),
+                                                       message)
             if frame is not None:
                 self.status_state = frame.get_flag()
                 if frame.get_flag() == Flag.Connack:
@@ -122,9 +122,10 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         except SocketDConnectionException as s:
             self.handshake_future.accept(ClientHandshakeResult(self.channel, s))
             logger.warning(s)
+        except ConnectionClosedOK as e:
+            pass
         except Exception as e:
             self.on_error(e)
-            raise e
 
     def on_close(self):
         self.client.get_processor().on_close(self.channel)

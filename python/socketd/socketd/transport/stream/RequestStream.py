@@ -25,11 +25,13 @@ class RequestStream(StreamBase):
         except Exception as _e:
             raise SocketDException(f"Request failed, sid= sid={self.get_sid()} {str(_e)}")
 
-    def await_result(self):
-        return self.__await__()
+    async def await_result(self):
+        if self._future.done():
+            return self._future.get_result()
+        return await self.__await__()
 
     async def on_reply(self, message: Reply):
-        return self._future.set_result(message)
+        return await self._future.set_result(message)
 
     def then_reply(self, onReply: Callable[[Reply], None]):
         self._future.then_callback(onReply)

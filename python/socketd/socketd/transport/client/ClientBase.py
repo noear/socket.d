@@ -6,6 +6,7 @@ from socketd.transport.client.ClientChannel import ClientChannel
 from socketd.transport.client.ClientConnector import ClientConnector
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Session import Session
+from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.impl.SessionDefault import SessionDefault
@@ -24,7 +25,7 @@ class ClientBase(ClientInternal, ABC):
     def get_assistant(self):
         return self._assistant
 
-    def get_heartbeatInterval(self):
+    def get_heartbeatInterval(self) -> int:
         return self._config.get_heartbeat_interval()
 
     def get_processor(self):
@@ -35,7 +36,7 @@ class ClientBase(ClientInternal, ABC):
             self._heartbeat_handler = handler
         return self
 
-    def get_heartbeatHandler(self):
+    def get_heartbeatHandler(self) -> HeartbeatHandler:
         return self._heartbeat_handler
 
     def get_config(self):
@@ -63,6 +64,9 @@ class ClientBase(ClientInternal, ABC):
         channel0.set_session(session)
         logger.info(f"Socket.D client successfully connected: {self._config.get_link_url()}")
         return session
+
+    async def openOrThow(self) -> Session:
+        ...
 
     @abstractmethod
     def create_connector(self):

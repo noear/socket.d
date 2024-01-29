@@ -1,3 +1,8 @@
+### 2024-01-29:
+* 增加 ClientSession 接口，客户端连接输出此类型
+* 增加 实现"集群"客户端
+* 增加 ClientBase::openOrThow 实现（包括 open 的，这块机制在 java 那儿有大调整）
+
 ### 2024-01-20:
 
 * 把 SocketDAlarmException 用起来，它是由对端传过来的异常（是协议的一部分）

@@ -90,7 +90,8 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
                 ", coreThreads=" + coreThreads +
                 ", maxThreads=" + maxThreads +
                 ", idleTimeout=" + idleTimeout +
-                ", replyTimeout=" + requestTimeout +
+                ", requestTimeout=" + requestTimeout +
+                ", streamTimeout=" + streamTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
                 ", maxUdpSize=" + maxUdpSize +

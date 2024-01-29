@@ -4,6 +4,7 @@ import type {WsClient} from "./WsClient";
 import {
     SdWebSocket,
     SdWebSocketCloseEvent,
+    SdWebSocketErrorEvent,
     SdWebSocketEvent,
     SdWebSocketListener,
     SdWebSocketMessageEvent
@@ -111,9 +112,9 @@ export class WebSocketClientImpl implements SdWebSocketListener {
         this._client.getProcessor().onClose(this._channel);
     }
 
-    onError(e) {
-        this.handshakeFutureDo(e);
-        this._client.getProcessor().onError(this._channel, e);
+    onError(e: SdWebSocketErrorEvent) {
+        this.handshakeFutureDo(e.error());
+        this._client.getProcessor().onError(this._channel, e.error());
     }
 
     private handshakeFutureDo(e) {

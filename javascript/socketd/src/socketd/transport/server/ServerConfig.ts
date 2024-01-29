@@ -79,7 +79,8 @@ export class ServerConfig extends ConfigBase {
             ", coreThreads=" + this._coreThreads +
             ", maxThreads=" + this._maxThreads +
             ", idleTimeout=" + this._idleTimeout +
-            ", replyTimeout=" + this._requestTimeout +
+            ", requestTimeout=" + this._requestTimeout +
+            ", streamTimeout=" + this._streamTimeout +
             ", readBufferSize=" + this._readBufferSize +
             ", writeBufferSize=" + this._writeBufferSize +
             ", maxUdpSize=" + this._maxUdpSize +

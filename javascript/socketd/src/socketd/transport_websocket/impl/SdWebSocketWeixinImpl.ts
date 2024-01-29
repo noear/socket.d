@@ -3,7 +3,9 @@ import {
     SdWebSocketListener,
     SdWebSocketEventImpl,
     SdWebSocketMessageEventImpl,
-    SdWebSocketCloseEventImpl, SdWebSocketState
+    SdWebSocketCloseEventImpl,
+    SdWebSocketState,
+    SdWebSocketErrorEventImpl
 } from "./SdWebSocket";
 
 export class SdWebSocketWeixinImpl implements SdWebSocket {
@@ -24,6 +26,14 @@ export class SdWebSocketWeixinImpl implements SdWebSocket {
         this._real.onError(this.onError.bind(this));
     }
 
+    private _attachment:any;
+    attachment() {
+        return this._attachment;
+    }
+    attachmentPut(data: any) {
+        this._attachment = data;
+    }
+
     isConnecting(): boolean {
         return this._state == SdWebSocketState.CONNECTING;
     }
@@ -41,24 +51,25 @@ export class SdWebSocketWeixinImpl implements SdWebSocket {
     }
 
     onOpen(e: Event) {
-        let evt = new SdWebSocketEventImpl();
+        let evt = new SdWebSocketEventImpl(this);
         this._state = SdWebSocketState.OPEN;
         this._listener.onOpen(evt);
     }
 
     onMessage(e: MessageEvent) {
-        let evt = new SdWebSocketMessageEventImpl(e.data);
+        let evt = new SdWebSocketMessageEventImpl(this, e.data);
         this._listener.onMessage(evt);
     }
 
     onClose(e: CloseEvent) {
-        let evt = new SdWebSocketCloseEventImpl();
+        let evt = new SdWebSocketCloseEventImpl(this);
         this._state = SdWebSocketState.CLOSED;
         this._listener.onClose(evt);
     }
 
     onError(e) {
-        this._listener.onError(e);
+        let evt = new SdWebSocketErrorEventImpl(this, e);
+        this._listener.onError(evt);
     }
 
     close(): void {

@@ -1,25 +1,26 @@
+
 import {
     SdWebSocket,
     SdWebSocketListener,
-    SdWebSocketEventImpl,
-    SdWebSocketMessageEventImpl,
     SdWebSocketCloseEventImpl,
-    SdWebSocketErrorEventImpl
+    SdWebSocketEventImpl,
+    SdWebSocketMessageEventImpl, SdWebSocketErrorEventImpl
 } from "./SdWebSocket";
+import NodeWebSocket from 'ws';
 
-export class SdWebSocketBrowserImpl implements SdWebSocket {
-    private _real: WebSocket;
+export class SdWebSocketNodeJs implements SdWebSocket {
+    private _real: NodeWebSocket;
     private _listener: SdWebSocketListener;
 
-    constructor(url: string, listener: SdWebSocketListener) {
-        this._real = new WebSocket(url);
+    constructor(real: NodeWebSocket, listener: SdWebSocketListener) {
+        this._real = real;
         this._listener = listener;
         this._real.binaryType = "arraybuffer";
 
-        this._real.onopen = this.onOpen.bind(this);
-        this._real.onmessage = this.onMessage.bind(this);
-        this._real.onclose = this.onClose.bind(this);
-        this._real.onerror = this.onError.bind(this);
+        this._real.on('open', this.onOpen.bind(this));
+        this._real.on('message', this.onMessage.bind(this));
+        this._real.on('close', this.onClose.bind(this));
+        this._real.on('error', this.onError.bind(this));
     }
 
     private _attachment: any;
@@ -32,33 +33,33 @@ export class SdWebSocketBrowserImpl implements SdWebSocket {
         this._attachment = data;
     }
 
-    isConnecting(): boolean {
-        return this._real.readyState == WebSocket.CONNECTING;
-    }
-
     isClosed(): boolean {
-        return this._real.readyState == WebSocket.CLOSED;
+        return this._real.readyState == NodeWebSocket.CLOSED;
     }
 
     isClosing(): boolean {
-        return this._real.readyState == WebSocket.CLOSING;
+        return this._real.readyState == NodeWebSocket.CLOSING;
+    }
+
+    isConnecting(): boolean {
+        return this._real.readyState == NodeWebSocket.CONNECTING;
     }
 
     isOpen(): boolean {
-        return this._real.readyState == WebSocket.OPEN;
+        return this._real.readyState == NodeWebSocket.OPEN;
     }
 
-    onOpen(e: Event) {
+    onOpen() {
         let evt = new SdWebSocketEventImpl(this);
         this._listener.onOpen(evt);
     }
 
-    onMessage(e: MessageEvent) {
-        let evt = new SdWebSocketMessageEventImpl(this, e.data);
+    onMessage(msg) {
+        let evt = new SdWebSocketMessageEventImpl(this, msg);
         this._listener.onMessage(evt);
     }
 
-    onClose(e: CloseEvent) {
+    onClose() {
         let evt = new SdWebSocketCloseEventImpl(this);
         this._listener.onClose(evt);
     }

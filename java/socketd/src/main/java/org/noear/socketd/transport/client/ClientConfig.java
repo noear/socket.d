@@ -172,6 +172,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
                 ", connectTimeout=" + connectTimeout +
                 ", idleTimeout=" + idleTimeout +
                 ", requestTimeout=" + requestTimeout +
+                ", streamTimeout=" + streamTimeout +
                 ", readBufferSize=" + readBufferSize +
                 ", writeBufferSize=" + writeBufferSize +
                 ", autoReconnect=" + autoReconnect +

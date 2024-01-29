@@ -82,14 +82,14 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def get_reply_timeout(self) -> int:
+    def get_read_buffer_size(self) -> int:
         """
         返回答复超时时间（单位：毫秒）。
         """
         ...
 
     @abstractmethod
-    def get_max_requests(self) -> int:
+    def get_write_buffer_size(self) -> int:
         """
         返回允许的最大请求数。
         """

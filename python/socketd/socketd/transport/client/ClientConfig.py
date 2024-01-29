@@ -18,11 +18,9 @@ class ClientConfig(ConfigBase):
         if self.__port is None:
             self.__port = 8602
 
-        self.__connect_timeout = 3000
-        self.__heartbeat_interval = 20 * 1000
+        self.__connect_timeout = 10_000
+        self.__heartbeat_interval = 20_000
         self.__auto_reconnect = True
-        self.__read_buffer_size = None
-        self.__write_buffer_size = None
 
     def get_schema(self):
         return self.__schema
@@ -53,19 +51,6 @@ class ClientConfig(ConfigBase):
         self.__connect_timeout = __connect_timeout
         return self
 
-    def get_read_buffer_size(self):
-        return self.__read_buffer_size
-
-    def read_buffer_size(self, __read_buffer_size):
-        self.__read_buffer_size = __read_buffer_size
-        return self
-
-    def get_write_buffer_size(self):
-        return self.__write_buffer_size
-
-    def write_buffer_size(self, __write_buffer_size):
-        self.__write_buffer_size = __write_buffer_size
-        return self
 
     def is_auto_reconnect(self):
         return self.__auto_reconnect
@@ -81,8 +66,8 @@ class ClientConfig(ConfigBase):
         return f"ClientConfig{{__schema='{self.__schema}', __url='{self.__url}', " \
                f"heartbeatInterval={self.__heartbeat_interval}, " \
                f"connectTimeout={self.__connect_timeout}, " \
-               f"readBufferSize={self.__read_buffer_size}, " \
-               f"writeBufferSize={self.__write_buffer_size}, " \
+               f"readBufferSize={self._read_buffer_size}, " \
+               f"writeBufferSize={self._write_buffer_size}, " \
                f"autoReconnect={self.__auto_reconnect}, " \
                f"maxRequests={self._max_requests}, " \
                f"maxUdpSize={self._max_udp_size}}}"

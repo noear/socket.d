@@ -19,26 +19,35 @@ from socketd.transport.stream.StreamMangerDefault import StreamMangerDefault
 class ConfigBase(Config, ABC):
 
     def __init__(self, client_mode: bool):
-        self._fragment_size = Constants.MAX_SIZE_FRAGMENT
         self._client_mode = client_mode
-        self._charset = "utf-8"
+        self._streamManger: Optional[StreamManger] = StreamMangerDefault(self)
         self._codec: Codec = CodecByteBuffer(self)
+
+        self._charset = "utf-8"
+
         self._idGenerator: Callable = None
         self._fragmentHandler: FragmentHandlerDefault = FragmentHandlerDefault()
+        self._fragment_size = Constants.MAX_SIZE_FRAGMENT
+
+        self._core_threads = os.cpu_count() * 2
+        self._max_threads = self._core_threads * 4
+
+        self._read_buffer_size = 512
+        self._write_buffer_size = 512
+
         self._sslContext = None
         self._executor = None
-        self._core_threads = os.cpu_count() * 2
-        self._max_threads = self._core_threads * 8
+
         self._idle_timeout = 60
-        self._reply_timeout = 3000
-        self._stream_timeout = 1000 * 60 * 60 * 2
         self._request_timeout = 10_000
+        self._stream_timeout = 1000 * 60 * 60 * 2
+
+
         self._max_requests = 10
         self._max_udp_size = 2048
         self.__is_thread = False
 
         self.__logger_level = "INFO"
-        self._streamManger: Optional[StreamManger] = StreamMangerDefault(self)
 
     def client_mode(self):
         return self._client_mode
@@ -110,22 +119,20 @@ class ConfigBase(Config, ABC):
         self._max_threads = max_threads
         return self
 
-    def get_reply_timeout(self):
-        return self._reply_timeout
+    def get_read_buffer_size(self) -> int:
+        return self._get_read_buffer_size
 
-    def reply_timeout(self, reply_timeout):
-        self._reply_timeout = reply_timeout
+    def read_buffer_size(self, read_buffer_size):
+        self._read_buffer_size = read_buffer_size
         return self
 
-    def get_max_requests(self):
-        return self._max_requests
 
-    def max_requests(self, max_requests):
-        self._max_requests = max_requests
+    def get_write_buffer_size(self) -> int:
+        return self._get_write_buffer_size
+
+    def write_buffer_size(self, write_buffer_size):
+        self._write_buffer_size = write_buffer_size
         return self
-
-    def get_max_udp_size(self):
-        return self._max_udp_size
 
     def max_udp_size(self, maxUdpSize):
         self._max_udp_size = maxUdpSize

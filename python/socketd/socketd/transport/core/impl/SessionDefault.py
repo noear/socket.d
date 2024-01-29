@@ -50,7 +50,7 @@ class SessionDefault(SessionBase, ABC):
                                timeout: int = 100) -> RequestStream:
 
         if timeout < 100:
-            timeout = self._channel.get_config().get_reply_timeout()
+            timeout = self._channel.get_config().get_request_timeout()
         message = MessageDefault().set_sid(self.generate_id()).set_event(event).set_entity(content)
         stream = RequestStream(message.get_sid(), timeout)
         await self._channel.send(Frame(Flag.Request, message), stream)

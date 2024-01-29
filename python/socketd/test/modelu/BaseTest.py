@@ -32,7 +32,7 @@ class BaseTest:
         return _config
 
     async def start(self):
-        self.__server: Server = SocketD.create_server(ServerConfig("ws").set_port(9999))
+        self.__server: Server = SocketD.create_server(ServerConfig("ws").port(9999))
         self.__server_session: WebSocketServer = await self.__server.config(self.s_config).listen(
             SimpleListenerTest()).start()
 

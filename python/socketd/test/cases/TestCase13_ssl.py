@@ -41,7 +41,7 @@ class TestCase13_ssl(BaseTestCase):
 
     async def _start(self):
         s = SimpleListenerTest()
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
+        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
 
         def s_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
             config.idle_timeout(10)

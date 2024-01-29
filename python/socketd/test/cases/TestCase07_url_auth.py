@@ -54,7 +54,7 @@ class TestCase07_url_auth(BaseTestCase):
 
     async def _start(self):
         s = SimpleListenerTest()
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
+        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
         self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
             s).start()
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?auth=root"

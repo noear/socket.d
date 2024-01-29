@@ -14,13 +14,14 @@ class ServerConfig(ConfigBase):
     def get_host(self):
         return self.__host
 
-    def set_host(self, host):
+    def host(self, host):
         self.__host = host
+        return self;
 
     def get_port(self):
         return self.__port
 
-    def set_port(self, port):
+    def port(self, port):
         self.__port = port
         return self
 

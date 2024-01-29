@@ -23,7 +23,7 @@ class TestCase09_clientCloseReconnect(BaseTestCase):
         self.loop = asyncio.get_event_loop()
 
     async def _start(self):
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
+        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
         _simple = SimpleListenerTest()
         _server = self.server.config(config_handler).listen(_simple)
         self.server_session: WebSocketServer = await _server.start()

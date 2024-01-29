@@ -62,7 +62,7 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
         self._simple = SimpleListenerTest()
 
     async def _start(self):
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).set_port(self.port))
+        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
         _server = self.server.config(config_handler).listen(self._simple)
         self.server_session: WebSocketServer = await _server.start()
 

@@ -22,7 +22,7 @@ def idGenerator(config):
 
 @calc_async_time
 async def application_test():
-    server: Server = SocketD.create_server(ServerConfig("ws").set_port(9999))
+    server: Server = SocketD.create_server(ServerConfig("ws").port(9999))
     server_session: WebSocketServer = await server.config(idGenerator).listen(
         SimpleListenerTest()).start()
     await asyncio.sleep(1)

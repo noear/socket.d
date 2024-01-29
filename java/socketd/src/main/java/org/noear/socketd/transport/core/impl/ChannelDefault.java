@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 
 /**
@@ -79,7 +79,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return assistant.getLocalAddress(source);
     }
 
-    private Object SEND_LOCK = new Object();
+    private ReentrantLock SEND_LOCK = new ReentrantLock();
 
     /**
      * 发送
@@ -96,7 +96,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        synchronized (SEND_LOCK) {
+        SEND_LOCK.lock();
+        try {
             if (frame.message() != null) {
                 MessageInternal message = frame.message();
 
@@ -138,6 +139,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             if (stream != null) {
                 stream.onProgress(true, 1, 1);
             }
+        } finally {
+            SEND_LOCK.unlock();
         }
     }
 

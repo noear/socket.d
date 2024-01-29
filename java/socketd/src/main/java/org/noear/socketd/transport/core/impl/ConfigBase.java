@@ -12,6 +12,7 @@ import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 配置基类
@@ -228,12 +229,13 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
-    private Object EXECUTOR_LOCK = new Object();
+    private ReentrantLock EXECUTOR_LOCK = new ReentrantLock();
 
     @Override
     public ExecutorService getChannelExecutor() {
         if (channelExecutor == null) {
-            synchronized (EXECUTOR_LOCK) {
+            EXECUTOR_LOCK.lock();
+            try {
                 if (channelExecutor == null) {
                     int nThreads = clientMode() ? coreThreads : maxThreads;
 
@@ -242,6 +244,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
                             new LinkedBlockingQueue<Runnable>(),
                             new NamedThreadFactory("Socketd-channelExecutor-"));
                 }
+            } finally {
+                EXECUTOR_LOCK.unlock();
             }
         }
 

@@ -63,11 +63,15 @@ class ClientConfig(ConfigBase):
         return self.__link_uri
 
     def __str__(self):
-        return f"ClientConfig{{__schema='{self.__schema}', __url='{self.__url}', " \
+        return f"ClientConfig{{schema='{self.__schema}', " \
+               f"charset='{self._charset}', " \
+               f"url='{self.__url}', " \
                f"heartbeatInterval={self.__heartbeat_interval}, " \
                f"connectTimeout={self.__connect_timeout}, " \
+               f"idleTimeout={self._idle_timeout}, "\
+               f"requestTimeout={self._request_timeout}, " \
+               f"streamTimeout={self._stream_timeout}, " \
                f"readBufferSize={self._read_buffer_size}, " \
                f"writeBufferSize={self._write_buffer_size}, " \
                f"autoReconnect={self.__auto_reconnect}, " \
-               f"maxRequests={self._max_requests}, " \
                f"maxUdpSize={self._max_udp_size}}}"

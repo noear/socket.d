@@ -9,9 +9,14 @@ import {SocketD} from "../SocketD";
 import NodeWebSocket from 'ws';
 import {ChannelDefault} from "../transport/core/ChannelDefault";
 import {SdWebSocketNodeJs} from "./impl/SdWebSocketNodeJs";
+import {ServerConfig} from "../transport/server/ServerConfig";
 
 export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelSupporter<SdWebSocket> {
     private _server: NodeWebSocket.Server;
+
+    constructor(config: ServerConfig) {
+        super(config, new WsChannelAssistant(config));
+    }
 
     getTitle(): string {
         return "ws/js-websocket/v" + SocketD.version();

@@ -82,6 +82,8 @@ class Constants:
     MAX_SIZE_META_STRING = 4096
     # 分片大小限制
     MAX_SIZE_FRAGMENT = 1024 * 1024 * 16
+    # 帧长度最大限制
+    MAX_SIZE_FRAME = 1024 * 1024 * 17
 
     THEAD_POOL_SIZE = 10
     # 单需求

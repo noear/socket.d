@@ -21,9 +21,9 @@ from loguru import logger
 
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
-    config.set_is_thread(True)
-    config.set_idle_timeout(10)
-    config.set_logger_level("DEBUG")
+    config.is_thread(True)
+    config.idle_timeout(10)
+    config.logger_level("DEBUG")
     config.id_generator(lambda: str(uuid.uuid4()))
     return config
 

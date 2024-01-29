@@ -46,8 +46,8 @@ class SimpleListenerTest(Listener, ABC):
 
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
-    config.set_is_thread(False)
-    config.set_idle_timeout(10)
+    config.is_thread(False)
+    config.idle_timeout(10)
     # config.set_logger_level("DEBUG")
     config.id_generator(uuid.uuid4)
     return config

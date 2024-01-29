@@ -17,8 +17,8 @@ from loguru import logger
 
 
 def c_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
-    config.set_is_thread(True)
-    config.set_idle_timeout(10)
+    config.is_thread(True)
+    config.idle_timeout(10)
     config.auto_reconnect(False)
     # config.set_logger_level("DEBUG")
     config.id_generator(uuid.uuid4)

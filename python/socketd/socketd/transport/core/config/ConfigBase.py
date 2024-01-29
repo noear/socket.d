@@ -35,9 +35,6 @@ class ConfigBase(Config, ABC):
         self._request_timeout = 10_000
         self._max_requests = 10
         self._max_udp_size = 2048
-        # ws最大传输大小
-        # socket.d 分片最小16m
-        self._ws_max_size = (2 << 19) * 17
         self.__is_thread = False
 
         self.__logger_level = "INFO"
@@ -45,6 +42,12 @@ class ConfigBase(Config, ABC):
 
     def client_mode(self):
         return self._client_mode
+
+    def get_stream_manger(self) -> StreamManger:
+        return self._streamManger
+
+    def get_role_name(self) -> str:
+        return "Client" if self.client_mode() else "Server"
 
     def get_charset(self):
         return self._charset
@@ -89,74 +92,65 @@ class ConfigBase(Config, ABC):
             self._executor = ThreadPoolExecutor(max_workers=__nThreads, thread_name_prefix="socketd-channelExecutor-")
         return self._executor
 
-    def set_executor(self, executor):
+    def executor(self, executor):
         self._executor = executor
         return self
 
     def get_core_threads(self):
         return self._core_threads
 
-    def set_core_threads(self, core_threads):
+    def core_threads(self, core_threads):
         self._core_threads = core_threads
         return self
 
     def get_max_threads(self):
         return self._max_threads
 
-    def set_max_threads(self, max_threads):
+    def max_threads(self, max_threads):
         self._max_threads = max_threads
         return self
 
     def get_reply_timeout(self):
         return self._reply_timeout
 
-    def set_reply_timeout(self, reply_timeout):
+    def reply_timeout(self, reply_timeout):
         self._reply_timeout = reply_timeout
         return self
 
     def get_max_requests(self):
         return self._max_requests
 
-    def set_max_requests(self, max_requests):
+    def max_requests(self, max_requests):
         self._max_requests = max_requests
         return self
 
     def get_max_udp_size(self):
         return self._max_udp_size
 
-    def set_max_udp_size(self, maxUdpSize):
+    def max_udp_size(self, maxUdpSize):
         self._max_udp_size = maxUdpSize
         return self
 
     def get_request_timeout(self) -> float:
         return self._request_timeout
 
-    def set_request_timeout(self, _request_time_out):
+    def request_timeout(self, _request_time_out):
         self._request_timeout = _request_time_out
         return self
 
     def get_stream_timeout(self) -> float:
         return self._stream_timeout
 
-    def set_stream_timeout(self, _stream_timeout):
+    def stream_timeout(self, _stream_timeout):
         self._stream_timeout = _stream_timeout
         return self
 
-    def set_is_thread(self, _is_thread):
+    def is_thread(self, _is_thread):
         self.__is_thread = _is_thread
+        return self
 
     def get_is_thread(self):
         return self.__is_thread
-
-    def get_ws_max_size(self):
-        return self._ws_max_size
-
-    def set_ws_max_size(self, _max_size):
-        self._ws_max_size = _max_size
-        return self
-
-    def get_role_name(self) -> str:
-        return "Client" if self.client_mode() else "Server"
 
     def get_fragment_size(self) -> int:
         return self._fragment_size
@@ -164,16 +158,17 @@ class ConfigBase(Config, ABC):
     def get_idle_timeout(self) -> float:
         return self._idle_timeout
 
-    def set_idle_timeout(self, _idle_timeout: float):
+    def idle_timeout(self, _idle_timeout: float):
         self._idle_timeout = _idle_timeout
+        return self
 
     def get_logger_level(self) -> str:
         return self.__logger_level
 
-    def set_logger_level(self, __logger_level: str):
+    def logger_level(self, __logger_level: str):
         self.__logger_level = __logger_level
         logger.setLevel(__logger_level)
+        return self
 
-    def get_stream_manger(self) -> StreamManger:
-        return self._streamManger
+
 

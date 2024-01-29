@@ -6,6 +6,7 @@ from websockets.client import WebSocketClientProtocol
 from socketd.transport.client.Client import Client, ClientInternal
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.Channel import Channel
+from socketd.transport.core.Costants import Constants
 from socketd.transport.core.config.logConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd.transport.utils.AsyncUtil import AsyncUtil
@@ -40,7 +41,7 @@ class WsAioClientConnector(ClientConnectorBase):
                                                 ping_timeout=self.client.get_config().get_idle_timeout(),
                                                 ping_interval=self.client.get_config().get_idle_timeout(),
                                                 logger=logger,
-                                                max_size=self.client.get_config().get_ws_max_size(),
+                                                max_size= Constants.MAX_SIZE_FRAME,
                                                 message_loop=self.__loop
                                                 )
             self.__real: AIOWebSocketClientImpl | WebSocketClientProtocol = await self.__con

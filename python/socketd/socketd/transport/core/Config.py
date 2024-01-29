@@ -18,10 +18,12 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def get_schema(self) -> str:
-        """
-        返回协议架构。
-        """
+    def get_stream_manger(self) -> StreamManger:
+        ...
+
+    @abstractmethod
+    def get_role_name(self) -> str:
+        """获取角色名"""
         ...
 
     @abstractmethod
@@ -110,10 +112,7 @@ class Config(ABC):
         """获取消息流超时（单位：毫秒）"""
         ...
 
-    @abstractmethod
-    def get_role_name(self) -> str:
-        """获取角色名"""
-        ...
+
 
     @abstractmethod
     def get_fragment_size(self) -> int:
@@ -127,10 +126,6 @@ class Config(ABC):
 
     @abstractmethod
     def get_logger_level(self) -> str:
-        ...
-
-    @abstractmethod
-    def get_stream_manger(self) -> StreamManger:
         ...
 
     @abstractmethod

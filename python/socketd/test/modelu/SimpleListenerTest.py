@@ -55,3 +55,26 @@ def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | Client
 
 async def send_and_subscribe_test(e: Entity):
     logger.info(e)
+
+
+class ClientListenerTest(Listener, ABC):
+
+    def __init__(self):
+        self.server_counter = AtomicRefer(0)
+        self.close_counter = AtomicRefer(0)
+        self.message_counter = AtomicRefer(0)
+
+    async def on_open(self, session):
+        pass
+
+    async def on_message(self, session, message: Message):
+        with self.server_counter:
+            self.server_counter.set(self.server_counter.get() + 1)
+
+    def on_close(self, session):
+        logger.debug("客户端主动关闭了")
+        with self.close_counter:
+            self.close_counter.set(self.close_counter.get() + 1)
+
+    def on_error(self, session, error):
+        logger.error(error)

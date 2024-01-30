@@ -25,7 +25,7 @@ class ConfigBase(Config, ABC):
 
         self._charset = "utf-8"
 
-        self._idGenerator: Callable = None
+        self._idGenerator: Optional[Callable] = None
         self._fragmentHandler: FragmentHandlerDefault = FragmentHandlerDefault()
         self._fragment_size = Constants.MAX_SIZE_FRAGMENT
 
@@ -41,7 +41,6 @@ class ConfigBase(Config, ABC):
         self._idle_timeout = 60
         self._request_timeout = 10_000
         self._stream_timeout = 1000 * 60 * 60 * 2
-
 
         self._max_requests = 10
         self._max_udp_size = 2048
@@ -120,15 +119,14 @@ class ConfigBase(Config, ABC):
         return self
 
     def get_read_buffer_size(self) -> int:
-        return self._get_read_buffer_size
+        return self._read_buffer_size
 
     def read_buffer_size(self, read_buffer_size):
         self._read_buffer_size = read_buffer_size
         return self
 
-
     def get_write_buffer_size(self) -> int:
-        return self._get_write_buffer_size
+        return self._write_buffer_size
 
     def write_buffer_size(self, write_buffer_size):
         self._write_buffer_size = write_buffer_size
@@ -177,5 +175,5 @@ class ConfigBase(Config, ABC):
         logger.setLevel(__logger_level)
         return self
 
-
-
+    def get_max_udp_size(self) -> int:
+        return self._max_udp_size

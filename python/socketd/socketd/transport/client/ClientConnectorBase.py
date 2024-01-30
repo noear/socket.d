@@ -7,7 +7,7 @@ from .ClientConnector import ClientConnector
 class ClientConnectorBase(ClientConnector, ABC):
 
     def __init__(self, client: ClientInternal):
-        self.client = client
+        self.client: ClientInternal = client
 
     def heartbeatHandler(self):
         return self.client.get_heartbeatHandler()

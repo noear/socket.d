@@ -22,7 +22,6 @@ from socketd.transport.server.Server import Server
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.is_thread(False)
-    config.ws_max_size((2 << 19) * 17)
     return config.id_generator(uuid.uuid4)
 
 

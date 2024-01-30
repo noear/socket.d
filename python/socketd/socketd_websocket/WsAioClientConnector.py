@@ -41,7 +41,7 @@ class WsAioClientConnector(ClientConnectorBase):
                                                 ping_timeout=self.client.get_config().get_idle_timeout(),
                                                 ping_interval=self.client.get_config().get_idle_timeout(),
                                                 logger=logger,
-                                                max_size= Constants.MAX_SIZE_FRAME,
+                                                max_size=Constants.MAX_SIZE_FRAME,
                                                 message_loop=self.__loop
                                                 )
             self.__real: AIOWebSocketClientImpl | WebSocketClientProtocol = await self.__con

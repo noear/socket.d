@@ -1,5 +1,7 @@
 import asyncio
+import uuid
 
+from socketd.transport.client.ClientConfig import ClientConfig
 from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer
@@ -9,8 +11,24 @@ from socketd.SocketD import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
-from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler
+from test.modelu.SimpleListenerTest import SimpleListenerTest, ClientListenerTest
 from loguru import logger
+
+
+def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+    config.is_thread(False)
+    config.idle_timeout(None)
+    # config.set_logger_level("DEBUG")
+    config.id_generator(uuid.uuid4)
+    return config
+
+
+def c_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+    config.is_thread(False)
+    config.idle_timeout(20)
+    config.heartbeat_interval(10)
+    config.id_generator(uuid.uuid4)
+    return config
 
 
 class TestCase08_ping_timout(BaseTestCase):
@@ -30,12 +48,15 @@ class TestCase08_ping_timout(BaseTestCase):
 
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
-            .config(config_handler).open()
-        # 超过设置的10，引发异常
+            .listen(ClientListenerTest()) \
+            .config(c_config_handler).open()
+        # 超过设置的20，引发异常
+        await asyncio.sleep(22)
         await self.client_session.send("demo", StringEntity("test"))
-        await asyncio.sleep(20)
+        await asyncio.sleep(22)
         await self.client_session.send("demo", StringEntity("test"))
-        await asyncio.sleep(3)
+        await asyncio.wait_for(self.client_session.send_ping())
+        await asyncio.sleep(4)
         logger.info(
             f" message {s.server_counter.get()}")
 

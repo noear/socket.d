@@ -2,6 +2,7 @@ import asyncio
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
+from socketd.transport.core.config.logConfig import log
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
@@ -13,7 +14,6 @@ from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
 from test.modelu.SimpleListenerTest import config_handler
-from loguru import logger
 
 
 class SimpleListenerTest(Listener):
@@ -24,12 +24,12 @@ class SimpleListenerTest(Listener):
     async def on_open(self, session: Session):
         params = session.get_param("auth")
         if params != "root":
-           await session.close()
+            await session.close()
 
     async def on_message(self, session, message: Message):
         with self.message_counter:
             self.message_counter.set(self.message_counter.get() + 1)
-        logger.info("message = {message}", message=message)
+        log.info("message = {message}", message=message)
         if message.is_request():
             await session.reply_end(message, StringEntity("ok test"))
         elif message.is_subscribe():
@@ -37,7 +37,7 @@ class SimpleListenerTest(Listener):
             await session.reply_end(message, StringEntity("ok test"))
 
     def on_close(self, session):
-        logger.debug("客户端主动关闭了")
+        log.debug("客户端主动关闭了")
 
     def on_error(self, session, error):
         pass
@@ -68,8 +68,8 @@ class TestCase07_url_auth(BaseTestCase):
 
             await self.client_session.send("demo", StringEntity("test").set_meta("name", "bai"))
         except Exception as e:
-            logger.error(e)
-        logger.info(
+            log.error(e)
+        log.info(
             f" message {s.message_counter.get()}")
 
     def start(self):

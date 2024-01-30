@@ -7,6 +7,7 @@ from websockets.uri import WebSocketURI
 
 from socketd.exception.SocketDExecption import SocketDConnectionException
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
+from socketd.transport.core.config.logConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike, ConnectionClosedOK
 
@@ -14,8 +15,6 @@ from socketd.transport.core.Costants import Flag
 from socketd.transport.core.Frame import Frame
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 from socketd_websocket import WsAioClient
-
-log = logger.opt()
 
 
 class AIOWebSocketClientImpl(WebSocketClientProtocol):
@@ -123,7 +122,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             self.handshake_future.accept(ClientHandshakeResult(self.channel, s))
             logger.warning(s)
         except ConnectionClosedOK as e:
-            pass
+            logger.info(e)
         except Exception as e:
             self.on_error(e)
 

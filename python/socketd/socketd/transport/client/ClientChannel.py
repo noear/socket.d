@@ -107,7 +107,8 @@ class ClientChannel(ChannelBase, ABC):
                     reason: str = "", ):
         try:
             await super().close(code, reason)
-            self._heartbeatScheduledFuture.cancel()
+            if self._heartbeatScheduledFuture:
+                self._heartbeatScheduledFuture.cancel()
             if self.real is not None:
                 await self.real.close()
             await self.connector.close()

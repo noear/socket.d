@@ -18,8 +18,8 @@ class ClientConfig(ConfigBase):
         if self.__port is None:
             self.__port = 8602
 
-        self.__connect_timeout = 10_000
-        self.__heartbeat_interval = 20_000
+        self.__connect_timeout = 10
+        self.__heartbeat_interval = 20
         self.__auto_reconnect = True
 
     def get_schema(self):
@@ -40,7 +40,7 @@ class ClientConfig(ConfigBase):
     def get_heartbeat_interval(self):
         return self.__heartbeat_interval
 
-    def heartbeat_interval(self, __heartbeat_interval):
+    def heartbeat_interval(self, __heartbeat_interval: float):
         self.__heartbeat_interval = __heartbeat_interval
         return self
 

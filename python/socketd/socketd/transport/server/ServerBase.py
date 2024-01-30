@@ -1,5 +1,7 @@
 from typing import Callable
 
+from socketd.transport.core.Listener import Listener
+from socketd.transport.core.Processor import Processor
 from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
@@ -13,7 +15,7 @@ class ServerBase(Server):
     """
 
     def __init__(self, config, assistant):
-        self._processor = ProcessorDefault()
+        self._processor: Processor = ProcessorDefault()
         self._config: ServerConfig = config
         self._assistant: ChannelAssistant = assistant
         self.isStarted = False
@@ -31,10 +33,10 @@ class ServerBase(Server):
         consumer(self._config)
         return self
 
-    def get_config(self):
+    def get_config(self) -> ServerConfig:
         return self._config
 
-    def process(self, processor):
+    def process(self, processor: Processor):
         """
         设置处理器
         """
@@ -42,10 +44,10 @@ class ServerBase(Server):
             self._processor = processor
         return self
 
-    def get_processor(self):
+    def get_processor(self) -> Processor:
         return self._processor
 
-    def listen(self, listener):
+    def listen(self, listener: Listener):
         """
         设置监听器
         """

@@ -10,6 +10,7 @@ import NodeWebSocket from 'ws';
 import {ChannelDefault} from "../transport/core/ChannelDefault";
 import {SdWebSocketNodeJs} from "./impl/SdWebSocketNodeJs";
 import {ServerConfig} from "../transport/server/ServerConfig";
+import {Constants} from "../transport/core/Constants";
 
 export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelSupporter<SdWebSocket> {
     private _server: NodeWebSocket.Server;
@@ -23,18 +24,40 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
     }
 
     start(): Server {
-        this._server = new NodeWebSocket.Server({
-            port: this.getConfig().getPort()
-        });
+        if (this._isStarted) {
+            throw new Error("Socket.D server started");
+        } else {
+            this._isStarted = true;
+        }
+
+        if(this.getConfig().getHttpServer()){
+            this._server = new NodeWebSocket.Server({
+                server: this.getConfig().getHttpServer(),
+                maxPayload: Constants.MAX_SIZE_FRAME
+            });
+        }else{
+            if (this.getConfig().getHost()) {
+                this._server = new NodeWebSocket.Server({
+                    port: this.getConfig().getPort(),
+                    host: this.getConfig().getHost(),
+                    maxPayload: Constants.MAX_SIZE_FRAME
+                });
+            } else {
+                this._server = new NodeWebSocket.Server({
+                    port: this.getConfig().getPort(),
+                    maxPayload: Constants.MAX_SIZE_FRAME
+                });
+            }
+        }
 
         const serverListener: SdWebSocketServerListener = new SdWebSocketServerListener(this);
 
-        this._server.on("connection", ws => {
-            const socket = new SdWebSocketNodeJs(ws, serverListener);
-            const channl = new ChannelDefault(socket, serverListener.getServer());
-            socket.attachmentPut(channl);
-            socket.onOpen();
+        this._server.on("connection", (ws,req) => {
+            //做转换与绑定
+            new SdWebSocketNodeJs(ws, req, serverListener);
         });
+
+        console.info("Socket.D server started: {server=" + this.getConfig().getLocalUrl() + "}");
 
         return this;
     }
@@ -56,7 +79,7 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
     }
 }
 
-class SdWebSocketServerListener implements SdWebSocketListener {
+export class SdWebSocketServerListener implements SdWebSocketListener {
     private _server: WsServer;
 
     constructor(server: WsServer) {

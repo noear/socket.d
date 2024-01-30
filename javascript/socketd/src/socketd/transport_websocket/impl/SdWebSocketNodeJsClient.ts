@@ -7,8 +7,9 @@ import {
     SdWebSocketErrorEventImpl
 } from "./SdWebSocket";
 import NodeWebSocket from 'ws';
+import {SocketAddress} from "../../transport/core/SocketAddress";
 
-export class SdWebSocketNodeJsImpl implements SdWebSocket {
+export class SdWebSocketNodeJsClient implements SdWebSocket {
     private _real: NodeWebSocket;
     private _listener: SdWebSocketListener;
 
@@ -21,6 +22,13 @@ export class SdWebSocketNodeJsImpl implements SdWebSocket {
         this._real.on('message', this.onMessage.bind(this));
         this._real.on('close', this.onClose.bind(this));
         this._real.on('error', this.onError.bind(this));
+    }
+
+    remoteAddress(): SocketAddress|null {
+        return null;
+    }
+    localAddress(): SocketAddress | null {
+        return null;
     }
 
     private _attachment: any;

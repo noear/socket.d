@@ -1,8 +1,8 @@
 import {SdWebSocketListener} from "./SdWebSocket";
-import {SdWebSocketBrowserImpl} from "./SdWebSocketBrowserImpl";
-import {SdWebSocketNodeJsImpl} from "./SdWebSocketNodeJsImpl";
-import {SdWebSocketUniappImpl} from "./SdWebSocketUniappImpl";
-import {SdWebSocketWeixinImpl} from "./SdWebSocketWeixinImpl";
+import {SdWebSocketBrowserClient} from "./SdWebSocketBrowserClient";
+import {SdWebSocketNodeJsClient} from "./SdWebSocketNodeJsClient";
+import {SdWebSocketUniappClient} from "./SdWebSocketUniappClient";
+import {SdWebSocketWeixinClient} from "./SdWebSocketWeixinClient";
 
 export enum Runtime {
     Unknown = 0,
@@ -46,16 +46,16 @@ export class EnvBridge {
 
         if (runtime == Runtime.Weixin) {
             console.info("Client channel use xeixin api!");
-            return new SdWebSocketWeixinImpl(url, connector);
+            return new SdWebSocketWeixinClient(url, connector);
         } else if (runtime == Runtime.Uniapp) {
             console.info("Client channel use uniapp api!");
-            return new SdWebSocketUniappImpl(url, connector);
+            return new SdWebSocketUniappClient(url, connector);
         } else if (runtime == Runtime.NodeJs) {
             console.info("Client channel use nodejs api");
-            return new SdWebSocketNodeJsImpl(url, connector);
+            return new SdWebSocketNodeJsClient(url, connector);
         } else {
             console.info("Client channel use browser api");
-            return new SdWebSocketBrowserImpl(url, connector);
+            return new SdWebSocketBrowserClient(url, connector);
         }
     }
 }

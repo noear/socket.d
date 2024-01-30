@@ -4,6 +4,7 @@ import type {Channel} from "./Channel";
 import {RequestStream, SendStream, SubscribeStream} from "../stream/Stream";
 import type {ClientSession} from "../client/ClientSession";
 import type {Handshake} from "./Handshake";
+import {SocketAddress} from "./SocketAddress";
 
 
 /**
@@ -13,6 +14,16 @@ import type {Handshake} from "./Handshake";
  * @since 2.0
  */
 export interface Session extends ClientSession {
+    /**
+     * 获取远程地址
+     */
+    remoteAddress(): SocketAddress | null;
+
+    /**
+     * 获取本地地址
+     */
+    localAddress(): SocketAddress | null;
+
     /**
      * 最后活动时间
      */
@@ -177,7 +188,12 @@ export abstract class SessionBase implements Session {
         this.attrMap().set(name, val);
     }
 
+
     abstract handshake(): Handshake ;
+
+    abstract remoteAddress(): SocketAddress | null;
+
+    abstract localAddress(): SocketAddress | null;
 
     abstract param(name: string): string | undefined;
 

@@ -9,6 +9,7 @@ import { Asserts } from "../core/Asserts";
 import { SocketdChannelException, SocketdException } from "../../exception/SocketdException";
 import {RunUtils} from "../../utils/RunUtils";
 import {SessionDefault} from "../core/SessionDefault";
+import {SocketAddress} from "../core/SocketAddress";
 
 /**
  * 客户端通道
@@ -126,6 +127,22 @@ export class ClientChannel extends ChannelBase implements Channel {
             return this._real!.getLiveTime();
         } else {
             return 0;
+        }
+    }
+
+    getRemoteAddress(): SocketAddress | null {
+        if (this._real) {
+            return  this._real.getRemoteAddress();
+        } else {
+            return null;
+        }
+    }
+
+    getLocalAddress(): SocketAddress | null {
+        if (this._real) {
+            return  this._real.getLocalAddress();
+        } else {
+            return null;
         }
     }
 

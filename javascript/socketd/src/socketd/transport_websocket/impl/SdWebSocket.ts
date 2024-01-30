@@ -1,4 +1,4 @@
-import {SdWebSocketNodeJs} from "./SdWebSocketNodeJs";
+import {SocketAddress} from "../../transport/core/SocketAddress";
 
 export interface SdWebSocket {
     isConnecting(): boolean;
@@ -7,8 +7,11 @@ export interface SdWebSocket {
     isClosed(): boolean;
     close(): void;
     send(data: string | ArrayBuffer): void;
+
     attachment(): any;
     attachmentPut(data: any);
+    remoteAddress(): SocketAddress|null;
+    localAddress(): SocketAddress|null;
 }
 
 export interface SdWebSocketListener {

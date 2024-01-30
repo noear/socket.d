@@ -6,6 +6,7 @@ import  {Frames} from "./Frame";
 import type {Frame} from "./Frame";
 import type {StreamInternal} from "../stream/Stream";
 import type {IoBiConsumer} from "./Typealias";
+import {SocketAddress} from "./SocketAddress";
 
 /**
  * 通道
@@ -60,6 +61,17 @@ export interface Channel {
      * 获取握手信息
      */
     getHandshake(): HandshakeInternal;
+
+
+    /**
+     * 获取远程地址
+     */
+    getRemoteAddress(): SocketAddress | null;
+
+    /**
+     * 获取本地地址
+     */
+    getLocalAddress(): SocketAddress | null;
 
     /**
      * 发送连接（握手）
@@ -233,6 +245,10 @@ export abstract class  ChannelBase implements Channel {
     sendAlarm(from: Message, alarm: string) {
         this.send(Frames.alarmFrame(from, alarm), null);
     }
+
+    abstract getRemoteAddress(): SocketAddress | null ;
+
+    abstract getLocalAddress(): SocketAddress | null ;
 
     abstract send(frame: Frame, stream: StreamInternal<any> | null);
 

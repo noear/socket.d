@@ -33,17 +33,13 @@ export class SocketD {
         for (const s of provider.schemas()) {
             this.serverProviderMap.set(s, provider);
         }
-
-        if (typeof window != 'undefined') {
-            window["SocketD"] = SocketD;
-        }
     }
 
     /**
      * 框架版本号
      */
     static version(): string {
-        return "2.3.8";
+        return "2.3.9";
     }
 
     /**

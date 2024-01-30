@@ -1,4 +1,5 @@
 import type {Frame} from "./Frame";
+import {SocketAddress} from "./SocketAddress";
 
 /**
  * 通道助理
@@ -28,10 +29,10 @@ export interface ChannelAssistant<T> {
     /**
      * 获取远程地址
      */
-    getRemoteAddress(target: T): string;
+    getRemoteAddress(target: T): SocketAddress | null;
 
     /**
      * 获取本地地址
      */
-    getLocalAddress(target: T): string;
+    getLocalAddress(target: T): SocketAddress | null;
 }

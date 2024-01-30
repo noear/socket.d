@@ -1,7 +1,4 @@
 const {SocketD}  = require('@noear/socket.d');
-const {EventListener} = require("@noear/socket.d/transport/core/Listener");
-const {EntityMetas} = require("@noear/socket.d/transport/core/Constants");
-
 
 function main(){
    let server = SocketD.createServer("sd:ws")
@@ -11,7 +8,7 @@ function main(){
 }
 
 function buildListener() {
-    return new EventListener()
+    return SocketD.newEventListener()
         .doOnOpen(s => {
             console.info("onOpen: " + s.sessionId());
         }).doOnMessage((s, m) => {
@@ -30,7 +27,7 @@ function buildListener() {
             }
         }).doOn("/upload", (s, m) => {
             if (m.isRequest()) {
-                let fileName = m.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME);
+                let fileName = m.meta(SocketD.EntityMetas.META_DATA_DISPOSITION_FILENAME);
                 if (fileName) {
                     s.reply(m, SocketD.newEntity("no file! size: " + m.dataSize()));
                 } else {
@@ -39,7 +36,7 @@ function buildListener() {
             }
         }).doOn("/download", (s, m) => {
             if (m.isRequest()) {
-                let fileEntity = SocketD.newEntity("...");//todo://SocketD.newEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov"));
+                let fileEntity = SocketD.newEntity("...");//todo://SocketD.newEntity(fs.readFileSync("/Users/noear/Movies/snack3-rce-poc.mov"));
                 s.reply(m, fileEntity);
             }
         }).doOn("/push", (s, m) => {

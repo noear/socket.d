@@ -18,7 +18,7 @@ import java.util.Map;
 public interface Entity {
     // >>> 不需要迁移
     static StringEntity of(String data){
-        return Entity.of(data);
+        return new StringEntity(data);
     }
 
     static FileEntity of(File data) throws IOException {

@@ -1,4 +1,5 @@
 import asyncio
+import time
 from typing import TypeVar, Optional
 
 from websockets import WebSocketCommonProtocol
@@ -33,6 +34,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         self._processor: Optional[Processor] = supporter.get_processor()
         self._streamManger: StreamManger = supporter.get_config().get_stream_manger()
         self._session: Optional[Session] = None
+        self._live_time: Optional[float] = None
 
     def is_valid(self) -> bool:
         return self.is_closed() == 0 and self._assistant.is_valid(self._source)
@@ -102,14 +104,14 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
         return self._session
 
-    async def close(self, code: int = 1000,
+    async def close(self, code: int = 0,
                     reason: str = "", ):
         try:
-            await super().close()
+            await super().close(code)
             await self._assistant.close(self._source)
         except Exception as e:
             log.warning(f"{self.get_config().get_role_name()} channel close error, "
-                           f"sessionId={self.get_session().get_session_id()} : {e}")
+                        f"sessionId={self.get_session().get_session_id()} : {e}")
 
     def set_session(self, __session: Session):
         self._session = __session
@@ -136,3 +138,6 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
     def reconnect(self):
         pass
+
+    def set_live_time_now(self):
+        self._live_time = time.time()

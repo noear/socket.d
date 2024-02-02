@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from asyncio import Future
 
+from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.Client import ClientInternal
 from socketd.transport.client.ClientChannel import ClientChannel
 from socketd.transport.client.ClientConnector import ClientConnector
 from socketd.transport.core.ChannelInternal import ChannelInternal
+from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Session import Session
 from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
@@ -18,7 +20,7 @@ class ClientBase(ClientInternal, ABC):
 
     def __init__(self, client_config: ClientConfig, assistant):
         self._processor = ProcessorDefault()
-        self._heartbeat_handler = None
+        self._heartbeat_handler: HeartbeatHandler = None
         self._config: ClientConfig = client_config
         self._assistant = assistant
 
@@ -55,18 +57,24 @@ class ClientBase(ClientInternal, ABC):
         self._processor.set_listener(listener)
         return self
 
-    async def open(self) -> Session | Future:
+    async def _open(self, isThrow):
         connector: ClientConnector = self.create_connector()
-        channel0: ChannelInternal = await connector.connect()
-        clientChannel = ClientChannel(channel0, connector)
-        clientChannel.set_handshake(channel0.get_handshake())
-        session: Session = SessionDefault(clientChannel)
-        channel0.set_session(session)
-        logger.info(f"Socket.D client successfully connected: {self._config.get_link_url()}")
-        return session
+        clientChannel: ClientChannel = ClientChannel(connector)
+        try:
+            await clientChannel.connect()
+        except Exception as e:
+            if isThrow:
+                await clientChannel.close(code=Constants.CLOSE28_OPEN_FAIL)
+                raise SocketDException(f"Socket.D client Connection failed {e}")
+        else:
+            logger.info(f"Socket.D client successfully connected: {self._config.get_link_url()}")
+        return clientChannel.get_session()
 
-    async def openOrThow(self) -> Session:
-        ...
+    async def open(self) -> Session | Future:
+        return await self._open(False)
+
+    async def openOrThrow(self) -> Session:
+        return await self._open(True)
 
     @abstractmethod
     def create_connector(self):

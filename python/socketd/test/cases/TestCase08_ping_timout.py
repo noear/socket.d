@@ -32,7 +32,9 @@ def c_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | Clie
 
 
 class TestCase08_ping_timout(BaseTestCase):
-
+    """
+    todo ws 底层已经维护好，自动收发ping帧，需要禁用才能生效
+    """
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server = None

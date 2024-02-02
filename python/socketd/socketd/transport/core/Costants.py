@@ -81,9 +81,9 @@ class Constants:
     # 元信息串大小限制
     MAX_SIZE_META_STRING = 4096
     # 分片大小限制
-    MAX_SIZE_FRAGMENT = (2 << 19) * 16
+    MAX_SIZE_FRAGMENT = (2 << 19)  # 16
     # 帧长度最大限制
-    MAX_SIZE_FRAME = (2 << 19) * 17
+    MAX_SIZE_FRAME = (2 << 19)  # 17
 
     THEAD_POOL_SIZE = 10
     # 单需求
@@ -94,6 +94,26 @@ class Constants:
     # 因异常关闭
     CLOSE3_ERROR = 3
 
+    # 因协议指令关闭
+    CLOSE11_PROTOCOL = 11
+
+    # 因协议非法关闭
+    CLOSE12_PROTOCOL_ILLEGAL = 12
+
+    # 因协议指令用户主动关闭（不可再重连）
+    CLOSE19_PROTOCOL_USER = 19
+
+    # 因异常关闭
+    CLOSE21_ERROR = 21
+
+    # 因重连关闭
+    CLOSE22_RECONNECT = 22
+
+    # 因打开失败关闭
+    CLOSE28_OPEN_FAIL = 28
+
+    # 因用户主动关闭（不可再重连）
+    CLOSE29_USER = 29
 
 
 class EntityMetas:
@@ -113,4 +133,3 @@ class EntityMetas:
     META_RANGE_START = "Data-Range-Start"
     # 数据范围长度
     META_RANGE_SIZE = "Data-Range-Size"
-

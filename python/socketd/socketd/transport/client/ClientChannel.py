@@ -1,21 +1,25 @@
 import asyncio
+from typing import Optional
 from abc import ABC
 from asyncio import Future
 
+from socketd.transport.core.ChannelInternal import ChannelInternal
+from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.utils.AssertsUtil import AssertsUtil
 from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.client.ClientConnector import ClientConnector
 from loguru import logger
 
-from socketd.transport.core.Channel import Channel
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandlerDefault
+from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
 
 class ClientChannel(ChannelBase, ABC):
-    def __init__(self, real: Channel, connector: ClientConnector):
-        super().__init__(real.get_config())
-        self.real: Channel = real
+    def __init__(self,  connector: ClientConnector):
+        super().__init__(connector.get_config())
+        self.real: Optional[ChannelInternal] = None
+        self._session = SessionDefault(self)
         self.connector: ClientConnector = connector
         self.heartbeatHandler = connector.heartbeatHandler()
         self._heartbeatScheduledFuture: Future | None = None
@@ -25,6 +29,7 @@ class ClientChannel(ChannelBase, ABC):
 
         self._loop = asyncio.new_event_loop()
         self.initHeartbeat()
+        self._isConnecting = AtomicRefer(False)
 
     def __del__(self):
         try:
@@ -101,7 +106,7 @@ class ClientChannel(ChannelBase, ABC):
         await self.real.retrieve(frame, on_error)
 
     def get_session(self):
-        return self.real.get_session()
+        return self._session
 
     async def close(self, code: int = 1000,
                     reason: str = "", ):
@@ -110,7 +115,7 @@ class ClientChannel(ChannelBase, ABC):
             if self._heartbeatScheduledFuture:
                 self._heartbeatScheduledFuture.cancel()
             if self.real is not None:
-                await self.real.close()
+                await self.real.close(code)
             await self.connector.close()
         except Exception as e:
             logger.error(e)
@@ -131,3 +136,20 @@ class ClientChannel(ChannelBase, ABC):
     async def reconnect(self):
         self.initHeartbeat()
         await self.prepare_check()
+
+    async def connect(self):
+        with self._isConnecting as isConnected:
+            if isConnected:
+                self._isConnecting.set(True)
+        try:
+            if self.real:
+                await self.real.close()
+            self.real: ChannelInternal = await self.connector.connect()
+            self.real.set_session(self._session)
+            self.set_handshake(self.real.get_handshake())
+        except TimeoutError as t:
+            logger.error(f"socketD connect timed out: {t}")
+        except Exception as e:
+            logger.error(e)
+        finally:
+            self._isConnecting.set(False)

@@ -1,7 +1,14 @@
 from abc import ABC, abstractmethod
 
+from socketd.transport.client.ClientConfig import ClientConfig
+
 
 class ClientConnector(ABC):
+
+    @abstractmethod
+    def get_config(self) -> ClientConfig:
+        ...
+
     @abstractmethod
     def heartbeatHandler(self):
         ...

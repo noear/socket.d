@@ -1,20 +1,15 @@
 import abc
 from typing import Union, Dict, Any, Callable, Coroutine, Optional
-from asyncio import Future
 
 from socket import gethostbyaddr
+
+from socketd.transport.client.ClientSession import ClientSession
 from socketd.transport.core import HandshakeDefault
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Entity import Entity
-from socketd.transport.stream.RequestStream import RequestStream
-from socketd.transport.stream.SendStream import SendStream
-from socketd.transport.stream import SubscribeStream
 
 
-class Session(abc.ABC):
-    @abc.abstractmethod
-    def is_valid(self) -> bool:
-        ...
+class Session(ClientSession, abc.ABC):
 
     @abc.abstractmethod
     def get_remote_address(self) -> gethostbyaddr:
@@ -48,24 +43,7 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def get_session_id(self) -> str:
-        ...
-
-    @abc.abstractmethod
     async def send_ping(self) -> Callable | Coroutine:
-        ...
-
-    @abc.abstractmethod
-    async def send(self, event: str, content: Entity) -> SendStream:
-        ...
-
-    @abc.abstractmethod
-    async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
-        ...
-
-    @abc.abstractmethod
-    async def send_and_subscribe(self, event: str, content: Entity,
-                                 timeout: int = 0) -> SubscribeStream:
         ...
 
     @abc.abstractmethod
@@ -77,19 +55,12 @@ class Session(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def close(self):
-        ...
-
-    @abc.abstractmethod
     def generate_id(self) -> str:
         ...
 
     @abc.abstractmethod
     def set_session_id(self, value):
         ...
-
-    @abc.abstractmethod
-    def reconnect(self) -> Future | None: ...
 
     @abc.abstractmethod
     def path(self) -> Optional[str]: ...

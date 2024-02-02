@@ -3,6 +3,7 @@ from typing import Optional
 
 from websockets.client import WebSocketClientProtocol
 
+from socketd.exception.SocketDExecption import SocketDTimeoutException
 from socketd.transport.client.Client import Client, ClientInternal
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.Channel import Channel
@@ -50,8 +51,15 @@ class WsAioClientConnector(ClientConnectorBase):
                 raise _e
             else:
                 return handshakeResult.get_channel()
+        except TimeoutError as t:
+            await self.close()
+            raise SocketDTimeoutException(f"Connection timeout: {self.client.get_config().get_link_url()}")
+        except IOError as o:
+            await self.close()
+            raise o
         except Exception as e:
-            raise e
+            await self.close()
+            raise SocketDTimeoutException(f"Connection timeout: {self.client.get_config().get_link_url()} {e}")
 
     async def close(self):
         if self.__real is None:
@@ -61,6 +69,7 @@ class WsAioClientConnector(ClientConnectorBase):
                 __top = await self.__top.get()
                 if not __top.done():
                     __top.set_result(1)
+            await self.__real.close()
             self.__real.on_close()
             self.__loop.stop()
         except Exception as e:

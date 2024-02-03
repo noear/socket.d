@@ -7,8 +7,9 @@ import {
     SdWebSocketState,
     SdWebSocketErrorEventImpl
 } from "./SdWebSocket";
+import {SocketAddress} from "../../transport/core/SocketAddress";
 
-export class SdWebSocketWeixinImpl implements SdWebSocket {
+export class SdWebSocketWeixinClient implements SdWebSocket {
     private _real: any;
     private _state: SdWebSocketState;
     private _listener: SdWebSocketListener;
@@ -24,6 +25,13 @@ export class SdWebSocketWeixinImpl implements SdWebSocket {
         this._real.onMessage(this.onMessage.bind(this));
         this._real.onClose(this.onClose.bind(this));
         this._real.onError(this.onError.bind(this));
+    }
+
+    remoteAddress(): SocketAddress|null {
+        return null;
+    }
+    localAddress(): SocketAddress | null {
+        return null;
     }
 
     private _attachment:any;

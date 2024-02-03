@@ -3,7 +3,7 @@ import type {ClientProvider} from "./transport/client/ClientProvider";
 import {Asserts} from "./transport/core/Asserts";
 import {ClientConfig} from "./transport/client/ClientConfig";
 import {ClusterClient} from "./cluster/ClusterClient";
-import {WsClientProvider} from "./transport_websocket/WsClientProvider";
+import {WsProvider} from "./transport_websocket/WsProvider";
 import {EntityDefault, FileEntity, StringEntity} from "./transport/core/Entity";
 import {EventListener, Listener, PathListener, PipelineListener, SimpleListener} from "./transport/core/Listener";
 import type {RouteSelector} from "./transport/core/RouteSelector";
@@ -11,6 +11,9 @@ import type {IoBiConsumer} from "./transport/core/Typealias";
 import type {Session} from "./transport/core/Session";
 import type {Message} from "./transport/core/Message";
 import {EntityMetas} from "./transport/core/Constants";
+import {ServerProvider} from "./transport/server/ServerProvider";
+import {ServerConfig} from "./transport/server/ServerConfig";
+import {Server} from "./transport/server/Server";
 
 export class SocketD {
     /**
@@ -19,15 +22,16 @@ export class SocketD {
     static EntityMetas = EntityMetas;
 
     private static clientProviderMap: Map<String, ClientProvider> = new Map<String, ClientProvider>();
+    private static serverProviderMap: Map<String, ServerProvider> = new Map<String, ServerProvider>();
 
     static {
-        const provider = new WsClientProvider();
+        const provider = new WsProvider();
         for (const s of provider.schemas()) {
             this.clientProviderMap.set(s, provider);
         }
 
-        if (typeof window != 'undefined') {
-            window["SocketD"] = SocketD;
+        for (const s of provider.schemas()) {
+            this.serverProviderMap.set(s, provider);
         }
     }
 
@@ -35,7 +39,7 @@ export class SocketD {
      * 框架版本号
      */
     static version(): string {
-        return "2.3.8";
+        return "2.3.9";
     }
 
     /**
@@ -43,6 +47,32 @@ export class SocketD {
      */
     static protocolVersion(): string {
         return "1.0";
+    }
+
+    /**
+     * 创建服务端
+     */
+    static createServer(schema: string): Server {
+        let server = this.createServerOrNull(schema);
+        if (server == null) {
+            throw new Error("No socketd server providers were found: " + schema);
+        } else {
+            return server;
+        }
+    }
+
+    /**
+     * 创建服务端，如果没有则为 null
+     */
+    static createServerOrNull(schema: string): Server | null {
+        Asserts.assertNull("schema", schema);
+
+        let factory = SocketD.serverProviderMap.get(schema);
+        if (factory == null) {
+            return null;
+        } else {
+            return factory.createServer(new ServerConfig(schema));
+        }
     }
 
     /**

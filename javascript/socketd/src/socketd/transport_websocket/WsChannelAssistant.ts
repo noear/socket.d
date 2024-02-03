@@ -3,6 +3,7 @@ import type {Frame} from "../transport/core/Frame";
 import type {Config} from "../transport/core/Config";
 import {ArrayBufferCodecReader, ArrayBufferCodecWriter} from "../transport/core/Codec";
 import {SdWebSocket} from "./impl/SdWebSocket";
+import {SocketAddress} from "../transport/core/SocketAddress";
 
 export class WsChannelAssistant implements ChannelAssistant<SdWebSocket> {
     _config: Config;
@@ -11,7 +12,7 @@ export class WsChannelAssistant implements ChannelAssistant<SdWebSocket> {
         this._config = config;
     }
 
-    read(buffer: ArrayBuffer): Frame | null{
+    read(buffer: ArrayBuffer): Frame | null {
         return this._config.getCodec().read(new ArrayBufferCodecReader(buffer));
     }
 
@@ -29,11 +30,11 @@ export class WsChannelAssistant implements ChannelAssistant<SdWebSocket> {
         target.close();
     }
 
-    getRemoteAddress(target: SdWebSocket): string {
-        throw new Error("Method not implemented.");
+    getRemoteAddress(target: SdWebSocket): SocketAddress | null {
+        return target.remoteAddress();
     }
 
-    getLocalAddress(target: SdWebSocket): string {
-        throw new Error("Method not implemented.");
+    getLocalAddress(target: SdWebSocket): SocketAddress | null {
+        return target.localAddress();
     }
 }

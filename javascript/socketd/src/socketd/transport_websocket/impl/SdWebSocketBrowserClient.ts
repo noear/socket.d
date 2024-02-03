@@ -6,8 +6,9 @@ import {
     SdWebSocketCloseEventImpl,
     SdWebSocketErrorEventImpl
 } from "./SdWebSocket";
+import {SocketAddress} from "../../transport/core/SocketAddress";
 
-export class SdWebSocketBrowserImpl implements SdWebSocket {
+export class SdWebSocketBrowserClient implements SdWebSocket {
     private _real: WebSocket;
     private _listener: SdWebSocketListener;
 
@@ -20,6 +21,13 @@ export class SdWebSocketBrowserImpl implements SdWebSocket {
         this._real.onmessage = this.onMessage.bind(this);
         this._real.onclose = this.onClose.bind(this);
         this._real.onerror = this.onError.bind(this);
+    }
+
+    remoteAddress(): SocketAddress|null {
+        return null;
+    }
+    localAddress(): SocketAddress | null {
+        return null;
     }
 
     private _attachment: any;

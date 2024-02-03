@@ -10,6 +10,7 @@ import {Constants, EntityMetas, Flags} from "./Constants";
 import {ChannelBase, ChannelInternal} from "./Channel";
 import {SessionDefault} from "./SessionDefault";
 import type { IoBiConsumer } from "./Typealias";
+import {SocketAddress} from "./SocketAddress";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _source: S;
@@ -59,12 +60,21 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this.send(Frames.pongFrame(), null);
     }
 
+    getRemoteAddress(): SocketAddress | null {
+        return this._assistant.getRemoteAddress(this._source);
+    }
+
+    getLocalAddress(): SocketAddress | null {
+        return this._assistant.getLocalAddress(this._source);
+    }
+
     send(frame: Frame, stream: StreamInternal<any> | null){
-        // if (this.getConfig().clientMode()) {
-        //     console.trace("C-SEN:" + frame);
-        // } else {
-        //     console.trace("S-SEN:" + frame);
-        // }
+        if (this.getConfig().clientMode()) {
+            //console.debug("C-SEN:" + frame);
+        } else {
+            //只打印服务端的（客户端的容易被人看光）
+            console.debug("S-SEN:" + frame);
+        }
 
 
         if (frame.message()) {

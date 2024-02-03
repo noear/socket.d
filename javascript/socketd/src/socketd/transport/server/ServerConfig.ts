@@ -7,6 +7,8 @@ export class ServerConfig extends ConfigBase {
     private _host: string;
     //端口
     private _port: number;
+    //http server
+    private _httpServer: any;
 
     constructor(schema: string) {
         super(false);
@@ -34,6 +36,15 @@ export class ServerConfig extends ConfigBase {
      */
     getHost(): string {
         return this._host;
+    }
+
+    getHttpServer(): any {
+        return this._httpServer;
+    }
+
+    httpServer(httpServer: any): this {
+        this._httpServer = httpServer;
+        return this;
     }
 
     /**
@@ -64,9 +75,9 @@ export class ServerConfig extends ConfigBase {
      */
     getLocalUrl(): string {
         if (this._host) {
-            return "sd:" + this._schema + "://127.0.0.1:" + this._port;
-        } else {
             return "sd:" + this._schema + "://" + this._host + ":" + this._port;
+        } else {
+            return "sd:" + this._schema + "://127.0.0.1:" + this._port;
         }
     }
 

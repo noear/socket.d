@@ -1,3 +1,8 @@
+### 2.3.9
+* 完成 for Node.js server 实现
+* 添加 Session::remoteAddress,localAddress 方法
+* 开放 Server 模式下的消息日志
+
 ### 2.3.8
 * 添加 CLOSE28_OPEN_FAIL 关闭码，优化关闭处理
 * 调整 SocketD.createXxx 的异常提示，带上协议架构信息

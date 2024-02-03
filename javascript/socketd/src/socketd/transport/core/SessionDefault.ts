@@ -13,6 +13,7 @@ import {
     SubscribeStreamImpl,
     type SendStream
 } from "../stream/Stream";
+import {SocketAddress} from "./SocketAddress";
 
 /**
  * 会话默认实现
@@ -29,6 +30,14 @@ export class SessionDefault extends SessionBase {
 
     isValid(): boolean {
         return this._channel.isValid();
+    }
+
+    remoteAddress(): SocketAddress | null {
+        return this._channel.getRemoteAddress();
+    }
+
+    localAddress(): SocketAddress | null {
+        return this._channel.getLocalAddress();
     }
 
     handshake(): Handshake {

@@ -49,7 +49,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(2, new NamedThreadFactory("nettyTcpServerBoss-"));
+        bossGroup = new NioEventLoopGroup(getConfig().getCoreThreads(), new NamedThreadFactory("nettyTcpServerBoss-"));
         workGroup = new NioEventLoopGroup(getConfig().getCoreThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
 
         try {

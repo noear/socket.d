@@ -1,11 +1,17 @@
 ### 2.3.10
 * 修复 MappedByteBuffer 不能解除映射的问题
 * 修复 Entity.of(String) 会出错的问题
+* 调整 消息发送改为 ReentrantLock 公平锁
+* 调整 smartsocket,websocket,netty 适配的服务端线程数改由配置决定
+
+### 2.3.9
+* 调整 ReentrantLock 替代 synchronized
 
 ### 2.3.8
 * 添加 CLOSE28_OPEN_FAIL 关闭码，优化关闭处理
 * 调整 SocketD.createXxx 的异常提示，带上协议架构信息
 * 调整 PathListener::of 更名为 doOf，并添加 of 函数（应用不同）
+
 
 ### 2.3.7
 * 添加 Client::openOrThow() 方法，原 open() 不再出异常

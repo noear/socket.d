@@ -104,8 +104,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
         return self._session
 
-    async def close(self, code: int = 0,
-                    reason: str = "", ):
+    async def close(self, code):
         try:
             await super().close(code)
             await self._assistant.close(self._source)

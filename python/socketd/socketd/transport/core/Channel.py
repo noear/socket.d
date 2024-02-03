@@ -92,8 +92,7 @@ class Channel:
     def get_session(self) -> Session:
         ...
 
-    async def close(self, code: int = 1000,
-                    reason: str = "", ):
+    async def close(self, code):
         ...
 
     def on_error(self, error: Exception):

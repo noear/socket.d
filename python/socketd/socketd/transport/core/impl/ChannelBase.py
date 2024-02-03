@@ -68,8 +68,7 @@ class ChannelBase(Channel, ABC):
     async def send_close(self):
         await self.send(Frames.closeFrame(), None)
 
-    async def close(self, code: int = 0,
-                    reason: str = "", ):
+    async def close(self, code: int):
         self._is_closed = code
         self.attachments.clear()
 

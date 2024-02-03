@@ -6,7 +6,7 @@ import time
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
@@ -34,9 +34,9 @@ class TestCase06_meta_size(BaseTestCase):
             .config(config_handler).open()
         __meta = "*=1&" * 50000
         start_time = time.monotonic()
-        await self.client_session.send("demo", StringEntity("test").set_meta_string(__meta))
+        await self.client_session.send("demo", StringEntity("test").meta_string_set(__meta))
 
-        await self.client_session.send("demo", StringEntity("test").set_meta("name", "bai"))
+        await self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
         end_time = time.monotonic()
         logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
         await asyncio.sleep(3)

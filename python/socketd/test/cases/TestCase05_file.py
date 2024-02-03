@@ -15,14 +15,14 @@ from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.server.Server import Server
 
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.is_thread(False)
-    config.ws_max_size((2 << 19) * 17)
+    config.idle_timeout(10000)
     return config.id_generator(uuid.uuid4)
 
 
@@ -74,6 +74,7 @@ class TestCase05_file(BaseTestCase):
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
+        await asyncio.sleep(1)
         try:
             with open(r"C:\Users\bai\Pictures\飞书20230728-180708.mp4",
                       "rb") as f:

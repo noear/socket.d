@@ -117,7 +117,7 @@ class CodecByteBuffer(Codec):
             target.put_bytes(metaStringB)
             target.put_bytes(b'\n')
 
-            # data
+            # _data
             if frame.message.get_entity().get_data() is not None:
                 target.put_bytes(frame.message.get_entity().get_data().getvalue())
             target.flush()
@@ -156,7 +156,7 @@ class CodecByteBuffer(Codec):
                 data = bytearray(_reader.get_buffer().read(dataRealSize))
 
             message = MessageDefault().set_sid(sid).set_event(event).set_entity(
-                EntityDefault().set_meta_string(metaString).set_data(data)
+                EntityDefault().meta_string_set(metaString).data_set(data)
             )
             message.flag = Flag.of(flag)
             _reader.close()

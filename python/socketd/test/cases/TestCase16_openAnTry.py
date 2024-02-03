@@ -1,43 +1,46 @@
 import asyncio
 
+from socketd import SocketD
 from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer
-from loguru import logger
 
 from socketd.transport.core.Session import Session
-from socketd import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
-from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler
+from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler, ClientListenerTest
+from loguru import logger
 
 
-class TestCase04_sendAndRequest_timeout(BaseTestCase):
+class TestCase16_openAnTry(BaseTestCase):
 
     def __init__(self, schema, port):
         super().__init__(schema, port)
-        self.server: Server
-        self.server_session: WebSocketServer
-        self.client_session: Session
+        self.server: Server = None
+        self.server_session: WebSocketServer = None
+        self.client_session: Session = None
         self.loop = asyncio.get_event_loop()
 
     async def _start(self):
+        s = SimpleListenerTest()
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
-        _simple = SimpleListenerTest()
-        _server = self.server.config(config_handler).listen(_simple)
-        self.server_session: WebSocketServer = await _server.start()
+        self.server_session: WebSocketServer = await self.server \
+            .config(config_handler) \
+            .listen(s) \
+            .start()
 
-        serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
-        self.client_session: Session = await SocketD.create_client(serverUrl) \
+        await asyncio.sleep(1)
+        self.client_session: Session = await SocketD.create_cluster_client(f"{self.schema}://127.0.0.1:{self.port}/",
+                                                                           f"{self.schema}://127.0.0.1:{self.port}/") \
+            .listen(ClientListenerTest()) \
             .config(config_handler).open()
-        try:
-            await self.client_session.send("demo", StringEntity("test"))
-            await self.client_session.send_and_request("demo", StringEntity("test"), 100)
-        except Exception as e:
-            pass
-        await asyncio.sleep(5)
-        logger.info(f"counter {_simple.server_counter.get()} close_counter {_simple.close_counter.get()} message {_simple.message_counter.get()}")
+
+        await self.client_session.send("demo", StringEntity("test"))
+
+        await asyncio.sleep(2)
+        logger.info(
+            f" message {s.server_counter.get()}")
 
     def start(self):
         super().start()
@@ -54,6 +57,7 @@ class TestCase04_sendAndRequest_timeout(BaseTestCase):
 
     def stop(self):
         super().stop()
+
         self.loop.run_until_complete(self._stop())
 
     def on_error(self):

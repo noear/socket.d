@@ -1,6 +1,6 @@
 import asyncio
 
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer
@@ -38,7 +38,7 @@ class TestCase01_client_send(BaseTestCase):
         for _ in range(100):
             await self.client_session.send("demo", StringEntity("test"))
 
-        await asyncio.sleep(10)
+        await asyncio.sleep(2)
         logger.info(
             f" message {s.server_counter.get()}")
 

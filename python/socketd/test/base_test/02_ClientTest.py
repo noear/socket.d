@@ -4,7 +4,7 @@ import time
 from loguru import logger
 
 from socketd.transport.core.Session import Session
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.entity.StringEntity import StringEntity
 from test.uitls import calc_async_time

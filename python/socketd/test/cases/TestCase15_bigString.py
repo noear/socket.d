@@ -1,7 +1,7 @@
 import asyncio
 import uuid
 
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from test.modelu.BaseTestCase import BaseTestCase
 
@@ -17,7 +17,7 @@ from loguru import logger
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.is_thread(False)
-    config.idle_timeout(10)
+    config.idle_timeout(10000)
     config.ws_max_size(2 ** 20 * 17)
     # config.set_logger_level("DEBUG")
     config.id_generator(uuid.uuid4)

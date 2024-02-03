@@ -1,9 +1,8 @@
 import asyncio
 import uuid
-import time
 from websockets.legacy.server import WebSocketServer
 
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.core import Entity
 from socketd.transport.core.Session import Session
 from socketd.transport.server.ServerConfig import ServerConfig

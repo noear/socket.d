@@ -14,12 +14,12 @@ from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
 class ChannelBase(Channel, ABC):
     def __init__(self, config: Config):
+        self._is_closed: Optional[int] = 0
         self.config = config
         self.requests = AtomicRefer(0)
         self.handshake = None
         self.live_time = 0
         self.attachments = {}
-        self._is_closed = False
         self.__lock: threading.Lock = threading.Lock()
         self.loop: Optional[asyncio.AbstractEventLoop] = None
 
@@ -53,8 +53,8 @@ class ChannelBase(Channel, ABC):
     def get_live_time(self):
         return self.live_time
 
-    async def send_connect(self, uri):
-        await self.send(Frames.connectFrame(self.config.get_id_generator()().__str__(), uri), None)
+    async def send_connect(self, uri, metaMap: dict):
+        await self.send(Frames.connectFrame(str(self.config.get_id_generator()()), uri, metaMap), None)
 
     async def send_connack(self, connect_message):
         await self.send(Frames.connackFrame(connect_message), None)
@@ -68,9 +68,9 @@ class ChannelBase(Channel, ABC):
     async def send_close(self):
         await self.send(Frames.closeFrame(), None)
 
-    async def close(self, code: int = 1000,
+    async def close(self, code: int = 0,
                     reason: str = "", ):
-        self._is_closed = True
+        self._is_closed = code
         self.attachments.clear()
 
     def get_config(self) -> 'Config':

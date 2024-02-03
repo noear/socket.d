@@ -1,6 +1,6 @@
 import asyncio
+import time
 from typing import TypeVar, Optional
-from loguru import logger
 
 from websockets import WebSocketCommonProtocol
 
@@ -9,6 +9,7 @@ from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
 from socketd.transport.core.Message import MessageInternal, Message
 from socketd.transport.core.Processor import Processor
+from socketd.transport.core.config.logConfig import log
 from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
 from socketd.transport.utils.AssertsUtil import AssertsUtil
@@ -33,6 +34,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         self._processor: Optional[Processor] = supporter.get_processor()
         self._streamManger: StreamManger = supporter.get_config().get_stream_manger()
         self._session: Optional[Session] = None
+        self._live_time: Optional[float] = None
 
     def is_valid(self) -> bool:
         return self.is_closed() == 0 and self._assistant.is_valid(self._source)
@@ -46,9 +48,9 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     async def send(self, frame: Frame, stream: StreamInternal) -> None:
         AssertsUtil.assert_closed(self)
         if self.get_config().client_mode():
-            logger.debug(f"C-SEN:{frame}")
+            log.debug(f"C-SEN:{frame}")
         else:
-            logger.debug(f"S-SEN:{frame}")
+            log.debug(f"S-SEN:{frame}")
         with self:
             if frame.get_message() is not None:
                 message: Message = frame.get_message()
@@ -71,6 +73,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                                                   .set_sid(message.get_sid())
                                                   .set_entity(fragmentEntity))
                         await self._assistant.write(self._source, fragmentFrame)
+
                     await self.get_config().get_fragment_handler().split_fragment(self,
                                                                                   stream, message,
                                                                                   __consumer)
@@ -85,15 +88,14 @@ class ChannelDefault(ChannelBase, ChannelInternal):
             if stream.demands() < Constants.DEMANDS_MULTIPLE or frame.get_flag() == Flag.ReplyEnd:
                 # 如果是单收或者答复结束，则移除流接收器
                 self._streamManger.remove_stream(frame.get_message().get_sid())
-
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
                 await stream.on_reply(frame.get_message())
             else:
                 await asyncio.get_running_loop().run_in_executor(self.get_config().get_executor(),
-                                                               lambda _m: asyncio.run(stream.on_reply(_m)),
-                                                               frame.get_message())
+                                                                 lambda _m: asyncio.run(stream.on_reply(_m)),
+                                                                 frame.get_message())
         else:
-            logger.debug(
+            log.debug(
                 f"{self.get_config().get_role_name()} stream not found, sid={frame.get_message().get_sid()}, sessionId={self.get_session().get_session_id()}")
 
     def get_session(self) -> Session:
@@ -102,14 +104,14 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
         return self._session
 
-    async def close(self, code: int = 1000,
+    async def close(self, code: int = 0,
                     reason: str = "", ):
         try:
-            await super().close()
+            await super().close(code)
             await self._assistant.close(self._source)
         except Exception as e:
-            logger.warning(f"{self.get_config().get_role_name()} channel close error, "
-                           f"sessionId={self.get_session().get_session_id()} : {e}")
+            log.warning(f"{self.get_config().get_role_name()} channel close error, "
+                        f"sessionId={self.get_session().get_session_id()} : {e}")
 
     def set_session(self, __session: Session):
         self._session = __session
@@ -136,3 +138,6 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
     def reconnect(self):
         pass
+
+    def set_live_time_now(self):
+        self._live_time = time.time()

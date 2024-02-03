@@ -28,7 +28,11 @@ class HandshakeInternal(Handshake):
 class HandshakeDefault(HandshakeInternal):
     def __init__(self, message: MessageInternal):
         self.__source: MessageInternal = message
-        self.__uri = urlparse(message.get_event())
+        linkUrl = message.get_data_as_string()
+        if not linkUrl:
+            linkUrl = message.get_event()
+        self.__uri = urlparse(linkUrl)
+        self.__path = self.__uri.path
         self.__entity = message.get_entity()
         self.__version = self.__entity.get_meta(EntityMetas.META_SOCKETD_VERSION)
         self.__param_map = self._parse_query_string(self.__uri.query)

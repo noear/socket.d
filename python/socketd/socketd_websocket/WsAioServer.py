@@ -4,6 +4,7 @@ from typing import Optional
 from websockets.server import WebSocketServer, serve as Serve, WebSocketServerProtocol
 from websockets import broadcast
 
+from socketd.transport.core.Costants import Constants
 from socketd.transport.server.ServerBase import ServerBase
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
@@ -12,8 +13,7 @@ from socketd.transport.server.ServerConfig import ServerConfig
 from socketd_websocket.impl.AIOServe import AIOServe
 from socketd_websocket.impl.AIOWebSocketServerImpl import AIOWebSocketServerImpl
 
-from socketd.transport.core.config.logConfig import logger
-from loguru import logger as log
+from socketd.transport.core.config.logConfig import logger, log
 
 
 class WsAioServer(ServerBase):
@@ -41,7 +41,7 @@ class WsAioServer(ServerBase):
                            ping_timeout=self.get_config().get_idle_timeout(),
                            ssl=self.get_config().get_ssl_context(),
                            logger=logger,
-                           max_size=self.get_config().get_ws_max_size(),
+                           max_size=Constants.MAX_SIZE_FRAME,
                            )
         self.server = _server
         log.info("Server started: {server=" + self.get_config().get_local_url() + "}")

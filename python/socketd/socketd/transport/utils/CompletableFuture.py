@@ -10,11 +10,13 @@ T = TypeVar('T')
 
 class CompletableFuture(Generic[T]):
 
-    def __init__(self, _future=None):
+    def __init__(self, _future=None, loop=None):
+        if loop is None:
+            loop = asyncio.get_running_loop()
         if _future and not asyncio.iscoroutine(_future):
             logger.warning("{name}对象不是协程对象", name=_future.__name__)
             return
-        self._future: asyncio.Task = asyncio.create_task(_future) if _future else asyncio.Future()
+        self._future: asyncio.Task = loop.create_task(_future) if _future else loop.create_future()
         self._lock = Lock()
 
     def get(self, timeout):

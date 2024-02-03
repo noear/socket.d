@@ -19,3 +19,6 @@ class ChannelInternal(Channel, ABC):
 
     @abstractmethod
     def do_open_future(self, is_ok: bool, e: Optional[Exception]): ...
+
+    @abstractmethod
+    def set_live_time_now(self):...

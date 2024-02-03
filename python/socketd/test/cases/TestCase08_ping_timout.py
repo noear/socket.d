@@ -1,20 +1,40 @@
 import asyncio
+import uuid
 
+from socketd.transport.client.ClientConfig import ClientConfig
 from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
-from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler
+from test.modelu.SimpleListenerTest import SimpleListenerTest, ClientListenerTest
 from loguru import logger
 
 
-class TestCase08_ping_timout(BaseTestCase):
+def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+    config.is_thread(False)
+    config.idle_timeout(None)
+    # config.set_logger_level("DEBUG")
+    config.id_generator(uuid.uuid4)
+    return config
 
+
+def c_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+    config.is_thread(False)
+    config.idle_timeout(10000)
+    config.heartbeat_interval(10000)
+    config.id_generator(uuid.uuid4)
+    return config
+
+
+class TestCase08_ping_timout(BaseTestCase):
+    """
+    todo ws 底层已经维护好，自动收发ping帧，需要禁用才能生效
+    """
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server = None
@@ -30,12 +50,14 @@ class TestCase08_ping_timout(BaseTestCase):
 
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
-            .config(config_handler).open()
-        # 超过设置的10，引发异常
+            .listen(ClientListenerTest()) \
+            .config(c_config_handler).open()
+        # 超过设置的20，引发异常
+        await asyncio.sleep(22)
         await self.client_session.send("demo", StringEntity("test"))
-        await asyncio.sleep(20)
+        await asyncio.sleep(22)
         await self.client_session.send("demo", StringEntity("test"))
-        await asyncio.sleep(3)
+        await asyncio.sleep(4)
         logger.info(
             f" message {s.server_counter.get()}")
 

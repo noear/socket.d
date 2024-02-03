@@ -1,26 +1,23 @@
 import asyncio
-from threading import Thread
 from typing import Optional, Union
 
 from websockets import ConnectionClosedError, ConnectionClosedOK
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
+from socketd.transport.core.config.logConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.Frame import Frame
-from loguru import logger
+
 
 from socketd_websocket.IWebSocketServer import IWebSocketServer
-
-log = logger.opt()
 
 
 class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
 
     def __init__(self, ws_handler, ws_server: WebSocketServer, ws_aio_server: 'WsAioServer',
                  *args, **kwargs):
-        self._loop: asyncio.AbstractEventLoop = ws_aio_server.get_loop()
         self.ws_aio_server = ws_aio_server
         self.__ws_server: WebSocketServer = ws_server
         self.__attachment: Optional[Channel] = None
@@ -83,10 +80,11 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                                   sessionId=conn.get_attachment().get_session().get_session_id())
                         break
             except asyncio.CancelledError as c:
-                logger.warning(c)
+                log.warning(c)
                 break
             except ConnectionClosedOK as e:
                 # received 1000 (OK); then sent 1000 (OK) 或者 1001  成功直接忽略
+                log.info(e)
                 break
             except ConnectionClosedError as e:
                 # 客户端异常关闭

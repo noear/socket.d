@@ -2,7 +2,7 @@ import asyncio
 import ssl
 import uuid
 
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from test.modelu.BaseTestCase import BaseTestCase
 

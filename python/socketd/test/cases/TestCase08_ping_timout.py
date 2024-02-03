@@ -7,7 +7,7 @@ from test.modelu.BaseTestCase import BaseTestCase
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
@@ -57,7 +57,6 @@ class TestCase08_ping_timout(BaseTestCase):
         await self.client_session.send("demo", StringEntity("test"))
         await asyncio.sleep(22)
         await self.client_session.send("demo", StringEntity("test"))
-        await asyncio.wait_for(self.client_session.send_ping())
         await asyncio.sleep(4)
         logger.info(
             f" message {s.server_counter.get()}")

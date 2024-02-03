@@ -11,7 +11,7 @@ from websockets.extensions.permessage_deflate import enable_server_permessage_de
 from websockets.headers import validate_subprotocols
 from websockets.http import USER_AGENT
 from websockets import WebSocketServer
-from websockets.legacy.server import HeadersLikeOrCallable, HTTPResponse, remove_path_argument
+from websockets.legacy.server import HeadersLikeOrCallable, HTTPResponse, remove_path_argument,serve
 
 
 class AIOServe:

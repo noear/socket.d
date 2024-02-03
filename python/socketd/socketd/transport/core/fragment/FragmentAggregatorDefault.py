@@ -50,6 +50,6 @@ class FragmentAggregatorDefault(FragmentAggregator):
                      MessageDefault()
                      .set_flag(self.__main.get_flag())
                      .set_sid(self.__main.get_sid())
-                     .set_entity(EntityDefault().set_meta_map(self.__main.get_entity().get_meta_map())
+                     .set_entity(EntityDefault().meta_put_all(self.__main.get_entity().get_meta_map())
                                  .set_data(byte))
                      )

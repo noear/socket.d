@@ -19,6 +19,7 @@ from test.cases.TestCase13_ssl import TestCase13_ssl
 from test.cases.TestCase14_timeout import TestCase14_timeout
 from test.cases.TestCase15_bigString import TestCase15_bigString
 from test.cases.TestCase15_connect import TestCase15_connect
+from test.cases.TestCase16_openAnTry import TestCase16_openAnTry
 
 
 class TestCase01(unittest.TestCase):
@@ -182,6 +183,16 @@ class TestCase01(unittest.TestCase):
     def test_Case15_connect(self):
         for i in range(len(TestCase01.schemas)):
             t = TestCase15_connect(TestCase01.schemas[i], 9100 + i)
+            try:
+                t.start()
+                t.stop()
+            except Exception as e:
+                t.on_error()
+                raise e
+
+    def test_Case16_openAnTry(self):
+        for i in range(len(TestCase01.schemas)):
+            t = TestCase16_openAnTry(TestCase01.schemas[i], 9100 + i)
             try:
                 t.start()
                 t.stop()

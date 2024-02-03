@@ -37,7 +37,6 @@ class SimpleListenerTest(Listener, ABC):
             await session.reply(message, StringEntity("reply"))
 
     def on_close(self, session):
-        logger.debug("客户端主动关闭了")
         with self.close_counter:
             self.close_counter.set(self.close_counter.get() + 1)
 
@@ -57,7 +56,7 @@ async def send_and_subscribe_test(e: Entity):
     logger.info(e)
 
 
-class ClientListenerTest(Listener, ABC):
+class ClientListenerTest(Listener):
 
     def __init__(self):
         self.server_counter = AtomicRefer(0)

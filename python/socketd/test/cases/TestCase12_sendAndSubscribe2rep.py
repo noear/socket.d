@@ -1,7 +1,7 @@
 import asyncio
 import uuid
 
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.Message import Message
 from socketd.transport.stream import SubscribeStream

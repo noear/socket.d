@@ -13,13 +13,13 @@ class Frames:
     def connectFrame(sid, url, metaMap: dict):
         entity = StringEntity(url)
         entity.meta_put_all(metaMap)
-        entity.put_meta(EntityMetas.META_SOCKETD_VERSION, SocketD.SocketD.version())
+        entity.put_meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
         return Frame(Flag.Connect, MessageDefault().set_sid(sid).set_event(url).set_entity(entity))
 
     @staticmethod
     def connackFrame(connectMessage: Message):
         entity = EntityDefault()
-        entity.put_meta(EntityMetas.META_SOCKETD_VERSION, SocketD.SocketD.version())
+        entity.put_meta(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
         entity.set_data(connectMessage.get_entity().get_data())
         return Frame(Flag.Connack, MessageDefault().set_sid(connectMessage.get_sid()).set_event(
             connectMessage.get_event()).set_entity(entity))

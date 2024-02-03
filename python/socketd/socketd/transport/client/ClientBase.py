@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from asyncio import Future
+from typing import Awaitable
 
 from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.Client import ClientInternal
@@ -32,7 +32,7 @@ class ClientBase(ClientInternal, ABC):
     def get_processor(self):
         return self._processor
 
-    def heartbeatHandler(self, handler):
+    def heartbeatHandler(self, handler: HeartbeatHandler):
         if handler is not None:
             self._heartbeat_handler = handler
         return self
@@ -69,11 +69,11 @@ class ClientBase(ClientInternal, ABC):
             logger.info(f"Socket.D client successfully connected: {self._config.get_link_url()}")
         return clientChannel.get_session()
 
-    async def open(self) -> Session | Future:
-        return await self._open(False)
+    def open(self) -> Awaitable[Session]:
+        return self._open(False)
 
-    async def openOrThrow(self) -> Session:
-        return await self._open(True)
+    def openOrThrow(self) -> Awaitable[Session]:
+        return self._open(True)
 
     @abstractmethod
     def create_connector(self):

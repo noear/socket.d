@@ -1,6 +1,6 @@
 import asyncio
 
-from socketd.SocketD import SocketD
+from socketd import SocketD
 from test.modelu.BaseTestCase import BaseTestCase
 
 from websockets.legacy.server import WebSocketServer

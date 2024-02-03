@@ -6,7 +6,7 @@ from socketd.transport.core import Entity
 from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.stream.SendStream import SendStream
 from socketd.transport.stream.SubscribeStream import SubscribeStream
-from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
+from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
 
 class ClusterClientSession(ClientSession):
@@ -43,10 +43,10 @@ class ClusterClientSession(ClientSession):
     async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0) -> SubscribeStream:
         return await self.__get_session().send_and_subscribe(event, content, timeout)
 
-    def close(self):
+    async def close(self):
         for session in self._sessionSet:
             try:
-                session.close()
+                await session.close()
             except RuntimeError as e:
                 pass
 

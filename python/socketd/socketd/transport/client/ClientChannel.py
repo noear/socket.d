@@ -71,7 +71,7 @@ class ClientChannel(ChannelBase, ABC):
         if self.connector.autoReconnect():
             async def _heartbeatScheduled():
                 while True:
-                    await asyncio.sleep(self.connector.heartbeatInterval())
+                    await asyncio.sleep(self.connector.heartbeatInterval()/100)
                     await self.heartbeat_handle()
 
             self._heartbeatScheduledFuture = asyncio.create_task(_heartbeatScheduled())

@@ -38,7 +38,7 @@ class ConfigBase(Config, ABC):
         self._sslContext = None
         self._executor = None
 
-        self._idle_timeout = 60
+        self._idle_timeout = 60_000
         self._request_timeout = 10_000
         self._stream_timeout = 1000 * 60 * 60 * 2
 

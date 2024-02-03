@@ -40,15 +40,15 @@ class WsAioClientConnector(ClientConnectorBase):
             self.__con: AIOConnect = AIOConnect(ws_url, client=self.client,
                                                 ssl=self.client.get_config().get_ssl_context(),
                                                 create_protocol=AIOWebSocketClientImpl,
-                                                ping_timeout=self.client.get_config().get_idle_timeout(),
-                                                ping_interval=self.client.get_config().get_idle_timeout(),
+                                                ping_timeout=self.client.get_config().get_idle_timeout() / 1000,
+                                                ping_interval=self.client.get_config().get_idle_timeout() / 1000,
                                                 logger=logger,
                                                 max_size=Constants.MAX_SIZE_FRAME,
                                                 message_loop=self._loop
                                                 )
             self.__real: AIOWebSocketClientImpl | WebSocketClientProtocol = await self.__con
             handshakeResult: ClientHandshakeResult = await self.__real.handshake_future.get(
-                self.client.get_config().get_connect_timeout())
+                self.client.get_config().get_connect_timeout() / 1000)
             if _e := handshakeResult.get_throwable():
                 raise _e
             else:

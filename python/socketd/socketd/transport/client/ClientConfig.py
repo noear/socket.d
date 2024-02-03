@@ -18,8 +18,8 @@ class ClientConfig(ConfigBase):
         if self.__port is None:
             self.__port = 8602
 
-        self.__connect_timeout = 10
-        self.__heartbeat_interval = 20
+        self.__connect_timeout = 10_000
+        self.__heartbeat_interval = 20_000
         self.__auto_reconnect = True
 
         self.__meta = dict()

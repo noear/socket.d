@@ -1,6 +1,6 @@
 import asyncio
 from asyncio import Future
-from typing import Callable, Optional, List, Awaitable
+from typing import Callable, Optional, List, Awaitable, Any
 
 from socketd import SocketD
 from socketd.cluster.ClusterClientSession import ClusterClientSession
@@ -16,9 +16,9 @@ class ClusterClient(Client):
 
     def __init__(self, *serverUrls):
         self._listener = None
-        self._serverUrls = serverUrls
+        self._serverUrls: Optional[tuple[Any, ...]] = serverUrls
         self._heartbeatHandler: Optional[HeartbeatHandler] = None
-        self._configHandler: Callable[[ClientConfig], ClientConfig] = None
+        self._configHandler: Optional[Callable[[ClientConfig], ClientConfig]] = None
 
     def heartbeatHandler(self, handler: HeartbeatHandler) -> 'Client':
         self._heartbeatHandler = handler
@@ -35,24 +35,25 @@ class ClusterClient(Client):
     async def _open(self, is_throw):
         sessions: List[Session] = []
         channelExecutor = None
-        for url in self._serverUrls:
-            client: ClientInternal = SocketD.create_client(url)
+        for urls in self._serverUrls:
+            for url in urls.split(","):
+                client: ClientInternal = SocketD.create_client(url)
 
-            if self._listener:
-                client.listen(self._listener)
+                if self._listener:
+                    client.listen(self._listener)
 
-            if self._configHandler:
-                client.config(self._configHandler)
+                if self._configHandler:
+                    client.config(self._configHandler)
 
-            if self._heartbeatHandler:
-                client.heartbeatHandler(self._heartbeatHandler)
+                if self._heartbeatHandler:
+                    client.heartbeatHandler(self._heartbeatHandler)
 
-            if channelExecutor is None:
-                channelExecutor = client.get_config().get_executor()
-            else:
-                client.get_config().executor(channelExecutor)
+                if channelExecutor is None:
+                    channelExecutor = client.get_config().get_executor()
+                else:
+                    client.get_config().executor(channelExecutor)
 
-            sessions.extend(await asyncio.gather(*[client.openOrThrow() if is_throw else client.open()]))
+                sessions.extend(await asyncio.gather(*[client.openOrThrow() if is_throw else client.open()]))
         return ClusterClientSession(sessions)
 
     def open(self) -> Awaitable[ClientSession]:

@@ -1,3 +1,7 @@
+### 2.3.10
+* 修复 MappedByteBuffer 不能解除映射的问题
+* 修复 Entity.of(String) 会出错的问题
+
 ### 2.3.8
 * 添加 CLOSE28_OPEN_FAIL 关闭码，优化关闭处理
 * 调整 SocketD.createXxx 的异常提示，带上协议架构信息

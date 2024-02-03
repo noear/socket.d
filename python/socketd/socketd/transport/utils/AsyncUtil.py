@@ -20,26 +20,19 @@ class AsyncUtil(object):
 
     @staticmethod
     def run_forever(loop: asyncio.AbstractEventLoop) -> typing.Optional[asyncio.Future]:
-        future = None
+        future = loop.create_future()
 
-        def _main(_loop: asyncio.AbstractEventLoop):
-            nonlocal future
+        def _main(_loop: asyncio.AbstractEventLoop, _future: asyncio.Future):
             asyncio.set_event_loop(_loop)
-            future = asyncio.Future()
-
-            async def _run():
-                while True:
-                    await asyncio.sleep(0)
-                    if future.done():
-                        break
 
             try:
-                _loop.run_until_complete(_run())
-            except Exception as e:
-                _loop.stop()
-                raise e
+                _loop.run_forever()
+            finally:
+                _loop.run_until_complete(_loop.shutdown_asyncgens())
+                _loop.close()
 
-        t = Thread(target=_main, args=(loop,))
+        t: Thread = Thread(target=_main, args=(loop, future))
+        t.daemon = True
         t.start()
         return future
 

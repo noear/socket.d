@@ -18,20 +18,14 @@ from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
 
 class WsAioClientConnector(ClientConnectorBase):
     def __init__(self, client: ClientInternal):
-        self.__top: Optional[AtomicRefer[asyncio.Future]] = None
+        self._top: Optional[asyncio.Future] = None
         self.__real: Optional[AIOWebSocketClientImpl] = None
         self.__con: Optional[AIOConnect] = None
-        self.__loop = asyncio.new_event_loop()
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
         super().__init__(client)
 
-    def __del__(self) -> None:
-        try:
-            self.stop()
-            logger.debug("WsAioClientConnector stop")
-        except Exception as e:
-            logger.error(e)
-
     async def connect(self) -> Channel:
+
         logger.info('Start connecting to: {}'.format(self.client.get_config().get_url()))
 
         # 处理自定义架构的影响
@@ -40,8 +34,8 @@ class WsAioClientConnector(ClientConnectorBase):
         # 支持 ssl
         if self.client.get_config().get_ssl_context() is not None:
             ws_url = ws_url.replace("ws", "wss")
-        if self.__top is None:
-            self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
+        self._loop = asyncio.new_event_loop()
+        self._top = AsyncUtil.run_forever(self._loop)
         try:
             self.__con: AIOConnect = AIOConnect(ws_url, client=self.client,
                                                 ssl=self.client.get_config().get_ssl_context(),
@@ -50,10 +44,11 @@ class WsAioClientConnector(ClientConnectorBase):
                                                 ping_interval=self.client.get_config().get_idle_timeout(),
                                                 logger=logger,
                                                 max_size=Constants.MAX_SIZE_FRAME,
-                                                message_loop=self.__loop
+                                                message_loop=self._loop
                                                 )
             self.__real: AIOWebSocketClientImpl | WebSocketClientProtocol = await self.__con
-            handshakeResult: ClientHandshakeResult = await self.__real.handshake_future.get(self.client.get_config().get_connect_timeout())
+            handshakeResult: ClientHandshakeResult = await self.__real.handshake_future.get(
+                self.client.get_config().get_connect_timeout())
             if _e := handshakeResult.get_throwable():
                 raise _e
             else:
@@ -74,12 +69,14 @@ class WsAioClientConnector(ClientConnectorBase):
         try:
             await self.__real.close()
             self.__real.on_close()
+            await self.stop()
         except Exception as e:
             logger.debug(e)
 
     async def stop(self):
-        async with self.__top:
-            __top = await self.__top.get()
-            if not __top.done():
-                __top.set_result(1)
-        self.__loop.stop()
+        if self._top:
+            _top = self._top
+            if not _top.done():
+                _top.set_result(1)
+        self._loop.stop()
+        logger.debug(f"Stopping WebSocket::{self._loop.is_running()}")

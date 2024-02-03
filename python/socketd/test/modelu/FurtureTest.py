@@ -57,6 +57,11 @@ class FutureTest(unittest.TestCase):
         print(results)
 
     def test_loop(self):
+
+        async def _handle(_loop):
+            for _ in range(10):
+                print("_")
+            _loop.stop()
         def _run(_loop: asyncio.AbstractEventLoop):
             asyncio.set_event_loop(_loop)
             _loop.run_forever()
@@ -96,10 +101,10 @@ class FutureTest(unittest.TestCase):
         async def main(_top):
             await _run("one", _top)
             if not top.done():
-                top.set_result(0)  # 程序中止，遇到下一个await后续丢失
+                top.cancel()  # 程序中止，遇到下一个await后续丢失
 
         logger.remove()
-        for i in range(100000):
+        for i in range(10):
             # 讲异步任务提交到事件循环中
             asyncio.run_coroutine_threadsafe(_run("two", top), loop)
             # loop.run_until_complete(_run("two", top))
@@ -136,7 +141,7 @@ class FutureTest(unittest.TestCase):
             await asyncio.sleep(0)
             logger.info(f"{asyncio.get_event_loop().time() - _time}")
             asyncio.run_coroutine_threadsafe(_hand(top), loop)
-            loop.stop()
+            # loop.stop()
             # top2.set_result(1)
             for _ in range(10):
                 logger.info("1")

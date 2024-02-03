@@ -36,7 +36,7 @@ class TestCase06_meta_size(BaseTestCase):
         start_time = time.monotonic()
         await self.client_session.send("demo", StringEntity("test").set_meta_string(__meta))
 
-        await self.client_session.send("demo", StringEntity("test").set_meta("name", "bai"))
+        await self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
         end_time = time.monotonic()
         logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
         await asyncio.sleep(3)

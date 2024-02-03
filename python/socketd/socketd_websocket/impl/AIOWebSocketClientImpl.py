@@ -23,19 +23,16 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         self.status_state = Flag.Unknown
         self.client = client
         self.channel = ChannelDefault(self, client)
+        # 预留的新的事件循环，用于跨线程操作
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         if message_loop := message_loop:
             self._loop = message_loop
         else:
             self._loop = asyncio.get_running_loop()
-        self.__message_loop = asyncio.get_running_loop()
         self.handshake_future: Optional[CompletableFuture] = None
 
     def get_channel(self):
         return self.channel
-
-    def set_loop(self, loop):
-        self._loop = loop
 
     async def handshake(self, wsuri: WebSocketURI, origin: Optional[Origin] = None,
                         available_extensions: Optional[Sequence[ClientExtensionFactory]] = None,
@@ -69,12 +66,12 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     log.warning(e)
                     raise e
 
-        asyncio.run_coroutine_threadsafe(_handler(), self.__message_loop)
+        asyncio.run_coroutine_threadsafe(_handler(), self.loop)
 
     async def on_open(self):
         try:
             log.info("Client:Websocket onOpen...")
-            await self.channel.send_connect(self.client.get_config().get_url())
+            await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta())
             while self.status_state == Flag.Connect:
                 await self.on_message()
         except Exception as e:
@@ -83,20 +80,17 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
 
     async def on_message(self):
         """处理消息"""
-        _loop = asyncio.get_running_loop()
         if self.status_state == Flag.Close:
             return
         try:
-            # if self.status_state != Flag.Connect and not self.transfer_data_task.done():
-            #     return
             message = await self.recv()
             if message is None:
                 # 结束握手
                 return
             # frame: Frame = self.client.get_assistant().read(message)
-            frame: Frame = await _loop.run_in_executor(None,
-                                                       lambda _message: self.client.get_assistant().read(_message),
-                                                       message)
+            frame: Frame = await self.loop.run_in_executor(None,
+                                                           lambda _message: self.client.get_assistant().read(_message),
+                                                           message)
             if frame is not None:
                 self.status_state = frame.get_flag()
                 if frame.get_flag() == Flag.Connack:
@@ -108,10 +102,11 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                             self.handshake_future.accept(ClientHandshakeResult(self.channel, None))
 
                     await self.channel.on_open_future(__future)
-                await self.client.get_processor().on_receive(self.channel, frame)
+                # 将on_receive 让新的事件循环进行回调，不阻塞当前read循环
+                asyncio.run_coroutine_threadsafe(self.client.get_processor().on_receive(self.channel, frame), self.loop)
                 if frame.get_flag() == Flag.Close:
                     """服务端主动关闭"""
-                    await self.close()
+                    # await self.close()
                     log.debug("{sessionId} 服务端主动关闭",
                               sessionId=self.channel.get_session().get_session_id())
         except CancelledError as c:

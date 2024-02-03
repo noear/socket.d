@@ -118,7 +118,7 @@ class Constants:
 
 class EntityMetas:
     # 框架版本号
-    META_SOCKETD_VERSION = "SocketD"
+    META_SOCKETD_VERSION = "Socket.D"
     # 数据长度
     META_DATA_LENGTH = "Data-Length"
     # 数据类型

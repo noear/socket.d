@@ -61,7 +61,7 @@ class Channel:
         ...
 
     @abstractmethod
-    async def send_connect(self, url: str) -> None:
+    async def send_connect(self, url: str,  metaMap: dict) -> None:
         ...
 
     @abstractmethod

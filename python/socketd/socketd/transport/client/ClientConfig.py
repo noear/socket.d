@@ -22,6 +22,8 @@ class ClientConfig(ConfigBase):
         self.__heartbeat_interval = 20
         self.__auto_reconnect = True
 
+        self.__meta = dict()
+
     def get_schema(self):
         return self.__schema
 
@@ -51,7 +53,6 @@ class ClientConfig(ConfigBase):
         self.__connect_timeout = __connect_timeout
         return self
 
-
     def is_auto_reconnect(self):
         return self.__auto_reconnect
 
@@ -62,13 +63,20 @@ class ClientConfig(ConfigBase):
     def get_link_url(self):
         return self.__link_uri
 
+    def get_meta(self):
+        return self.__meta
+
+    def meta_put(self, name, val):
+        self.__meta[name] = val
+        return self
+
     def __str__(self):
         return f"ClientConfig{{schema='{self.__schema}', " \
                f"charset='{self._charset}', " \
                f"url='{self.__url}', " \
                f"heartbeatInterval={self.__heartbeat_interval}, " \
                f"connectTimeout={self.__connect_timeout}, " \
-               f"idleTimeout={self._idle_timeout}, "\
+               f"idleTimeout={self._idle_timeout}, " \
                f"requestTimeout={self._request_timeout}, " \
                f"streamTimeout={self._stream_timeout}, " \
                f"readBufferSize={self._read_buffer_size}, " \

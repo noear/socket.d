@@ -24,6 +24,13 @@ class WsAioClientConnector(ClientConnectorBase):
         self.__loop = asyncio.new_event_loop()
         super().__init__(client)
 
+    def __del__(self) -> None:
+        try:
+            self.stop()
+            logger.debug("WsAioClientConnector stop")
+        except Exception as e:
+            logger.error(e)
+
     async def connect(self) -> Channel:
         logger.info('Start connecting to: {}'.format(self.client.get_config().get_url()))
 
@@ -65,12 +72,14 @@ class WsAioClientConnector(ClientConnectorBase):
         if self.__real is None:
             return
         try:
-            async with self.__top:
-                __top = await self.__top.get()
-                if not __top.done():
-                    __top.set_result(1)
             await self.__real.close()
             self.__real.on_close()
-            self.__loop.stop()
         except Exception as e:
             logger.debug(e)
+
+    async def stop(self):
+        async with self.__top:
+            __top = await self.__top.get()
+            if not __top.done():
+                __top.set_result(1)
+        self.__loop.stop()

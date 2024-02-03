@@ -36,6 +36,7 @@ class AsyncUtil(object):
             try:
                 _loop.run_until_complete(_run())
             except Exception as e:
+                _loop.stop()
                 raise e
 
         t = Thread(target=_main, args=(loop,))
@@ -47,8 +48,12 @@ class AsyncUtil(object):
         loop = asyncio.new_event_loop()
 
         async def _run():
-            await core
-            loop.stop()
+            try:
+                await core
+            except Exception as e:
+                raise e
+            finally:
+                loop.stop()
 
         if thread:
             t = Thread(target=AsyncUtil.thread_handler, args=(loop, loop.create_task(_run())))

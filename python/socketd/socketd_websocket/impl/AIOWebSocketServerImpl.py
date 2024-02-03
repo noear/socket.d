@@ -18,7 +18,6 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
 
     def __init__(self, ws_handler, ws_server: WebSocketServer, ws_aio_server: 'WsAioServer',
                  *args, **kwargs):
-        self._loop: asyncio.AbstractEventLoop = ws_aio_server.get_loop()
         self.ws_aio_server = ws_aio_server
         self.__ws_server: WebSocketServer = ws_server
         self.__attachment: Optional[Channel] = None

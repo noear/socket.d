@@ -117,7 +117,7 @@ class CodecByteBuffer(Codec):
             target.put_bytes(metaStringB)
             target.put_bytes(b'\n')
 
-            # data
+            # _data
             if frame.message.get_entity().get_data() is not None:
                 target.put_bytes(frame.message.get_entity().get_data().getvalue())
             target.flush()

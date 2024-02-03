@@ -60,13 +60,13 @@ class TestCase07_url_auth(BaseTestCase):
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?auth=root"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
-        await self.client_session.send("demo", StringEntity("root").set_meta("name", "root"))
+        await self.client_session.send("demo", StringEntity("root").meta_put("name", "root"))
         try:
-            serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
+            serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?auth=123"
             self.client_session: Session = await SocketD.create_client(serverUrl) \
                 .config(config_handler).open()
 
-            await self.client_session.send("demo", StringEntity("test").set_meta("name", "bai"))
+            await self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
         except Exception as e:
             log.error(e)
         log.info(
@@ -74,7 +74,6 @@ class TestCase07_url_auth(BaseTestCase):
 
     def start(self):
         super().start()
-
         self.loop.run_until_complete(self._start())
 
     async def _stop(self):

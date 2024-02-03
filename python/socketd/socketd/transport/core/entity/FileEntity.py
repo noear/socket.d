@@ -12,7 +12,7 @@ class FileEntity(EntityDefault):
         super().__init__()
         self._file: BufferedReader = file
         self.set_data(file)
-        self.set_meta(EntityMetas.META_DATA_DISPOSITION_FILENAME, filename)
+        self.meta_put(EntityMetas.META_DATA_DISPOSITION_FILENAME, filename)
 
     def get_file(self) -> BinaryIO:
         return self._file

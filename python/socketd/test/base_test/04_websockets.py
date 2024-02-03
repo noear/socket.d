@@ -14,8 +14,8 @@ class Test_websockets(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._loop = asyncio.get_event_loop()
-        # self.top = AsyncUtil.run_forever(self._loop)
+        self._loop = asyncio.new_event_loop()
+        self.top = AsyncUtil.run_forever(self._loop)
         # self._loop2 = asyncio.new_event_loop()
         # self.top2 = AsyncUtil.run_forever(self._loop2)
 
@@ -33,7 +33,7 @@ class Test_websockets(unittest.TestCase):
     async def _server(self):
         # set this future to exit the server
         __server = await serve(ws_handler=self.on_message, host="0.0.0.0", port=7780,
-                               loop=asyncio.get_running_loop(),
+                               loop=self._loop,
                                ping_interval=109,
                                ping_timeout=5)
 
@@ -42,9 +42,8 @@ class Test_websockets(unittest.TestCase):
         async with connect(uri, ping_interval=100,
                                ping_timeout=590) as websocket:
             start_time = time.monotonic()
-            for _ in range(1):
+            for _ in range(10):
                 await websocket.send("test")
-            await asyncio.sleep(21)
             end_time = time.monotonic()
             logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
             await websocket.send("close")

@@ -3,7 +3,9 @@ from typing import Optional
 from abc import ABC
 from asyncio import Future
 
+from socketd.exception.SocketDExecption import SocketDException, SocketDChannelException
 from socketd.transport.core.ChannelInternal import ChannelInternal
+from socketd.transport.core.Costants import Constants
 from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.utils.AssertsUtil import AssertsUtil
 from socketd.transport.core.impl.ChannelBase import ChannelBase
@@ -86,21 +88,24 @@ class ClientChannel(ChannelBase, ABC):
                 await self.heartbeatHandler.heartbeat(self.get_session())
             except Exception as e:
                 if self.connector.autoReconnect():
-                    await self.real.close()
+                    if self.real:
+                        await self.real.close(code=Constants.CLOSE21_ERROR)
                     self.real = None
                 raise e
 
     async def send(self, frame, acceptor):
         AssertsUtil.assert_closed(self.real)
-        with self:
-            try:
-                await self.prepare_check()
-                await self.real.send(frame, acceptor)
-            except Exception as e:
-                if self.connector.autoReconnect():
+        try:
+            await self.prepare_check()
+            await self.real.send(frame, acceptor)
+        except SocketDException as s:
+            raise s
+        except Exception as e:
+            if self.connector.autoReconnect():
+                if self.real:
                     await self.real.close()
-                    self.real = None
-                # raise e
+                self.real = None
+            raise SocketDChannelException(f"Client channel send failed {e}")
 
     async def retrieve(self, frame, on_error):
         await self.real.retrieve(frame, on_error)
@@ -114,9 +119,9 @@ class ClientChannel(ChannelBase, ABC):
             await super().close(code, reason)
             if self._heartbeatScheduledFuture:
                 self._heartbeatScheduledFuture.cancel()
+            await self.connector.close()
             if self.real is not None:
                 await self.real.close(code)
-            await self.connector.close()
         except Exception as e:
             logger.error(e)
 

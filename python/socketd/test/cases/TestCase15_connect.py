@@ -31,6 +31,7 @@ class TestCase15_connect(BaseTestCase):
             .start()
         await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
+
         async def _main():
             for _ in range(10):
                 client_session: Session = await SocketD.create_client(serverUrl) \
@@ -40,6 +41,7 @@ class TestCase15_connect(BaseTestCase):
                 for _ in range(3):
                     await client_session.send("demo", StringEntity("test"))
                 await self.client_session_queue.put(client_session)
+
         # 并发连接到服务器 10 * 10
         await asyncio.gather(*[_main() for _ in range(10)])
         await asyncio.sleep(30)

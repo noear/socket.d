@@ -8,7 +8,7 @@ from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.Costants import Flag
+from socketd.transport.core.Costants import Flag, Constants
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.stream.SendStream import SendStream
@@ -85,7 +85,7 @@ class SessionDefault(SessionBase, ABC):
                 await self._channel.send_close()
             except Exception as e:
                 logger.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
-        await self._channel.close()
+        await self._channel.close(Constants.CLOSE29_USER)
 
     def get_param(self, name: str):
         return self.get_handshake().get_param(name)

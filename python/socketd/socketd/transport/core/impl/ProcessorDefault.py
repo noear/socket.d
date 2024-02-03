@@ -55,7 +55,7 @@ class ProcessorDefault(Processor, ABC):
             await self.on_open(channel)
         else:
             if channel.get_handshake() is None:
-                await channel.close()
+                await channel.close(Constants.CLOSE11_PROTOCOL)
                 self.log.warning("Channel handshake is None, sessionId={}", channel.get_session().get_session_id())
                 return
 
@@ -67,7 +67,7 @@ class ProcessorDefault(Processor, ABC):
                 elif frame.get_flag() == Flag.Pong:
                     pass
                 elif frame.get_flag() == Flag.Close:
-                    await channel.close()
+                    await channel.close(Constants.CLOSE11_PROTOCOL)
                     self.on_close(channel)
                 elif frame.get_flag() == Flag.Alarm:
                     e = SocketDAlarmException(frame.get_message())
@@ -83,7 +83,7 @@ class ProcessorDefault(Processor, ABC):
                 elif frame.get_flag() in [Flag.Reply, Flag.ReplyEnd]:
                     await self.on_receive_do(channel, frame, True)
                 else:
-                    await channel.close()
+                    await channel.close(Constants.CLOSE12_PROTOCOL_ILLEGAL)
                     self.on_close(channel)
             except Exception as e:
                 logger.error(e)

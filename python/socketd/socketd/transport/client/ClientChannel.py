@@ -103,7 +103,7 @@ class ClientChannel(ChannelBase, ABC):
         except Exception as e:
             if self.connector.autoReconnect():
                 if self.real:
-                    await self.real.close()
+                    await self.real.close(Constants.CLOSE21_ERROR)
                 self.real = None
             raise SocketDChannelException(f"Client channel send failed {e}")
 
@@ -113,10 +113,9 @@ class ClientChannel(ChannelBase, ABC):
     def get_session(self):
         return self._session
 
-    async def close(self, code: int = 1000,
-                    reason: str = "", ):
+    async def close(self, code):
         try:
-            await super().close(code, reason)
+            await super().close(code)
             if self._heartbeatScheduledFuture:
                 self._heartbeatScheduledFuture.cancel()
             await self.connector.close()
@@ -148,7 +147,7 @@ class ClientChannel(ChannelBase, ABC):
                 self._isConnecting.set(True)
         try:
             if self.real:
-                await self.real.close()
+                await self.real.close(Constants.CLOSE22_RECONNECT)
             self.real: ChannelInternal = await self.connector.connect()
             self.real.set_session(self._session)
             self.set_handshake(self.real.get_handshake())

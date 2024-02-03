@@ -44,7 +44,7 @@ class TestCase13_ssl(BaseTestCase):
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
 
         def s_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
-            config.idle_timeout(10)
+            config.idle_timeout(10000)
             # config.set_logger_level("DEBUG")
             config.id_generator(uuid.uuid4)
             config.ssl_context(get_s_ssl())
@@ -56,7 +56,7 @@ class TestCase13_ssl(BaseTestCase):
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
 
         def c_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
-            config.idle_timeout(10)
+            config.idle_timeout(10000)
             # config.set_logger_level("DEBUG")
             config.id_generator(uuid.uuid4)
             config.ssl_context(get_c_ssl())

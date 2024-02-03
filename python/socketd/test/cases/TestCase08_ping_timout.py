@@ -25,8 +25,8 @@ def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | Client
 
 def c_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.is_thread(False)
-    config.idle_timeout(20)
-    config.heartbeat_interval(10)
+    config.idle_timeout(10000)
+    config.heartbeat_interval(10000)
     config.id_generator(uuid.uuid4)
     return config
 

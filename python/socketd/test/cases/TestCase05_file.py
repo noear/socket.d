@@ -22,7 +22,7 @@ from socketd.transport.server.Server import Server
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.is_thread(False)
-    config.idle_timeout(10)
+    config.idle_timeout(10000)
     return config.id_generator(uuid.uuid4)
 
 

@@ -22,7 +22,7 @@ from loguru import logger
 
 def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
     config.is_thread(True)
-    config.idle_timeout(10)
+    config.idle_timeout(10000)
     config.logger_level("DEBUG")
     config.id_generator(lambda: str(uuid.uuid4()))
     return config
@@ -45,7 +45,7 @@ class SimpleListenerTest(Listener):
         if message.is_request():
             req: RequestStream = await session.send_and_request("demo", StringEntity("今天不好"), 100)
             # todo await_result会进行强阻塞线程，导致无法监听到其他线程修改的值，线程可见性，这里就停止0.1等待
-            await asyncio.sleep(0.1)
+            # await asyncio.sleep(0.1)
             logger.debug(f"开始等待::s::{current_thread().name} eventLoop: {id(asyncio.get_running_loop())}")
             entity = await req.await_result()
             logger.debug(f"等待结束::s::{current_thread().name} eventLoop: {id(asyncio.get_running_loop())}")

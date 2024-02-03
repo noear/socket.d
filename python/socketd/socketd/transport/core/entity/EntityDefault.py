@@ -26,7 +26,7 @@ class EntityDefault(Entity):
         return self
 
     def meta_put_all(self, metaMap: dict):
-        if metaMap:
+        if self._meta_map:
             self._meta_map.update(metaMap)
             self._meta_stringChanged = True
         return self

@@ -81,9 +81,9 @@ class Constants:
     # 元信息串大小限制
     MAX_SIZE_META_STRING = 4096
     # 分片大小限制
-    MAX_SIZE_FRAGMENT = (2 << 19)  # 16
+    MAX_SIZE_FRAGMENT = (2 << 19) * 16  # 16
     # 帧长度最大限制
-    MAX_SIZE_FRAME = (2 << 19)  # 17
+    MAX_SIZE_FRAME = (2 << 19) * 17 # 17
 
     THEAD_POOL_SIZE = 10
     # 单需求

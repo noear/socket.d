@@ -7,4 +7,4 @@ class StringEntity(EntityDefault, ABC):
 
     def __init__(self, string: str):
         super().__init__()
-        self.set_data(string.encode("utf-8"))
+        self.data_set(string.encode("utf-8"))

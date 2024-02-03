@@ -20,8 +20,8 @@ class EntityDefault(Entity):
         return self
 
     def range(self, start: int, stop: int):
-        self.put_meta(EntityMetas.META_RANGE_START, start)
-        self.put_meta(EntityMetas.META_RANGE_SIZE, stop)
+        self.meta_put(EntityMetas.META_RANGE_START, start)
+        self.meta_put(EntityMetas.META_RANGE_SIZE, stop)
         self._meta_stringChanged = True
         return self
 
@@ -31,7 +31,7 @@ class EntityDefault(Entity):
             self._meta_stringChanged = True
         return self
 
-    def set_meta_string(self, meta_string):
+    def meta_string_set(self, meta_string):
         self._meta_map = None
         self._meta_string = meta_string
         self._meta_stringChanged = False
@@ -48,7 +48,7 @@ class EntityDefault(Entity):
             self._meta_stringChanged = False
         return self._meta_string
 
-    def set_meta_map(self, meta_map):
+    def meta_map_set(self, meta_map):
         self._meta_map = meta_map
         self._meta_string = None
         self._meta_stringChanged = True
@@ -68,13 +68,9 @@ class EntityDefault(Entity):
         return self._meta_map
 
     def meta_put(self, name, val):
-        self.put_meta(name, val)
-        self._meta_stringChanged = True
-        return self
-
-    def put_meta(self, name, val):
         self.get_meta_map()[name] = val
         self._meta_stringChanged = True
+        return self
 
     def get_meta(self, name) -> Any:
         return self.get_meta_map().get(name)
@@ -84,7 +80,7 @@ class EntityDefault(Entity):
             return data
         return default_val
 
-    def set_data(self, data: bytes | bytearray | memoryview | BytesIO | BufferedReader):
+    def data_set(self, data: bytes | bytearray | memoryview | BytesIO | BufferedReader):
         _type = type(data)
         if _type == BytesIO:
             self._data = data

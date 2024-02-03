@@ -31,9 +31,9 @@ class FragmentHandlerBase(FragmentHandler, ABC):
                 if data_buffer is None or len(data_buffer.getbuffer()) == 0:
                     return
 
-                fragment_entity: EntityDefault = EntityDefault().set_data(data_buffer)
+                fragment_entity: EntityDefault = EntityDefault().data_set(data_buffer)
                 if fragment_index == 1:
-                    fragment_entity.set_meta_map(message.get_meta_map())
+                    fragment_entity.meta_map_set(message.get_meta_map())
                 fragment_entity.meta_put(EntityMetas.META_DATA_FRAGMENT_IDX, str(fragment_index))
                 fragment_entity.meta_put(EntityMetas.META_DATA_FRAGMENT_TOTAL, str(fragment_total))
 

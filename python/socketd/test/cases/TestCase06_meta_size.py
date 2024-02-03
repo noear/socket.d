@@ -34,7 +34,7 @@ class TestCase06_meta_size(BaseTestCase):
             .config(config_handler).open()
         __meta = "*=1&" * 50000
         start_time = time.monotonic()
-        await self.client_session.send("demo", StringEntity("test").set_meta_string(__meta))
+        await self.client_session.send("demo", StringEntity("test").meta_string_set(__meta))
 
         await self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
         end_time = time.monotonic()

@@ -79,7 +79,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return assistant.getLocalAddress(source);
     }
 
-    private ReentrantLock SEND_LOCK = new ReentrantLock();
+    private ReentrantLock SEND_LOCK = new ReentrantLock(true);
 
     /**
      * 发送

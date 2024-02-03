@@ -91,11 +91,14 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
                     .map(FileChannel.MapMode.READ_ONLY, 0, dataLength);
 
             //返回
+            TempfileEntity entity =  new TempfileEntity(tmpfile, tmpfileChannel, dataBuffer, main.metaMap());
+            entity.metaMap().remove(EntityMetas.META_DATA_FRAGMENT_IDX);
+
             return new Frame(main.flag(), new MessageBuilder()
                     .flag(main.flag())
                     .sid(main.sid())
                     .event(main.event())
-                    .entity(new TempfileEntity(tmpfile, dataBuffer, main.metaMap()))
+                    .entity(entity)
                     .build());
         } finally {
             tmpfileChannel.close();

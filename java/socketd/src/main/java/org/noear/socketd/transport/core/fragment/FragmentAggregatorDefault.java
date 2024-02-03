@@ -1,10 +1,7 @@
 package org.noear.socketd.transport.core.fragment;
 
-import org.noear.socketd.transport.core.EntityMetas;
-import org.noear.socketd.transport.core.FragmentAggregator;
-import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.exception.SocketdCodecException;
-import org.noear.socketd.transport.core.MessageInternal;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.utils.StrUtils;
@@ -95,12 +92,14 @@ public class FragmentAggregatorDefault implements FragmentAggregator {
         //索引番转
         dataBuffer.flip();
 
+        EntityDefault entity = new EntityDefault().metaMapPut(main.metaMap()).dataSet(dataBuffer);
+        entity.metaMap().remove(EntityMetas.META_DATA_FRAGMENT_IDX);
         //返回
         return new Frame(main.flag(), new MessageBuilder()
                 .flag(main.flag())
                 .sid(main.sid())
                 .event(main.event())
-                .entity(new EntityDefault().metaMapPut(main.metaMap()).dataSet(dataBuffer))
+                .entity(entity)
                 .build());
     }
 }

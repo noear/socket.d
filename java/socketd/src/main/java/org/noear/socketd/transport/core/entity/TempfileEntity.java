@@ -18,10 +18,12 @@ import java.util.Map;
  */
 public class TempfileEntity extends EntityDefault {
     private final File file;
+    private final FileChannel fileC;
     private RandomAccessFile fileRaf;
 
-    public TempfileEntity(File file, ByteBuffer data, Map<String, String> metaMap) throws IOException {
+    public TempfileEntity(File file, FileChannel fileC, ByteBuffer data, Map<String, String> metaMap) throws IOException {
         this.file = file;
+        this.fileC = fileC;
         dataSet(data);
         metaMapPut(metaMap);
     }
@@ -29,11 +31,10 @@ public class TempfileEntity extends EntityDefault {
     public TempfileEntity(File file) throws IOException {
         this.file = file;
         this.fileRaf = new RandomAccessFile(file, "r");
+        this.fileC = fileRaf.getChannel();
 
         long len = file.length();
-        MappedByteBuffer byteBuffer = fileRaf
-                .getChannel()
-                .map(FileChannel.MapMode.READ_ONLY, 0, len);
+        MappedByteBuffer byteBuffer = fileC.map(FileChannel.MapMode.READ_ONLY, 0, len);
 
         dataSet(byteBuffer);
         metaPut(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
@@ -41,6 +42,10 @@ public class TempfileEntity extends EntityDefault {
 
     @Override
     public void release() throws IOException {
+        if (data() instanceof MappedByteBuffer) {
+            UnmapUtil.unmap(fileC, (MappedByteBuffer) data());
+        }
+
         if (fileRaf != null) {
             fileRaf.close();
         }

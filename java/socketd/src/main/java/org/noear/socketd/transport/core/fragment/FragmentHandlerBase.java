@@ -69,7 +69,7 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
     public Frame aggrFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
         FragmentAggregator aggregator = channel.getAttachment(message.sid());
         if (aggregator == null) {
-            aggregator = new FragmentAggregatorDefault(message);
+            aggregator = createFragmentAggregator(message);
             channel.putAttachment(aggregator.getSid(), aggregator);
         }
 

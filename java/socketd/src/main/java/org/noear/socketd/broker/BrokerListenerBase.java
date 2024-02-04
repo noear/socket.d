@@ -86,7 +86,7 @@ public abstract class BrokerListenerBase implements Listener {
             //论询处理
             int counter = playerRoundCounter.incrementAndGet();
             int idx = counter % sessions.size();
-            if (counter > 999_999_999) {
+            if (counter > 999_999) {
                 playerRoundCounter.set(0);
             }
             return sessions.get(idx);

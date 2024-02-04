@@ -69,7 +69,7 @@ public class ClusterClientSession implements ClientSession {
             //论询处理
             int counter = sessionRoundCounter.incrementAndGet();
             int idx = counter % sessions.size();
-            if (counter > 999_999_999) {
+            if (counter > 999_999) {
                 sessionRoundCounter.set(0);
             }
             return sessions.get(idx);

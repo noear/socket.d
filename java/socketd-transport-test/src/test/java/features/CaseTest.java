@@ -16,7 +16,7 @@ public class CaseTest {
             "sd:ws-java",
             "sd:udp-java",
 //            "sd:udp-netty",
-//            "sd:kcp-java",
+            "sd:kcp-java",
     };
 
     @Test

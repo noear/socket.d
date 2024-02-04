@@ -38,11 +38,15 @@ public interface Constants {
     /**
      * 因协议指令关闭
      */
-    int CLOSE11_PROTOCOL = 11;
+    int CLOSE11_PROTOCOL_CLOSE = 11;
+    /**
+     * 因协议关闭开始（安全关闭）
+     */
+    int CLOSE12_PROTOCOL_CLOSE_STARTING = 12;
     /**
      * 因协议非法关闭
      */
-    int CLOSE12_PROTOCOL_ILLEGAL = 12;
+    int CLOSE18_PROTOCOL_ILLEGAL = 18;
     /**
      * 因协议指令用户主动关闭（不可再重连）
      */

@@ -128,7 +128,6 @@ public interface Session extends ClientSession, Closeable {
      */
     void sendAlarm(Message from, String alarm) throws IOException;
 
-
     /**
      * 答复
      *
@@ -144,4 +143,9 @@ public interface Session extends ClientSession, Closeable {
      * @param entity 实体
      */
     void replyEnd(Message from, Entity entity) throws IOException;
+
+    /**
+     * 关闭开始
+     */
+    void closeStarting() throws IOException;
 }

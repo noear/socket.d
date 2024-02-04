@@ -97,13 +97,10 @@ public interface Channel {
 
     /**
      * 发送 Close
+     *
+     * @param code 关闭代码
      */
-    void sendClose() throws IOException;
-
-    /**
-     * 发送告警
-     */
-    void sendAlarm(Message from, String alarm) throws IOException;
+    void sendClose(int code) throws IOException;
 
     /**
      * 发送

@@ -118,7 +118,7 @@ public class SessionDefault extends SessionBase {
 
     @Override
     public void sendAlarm(Message from, String alarm) throws IOException {
-        channel.sendAlarm(from, alarm);
+        channel.send(Frames.alarmFrame(from, alarm), null);
     }
 
     /**
@@ -130,7 +130,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public SendStream send(String event, Entity entity) throws IOException {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -155,7 +155,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -189,7 +189,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -217,7 +217,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void reply(Message from, Entity entity) throws IOException {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -238,7 +238,7 @@ public class SessionDefault extends SessionBase {
      */
     @Override
     public void replyEnd(Message from, Entity entity) throws IOException {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -249,6 +249,22 @@ public class SessionDefault extends SessionBase {
                 .build();
 
         channel.send(new Frame(Flags.ReplyEnd, message), null);
+    }
+
+
+    /**
+     * 关闭开始
+     */
+    @Override
+    public void closeStarting() throws IOException {
+        if (log.isDebugEnabled()) {
+            log.debug("{} session close starting, sessionId={}",
+                    channel.getConfig().getRoleName(), sessionId());
+        }
+
+        if (channel.isValid()) {
+            channel.sendClose(Constants.CLOSE12_PROTOCOL_CLOSE_STARTING);
+        }
     }
 
     /**
@@ -263,7 +279,7 @@ public class SessionDefault extends SessionBase {
 
         if (channel.isValid()) {
             try {
-                channel.sendClose();
+                channel.sendClose(Constants.CLOSE11_PROTOCOL_CLOSE);
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     log.warn("{} channel sendClose error",

@@ -170,7 +170,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         try {
             super.close(code);
 
-            if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
+            if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
                 this._assistant.close(this._source);
 
                 console.debug(`${this.getConfig().getRoleName()} channel closed, sessionId=${this.getSession().sessionId()}`);

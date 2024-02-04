@@ -236,7 +236,7 @@ export class SessionDefault extends SessionBase {
         console.debug(`${this._channel.getConfig().getRoleName()} session close starting, sessionId=${this.sessionId()}`);
 
         if (this._channel.isValid()) {
-            this._channel.sendClose(Constants.CLOSE11_PROTOCOL_CLOSE_STARTING);
+            this._channel.sendClose(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING);
         }
     }
 
@@ -248,12 +248,12 @@ export class SessionDefault extends SessionBase {
 
         if (this._channel.isValid()) {
             try {
-                this._channel.sendClose(Constants.CLOSE12_PROTOCOL_CLOSE);
+                this._channel.sendClose(Constants.CLOSE1001_PROTOCOL_CLOSE);
             } catch (e) {
                 console.warn(`${this._channel.getConfig().getRoleName()} channel sendClose error`, e);
             }
         }
 
-        this._channel.close(Constants.CLOSE29_USER);
+        this._channel.close(Constants.CLOSE2009_USER);
     }
 }

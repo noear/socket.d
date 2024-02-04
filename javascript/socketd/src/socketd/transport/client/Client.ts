@@ -180,7 +180,7 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
                 resolve(clientChannel.getSession());
             }, err => {
                 if (isThow) {
-                    clientChannel.close(Constants.CLOSE28_OPEN_FAIL);
+                    clientChannel.close(Constants.CLOSE2008_OPEN_FAIL);
                     reject(err);
                 } else {
                     console.warn("Socket.D client Connection failed!");

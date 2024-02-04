@@ -210,7 +210,7 @@ export abstract class  ChannelBase implements Channel {
     close(code: number) {
         this._isClosed = code;
 
-        if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
             this._attachments.clear();
         }
     }

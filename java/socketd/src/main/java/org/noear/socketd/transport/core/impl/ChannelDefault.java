@@ -29,6 +29,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final ChannelAssistant<S> assistant;
     //流管理器
     private final StreamManger streamManger;
+    //发送锁
+    private final ReentrantLock sendLock;
     //会话（懒加载）
     private Session session;
     //最后活动时间
@@ -42,6 +44,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this.processor = supporter.getProcessor();
         this.assistant = supporter.getAssistant();
         this.streamManger = supporter.getConfig().getStreamManger();
+        this.sendLock = new ReentrantLock(supporter.getConfig().sequenceMode());
     }
 
     /**
@@ -79,7 +82,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return assistant.getLocalAddress(source);
     }
 
-    private ReentrantLock SEND_LOCK = new ReentrantLock(true);
+
 
     /**
      * 发送
@@ -96,7 +99,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        SEND_LOCK.lock();
+        sendLock.lock();
         try {
             if (frame.message() != null) {
                 MessageInternal message = frame.message();
@@ -140,7 +143,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 stream.onProgress(true, 1, 1);
             }
         } finally {
-            SEND_LOCK.unlock();
+            sendLock.unlock();
         }
     }
 

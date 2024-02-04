@@ -152,7 +152,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                         log.debug("Server channel idle timeout, remoteIp={}", socket.getRemoteSocketAddress());
                     }
                     //注意：socket 客户端无法感知关闭，需要发消息通知
-                    channel.sendClose(Constants.CLOSE11_PROTOCOL_CLOSE);
+                    channel.sendClose(Constants.CLOSE12_PROTOCOL_CLOSE);
                     throw e;
                 }
             } catch (IOException e) {

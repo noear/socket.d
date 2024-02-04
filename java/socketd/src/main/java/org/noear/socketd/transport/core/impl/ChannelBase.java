@@ -1,9 +1,6 @@
 package org.noear.socketd.transport.core.impl;
 
-import org.noear.socketd.transport.core.Channel;
-import org.noear.socketd.transport.core.Config;
-import org.noear.socketd.transport.core.HandshakeInternal;
-import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -59,7 +56,10 @@ public abstract class ChannelBase implements Channel {
     @Override
     public void close(int code) {
         isClosed = code;
-        attachments.clear();
+
+        if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
+            attachments.clear();
+        }
     }
 
     @Override

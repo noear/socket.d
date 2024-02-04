@@ -31,26 +31,17 @@ public interface Constants {
     int DEF_PORT = 8602;
 
     /**
-     * 附件键-通道
-     * */
-    String ATT_KEY_CHANNEL = "ATT_KEY_SD_CHANNEL";
-
+     * 因协议关闭开始（安全关闭）
+     */
+    int CLOSE11_PROTOCOL_CLOSE_STARTING = 11;
     /**
      * 因协议指令关闭
      */
-    int CLOSE11_PROTOCOL_CLOSE = 11;
-    /**
-     * 因协议关闭开始（安全关闭）
-     */
-    int CLOSE12_PROTOCOL_CLOSE_STARTING = 12;
+    int CLOSE12_PROTOCOL_CLOSE = 12;
     /**
      * 因协议非法关闭
      */
-    int CLOSE18_PROTOCOL_ILLEGAL = 18;
-    /**
-     * 因协议指令用户主动关闭（不可再重连）
-     */
-    int CLOSE19_PROTOCOL_USER = 19;
+    int CLOSE13_PROTOCOL_ILLEGAL = 13;
     /**
      * 因异常关闭
      */

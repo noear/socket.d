@@ -22,7 +22,7 @@ public class FrameDecoder extends BasedPipeHandler<ByteBuf, Frame> {
     }
 
     @Override
-    public PipeStatus doHandler(PipeContext context, PipeRcvQueue<ByteBuf> src, PipeSndQueue<Frame> dst) throws IOException {
+    public PipeStatus onMessage(PipeContext context, PipeRcvQueue<ByteBuf> src, PipeSndQueue<Frame> dst) throws IOException {
         boolean hasAny = false;
         while (src.hasMore()) {
             ByteBuf byteBuf = src.peekMessage();

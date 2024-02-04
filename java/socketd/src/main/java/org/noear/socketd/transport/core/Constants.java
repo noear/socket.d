@@ -33,31 +33,31 @@ public interface Constants {
     /**
      * 因协议关闭开始（安全关闭）
      */
-    int CLOSE11_PROTOCOL_CLOSE_STARTING = 11;
+    int CLOSE1000_PROTOCOL_CLOSE_STARTING = 1000;
     /**
      * 因协议指令关闭
      */
-    int CLOSE12_PROTOCOL_CLOSE = 12;
+    int CLOSE1001_PROTOCOL_CLOSE = 1001;
     /**
      * 因协议非法关闭
      */
-    int CLOSE13_PROTOCOL_ILLEGAL = 13;
+    int CLOSE1002_PROTOCOL_ILLEGAL = 1002;
     /**
      * 因异常关闭
      */
-    int CLOSE21_ERROR = 21;
+    int CLOSE2001_ERROR = 2001;
     /**
      * 因重连关闭
      */
-    int CLOSE22_RECONNECT = 22;
+    int CLOSE2002_RECONNECT = 2002;
     /**
      * 因打开失败关闭
      */
-    int CLOSE28_OPEN_FAIL = 28;
+    int CLOSE2008_OPEN_FAIL = 2008;
     /**
      * 因用户主动关闭（不可再重连）
      */
-    int CLOSE29_USER = 29;
+    int CLOSE2009_USER = 2009;
 
 
     /**

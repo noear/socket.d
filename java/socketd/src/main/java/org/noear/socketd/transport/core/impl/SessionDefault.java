@@ -263,7 +263,7 @@ public class SessionDefault extends SessionBase {
         }
 
         if (channel.isValid()) {
-            channel.sendClose(Constants.CLOSE11_PROTOCOL_CLOSE_STARTING);
+            channel.sendClose(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING);
         }
     }
 
@@ -279,7 +279,7 @@ public class SessionDefault extends SessionBase {
 
         if (channel.isValid()) {
             try {
-                channel.sendClose(Constants.CLOSE12_PROTOCOL_CLOSE);
+                channel.sendClose(Constants.CLOSE1001_PROTOCOL_CLOSE);
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     log.warn("{} channel sendClose error",
@@ -288,6 +288,6 @@ public class SessionDefault extends SessionBase {
             }
         }
 
-        channel.close(Constants.CLOSE29_USER);
+        channel.close(Constants.CLOSE2009_USER);
     }
 }

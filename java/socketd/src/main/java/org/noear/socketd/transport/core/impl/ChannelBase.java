@@ -57,7 +57,7 @@ public abstract class ChannelBase implements Channel {
     public void close(int code) {
         isClosed = code;
 
-        if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
             attachments.clear();
         }
     }

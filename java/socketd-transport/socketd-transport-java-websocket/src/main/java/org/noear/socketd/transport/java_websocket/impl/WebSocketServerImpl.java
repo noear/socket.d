@@ -35,6 +35,10 @@ public class WebSocketServerImpl extends WebSocketServer {
 
 
     private ChannelInternal getChannel(WebSocket conn) {
+        if(conn == null){
+            return null;
+        }
+
         ChannelInternal channel = conn.getAttachment();
 
         if (channel == null) {

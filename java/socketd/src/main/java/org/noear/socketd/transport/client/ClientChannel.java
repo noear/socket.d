@@ -254,7 +254,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
         try {
             if (real != null) {
-                real.close(Constants.CLOSE22_RECONNECT);
+                real.close(Constants.CLOSE2002_RECONNECT);
             }
 
             real = connector.connect();
@@ -269,7 +269,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     private void internalCloseIfError() {
         if (real != null) {
-            real.close(Constants.CLOSE21_ERROR);
+            real.close(Constants.CLOSE2001_ERROR);
             real = null;
         }
     }

@@ -134,7 +134,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
         } catch (Throwable e) {
             if (isThow) {
 
-                clientChannel.close(Constants.CLOSE28_OPEN_FAIL);
+                clientChannel.close(Constants.CLOSE2008_OPEN_FAIL);
 
                 if (e instanceof RuntimeException || e instanceof IOException) {
                     throw e;

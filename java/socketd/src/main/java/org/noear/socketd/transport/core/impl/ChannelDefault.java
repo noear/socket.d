@@ -234,7 +234,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         try {
             super.close(code);
 
-            if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
+            if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
                 assistant.close(source);
 
                 if (log.isDebugEnabled()) {

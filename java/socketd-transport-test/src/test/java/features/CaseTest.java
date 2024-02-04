@@ -403,4 +403,21 @@ public class CaseTest {
             }
         }
     }
+
+    @Test
+    public void TestCase33_closeStarting() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase33_closeStarting(s1, 3300 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
 }

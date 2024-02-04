@@ -31,6 +31,7 @@ public class FrameDecoder extends BasedPipeHandler<ByteBuf, Frame> {
                 if (!byteBuf.hasReadable()) {
                     src.skipMessage(1);
                 }
+                byteBuf.markReader();
 
                 dst.offerMessage(frame);
                 hasAny = true;

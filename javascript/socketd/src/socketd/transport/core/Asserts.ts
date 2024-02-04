@@ -21,7 +21,7 @@ export class Asserts {
      static  isClosedAndEnd( channel:Channel) {
          return channel.isClosed() == Constants.CLOSE29_USER
              || channel.isClosed() == Constants.CLOSE28_OPEN_FAIL
-             || channel.isClosed() == Constants.CLOSE19_PROTOCOL_USER;
+             || channel.isClosed() == Constants.CLOSE11_PROTOCOL_CLOSE_STARTING;
      }
 
     /**

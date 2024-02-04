@@ -68,7 +68,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return this._assistant.getLocalAddress(this._source);
     }
 
-    send(frame: Frame, stream: StreamInternal<any> | null){
+    send(frame: Frame, stream: StreamInternal<any> | null) {
         if (this.getConfig().clientMode()) {
             //console.debug("C-SEN:" + frame);
         } else {
@@ -167,11 +167,14 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     close(code) {
-        console.debug(`${this.getConfig().getRoleName()} channel will be closed, sessionId=${this.getSession().sessionId()}`);
-
         try {
             super.close(code);
-            this._assistant.close(this._source);
+
+            if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
+                this._assistant.close(this._source);
+
+                console.debug(`${this.getConfig().getRoleName()} channel closed, sessionId=${this.getSession().sessionId()}`);
+            }
         } catch (e) {
             console.warn(`${this.getConfig().getRoleName()} channel close error, sessionId=${this.getSession().sessionId()}`, e);
         }

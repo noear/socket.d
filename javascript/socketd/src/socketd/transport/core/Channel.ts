@@ -7,6 +7,7 @@ import type {Frame} from "./Frame";
 import type {StreamInternal} from "../stream/Stream";
 import type {IoBiConsumer} from "./Typealias";
 import {SocketAddress} from "./SocketAddress";
+import {Constants} from "./Constants";
 
 /**
  * 通道
@@ -99,8 +100,10 @@ export interface Channel {
 
     /**
      * 发送 Close
+     *
+     * @param code 关闭代码
      */
-    sendClose();
+    sendClose(code:number);
 
     /**
      * 发送告警
@@ -206,7 +209,10 @@ export abstract class  ChannelBase implements Channel {
 
     close(code: number) {
         this._isClosed = code;
-        this._attachments.clear();
+
+        if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
+            this._attachments.clear();
+        }
     }
 
 
@@ -238,8 +244,8 @@ export abstract class  ChannelBase implements Channel {
         this.send(Frames.pongFrame(), null);
     }
 
-    sendClose() {
-        this.send(Frames.closeFrame(), null);
+    sendClose(code:number) {
+        this.send(Frames.closeFrame(code), null);
     }
 
     sendAlarm(from: Message, alarm: string) {

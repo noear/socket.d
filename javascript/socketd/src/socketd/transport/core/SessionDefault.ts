@@ -232,6 +232,14 @@ export class SessionDefault extends SessionBase {
         this._channel.send(new Frame(Flags.ReplyEnd, message), null);
     }
 
+    closeStarting() {
+        console.debug(`${this._channel.getConfig().getRoleName()} session close starting, sessionId=${this.sessionId()}`);
+
+        if (this._channel.isValid()) {
+            this._channel.sendClose(Constants.CLOSE11_PROTOCOL_CLOSE_STARTING);
+        }
+    }
+
     /**
      * 关闭
      */
@@ -240,7 +248,7 @@ export class SessionDefault extends SessionBase {
 
         if (this._channel.isValid()) {
             try {
-                this._channel.sendClose();
+                this._channel.sendClose(Constants.CLOSE12_PROTOCOL_CLOSE);
             } catch (e) {
                 console.warn(`${this._channel.getConfig().getRoleName()} channel sendClose error`, e);
             }

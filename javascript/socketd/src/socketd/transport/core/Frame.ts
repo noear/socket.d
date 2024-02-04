@@ -98,8 +98,11 @@ export class Frames {
     /**
      * 构建关闭帧（一般用不到）
      */
-    static closeFrame(): Frame {
-        return new Frame(Flags.Close, null);
+    static closeFrame(code:number): Frame {
+        const message = new MessageBuilder();
+        message.entity(new StringEntity("").metaPut("code", code.toString()));
+
+        return new Frame(Flags.Close, message.build());
     }
 
     /**

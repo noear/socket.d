@@ -126,6 +126,11 @@ export interface Session extends ClientSession {
      * @param entity  实体
      */
     replyEnd(from: Message, entity: Entity);
+
+    /**
+     * 关闭开始
+     */
+    closeStarting();
 }
 
 /**
@@ -220,6 +225,8 @@ export abstract class SessionBase implements Session {
     abstract sendAndRequest(event: string, entity: Entity, timeout?: number): RequestStream;
 
     abstract sendAndSubscribe(event: string, entity: Entity, timeout?: number): SubscribeStream;
+
+    abstract closeStarting();
 
     abstract close();
 

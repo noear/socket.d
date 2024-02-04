@@ -26,17 +26,17 @@ export const Constants = {
 
 
     /**
+     * 因协议关闭开始（安全关闭）
+     */
+    CLOSE11_PROTOCOL_CLOSE_STARTING: 11,
+    /**
      * 因协议指令关闭
      */
-    CLOSE11_PROTOCOL: 11,
+    CLOSE12_PROTOCOL_CLOSE: 12,
     /**
      * 因协议非法关闭
      */
-    CLOSE12_PROTOCOL_ILLEGAL: 12,
-    /**
-     * 因协议指令用户主动关闭（不可再重连）
-     */
-    CLOSE19_PROTOCOL_USER: 19,
+    CLOSE13_PROTOCOL_ILLEGAL: 13,
     /**
      * 因异常关闭
      */

@@ -41,6 +41,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     private SSLContext sslContext;
     //通道执行器
     private volatile ExecutorService channelExecutor;
+    private volatile ExecutorService channelExecutorSelfNew;
 
     //字符集
     protected Charset charset;
@@ -76,7 +77,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.fragmentHandler = new FragmentHandlerDefault();
         this.fragmentSize = Constants.MAX_SIZE_DATA;
 
-        this.coreThreads = Math.max(Runtime.getRuntime().availableProcessors(), 2);
+        this.coreThreads = Runtime.getRuntime().availableProcessors();
         this.maxThreads = coreThreads * 4;
 
         this.readBufferSize = 512;
@@ -237,9 +238,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
             EXECUTOR_LOCK.lock();
             try {
                 if (channelExecutor == null) {
-                    int nThreads = clientMode() ? coreThreads : maxThreads;
+                    int nThreads = clientMode() ? getCoreThreads() : getMaxThreads();
 
-                    channelExecutor = new ThreadPoolExecutor(nThreads, nThreads,
+                    channelExecutor = channelExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
                             0L, TimeUnit.MILLISECONDS,
                             new LinkedBlockingQueue<Runnable>(),
                             new NamedThreadFactory("Socketd-channelExecutor-"));
@@ -256,11 +257,11 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 配置调试执行器
      */
     public T channelExecutor(ExecutorService channelExecutor) {
-        ExecutorService odl = this.channelExecutor;
         this.channelExecutor = channelExecutor;
 
-        if (odl != null) {
-            odl.shutdown();
+        if (channelExecutorSelfNew != null) {
+            //谁 new 的，谁 shutdown
+            channelExecutorSelfNew.shutdown();
         }
 
         return (T) this;

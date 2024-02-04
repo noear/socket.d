@@ -1,7 +1,7 @@
 ### 2.3.10
 * 添加 Session::closeStarting 接口
 * 添加 关闭协议帧对 code 的支持
-* 修复 MappedByteBuffer 不能解除映射的问题
+* 修复 MappedByteBuffer 不能解除映射的问题（可以改善内存与删除控制）
 * 修复 Entity.of(String) 会出错的问题
 * 修复 使用临时文件分片处理失效的问题
 * 调整 轮询最大值改为 999_999

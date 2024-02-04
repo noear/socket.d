@@ -118,7 +118,7 @@ public class SessionDefault extends SessionBase {
 
     @Override
     public void sendAlarm(Message from, String alarm) throws IOException {
-        channel.send(Frames.alarmFrame(from, alarm), null);
+        channel.sendAlarm(from, alarm);
     }
 
     /**

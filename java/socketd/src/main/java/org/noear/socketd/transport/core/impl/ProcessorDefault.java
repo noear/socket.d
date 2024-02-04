@@ -107,11 +107,18 @@ public class ProcessorDefault implements Processor {
                     }
                     case Flags.Close: {
                         //关闭通道
-                        int code = frame.message().metaAsInt("code");
+                        int code = 0;
+
+                        if (frame.message() != null) {
+                            code = frame.message().metaAsInt("code");
+                        }
+
                         if (code == 0) {
                             code = Constants.CLOSE12_PROTOCOL_CLOSE;
                         }
+
                         channel.close(code);
+
                         if (code > Constants.CLOSE11_PROTOCOL_CLOSE_STARTING) {
                             onCloseInternal(channel);
                         }

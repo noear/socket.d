@@ -99,4 +99,9 @@ public abstract class ChannelBase implements Channel {
     public void sendClose(int code) throws IOException {
         send(Frames.closeFrame(code), null);
     }
+
+    @Override
+    public void sendAlarm(Message from, String alarm) throws IOException {
+        send(Frames.alarmFrame(from, alarm), null);
+    }
 }

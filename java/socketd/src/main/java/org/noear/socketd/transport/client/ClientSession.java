@@ -80,4 +80,9 @@ public interface ClientSession extends Closeable {
      * @return 流
      */
     SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException;
+
+    /**
+     * 关闭开始
+     */
+    void closeStarting() throws IOException;
 }

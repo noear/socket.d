@@ -146,6 +146,14 @@ public class ClusterClientSession implements ClientSession {
         return sender.sendAndSubscribe(event, entity, timeout);
     }
 
+    @Override
+    public void closeStarting() throws IOException {
+        for (ClientSession session : sessionSet) {
+            //某个关闭出错，不影响别的关闭
+            RunUtils.runAndTry(session::closeStarting);
+        }
+    }
+
     /**
      * 关闭
      */

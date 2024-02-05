@@ -22,14 +22,14 @@ public abstract class BasedPipeHandler<IN, OUT> implements PipeHandler<IN, OUT> 
     }
 
     @Override
-    public void initHandler(PipeContext context) {
+    public void onActive(PipeContext context) {
         if (context.context(ChannelInternal.class) == null) {
             context.context(ChannelInternal.class, new ChannelDefault<>((NetChannel) context.getChannel(), this.supporter));
         }
     }
 
     @Override
-    public void releaseHandler(PipeContext context) {
+    public void onClose(PipeContext context) {
         if (context.context(ChannelInternal.class) != null) {
             ChannelInternal channel = context.context(ChannelInternal.class);
             this.supporter.getProcessor().onClose(channel);

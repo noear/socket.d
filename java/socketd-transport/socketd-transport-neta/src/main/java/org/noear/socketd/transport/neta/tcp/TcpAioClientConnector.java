@@ -6,7 +6,6 @@ import net.hasor.neta.channel.NetaSocket;
 import net.hasor.neta.channel.PipeInitializer;
 import net.hasor.neta.channel.SoConfig;
 import net.hasor.neta.handler.PipeHelper;
-import net.hasor.neta.handler.codec.LimitFrameHandler;
 import org.noear.socketd.exception.SocketdConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
@@ -15,6 +14,7 @@ import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.neta.tcp.impl.ClientPipeListener;
 import org.noear.socketd.transport.neta.tcp.impl.FrameDecoder;
 import org.noear.socketd.transport.neta.tcp.impl.FrameEncoder;
+import org.noear.socketd.transport.neta.tcp.impl.FixedLengthFrameHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         ClientPipeListener pipeListener = new ClientPipeListener(client);
 
         PipeInitializer initializer = ctx -> PipeHelper.builder()
-                .nextDecoder(new LimitFrameHandler(Constants.MAX_SIZE_FRAME))
+                .nextDecoder(new FixedLengthFrameHandler(Constants.MAX_SIZE_FRAME))
                 .nextDuplex(decoder,encoder)
                 .nextDecoder(pipeListener).build();
 

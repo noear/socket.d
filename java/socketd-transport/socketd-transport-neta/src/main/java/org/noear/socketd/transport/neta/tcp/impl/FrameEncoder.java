@@ -23,7 +23,7 @@ public class FrameEncoder extends BasedPipeHandler<Frame, ByteBuf> {
     }
 
     @Override
-    public PipeStatus doHandler(PipeContext context, PipeRcvQueue<Frame> src, PipeSndQueue<ByteBuf> dst) throws IOException {
+    public PipeStatus onMessage(PipeContext context, PipeRcvQueue<Frame> src, PipeSndQueue<ByteBuf> dst) throws IOException {
         boolean hasAny = false;
         while (src.hasMore()) {
             Frame frame = src.takeMessage();

@@ -54,7 +54,7 @@ public class ClusterClientSession implements ClientSession {
         } else {
             //查找可用的会话
             List<ClientSession> sessions = sessionSet.stream()
-                    .filter(s -> s.isValid() && s.isClosing() == false)
+                    .filter(s -> s.isValid() && !s.isClosing())
                     .collect(Collectors.toList());
 
             if (sessions.size() == 0) {

@@ -19,8 +19,6 @@ public abstract class ChannelBase implements Channel {
     private final Map<String, Object> attachments = new ConcurrentHashMap<>();
     //握手信息
     private HandshakeInternal handshake;
-    //是否已关闭（用于做关闭异常提醒）//可能协议关；可能用户关
-    private int isClosed;
 
 
     public ChannelBase(Config config) {
@@ -47,24 +45,9 @@ public abstract class ChannelBase implements Channel {
         }
     }
 
-    @Override
-    public boolean isClosing() {
-        return isClosed == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
-    }
-
-    @Override
-    public int isClosed() {
-        if (isClosed > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            return isClosed;
-        } else {
-            return 0;
-        }
-    }
 
     @Override
     public void close(int code) {
-        isClosed = code;
-
         if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
             attachments.clear();
         }

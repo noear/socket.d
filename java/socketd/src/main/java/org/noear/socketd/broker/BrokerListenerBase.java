@@ -16,11 +16,22 @@ import java.util.stream.Collectors;
  * @since 2.1
  */
 public abstract class BrokerListenerBase implements Listener {
+    private Map<String, Session> sessionAll = new ConcurrentHashMap<>();
     //玩家会话
     private Map<String, Set<Session>> playerSessions = new ConcurrentHashMap<>();
     //轮询计数
     private AtomicInteger playerRoundCounter = new AtomicInteger(0);
 
+    /**
+     * 获取所有会话（包括没有名字的）
+     */
+    public Collection<Session> getSessionAll() {
+        return sessionAll.values();
+    }
+
+    /**
+     * 获取所有玩家的名字
+     */
     public Collection<String> getNameAll() {
         return playerSessions.keySet();
     }
@@ -59,17 +70,7 @@ public abstract class BrokerListenerBase implements Listener {
             return null;
         }
 
-        Session session = getPlayerOneDo(name);
-
-        if (session != null) {
-            if (session.isValid() == false || session.isClosing()) {
-                //如果无效，做关闭处理 //只试一次（避免性能浪费）
-                onClose(session);
-                session = getPlayerOneDo(name);
-            }
-        }
-
-        return session;
+        return getPlayerOneDo(name);
     }
 
     private Session getPlayerOneDo(String name) {
@@ -79,7 +80,7 @@ public abstract class BrokerListenerBase implements Listener {
         } else {
             //线程安全处理（避免别处有增减）
             List<Session> sessions = tmp.stream()
-                    .filter(s -> s.isValid() && s.isClosing() == false)
+                    .filter(s -> s.isValid() && !s.isClosing())
                     .collect(Collectors.toList());
 
             if (sessions.size() == 0) {
@@ -112,6 +113,8 @@ public abstract class BrokerListenerBase implements Listener {
             Set<Session> sessions = playerSessions.computeIfAbsent(name, n -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
             sessions.add(session);
         }
+
+        sessionAll.put(session.sessionId(), session);
     }
 
     /**
@@ -128,5 +131,7 @@ public abstract class BrokerListenerBase implements Listener {
                 sessions.remove(session);
             }
         }
+
+        sessionAll.remove(session.sessionId());
     }
 }

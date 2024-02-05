@@ -37,6 +37,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private long liveTime;
     //打开前景（用于构建 onOpen 异步处理）
     private BiConsumer<Boolean, Throwable> onOpenFuture;
+    //关闭代号（用于做关闭异常提醒）//可能协议关；可能用户关
+    private int closeCode;
 
     public ChannelDefault(S source, ChannelSupporter<S> supporter) {
         super(supporter.getConfig());
@@ -225,6 +227,20 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
     }
 
+    @Override
+    public boolean isClosing() {
+        return closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
+    }
+
+    @Override
+    public int isClosed() {
+        if (closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            return closeCode;
+        } else {
+            return 0;
+        }
+    }
+
 
     /**
      * 关闭
@@ -232,6 +248,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     @Override
     public void close(int code) {
         try {
+            this.closeCode = code;
+
             super.close(code);
 
             if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {

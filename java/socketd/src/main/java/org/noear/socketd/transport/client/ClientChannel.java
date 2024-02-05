@@ -85,6 +85,15 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    @Override
+    public boolean isClosing() {
+        if (real == null) {
+            return false;
+        } else {
+            return real.isClosing();
+        }
+    }
+
     /**
      * 是否已关闭
      */

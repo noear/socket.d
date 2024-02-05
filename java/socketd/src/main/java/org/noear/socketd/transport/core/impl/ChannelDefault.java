@@ -57,6 +57,19 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return isClosed() == 0 && assistant.isValid(source);
     }
 
+    @Override
+    public boolean isClosing() {
+        return closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
+    }
+
+    @Override
+    public int isClosed() {
+        if (closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            return closeCode;
+        } else {
+            return 0;
+        }
+    }
 
     @Override
     public long getLiveTime() {
@@ -226,21 +239,6 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             onOpenFuture.accept(isOk, error);
         }
     }
-
-    @Override
-    public boolean isClosing() {
-        return closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
-    }
-
-    @Override
-    public int isClosed() {
-        if (closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            return closeCode;
-        } else {
-            return 0;
-        }
-    }
-
 
     /**
      * 关闭

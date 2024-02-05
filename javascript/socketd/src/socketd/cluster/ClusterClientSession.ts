@@ -47,7 +47,7 @@ export class ClusterClientSession implements ClientSession {
             //查找可用的会话
             const sessions = new Array<ClientSession>();
             for (const s of this._sessionSet) {
-                if (s.isValid()) {
+                if (s.isValid() && !s.isClosing()) {
                     sessions.push(s);
                 }
             }
@@ -74,6 +74,16 @@ export class ClusterClientSession implements ClientSession {
     isValid(): boolean {
         for (const session of this._sessionSet) {
             if (session.isValid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isClosing(): boolean {
+        for (const session of this._sessionSet) {
+            if (session.isClosing()) {
                 return true;
             }
         }

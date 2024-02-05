@@ -112,6 +112,17 @@ export class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
+     * 是否关闭中
+     */
+    isClosing() {
+        if (this._real == null) {
+            return false;
+        } else {
+            return this._real.isClosing();
+        }
+    }
+
+    /**
      * 是否已关闭
      */
     isClosed(): number {

@@ -32,6 +32,10 @@ export class SessionDefault extends SessionBase {
         return this._channel.isValid();
     }
 
+    isClosing(): boolean {
+        return this._channel.isClosing();
+    }
+
     remoteAddress(): SocketAddress | null {
         return this._channel.getRemoteAddress();
     }

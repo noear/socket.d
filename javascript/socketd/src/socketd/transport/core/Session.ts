@@ -218,6 +218,8 @@ export abstract class SessionBase implements Session {
 
     abstract isValid(): boolean ;
 
+    abstract isClosing(): boolean;
+
     abstract reconnect();
 
     abstract send(event: string, entity: Entity): SendStream;

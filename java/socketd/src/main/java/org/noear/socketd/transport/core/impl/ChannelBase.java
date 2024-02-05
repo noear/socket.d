@@ -47,10 +47,18 @@ public abstract class ChannelBase implements Channel {
         }
     }
 
+    @Override
+    public boolean isClosing() {
+        return isClosed == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
+    }
 
     @Override
     public int isClosed() {
-        return isClosed;
+        if (isClosed > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            return isClosed;
+        } else {
+            return 0;
+        }
     }
 
     @Override

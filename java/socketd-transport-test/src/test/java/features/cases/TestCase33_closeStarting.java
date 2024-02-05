@@ -48,7 +48,7 @@ public class TestCase33_closeStarting extends BaseTestCase {
                         System.out.println("::" + message);
                         if (message.isRequest()) {
                             messageCounter.incrementAndGet();
-                            if(session.isValid()) {
+                            if(session.isValid() && session.isClosing() == false) {
                                 session.reply(message, Entity.of());
                             }
                         }

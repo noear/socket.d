@@ -54,11 +54,10 @@ public class ClusterClientSession implements ClientSession {
         } else {
             //查找可用的会话
             List<ClientSession> sessions = sessionSet.stream()
-                    .filter(s -> s.isValid())
+                    .filter(s -> s.isValid() && s.isClosing() == false)
                     .collect(Collectors.toList());
 
             if (sessions.size() == 0) {
-                //没有可用的会话
                 throw new SocketdException("No session is available!");
             }
 
@@ -80,6 +79,17 @@ public class ClusterClientSession implements ClientSession {
     public boolean isValid() {
         for (ClientSession session : sessionSet) {
             if (session.isValid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isClosing() {
+        for (ClientSession session : sessionSet) {
+            if (session.isClosing()) {
                 return true;
             }
         }

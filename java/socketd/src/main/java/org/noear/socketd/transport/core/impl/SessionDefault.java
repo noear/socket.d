@@ -37,6 +37,11 @@ public class SessionDefault extends SessionBase {
         return channel.isValid();
     }
 
+    @Override
+    public boolean isClosing() {
+        return channel.isClosing();
+    }
+
     /**
      * 获取远程地址
      */

@@ -140,8 +140,8 @@ public class ClientChannel extends ChannelBase implements Channel {
                 return;
             }
 
-            //关闭并结束了
-            if (Asserts.isClosedAndEnd(real)) {
+            //关闭并结束了或者正在关闭中
+            if (Asserts.isClosedAndEnd(real) || real.isClosing()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }

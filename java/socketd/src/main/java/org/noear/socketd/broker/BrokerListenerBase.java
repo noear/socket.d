@@ -7,6 +7,7 @@ import org.noear.socketd.utils.StrUtils;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * 经纪人监听器基类（实现玩家封闭管理）
@@ -61,7 +62,7 @@ public abstract class BrokerListenerBase implements Listener {
         Session session = getPlayerOneDo(name);
 
         if (session != null) {
-            if (session.isValid() == false) {
+            if (session.isValid() == false || session.isClosing()) {
                 //如果无效，做关闭处理 //只试一次（避免性能浪费）
                 onClose(session);
                 session = getPlayerOneDo(name);
@@ -75,14 +76,20 @@ public abstract class BrokerListenerBase implements Listener {
         Collection<Session> tmp = getPlayerAll(name);
         if (tmp == null || tmp.size() == 0) {
             return null;
-        }
-
-        //线程安全处理（避免别处有增减）
-        List<Session> sessions = new ArrayList<>(tmp);
-
-        if (sessions.size() == 1) {
-            return sessions.get(0);
         } else {
+            //线程安全处理（避免别处有增减）
+            List<Session> sessions = tmp.stream()
+                    .filter(s -> s.isValid() && s.isClosing() == false)
+                    .collect(Collectors.toList());
+
+            if (sessions.size() == 0) {
+                return null;
+            }
+
+            if (sessions.size() == 1) {
+                return sessions.get(0);
+            }
+
             //论询处理
             int counter = playerRoundCounter.incrementAndGet();
             int idx = counter % sessions.size();

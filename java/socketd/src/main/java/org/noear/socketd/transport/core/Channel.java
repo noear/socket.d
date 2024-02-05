@@ -29,6 +29,11 @@ public interface Channel {
     boolean isValid();
 
     /**
+     * 是否正在关闭
+     * */
+    boolean isClosing();
+
+    /**
      * 是否已关闭
      */
     int isClosed();

@@ -20,6 +20,11 @@ public interface ClientSession extends Closeable {
     boolean isValid();
 
     /**
+     * 是否正在关闭中
+     * */
+    boolean isClosing();
+
+    /**
      * 获取会话Id
      */
     String sessionId();

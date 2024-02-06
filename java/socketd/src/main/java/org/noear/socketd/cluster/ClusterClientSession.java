@@ -104,11 +104,10 @@ public class ClusterClientSession implements ClientSession {
         }
     }
 
-
     /**
      * 获取任意一个会话（轮询负栽均衡）
      *
-     * @deprecated 2.3
+     * @deprecated  2.3
      */
     @Deprecated
     public ClientSession getSessionOne() {

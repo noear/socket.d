@@ -60,55 +60,54 @@ public abstract class BrokerListenerBase implements Listener {
     /**
      * 获取第一个玩家会话
      *
-     * @param name 名字
+     * @param atName 目标名字
      * @since 2.3
      */
-    public Session getPlayerFirst(String name) {
-        if (StrUtils.isEmpty(name)) {
+    public Session getPlayerFirst(String atName) {
+        if (StrUtils.isEmpty(atName)) {
             return null;
         }
 
-        return BrokerPolicy.getFirst(getPlayerAll(name));
+        if (atName.endsWith("!")) {
+            atName = atName.substring(0, atName.length() - 1);
+        }
+
+        return BrokerPolicy.getFirst(getPlayerAll(atName));
     }
 
     /**
      * 获取任意一个玩家会话
      *
-     * @param name 名字
+     * @param atName 目标名字
      * @since 2.3
      */
-    public Session getPlayerAny(String name) {
-        if (StrUtils.isEmpty(name)) {
+    public Session getPlayerAny(String atName, Session requester) throws IOException {
+        if (StrUtils.isEmpty(atName)) {
             return null;
         }
 
-        return BrokerPolicy.getAnyByPoll(getPlayerAll(name));
-    }
+        if (atName.endsWith("!")) {
+            atName = atName.substring(0, atName.length() - 1);
 
-    /**
-     * 根据 ip_hash 获取任意一个玩家会话
-     *
-     * @param name 名字
-     * @since 2.3
-     */
-    public Session getPlayerAnyByIpHash(String name, Session requester) throws IOException {
-        if (StrUtils.isEmpty(name)) {
-            return null;
+            if (requester == null) {
+                return BrokerPolicy.getAnyByPoll(getPlayerAll(atName));
+            } else {
+                return BrokerPolicy.getAnyByIpHash(getPlayerAll(atName), requester);
+            }
+        } else {
+            return BrokerPolicy.getAnyByPoll(getPlayerAll(atName));
         }
-
-        return BrokerPolicy.getAnyByIpHash(getPlayerAll(name), requester);
     }
-
 
     /**
      * 获取任意一个玩家会话
      *
-     * @param name 名字
-     * @deprecated 2.3
+     * @param atName 目标名字
+     * @deprecated  2.3
      */
     @Deprecated
-    public Session getPlayerOne(String name) {
-        return getPlayerAny(name);
+    public Session getPlayerOne(String atName) throws IOException {
+        return getPlayerAny(atName, null);
     }
 
     /**

@@ -104,7 +104,7 @@ public interface Session extends ClientSession, Closeable {
     boolean isValid();
 
     /**
-     * 是否正在关闭中
+     * 是否关闭中
      * */
     boolean isClosing();
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from io import BytesIO
 from typing import Type, TypeVar, Callable
 
-from socketd.transport.core.codec import Buffer
+from socketd.transport.core.codec.Buffer import Buffer
 from socketd.transport.core.Frame import Frame
 
 In = TypeVar("In", bound=Type)
@@ -32,13 +32,16 @@ class Codec(ABC):
 
 class CodecReader(ABC):
     @abstractmethod
-    def get_bytes(self) -> bytes: ...
+    def get_bytes(self, size) -> bytes: ...
 
     @abstractmethod
     def get_int(self) -> int: ...
 
     @abstractmethod
     def skip_bytes(self, size): ...
+
+    @abstractmethod
+    def seek(self, size): ...
 
     @abstractmethod
     def position(self): ...
@@ -61,10 +64,13 @@ class CodecWriter(ABC):
     def put_int(self, _num: int): ...
 
     @abstractmethod
+    def put_char(self, _val):...
+
+    @abstractmethod
     def flush(self): ...
 
     @abstractmethod
-    def get_buffer(self) -> BytesIO: ...
+    def get_buffer(self) -> Buffer: ...
 
     @abstractmethod
     def close(self): ...

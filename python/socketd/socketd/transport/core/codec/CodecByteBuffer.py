@@ -1,12 +1,12 @@
 from io import BytesIO
 from typing import Callable, Optional
-from socketd.transport.core.Codec import Codec, CodecReader, CodecWriter
 from socketd.transport.core.Costants import Constants, Flag
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.core.entity.EntityDefault import EntityDefault
 from socketd.transport.core.Config import Config
 from socketd.transport.core.codec.Buffer import Buffer
+from socketd.transport.core.Codec import Codec, CodecReader, CodecWriter
 
 
 def assert_size(name: str, size: int, limitSize: int) -> None:
@@ -20,14 +20,17 @@ class ByteBufferCodecReader(CodecReader):
     def __init__(self, buffer: Buffer):
         self.__buffer = buffer
 
-    def get_bytes(self) -> bytes:
-        return self.__buffer.getvalue()
+    def get_bytes(self, size) -> bytes:
+        return self.__buffer.read(size)
 
     def get_int(self) -> int:
-        return int.from_bytes(self.__buffer.read1(4), byteorder='little', signed=False)
+        return int.from_bytes(self.__buffer.read1(4), byteorder='big', signed=False)
 
     def skip_bytes(self, size):
         self.__buffer.seek(self.__buffer.tell() + size)
+
+    def seek(self, size):
+        self.__buffer.seek(size)
 
     def remaining(self):
         return self.__buffer.remaining()
@@ -51,12 +54,16 @@ class ByteBufferCodecWriter(CodecWriter):
         self.__buffer.write(_bytes)
 
     def put_int(self, _num: int):
-        self.__buffer.write(_num.to_bytes(length=4, byteorder='little', signed=False))
+        self.__buffer.write(_num.to_bytes(length=4, byteorder='big', signed=False))
+
+    def put_char(self, _val: bytes):
+        by: int = int.from_bytes(_val, byteorder='big', signed=False)
+        self.__buffer.write(by.to_bytes(length=2, byteorder='big', signed=False))
 
     def flush(self):
         self.__buffer.flush()
 
-    def get_buffer(self) -> BytesIO:
+    def get_buffer(self) -> Buffer:
         return self.__buffer
 
     def close(self):
@@ -72,7 +79,6 @@ class CodecByteBuffer(Codec):
             # length (flag + int.bytes)
             _len = 2 * 4
             target: CodecWriter = factory(_len)
-
             # length
             target.put_int(_len)
             # flag
@@ -107,15 +113,15 @@ class CodecByteBuffer(Codec):
 
             # sid
             target.put_bytes(sidB)
-            target.put_bytes(b'\n')
+            target.put_char(b'\n')
 
             # event
             target.put_bytes(event)
-            target.put_bytes(b'\n')
+            target.put_char(b'\n')
 
             # metaString
             target.put_bytes(metaStringB)
-            target.put_bytes(b'\n')
+            target.put_char(b'\n')
 
             # _data
             if frame.message.get_entity().get_data() is not None:
@@ -129,7 +135,6 @@ class CodecByteBuffer(Codec):
 
         if len0 > (_reader.remaining() + 4):
             return None
-
         flag = _reader.get_int()  # 取前一位数据
 
         if len0 == 8:
@@ -163,7 +168,8 @@ class CodecByteBuffer(Codec):
             return Frame(message.flag, message)
 
     def decodeString(self, reader: CodecReader, buf: Buffer, maxLen: int) -> str:
-        b = bytearray(reader.get_buffer().readline(maxLen).replace(b'\n', b''))
+        b = bytearray(reader.get_buffer().readline(maxLen))[:-2]
+        reader.skip_bytes(1)
         if buf.limit() < 1:
             return ""
         return b.decode(self.config.get_charset())

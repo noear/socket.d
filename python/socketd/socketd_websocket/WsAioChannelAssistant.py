@@ -31,7 +31,6 @@ class WsAioChannelAssistant(ChannelAssistant):
                     _end = source.max_size * i
                     await source.write_frame(False, frames.OP_BINARY, _data[_start:_end])
                     _start += source.max_size
-                print(source.state)
                 await source.write_frame(True, frames.OP_CONT, b"")
             else:
                 await source.send(_data)

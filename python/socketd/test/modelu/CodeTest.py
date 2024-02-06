@@ -2,14 +2,15 @@ import asyncio
 import unittest
 from asyncio import Queue
 from concurrent.futures import ThreadPoolExecutor
+from socketd.transport.core.Codec import Codec, CodecReader, CodecWriter
 
-from socketd.transport.core.codec import Buffer
+from socketd.transport.core.codec.Buffer import Buffer
 from socketd.transport.core.Costants import Flag
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.core.entity.StringEntity import StringEntity
-from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer
+from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer, ByteBufferCodecWriter, ByteBufferCodecReader
 from test.uitls import calc_time
 
 
@@ -17,17 +18,16 @@ class CodeTest(unittest.TestCase):
 
     def test01(self):
         code = CodecByteBuffer(ServerConfig("ws"))
-        b1 = code.write(Frame(Flag.Message,
-                              MessageDefault().set_sid("1700534070000000001")
-                              .set_entity(StringEntity("test"))
-                              .set_event("demo")
-                              ),
-                        lambda l: Buffer(100))
-        print(f"size {b1.size()} pos = {b1.tell()}")
-        b1.seek(0)
-        b2 = code.read(b1)
-        print(f"size {b1.size()} pos = {b1.tell()}")
-        print(b1.getvalue())
+        f1 = Frame(Flag.Message,
+                   MessageDefault().set_sid("1700534070000000001")
+                   .set_entity(StringEntity("test"))
+                   .set_event("demo")
+                   )
+        print(f1)
+        b1: CodecWriter = code.write(f1,
+                                     lambda l: ByteBufferCodecWriter(Buffer(100)))
+        print(b1.get_buffer().getvalue())
+        b2 = code.read(ByteBufferCodecReader(b1.get_buffer()))
         print(b2)
         b1.close()
 
@@ -47,9 +47,8 @@ class CodeTest(unittest.TestCase):
                                   MessageDefault().set_sid("1700534070000000001")
                                   .set_entity(StringEntity("test"))
                                   ),
-                            lambda l: Buffer(100))
-            b1.seek(0)
-            b2 = code.read(b1)
+                            lambda l: ByteBufferCodecWriter(Buffer(100)))
+            b2 = code.read(ByteBufferCodecReader(b1.get_buffer()))
             b1.close()
         # for _ in range(100000):
         #     b = Buffer(limit=5)

@@ -12,7 +12,6 @@ import org.noear.socketd.utils.StrUtils;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * 集群客户端会话
@@ -45,7 +44,7 @@ public class ClusterClientSession implements ClientSession {
      * 获取第一个会话
      *
      * @since 2.3
-     * */
+     */
     public ClientSession getSessionFirst() {
         if (sessionSet.size() == 0) {
             //没有会话
@@ -80,8 +79,8 @@ public class ClusterClientSession implements ClientSession {
         } else {
             //查找可用的会话
             List<ClientSession> sessions = new ArrayList<>();
-            for(ClientSession s: sessionSet){
-                if(s.isValid() && !s.isClosing()){
+            for (ClientSession s : sessionSet) {
+                if (s.isValid() && !s.isClosing()) {
                     sessions.add(s);
                 }
             }
@@ -105,9 +104,20 @@ public class ClusterClientSession implements ClientSession {
     }
 
     /**
+     * 获取一个会话
+     */
+    public ClientSession getSessionOne(boolean getFirst) {
+        if (getFirst) {
+            return getSessionFirst();
+        } else {
+            return getSessionAny();
+        }
+    }
+
+    /**
      * 获取任意一个会话（轮询负栽均衡）
      *
-     * @deprecated  2.3
+     * @deprecated 2.3
      */
     @Deprecated
     public ClientSession getSessionOne() {

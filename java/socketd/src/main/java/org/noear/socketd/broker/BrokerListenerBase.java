@@ -4,10 +4,9 @@ import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.utils.StrUtils;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * 经纪人监听器基类（实现玩家封闭管理）
@@ -19,8 +18,6 @@ public abstract class BrokerListenerBase implements Listener {
     private Map<String, Session> sessionAll = new ConcurrentHashMap<>();
     //玩家会话
     private Map<String, Set<Session>> playerSessions = new ConcurrentHashMap<>();
-    //轮询计数
-    private AtomicInteger playerRoundCounter = new AtomicInteger(0);
 
     /**
      * 获取所有会话（包括没有名字的）
@@ -61,47 +58,57 @@ public abstract class BrokerListenerBase implements Listener {
     }
 
     /**
-     * 获取一个玩家会话
+     * 获取第一个玩家会话
      *
      * @param name 名字
+     * @since 2.3
      */
-    public Session getPlayerOne(String name) {
+    public Session getPlayerFirst(String name) {
         if (StrUtils.isEmpty(name)) {
             return null;
         }
 
-        return getPlayerOneDo(name);
+        return BrokerPolicy.getFirst(getPlayerAll(name));
     }
 
-    private Session getPlayerOneDo(String name) {
-        Collection<Session> tmp = getPlayerAll(name);
-        if (tmp == null || tmp.size() == 0) {
+    /**
+     * 获取任意一个玩家会话
+     *
+     * @param name 名字
+     * @since 2.3
+     */
+    public Session getPlayerAny(String name) {
+        if (StrUtils.isEmpty(name)) {
             return null;
-        } else {
-            //查找可用的会话
-            List<Session> sessions = new ArrayList<>();
-            for(Session s: tmp){
-                if(s.isValid() && !s.isClosing()){
-                    sessions.add(s);
-                }
-            }
-
-            if (sessions.size() == 0) {
-                return null;
-            }
-
-            if (sessions.size() == 1) {
-                return sessions.get(0);
-            }
-
-            //论询处理
-            int counter = playerRoundCounter.incrementAndGet();
-            int idx = counter % sessions.size();
-            if (counter > 999_999) {
-                playerRoundCounter.set(0);
-            }
-            return sessions.get(idx);
         }
+
+        return BrokerPolicy.getAnyByPoll(getPlayerAll(name));
+    }
+
+    /**
+     * 根据 ip_hash 获取任意一个玩家会话
+     *
+     * @param name 名字
+     * @since 2.3
+     */
+    public Session getPlayerAnyByIpHash(String name, Session requester) throws IOException {
+        if (StrUtils.isEmpty(name)) {
+            return null;
+        }
+
+        return BrokerPolicy.getAnyByIpHash(getPlayerAll(name), requester);
+    }
+
+
+    /**
+     * 获取任意一个玩家会话
+     *
+     * @param name 名字
+     * @deprecated 2.3
+     */
+    @Deprecated
+    public Session getPlayerOne(String name) {
+        return getPlayerAny(name);
     }
 
     /**

@@ -1,8 +1,6 @@
 package org.noear.socketd.broker;
 
-import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.Message;
-import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +55,15 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
             }
         } else {
             //单发模式（给同名的某个玩家，轮询负截均衡）
-            Session responder = getPlayerOne(atName);
+            Session responder = null;
+            if (atName.endsWith("!")) {
+                //单发，强制绑定固定目标（一般用 ip_hash）
+                atName = atName.substring(0, atName.length() - 1);
+                responder = getPlayerAnyByIpHash(atName, requester);
+            } else {
+                responder = getPlayerAny(atName);
+            }
+
             if (responder != null) {
                 //转发消息
                 forwardToSession(requester, message, responder);

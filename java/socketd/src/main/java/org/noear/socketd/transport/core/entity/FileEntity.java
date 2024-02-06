@@ -16,13 +16,13 @@ import java.nio.channels.FileChannel;
  */
 public class FileEntity extends EntityDefault {
     private final RandomAccessFile fileRaf;
+    private final FileChannel fileC;
 
     public FileEntity(File file) throws IOException {
         long len = file.length();
         fileRaf = new RandomAccessFile(file, "r");
-        MappedByteBuffer byteBuffer = fileRaf
-                .getChannel()
-                .map(FileChannel.MapMode.READ_ONLY, 0, len);
+        fileC = fileRaf.getChannel();
+        MappedByteBuffer byteBuffer = fileC.map(FileChannel.MapMode.READ_ONLY, 0, len);
 
         dataSet(byteBuffer);
         metaPut(EntityMetas.META_DATA_DISPOSITION_FILENAME, file.getName());
@@ -30,6 +30,10 @@ public class FileEntity extends EntityDefault {
 
     @Override
     public void release() throws IOException {
+        if (data() instanceof MappedByteBuffer) {
+            UnmapUtil.unmap(fileC, (MappedByteBuffer) data());
+        }
+
         fileRaf.close();
     }
 }

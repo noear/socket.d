@@ -15,7 +15,7 @@ function buildListener() {
             console.info("onMessage: " + m);
         }).doOn("/demo", (s, m) => {
             if (m.isRequest()) {
-                s.reply(m, SocketD.newEntity("me to!"));
+                s.reply(m, SocketD.newEntity("me to! ref:" + m.dataAsString()));
             }
 
             if (m.isSubscribe()) {
@@ -29,9 +29,9 @@ function buildListener() {
             if (m.isRequest()) {
                 let fileName = m.meta(SocketD.EntityMetas.META_DATA_DISPOSITION_FILENAME);
                 if (fileName) {
-                    s.reply(m, SocketD.newEntity("no file! size: " + m.dataSize()));
-                } else {
                     s.reply(m, SocketD.newEntity("file received: " + fileName + ", size: " + m.dataSize()));
+                }else{
+                    s.reply(m, SocketD.newEntity("no file! size: " + m.dataSize()));
                 }
             }
         }).doOn("/download", (s, m) => {

@@ -20,6 +20,11 @@ public interface ClientSession extends Closeable {
     boolean isValid();
 
     /**
+     * 是否正在关闭中
+     * */
+    boolean isClosing();
+
+    /**
      * 获取会话Id
      */
     String sessionId();
@@ -80,4 +85,9 @@ public interface ClientSession extends Closeable {
      * @return 流
      */
     SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException;
+
+    /**
+     * 关闭开始
+     */
+    void closeStarting() throws IOException;
 }

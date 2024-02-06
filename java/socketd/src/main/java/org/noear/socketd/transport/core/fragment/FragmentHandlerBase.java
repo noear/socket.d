@@ -7,6 +7,7 @@ import org.noear.socketd.utils.IoConsumer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 
 /**
  * 数据分片处理基类
@@ -23,7 +24,9 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
      */
     @Override
     public void spliFragment(Channel channel, StreamInternal stream, MessageInternal message, IoConsumer<Entity> consumer) throws IOException {
-        if (message.dataSize() > channel.getConfig().getFragmentSize()) {
+        if (message.dataSize() > channel.getConfig().getFragmentSize()
+                || message.data() instanceof MappedByteBuffer) {
+            // MappedByteBuffer 的数据，也需要提前转出来
             int fragmentTotal = message.dataSize() / channel.getConfig().getFragmentSize();
             if (message.dataSize() % channel.getConfig().getFragmentSize() > 0) {
                 fragmentTotal++;
@@ -42,8 +45,12 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
                 if (fragmentIndex == 1) {
                     fragmentEntity.metaMapPut(message.metaMap());
                 }
-                fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
-                fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_TOTAL, String.valueOf(fragmentTotal));
+
+                if (fragmentTotal > 1) {
+                    //数量大于1才算真正的分版
+                    fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_IDX, String.valueOf(fragmentIndex));
+                    fragmentEntity.metaPut(EntityMetas.META_DATA_FRAGMENT_TOTAL, String.valueOf(fragmentTotal));
+                }
 
                 consumer.accept(fragmentEntity);
                 if (stream != null) {
@@ -69,7 +76,7 @@ public abstract class FragmentHandlerBase implements FragmentHandler {
     public Frame aggrFragment(Channel channel, int fragmentIndex, MessageInternal message) throws IOException {
         FragmentAggregator aggregator = channel.getAttachment(message.sid());
         if (aggregator == null) {
-            aggregator = new FragmentAggregatorDefault(message);
+            aggregator = createFragmentAggregator(message);
             channel.putAttachment(aggregator.getSid(), aggregator);
         }
 

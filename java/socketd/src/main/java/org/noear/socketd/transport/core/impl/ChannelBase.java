@@ -1,9 +1,6 @@
 package org.noear.socketd.transport.core.impl;
 
-import org.noear.socketd.transport.core.Channel;
-import org.noear.socketd.transport.core.Config;
-import org.noear.socketd.transport.core.HandshakeInternal;
-import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.*;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,8 +19,6 @@ public abstract class ChannelBase implements Channel {
     private final Map<String, Object> attachments = new ConcurrentHashMap<>();
     //握手信息
     private HandshakeInternal handshake;
-    //是否已关闭（用于做关闭异常提醒）//可能协议关；可能用户关
-    private int isClosed;
 
 
     public ChannelBase(Config config) {
@@ -52,14 +47,10 @@ public abstract class ChannelBase implements Channel {
 
 
     @Override
-    public int isClosed() {
-        return isClosed;
-    }
-
-    @Override
     public void close(int code) {
-        isClosed = code;
-        attachments.clear();
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            attachments.clear();
+        }
     }
 
     @Override
@@ -96,8 +87,8 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void sendClose() throws IOException {
-        send(Frames.closeFrame(), null);
+    public void sendClose(int code) throws IOException {
+        send(Frames.closeFrame(code), null);
     }
 
     @Override

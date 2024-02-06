@@ -98,7 +98,7 @@ export class ProcessorDefault implements Processor {
             this.onOpen(channel);
         } else {
             if (channel.getHandshake() == null) {
-                channel.close(Constants.CLOSE11_PROTOCOL);
+                channel.close(Constants.CLOSE1001_PROTOCOL_CLOSE);
 
                 if (frame.flag() == Flags.Close) {
                     //说明握手失败了
@@ -123,8 +123,21 @@ export class ProcessorDefault implements Processor {
                     }
                     case Flags.Close: {
                         //关闭通道
-                        channel.close(Constants.CLOSE11_PROTOCOL);
-                        this.onCloseInternal(channel);
+                        let code = 0;
+
+                        if (frame.message() != null) {
+                            code = frame.message()!.metaAsInt("code");
+                        }
+
+                        if (code == 0) {
+                            code = Constants.CLOSE1001_PROTOCOL_CLOSE;
+                        }
+
+                        channel.close(code);
+
+                        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+                            this.onCloseInternal(channel);
+                        }
                         break;
                     }
                     case Flags.Alarm: {
@@ -151,7 +164,7 @@ export class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close(Constants.CLOSE12_PROTOCOL_ILLEGAL);
+                        channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL);
                         this.onCloseInternal(channel);
                     }
                 }

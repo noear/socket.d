@@ -1,3 +1,11 @@
+### 2.3.11
+* 优化 安全停止细节
+
+### 2.3.10
+* 优化 StrUtil 关于字符转换的处理（优化使用 TextDecoder）
+* 添加 Session::closeStarting 接口
+* 添加 关闭协议帧对 code 的支持
+
 ### 2.3.9
 * 完成 for Node.js server 实现
 * 添加 Session::remoteAddress,localAddress 方法

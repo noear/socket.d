@@ -26,33 +26,33 @@ export const Constants = {
 
 
     /**
+     * 因协议关闭开始（安全关闭）
+     */
+    CLOSE1000_PROTOCOL_CLOSE_STARTING: 1000,
+    /**
      * 因协议指令关闭
      */
-    CLOSE11_PROTOCOL: 11,
+    CLOSE1001_PROTOCOL_CLOSE: 1001,
     /**
      * 因协议非法关闭
      */
-    CLOSE12_PROTOCOL_ILLEGAL: 12,
-    /**
-     * 因协议指令用户主动关闭（不可再重连）
-     */
-    CLOSE19_PROTOCOL_USER: 19,
+    CLOSE1002_PROTOCOL_ILLEGAL: 1002,
     /**
      * 因异常关闭
      */
-    CLOSE21_ERROR: 21,
+    CLOSE2001_ERROR: 2001,
     /**
      * 因重连关闭
      */
-    CLOSE22_RECONNECT: 22,
+    CLOSE2002_RECONNECT: 2002,
     /**
      * 因打开失败关闭
      */
-    CLOSE28_OPEN_FAIL :28,
+    CLOSE2008_OPEN_FAIL :2008,
     /**
      * 因用户主动关闭（不可再重连）
      */
-    CLOSE29_USER: 29,
+    CLOSE2009_USER: 2009,
 
     /**
      * 流ID长度最大限制

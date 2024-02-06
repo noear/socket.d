@@ -1,13 +1,16 @@
 package org.noear.socketd.transport.neta.tcp;
 
-import net.hasor.neta.channel.*;
-import net.hasor.neta.handler.PipeInitializer;
-import net.hasor.neta.handler.codec.LimitFrameHandler;
+import net.hasor.neta.channel.NetChannel;
+import net.hasor.neta.channel.NetaSocket;
+import net.hasor.neta.channel.PipeInitializer;
+import net.hasor.neta.channel.SoConfig;
+import net.hasor.neta.handler.PipeHelper;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.neta.tcp.impl.FrameDecoder;
 import org.noear.socketd.transport.neta.tcp.impl.FrameEncoder;
+import org.noear.socketd.transport.neta.tcp.impl.FixedLengthFrameHandler;
 import org.noear.socketd.transport.neta.tcp.impl.ServerPipeListener;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
@@ -24,7 +27,7 @@ import java.io.IOException;
  */
 public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements ChannelSupporter<NetChannel> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioServer.class);
-    private CobbleSocket server;
+    private NetaSocket server;
 
     public TcpAioServer(ServerConfig config) {
         super(config, new TcpAioChannelAssistant());
@@ -45,21 +48,22 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
 
         FrameDecoder decoder = new FrameDecoder(this.getConfig(), this);
         FrameEncoder encoder = new FrameEncoder(this.getConfig(), this);
+        ServerPipeListener listener = new ServerPipeListener(this);
 
-        PipelineFactory pipeline = PipeInitializer.builder()
-                .nextToDecoder(new LimitFrameHandler(Constants.MAX_SIZE_FRAME))
-                .nextTo(decoder,encoder)
-                .bindReceive(new ServerPipeListener(this)).build();
+        PipeInitializer initializer = ctx -> PipeHelper.builder()
+                .nextDecoder(new FixedLengthFrameHandler(Constants.MAX_SIZE_FRAME))
+                .nextDuplex(decoder,encoder)
+                .nextDecoder(listener).build();
 
         SoConfig soConfig = new SoConfig();
         soConfig.setSoKeepAlive(false);
         soConfig.setNetlog(true);
-        server = new CobbleSocket(soConfig);
+        server = new NetaSocket(soConfig);
 
         if (StrUtils.isEmpty(getConfig().getHost())) {
-            server.listen(getConfig().getPort(), pipeline);
+            server.listen(getConfig().getPort(), initializer);
         } else {
-            server.listen(getConfig().getHost(), getConfig().getPort(), pipeline);
+            server.listen(getConfig().getHost(), getConfig().getPort(), initializer);
         }
 
         log.info("Socket.D server started: {server=" + getConfig().getLocalUrl() + "}");

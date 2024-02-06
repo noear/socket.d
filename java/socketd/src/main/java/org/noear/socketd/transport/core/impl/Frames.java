@@ -1,10 +1,7 @@
 package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.core.EntityMetas;
-import org.noear.socketd.transport.core.Flags;
-import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.Message;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.core.entity.StringEntity;
@@ -67,8 +64,11 @@ public class Frames {
     /**
      * 构建关闭帧（一般用不到）
      */
-    public static final Frame closeFrame() {
-        return new Frame(Flags.Close, null);
+    public static final Frame closeFrame(int code) {
+        MessageBuilder message = new MessageBuilder();
+        message.entity(Entity.of().metaPut("code", String.valueOf(code)));
+
+        return new Frame(Flags.Close, message.build());
     }
 
     /**

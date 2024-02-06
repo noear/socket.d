@@ -19,9 +19,9 @@ export class Asserts {
     }
 
      static  isClosedAndEnd( channel:Channel) {
-         return channel.isClosed() == Constants.CLOSE29_USER
-             || channel.isClosed() == Constants.CLOSE28_OPEN_FAIL
-             || channel.isClosed() == Constants.CLOSE19_PROTOCOL_USER;
+         return channel.isClosed() == Constants.CLOSE2009_USER
+             || channel.isClosed() == Constants.CLOSE2008_OPEN_FAIL
+             || channel.isClosed() == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
      }
 
     /**

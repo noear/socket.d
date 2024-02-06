@@ -54,11 +54,10 @@ public class ClusterClientSession implements ClientSession {
         } else {
             //查找可用的会话
             List<ClientSession> sessions = sessionSet.stream()
-                    .filter(s -> s.isValid())
+                    .filter(s -> s.isValid() && !s.isClosing())
                     .collect(Collectors.toList());
 
             if (sessions.size() == 0) {
-                //没有可用的会话
                 throw new SocketdException("No session is available!");
             }
 
@@ -69,7 +68,7 @@ public class ClusterClientSession implements ClientSession {
             //论询处理
             int counter = sessionRoundCounter.incrementAndGet();
             int idx = counter % sessions.size();
-            if (counter > 999_999_999) {
+            if (counter > 999_999) {
                 sessionRoundCounter.set(0);
             }
             return sessions.get(idx);
@@ -80,6 +79,17 @@ public class ClusterClientSession implements ClientSession {
     public boolean isValid() {
         for (ClientSession session : sessionSet) {
             if (session.isValid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isClosing() {
+        for (ClientSession session : sessionSet) {
+            if (session.isClosing()) {
                 return true;
             }
         }
@@ -144,6 +154,14 @@ public class ClusterClientSession implements ClientSession {
         ClientSession sender = getSessionOne();
 
         return sender.sendAndSubscribe(event, entity, timeout);
+    }
+
+    @Override
+    public void closeStarting() throws IOException {
+        for (ClientSession session : sessionSet) {
+            //某个关闭出错，不影响别的关闭
+            RunUtils.runAndTry(session::closeStarting);
+        }
     }
 
     /**

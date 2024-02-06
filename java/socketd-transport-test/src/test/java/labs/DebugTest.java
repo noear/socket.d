@@ -18,13 +18,13 @@ public class DebugTest {
     /**
      * 用于调试
      */
-
-    public static void main(String[] args) throws Exception {
+    @Test
+    public  void main() throws Exception {
         String s1 = schemas[3];
-        BaseTestCase testCase = new TestCase01_client_send(s1, 8602);
+        BaseTestCase testCase = new TestCase14_file(s1, 8602);
         try {
             testCase.start();
-            //testCase.stop();
+            testCase.stop();
         } catch (Exception e) {
             testCase.onError();
             e.printStackTrace();

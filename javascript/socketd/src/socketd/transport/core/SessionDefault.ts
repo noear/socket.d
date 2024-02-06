@@ -32,6 +32,10 @@ export class SessionDefault extends SessionBase {
         return this._channel.isValid();
     }
 
+    isClosing(): boolean {
+        return this._channel.isClosing();
+    }
+
     remoteAddress(): SocketAddress | null {
         return this._channel.getRemoteAddress();
     }
@@ -232,6 +236,14 @@ export class SessionDefault extends SessionBase {
         this._channel.send(new Frame(Flags.ReplyEnd, message), null);
     }
 
+    closeStarting() {
+        console.debug(`${this._channel.getConfig().getRoleName()} session close starting, sessionId=${this.sessionId()}`);
+
+        if (this._channel.isValid()) {
+            this._channel.sendClose(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING);
+        }
+    }
+
     /**
      * 关闭
      */
@@ -240,12 +252,12 @@ export class SessionDefault extends SessionBase {
 
         if (this._channel.isValid()) {
             try {
-                this._channel.sendClose();
+                this._channel.sendClose(Constants.CLOSE1001_PROTOCOL_CLOSE);
             } catch (e) {
                 console.warn(`${this._channel.getConfig().getRoleName()} channel sendClose error`, e);
             }
         }
 
-        this._channel.close(Constants.CLOSE29_USER);
+        this._channel.close(Constants.CLOSE2009_USER);
     }
 }

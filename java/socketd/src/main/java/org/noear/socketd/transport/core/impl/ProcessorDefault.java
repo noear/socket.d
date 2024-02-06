@@ -64,7 +64,7 @@ public class ProcessorDefault implements Processor {
                     //如果有异常
                     if (channel.isValid()) {
                         //如果还有效，则关闭通道
-                        channel.close(Constants.CLOSE21_ERROR);
+                        channel.close(Constants.CLOSE2001_ERROR);
                         onCloseInternal(channel);
                     }
                 }
@@ -78,7 +78,7 @@ public class ProcessorDefault implements Processor {
             onOpen(channel);
         } else {
             if (channel.getHandshake() == null) {
-                channel.close(Constants.CLOSE11_PROTOCOL);
+                channel.close(Constants.CLOSE1001_PROTOCOL_CLOSE);
 
                 if(frame.flag() == Flags.Close){
                     //说明握手失败了
@@ -107,8 +107,21 @@ public class ProcessorDefault implements Processor {
                     }
                     case Flags.Close: {
                         //关闭通道
-                        channel.close(Constants.CLOSE11_PROTOCOL);
-                        onCloseInternal(channel);
+                        int code = 0;
+
+                        if (frame.message() != null) {
+                            code = frame.message().metaAsInt("code");
+                        }
+
+                        if (code == 0) {
+                            code = Constants.CLOSE1001_PROTOCOL_CLOSE;
+                        }
+
+                        channel.close(code);
+
+                        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+                            onCloseInternal(channel);
+                        }
                         break;
                     }
                     case Flags.Alarm: {
@@ -135,7 +148,7 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close(Constants.CLOSE12_PROTOCOL_ILLEGAL);
+                        channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL);
                         onCloseInternal(channel);
                     }
                 }

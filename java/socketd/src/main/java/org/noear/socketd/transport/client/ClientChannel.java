@@ -85,6 +85,15 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
+    @Override
+    public boolean isClosing() {
+        if (real == null) {
+            return false;
+        } else {
+            return real.isClosing();
+        }
+    }
+
     /**
      * 是否已关闭
      */
@@ -140,8 +149,8 @@ public class ClientChannel extends ChannelBase implements Channel {
                 return;
             }
 
-            //关闭并结束了
-            if (Asserts.isClosedAndEnd(real)) {
+            //关闭并结束了或者正在关闭中
+            if (Asserts.isClosedAndEnd(real) || real.isClosing()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
                 }
@@ -254,7 +263,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
         try {
             if (real != null) {
-                real.close(Constants.CLOSE22_RECONNECT);
+                real.close(Constants.CLOSE2002_RECONNECT);
             }
 
             real = connector.connect();
@@ -269,7 +278,7 @@ public class ClientChannel extends ChannelBase implements Channel {
 
     private void internalCloseIfError() {
         if (real != null) {
-            real.close(Constants.CLOSE21_ERROR);
+            real.close(Constants.CLOSE2001_ERROR);
             real = null;
         }
     }

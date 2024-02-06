@@ -21,9 +21,8 @@ public class Asserts {
     }
 
     public static boolean isClosedAndEnd(Channel channel) {
-        return channel.isClosed() == Constants.CLOSE29_USER
-                || channel.isClosed() == Constants.CLOSE28_OPEN_FAIL
-                || channel.isClosed() == Constants.CLOSE19_PROTOCOL_USER;
+        return channel.isClosed() == Constants.CLOSE2009_USER
+                || channel.isClosed() == Constants.CLOSE2008_OPEN_FAIL;
     }
 
     /**

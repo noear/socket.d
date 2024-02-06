@@ -14,6 +14,11 @@ export interface ClientSession {
     isValid(): boolean;
 
     /**
+     * 是否正在关闭中
+     * */
+    isClosing(): boolean;
+
+    /**
      * 获取会话Id
      */
     sessionId(): string;

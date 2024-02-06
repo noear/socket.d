@@ -24,7 +24,10 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _session: Session;
     //最后活动时间
     private _liveTime: number = 0;
+    //打开前景（用于构建 onOpen 异步处理）
     private _onOpenFuture: IoBiConsumer<boolean, Error>;
+    //关闭代号（用于做关闭异常提醒）//可能协议关；可能用户关
+    private _closeCode: number = 0;
 
     constructor(source: S, supporter: ChannelSupporter<S>) {
         super(supporter.getConfig());
@@ -44,8 +47,21 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
     }
 
-    isValid() {
+    isValid(): boolean {
         return this.isClosed() == 0 && this._assistant.isValid(this._source);
+    }
+
+
+    isClosing(): boolean {
+        return this._closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
+    }
+
+    isClosed(): number {
+        if (this._closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            return this._closeCode;
+        } else {
+            return 0;
+        }
     }
 
     config(): Config {
@@ -68,7 +84,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return this._assistant.getLocalAddress(this._source);
     }
 
-    send(frame: Frame, stream: StreamInternal<any> | null){
+    send(frame: Frame, stream: StreamInternal<any> | null) {
         if (this.getConfig().clientMode()) {
             //console.debug("C-SEN:" + frame);
         } else {
@@ -167,11 +183,16 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     close(code) {
-        console.debug(`${this.getConfig().getRoleName()} channel will be closed, sessionId=${this.getSession().sessionId()}`);
-
         try {
+            this._closeCode = code;
+
             super.close(code);
-            this._assistant.close(this._source);
+
+            if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+                this._assistant.close(this._source);
+
+                console.debug(`${this.getConfig().getRoleName()} channel closed, sessionId=${this.getSession().sessionId()}`);
+            }
         } catch (e) {
             console.warn(`${this.getConfig().getRoleName()} channel close error, sessionId=${this.getSession().sessionId()}`, e);
         }

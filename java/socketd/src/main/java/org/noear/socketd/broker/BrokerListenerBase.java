@@ -7,6 +7,7 @@ import org.noear.socketd.utils.StrUtils;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * 经纪人监听器基类（实现玩家封闭管理）
@@ -15,11 +16,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2.1
  */
 public abstract class BrokerListenerBase implements Listener {
+    private Map<String, Session> sessionAll = new ConcurrentHashMap<>();
     //玩家会话
     private Map<String, Set<Session>> playerSessions = new ConcurrentHashMap<>();
     //轮询计数
     private AtomicInteger playerRoundCounter = new AtomicInteger(0);
 
+    /**
+     * 获取所有会话（包括没有名字的）
+     */
+    public Collection<Session> getSessionAll() {
+        return sessionAll.values();
+    }
+
+    /**
+     * 获取所有玩家的名字
+     */
     public Collection<String> getNameAll() {
         return playerSessions.keySet();
     }
@@ -58,35 +70,31 @@ public abstract class BrokerListenerBase implements Listener {
             return null;
         }
 
-        Session session = getPlayerOneDo(name);
-
-        if (session != null) {
-            if (session.isValid() == false) {
-                //如果无效，做关闭处理 //只试一次（避免性能浪费）
-                onClose(session);
-                session = getPlayerOneDo(name);
-            }
-        }
-
-        return session;
+        return getPlayerOneDo(name);
     }
 
     private Session getPlayerOneDo(String name) {
         Collection<Session> tmp = getPlayerAll(name);
         if (tmp == null || tmp.size() == 0) {
             return null;
-        }
-
-        //线程安全处理（避免别处有增减）
-        List<Session> sessions = new ArrayList<>(tmp);
-
-        if (sessions.size() == 1) {
-            return sessions.get(0);
         } else {
+            //线程安全处理（避免别处有增减）
+            List<Session> sessions = tmp.stream()
+                    .filter(s -> s.isValid() && !s.isClosing())
+                    .collect(Collectors.toList());
+
+            if (sessions.size() == 0) {
+                return null;
+            }
+
+            if (sessions.size() == 1) {
+                return sessions.get(0);
+            }
+
             //论询处理
             int counter = playerRoundCounter.incrementAndGet();
             int idx = counter % sessions.size();
-            if (counter > 999_999_999) {
+            if (counter > 999_999) {
                 playerRoundCounter.set(0);
             }
             return sessions.get(idx);
@@ -105,6 +113,8 @@ public abstract class BrokerListenerBase implements Listener {
             Set<Session> sessions = playerSessions.computeIfAbsent(name, n -> Collections.newSetFromMap(new ConcurrentHashMap<>()));
             sessions.add(session);
         }
+
+        sessionAll.put(session.sessionId(), session);
     }
 
     /**
@@ -121,5 +131,7 @@ public abstract class BrokerListenerBase implements Listener {
                 sessions.remove(session);
             }
         }
+
+        sessionAll.remove(session.sessionId());
     }
 }

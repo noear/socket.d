@@ -49,13 +49,17 @@ export class StrUtils {
             charet = 'utf-8';
         }
 
-        var data = unescape(encodeURIComponent(str))
-            .split('')
-            .map(val => val.charCodeAt(0));
-        return new Uint8Array(data).buffer;
-
-        //const encoder = new TextEncoder(); // 使用 UTF-8 编码器进行编码
-        //return encoder.encode(str).buffer; // 将字符串编码成 ArrayBuffer,
+        if (typeof TextEncoder) {
+            //能处理更大的字符串
+            const encoder = new TextEncoder(); // 使用 UTF-8 编码器进行编码
+            return encoder.encode(str).buffer; // 将字符串编码成 ArrayBuffer,
+        } else {
+            //能兼容没有 TextEncoder 接口的环境
+            let data = unescape(encodeURIComponent(str))
+                .split('')
+                .map(val => val.charCodeAt(0));
+            return new Uint8Array(data).buffer;
+        }
     }
 
     static bufToStr(buf: ArrayBuffer, start: number, length: number, charet?: string): string {
@@ -83,9 +87,14 @@ export class StrUtils {
             charet = 'utf-8';
         }
 
-        // @ts-ignore
-        return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(buf))));
-        //const decoder = new TextDecoder(charet)
-        //return decoder.decode(buf);
+        if(typeof TextDecoder){
+            //能处理更大的字符串
+            const decoder = new TextDecoder(charet)
+            return decoder.decode(buf);
+        }else{
+            //能兼容没有 TextEncoder 接口的环境
+            // @ts-ignore
+            return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(buf))));
+        }
     }
 }

@@ -29,12 +29,16 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private final ChannelAssistant<S> assistant;
     //流管理器
     private final StreamManger streamManger;
+    //发送锁
+    private final ReentrantLock sendLock;
     //会话（懒加载）
     private Session session;
     //最后活动时间
     private long liveTime;
     //打开前景（用于构建 onOpen 异步处理）
     private BiConsumer<Boolean, Throwable> onOpenFuture;
+    //关闭代号（用于做关闭异常提醒）//可能协议关；可能用户关
+    private int closeCode;
 
     public ChannelDefault(S source, ChannelSupporter<S> supporter) {
         super(supporter.getConfig());
@@ -42,6 +46,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this.processor = supporter.getProcessor();
         this.assistant = supporter.getAssistant();
         this.streamManger = supporter.getConfig().getStreamManger();
+        this.sendLock = new ReentrantLock(supporter.getConfig().sequenceMode());
     }
 
     /**
@@ -52,6 +57,19 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return isClosed() == 0 && assistant.isValid(source);
     }
 
+    @Override
+    public boolean isClosing() {
+        return closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
+    }
+
+    @Override
+    public int isClosed() {
+        if (closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            return closeCode;
+        } else {
+            return 0;
+        }
+    }
 
     @Override
     public long getLiveTime() {
@@ -79,7 +97,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return assistant.getLocalAddress(source);
     }
 
-    private ReentrantLock SEND_LOCK = new ReentrantLock();
+
 
     /**
      * 发送
@@ -96,7 +114,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        SEND_LOCK.lock();
+        sendLock.lock();
         try {
             if (frame.message() != null) {
                 MessageInternal message = frame.message();
@@ -140,7 +158,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 stream.onProgress(true, 1, 1);
             }
         } finally {
-            SEND_LOCK.unlock();
+            sendLock.unlock();
         }
     }
 
@@ -222,19 +240,23 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
     }
 
-
     /**
      * 关闭
      */
     @Override
     public void close(int code) {
-        if (log.isDebugEnabled()) {
-            log.debug("{} channel will be closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
-        }
-
         try {
+            this.closeCode = code;
+
             super.close(code);
-            assistant.close(source);
+
+            if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+                assistant.close(source);
+
+                if (log.isDebugEnabled()) {
+                    log.debug("{} channel closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
+                }
+            }
         } catch (Throwable e) {
             if (log.isWarnEnabled()) {
                 log.warn("{} channel close error, sessionId={}",

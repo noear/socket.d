@@ -3,6 +3,7 @@ package org.noear.socketd.transport.java_tcp;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
+import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.noear.socketd.transport.server.Server;
@@ -151,7 +152,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                         log.debug("Server channel idle timeout, remoteIp={}", socket.getRemoteSocketAddress());
                     }
                     //注意：socket 客户端无法感知关闭，需要发消息通知
-                    channel.sendClose();
+                    channel.sendClose(Constants.CLOSE1001_PROTOCOL_CLOSE);
                     throw e;
                 }
             } catch (IOException e) {

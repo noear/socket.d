@@ -4,7 +4,6 @@ import {RequestStream, SendStream, SubscribeStream} from "../transport/stream/St
 import {StrUtils} from "../utils/StrUtils";
 import {SocketdException} from "../exception/SocketdException";
 import {RunUtils} from "../utils/RunUtils";
-import {IoConsumer} from "../transport/core/Typealias";
 
 /**
  * 集群客户端会话
@@ -95,7 +94,7 @@ export class ClusterClientSession implements ClientSession {
     }
 
     /**
-     * 获取一个会话（轮询负栽均衡）
+     * 获取任一个会话（轮询负栽均衡）
      *
      * @deprecated 2.3
      */

@@ -42,9 +42,35 @@ public class ClusterClientSession implements ClientSession {
     }
 
     /**
-     * 获取一个会话（轮询负栽均衡）
+     * 获取第一个会话
+     *
+     * @since 2.3
+     * */
+    public ClientSession getSessionFirst() {
+        if (sessionSet.size() == 0) {
+            //没有会话
+            throw new SocketdException("No session!");
+        } else if (sessionSet.size() == 1) {
+            //只有一个就不管了
+            return sessionSet.get(0);
+        } else {
+            //查找可用的会话
+            for (ClientSession s : sessionSet) {
+                if (s.isValid() && !s.isClosing()) {
+                    return s;
+                }
+            }
+
+            throw new SocketdException("No session is available!");
+        }
+    }
+
+    /**
+     * 获取任意一个会话（轮询负栽均衡）
+     *
+     * @since 2.3
      */
-    public ClientSession getSessionOne() {
+    public ClientSession getSessionAny() {
         if (sessionSet.size() == 0) {
             //没有会话
             throw new SocketdException("No session!");
@@ -76,6 +102,17 @@ public class ClusterClientSession implements ClientSession {
             }
             return sessions.get(idx);
         }
+    }
+
+
+    /**
+     * 获取任意一个会话（轮询负栽均衡）
+     *
+     * @deprecated 2.3
+     */
+    @Deprecated
+    public ClientSession getSessionOne() {
+        return getSessionAny();
     }
 
     @Override
@@ -123,7 +160,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public SendStream send(String event, Entity entity) throws IOException {
-        ClientSession sender = getSessionOne();
+        ClientSession sender = getSessionAny();
 
         return sender.send(event, entity);
     }
@@ -138,7 +175,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException {
-        ClientSession sender = getSessionOne();
+        ClientSession sender = getSessionAny();
 
         return sender.sendAndRequest(event, entity, timeout);
     }
@@ -154,7 +191,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException {
-        ClientSession sender = getSessionOne();
+        ClientSession sender = getSessionAny();
 
         return sender.sendAndSubscribe(event, entity, timeout);
     }

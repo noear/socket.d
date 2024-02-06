@@ -38,6 +38,8 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
             return;
         }
 
+        message.putMeta(EntityMetas.META_X_REAL_IP, requester.remoteAddress().getHostName());
+
         if (atName.equals("*")) {
             //广播模式（给所有玩家）
             Collection<String> nameAll = getNameAll();

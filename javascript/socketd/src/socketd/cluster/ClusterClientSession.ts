@@ -34,9 +34,32 @@ export class ClusterClientSession implements ClientSession {
     }
 
     /**
-     * 获取一个会话（轮询负栽均衡）
+     * 获取第一个会话
      */
-    getSessionOne(): ClientSession {
+    getSessionFirst(): ClientSession {
+        if (this._sessionSet.length == 0) {
+            //没有会话
+            throw new SocketdException("No session!");
+        } else if (this._sessionSet.length == 1) {
+            //只有一个就不管了
+            return this._sessionSet[0];
+        } else {
+            //查找可用的会话
+            for (const s of this._sessionSet) {
+                if (s.isValid() && !s.isClosing()) {
+                    return s;
+                }
+            }
+
+            //没有可用的会话
+            throw new SocketdException("No session is available!");
+        }
+    }
+
+    /**
+     * 获取任一个会话（轮询负栽均衡）
+     */
+    getSessionAny(): ClientSession {
         if (this._sessionSet.length == 0) {
             //没有会话
             throw new SocketdException("No session!");
@@ -71,6 +94,18 @@ export class ClusterClientSession implements ClientSession {
         }
     }
 
+    /**
+     * 获取一个会话（轮询负栽均衡）
+     *
+     * @deprecated 2.3
+     */
+    getSessionOne(): ClientSession {
+        return this.getSessionAny();
+    }
+
+    /**
+     * 是否有效
+     * */
     isValid(): boolean {
         for (const session of this._sessionSet) {
             if (session.isValid()) {
@@ -81,6 +116,9 @@ export class ClusterClientSession implements ClientSession {
         return false;
     }
 
+    /**
+     * 是否关闭中
+     * */
     isClosing(): boolean {
         for (const session of this._sessionSet) {
             if (session.isClosing()) {
@@ -110,7 +148,7 @@ export class ClusterClientSession implements ClientSession {
      * @param content 内容
      */
     send(event: string, content: Entity): SendStream {
-        const sender = this.getSessionOne();
+        const sender = this.getSessionAny();
 
         return sender.send(event, content);
     }
@@ -124,7 +162,7 @@ export class ClusterClientSession implements ClientSession {
      * @param timeout  超时
      */
     sendAndRequest(event: string, content: Entity, timeout?: number): RequestStream {
-        const sender = this.getSessionOne();
+        const sender = this.getSessionAny();
 
         return sender.sendAndRequest(event, content, timeout);
     }
@@ -137,7 +175,7 @@ export class ClusterClientSession implements ClientSession {
      * @param timeout  超时
      */
     sendAndSubscribe(event: string, content: Entity, timeout: number): SubscribeStream {
-        const sender = this.getSessionOne();
+        const sender = this.getSessionAny();
 
         return sender.sendAndSubscribe(event, content, timeout);
     }

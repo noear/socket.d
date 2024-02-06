@@ -78,10 +78,13 @@ public abstract class BrokerListenerBase implements Listener {
         if (tmp == null || tmp.size() == 0) {
             return null;
         } else {
-            //线程安全处理（避免别处有增减）
-            List<Session> sessions = tmp.stream()
-                    .filter(s -> s.isValid() && !s.isClosing())
-                    .collect(Collectors.toList());
+            //查找可用的会话
+            List<Session> sessions = new ArrayList<>();
+            for(Session s: tmp){
+                if(s.isValid() && !s.isClosing()){
+                    sessions.add(s);
+                }
+            }
 
             if (sessions.size() == 0) {
                 return null;

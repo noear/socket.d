@@ -53,9 +53,12 @@ public class ClusterClientSession implements ClientSession {
             return sessionSet.get(0);
         } else {
             //查找可用的会话
-            List<ClientSession> sessions = sessionSet.stream()
-                    .filter(s -> s.isValid() && !s.isClosing())
-                    .collect(Collectors.toList());
+            List<ClientSession> sessions = new ArrayList<>();
+            for(ClientSession s: sessionSet){
+                if(s.isValid() && !s.isClosing()){
+                    sessions.add(s);
+                }
+            }
 
             if (sessions.size() == 0) {
                 throw new SocketdException("No session is available!");

@@ -46,7 +46,7 @@ function buildListener() {
 
             s.attrPut("push", "1");
 
-            for (let i = 0; i++; i < 100) {
+            for (let i = 0; i < 100; i++) {
                 if (s.attrHas("push") == false) {
                     break;
                 }
@@ -55,7 +55,7 @@ function buildListener() {
                 //todo:sleep
             }
         }).doOn("/unpush", (s, m) => {
-            s.attrMap().remove("push");
+            s.attrMap().delete("push");
         })
         .doOnClose(s => {
             console.info("onClose: " + s.sessionId());

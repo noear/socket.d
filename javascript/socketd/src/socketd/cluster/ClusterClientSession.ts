@@ -4,6 +4,7 @@ import {RequestStream, SendStream, SubscribeStream} from "../transport/stream/St
 import {StrUtils} from "../utils/StrUtils";
 import {SocketdException} from "../exception/SocketdException";
 import {RunUtils} from "../utils/RunUtils";
+import {LoadBalancer} from "./LoadBalancer";
 
 /**
  * 集群客户端会话
@@ -14,15 +15,12 @@ import {RunUtils} from "../utils/RunUtils";
 export class ClusterClientSession implements ClientSession {
     //会话集合
     private _sessionSet: Array<ClientSession>;
-    //轮询计数
-    private _sessionRoundCounter: number;
     //会话id
     private _sessionId: string;
 
     constructor(sessions: ClientSession[]) {
         this._sessionSet = sessions;
         this._sessionId = StrUtils.guid();
-        this._sessionRoundCounter = 0;
     }
 
     /**
@@ -33,63 +31,21 @@ export class ClusterClientSession implements ClientSession {
     }
 
     /**
-     * 获取第一个会话
-     */
-    getSessionFirst(): ClientSession {
-        if (this._sessionSet.length == 0) {
-            //没有会话
-            throw new SocketdException("No session!");
-        } else if (this._sessionSet.length == 1) {
-            //只有一个就不管了
-            return this._sessionSet[0];
-        } else {
-            //查找可用的会话
-            for (const s of this._sessionSet) {
-                if (s.isValid() && !s.isClosing()) {
-                    return s;
-                }
-            }
-
-            //没有可用的会话
-            throw new SocketdException("No session is available!");
-        }
-    }
-
-    /**
      * 获取任一个会话（轮询负栽均衡）
      */
-    getSessionAny(): ClientSession {
-        if (this._sessionSet.length == 0) {
-            //没有会话
-            throw new SocketdException("No session!");
-        } else if (this._sessionSet.length == 1) {
-            //只有一个就不管了
-            return this._sessionSet[0];
+    getSessionAny(diversionOrNull:string | null): ClientSession {
+        let session: ClientSession|null = null;
+
+        if (diversionOrNull) {
+            session = LoadBalancer.getAnyByHash(this._sessionSet, diversionOrNull);
         } else {
-            //查找可用的会话
-            const sessions = new Array<ClientSession>();
-            for (const s of this._sessionSet) {
-                if (s.isValid() && !s.isClosing()) {
-                    sessions.push(s);
-                }
-            }
+            session = LoadBalancer.getAnyByPoll(this._sessionSet);
+        }
 
-            if (sessions.length == 0) {
-                //没有可用的会话
-                throw new SocketdException("No session is available!");
-            }
-
-            if (sessions.length == 1) {
-                return sessions[0];
-            }
-
-            //论询处理
-            const counter = this._sessionRoundCounter++;
-            const idx = counter % sessions.length;
-            if (counter > 999_999_999) {
-                this._sessionRoundCounter = 0;
-            }
-            return sessions[idx];
+        if (session == null) {
+            throw new SocketdException("No session is available!");
+        } else {
+            return session;
         }
     }
 
@@ -99,7 +55,7 @@ export class ClusterClientSession implements ClientSession {
      * @deprecated 2.3
      */
     getSessionOne(): ClientSession {
-        return this.getSessionAny();
+        return this.getSessionAny(null);
     }
 
     /**
@@ -147,7 +103,7 @@ export class ClusterClientSession implements ClientSession {
      * @param content 内容
      */
     send(event: string, content: Entity): SendStream {
-        const sender = this.getSessionAny();
+        const sender = this.getSessionAny(null);
 
         return sender.send(event, content);
     }
@@ -161,7 +117,7 @@ export class ClusterClientSession implements ClientSession {
      * @param timeout  超时
      */
     sendAndRequest(event: string, content: Entity, timeout?: number): RequestStream {
-        const sender = this.getSessionAny();
+        const sender = this.getSessionAny(null);
 
         return sender.sendAndRequest(event, content, timeout);
     }
@@ -174,7 +130,7 @@ export class ClusterClientSession implements ClientSession {
      * @param timeout  超时
      */
     sendAndSubscribe(event: string, content: Entity, timeout: number): SubscribeStream {
-        const sender = this.getSessionAny();
+        const sender = this.getSessionAny(null);
 
         return sender.sendAndSubscribe(event, content, timeout);
     }

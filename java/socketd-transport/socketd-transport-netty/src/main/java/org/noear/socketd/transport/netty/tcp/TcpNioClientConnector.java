@@ -5,7 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
@@ -64,14 +64,14 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
+            throw new SocketDConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
+                throw new SocketDConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
     }

@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.smartsocket.tcp;
 
-import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
@@ -59,14 +59,14 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
+            throw new SocketDConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
+                throw new SocketDConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
     }

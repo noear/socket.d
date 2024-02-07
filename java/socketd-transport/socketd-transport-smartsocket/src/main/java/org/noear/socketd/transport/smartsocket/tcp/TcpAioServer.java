@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.smartsocket.tcp;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.server.Server;
@@ -95,7 +95,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdException("Socket.D server start failed!", e);
+                throw new SocketDException("Socket.D server start failed!", e);
             }
         }
 

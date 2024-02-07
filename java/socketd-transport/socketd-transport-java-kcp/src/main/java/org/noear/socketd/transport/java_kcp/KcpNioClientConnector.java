@@ -4,8 +4,8 @@ import com.backblaze.erasure.FecAdapt;
 import kcp.ChannelConfig;
 import kcp.KcpClient;
 import kcp.Ukcp;
-import org.noear.socketd.exception.SocketdConnectionException;
-import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.exception.SocketDConnectionException;
+import org.noear.socketd.exception.SocketDTimeoutException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
@@ -75,14 +75,14 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdTimeoutException("Connection timeout: " + client.getConfig().getLinkUrl());
+            throw new SocketDTimeoutException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
+                throw new SocketDConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
     }

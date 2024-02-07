@@ -2,7 +2,7 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketdChannelException;
+import org.noear.socketd.exception.SocketDChannelException;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
@@ -83,7 +83,7 @@ public class TestCase12_client_session_close extends BaseTestCase {
 
         try {
             clientSession.send("/user/created", new StringEntity("hi"));
-        } catch (SocketdChannelException e) {
+        } catch (SocketDChannelException e) {
 
         }
 

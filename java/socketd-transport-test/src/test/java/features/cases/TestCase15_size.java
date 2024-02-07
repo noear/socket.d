@@ -2,7 +2,7 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
@@ -66,7 +66,7 @@ public class TestCase15_size extends BaseTestCase {
 
         try {
             clientSession.send("/user/size", new StringEntity("hi").metaPut("test", meta.toString()));
-        } catch (SocketdException e) {
+        } catch (SocketDException e) {
             e.printStackTrace();
         }
         clientSession.send("/user/size", new StringEntity("hi").metaPut("test", "ok"));

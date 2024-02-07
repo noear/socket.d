@@ -4,7 +4,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ServerHandshake;
-import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
@@ -90,7 +90,7 @@ public class WebSocketClientImpl extends WebSocketClient {
                 client.getProcessor().onReceive(channel, frame);
             }
         } catch (Exception e) {
-            if (e instanceof SocketdConnectionException) {
+            if (e instanceof SocketDConnectionException) {
                 //说明握手失败了
                 handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 return;

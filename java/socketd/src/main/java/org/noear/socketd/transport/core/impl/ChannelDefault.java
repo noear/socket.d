@@ -4,6 +4,7 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.transport.stream.StreamManger;
+import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,9 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     //流管理器
     private final StreamManger streamManger;
     //发送锁
-    private final ReentrantLock sendLock;
+    private final ReentrantLock sendInFairLock;
+    private final ReentrantLock sendNoFairLock;
+
     //会话（懒加载）
     private Session session;
     //最后活动时间
@@ -46,7 +49,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         this.processor = supporter.getProcessor();
         this.assistant = supporter.getAssistant();
         this.streamManger = supporter.getConfig().getStreamManger();
-        this.sendLock = new ReentrantLock(supporter.getConfig().sequenceMode());
+        this.sendInFairLock = new ReentrantLock(true);
+        this.sendNoFairLock = new ReentrantLock(false);
     }
 
     /**
@@ -98,7 +102,6 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
 
-
     /**
      * 发送
      */
@@ -114,51 +117,74 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        sendLock.lock();
-        try {
-            if (frame.message() != null) {
-                MessageInternal message = frame.message();
+        //以下为锁处理，如果迁移不方便，可以去掉
+        boolean inFair = getConfig().sequenceMode();
+        if (inFair == false && frame.message() != null) {
+            String atName = frame.message().atName();
+            if (StrUtils.isNotEmpty(atName) && atName.charAt(atName.length() - 1) == '!') {
+                //如果 “name!” 则用公平锁
+                inFair = true;
+            }
+        }
 
-                //注册流接收器
-                if (stream != null) {
-                    streamManger.addStream(message.sid(), stream);
+        if (inFair) {
+            sendInFairLock.lock();
+            try {
+                sendDo(frame, stream);
+            } finally {
+                sendInFairLock.unlock();
+            }
+        } else {
+            sendNoFairLock.lock();
+            try {
+                sendDo(frame, stream);
+            } finally {
+                sendNoFairLock.unlock();
+            }
+        }
+    }
+
+    private void sendDo(Frame frame, StreamInternal stream) throws IOException {
+        if (frame.message() != null) {
+            MessageInternal message = frame.message();
+
+            //注册流接收器
+            if (stream != null) {
+                streamManger.addStream(message.sid(), stream);
+            }
+
+            //如果有实体（尝试分片）
+            if (message.entity() != null) {
+                //确保用完自动关闭
+
+                if (message.dataSize() > getConfig().getFragmentSize()) {
+                    message.putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(message.dataSize()));
                 }
 
-                //如果有实体（尝试分片）
-                if (message.entity() != null) {
-                    //确保用完自动关闭
-
-                    if (message.dataSize() > getConfig().getFragmentSize()) {
-                        message.putMeta(EntityMetas.META_DATA_LENGTH, String.valueOf(message.dataSize()));
+                getConfig().getFragmentHandler().spliFragment(this, stream, message, fragmentEntity -> {
+                    //主要是 sid 和 entity
+                    Frame fragmentFrame;
+                    if (fragmentEntity instanceof MessageInternal) {
+                        fragmentFrame = new Frame(frame.flag(), (MessageInternal) fragmentEntity);
+                    } else {
+                        fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
+                                .flag(frame.flag())
+                                .sid(message.sid())
+                                .event(message.event())
+                                .entity(fragmentEntity)
+                                .build());
                     }
 
-                    getConfig().getFragmentHandler().spliFragment(this, stream, message, fragmentEntity -> {
-                        //主要是 sid 和 entity
-                        Frame fragmentFrame;
-                        if (fragmentEntity instanceof MessageInternal) {
-                            fragmentFrame = new Frame(frame.flag(), (MessageInternal) fragmentEntity);
-                        } else {
-                            fragmentFrame = new Frame(frame.flag(), new MessageBuilder()
-                                    .flag(frame.flag())
-                                    .sid(message.sid())
-                                    .event(message.event())
-                                    .entity(fragmentEntity)
-                                    .build());
-                        }
-
-                        assistant.write(source, fragmentFrame);
-                    });
-                    return;
-                }
+                    assistant.write(source, fragmentFrame);
+                });
+                return;
             }
+        }
 
-            //不满足分片条件，直接发
-            assistant.write(source, frame);
-            if (stream != null) {
-                stream.onProgress(true, 1, 1);
-            }
-        } finally {
-            sendLock.unlock();
+        //不满足分片条件，直接发
+        assistant.write(source, frame);
+        if (stream != null) {
+            stream.onProgress(true, 1, 1);
         }
     }
 

@@ -46,6 +46,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
     //字符集
     protected Charset charset;
 
+
+    //io线程数
+    protected int ioThreads;
     //内核线程数
     protected int coreThreads;
     //最大线程数
@@ -77,6 +80,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.fragmentHandler = new FragmentHandlerDefault();
         this.fragmentSize = Constants.MAX_SIZE_DATA;
 
+        this.ioThreads = 1;
         this.coreThreads = Runtime.getRuntime().availableProcessors();
         this.maxThreads = coreThreads * 4;
 
@@ -265,6 +269,16 @@ public abstract class ConfigBase<T extends Config> implements Config {
         }
 
         return (T) this;
+    }
+
+    @Override
+    public int getIoThreads() {
+        return ioThreads;
+    }
+
+    public T ioThreads(int ioThreads) {
+        this.ioThreads = ioThreads;
+        return (T)this;
     }
 
     /**

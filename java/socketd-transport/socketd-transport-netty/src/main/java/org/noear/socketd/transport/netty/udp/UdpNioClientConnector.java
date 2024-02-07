@@ -40,7 +40,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
         //关闭之前的资源
         close();
 
-        workerGroup = new NioEventLoopGroup(Math.min(getConfig().getCoreThreads(),2), new NamedThreadFactory("nettyUdpClientWork-"));
+        workerGroup = new NioEventLoopGroup(getConfig().getIoThreads(), new NamedThreadFactory("nettyUdpClientWork-"));
 
         try {
             Bootstrap bootstrap = new Bootstrap();

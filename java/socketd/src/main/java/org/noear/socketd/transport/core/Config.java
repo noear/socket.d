@@ -69,7 +69,12 @@ public interface Config {
     ExecutorService getChannelExecutor();
 
     /**
-     * 核心线程数（第二优先）
+     * Io线程数
+     */
+    int getIoThreads();
+
+    /**
+     * 核心线程数
      */
     int getCoreThreads();
 

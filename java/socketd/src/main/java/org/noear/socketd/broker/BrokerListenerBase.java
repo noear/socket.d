@@ -1,5 +1,6 @@
 package org.noear.socketd.broker;
 
+import org.noear.socketd.cluster.LoadBalancer;
 import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.utils.StrUtils;
@@ -58,24 +59,6 @@ public abstract class BrokerListenerBase implements Listener {
     }
 
     /**
-     * 获取第一个玩家会话
-     *
-     * @param atName 目标名字
-     * @since 2.3
-     */
-    public Session getPlayerFirst(String atName) {
-        if (StrUtils.isEmpty(atName)) {
-            return null;
-        }
-
-        if (atName.endsWith("!")) {
-            atName = atName.substring(0, atName.length() - 1);
-        }
-
-        return BrokerPolicy.getFirst(getPlayerAll(atName));
-    }
-
-    /**
      * 获取任意一个玩家会话
      *
      * @param atName 目标名字
@@ -90,12 +73,13 @@ public abstract class BrokerListenerBase implements Listener {
             atName = atName.substring(0, atName.length() - 1);
 
             if (requester == null) {
-                return BrokerPolicy.getAnyByPoll(getPlayerAll(atName));
+                return LoadBalancer.getAnyByPoll(getPlayerAll(atName));
             } else {
-                return BrokerPolicy.getAnyByIpHash(getPlayerAll(atName), requester);
+                //使用请求者 ip 分流
+                return LoadBalancer.getAnyByHash(getPlayerAll(atName), requester.remoteAddress().getHostName());
             }
         } else {
-            return BrokerPolicy.getAnyByPoll(getPlayerAll(atName));
+            return LoadBalancer.getAnyByPoll(getPlayerAll(atName));
         }
     }
 

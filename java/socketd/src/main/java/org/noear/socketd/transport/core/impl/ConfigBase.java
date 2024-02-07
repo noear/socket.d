@@ -39,10 +39,6 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     //ssl 上下文
     private SSLContext sslContext;
-    //交换执行器
-    private volatile ExecutorService channelExecutor;
-    private volatile ExecutorService channelExecutorSelfNew;
-
     //字符集
     protected Charset charset;
 
@@ -53,6 +49,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected int codecThreads;
     //交换线程数
     protected int exchangeThreads;
+
+    //交换执行器
+    private volatile ExecutorService exchangeExecutor;
+    private volatile ExecutorService exchangeExecutorSelfNew;
 
     //读缓冲大小
     protected int readBufferSize;
@@ -103,7 +103,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * 顺序模式
-     * */
+     */
     @Override
     public boolean sequenceMode() {
         return sequenceMode;
@@ -111,7 +111,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * 配置顺序模式
-     * */
+     */
     public T sequenceMode(boolean sequenceMode) {
         this.sequenceMode = sequenceMode;
         return (T) this;
@@ -236,14 +236,17 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     private ReentrantLock EXECUTOR_LOCK = new ReentrantLock();
 
+    /**
+     * 获取交换执行器
+     */
     @Override
     public ExecutorService getExchangeExecutor() {
-        if (channelExecutor == null) {
+        if (exchangeExecutor == null) {
             EXECUTOR_LOCK.lock();
             try {
-                if (channelExecutor == null) {
+                if (exchangeExecutor == null) {
                     int nThreads = getExchangeThreads();
-                    channelExecutor = channelExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
+                    exchangeExecutor = exchangeExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
                             0L, TimeUnit.MILLISECONDS,
                             new LinkedBlockingQueue<Runnable>(),
                             new NamedThreadFactory("Socketd-channelExecutor-"));
@@ -253,18 +256,18 @@ public abstract class ConfigBase<T extends Config> implements Config {
             }
         }
 
-        return channelExecutor;
+        return exchangeExecutor;
     }
 
     /**
-     * 配置调试执行器
+     * 配置交换执行器
      */
-    public T channelExecutor(ExecutorService channelExecutor) {
-        this.channelExecutor = channelExecutor;
+    public T exchangeExecutor(ExecutorService exchangeExecutor) {
+        this.exchangeExecutor = exchangeExecutor;
 
-        if (channelExecutorSelfNew != null) {
+        if (exchangeExecutorSelfNew != null) {
             //谁 new 的，谁 shutdown
-            channelExecutorSelfNew.shutdown();
+            exchangeExecutorSelfNew.shutdown();
         }
 
         return (T) this;
@@ -272,7 +275,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * Io线程数
-     * */
+     */
     @Override
     public int getIoThreads() {
         return ioThreads;
@@ -280,10 +283,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * Io线程数
-     * */
+     */
     public T ioThreads(int ioThreads) {
         this.ioThreads = ioThreads;
-        return (T)this;
+        return (T) this;
     }
 
     /**

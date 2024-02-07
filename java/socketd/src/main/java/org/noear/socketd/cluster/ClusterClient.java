@@ -98,7 +98,7 @@ public class ClusterClient implements Client {
                 if (channelExecutor == null) {
                     channelExecutor = client.getConfig().getExchangeExecutor();
                 } else {
-                    client.getConfig().channelExecutor(channelExecutor);
+                    client.getConfig().exchangeExecutor(channelExecutor);
                 }
 
                 if (isThow) {

@@ -64,24 +64,24 @@ public interface Config {
     SSLContext getSslContext();
 
     /**
-     * 通道执行器
-     */
-    ExecutorService getChannelExecutor();
-
-    /**
      * Io线程数
      */
     int getIoThreads();
 
     /**
-     * 核心线程数
+     * 解码线程数
      */
-    int getCoreThreads();
+    int getCodecThreads();
 
     /**
-     * 最大线程数
+     * 交换线程数
      */
-    int getMaxThreads();
+    int getExchangeThreads();
+
+    /**
+     * 交换执行器
+     */
+    ExecutorService getExchangeExecutor();
 
     /**
      * 获取读缓冲大小

@@ -207,7 +207,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 stream.onReply(frame.message());
             } else {
                 //改为异步处理，避免卡死Io线程
-                getConfig().getChannelExecutor().submit(() -> {
+                getConfig().getExchangeExecutor().submit(() -> {
                     stream.onReply(frame.message());
                 });
             }

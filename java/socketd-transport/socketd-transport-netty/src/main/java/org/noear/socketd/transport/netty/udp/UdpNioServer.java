@@ -49,7 +49,7 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(getConfig().getIoThreads(), new NamedThreadFactory("nettyUdpServerBoss-"));
+        bossGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyUdpServerBoss-"));
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);

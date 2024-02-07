@@ -211,7 +211,7 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onOpen(ChannelInternal channel) {
-        channel.getConfig().getChannelExecutor().submit(() -> {
+        channel.getConfig().getExchangeExecutor().submit(() -> {
             try {
                 listener.onOpen(channel.getSession());
                 channel.doOpenFuture(true, null);
@@ -233,7 +233,7 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onMessage(ChannelInternal channel, Message message) {
-        channel.getConfig().getChannelExecutor().submit(() -> {
+        channel.getConfig().getExchangeExecutor().submit(() -> {
             try {
                 listener.onMessage(channel.getSession(), message);
             } catch (Throwable e) {

@@ -87,8 +87,9 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
                 ", charset=" + charset +
                 ", host='" + host + '\'' +
                 ", port=" + port +
-                ", coreThreads=" + coreThreads +
-                ", maxThreads=" + maxThreads +
+                ", ioThreads=" + ioThreads +
+                ", codecThreads=" + codecThreads +
+                ", exchangeThreads=" + exchangeThreads +
                 ", idleTimeout=" + idleTimeout +
                 ", requestTimeout=" + requestTimeout +
                 ", streamTimeout=" + streamTimeout +

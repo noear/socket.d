@@ -50,7 +50,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
         }
 
         bossGroup = new NioEventLoopGroup(getConfig().getIoThreads(), new NamedThreadFactory("nettyTcpServerBoss-"));
-        workGroup = new NioEventLoopGroup(getConfig().getCoreThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
+        workGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);

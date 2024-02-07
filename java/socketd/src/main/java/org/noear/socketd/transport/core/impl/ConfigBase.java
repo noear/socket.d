@@ -39,7 +39,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     //ssl 上下文
     private SSLContext sslContext;
-    //通道执行器
+    //交换执行器
     private volatile ExecutorService channelExecutor;
     private volatile ExecutorService channelExecutorSelfNew;
 
@@ -49,10 +49,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     //io线程数
     protected int ioThreads;
-    //内核线程数
-    protected int coreThreads;
-    //最大线程数
-    protected int maxThreads;
+    //解码线程数
+    protected int codecThreads;
+    //交换线程数
+    protected int exchangeThreads;
 
     //读缓冲大小
     protected int readBufferSize;
@@ -81,8 +81,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.fragmentSize = Constants.MAX_SIZE_DATA;
 
         this.ioThreads = 1;
-        this.coreThreads = Runtime.getRuntime().availableProcessors();
-        this.maxThreads = coreThreads * 4;
+        this.codecThreads = Runtime.getRuntime().availableProcessors();
+        this.exchangeThreads = Runtime.getRuntime().availableProcessors() * 4;
 
         this.readBufferSize = 512;
         this.writeBufferSize = 512;
@@ -237,13 +237,12 @@ public abstract class ConfigBase<T extends Config> implements Config {
     private ReentrantLock EXECUTOR_LOCK = new ReentrantLock();
 
     @Override
-    public ExecutorService getChannelExecutor() {
+    public ExecutorService getExchangeExecutor() {
         if (channelExecutor == null) {
             EXECUTOR_LOCK.lock();
             try {
                 if (channelExecutor == null) {
-                    int nThreads = clientMode() ? getCoreThreads() : getMaxThreads();
-
+                    int nThreads = getExchangeThreads();
                     channelExecutor = channelExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
                             0L, TimeUnit.MILLISECONDS,
                             new LinkedBlockingQueue<Runnable>(),
@@ -271,46 +270,51 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
+    /**
+     * Io线程数
+     * */
     @Override
     public int getIoThreads() {
         return ioThreads;
     }
 
+    /**
+     * Io线程数
+     * */
     public T ioThreads(int ioThreads) {
         this.ioThreads = ioThreads;
         return (T)this;
     }
 
     /**
-     * 获取核心线程数
+     * 获取解码线程数
      */
     @Override
-    public int getCoreThreads() {
-        return coreThreads;
+    public int getCodecThreads() {
+        return codecThreads;
     }
 
     /**
-     * 配置核心线程数
+     * 配置解码线程数
      */
-    public T coreThreads(int coreThreads) {
-        this.coreThreads = coreThreads;
-        this.maxThreads = coreThreads * 4;
+    public T codecThreads(int codecThreads) {
+        this.codecThreads = codecThreads;
         return (T) this;
     }
 
     /**
-     * 获取最大线程数
+     * 获取交换线程数
      */
     @Override
-    public int getMaxThreads() {
-        return maxThreads;
+    public int getExchangeThreads() {
+        return exchangeThreads;
     }
 
     /**
-     * 配置最大线程数
+     * 配置交换线程数
      */
-    public T maxThreads(int maxThreads) {
-        this.maxThreads = maxThreads;
+    public T exchangeThreads(int exchangeThreads) {
+        this.exchangeThreads = exchangeThreads;
         return (T) this;
     }
 

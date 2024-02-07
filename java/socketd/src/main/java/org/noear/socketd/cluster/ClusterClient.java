@@ -94,9 +94,9 @@ public class ClusterClient implements Client {
                     client.heartbeatHandler(heartbeatHandler);
                 }
 
-                //复用通道执行器（省点线程数）
+                //复用交换执行器（省点线程数）
                 if (channelExecutor == null) {
-                    channelExecutor = client.getConfig().getChannelExecutor();
+                    channelExecutor = client.getConfig().getExchangeExecutor();
                 } else {
                     client.getConfig().channelExecutor(channelExecutor);
                 }

@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.core.impl;
 
-import org.noear.socketd.exception.SocketdAlarmException;
-import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketDAlarmException;
+import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.stream.StreamInternal;
@@ -82,7 +82,7 @@ public class ProcessorDefault implements Processor {
 
                 if(frame.flag() == Flags.Close){
                     //说明握手失败了
-                    throw new SocketdConnectionException("Connection request was rejected");
+                    throw new SocketDConnectionException("Connection request was rejected");
                 }
 
                 if (log.isWarnEnabled()) {
@@ -126,7 +126,7 @@ public class ProcessorDefault implements Processor {
                     }
                     case Flags.Alarm: {
                         //结束流，并异常通知
-                        SocketdAlarmException exception = new SocketdAlarmException(frame.message());
+                        SocketDAlarmException exception = new SocketDAlarmException(frame.message());
                         StreamInternal stream = channel.getConfig().getStreamManger().getStream(frame.message().sid());
                         if (stream == null) {
                             onError(channel, exception);

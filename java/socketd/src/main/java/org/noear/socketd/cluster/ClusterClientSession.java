@@ -1,6 +1,6 @@
 package org.noear.socketd.cluster;
 
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.stream.SendStream;
@@ -52,7 +52,7 @@ public class ClusterClientSession implements ClientSession {
         }
 
         if (session == null) {
-            throw new SocketdException("No session is available!");
+            throw new SocketDException("No session is available!");
         } else {
             return session;
         }

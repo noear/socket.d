@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.core.fragment;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.exception.SocketdCodecException;
+import org.noear.socketd.exception.SocketDCodecException;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.utils.StrUtils;
@@ -32,7 +32,7 @@ public class FragmentAggregatorDefault implements FragmentAggregator {
         String dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
 
         if (StrUtils.isEmpty(dataLengthStr)) {
-            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
+            throw new SocketDCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);

@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.exception.SocketdChannelException;
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDChannelException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ChannelBase;
 import org.noear.socketd.transport.core.impl.HeartbeatHandlerDefault;
@@ -162,14 +162,14 @@ public class ClientChannel extends ChannelBase implements Channel {
             internalCheck();
 
             heartbeatHandler.heartbeat(getSession());
-        } catch (SocketdException e) {
+        } catch (SocketDException e) {
             throw e;
         } catch (Throwable e) {
             if (connector.autoReconnect()) {
                 internalCloseIfError();
             }
 
-            throw new SocketdChannelException("Client channel heartbeat failed", e);
+            throw new SocketDChannelException("Client channel heartbeat failed", e);
         }
     }
 
@@ -188,17 +188,17 @@ public class ClientChannel extends ChannelBase implements Channel {
 
             if (real == null) {
                 //有可能此时仍未连接
-                throw new SocketdChannelException("Client channel is not connected");
+                throw new SocketDChannelException("Client channel is not connected");
             }
 
             real.send(frame, stream);
-        } catch (SocketdException e) {
+        } catch (SocketDException e) {
             throw e;
         } catch (Throwable e) {
             if (connector.autoReconnect()) {
                 internalCloseIfError();
             }
-            throw new SocketdChannelException("Client channel send failed", e);
+            throw new SocketDChannelException("Client channel send failed", e);
         }
     }
 

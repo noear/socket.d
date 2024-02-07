@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.core;
 
-import org.noear.socketd.exception.SocketdChannelException;
-import org.noear.socketd.exception.SocketdSizeLimitException;
+import org.noear.socketd.exception.SocketDChannelException;
+import org.noear.socketd.exception.SocketDSizeLimitException;
 import org.noear.socketd.utils.StrUtils;
 
 /**
@@ -16,7 +16,7 @@ public class Asserts {
      */
     public static void assertClosed(Channel channel) {
         if (channel != null && channel.isClosed() > 0) {
-            throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            throw new SocketDChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }
 
@@ -30,7 +30,7 @@ public class Asserts {
      */
     public static void assertClosedAndEnd(Channel channel) {
         if (channel != null && isClosedAndEnd(channel)) {
-            throw new SocketdChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
+            throw new SocketDChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }
 
@@ -61,7 +61,7 @@ public class Asserts {
             StringBuilder buf = new StringBuilder();
             buf.append("This message ").append(name).append(" size is out of limit ").append(limitSize)
                     .append(" (").append(size).append(")");
-            throw new SocketdSizeLimitException(buf.toString());
+            throw new SocketDSizeLimitException(buf.toString());
         }
     }
 }

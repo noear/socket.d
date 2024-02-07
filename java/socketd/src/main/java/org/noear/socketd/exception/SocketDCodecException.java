@@ -6,8 +6,8 @@ package org.noear.socketd.exception;
  * @author noear
  * @since 2.0
  */
-public class SocketdCodecException extends SocketdException {
-    public SocketdCodecException(String message){
+public class SocketDCodecException extends SocketDException {
+    public SocketDCodecException(String message){
         super(message);
     }
 }

@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ProcessorDefault;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
                 if (e instanceof RuntimeException || e instanceof IOException) {
                     throw e;
                 } else {
-                    throw new SocketdException("Socket.D client Connection failed", e);
+                    throw new SocketDException("Socket.D client Connection failed", e);
                 }
             } else {
                 log.info("Socket.D client Connection failed: {link={}}", getConfig().getLinkUrl());

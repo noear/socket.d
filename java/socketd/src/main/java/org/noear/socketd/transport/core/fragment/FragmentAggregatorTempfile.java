@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.core.fragment;
 
-import org.noear.socketd.exception.SocketdCodecException;
+import org.noear.socketd.exception.SocketDCodecException;
 import org.noear.socketd.transport.core.EntityMetas;
 import org.noear.socketd.transport.core.FragmentAggregator;
 import org.noear.socketd.transport.core.Frame;
@@ -37,7 +37,7 @@ public class FragmentAggregatorTempfile implements FragmentAggregator {
         String dataLengthStr = main.meta(EntityMetas.META_DATA_LENGTH);
 
         if (StrUtils.isEmpty(dataLengthStr)) {
-            throw new SocketdCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
+            throw new SocketDCodecException("Missing '" + EntityMetas.META_DATA_LENGTH + "' meta, event=" + main.event());
         }
 
         this.dataLength = Integer.parseInt(dataLengthStr);

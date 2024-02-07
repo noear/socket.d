@@ -56,14 +56,19 @@ export interface Config {
     getFragmentSize(): number;
 
     /**
-     * 核心线程数（第二优先）
+     * Io线程数
      */
-    getCoreThreads(): number;
+    getIoThreads(): number;
 
     /**
-     * 最大线程数
+     * 解码线程数
      */
-    getMaxThreads(): number;
+    getCodecThreads(): number;
+
+    /**
+     * 交换线程数
+     */
+    getExchangeThreads(): number;
 
     /**
      * 获取读缓冲大小
@@ -112,10 +117,12 @@ export abstract class ConfigBase implements Config {
     private _fragmentSize: number;
     //字符集
     protected _charset: string
-    //内核线程数
-    protected _coreThreads: number;
-    //最大线程数
-    protected _maxThreads: number;
+    //io线程数
+    protected _ioThreads: number;
+    //解码线程数
+    protected _codecThreads: number;
+    //交换线程数
+    protected _exchangeThreads: number;
     //读缓冲大小
     protected _readBufferSize: number;
     //写缓冲大小
@@ -141,8 +148,9 @@ export abstract class ConfigBase implements Config {
         this._fragmentHandler = new FragmentHandlerDefault();
         this._fragmentSize = Constants.MAX_SIZE_DATA;
 
-        this._coreThreads = 2;
-        this._maxThreads = this._coreThreads * 4;
+        this._ioThreads = 1;
+        this._codecThreads = 2;
+        this._exchangeThreads = this._codecThreads * 4;
 
         this._readBufferSize = 512;
         this._writeBufferSize = 512;
@@ -255,33 +263,47 @@ export abstract class ConfigBase implements Config {
     }
 
     /**
-     * 获取核心线程数
-     */
-    getCoreThreads(): number {
-        return this._coreThreads;
+     * Io线程数
+     * */
+    getIoThreads(): number {
+        return this._ioThreads;
     }
 
     /**
-     * 配置核心线程数
+     * 配置Io线程数
      */
-    coreThreads(coreThreads: number): this {
-        this._coreThreads = coreThreads;
-        this._maxThreads = coreThreads * 4;
+    ioThreads(ioThreads: number): this {
+        this._ioThreads = ioThreads;
         return this;
     }
 
     /**
-     * 获取最大线程数
+     * 获取解码线程数
      */
-    getMaxThreads(): number {
-        return this._maxThreads;
+    getCodecThreads(): number {
+        return this._codecThreads;
     }
 
     /**
-     * 配置最大线程数
+     * 配置解码线程数
      */
-    maxThreads(maxThreads: number): this {
-        this._maxThreads = maxThreads;
+    codecThreads(codecThreads: number): this {
+        this._codecThreads = codecThreads;
+        return this;
+    }
+
+    /**
+     * 获取交换线程数
+     */
+    getExchangeThreads(): number {
+        return this._exchangeThreads;
+    }
+
+    /**
+     * 配置交换线程数
+     */
+    exchangeThreads(exchangeThreads: number): this {
+        this._exchangeThreads = exchangeThreads;
         return this;
     }
 

@@ -158,6 +158,9 @@ export class ClientConfig extends ConfigBase {
             "schema='" + this._schema + '\'' +
             ", charset=" + this._charset +
             ", url='" + this._url + '\'' +
+            ", ioThreads=" + this._ioThreads +
+            ", codecThreads=" + this._codecThreads +
+            ", exchangeThreads=" + this._exchangeThreads +
             ", heartbeatInterval=" + this._heartbeatInterval +
             ", connectTimeout=" + this._connectTimeout +
             ", idleTimeout=" + this._idleTimeout +

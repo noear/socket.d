@@ -75,7 +75,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             }
 
 
-            server.setThreadNum(getConfig().getIoThreads());
+            server.setThreadNum(Math.max(getConfig().getIoThreads(), 2));
             server.setBannerEnabled(false);
 
             if (getConfig().getReadBufferSize() > 0) {

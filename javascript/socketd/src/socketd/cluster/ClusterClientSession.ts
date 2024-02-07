@@ -2,7 +2,7 @@ import type {ClientSession} from "../transport/client/ClientSession";
 import type { Entity } from "../transport/core/Entity";
 import {RequestStream, SendStream, SubscribeStream} from "../transport/stream/Stream";
 import {StrUtils} from "../utils/StrUtils";
-import {SocketdException} from "../exception/SocketdException";
+import {SocketDException} from "../exception/SocketDException";
 import {RunUtils} from "../utils/RunUtils";
 import {LoadBalancer} from "./LoadBalancer";
 
@@ -43,7 +43,7 @@ export class ClusterClientSession implements ClientSession {
         }
 
         if (session == null) {
-            throw new SocketdException("No session is available!");
+            throw new SocketDException("No session is available!");
         } else {
             return session;
         }

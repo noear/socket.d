@@ -1,7 +1,7 @@
 import {IoConsumer, IoTriConsumer} from "../core/Typealias";
 import {Reply} from "../core/Entity";
 import {MessageInternal} from "../core/Message";
-import {SocketdTimeoutException} from "../../exception/SocketdException";
+import {SocketDTimeoutException} from "../../exception/SocketDException";
 import {Config} from "../core/Config";
 import {Asserts} from "../core/Asserts";
 import {Constants} from "../core/Constants";
@@ -180,7 +180,7 @@ export abstract class StreamBase<T extends Stream<any>> implements StreamInterna
 
         this._insuranceFuture = setTimeout(() => {
             streamManger.removeStream(this.sid());
-            this.onError(new SocketdTimeoutException("The stream response timeout, sid=" + this.sid()));
+            this.onError(new SocketDTimeoutException("The stream response timeout, sid=" + this.sid()));
         }, streamTimeout);
     }
 

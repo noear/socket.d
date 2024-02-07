@@ -2,7 +2,7 @@ import {StrUtils} from "../../utils/StrUtils";
 import {ArrayBufferCodecReader, CodecReader} from "./Codec";
 import {Constants, EntityMetas} from "./Constants";
 import {BlobBuffer, type Buffer, ByteBuffer} from "./Buffer";
-import {SocketdException} from "../../exception/SocketdException";
+import {SocketDException} from "../../exception/SocketDException";
 
 
 /**
@@ -275,7 +275,7 @@ export class EntityDefault implements Entity {
 
     dataAsReader(): CodecReader {
         if (this._data.getArray() == null) {
-            throw new SocketdException("Blob does not support dataAsReader");
+            throw new SocketDException("Blob does not support dataAsReader");
         }
 
         if (!this._dataAsReader) {
@@ -290,7 +290,7 @@ export class EntityDefault implements Entity {
      */
     dataAsString(): string {
         if (this._data.getArray() == null) {
-            throw new SocketdException("Blob does not support dataAsString");
+            throw new SocketDException("Blob does not support dataAsString");
         }
 
         return StrUtils.bufToStrDo(this._data.getArray()!, '');

@@ -6,7 +6,7 @@ import type { ClientConnector } from "./ClientConnector";
 import { HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
 import { Constants } from "../core/Constants";
 import { Asserts } from "../core/Asserts";
-import { SocketdChannelException, SocketdException } from "../../exception/SocketdException";
+import { SocketDChannelException, SocketDException } from "../../exception/SocketDException";
 import {RunUtils} from "../../utils/RunUtils";
 import {SessionDefault} from "../core/SessionDefault";
 import {SocketAddress} from "../core/SocketAddress";
@@ -87,7 +87,7 @@ export class ClientChannel extends ChannelBase implements Channel {
 
             this._heartbeatHandler.heartbeat(this.getSession());
         } catch (e) {
-            if (e instanceof SocketdException) {
+            if (e instanceof SocketDException) {
                 throw e;
             }
 
@@ -95,7 +95,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 this.internalCloseIfError();
             }
 
-            throw new SocketdChannelException(e);
+            throw new SocketDChannelException(e);
         }
     }
 
@@ -178,7 +178,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 }
             } else {
                 //有可能此时仍未连接
-                const err = new SocketdChannelException("Client channel is not connected");
+                const err = new SocketDChannelException("Client channel is not connected");
                 if (stream) {
                     stream.onError(err);
                 }

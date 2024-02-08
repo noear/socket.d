@@ -23,9 +23,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class ConfigBase<T extends Config> implements Config {
     //客户模式
     private final boolean clientMode;
-    //顺序模式（指发送有序）
+    //顺序发送
     private boolean sequenceSend;
-    //无锁模式
+    //无锁发送
     private boolean nolockSend;
     //流管理器
     private final StreamManger streamManger;

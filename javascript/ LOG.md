@@ -1,7 +1,5 @@
 ### 2.4.0
 
-### 2.4.0
-
 * 添加 LoadBalancer 集群负载均衡工具
 * 调整 Socketd 开头的异常类改为 SocketD 开头（与 python 统一）
 * 调整 几个配置名

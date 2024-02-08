@@ -23,12 +23,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class ConfigBase<T extends Config> implements Config {
     //客户模式
     private final boolean clientMode;
+    //顺序模式（指发送有序）
+    private boolean sequenceSend;
+    //无锁模式
+    private boolean nolockSend;
     //流管理器
     private final StreamManger streamManger;
     //编解码器
     private final Codec codec;
-    //顺序模式（指发送有序）
-    private boolean sequenceMode;
 
     //id生成器
     private IdGenerator idGenerator;
@@ -70,7 +72,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
-        this.sequenceMode = false;
+        this.sequenceSend = false;
+        this.nolockSend = false;
         this.streamManger = new StreamMangerDefault(this);
         this.codec = new CodecDefault(this);
 
@@ -102,18 +105,35 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 顺序模式
+     * 顺序发送
      */
     @Override
-    public boolean sequenceMode() {
-        return sequenceMode;
+    public boolean isSequenceSend() {
+        return sequenceSend;
+    }
+
+
+    /**
+     * 配置顺序发送
+     */
+    public T sequenceSend(boolean sequenceSend) {
+        this.sequenceSend = sequenceSend;
+        return (T) this;
     }
 
     /**
-     * 配置顺序模式
+     * 无锁发送
+     * */
+    @Override
+    public boolean isNolockSend() {
+        return nolockSend;
+    }
+
+    /**
+     * 配置无锁发送
      */
-    public T sequenceMode(boolean sequenceMode) {
-        this.sequenceMode = sequenceMode;
+    public T nolockSend(boolean nolockSend) {
+        this.nolockSend = nolockSend;
         return (T) this;
     }
 

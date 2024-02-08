@@ -19,9 +19,14 @@ public interface Config {
     boolean clientMode();
 
     /**
-     * 是否顺序模式
-     * */
-    boolean sequenceMode();
+     * 是否顺序发送
+     */
+    boolean isSequenceSend();
+
+    /**
+     * 是否无锁发送
+     */
+    boolean isNolockSend();
 
     /**
      * 获取流管理器

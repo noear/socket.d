@@ -117,29 +117,38 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        //以下为锁处理，如果迁移不方便，可以去掉
-        boolean inFair = getConfig().sequenceMode();
-        if (inFair == false && frame.message() != null) {
-            String atName = frame.message().atName();
-            if (StrUtils.isNotEmpty(atName) && atName.charAt(atName.length() - 1) == '!') {
-                //如果 “name!” 则用公平锁
-                inFair = true;
-            }
-        }
+        //
+        //如果是单线程语言的，只需要使用无锁发送
+        //
 
-        if (inFair) {
-            sendInFairLock.lock();
-            try {
-                sendDo(frame, stream);
-            } finally {
-                sendInFairLock.unlock();
-            }
+        if (getConfig().isNolockSend()) {
+            //无锁发送
+            sendDo(frame, stream);
         } else {
-            sendNoFairLock.lock();
-            try {
-                sendDo(frame, stream);
-            } finally {
-                sendNoFairLock.unlock();
+            //有锁发送，如果有数据分片场景必须要有锁！
+            boolean inFair = getConfig().isSequenceSend();
+            if (inFair == false && frame.message() != null) {
+                String atName = frame.message().atName();
+                if (StrUtils.isNotEmpty(atName) && atName.charAt(atName.length() - 1) == '!') {
+                    //如果 “name!”（即要求固定发送目标的），则用公平锁
+                    inFair = true;
+                }
+            }
+
+            if (inFair) {
+                sendInFairLock.lock();
+                try {
+                    sendDo(frame, stream);
+                } finally {
+                    sendInFairLock.unlock();
+                }
+            } else {
+                sendNoFairLock.lock();
+                try {
+                    sendDo(frame, stream);
+                } finally {
+                    sendNoFairLock.unlock();
+                }
             }
         }
     }

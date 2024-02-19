@@ -1,10 +1,7 @@
 package org.noear.socketd.cluster;
 
 import org.noear.socketd.SocketD;
-import org.noear.socketd.transport.client.Client;
-import org.noear.socketd.transport.client.ClientConfigHandler;
-import org.noear.socketd.transport.client.ClientInternal;
-import org.noear.socketd.transport.client.ClientSession;
+import org.noear.socketd.transport.client.*;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.StrUtils;
 
@@ -21,7 +18,8 @@ import java.util.concurrent.ExecutorService;
 public class ClusterClient implements Client {
     private final String[] serverUrls;
 
-    private HeartbeatHandler heartbeatHandler;
+    private ClientConnectHandler connectHandler;
+    private ClientHeartbeatHandler heartbeatHandler;
     private ClientConfigHandler configHandler;
     private Listener listener;
 
@@ -30,7 +28,13 @@ public class ClusterClient implements Client {
     }
 
     @Override
-    public Client heartbeatHandler(HeartbeatHandler heartbeatHandler) {
+    public Client connectHandler(ClientConnectHandler connectHandler) {
+        this.connectHandler = connectHandler;
+        return this;
+    }
+
+    @Override
+    public Client heartbeatHandler(ClientHeartbeatHandler heartbeatHandler) {
         this.heartbeatHandler = heartbeatHandler;
         return this;
     }
@@ -88,6 +92,10 @@ public class ClusterClient implements Client {
 
                 if (configHandler != null) {
                     client.config(configHandler);
+                }
+
+                if (connectHandler != null) {
+                    client.connectHandler(connectHandler);
                 }
 
                 if (heartbeatHandler != null) {

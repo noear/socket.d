@@ -2,9 +2,9 @@ package org.noear.socketd.transport.client;
 
 import org.noear.socketd.exception.SocketDChannelException;
 import org.noear.socketd.exception.SocketDException;
+import org.noear.socketd.transport.client.impl.ClientHeartbeatHandlerDefault;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ChannelBase;
-import org.noear.socketd.transport.core.impl.HeartbeatHandlerDefault;
 import org.noear.socketd.transport.core.impl.SessionDefault;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.utils.RunUtils;
@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ClientChannel extends ChannelBase implements Channel {
     private static final Logger log = LoggerFactory.getLogger(ClientChannel.class);
 
+    //客户端
+    private final ClientInternal client;
     //连接器
     private final ClientConnector connector;
     //会话壳
@@ -32,21 +34,22 @@ public class ClientChannel extends ChannelBase implements Channel {
     //真实通道
     private ChannelInternal real;
     //心跳处理
-    private HeartbeatHandler heartbeatHandler;
+    private ClientHeartbeatHandler heartbeatHandler;
     //心跳调度
     private ScheduledFuture<?> heartbeatScheduledFuture;
     //连接状态
     private AtomicBoolean isConnecting = new AtomicBoolean(false);
 
-    public ClientChannel(ClientConnector connector) {
+    public ClientChannel(ClientInternal client,ClientConnector connector) {
         super(connector.getConfig());
+        this.client = client;
         this.connector = connector;
         this.sessionShell = new SessionDefault(this);
 
-        if (connector.getHeartbeatHandler() == null) {
-            this.heartbeatHandler = new HeartbeatHandlerDefault();
+        if (client.getHeartbeatHandler() == null) {
+            this.heartbeatHandler = new ClientHeartbeatHandlerDefault();
         } else {
-            this.heartbeatHandler = connector.getHeartbeatHandler();
+            this.heartbeatHandler = client.getHeartbeatHandler();
         }
 
         initHeartbeat();
@@ -69,7 +72,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                         log.warn("Client channel heartbeat error", e);
                     }
                 }
-            }, connector.getHeartbeatInterval(), connector.getHeartbeatInterval());
+            }, client.getHeartbeatInterval(), client.getHeartbeatInterval());
         }
     }
 
@@ -161,7 +164,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         try {
             internalCheck();
 
-            heartbeatHandler.heartbeat(getSession());
+            heartbeatHandler.clientHeartbeat(getSession());
         } catch (SocketDException e) {
             throw e;
         } catch (Throwable e) {
@@ -266,7 +269,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 real.close(Constants.CLOSE2002_RECONNECT);
             }
 
-            real = connector.connect();
+            real = client.getConnectHandler().clientConnect(connector);
             //原始 session 切换为带壳的 session
             real.setSession(sessionShell);
             //同步握手信息

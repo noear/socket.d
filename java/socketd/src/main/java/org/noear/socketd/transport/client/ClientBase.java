@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.client;
 
 import org.noear.socketd.exception.SocketDException;
+import org.noear.socketd.transport.client.impl.ClientConnectHandlerDefault;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ProcessorDefault;
 import org.slf4j.Logger;
@@ -20,7 +21,9 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     //协议处理器
     protected Processor processor = new ProcessorDefault();
     //心跳处理
-    protected HeartbeatHandler heartbeatHandler;
+    protected ClientHeartbeatHandler heartbeatHandler;
+    //连接处理
+    protected ClientConnectHandler connectHandler = new ClientConnectHandlerDefault();
 
     //配置
     private final ClientConfig config;
@@ -40,10 +43,18 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     }
 
     /**
+     * 获取连接处理器
+     */
+    @Override
+    public ClientConnectHandler getConnectHandler() {
+        return connectHandler;
+    }
+
+    /**
      * 获取心跳处理
      */
     @Override
-    public HeartbeatHandler getHeartbeatHandler() {
+    public ClientHeartbeatHandler getHeartbeatHandler() {
         return heartbeatHandler;
     }
 
@@ -72,13 +83,22 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
         return processor;
     }
 
+    @Override
+    public Client connectHandler(ClientConnectHandler connectHandler) {
+        if (connectHandler != null) {
+            this.connectHandler = connectHandler;
+        }
+
+        return this;
+    }
+
     /**
      * 设置心跳
      */
     @Override
-    public Client heartbeatHandler(HeartbeatHandler handler) {
-        if (handler != null) {
-            this.heartbeatHandler = handler;
+    public Client heartbeatHandler(ClientHeartbeatHandler heartbeatHandler) {
+        if (heartbeatHandler != null) {
+            this.heartbeatHandler = heartbeatHandler;
         }
 
         return this;
@@ -125,7 +145,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
 
     private Session openDo(boolean isThow) throws IOException {
         ClientConnector connector = createConnector();
-        ClientChannel clientChannel = new ClientChannel(connector);
+        ClientChannel clientChannel = new ClientChannel(this, connector);
 
         try {
             clientChannel.connect();

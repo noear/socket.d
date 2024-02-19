@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.transport.core.HeartbeatHandler;
 import org.noear.socketd.transport.core.Processor;
 
 /**
@@ -11,9 +10,14 @@ import org.noear.socketd.transport.core.Processor;
  */
 public interface ClientInternal extends Client {
     /**
+     * 获取连接处理器
+     */
+    ClientConnectHandler getConnectHandler();
+
+    /**
      * 获取心跳处理
      */
-    HeartbeatHandler getHeartbeatHandler();
+    ClientHeartbeatHandler getHeartbeatHandler();
 
     /**
      * 获取心跳间隔（毫秒）

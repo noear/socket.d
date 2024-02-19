@@ -12,12 +12,17 @@ import java.io.IOException;
  */
 public interface Client {
     /**
-     * 心跳
+     * 连接处理
      */
-    Client heartbeatHandler(HeartbeatHandler handler);
+    Client connectHandler(ClientConnectHandler connectHandler);
 
     /**
-     * 配置
+     * 心跳处理
+     */
+    Client heartbeatHandler(ClientHeartbeatHandler heartbeatHandler);
+
+    /**
+     * 配置处理
      */
     Client config(ClientConfigHandler configHandler);
 

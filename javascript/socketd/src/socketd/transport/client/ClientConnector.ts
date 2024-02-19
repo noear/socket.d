@@ -17,16 +17,6 @@ export interface ClientConnector {
     getConfig(): Config;
 
     /**
-     * 获取心跳处理
-     */
-    getHeartbeatHandler(): IoConsumer<Session>;
-
-    /**
-     * 获取心跳频率（单位：毫秒）
-     */
-    getHeartbeatInterval(): number;
-
-    /**
      * 是否自动重连
      */
     autoReconnect(): boolean;
@@ -59,14 +49,6 @@ export abstract class ClientConnectorBase<T extends ClientInternal> implements C
 
     getConfig(): Config {
         return this._client.getConfig();
-    }
-
-    getHeartbeatHandler(): IoConsumer<Session> {
-        return this._client.getHeartbeatHandler();
-    }
-
-    getHeartbeatInterval(): number {
-        return this._client.getHeartbeatInterval();
     }
 
     autoReconnect(): boolean {

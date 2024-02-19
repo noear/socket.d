@@ -13,6 +13,10 @@ async function open(callback) {
             .heartbeatInterval(1000*5)
             .fragmentSize(1024 * 1024)
             .metaPut("test","1"))
+        .connectHandler(c=> {
+            console.log("connect begin...");
+            return c.connect();
+        })
         .listen(SocketD.newEventListener().doOnMessage((s, m) => {
             appendToMessageList('收到推送', m.dataAsString());
         }))

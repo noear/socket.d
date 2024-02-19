@@ -1,3 +1,6 @@
+### 2.4.1
+* 添加 ClientConnectHandler 接口，提供连接时的拦截处理
+
 ### 2.4.0
 
 * 添加 LoadBalancer 集群负载均衡工具

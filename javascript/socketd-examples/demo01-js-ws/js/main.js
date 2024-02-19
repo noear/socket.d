@@ -15,6 +15,7 @@ async function open(callback) {
             .metaPut("test","1"))
         .connectHandler(c=> {
             console.log("connect begin...");
+            c.getConfig().metaPut("test","1");
             return c.connect();
         })
         .listen(SocketD.newEventListener().doOnMessage((s, m) => {

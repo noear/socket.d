@@ -3,6 +3,7 @@ import type {Session} from "../core/Session";
 import type {ChannelInternal} from "../core/Channel";
 import type {ClientInternal} from "./Client";
 import {Config} from "../core/Config";
+import {ClientConfig} from "./ClientConfig";
 
 /**
  * 客户端连接器
@@ -14,7 +15,7 @@ export interface ClientConnector {
     /**
      * 获取配置
      * */
-    getConfig(): Config;
+    getConfig(): ClientConfig;
 
     /**
      * 是否自动重连
@@ -47,7 +48,7 @@ export abstract class ClientConnectorBase<T extends ClientInternal> implements C
         this._client = client;
     }
 
-    getConfig(): Config {
+    getConfig(): ClientConfig {
         return this._client.getConfig();
     }
 

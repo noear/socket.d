@@ -83,6 +83,9 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
         return processor;
     }
 
+    /**
+     * 设置连接处理器
+     */
     @Override
     public Client connectHandler(ClientConnectHandler connectHandler) {
         if (connectHandler != null) {
@@ -93,7 +96,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     }
 
     /**
-     * 设置心跳
+     * 设置心跳处理器
      */
     @Override
     public Client heartbeatHandler(ClientHeartbeatHandler heartbeatHandler) {

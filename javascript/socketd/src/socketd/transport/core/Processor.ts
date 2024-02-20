@@ -85,7 +85,7 @@ export class ProcessorDefault implements Processor {
                 if (r && channel.isValid()) {
                     //如果还有效，则发送链接确认
                     try {
-                        channel.sendConnack(frame.message()!); //->Connack
+                        channel.sendConnack(); //->Connack
                     } catch (err) {
                         this.onError(channel, err);
                     }

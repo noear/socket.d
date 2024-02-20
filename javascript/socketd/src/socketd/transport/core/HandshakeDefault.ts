@@ -9,6 +9,7 @@ export class HandshakeDefault implements HandshakeInternal {
     private _path: string;
     private _version: string | null;
     private _paramMap: Map<string, string>;
+    private _outMetaMap: Map<string, string>;
 
     constructor(source: MessageInternal) {
         let linkUrl = source.dataAsString();
@@ -20,6 +21,7 @@ export class HandshakeDefault implements HandshakeInternal {
         this._source = source;
         this._url = linkUrl;
         this._version = source.meta(EntityMetas.META_SOCKETD_VERSION);
+        this._outMetaMap = new Map<string, string>();
         this._paramMap = new Map<string, string>();
         let _uri = StrUtils.parseUri(linkUrl);
         this._path = _uri.path;
@@ -45,7 +47,23 @@ export class HandshakeDefault implements HandshakeInternal {
         return this._source;
     }
 
-    param(name: string): string | undefined{
+    getOutMetaMap(): Map<string, string> {
+        return this._outMetaMap;
+    }
+
+    uri(): string {
+        return this._url;
+    }
+
+    path(): string {
+        return this._path;
+    }
+
+    version(): string | null {
+        return this._version;
+    }
+
+    param(name: string): string | undefined {
         return this._paramMap.get(name);
     }
 
@@ -62,15 +80,7 @@ export class HandshakeDefault implements HandshakeInternal {
         this._paramMap.set(name, value);
     }
 
-    uri(): string {
-        return this._url;
-    }
-
-    path(): string {
-        return this._path;
-    }
-
-    version(): string | null{
-        return this._version;
+    outMeta(name: string, value: string) {
+        this._outMetaMap.set(name, value);
     }
 }

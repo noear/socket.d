@@ -2,6 +2,7 @@ import {EntityDefault, StringEntity} from "./Entity";
 import {EntityMetas, Flags} from "./Constants";
 import {Message, MessageBuilder, MessageInternal} from "./Message";
 import {SocketD} from "../../SocketD";
+import {HandshakeInternal} from "./Handshake";
 
 /**
  * 帧（帧[消息[实体]]）
@@ -68,16 +69,17 @@ export class Frames {
     /**
      * 构建连接确认帧
      *
-     * @param connectMessage 连接消息
+     * @param handshake 握手信息
      */
-    static connackFrame(connectMessage: Message): Frame {
+    static connackFrame(handshake: HandshakeInternal): Frame {
         const entity = new EntityDefault();
         //添加框架版本号
+        entity.metaMapPut(handshake.getOutMetaMap());
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
-        entity.dataSet(connectMessage.data().getArray()!);
+        entity.dataSet(handshake.getSource().data().getArray()!);
         return new Frame(Flags.Connack, new MessageBuilder()
-            .sid(connectMessage.sid())
-            .event(connectMessage.event()) //兼容旧版本（@deprecated 2.2.2）
+            .sid(handshake.getSource().sid())
+            .event(handshake.getSource().event()) //兼容旧版本（@deprecated 2.2.2）
             .entity(entity).build());
     }
 

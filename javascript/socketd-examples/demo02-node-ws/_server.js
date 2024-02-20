@@ -10,6 +10,7 @@ function main(){
 function buildListener() {
     return SocketD.newEventListener()
         .doOnOpen(s => {
+            s.handshake().outMeta("test","1");
             console.info("onOpen: " + s.sessionId());
         }).doOnMessage((s, m) => {
             console.info("onMessage: " + m);

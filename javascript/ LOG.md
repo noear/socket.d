@@ -1,3 +1,7 @@
+### 2.4.2
+* 添加 连接时 Handshake 元信息交互机制
+
+
 ### 2.4.1
 * 添加 ClientConnectHandler 接口，提供连接时的拦截处理
 

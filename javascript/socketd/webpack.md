@@ -39,7 +39,7 @@ npm publish
 ```javascript
 
 /*!
- * Socket.D v2.4.1
+ * Socket.D v2.4.2
  * (c) 2023-2024 noear.org
  * Released under the Apache-2.0 License.
  */

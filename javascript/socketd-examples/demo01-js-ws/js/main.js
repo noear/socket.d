@@ -18,7 +18,11 @@ async function open(callback) {
             c.getConfig().metaPut("test","1");
             return c.connect();
         })
-        .listen(SocketD.newEventListener().doOnMessage((s, m) => {
+        .listen(SocketD.newEventListener()
+            .doOnOpen(s=>{
+                console.log("outmeta: test=" + s.handshake().param("test"))
+            })
+            .doOnMessage((s, m) => {
             appendToMessageList('收到推送', m.dataAsString());
         }))
         .open();

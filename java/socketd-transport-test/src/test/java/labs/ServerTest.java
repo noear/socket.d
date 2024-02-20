@@ -45,6 +45,7 @@ public class ServerTest {
     private static Listener buildListener() {
         return new EventListener()
                 .doOnOpen(s -> {
+                    s.handshake().outMeta("test","1");
                     System.out.println("onOpen: " + s.sessionId() + ", meta=" + s.handshake().paramMap());
                 }).doOnMessage((s, m) -> {
                     System.out.println("onMessage: " + m);

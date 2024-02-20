@@ -36,6 +36,22 @@ public class CaseTest {
     }
 
     @Test
+    public void TestCase02_handshake() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+            BaseTestCase testCase = new TestCase02_handshake(s1, 1020 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
     public void TestCase11_autoReconnect() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];

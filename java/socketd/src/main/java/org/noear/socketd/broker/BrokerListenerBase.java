@@ -28,6 +28,13 @@ public abstract class BrokerListenerBase implements Listener {
     }
 
     /**
+     * 获取任意会话（包括没有名字的）
+     */
+    public Session getSessionAny(){
+        return LoadBalancer.getAnyByPoll(sessionAll.values());
+    }
+
+    /**
      * 获取所有玩家的名字
      */
     public Collection<String> getNameAll() {
@@ -87,11 +94,29 @@ public abstract class BrokerListenerBase implements Listener {
      * 获取任意一个玩家会话
      *
      * @param atName 目标名字
+     * @since 2.3
+     */
+    public Session getPlayerAny(String atName) {
+        if (StrUtils.isEmpty(atName)) {
+            return null;
+        }
+
+        if (atName.endsWith("!")) {
+            atName = atName.substring(0, atName.length() - 1);
+        }
+
+        return LoadBalancer.getAnyByPoll(getPlayerAll(atName));
+    }
+
+    /**
+     * 获取任意一个玩家会话
+     *
+     * @param atName 目标名字
      * @deprecated  2.3
      */
     @Deprecated
-    public Session getPlayerOne(String atName) throws IOException {
-        return getPlayerAny(atName, null);
+    public Session getPlayerOne(String atName){
+        return getPlayerAny(atName);
     }
 
     /**

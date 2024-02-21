@@ -75,7 +75,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
      * @param message   消息
      * @param name      目标玩家名字
      */
-    protected boolean forwardToName(Session requester, Message message, String name) throws IOException {
+    public boolean forwardToName(Session requester, Message message, String name) throws IOException {
         Collection<Session> playerAll = getPlayerAll(name);
         if (playerAll != null && playerAll.size() > 0) {
             for (Session responder : new ArrayList<>(playerAll)) {
@@ -103,7 +103,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
      * @param message   消息
      * @param responder 目标玩家会话
      */
-    protected void forwardToSession(Session requester, Message message, Session responder) throws IOException {
+    public void forwardToSession(Session requester, Message message, Session responder) throws IOException {
         if (message.isRequest()) {
             responder.sendAndRequest(message.event(), message, -1).thenReply(reply -> {
                 if (requester.isValid()) {

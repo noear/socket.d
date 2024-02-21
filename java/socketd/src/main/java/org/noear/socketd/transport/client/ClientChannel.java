@@ -77,6 +77,48 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     /**
+     * 心跳处理
+     */
+    private void heartbeatHandle() throws IOException {
+        if (real != null) {
+            //说明握手未成
+            if (real.getHandshake() == null) {
+                return;
+            }
+
+            //关闭并结束了
+            if (Asserts.isClosedAndEnd(real)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
+                }
+
+                //可能是被内层的会话关闭的，跳过了外层
+                this.close(real.isClosed());
+                return;
+            }
+
+            //或者正在关闭中
+            if(real.isClosing()){
+                return;
+            }
+        }
+
+        try {
+            internalCheck();
+
+            heartbeatHandler.clientHeartbeat(getSession());
+        } catch (SocketDException e) {
+            throw e;
+        } catch (Throwable e) {
+            if (connector.autoReconnect()) {
+                internalCloseIfError();
+            }
+
+            throw new SocketDChannelException("Client channel heartbeat failed", e);
+        }
+    }
+
+    /**
      * 是否有效
      */
     @Override
@@ -142,39 +184,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         }
     }
 
-    /**
-     * 心跳处理
-     */
-    private void heartbeatHandle() throws IOException {
-        if (real != null) {
-            //说明握手未成
-            if (real.getHandshake() == null) {
-                return;
-            }
 
-            //关闭并结束了或者正在关闭中
-            if (Asserts.isClosedAndEnd(real) || real.isClosing()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Client channel is closed (pause heartbeat), sessionId={}", getSession().sessionId());
-                }
-                return;
-            }
-        }
-
-        try {
-            internalCheck();
-
-            heartbeatHandler.clientHeartbeat(getSession());
-        } catch (SocketDException e) {
-            throw e;
-        } catch (Throwable e) {
-            if (connector.autoReconnect()) {
-                internalCloseIfError();
-            }
-
-            throw new SocketDChannelException("Client channel heartbeat failed", e);
-        }
-    }
 
     /**
      * 发送

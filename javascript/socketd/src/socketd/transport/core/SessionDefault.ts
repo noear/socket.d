@@ -111,7 +111,7 @@ export class SessionDefault extends SessionBase {
      * @return 流
      */
     send(event: string, entity: Entity): SendStream {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -136,7 +136,7 @@ export class SessionDefault extends SessionBase {
      * @return 流
      */
     sendAndRequest(event: string, entity: Entity, timeout?: number): RequestStream {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -173,7 +173,7 @@ export class SessionDefault extends SessionBase {
      * @return 流
      */
     sendAndSubscribe(event: string, entity: Entity, timeout?: number): SubscribeStream {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -203,7 +203,7 @@ export class SessionDefault extends SessionBase {
      * @param entity  实体
      */
     reply(from: Message, entity: Entity) {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 
@@ -223,7 +223,7 @@ export class SessionDefault extends SessionBase {
      * @param entity  实体
      */
     replyEnd(from: Message, entity: Entity) {
-        if(entity == null){
+        if (entity == null) {
             entity = new EntityDefault();
         }
 

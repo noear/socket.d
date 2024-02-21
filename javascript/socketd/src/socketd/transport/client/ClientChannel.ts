@@ -79,8 +79,15 @@ export class ClientChannel extends ChannelBase implements Channel {
             }
 
             //关闭并结束了
-            if (Asserts.isClosedAndEnd(this._real) || this._real.isClosing()) {
+            if (Asserts.isClosedAndEnd(this._real)) {
                 console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
+                //可能是被内层的会话关闭的，跳过了外层
+                this.close(this._real.isClosed());
+                return;
+            }
+
+            //或者正在关闭中
+            if (this._real.isClosing()) {
                 return;
             }
         }

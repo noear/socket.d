@@ -172,7 +172,12 @@ export class EntityDefault implements Entity {
      * @param val  值
      */
     metaPut(name: string, val: string): EntityDefault {
-        this.metaMap().set(name, val);
+        if (val == null) {
+            this.metaMap().delete(name);
+        } else {
+            this.metaMap().set(name, val);
+        }
+
         return this;
     }
 

@@ -41,9 +41,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
 
-    implementation("org.noear:socketd-transport-java-tcp:2.4.2")
-    implementation("org.noear:socketd-transport-java-udp:2.4.2")
-    implementation("org.noear:socketd-transport-java-websocket:2.4.2")
+    implementation("org.noear:socketd-transport-java-tcp:2.4.3")
+    implementation("org.noear:socketd-transport-java-udp:2.4.3")
+    implementation("org.noear:socketd-transport-java-websocket:2.4.3")
 
     implementation("com.github.tony19:logback-android:3.0.0")
 

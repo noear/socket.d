@@ -8,7 +8,7 @@ async function open(callback) {
         alert('serverUrl不能为空!');
         return;
     }
-    window.clientSession = await SocketD.createClient(serverUrl.trim())
+    await SocketD.createClient(serverUrl.trim())
         .config(c => c
             .heartbeatInterval(1000*5)
             .fragmentSize(1024 * 1024)
@@ -20,6 +20,7 @@ async function open(callback) {
         })
         .listen(SocketD.newEventListener()
             .doOnOpen(s=>{
+                window.clientSession = s;
                 console.log("outmeta: test=" + s.handshake().param("test"))
             })
             .doOnMessage((s, m) => {

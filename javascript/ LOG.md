@@ -1,3 +1,10 @@
+### 2.4.3
+* 优化 EntityDefault:metaPut 当 val=null时，视为删除
+* 优化 ClientChannel:heartbeatHandle 添加 isClosing 的判断
+* 优化 ClientChannel:heartbeatHandle 处理，增加内部会话关闭时，同步到外层
+* 优化 ChannelDefault 内部的通道关闭改为延时100ms关，避免 sendClose 时通道坏掉
+* 优化 isClosedAndEnd 的判断条件，去掉 CLOSE1000_PROTOCOL_CLOSE_STARTING
+
 ### 2.4.2
 * 添加 连接时 Handshake 元信息交互机制
 

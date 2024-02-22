@@ -1,4 +1,11 @@
 ### 2.4.3
+* 优化 EntityDefault:metaPut 当 val=null时，视为删除
+* 优化 ClientChannel:heartbeatHandle 添加 isClosing 的判断
+* 优化 ClientChannel:heartbeatHandle 处理，增加内部会话关闭时，同步到外层
+* 优化 ChannelDefault 内部的通道关闭改为延时100ms关，避免 sendClose 时通道坏掉
+* 调整 BrokerListener 的能力方法，都改为公有
+* 调整 心跳日志级别改为 debug
+* 添加 BrokerListenerBase:getPlayerAny(name) 接口
 * smart-socket 升为 1.5.42
 
 ### 2.4.2

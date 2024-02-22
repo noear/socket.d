@@ -21,7 +21,7 @@ public class DebugTest {
     @Test
     public  void main() throws Exception {
         String s1 = schemas[2];
-        BaseTestCase testCase = new TestCase02_handshake(s1, 8602);
+        BaseTestCase testCase = new TestCase34_inner_close(s1, 8602);
         try {
             testCase.start();
             testCase.stop();

@@ -62,7 +62,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 try {
                     await this.heartbeatHandle();
                 } catch (e) {
-                    console.warn("Client channel heartbeat error", e);
+                    console.debug("Client channel heartbeat error", e);
                 }
             }, this._client.getHeartbeatInterval());
         }

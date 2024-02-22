@@ -67,9 +67,9 @@ public class ClientChannel extends ChannelBase implements Channel {
             heartbeatScheduledFuture = RunUtils.scheduleWithFixedDelay(() -> {
                 try {
                     heartbeatHandle();
-                } catch (Exception e) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Client channel heartbeat error", e);
+                } catch (Throwable e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Client channel heartbeat error", e);
                     }
                 }
             }, client.getHeartbeatInterval(), client.getHeartbeatInterval());

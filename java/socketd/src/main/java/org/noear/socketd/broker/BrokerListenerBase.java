@@ -35,6 +35,13 @@ public abstract class BrokerListenerBase implements Listener {
     }
 
     /**
+     * 获取会话数量
+     * */
+    public int getSessionCount(){
+        return sessionAll.size();
+    }
+
+    /**
      * 获取所有玩家的名字
      */
     public Collection<String> getNameAll() {
@@ -46,7 +53,7 @@ public abstract class BrokerListenerBase implements Listener {
      *
      * @param name 名字
      */
-    public int getPlayerNum(String name) {
+    public int getPlayerCount(String name) {
         Collection<Session> tmp = getPlayerAll(name);
 
         if (tmp == null) {
@@ -54,6 +61,17 @@ public abstract class BrokerListenerBase implements Listener {
         } else {
             return tmp.size();
         }
+    }
+
+    /**
+     * 获取所有玩家数量
+     *
+     * @param name 名字
+     * @deprecated 2.4
+     */
+    @Deprecated
+    public int getPlayerNum(String name) {
+        return getPlayerCount(name);
     }
 
     /**
@@ -91,7 +109,7 @@ public abstract class BrokerListenerBase implements Listener {
     }
 
     /**
-     * 获取任意一个玩家会话
+     * 获取任意一个玩家会话（不支持哈希）
      *
      * @param atName 目标名字
      * @since 2.3

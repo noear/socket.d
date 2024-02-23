@@ -1,3 +1,32 @@
+### 2.4.3
+* 优化 EntityDefault:metaPut 当 val=null时，视为删除
+* 优化 ClientChannel:heartbeatHandle 添加 isClosing 的判断
+* 优化 ClientChannel:heartbeatHandle 处理，增加内部会话关闭时，同步到外层
+* 优化 ChannelDefault 内部的通道关闭改为延时100ms关，避免 sendClose 时通道坏掉
+* 优化 isClosedAndEnd 的判断条件，去掉 CLOSE1000_PROTOCOL_CLOSE_STARTING
+
+### 2.4.2
+* 添加 连接时 Handshake 元信息交互机制
+
+
+### 2.4.1
+* 添加 ClientConnectHandler 接口，提供连接时的拦截处理
+
+### 2.4.0
+
+* 添加 LoadBalancer 集群负载均衡工具
+* 调整 Socketd 开头的异常类改为 SocketD 开头（与 python 统一）
+* 调整 几个配置名
+
+
+| 接配置名         | 新配置名            | 备注                        |
+|--------------|-----------------|---------------------------|
+| maxThreads   | exchangeThreads | 交换线程数，用于消息接收等（原来的名字，语义不明） |
+| coreThreads  | codecThreads    | 解码线程数，用于编解码等（原来的名字，语义不明）  |
+| /            | ioThreads       | Io线程数，用于连接等               |
+
+备注：关于线程配置在 js 里，基本没用到
+
 ### 2.3.11
 * 优化 安全停止细节
 

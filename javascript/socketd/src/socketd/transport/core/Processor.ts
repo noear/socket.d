@@ -3,7 +3,7 @@ import type {ChannelInternal} from "./Channel";
 import type {Message} from "./Message";
 import type {Frame} from "./Frame";
 import {Constants, EntityMetas, Flags} from "./Constants";
-import {SocketdAlarmException, SocketdConnectionException} from "../../exception/SocketdException";
+import {SocketDAlarmException, SocketDConnectionException} from "../../exception/SocketDException";
 import {HandshakeDefault} from "./HandshakeDefault";
 import {StreamInternal} from "../stream/Stream";
 
@@ -85,7 +85,7 @@ export class ProcessorDefault implements Processor {
                 if (r && channel.isValid()) {
                     //如果还有效，则发送链接确认
                     try {
-                        channel.sendConnack(frame.message()!); //->Connack
+                        channel.sendConnack(); //->Connack
                     } catch (err) {
                         this.onError(channel, err);
                     }
@@ -102,7 +102,7 @@ export class ProcessorDefault implements Processor {
 
                 if (frame.flag() == Flags.Close) {
                     //说明握手失败了
-                    throw new SocketdConnectionException("Connection request was rejected");
+                    throw new SocketDConnectionException("Connection request was rejected");
                 }
 
                 console.warn(`${channel.getConfig().getRoleName()} channel handshake is null, sessionId=${channel.getSession().sessionId()}`);
@@ -142,7 +142,7 @@ export class ProcessorDefault implements Processor {
                     }
                     case Flags.Alarm: {
                         //结束流，并异常通知
-                        const exception = new SocketdAlarmException(frame.message()!);
+                        const exception = new SocketDAlarmException(frame.message()!);
                         const stream = channel.getConfig().getStreamManger().getStream(frame.message()!.sid());
                         if (stream == null) {
                             this.onError(channel, exception);

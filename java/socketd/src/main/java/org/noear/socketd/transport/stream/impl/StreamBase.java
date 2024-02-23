@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.stream.impl;
 
-import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.exception.SocketDTimeoutException;
 import org.noear.socketd.transport.stream.Stream;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.transport.stream.StreamManger;
@@ -76,7 +76,7 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
 
         insuranceFuture = RunUtils.delay(() -> {
             streamManger.removeStream(sid);
-            this.onError(new SocketdTimeoutException("The stream response timeout, sid=" + sid));
+            this.onError(new SocketDTimeoutException("The stream response timeout, sid=" + sid));
         }, streamTimeout);
     }
 

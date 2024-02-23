@@ -24,7 +24,7 @@ public interface Handshake {
 
     /**
      * 请求路径
-     * */
+     */
     String path();
 
     /**
@@ -51,4 +51,9 @@ public interface Handshake {
      * 放置参数
      */
     Handshake paramPut(String name, String value);
+
+    /**
+     * 输出元信息
+     */
+    void outMeta(String name, String value);
 }

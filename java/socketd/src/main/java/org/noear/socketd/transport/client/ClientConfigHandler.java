@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.client;
 
 /**
- * 客户端配置处理
+ * 客户端配置处理器
  *
  * @author noear
  * @since 2.0

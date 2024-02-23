@@ -19,6 +19,7 @@ public class HandshakeDefault implements HandshakeInternal {
     private final String path;
     private final String version;
     private final Map<String, String> paramMap;
+    private final Map<String, String> outMetaMap;
 
     /**
      * 消息源
@@ -29,7 +30,7 @@ public class HandshakeDefault implements HandshakeInternal {
 
     public HandshakeDefault(MessageInternal source) {
         String linkUrl = source.dataAsString();
-        if(StrUtils.isEmpty(linkUrl)){
+        if (StrUtils.isEmpty(linkUrl)) {
             //兼容旧版本（@deprecated 2.2）
             linkUrl = source.event();
         }
@@ -38,6 +39,7 @@ public class HandshakeDefault implements HandshakeInternal {
         this.uri = URI.create(linkUrl);
         this.path = uri.getPath();
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
+        this.outMetaMap = new ConcurrentHashMap<>();
         this.paramMap = new ConcurrentHashMap<>();
 
         //添加连接参数
@@ -75,7 +77,7 @@ public class HandshakeDefault implements HandshakeInternal {
 
     /**
      * 请求路径
-     * */
+     */
     @Override
     public String path() {
         return path;
@@ -120,5 +122,15 @@ public class HandshakeDefault implements HandshakeInternal {
     public Handshake paramPut(String name, String value) {
         paramMap.put(name, value);
         return this;
+    }
+
+    @Override
+    public void outMeta(String name, String value) {
+        outMetaMap.put(name, value);
+    }
+
+    @Override
+    public Map<String, String> getOutMetaMap() {
+        return outMetaMap;
     }
 }

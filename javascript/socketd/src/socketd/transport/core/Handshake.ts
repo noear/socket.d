@@ -48,6 +48,11 @@ export interface Handshake {
      * 设置或修改参数
      */
     paramPut(name: string, value: string);
+
+    /**
+     * 输出元信息
+     */
+    outMeta(name: string, value: string);
 }
 
 
@@ -60,4 +65,9 @@ export interface HandshakeInternal extends Handshake {
      * 获取消息源
      */
     getSource(): MessageInternal;
+
+    /**
+     * 获取输出元信息
+     */
+    getOutMetaMap(): Map<string, string>;
 }

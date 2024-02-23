@@ -14,7 +14,7 @@ import {ClientHandshakeResult} from "../transport/client/ClientHandshakeResult";
 import {EnvBridge} from "./impl/EnvBridge";
 import {ChannelDefault} from "../transport/core/ChannelDefault";
 import {Flags} from "../transport/core/Constants";
-import {SocketdConnectionException} from "../exception/SocketdException";
+import {SocketDConnectionException} from "../exception/SocketDException";
 
 export class WsClientConnector extends ClientConnectorBase<WsClient> {
     _real: WebSocketClientImpl;
@@ -98,7 +98,7 @@ export class WebSocketClientImpl implements SdWebSocketListener {
                     this._client.getProcessor().onReceive(this._channel, frame);
                 }
             } catch (e) {
-                if (e instanceof SocketdConnectionException) {
+                if (e instanceof SocketDConnectionException) {
                     this.handshakeFutureDo(e);
                 }
 

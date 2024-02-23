@@ -6,8 +6,8 @@ package org.noear.socketd.exception;
  * @author noear
  * @since 2.0
  */
-public class SocketdSizeLimitException extends SocketdException {
-    public SocketdSizeLimitException(String message){
+public class SocketDSizeLimitException extends SocketDException {
+    public SocketDSizeLimitException(String message){
         super(message);
     }
 }

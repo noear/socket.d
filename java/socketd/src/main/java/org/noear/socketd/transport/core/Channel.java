@@ -86,9 +86,8 @@ public interface Channel {
     /**
      * 发送连接确认（握手）
      *
-     * @param connectMessage 连接消息
      */
-    void sendConnack(Message connectMessage) throws IOException;
+    void sendConnack() throws IOException;
 
     /**
      * 发送 Ping（心跳）

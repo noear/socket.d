@@ -10,6 +10,7 @@ function main(){
 function buildListener() {
     return SocketD.newEventListener()
         .doOnOpen(s => {
+            s.handshake().outMeta("test","1");
             console.info("onOpen: " + s.sessionId());
         }).doOnMessage((s, m) => {
             console.info("onMessage: " + m);
@@ -46,7 +47,7 @@ function buildListener() {
 
             s.attrPut("push", "1");
 
-            for (let i = 0; i++; i < 100) {
+            for (let i = 0; i < 100; i++) {
                 if (s.attrHas("push") == false) {
                     break;
                 }
@@ -55,7 +56,7 @@ function buildListener() {
                 //todo:sleep
             }
         }).doOn("/unpush", (s, m) => {
-            s.attrMap().remove("push");
+            s.attrMap().delete("push");
         })
         .doOnClose(s => {
             console.info("onClose: " + s.sessionId());

@@ -24,12 +24,12 @@ public class WebSocketServerImpl extends WebSocketServer {
     private WsNioServer server;
 
     public WebSocketServerImpl(int port, WsNioServer server) {
-        super(new InetSocketAddress(port), server.getConfig().getCoreThreads());
+        super(new InetSocketAddress(port), server.getConfig().getCodecThreads());
         this.server = server;
     }
 
     public WebSocketServerImpl(String addr, int port, WsNioServer server) {
-        super(new InetSocketAddress(addr, port), server.getConfig().getCoreThreads());
+        super(new InetSocketAddress(addr, port), server.getConfig().getCodecThreads());
         this.server = server;
     }
 

@@ -11,6 +11,10 @@ public class RunUtils {
     /**
      * 异步执行器（一般用于异步任务）
      */
+    private static ExecutorService singleExecutor;
+    /**
+     * 异步执行器（一般用于异步任务）
+     */
     private static ExecutorService asyncExecutor;
     /**
      * 调度执行器（一般用于延时任务）
@@ -18,6 +22,8 @@ public class RunUtils {
     private static ScheduledExecutorService scheduledExecutor;
 
     static {
+        singleExecutor = Executors.newSingleThreadExecutor(new NamedThreadFactory("Socketd-singleExecutor-"));
+
         int asyncPoolSize = Math.max(Runtime.getRuntime().availableProcessors(), 2);
         asyncExecutor = new ThreadPoolExecutor(asyncPoolSize, asyncPoolSize,
                 0L, TimeUnit.MILLISECONDS,
@@ -52,6 +58,13 @@ public class RunUtils {
         } catch (Throwable e) {
             //略...
         }
+    }
+
+    /**
+     * 异步执行（单线程）
+     */
+    public static CompletableFuture<Void> single(Runnable task){
+        return CompletableFuture.runAsync(task, singleExecutor);
     }
 
 

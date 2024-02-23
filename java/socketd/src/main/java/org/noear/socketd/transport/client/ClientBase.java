@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.client;
 
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
+import org.noear.socketd.transport.client.impl.ClientConnectHandlerDefault;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ProcessorDefault;
 import org.slf4j.Logger;
@@ -20,7 +21,9 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     //协议处理器
     protected Processor processor = new ProcessorDefault();
     //心跳处理
-    protected HeartbeatHandler heartbeatHandler;
+    protected ClientHeartbeatHandler heartbeatHandler;
+    //连接处理
+    protected ClientConnectHandler connectHandler = new ClientConnectHandlerDefault();
 
     //配置
     private final ClientConfig config;
@@ -40,10 +43,18 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     }
 
     /**
+     * 获取连接处理器
+     */
+    @Override
+    public ClientConnectHandler getConnectHandler() {
+        return connectHandler;
+    }
+
+    /**
      * 获取心跳处理
      */
     @Override
-    public HeartbeatHandler getHeartbeatHandler() {
+    public ClientHeartbeatHandler getHeartbeatHandler() {
         return heartbeatHandler;
     }
 
@@ -73,12 +84,24 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     }
 
     /**
-     * 设置心跳
+     * 设置连接处理器
      */
     @Override
-    public Client heartbeatHandler(HeartbeatHandler handler) {
-        if (handler != null) {
-            this.heartbeatHandler = handler;
+    public Client connectHandler(ClientConnectHandler connectHandler) {
+        if (connectHandler != null) {
+            this.connectHandler = connectHandler;
+        }
+
+        return this;
+    }
+
+    /**
+     * 设置心跳处理器
+     */
+    @Override
+    public Client heartbeatHandler(ClientHeartbeatHandler heartbeatHandler) {
+        if (heartbeatHandler != null) {
+            this.heartbeatHandler = heartbeatHandler;
         }
 
         return this;
@@ -125,7 +148,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
 
     private Session openDo(boolean isThow) throws IOException {
         ClientConnector connector = createConnector();
-        ClientChannel clientChannel = new ClientChannel(connector);
+        ClientChannel clientChannel = new ClientChannel(this, connector);
 
         try {
             clientChannel.connect();
@@ -139,7 +162,7 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
                 if (e instanceof RuntimeException || e instanceof IOException) {
                     throw e;
                 } else {
-                    throw new SocketdException("Socket.D client Connection failed", e);
+                    throw new SocketDException("Socket.D client Connection failed", e);
                 }
             } else {
                 log.info("Socket.D client Connection failed: {link={}}", getConfig().getLinkUrl());

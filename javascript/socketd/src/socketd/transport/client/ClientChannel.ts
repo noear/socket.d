@@ -3,13 +3,15 @@ import type { Frame } from "../core/Frame";
 import type { Session } from "../core/Session";
 import type { StreamInternal } from "../stream/Stream";
 import type { ClientConnector } from "./ClientConnector";
-import { HeartbeatHandler, HeartbeatHandlerDefault} from "../core/HeartbeatHandler";
 import { Constants } from "../core/Constants";
 import { Asserts } from "../core/Asserts";
-import { SocketdChannelException, SocketdException } from "../../exception/SocketdException";
+import { SocketDChannelException, SocketDException } from "../../exception/SocketDException";
 import {RunUtils} from "../../utils/RunUtils";
 import {SessionDefault} from "../core/SessionDefault";
 import {SocketAddress} from "../core/SocketAddress";
+import {ClientHeartbeatHandler, ClientHeartbeatHandlerDefault} from "./ClientHeartbeatHandler";
+import {ClientInternal} from "./Client";
+import {ClientConnectHandler, ClientConnectHandlerDefault} from "./ClientConnectHandler";
 
 /**
  * 客户端通道
@@ -18,30 +20,31 @@ import {SocketAddress} from "../core/SocketAddress";
  * @since 2.0
  */
 export class ClientChannel extends ChannelBase implements Channel {
+    //客户端
+    private _client: ClientInternal;
     //连接器
     private _connector: ClientConnector;
     //会话壳
     private _sessionShell: Session;
     //真实通道
     private _real: ChannelInternal | null;
+    //连接处理
+    private _connectHandler : ClientConnectHandler;
     //心跳处理
-    private _heartbeatHandler: HeartbeatHandler;
+    private _heartbeatHandler: ClientHeartbeatHandler;
     //心跳调度
     private _heartbeatScheduledFuture: any;
     //连接状态
     private _isConnecting: boolean = false;
 
-    constructor(connector: ClientConnector) {
+    constructor(client: ClientInternal, connector: ClientConnector) {
         super(connector.getConfig());
-
+        this._client = client;
         this._connector = connector;
         this._sessionShell = new SessionDefault(this);
 
-        if (connector.getHeartbeatHandler() == null) {
-            this._heartbeatHandler = new HeartbeatHandlerDefault(null);
-        } else {
-            this._heartbeatHandler = new HeartbeatHandlerDefault(connector.getHeartbeatHandler());
-        }
+        this._connectHandler = new ClientConnectHandlerDefault(client.getConnectHandler());
+        this._heartbeatHandler = new ClientHeartbeatHandlerDefault(client.getHeartbeatHandler());
 
         this.initHeartbeat();
     }
@@ -59,9 +62,9 @@ export class ClientChannel extends ChannelBase implements Channel {
                 try {
                     await this.heartbeatHandle();
                 } catch (e) {
-                    console.warn("Client channel heartbeat error", e);
+                    console.debug("Client channel heartbeat error", e);
                 }
-            }, this._connector.getHeartbeatInterval());
+            }, this._client.getHeartbeatInterval());
         }
     }
 
@@ -78,6 +81,13 @@ export class ClientChannel extends ChannelBase implements Channel {
             //关闭并结束了
             if (Asserts.isClosedAndEnd(this._real)) {
                 console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
+                //可能是被内层的会话关闭的，跳过了外层
+                this.close(this._real.isClosed());
+                return;
+            }
+
+            //或者正在关闭中
+            if (this._real.isClosing()) {
                 return;
             }
         }
@@ -85,9 +95,9 @@ export class ClientChannel extends ChannelBase implements Channel {
         try {
             await this.internalCheck();
 
-            this._heartbeatHandler.heartbeat(this.getSession());
+            this._heartbeatHandler.clientHeartbeat(this.getSession());
         } catch (e) {
-            if (e instanceof SocketdException) {
+            if (e instanceof SocketDException) {
                 throw e;
             }
 
@@ -95,7 +105,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 this.internalCloseIfError();
             }
 
-            throw new SocketdChannelException(e);
+            throw new SocketDChannelException(e);
         }
     }
 
@@ -178,7 +188,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 }
             } else {
                 //有可能此时仍未连接
-                const err = new SocketdChannelException("Client channel is not connected");
+                const err = new SocketDChannelException("Client channel is not connected");
                 if (stream) {
                     stream.onError(err);
                 }
@@ -233,7 +243,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 this._real.close(Constants.CLOSE2002_RECONNECT);
             }
 
-            this._real = await this._connector.connect();
+            this._real = await this._connectHandler.clientConnect(this._connector);
             //原始 session 切换为带壳的 session
             this._real.setSession(this._sessionShell);
             //同步握手信息

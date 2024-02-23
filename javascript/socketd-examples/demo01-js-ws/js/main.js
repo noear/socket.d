@@ -8,12 +8,22 @@ async function open(callback) {
         alert('serverUrl不能为空!');
         return;
     }
-    window.clientSession = await SocketD.createClient(serverUrl.trim())
+    await SocketD.createClient(serverUrl.trim())
         .config(c => c
             .heartbeatInterval(1000*5)
             .fragmentSize(1024 * 1024)
             .metaPut("test","1"))
-        .listen(SocketD.newEventListener().doOnMessage((s, m) => {
+        .connectHandler(c=> {
+            console.log("connect begin...");
+            c.getConfig().metaPut("test","1");
+            return c.connect();
+        })
+        .listen(SocketD.newEventListener()
+            .doOnOpen(s=>{
+                window.clientSession = s;
+                console.log("outmeta: test=" + s.handshake().param("test"))
+            })
+            .doOnMessage((s, m) => {
             appendToMessageList('收到推送', m.dataAsString());
         }))
         .open();

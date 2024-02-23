@@ -6,8 +6,8 @@ package org.noear.socketd.exception;
  * @author noear
  * @since 2.0
  */
-public class SocketdTimeoutException extends SocketdException {
-    public SocketdTimeoutException(String message){
+public class SocketDTimeoutException extends SocketDException {
+    public SocketDTimeoutException(String message){
         super(message);
     }
 }

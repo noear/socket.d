@@ -124,7 +124,12 @@ public class EntityDefault implements Entity {
      * @param val  值
      */
     public EntityDefault metaPut(String name, String val) {
-        metaMap().put(name, val);
+        if (val == null) {
+            metaMap().remove(name);
+        } else {
+            metaMap().put(name, val);
+        }
+
         this.metaStringChanged = true;
         return this;
     }

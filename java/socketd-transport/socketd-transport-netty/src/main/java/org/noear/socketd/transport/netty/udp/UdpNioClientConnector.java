@@ -4,12 +4,12 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.udp.impl.NettyClientInboundHandler;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocketdTimeoutException;
+import org.noear.socketd.exception.SocketDTimeoutException;
 import org.noear.socketd.utils.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
         //关闭之前的资源
         close();
 
-        workerGroup = new NioEventLoopGroup(Math.min(getConfig().getCoreThreads(),2), new NamedThreadFactory("nettyUdpClientWork-"));
+        workerGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyUdpClientWork-"));
 
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -66,14 +66,14 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketdTimeoutException("Connection timeout: " + client.getConfig().getLinkUrl());
+            throw new SocketDTimeoutException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
+                throw new SocketDConnectionException("Connection failed: " + client.getConfig().getLinkUrl(), e);
             }
         }
     }

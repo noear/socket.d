@@ -20,8 +20,8 @@ public class DebugTest {
      */
     @Test
     public  void main() throws Exception {
-        String s1 = schemas[3];
-        BaseTestCase testCase = new TestCase14_file(s1, 8602);
+        String s1 = schemas[2];
+        BaseTestCase testCase = new TestCase34_inner_close(s1, 8602);
         try {
             testCase.start();
             testCase.stop();

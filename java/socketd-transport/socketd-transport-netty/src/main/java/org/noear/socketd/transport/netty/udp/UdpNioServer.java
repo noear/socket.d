@@ -6,7 +6,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.netty.udp.impl.DatagramTagert;
 import org.noear.socketd.transport.netty.udp.impl.NettyServerInboundHandler;
@@ -49,7 +49,7 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(Math.min(getConfig().getCoreThreads(),2), new NamedThreadFactory("nettyUdpServerBoss-"));
+        bossGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyUdpServerBoss-"));
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
@@ -72,7 +72,7 @@ public class UdpNioServer extends ServerBase<UdpNioChannelAssistant> implements 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdException("Socket.D server start failed!", e);
+                throw new SocketDException("Socket.D server start failed!", e);
             }
         }
 

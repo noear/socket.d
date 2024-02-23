@@ -1,3 +1,37 @@
+### 2.4.3
+* 优化 EntityDefault:metaPut 当 val=null时，视为删除
+* 优化 ClientChannel:heartbeatHandle 添加 isClosing 的判断
+* 优化 ClientChannel:heartbeatHandle 处理，增加内部会话关闭时，同步到外层
+* 优化 ChannelDefault 内部的通道关闭改为延时100ms关，避免 sendClose 时通道坏掉
+* 调整 BrokerListener 的能力方法，都改为公有
+* 调整 心跳日志级别改为 debug
+* 添加 BrokerListenerBase:getPlayerAny(name) 接口
+* smart-socket 升为 1.5.42
+
+### 2.4.2
+* 添加 连接时 Handshake 元信息交互机制
+
+### 2.4.1
+* 添加 ClientConnectHandler 接口，提供连接时的拦截处理
+
+### 2.4.0
+
+* 添加 LoadBalancer 集群负载均衡工具
+* 添加 BrokerListener 新的转发路由机制，固定给某个接收者（name!）
+* 调整 Socketd 开头的异常类改为 SocketD 开头（与 python 统一）
+* 调整 几个配置名
+
+
+| 接配置名         | 新配置名            | 备注                       |
+|--------------|-----------------|--------------------------|
+| maxThreads   | exchangeThreads | 交换线程数，用于消息接收等（原来的名字，语义不明） |
+| coreThreads  | codecThreads    | 解码线程数，用于编解码等（原来的名字，语义不明）  |
+| /            | ioThreads       | Io线程数，用于连接等               |
+| sequenceMode | sequenceSend    | 有锁顺序发送（原来的名字，语义不明）                   |
+| /            | nolockSend      | 无锁发送                     |
+
+备注：关于线程配置，在不同的适配时使用情况不同。其中 exchange 支持直接配置线程池（以支持 jdk21 的虚拟线程池）
+
 ### 2.3.11
 * 优化 安全停止细节
 

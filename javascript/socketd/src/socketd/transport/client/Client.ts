@@ -1,5 +1,5 @@
 import type {Listener} from "../core/Listener";
-import type {IoConsumer} from "../core/Typealias";
+import type {IoConsumer, IoFunction} from "../core/Typealias";
 import type {ClientSession} from "./ClientSession";
 import type {ClientConfig} from "./ClientConfig";
 import {Processor, ProcessorDefault} from "../core/Processor";
@@ -8,6 +8,7 @@ import type {Session} from "../core/Session";
 import type {ClientConnector} from "./ClientConnector";
 import {ClientChannel} from "./ClientChannel";
 import {Constants} from "../core/Constants";
+import {ChannelInternal} from "../core/Channel";
 
 /**
  * 客户端（用于构建会话）
@@ -17,12 +18,17 @@ import {Constants} from "../core/Constants";
  */
 export interface Client {
     /**
-     * 心跳
+     * 连接处理
+     */
+    connectHandler(handler: IoFunction<ClientConnector, Promise<ChannelInternal>>);
+
+    /**
+     * 心跳处理
      */
     heartbeatHandler(handler: IoConsumer<Session>)
 
     /**
-     * 配置
+     * 配置处理
      */
     config(configHandler: IoConsumer<ClientConfig>)
 
@@ -50,6 +56,11 @@ export interface Client {
  * @since  2.1
  */
 export interface ClientInternal extends Client {
+    /**
+     * 获取连接处理器
+     */
+    getConnectHandler(): IoFunction<ClientConnector, Promise<ChannelInternal>>;
+
     /**
      * 获取心跳处理
      */
@@ -79,6 +90,7 @@ export interface ClientInternal extends Client {
  */
 export abstract class ClientBase<T extends ChannelAssistant<Object>> implements ClientInternal {
     private _config: ClientConfig;
+    private _connectHandler : IoFunction<ClientConnector, Promise<ChannelInternal>>;
     private _heartbeatHandler: IoConsumer<Session>;
     private _processor: Processor;
     private _assistant: T;
@@ -94,6 +106,10 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
      */
     getAssistant(): T {
         return this._assistant;
+    }
+
+    getConnectHandler(): IoFunction<ClientConnector, Promise<ChannelInternal>> {
+        return this._connectHandler;
     }
 
     /**
@@ -125,7 +141,18 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
     }
 
     /**
-     * 设置心跳
+     * 设置连接处理器
+     */
+    connectHandler(handler: IoFunction<ClientConnector, Promise<ChannelInternal>>) {
+        if (handler != null) {
+            this._connectHandler = handler;
+        }
+
+        return this;
+    }
+
+    /**
+     * 设置心跳处理器
      */
     heartbeatHandler(handler: IoConsumer<Session>) {
         if (handler != null) {
@@ -171,7 +198,7 @@ export abstract class ClientBase<T extends ChannelAssistant<Object>> implements 
 
     private openDo(isThow: boolean): Promise<ClientSession> {
         const connector = this.createConnector();
-        const clientChannel = new ClientChannel(connector);
+        const clientChannel = new ClientChannel(this, connector);
 
         return new Promise<ClientSession>((resolve, reject) => {
             // @ts-ignore

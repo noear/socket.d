@@ -6,7 +6,7 @@ import type {Message} from "../transport/core/Message";
  * @author noear
  * @since 2.0
  */
-export class SocketdException extends Error {
+export class SocketDException extends Error {
     constructor(message) {
         super(message);
     }
@@ -18,7 +18,7 @@ export class SocketdException extends Error {
  * @author noear
  * @since 2.0
  */
-export class SocketdAlarmException extends SocketdException {
+export class SocketDAlarmException extends SocketDException {
     private  _alarm: Message;
 
     constructor(alarm: Message) {
@@ -37,7 +37,7 @@ export class SocketdAlarmException extends SocketdException {
  * @author noear
  * @since 2.0
  */
-export class SocketdChannelException extends SocketdException {
+export class SocketDChannelException extends SocketDException {
     constructor(message) {
         super(message);
     }
@@ -49,7 +49,7 @@ export class SocketdChannelException extends SocketdException {
  * @author noear
  * @since 2.0
  */
-export class SocketdCodecException extends SocketdException {
+export class SocketDCodecException extends SocketDException {
     constructor(message) {
         super(message);
     }
@@ -61,7 +61,7 @@ export class SocketdCodecException extends SocketdException {
  * @author noear
  * @since 2.0
  */
-export class SocketdConnectionException extends SocketdException {
+export class SocketDConnectionException extends SocketDException {
     constructor(message) {
         super(message);
     }
@@ -73,7 +73,7 @@ export class SocketdConnectionException extends SocketdException {
  * @author noear
  * @since 2.0
  */
-export class SocketdSizeLimitException extends SocketdException {
+export class SocketDSizeLimitException extends SocketDException {
     constructor(message) {
         super(message);
     }
@@ -86,7 +86,7 @@ export class SocketdSizeLimitException extends SocketdException {
  * @author noear
  * @since 2.0
  */
-export class SocketdTimeoutException extends SocketdException {
+export class SocketDTimeoutException extends SocketDException {
     constructor(message) {
         super(message);
     }

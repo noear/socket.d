@@ -7,7 +7,8 @@ import org.noear.socketd.transport.core.Session;
 import java.io.IOException;
 
 /**
- * @author noear 2023/10/12 created
+ * @author noear
+ * @since 2.0
  */
 public class ServerListener implements Listener {
 

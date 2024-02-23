@@ -54,7 +54,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
             isStarted = true;
         }
 
-        serverExecutor = Executors.newFixedThreadPool(getConfig().getMaxThreads());
+        serverExecutor = Executors.newFixedThreadPool(getConfig().getExchangeThreads());
         server = createServer();
 
         serverExecutor.submit(this::accept);

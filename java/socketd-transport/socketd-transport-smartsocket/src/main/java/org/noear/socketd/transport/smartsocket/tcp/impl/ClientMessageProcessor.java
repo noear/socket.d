@@ -1,6 +1,6 @@
 package org.noear.socketd.transport.smartsocket.tcp.impl;
 
-import org.noear.socketd.exception.SocketdConnectionException;
+import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
@@ -50,7 +50,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
 
             client.getProcessor().onReceive(channel, frame);
         } catch (Exception e) {
-            if (e instanceof SocketdConnectionException) {
+            if (e instanceof SocketDConnectionException) {
                 //说明握手失败了
                 handshakeFuture.complete(new ClientHandshakeResult(channel, e));
                 return;

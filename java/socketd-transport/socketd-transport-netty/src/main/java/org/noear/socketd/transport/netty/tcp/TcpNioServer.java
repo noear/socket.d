@@ -5,7 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.netty.tcp.impl.NettyChannelInitializer;
 import org.noear.socketd.transport.netty.tcp.impl.NettyServerInboundHandler;
@@ -49,8 +49,8 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             isStarted = true;
         }
 
-        bossGroup = new NioEventLoopGroup(Math.min(getConfig().getCoreThreads(),2), new NamedThreadFactory("nettyTcpServerBoss-"));
-        workGroup = new NioEventLoopGroup(getConfig().getCoreThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
+        bossGroup = new NioEventLoopGroup(getConfig().getIoThreads(), new NamedThreadFactory("nettyTcpServerBoss-"));
+        workGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
@@ -73,7 +73,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             if (e instanceof IOException) {
                 throw (IOException) e;
             } else {
-                throw new SocketdException("Socket.D server start failed!", e);
+                throw new SocketDException("Socket.D server start failed!", e);
             }
         }
 

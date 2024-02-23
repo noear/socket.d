@@ -23,12 +23,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class ConfigBase<T extends Config> implements Config {
     //客户模式
     private final boolean clientMode;
+    //顺序发送
+    private boolean sequenceSend;
+    //无锁发送
+    private boolean nolockSend;
     //流管理器
     private final StreamManger streamManger;
     //编解码器
     private final Codec codec;
-    //顺序模式（指发送有序）
-    private boolean sequenceMode;
 
     //id生成器
     private IdGenerator idGenerator;
@@ -39,17 +41,20 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     //ssl 上下文
     private SSLContext sslContext;
-    //通道执行器
-    private volatile ExecutorService channelExecutor;
-    private volatile ExecutorService channelExecutorSelfNew;
-
     //字符集
     protected Charset charset;
 
-    //内核线程数
-    protected int coreThreads;
-    //最大线程数
-    protected int maxThreads;
+
+    //io线程数
+    protected int ioThreads;
+    //解码线程数
+    protected int codecThreads;
+    //交换线程数
+    protected int exchangeThreads;
+
+    //交换执行器
+    private volatile ExecutorService exchangeExecutor;
+    private volatile ExecutorService exchangeExecutorSelfNew;
 
     //读缓冲大小
     protected int readBufferSize;
@@ -67,7 +72,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
-        this.sequenceMode = false;
+        this.sequenceSend = false;
+        this.nolockSend = false;
         this.streamManger = new StreamMangerDefault(this);
         this.codec = new CodecDefault(this);
 
@@ -77,8 +83,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.fragmentHandler = new FragmentHandlerDefault();
         this.fragmentSize = Constants.MAX_SIZE_DATA;
 
-        this.coreThreads = Runtime.getRuntime().availableProcessors();
-        this.maxThreads = coreThreads * 4;
+        this.ioThreads = 1;
+        this.codecThreads = Runtime.getRuntime().availableProcessors();
+        this.exchangeThreads = Runtime.getRuntime().availableProcessors() * 4;
 
         this.readBufferSize = 512;
         this.writeBufferSize = 512;
@@ -98,18 +105,35 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 顺序模式
-     * */
+     * 顺序发送
+     */
     @Override
-    public boolean sequenceMode() {
-        return sequenceMode;
+    public boolean isSequenceSend() {
+        return sequenceSend;
+    }
+
+
+    /**
+     * 配置顺序发送
+     */
+    public T sequenceSend(boolean sequenceSend) {
+        this.sequenceSend = sequenceSend;
+        return (T) this;
     }
 
     /**
-     * 配置顺序模式
+     * 无锁发送
      * */
-    public T sequenceMode(boolean sequenceMode) {
-        this.sequenceMode = sequenceMode;
+    @Override
+    public boolean isNolockSend() {
+        return nolockSend;
+    }
+
+    /**
+     * 配置无锁发送
+     */
+    public T nolockSend(boolean nolockSend) {
+        this.nolockSend = nolockSend;
         return (T) this;
     }
 
@@ -232,15 +256,17 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     private ReentrantLock EXECUTOR_LOCK = new ReentrantLock();
 
+    /**
+     * 获取交换执行器
+     */
     @Override
-    public ExecutorService getChannelExecutor() {
-        if (channelExecutor == null) {
+    public ExecutorService getExchangeExecutor() {
+        if (exchangeExecutor == null) {
             EXECUTOR_LOCK.lock();
             try {
-                if (channelExecutor == null) {
-                    int nThreads = clientMode() ? getCoreThreads() : getMaxThreads();
-
-                    channelExecutor = channelExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
+                if (exchangeExecutor == null) {
+                    int nThreads = getExchangeThreads();
+                    exchangeExecutor = exchangeExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
                             0L, TimeUnit.MILLISECONDS,
                             new LinkedBlockingQueue<Runnable>(),
                             new NamedThreadFactory("Socketd-channelExecutor-"));
@@ -250,53 +276,68 @@ public abstract class ConfigBase<T extends Config> implements Config {
             }
         }
 
-        return channelExecutor;
+        return exchangeExecutor;
     }
 
     /**
-     * 配置调试执行器
+     * 配置交换执行器
      */
-    public T channelExecutor(ExecutorService channelExecutor) {
-        this.channelExecutor = channelExecutor;
+    public T exchangeExecutor(ExecutorService exchangeExecutor) {
+        this.exchangeExecutor = exchangeExecutor;
 
-        if (channelExecutorSelfNew != null) {
+        if (exchangeExecutorSelfNew != null) {
             //谁 new 的，谁 shutdown
-            channelExecutorSelfNew.shutdown();
+            exchangeExecutorSelfNew.shutdown();
         }
 
         return (T) this;
     }
 
     /**
-     * 获取核心线程数
+     * Io线程数
      */
     @Override
-    public int getCoreThreads() {
-        return coreThreads;
+    public int getIoThreads() {
+        return ioThreads;
     }
 
     /**
-     * 配置核心线程数
+     * Io线程数
      */
-    public T coreThreads(int coreThreads) {
-        this.coreThreads = coreThreads;
-        this.maxThreads = coreThreads * 4;
+    public T ioThreads(int ioThreads) {
+        this.ioThreads = ioThreads;
         return (T) this;
     }
 
     /**
-     * 获取最大线程数
+     * 获取解码线程数
      */
     @Override
-    public int getMaxThreads() {
-        return maxThreads;
+    public int getCodecThreads() {
+        return codecThreads;
     }
 
     /**
-     * 配置最大线程数
+     * 配置解码线程数
      */
-    public T maxThreads(int maxThreads) {
-        this.maxThreads = maxThreads;
+    public T codecThreads(int codecThreads) {
+        this.codecThreads = codecThreads;
+        return (T) this;
+    }
+
+    /**
+     * 获取交换线程数
+     */
+    @Override
+    public int getExchangeThreads() {
+        return exchangeThreads;
+    }
+
+    /**
+     * 配置交换线程数
+     */
+    public T exchangeThreads(int exchangeThreads) {
+        this.exchangeThreads = exchangeThreads;
         return (T) this;
     }
 

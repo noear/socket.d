@@ -168,6 +168,9 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
                 "schema='" + schema + '\'' +
                 ", charset=" + charset +
                 ", url='" + url + '\'' +
+                ", ioThreads=" + ioThreads +
+                ", codecThreads=" + codecThreads +
+                ", exchangeThreads=" + exchangeThreads +
                 ", heartbeatInterval=" + heartbeatInterval +
                 ", connectTimeout=" + connectTimeout +
                 ", idleTimeout=" + idleTimeout +

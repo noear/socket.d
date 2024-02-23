@@ -7,6 +7,10 @@ import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.EventListener;
 
+/**
+ * @author noear
+ * @since 2.0
+ */
 public class Demo {
     public void borker() throws Exception {
         SocketD.createServer("sd:tcp")

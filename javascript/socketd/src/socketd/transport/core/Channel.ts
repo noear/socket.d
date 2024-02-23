@@ -88,10 +88,8 @@ export interface Channel {
 
     /**
      * 发送连接确认（握手）
-     *
-     * @param connectMessage 连接消息
      */
-    sendConnack(connectMessage: Message);
+    sendConnack();
 
     /**
      * 发送 Ping（心跳）
@@ -233,8 +231,8 @@ export abstract class  ChannelBase implements Channel {
         this.send(Frames.connectFrame(this.getConfig().getIdGenerator().generate(), url, metaMap), null)
     }
 
-    sendConnack(connectMessage: Message) {
-        this.send(Frames.connackFrame(connectMessage), null);
+    sendConnack() {
+        this.send(Frames.connackFrame(this.getHandshake()), null);
     }
 
     sendPing() {

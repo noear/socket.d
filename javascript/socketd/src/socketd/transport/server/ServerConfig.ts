@@ -87,8 +87,9 @@ export class ServerConfig extends ConfigBase {
             ", charset=" + this._charset +
             ", host='" + this._host + '\'' +
             ", port=" + this._port +
-            ", coreThreads=" + this._coreThreads +
-            ", maxThreads=" + this._maxThreads +
+            ", ioThreads=" + this._ioThreads +
+            ", codecThreads=" + this._codecThreads +
+            ", exchangeThreads=" + this._exchangeThreads +
             ", idleTimeout=" + this._idleTimeout +
             ", requestTimeout=" + this._requestTimeout +
             ", streamTimeout=" + this._streamTimeout +

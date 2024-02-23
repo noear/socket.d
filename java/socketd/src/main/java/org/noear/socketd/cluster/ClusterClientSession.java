@@ -1,6 +1,6 @@
 package org.noear.socketd.cluster;
 
-import org.noear.socketd.exception.SocketdException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.stream.SendStream;
@@ -11,8 +11,6 @@ import org.noear.socketd.utils.StrUtils;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * 集群客户端会话
@@ -23,15 +21,12 @@ import java.util.stream.Collectors;
 public class ClusterClientSession implements ClientSession {
     //会话集合
     private final List<ClientSession> sessionSet;
-    //轮询计数
-    private final AtomicInteger sessionRoundCounter;
     //会话id
     private final String sessionId;
 
     public ClusterClientSession(List<ClientSession> sessions) {
         this.sessionSet = sessions;
         this.sessionId = StrUtils.guid();
-        this.sessionRoundCounter = new AtomicInteger(0);
     }
 
     /**
@@ -42,37 +37,35 @@ public class ClusterClientSession implements ClientSession {
     }
 
     /**
-     * 获取一个会话（轮询负栽均衡）
+     * 获取任意一个会话
+     *
+     * @param diversionOrNull 分流（或者 null）
+     * @since 2.3
      */
-    public ClientSession getSessionOne() {
-        if (sessionSet.size() == 0) {
-            //没有会话
-            throw new SocketdException("No session!");
-        } else if (sessionSet.size() == 1) {
-            //只有一个就不管了
-            return sessionSet.get(0);
+    public ClientSession getSessionAny(String diversionOrNull) {
+        ClientSession session = null;
+
+        if (StrUtils.isEmpty(diversionOrNull)) {
+            session = LoadBalancer.getAnyByPoll(sessionSet);
         } else {
-            //查找可用的会话
-            List<ClientSession> sessions = sessionSet.stream()
-                    .filter(s -> s.isValid() && !s.isClosing())
-                    .collect(Collectors.toList());
-
-            if (sessions.size() == 0) {
-                throw new SocketdException("No session is available!");
-            }
-
-            if (sessions.size() == 1) {
-                return sessions.get(0);
-            }
-
-            //论询处理
-            int counter = sessionRoundCounter.incrementAndGet();
-            int idx = counter % sessions.size();
-            if (counter > 999_999) {
-                sessionRoundCounter.set(0);
-            }
-            return sessions.get(idx);
+            session = LoadBalancer.getAnyByHash(sessionSet, diversionOrNull);
         }
+
+        if (session == null) {
+            throw new SocketDException("No session is available!");
+        } else {
+            return session;
+        }
+    }
+
+    /**
+     * 获取任意一个会话（轮询负栽均衡）
+     *
+     * @deprecated 2.3
+     */
+    @Deprecated
+    public ClientSession getSessionOne() {
+        return getSessionAny(null);
     }
 
     @Override
@@ -120,7 +113,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public SendStream send(String event, Entity entity) throws IOException {
-        ClientSession sender = getSessionOne();
+        ClientSession sender = getSessionAny(null);
 
         return sender.send(event, entity);
     }
@@ -135,7 +128,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public RequestStream sendAndRequest(String event, Entity entity, long timeout) throws IOException {
-        ClientSession sender = getSessionOne();
+        ClientSession sender = getSessionAny(null);
 
         return sender.sendAndRequest(event, entity, timeout);
     }
@@ -151,7 +144,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public SubscribeStream sendAndSubscribe(String event, Entity entity, long timeout) throws IOException {
-        ClientSession sender = getSessionOne();
+        ClientSession sender = getSessionAny(null);
 
         return sender.sendAndSubscribe(event, entity, timeout);
     }

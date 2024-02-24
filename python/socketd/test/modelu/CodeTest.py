@@ -19,15 +19,20 @@ class CodeTest(unittest.TestCase):
     def test01(self):
         code = CodecByteBuffer(ServerConfig("ws"))
         f1 = Frame(Flag.Message,
-                   MessageDefault().set_sid("1700534070000000001")
-                   .set_entity(StringEntity("test"))
+                   MessageDefault()
+                   .set_flag(Flag.Message)
+                   .set_sid("1700534070000000001")
+                   .set_entity(StringEntity("test").meta_string_set("test=1&test=2"))
                    .set_event("demo")
                    )
         print(f1)
         b1: CodecWriter = code.write(f1,
                                      lambda l: ByteBufferCodecWriter(Buffer(100)))
         print(b1.get_buffer().getvalue())
-        b2 = code.read(ByteBufferCodecReader(b1.get_buffer()))
+        r: CodecReader = ByteBufferCodecReader(b1.get_buffer())
+        print(r.get_buffer().getvalue())
+        r.seek(0)
+        b2 = code.read(r)
         print(b2)
         b1.close()
 

@@ -28,11 +28,11 @@ class Buffer(BytesIO):
         return self.__size
 
     def put_int(self, num: int):
-        super().write(num.to_bytes(length=4, byteorder='little', signed=False))
+        super().write(num.to_bytes(length=4, byteorder='big', signed=False))
         self.__size += 4
 
     def get_int(self):
-        return int.from_bytes(self.read1(4), byteorder='little', signed=False)
+        return int.from_bytes(self.read1(4), byteorder='big', signed=False)
 
     def write(self, __buffer) -> int:
         num = super().write(__buffer)

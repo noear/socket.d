@@ -1,4 +1,3 @@
-import asyncio
 import unittest
 import sys
 from loguru import logger

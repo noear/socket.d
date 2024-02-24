@@ -59,6 +59,7 @@ class ByteBufferCodecWriter(CodecWriter):
     def put_char(self, _val: bytes):
         by: int = int.from_bytes(_val, byteorder='big', signed=False)
         self.__buffer.write(by.to_bytes(length=2, byteorder='big', signed=False))
+        # self.__buffer.write(_val)
 
     def flush(self):
         self.__buffer.flush()
@@ -149,16 +150,16 @@ class CodecByteBuffer(Codec):
             metaString = self.decodeString(_reader, by, Constants.MAX_SIZE_META_STRING)
 
             # 2. decode body
-            dataRealSize = len0 - _reader.position()
+            dataRealSize = len0 - _reader.position() + 3
             data: Optional[bytearray] = None
             if dataRealSize > Constants.MAX_SIZE_FRAGMENT:
                 # exceeded the limit, read and discard the bytes
                 data = bytearray(Constants.MAX_SIZE_FRAGMENT)
                 _reader.get_buffer().readinto(data)
                 for i in range(dataRealSize - Constants.MAX_SIZE_FRAGMENT):
-                    _reader.get_buffer().read()
+                    _reader.get_bytes(1)
             else:
-                data = bytearray(_reader.get_buffer().read(dataRealSize))
+                data = bytearray(_reader.get_bytes(dataRealSize))
 
             message = MessageDefault().set_sid(sid).set_event(event).set_entity(
                 EntityDefault().meta_string_set(metaString).data_set(data)
@@ -169,7 +170,6 @@ class CodecByteBuffer(Codec):
 
     def decodeString(self, reader: CodecReader, buf: Buffer, maxLen: int) -> str:
         b = bytearray(reader.get_buffer().readline(maxLen))[:-2]
-        reader.skip_bytes(1)
         if buf.limit() < 1:
             return ""
         return b.decode(self.config.get_charset())

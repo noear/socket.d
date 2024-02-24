@@ -16,7 +16,7 @@ from test.cases.TestCase11_sendAndRequest2rep import SimpleListenerTest
 
 
 async def main():
-    server = SocketD.create_server(ServerConfig("ws").port(9100))
+    server = SocketD.create_server(ServerConfig("ws").port(7779))
     server_session: WebSocketServer = await server.config(config_handler).listen(
         SimpleListenerTest()).start()
     await asyncio.Future()

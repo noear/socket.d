@@ -110,7 +110,9 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
                 }
             }).thenError(err -> {
                 //传递异常
-                RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
+                if (requester.isValid()) {
+                    RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
+                }
             });
         } else if (message.isSubscribe()) {
             responder.sendAndSubscribe(message.event(), message).thenReply(reply -> {
@@ -123,7 +125,9 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
                 }
             }).thenError(err -> {
                 //传递异常
-                RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
+                if (requester.isValid()) {
+                    RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
+                }
             });
         } else {
             responder.send(message.event(), message);

@@ -1,3 +1,6 @@
+### 2.4.4
+* 添加 BrokerListener 异常转发支持
+
 ### 2.4.3
 * 优化 EntityDefault:metaPut 当 val=null时，视为删除
 * 优化 ClientChannel:heartbeatHandle 添加 isClosing 的判断

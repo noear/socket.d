@@ -14,19 +14,19 @@ import {LoadBalancer} from "./LoadBalancer";
  */
 export class ClusterClientSession implements ClientSession {
     //会话集合
-    private _sessionSet: Array<ClientSession>;
+    private _sessionSet: Set<ClientSession>;
     //会话id
     private _sessionId: string;
 
     constructor(sessions: ClientSession[]) {
-        this._sessionSet = sessions;
+        this._sessionSet = new Set<ClientSession>(sessions);
         this._sessionId = StrUtils.guid();
     }
 
     /**
      * 获取所有会话
      */
-    getSessionAll(): ClientSession[] {
+    getSessionAll(): Set<ClientSession> {
         return this._sessionSet;
     }
 

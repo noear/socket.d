@@ -53,7 +53,7 @@ export class SessionDefault extends SessionBase {
      *
      * @param name 名字
      */
-    param(name: string): string | undefined {
+    param(name: string): string | null {
         return this.handshake().param(name);
     }
 

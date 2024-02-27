@@ -39,14 +39,14 @@ export interface Session extends ClientSession {
      *
      * @since 2.1
      */
-    name(): string | undefined;
+    name(): string | null;
 
     /**
      * 获取握手参数
      *
      * @param name 名字
      */
-    param(name: string): string | undefined;
+    param(name: string): string | null;
 
     /**
      * 获取握手参数或默认值
@@ -157,8 +157,9 @@ export abstract class SessionBase implements Session {
         return this._channel.getLiveTime();
     }
 
-    name(): string | undefined {
-        return this.param("@");
+    name(): string | null {
+        let tmp = this.param("@");
+        return tmp ? tmp : null;
     }
 
     attrMap(): Map<string, any> {
@@ -201,7 +202,7 @@ export abstract class SessionBase implements Session {
 
     abstract localAddress(): SocketAddress | null;
 
-    abstract param(name: string): string | undefined;
+    abstract param(name: string): string | null;
 
     abstract paramOrDefault(name: string, def: string): string;
 

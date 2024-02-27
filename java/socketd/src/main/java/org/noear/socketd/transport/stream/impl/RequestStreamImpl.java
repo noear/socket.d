@@ -9,6 +9,7 @@ import org.noear.socketd.utils.IoConsumer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 /**
  * 请求流
@@ -33,6 +34,18 @@ public class RequestStreamImpl extends StreamBase<RequestStream> implements Requ
     }
 
     /**
+     * 出错时
+     * */
+    @Override
+    public void onError(Throwable error) {
+        if (doOnError != null) {
+            doOnError.accept(error);
+        }
+
+        future.completeExceptionally(error);
+    }
+
+    /**
      * 答复时
      */
     @Override
@@ -47,7 +60,11 @@ public class RequestStreamImpl extends StreamBase<RequestStream> implements Requ
         } catch (TimeoutException e) {
             throw new SocketDTimeoutException("Request reply timeout > " + timeout() + ", sid=" + sid());
         } catch (Throwable e) {
-            throw new SocketDException("Request failed, sid=" + sid(), e);
+            if (e instanceof SocketDException) {
+                throw (SocketDException) e;
+            } else {
+                throw new SocketDException("Request failed, sid=" + sid(), e);
+            }
         }
     }
 

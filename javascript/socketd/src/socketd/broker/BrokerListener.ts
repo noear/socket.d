@@ -19,12 +19,12 @@ export class BrokerListener extends BrokerListenerBase implements Listener {
     onMessage(requester: Session, message: Message) {
         let atName = message.atName();
 
-        if (atName == null) {
+        if (!atName) {
             requester.sendAlarm(message, "Broker message require '@' meta");
             return;
         }
 
-        if (atName.equals("*")) {
+        if (atName == "*") {
             //广播模式（给所有玩家）
             let nameAll = this.getNameAll();
             if (nameAll != null && nameAll.size > 0) {

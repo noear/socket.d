@@ -1,3 +1,6 @@
+### 2.4.5
+* 完善 BrokerListener 实现
+
 ### 2.4.4
 * 添加 BrokerListener 实现
 

@@ -1,5 +1,6 @@
 ### 2.4.5
 * 优化 流异常传导性
+* 添加 Entity:delMeta 删除元信息接口
 
 ### 2.4.4
 * 添加 BrokerListener 异常转发支持

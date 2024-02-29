@@ -1,5 +1,6 @@
 ### 2.4.5
 * 完善 BrokerListener 实现
+* 添加 Entity:delMeta 删除元信息接口
 
 ### 2.4.4
 * 添加 BrokerListener 实现

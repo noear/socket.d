@@ -245,8 +245,12 @@ export class MessageDefault implements MessageInternal {
         return this._entity!.metaAsFloat(name);
     }
 
-    putMeta(name: string, val: string) {
+    putMeta(name: string, val: string | null) {
         this._entity!.putMeta(name, val);
+    }
+
+    delMeta(name: string) {
+        this._entity!.delMeta(name);
     }
 
     data(): Buffer {

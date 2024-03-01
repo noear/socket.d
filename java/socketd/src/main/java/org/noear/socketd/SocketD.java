@@ -51,17 +51,25 @@ public class SocketD {
         clientProviderMap = new HashMap<>();
         serverProviderMap = new HashMap<>();
 
-        ServiceLoader.load(ClientProvider.class).iterator().forEachRemaining(factory -> {
-            for (String s : factory.schemas()) {
-                clientProviderMap.put(s, factory);
-            }
+        ServiceLoader.load(ClientProvider.class).iterator().forEachRemaining(clientProvider -> {
+            registerClientProvider(clientProvider);
         });
 
-        ServiceLoader.load(ServerProvider.class).iterator().forEachRemaining(factory -> {
-            for (String s : factory.schemas()) {
-                serverProviderMap.put(s, factory);
-            }
+        ServiceLoader.load(ServerProvider.class).iterator().forEachRemaining(serverProvider -> {
+            registerServerProvider(serverProvider);
         });
+    }
+
+    public static void registerClientProvider(ClientProvider clientProvider) {
+        for (String s : clientProvider.schemas()) {
+            clientProviderMap.put(s, clientProvider);
+        }
+    }
+
+    public static void registerServerProvider(ServerProvider serverProvider) {
+        for (String s : serverProvider.schemas()) {
+            serverProviderMap.put(s, serverProvider);
+        }
     }
 
     /**

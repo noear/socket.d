@@ -8,7 +8,7 @@ package org.noear.socketd.transport.core;
  */
 public interface EntityMetas {
     /**
-     * 框架版本号
+     * 协议版本号
      */
     String META_SOCKETD_VERSION = "Socket.D";
 

@@ -58,7 +58,7 @@ class ByteBufferCodecWriter(CodecWriter):
 
     def put_char(self, _val: bytes):
         by: int = int.from_bytes(_val, byteorder='big', signed=False)
-        self.__buffer.write(by.to_bytes(length=2, byteorder='big', signed=False))
+        self.__buffer.write(by.to_bytes(length=2,byteorder='big', signed=False))
         # self.__buffer.write(_val)
 
     def flush(self):

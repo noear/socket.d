@@ -14,6 +14,7 @@ from socketd_websocket.WsAioFactoy import WsAioFactory
 def version() -> str:
     return "2.3.6"
 
+
 def protocol_version() -> str:
     return "1.0"
 

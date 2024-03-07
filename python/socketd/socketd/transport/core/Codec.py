@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from io import BytesIO
 from typing import Type, TypeVar, Callable
@@ -16,14 +15,14 @@ class Codec(ABC):
     """
 
     @abstractmethod
-    def read(self, buffer: Buffer) -> Frame:
+    def read(self, buffer: 'CodecReader') -> Frame:
         """
         编码
         """
         pass
 
     @abstractmethod
-    def write(self, frame, target: Callable) -> 'CodecWriter':
+    def write(self, frame, target: Callable[[int], 'CodecWriter']) -> 'CodecWriter':
         """
         解码
         """
@@ -64,7 +63,7 @@ class CodecWriter(ABC):
     def put_int(self, _num: int): ...
 
     @abstractmethod
-    def put_char(self, _val):...
+    def put_char(self, _val): ...
 
     @abstractmethod
     def flush(self): ...

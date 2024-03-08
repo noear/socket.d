@@ -41,7 +41,7 @@ class SessionBase(Session, ABC):
         return self._session_id
 
     def generate_id(self) -> str:
-        return self._channel.get_config().get_id_generator()().__str__()
+        return self._channel.get_config().gen_id()
 
     def set_session_id(self, value):
         self._session_id = value

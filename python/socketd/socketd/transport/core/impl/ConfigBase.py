@@ -2,16 +2,16 @@ import os
 import ssl
 from abc import ABC
 
-from typing import Callable, Any, Optional
 from concurrent.futures import ThreadPoolExecutor
 
 from socketd.transport.core.Config import Config
 from socketd.transport.core.Codec import Codec
+from socketd.transport.core.IdGenerator import IdGenerator, GuidGenerator
 from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandlerDefault
 
-from socketd.transport.core.config.logConfig import logger
+from socketd.transport.core.impl.LogConfig import logger
 from socketd.transport.stream.StreamManger import StreamManger
 from socketd.transport.stream.StreamMangerDefault import StreamMangerDefault
 
@@ -20,12 +20,12 @@ class ConfigBase(Config, ABC):
 
     def __init__(self, client_mode: bool):
         self._client_mode = client_mode
-        self._streamManger: Optional[StreamManger] = StreamMangerDefault(self)
+        self._streamManger: StreamManger = StreamMangerDefault(self)
         self._codec: Codec = CodecByteBuffer(self)
 
         self._charset = "utf-8"
 
-        self._idGenerator: Optional[Callable] = None
+        self._idGenerator: IdGenerator = GuidGenerator
         self._fragmentHandler: FragmentHandlerDefault = FragmentHandlerDefault()
         self._fragment_size = Constants.MAX_SIZE_FRAGMENT
 
@@ -77,21 +77,23 @@ class ConfigBase(Config, ABC):
 
     def fragment_handler(self, fragmentHandler):
         assert fragmentHandler is None
-        self._fragmentHandler = fragmentHandler
+        if fragmentHandler is not None:
+            self._fragmentHandler = fragmentHandler
         return self
 
-    def get_id_generator(self) -> Callable[[], Any]:
-        return self._idGenerator
+    def gen_id(self) -> str:
+        return self._idGenerator()
 
-    def id_generator(self, _idGenerator: Callable[[], Any]):
-        # assert _idGenerator is None
-        self._idGenerator = _idGenerator
+    def id_generator(self, idGenerator: IdGenerator):
+        if idGenerator is not None:
+            self._idGenerator = idGenerator
         return self
 
     def get_ssl_context(self) -> ssl.SSLContext:
         return self._sslContext
 
     def ssl_context(self, ssl_context: ssl.SSLContext):
+        self._sslContext = ssl_context
         return self
 
     def get_executor(self):

@@ -10,7 +10,7 @@ from socketd.transport.core.entity.StringEntity import StringEntity
 class Frames:
 
     @staticmethod
-    def connectFrame(sid, url, metaMap: dict):
+    def connectFrame(sid:str, url:str, metaMap: dict):
         entity = StringEntity(url)
         entity.meta_put_all(metaMap)
         entity.meta_put(EntityMetas.META_SOCKETD_VERSION, SocketD.version())

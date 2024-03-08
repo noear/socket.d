@@ -54,7 +54,7 @@ class ChannelBase(Channel, ABC):
         return self.live_time
 
     async def send_connect(self, uri, metaMap: dict):
-        await self.send(Frames.connectFrame(str(self.config.get_id_generator()()), uri, metaMap), None)
+        await self.send(Frames.connectFrame(self.config.gen_id(), uri, metaMap), None)
 
     async def send_connack(self, connect_message):
         await self.send(Frames.connackFrame(connect_message), None)

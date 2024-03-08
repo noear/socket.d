@@ -9,7 +9,7 @@ from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
 from socketd.transport.core.Message import MessageInternal, Message
 from socketd.transport.core.Processor import Processor
-from socketd.transport.core.config.logConfig import log
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
 from socketd.transport.utils.AssertsUtil import AssertsUtil

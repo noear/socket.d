@@ -221,11 +221,11 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 获取标识生成器
+     * 生成Id
      */
     @Override
-    public IdGenerator getIdGenerator() {
-        return idGenerator;
+    public String genId() {
+        return idGenerator.generate();
     }
 
     /**

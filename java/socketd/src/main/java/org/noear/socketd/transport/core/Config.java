@@ -49,9 +49,9 @@ public interface Config {
     Codec getCodec();
 
     /**
-     * 获取Id生成器
+     * 生成Id
      */
-    IdGenerator getIdGenerator();
+    String genId();
 
     /**
      * 获取分片处理器

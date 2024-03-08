@@ -2,7 +2,7 @@ import asyncio
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
-from socketd.transport.core.config.logConfig import log
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 

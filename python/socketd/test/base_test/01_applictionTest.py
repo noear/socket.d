@@ -1,5 +1,5 @@
 import asyncio
-import uuid
+
 from websockets.legacy.server import WebSocketServer
 
 from socketd import SocketD
@@ -15,18 +15,13 @@ from test.uitls import calc_async_time
 from loguru import logger
 
 
-def idGenerator(config):
-    return config.id_generator(uuid.uuid4)
-
-
 @calc_async_time
 async def application_test():
     server: Server = SocketD.create_server(ServerConfig("ws").port(9999))
-    server_session: WebSocketServer = await server.config(idGenerator).listen(
+    server_session: WebSocketServer = await server.listen(
         SimpleListenerTest()).start()
     await asyncio.sleep(1)
-    client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9999") \
-        .config(idGenerator).open()
+    client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9999").open()
 
     # 单向发送
     await client_session.send("demo", StringEntity("test.png"))

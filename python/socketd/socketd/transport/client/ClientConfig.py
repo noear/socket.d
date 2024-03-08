@@ -1,5 +1,5 @@
 from urllib.parse import urlparse
-from socketd.transport.core.config.ConfigBase import ConfigBase
+from socketd.transport.core.impl.ConfigBase import ConfigBase
 
 
 class ClientConfig(ConfigBase):

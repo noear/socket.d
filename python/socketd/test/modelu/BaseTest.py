@@ -1,4 +1,3 @@
-import uuid
 from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
@@ -22,14 +21,12 @@ class BaseTest:
         self.__c_lock = AtomicRefer(0)
 
     @classmethod
-    def s_config(cls, _config: ServerConfig) -> ServerConfig:
-        _config.id_generator(uuid.uuid4)
-        return _config
+    def s_config(cls, _config: ServerConfig):
+        ...
 
     @classmethod
-    def c_config(cls, _config: ClientConfig) -> ClientConfig:
-        _config.id_generator(uuid.uuid4)
-        return _config
+    def c_config(cls, _config: ClientConfig):
+        ...
 
     async def start(self):
         self.__server: Server = SocketD.create_server(ServerConfig("ws").port(9999))

@@ -20,12 +20,10 @@ from socketd.transport.core.Listener import Listener
 from loguru import logger
 
 
-def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+def config_handler(config: ServerConfig | ClientConfig):
     config.is_thread(True)
     config.idle_timeout(10000)
     config.logger_level("DEBUG")
-    config.id_generator(lambda: str(uuid.uuid4()))
-    return config
 
 
 class SimpleListenerTest(Listener):

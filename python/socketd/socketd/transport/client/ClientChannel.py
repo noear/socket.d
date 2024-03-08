@@ -151,7 +151,7 @@ class ClientChannel(ChannelBase, ABC):
             if self._real:
                 await self._real.close(Constants.CLOSE22_RECONNECT)
 
-            self._real: ChannelInternal = await self._client.get_connectHandler().clientConnect(self._connector)
+            self._real: ChannelInternal = await self._client.get_connectHandler()(self._connector)
             self._real.set_session(self._session)
             self.set_handshake(self._real.get_handshake())
         except TimeoutError as t:

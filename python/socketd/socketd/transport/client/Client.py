@@ -1,22 +1,25 @@
 # 客户端
 from abc import ABC, abstractmethod
-from typing import Callable
 from asyncio.futures import Future
 
 from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.client.ClientConfigHandler import ClientConfigHandler
+from socketd.transport.client.ClientConnectHandler import ClientConnectHandler
 from socketd.transport.core import Listener
 from socketd.transport.core.Processor import Processor
 from socketd.transport.core.Session import Session
-from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
+from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandler
 
 
 class Client(ABC):
+    @abstractmethod
+    def connectHandler(self, connectHandler: ClientConnectHandler) -> 'Client': ...
 
     @abstractmethod
-    def heartbeatHandler(self, handler: HeartbeatHandler) -> 'Client': ...
+    def heartbeatHandler(self, heartbeatHandler: ClientHeartbeatHandler) -> 'Client': ...
 
     @abstractmethod
-    def config(self, consumer: Callable[[ClientConfig], ClientConfig]) -> 'Client': ...
+    def config(self, configHandler: ClientConfigHandler) -> 'Client': ...
 
     @abstractmethod
     def listen(self, listener: Listener) -> 'Client': ...
@@ -30,7 +33,10 @@ class Client(ABC):
 
 class ClientInternal(Client):
     @abstractmethod
-    def get_heartbeatHandler(self) -> HeartbeatHandler: ...
+    def get_connectHandler(self) -> ClientConnectHandler: ...
+
+    @abstractmethod
+    def get_heartbeatHandler(self) -> ClientHeartbeatHandler: ...
 
     @abstractmethod
     def get_heartbeatInterval(self) -> int: ...

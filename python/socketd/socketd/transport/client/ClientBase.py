@@ -4,11 +4,12 @@ from typing import Awaitable
 from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.Client import ClientInternal
 from socketd.transport.client.ClientChannel import ClientChannel
+from socketd.transport.client.ClientConnectHandler import ClientConnectHandler, ClientConnectHandlerDefault
 from socketd.transport.client.ClientConnector import ClientConnector
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Session import Session
-from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
+from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandler
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.client.ClientConfig import ClientConfig
 
@@ -17,31 +18,41 @@ from loguru import logger
 
 class ClientBase(ClientInternal, ABC):
 
-    def __init__(self, client_config: ClientConfig, assistant):
+    def __init__(self, client_config: ClientConfig, assistant:ChannelAssistant):
         self._processor = ProcessorDefault()
-        self._heartbeat_handler: HeartbeatHandler = None
+        self._heartbeat_handler: ClientHeartbeatHandler = None
+        self._connect_handler: ClientConnectHandler = ClientConnectHandlerDefault
         self._config: ClientConfig = client_config
         self._assistant: ChannelAssistant = assistant
 
     def get_assistant(self):
         return self._assistant
 
-    def get_heartbeatInterval(self) -> int:
-        return self._config.get_heartbeat_interval()
+    def get_config(self) -> ClientConfig:
+        return self._config
 
     def get_processor(self):
         return self._processor
 
-    def heartbeatHandler(self, handler: HeartbeatHandler):
-        if handler is not None:
-            self._heartbeat_handler = handler
-        return self
+    def get_connectHandler(self) -> ClientConnectHandler:
+        return self._connect_handler
 
-    def get_heartbeatHandler(self) -> HeartbeatHandler:
+    def get_heartbeatInterval(self) -> int:
+        return self._config.get_heartbeat_interval()
+
+    def get_heartbeatHandler(self) -> ClientHeartbeatHandler:
         return self._heartbeat_handler
 
-    def get_config(self) -> ClientConfig:
-        return self._config
+    def connectHandler(self, connectHandler: ClientConnectHandler) -> 'Client':
+        if connectHandler is not None:
+            self._connect_handler = connectHandler
+        return self
+
+    def heartbeatHandler(self, heartbeatHandler: ClientHeartbeatHandler):
+        if heartbeatHandler is not None:
+            self._heartbeat_handler = heartbeatHandler
+        return self
+
 
     def config(self, consumer):
         consumer(self._config)
@@ -56,9 +67,9 @@ class ClientBase(ClientInternal, ABC):
         self._processor.set_listener(listener)
         return self
 
-    async def _open(self, isThrow):
+    async def _open_do(self, isThrow):
         connector: ClientConnector = self.create_connector()
-        clientChannel: ClientChannel = ClientChannel(connector)
+        clientChannel: ClientChannel = ClientChannel(self, connector)
         try:
             await clientChannel.connect()
         except Exception as e:
@@ -70,10 +81,10 @@ class ClientBase(ClientInternal, ABC):
         return clientChannel.get_session()
 
     def open(self) -> Awaitable[Session]:
-        return self._open(False)
+        return self._open_do(False)
 
     def openOrThrow(self) -> Awaitable[Session]:
-        return self._open(True)
+        return self._open_do(True)
 
     @abstractmethod
     def create_connector(self):

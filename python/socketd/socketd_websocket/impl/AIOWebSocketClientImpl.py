@@ -71,7 +71,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
     async def on_open(self):
         try:
             log.info("Client:Websocket onOpen...")
-            await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta())
+            await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta_map())
             while self.status_state == Flag.Connect:
                 await self.on_message()
         except Exception as e:

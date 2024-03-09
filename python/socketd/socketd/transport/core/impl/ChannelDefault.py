@@ -2,8 +2,6 @@ import asyncio
 import time
 from typing import TypeVar, Optional
 
-from websockets import WebSocketCommonProtocol
-
 from socketd.transport.core import Entity
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
@@ -21,7 +19,7 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
-S = TypeVar("S", bound=WebSocketCommonProtocol)
+S = TypeVar("S")
 
 
 class ChannelDefault(ChannelBase, ChannelInternal):
@@ -29,7 +27,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     def __init__(self, source: S, supporter: ChannelSupporter[S]):
         ChannelBase.__init__(self, supporter.get_config())
         self.onOpenFuture: Optional[CompletableFuture] = CompletableFuture()
-        self._source: WebSocketCommonProtocol = source
+        self._source = source
         self._assistant = supporter.get_assistant()
         self._processor: Optional[Processor] = supporter.get_processor()
         self._streamManger: StreamManger = supporter.get_config().get_stream_manger()
@@ -118,11 +116,14 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     def get_stream(self, sid: str) -> Stream:
         return self._streamManger.get_stream(sid)
 
-    async def on_open_future(self, future):
+    async def on_open_future(self, _future):
         try:
-            self.onOpenFuture.then_async_callback(future)
+            if asyncio.iscoroutinefunction(_future):
+                self.onOpenFuture.then_async_callback(_future)
+            else:
+                self.onOpenFuture.then_success_callback(_future)
         except Exception as e:
-            await future(None, e)
+            _future.send(None, e)
         return self.onOpenFuture
 
     def do_open_future(self, is_ok: bool, e: Exception):

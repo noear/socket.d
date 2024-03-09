@@ -58,7 +58,7 @@ class ClientBase(ClientInternal, ABC):
 
     async def _open(self, isThrow):
         connector: ClientConnector = self.create_connector()
-        clientChannel: ClientChannel = ClientChannel(connector)
+        clientChannel: ClientChannel = ClientChannel(self, connector)
         try:
             await clientChannel.connect()
         except Exception as e:

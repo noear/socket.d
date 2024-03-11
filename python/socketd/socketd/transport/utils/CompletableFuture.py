@@ -41,6 +41,7 @@ class CompletableFuture(Generic[T]):
 
     def then_success_callback(self, _fn):
         def callback(fn: asyncio.Future):
+            _fn.send(None)
             _fn.send((fn.result(), fn.exception()))
         self._future.add_done_callback(functools.partial(callback))
 

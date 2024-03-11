@@ -37,7 +37,7 @@ class AsyncUtil(object):
         return future
 
     @staticmethod
-    def thread_loop(core: typing.Coroutine, thread=None, pool: Executor = None):
+    def thread_loop(core: typing.Coroutine, thread=None, pool: Executor = None) -> asyncio.AbstractEventLoop:
         loop = asyncio.new_event_loop()
 
         async def _run():
@@ -53,3 +53,4 @@ class AsyncUtil(object):
             t.start()
         if pool:
             pool.submit(lambda x: AsyncUtil.thread_handler(*x), (loop, loop.create_task(_run())))
+        return loop

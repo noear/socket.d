@@ -1,6 +1,7 @@
 import unittest
 import asyncio
 
+from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 from socketd.transport.utils.sync_api import AtomicRefer as AtomicRefer_
 from test.uitls import calc_time
@@ -39,6 +40,8 @@ class Demo:
 @calc_time
 async def main():
     a = AtomicRefer(10)
+    loop = asyncio.new_event_loop()
+    future = AsyncUtil.run_forever(loop)
     async with a as t:
         logger.debug(t)
         # tasks = [add2(a, 1000) for _ in range(10)]
@@ -51,6 +54,8 @@ async def main():
         # await asyncio.gather(*[asyncio.create_task(add(a)) for _ in range(10000)]) # 40-60
         # for _ in range(10000): # 16ms
         #     await add(a)
+        asyncio.run_coroutine_threadsafe(Demo.add2(a, 10), loop)
+    future.set_result(1)
     logger.debug(await a.get())
 
 

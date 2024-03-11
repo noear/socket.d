@@ -180,3 +180,17 @@ class FutureTest(unittest.TestCase):
 
         asyncio.run(_main(get))
 
+
+    def test_send(self):
+        async def send():
+            await asyncio.sleep(2)
+            a = yield
+            print(a)
+            yield
+
+        async def _main():
+            s = send()
+            await anext(s, 1)
+            await anext(s,2)
+
+        asyncio.run(_main())

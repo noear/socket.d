@@ -35,12 +35,12 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                 frame: Frame = await loop.create_task(self.get_assistant().read(sock))
                 if frame is not None:
                     await self.get_processor().on_receive(channel, frame)
-                if frame.get_flag() == Flag.Close:
-                    """客户端主动关闭"""
-                    sock.close()
-                    log.debug("{sessionId} 主动退出",
-                              sessionId=channel.get_session().get_session_id())
-                    break
+                    if frame.get_flag() == Flag.Close:
+                        """客户端主动关闭"""
+                        sock.close()
+                        log.debug("{sessionId} 主动退出",
+                                  sessionId=channel.get_session().get_session_id())
+                        break
             except SocketDTimeoutException as e:
                 await channel.send_close()
                 log.error("server handler {e}", e=e)

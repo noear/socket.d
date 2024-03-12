@@ -1,8 +1,6 @@
 from abc import ABC
 from typing import Optional, Union
 
-from loguru import logger
-
 from socketd.exception.SocketDExecption import SocketDAlarmException
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.HandshakeDefault import HandshakeDefault
@@ -15,12 +13,13 @@ from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamInternal
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 
+from socketd.transport.core.config.logConfig import log
+
 
 class ProcessorDefault(Processor, ABC):
 
     def __init__(self):
         self.listener = SimpleListener()
-        self.log = logger.opt()
 
     def set_listener(self, listener):
         if listener is not None:
@@ -28,9 +27,9 @@ class ProcessorDefault(Processor, ABC):
 
     async def on_receive(self, channel: ChannelInternal, frame):
         if channel.get_config().client_mode():
-            logger.debug(f"C-REV:{frame}")
+            log.debug(f"C-REV:{frame}")
         else:
-            logger.debug(f"S-REV:{frame}")
+            log.debug(f"S-REV:{frame}")
 
         if frame.get_flag() == Flag.Connect:
             connectMessage = frame.get_message()
@@ -86,7 +85,7 @@ class ProcessorDefault(Processor, ABC):
                     await channel.close(Constants.CLOSE12_PROTOCOL_ILLEGAL)
                     self.on_close(channel)
             except Exception as e:
-                logger.error(e)
+                log.error(e)
                 self.on_error(channel, e)
                 raise e
 
@@ -129,7 +128,7 @@ class ProcessorDefault(Processor, ABC):
             await self.listener.on_open(channel.get_session())
         except Exception as e:
             channel.do_open_future(True, e)
-            logger.warning(e)
+            log.warning(e)
 
     async def on_message(self, channel: ChannelInternal, message: Message):
         AsyncUtil.thread_loop(self.listener.on_message(

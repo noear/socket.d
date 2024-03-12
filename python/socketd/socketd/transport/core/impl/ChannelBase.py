@@ -21,7 +21,7 @@ class ChannelBase(Channel, ABC):
         self.live_time = 0
         self.attachments = {}
         self.__lock: threading.Lock = threading.Lock()
-        self.loop: Optional[asyncio.AbstractEventLoop] = None
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
 
     def __enter__(self):
         return self.__lock.acquire()
@@ -79,8 +79,8 @@ class ChannelBase(Channel, ABC):
         pass
 
     def get_loop(self) -> asyncio.AbstractEventLoop:
-        return self.loop
+        return self._loop
 
     def set_loop(self, loop) -> None:
-        self.loop = loop
+        self._loop = loop
 

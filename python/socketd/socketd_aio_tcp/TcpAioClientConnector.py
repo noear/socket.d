@@ -1,6 +1,6 @@
 import asyncio
 import socket
-from typing import Optional
+from typing import Optional, AsyncGenerator, List
 
 from socketd.exception.SocketDExecption import SocketDTimeoutException, SocketDConnectionException
 from socketd.transport.client.Client import ClientInternal
@@ -13,6 +13,7 @@ from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 from socketd.transport.core.config.logConfig import log
+from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 
 
 class TcpAioClientConnector(ClientConnectorBase):
@@ -22,28 +23,29 @@ class TcpAioClientConnector(ClientConnectorBase):
         self.__top: Optional[asyncio.Future] = None
         self.__real: Optional[socket.socket] = None
         self.__loop = asyncio.new_event_loop()
+        self.__message: asyncio.Queue = asyncio.Queue()
+        self._handshakeFuture = CompletableFuture()
+        self._handshakeTask: Optional[AsyncGenerator] = None
+        self._receiveTask: Optional[asyncio.Task] = None
+        self.transfer_dataTask: Optional[asyncio.Task] = None
 
     async def connect(self):
         # 处理自定义架构的影响
         tcp_url = self.client.get_config().get_url().replace("std:", "").replace("-python", "")
         _sch, _host, _port = tcp_url.replace("//", "").split(":")
         if self.__top is None:
-            self.__top = AsyncUtil.run_forever(self.__loop)
+            self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
         _port = _port.split("/")[0]
         try:
             self.__real: socket.socket = socket.create_connection((_host, _port),
                                                                   timeout=self.client.get_config().get_idle_timeout())
             channel = ChannelDefault(self.__real, self.client)
 
-            handshakeFuture = CompletableFuture()
-            tasks = [
-                asyncio.create_task(self.receive(channel, self.__real, handshakeFuture)),
-                asyncio.create_task(channel.send_connect(tcp_url, self.client.get_config().get_meta_map()))
-            ]
-            # asyncio.run_coroutine_threadsafe(self.receive(channel, self.__real, handshakeFuture), self.__loop)
-            # asyncio.run_coroutine_threadsafe(channel.send_connect(tcp_url, self.client.get_config().get_meta_map()), self.__loop)
-            await asyncio.gather(*tasks)
-            handshakeResult: ClientHandshakeResult = await handshakeFuture.get(
+            self._receiveTask = asyncio.create_task(self.receive(channel, self.__real, self._handshakeFuture))
+            self.transfer_dataTask = asyncio.create_task(self.transfer_data(self.__real))
+
+            await channel.send_connect(tcp_url, self.client.get_config().get_meta_map())
+            handshakeResult: ClientHandshakeResult = await self._handshakeFuture.get(
                 self.client.get_config().get_connect_timeout())
             if _e := handshakeResult.get_throwable():
                 raise _e
@@ -59,27 +61,39 @@ class TcpAioClientConnector(ClientConnectorBase):
             await self.close()
             raise SocketDTimeoutException(f"Connection timeout: {self.client.get_config().get_link_url()} {e}")
 
+    async def transfer_data(self, _sock: socket.socket) -> None:
+
+        while True:
+            try:
+                if getattr(_sock, '_closed'):
+                    break
+                _frame: Frame = await self.client.get_assistant().read(_sock)
+                if _frame is None:
+                    break
+                await self.__message.put(_frame)
+                if _frame.get_flag() == Flag.Close:
+                    break
+            except asyncio.CancelledError as e:
+                break
+            except ConnectionAbortedError as e:
+                break
+
     async def receive(self, channel: ChannelDefault, _socket: socket.socket,
                       handshake_future: CompletableFuture) -> None:
-        loop = asyncio.get_running_loop()
         while True:
             try:
                 if getattr(_socket, '_closed'):
                     break
-                task = loop.create_task(self.client.get_assistant().read(_socket))
-                while True:
-                    await asyncio.sleep(0)
-                    if task.done():
-                        frame: Frame = await task
-                        if frame is not None:
-                            if frame.get_flag() == Flag.Connack:
-                                def future():
-                                    b, _e = yield
-                                    handshake_future.accept(ClientHandshakeResult(channel, e))
+                frame: Frame = await self.__message.get()
+                if frame is not None:
+                    if frame.get_flag() == Flag.Connack:
+                        async def future(b, _e):
+                            handshake_future.accept(ClientHandshakeResult(channel, _e))
 
-                                await channel.on_open_future(future)
-                            await self.client.get_processor().on_message(channel, frame)
-                    break
+                        await channel.on_open_future(future)
+                    await self.client.get_processor().on_receive(channel, frame)
+                    if frame.get_flag() == Flag.Close:
+                        break
             except SocketDConnectionException as e:
                 handshake_future.accept(ClientHandshakeResult(channel, e))
                 break
@@ -91,6 +105,8 @@ class TcpAioClientConnector(ClientConnectorBase):
         if self.__real is None:
             return
         try:
+            self._receiveTask.cancel()
+            self.transfer_dataTask.cancel()
             self.__real.close()
             await self.stop()
         except Exception as e:
@@ -98,8 +114,9 @@ class TcpAioClientConnector(ClientConnectorBase):
 
     async def stop(self):
         if self.__top:
-            _top = self.__top
-            if not _top.done():
-                _top.set_result(1)
-        self.__loop.stop()
-        log.debug(f"Stopping WebSocket::{self.__loop.is_running()}")
+            async with self.__top as _top:
+                if not _top.done():
+                    _top.cancel()
+        if self.__loop.is_running():
+            self.__loop.stop()
+        log.debug(f"Stopping TCP::{self.__loop.is_running()}")

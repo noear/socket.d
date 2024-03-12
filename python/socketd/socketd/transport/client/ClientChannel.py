@@ -38,7 +38,9 @@ class ClientChannel(ChannelBase, ABC):
     def __del__(self):
         try:
             if self._loop:
-                self._loop.stop()
+                if self._loop.is_running():
+                    self._loop.stop()
+                self._loop.close()
         except Exception as e:
             logger.warning(e)
 
@@ -75,11 +77,8 @@ class ClientChannel(ChannelBase, ABC):
                 while True:
                     await asyncio.sleep(self.client.get_heartbeatInterval()/100)
                     await self.heartbeat_handle()
-
+            # 附加在当前事件中
             self._heartbeatScheduledFuture = asyncio.create_task(_heartbeatScheduled())
-            self.get_config().get_executor().submit(lambda:
-                                                    AsyncUtil.thread_handler(self._loop,
-                                                                             self._heartbeatScheduledFuture))
 
     async def heartbeat_handle(self):
         AssertsUtil.assert_closed(self._real)
@@ -123,6 +122,8 @@ class ClientChannel(ChannelBase, ABC):
             await self.connector.close()
             if self._real is not None:
                 await self._real.close(code)
+            if self._loop:
+                self._loop.stop()
         except Exception as e:
             logger.error(e)
 

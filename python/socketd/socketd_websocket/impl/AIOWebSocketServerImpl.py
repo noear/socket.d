@@ -10,7 +10,6 @@ from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Costants import Flag
 from socketd.transport.core.Frame import Frame
 
-
 from socketd_websocket.IWebSocketServer import IWebSocketServer
 
 
@@ -71,7 +70,6 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_executor(),
                                                           lambda _message: self.ws_aio_server.get_assistant().read(_message), message)
                 if frame is not None:
-
                     await self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)
                     if frame.get_flag() == Flag.Close:
                         """客户端主动关闭"""

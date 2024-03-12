@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Awaitable
+from typing import Awaitable, Optional
 
 from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.Client import ClientInternal
@@ -19,7 +19,7 @@ class ClientBase(ClientInternal, ABC):
 
     def __init__(self, client_config: ClientConfig, assistant):
         self._processor = ProcessorDefault()
-        self._heartbeat_handler: HeartbeatHandler = None
+        self._heartbeat_handler: Optional[HeartbeatHandler] = None
         self._config: ClientConfig = client_config
         self._assistant: ChannelAssistant = assistant
 
@@ -58,7 +58,7 @@ class ClientBase(ClientInternal, ABC):
 
     async def _open(self, isThrow):
         connector: ClientConnector = self.create_connector()
-        clientChannel: ClientChannel = ClientChannel(connector)
+        clientChannel: ClientChannel = ClientChannel(self, connector)
         try:
             await clientChannel.connect()
         except Exception as e:

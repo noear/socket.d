@@ -63,7 +63,7 @@ class ClientConfig(ConfigBase):
     def get_link_url(self):
         return self.__link_uri
 
-    def get_meta(self):
+    def get_meta_map(self):
         return self.__meta
 
     def meta_put(self, name, val):

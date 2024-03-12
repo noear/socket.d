@@ -8,11 +8,14 @@ from socketd.transport.client.ClientFactory import ClientFactory
 from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.server.ServerFactory import ServerFactory
+
 from socketd_websocket.WsAioFactoy import WsAioFactory
+from socketd_aio_tcp.TcpAioFactory import TcpAioFactory
 
 
 def version() -> str:
     return "2.3.6"
+
 
 def protocol_version() -> str:
     return "1.0"
@@ -62,5 +65,5 @@ def create_cluster_client(*urls):
 
 
 # Initialize the client and server factory maps
-load_factories([WsAioFactory()], server_factory_map)
-load_factories([WsAioFactory()], client_factory_map)
+load_factories([WsAioFactory(), TcpAioFactory()], server_factory_map)
+load_factories([WsAioFactory(), TcpAioFactory()], client_factory_map)

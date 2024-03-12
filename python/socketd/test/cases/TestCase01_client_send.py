@@ -25,10 +25,7 @@ class TestCase01_client_send(BaseTestCase):
     async def _start(self):
         s = SimpleListenerTest()
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
-        self.server_session: WebSocketServer = await self.server \
-            .config(config_handler) \
-            .listen(s) \
-            .start()
+        self.server_session: Server = await self.server.config(config_handler) .listen(s) .start()
         await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \

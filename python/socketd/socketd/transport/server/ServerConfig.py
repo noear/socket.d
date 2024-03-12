@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from socketd.transport.core.config.ConfigBase import ConfigBase
 
 
@@ -14,14 +16,14 @@ class ServerConfig(ConfigBase):
     def get_host(self):
         return self.__host
 
-    def host(self, host):
+    def host(self, host) -> ServerConfig:
         self.__host = host
-        return self;
+        return self
 
     def get_port(self):
         return self.__port
 
-    def port(self, port):
+    def port(self, port) ->ServerConfig:
         self.__port = port
         return self
 
@@ -37,11 +39,11 @@ class ServerConfig(ConfigBase):
                f"charset='{self._charset}', "\
                f"host='{self.__host}', " \
                f"port={self.__port}, " \
-               f"coreThreads='{self._coreThreads}', " \
-               f"maxThreads={self._maxThreads}, " \
+               f"coreThreads='{self._core_threads}', " \
+               f"maxThreads={self._max_threads}, " \
                f"idleTimeout={self._idle_timeout}, "\
                f"requestTimeout={self._request_timeout}, " \
                f"streamTimeout={self._stream_timeout}, " \
-               f"readBufferSize={self.__read_buffer_size}, " \
-               f"writeBufferSize={self.__write_buffer_size}, " \
+               f"readBufferSize={self._read_buffer_size}, " \
+               f"writeBufferSize={self._write_buffer_size}, " \
                f"maxUdpSize={self._max_udp_size}}}"

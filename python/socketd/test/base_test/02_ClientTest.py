@@ -22,7 +22,7 @@ def send_and_subscribe_test(e: Entity):
 
 @calc_async_time
 async def main():
-    client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:7779").config(config_handler).open()
+    client_session: Session = await SocketD.create_client("std:tcp://127.0.0.1:7779").config(config_handler).open()
     start_time = time.monotonic()
     for _ in range(10):
         await client_session.send("demo", StringEntity("test.png"))

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Callable
 
 from socketd.transport.core.Listener import Listener
@@ -20,13 +22,13 @@ class ServerBase(Server):
         self._assistant: ChannelAssistant = assistant
         self.isStarted = False
 
-    def get_assistant(self):
+    def get_assistant(self) -> ChannelAssistant:
         """
         获取通道助理
         """
         return self._assistant
 
-    def config(self, consumer: Callable[[Config], Config]):
+    def config(self, consumer: Callable[[Config], Config]) -> ServerBase:
         """
         获取配置
         """
@@ -36,7 +38,7 @@ class ServerBase(Server):
     def get_config(self) -> ServerConfig:
         return self._config
 
-    def process(self, processor: Processor):
+    def process(self, processor: Processor) -> ServerBase:
         """
         设置处理器
         """
@@ -47,7 +49,7 @@ class ServerBase(Server):
     def get_processor(self) -> Processor:
         return self._processor
 
-    def listen(self, listener: Listener):
+    def listen(self, listener: Listener) -> ServerBase:
         """
         设置监听器
         """

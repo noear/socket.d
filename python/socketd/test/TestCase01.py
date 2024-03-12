@@ -22,7 +22,10 @@ from test.cases.TestCase16_openAnTry import TestCase16_openAnTry
 
 
 class TestCase01(unittest.TestCase):
-    schemas = ["std:ws"]
+    schemas = [
+        # "std:ws",
+        "std:tcp"
+    ]
 
     def __init__(self, *args, **kwargs):
         logger.remove()

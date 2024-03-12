@@ -12,7 +12,7 @@ class ChannelAssistant(typing.Generic[S], ABC):
         pass
 
     @abstractmethod
-    def read(self, buffer: Any) -> Frame: ...
+    def read(self, target: Any) -> Frame: ...
 
     @abstractmethod
     def is_valid(self, target: Any) -> bool:

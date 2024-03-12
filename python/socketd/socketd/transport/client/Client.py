@@ -1,10 +1,11 @@
-# 客户端
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Callable
 from asyncio.futures import Future
 
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core import Listener
+from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.Processor import Processor
 from socketd.transport.core.Session import Session
 from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
@@ -13,19 +14,19 @@ from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
 class Client(ABC):
 
     @abstractmethod
-    def heartbeatHandler(self, handler: HeartbeatHandler) -> 'Client': ...
+    def heartbeatHandler(self, handler: HeartbeatHandler) -> Client: ...
 
     @abstractmethod
-    def config(self, consumer: Callable[[ClientConfig], ClientConfig]) -> 'Client': ...
+    def config(self, consumer: Callable[[ClientConfig], ClientConfig]) -> Client: ...
 
     @abstractmethod
-    def listen(self, listener: Listener) -> 'Client': ...
+    def listen(self, listener: Listener) -> Client: ...
 
     @abstractmethod
     def open(self) -> Session | Future: ...
 
     @abstractmethod
-    def openOrThrow(self) -> Session | Future:...
+    def openOrThrow(self) -> Session | Future: ...
 
 
 class ClientInternal(Client):
@@ -40,3 +41,6 @@ class ClientInternal(Client):
 
     @abstractmethod
     def get_processor(self) -> Processor: ...
+
+    @abstractmethod
+    def get_assistant(self) -> ChannelAssistant: ...

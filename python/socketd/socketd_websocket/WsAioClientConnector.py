@@ -11,7 +11,6 @@ from socketd.transport.core.Costants import Constants
 from socketd.transport.core.config.logConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd.transport.utils.AsyncUtil import AsyncUtil
-from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 from socketd_websocket.impl.AIOConnect import AIOConnect
 from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
 

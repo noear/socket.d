@@ -33,14 +33,14 @@ export class LoadBalancer {
     /**
      * 根据 poll 获取任意一个
      */
-    static getAnyByPoll<T extends ClientSession>(coll: Array<T>): T | null {
+    static getAnyByPoll<T extends ClientSession>(coll: Set<T> | null): T | null {
         return LoadBalancer.getAny(coll, () => LoadBalancer.roundCounterGet());
     }
 
     /**
      * 根据 hash 获取任意一个
      */
-    static getAnyByHash<T extends ClientSession>(coll: Array<T>, diversion: string): T | null {
+    static getAnyByHash<T extends ClientSession>(coll: Set<T> | null, diversion: string): T | null {
         return LoadBalancer.getAny(coll, () => LoadBalancer.hashcode(diversion));
     }
 
@@ -48,8 +48,8 @@ export class LoadBalancer {
     /**
      * 获取任意一个
      */
-    static getAny<T extends ClientSession>(coll: Array<T>, randomSupplier: IoSupplier<number>): T | null {
-        if (coll == null || coll.length == 0) {
+    static getAny<T extends ClientSession>(coll: Set<T> | null, randomSupplier: IoSupplier<number>): T | null {
+        if (coll == null || coll.size == 0) {
             return null;
         } else {
             //查找可用的会话

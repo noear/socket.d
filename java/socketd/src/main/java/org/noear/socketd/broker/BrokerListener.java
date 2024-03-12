@@ -1,6 +1,7 @@
 package org.noear.socketd.broker;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +108,11 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
                 if (requester.isValid()) {
                     requester.reply(message, reply);
                 }
+            }).thenError(err -> {
+                //传递异常
+                if (requester.isValid()) {
+                    RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
+                }
             });
         } else if (message.isSubscribe()) {
             responder.sendAndSubscribe(message.event(), message).thenReply(reply -> {
@@ -116,6 +122,11 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
                     } else {
                         requester.reply(message, reply);
                     }
+                }
+            }).thenError(err -> {
+                //传递异常
+                if (requester.isValid()) {
+                    RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
                 }
             });
         } else {

@@ -453,4 +453,38 @@ public class CaseTest {
             }
         }
     }
+
+    @Test
+    public void TestCase35_sendAlarm() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase35_sendAlarm(s1, 3500 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void TestCase36_sendAlarm_async() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase36_sendAlarm_async(s1, 3600 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
 }

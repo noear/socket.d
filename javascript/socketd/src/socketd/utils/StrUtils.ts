@@ -27,6 +27,28 @@ export class StrUtils {
             return '';
         }
 
+        let idx = str.indexOf("?");
+        if(idx){
+            let uri0Str = str.substring(0,idx);
+            let uri1Str = str.substring(idx, str.length);
+
+            let uri0 = StrUtils.parseUriDo(uri0Str);
+
+            uri0.source = str;
+            uri0.query = uri1Str.substring(1,uri1Str.length);
+            uri0.relative = uri1Str;
+
+            return uri0;
+        }else{
+            return StrUtils.parseUriDo(str);
+        }
+    }
+
+    static parseUriDo(str):any {
+        if (!str) {
+            return '';
+        }
+
         let o = StrUtils.parseUriOptions,
             m = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
             uri = {},

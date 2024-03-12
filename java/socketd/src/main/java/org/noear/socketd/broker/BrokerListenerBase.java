@@ -1,7 +1,6 @@
 package org.noear.socketd.broker;
 
 import org.noear.socketd.cluster.LoadBalancer;
-import org.noear.socketd.transport.core.Listener;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.utils.StrUtils;
 
@@ -15,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author noear
  * @since 2.1
  */
-public abstract class BrokerListenerBase implements Listener {
+public abstract class BrokerListenerBase {
     private Map<String, Session> sessionAll = new ConcurrentHashMap<>();
     //玩家会话
     private Map<String, Set<Session>> playerSessions = new ConcurrentHashMap<>();

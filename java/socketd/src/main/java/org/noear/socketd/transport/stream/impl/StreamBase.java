@@ -24,8 +24,8 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
     private final int demands;
 
     private long timeout;
-    private Consumer<Throwable> doOnError;
-    private TriConsumer<Boolean, Integer, Integer> doOnProgress;
+    protected Consumer<Throwable> doOnError;
+    protected TriConsumer<Boolean, Integer, Integer> doOnProgress;
 
     public StreamBase(String sid, int demands, long timeout) {
         this.sid = sid;

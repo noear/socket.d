@@ -92,6 +92,11 @@ public interface Entity {
     void putMeta(String name, String val);
 
     /**
+     * 删除元信息
+     * */
+    void delMeta(String name);
+
+    /**
      * 获取数据
      */
     ByteBuffer data();

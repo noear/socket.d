@@ -14,6 +14,8 @@ import {EntityMetas} from "./transport/core/Constants";
 import {ServerProvider} from "./transport/server/ServerProvider";
 import {ServerConfig} from "./transport/server/ServerConfig";
 import {Server} from "./transport/server/Server";
+import {BrokerListener} from "./broker/BrokerListener";
+import {BrokerFragmentHandler} from "./broker/BrokerFragmentHandler";
 
 export class SocketD {
     /**
@@ -39,7 +41,7 @@ export class SocketD {
      * 框架版本号
      */
     static version(): string {
-        return "2.4.3";
+        return "2.4.6";
     }
 
     /**
@@ -169,5 +171,18 @@ export class SocketD {
     static newPipelineListener(): PipelineListener {
         return new PipelineListener();
     }
-}
 
+    /**
+     * 创建经理人监听器
+     * */
+    static newBrokerListener(): BrokerListener {
+        return new BrokerListener();
+    }
+
+    /**
+     * 创建经理人分布处理
+     * */
+    static newBrokerFragmentHandler(): BrokerFragmentHandler {
+        return new BrokerFragmentHandler();
+    }
+}

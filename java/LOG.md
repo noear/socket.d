@@ -1,3 +1,10 @@
+### 2.4.5
+* 优化 流异常传导性
+* 添加 Entity:delMeta 删除元信息接口
+
+### 2.4.4
+* 添加 BrokerListener 异常转发支持
+
 ### 2.4.3
 * 优化 EntityDefault:metaPut 当 val=null时，视为删除
 * 优化 ClientChannel:heartbeatHandle 添加 isClosing 的判断

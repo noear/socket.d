@@ -34,7 +34,7 @@ export interface Handshake {
      *
      * @param name 参数名
      */
-    param(name: string): string | undefined;
+    param(name: string): string | null;
 
     /**
      * 获取参数或默认值

@@ -45,7 +45,12 @@ export interface Entity {
     /**
      * 添加元信息
      * */
-    putMeta(name: string, val: string);
+    putMeta(name: string, val: string | null);
+
+    /**
+     * 删除元信息
+     * */
+    delMeta(name: string);
 
     /**
      * 获取数据
@@ -171,7 +176,7 @@ export class EntityDefault implements Entity {
      * @param name 名字
      * @param val  值
      */
-    metaPut(name: string, val: string): EntityDefault {
+    metaPut(name: string, val: string | null): EntityDefault {
         if (val == null) {
             this.metaMap().delete(name);
         } else {
@@ -179,6 +184,15 @@ export class EntityDefault implements Entity {
         }
 
         return this;
+    }
+
+    /**
+     * 删除元信息
+     *
+     * @param name 名字
+     */
+    metaDel(name:string){
+        this.metaMap().delete(name);
     }
 
     /**
@@ -252,8 +266,17 @@ export class EntityDefault implements Entity {
      * @param name 名字
      * @param val  值
      */
-    putMeta(name: string, val: string) {
+    putMeta(name: string, val: string| null) {
         this.metaPut(name, val);
+    }
+
+    /**
+     * 删除元信息
+     *
+     * @param name 名字
+     */
+    delMeta(name: string) {
+        this.metaDel(name);
     }
 
     /**

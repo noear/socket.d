@@ -117,6 +117,11 @@ public class MessageDefault implements MessageInternal {
     }
 
     @Override
+    public void delMeta(String name) {
+        entity.delMeta(name);
+    }
+
+    @Override
     public ByteBuffer data() {
         return entity.data();
     }

@@ -63,8 +63,9 @@ export class HandshakeDefault implements HandshakeInternal {
         return this._version;
     }
 
-    param(name: string): string | undefined {
-        return this._paramMap.get(name);
+    param(name: string): string | null {
+        let tmp = this._paramMap.get(name);
+        return tmp ? tmp : null;
     }
 
     paramMap(): Map<string, string> {

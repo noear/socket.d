@@ -26,12 +26,16 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
         self.__top: Optional[asyncio.Future] = None
         self._is_close: AtomicRefer = AtomicRefer(False)
         self._sock_future_list: List[asyncio.Future] = []
+        self._server_forever_future: Optional[asyncio.Future] = None
 
     # 服务器的回调函数
     async def handler(self, loop: asyncio.AbstractEventLoop, sock: socket.socket,
                       addr, channel: ChannelDefault):  # reader和writer参数是asyncio.start_server生成异步服务器后自动传入进来的
         while True:  # 循环接受数据，直到套接字关闭
             try:
+                if await self._is_close.get():
+                    self.get_processor().on_close(channel)
+                    break
                 frame: Frame = await loop.create_task(self.get_assistant().read(sock))
                 if frame is not None:
                     await self.get_processor().on_receive(channel, frame)
@@ -60,7 +64,7 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                 channel = ChannelDefault(sock, self)
                 self._sock_future_list.append(loop.create_task(self.handler(loop, sock, addr, channel)))
             except asyncio.CancelledError as e:
-                log.warn("Server asyncio cancelled {e}", e=e)
+                log.warning("Server asyncio cancelled {e}", e=e)
                 break
             except Exception as e:
                 log.warning("Server accept error {e}", e=e)
@@ -72,19 +76,22 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
         self._server: socket.socket = socket.create_server((self.get_config().get_host(),
                                                             self.get_config().get_port()))
         self._server.setblocking(False)
-        if self.__top is None:
+        if self.__top is None or not self.__loop.is_running():
             self.__top = AsyncUtil.run_forever(self.__loop)
-        asyncio.run_coroutine_threadsafe(self.server_forever(self.__loop, self._server), self.__loop)
+        self._server_forever_future = asyncio.run_coroutine_threadsafe(self.server_forever(self.__loop, self._server), self.__loop)
         return self._server
 
     async def close_wait(self):
         asyncio.run_coroutine_threadsafe(asyncio.wait(self._sock_future_list), self.__loop).result()
 
     async def stop(self):
+        log.info("TcpAioServer stop...")
         # 等等执行完成
         await self._is_close.set(True)
-        await self.close_wait()
-        self._server.close()
-        self.__top.set_result(True)
+        if not self.__top.done():
+            self.__top.set_result(True)
+        self._server_forever_future.cancel()
+        # await self.close_wait()
         self.__loop.stop()
+        self._server.close()
 

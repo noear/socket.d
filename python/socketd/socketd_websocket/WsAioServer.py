@@ -30,8 +30,9 @@ class WsAioServer(ServerBase):
             raise Exception("Server started")
         else:
             self.__is_started = True
-        if self.__top is None:
-            self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
+        # 暂时禁用
+        # if self.__top is None:
+        #     self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
         _server = AIOServe(ws_handler=None,
                            host="0.0.0.0" if self.get_config().get_host() is None else self.get_config().get_host(),
                            port=self.get_config().get_port(),
@@ -62,8 +63,9 @@ class WsAioServer(ServerBase):
         log.info("WsAioServer stop...")
         self.server.ws_server.close()
         self.__is_started = False
-        async with self.__top:
-            __top = await self.__top.get()
-            if not __top.done():
-                __top.set_result(1)
-            self.__loop.stop()
+        if self.__top:
+            async with self.__top:
+                __top = await self.__top.get()
+                if not __top.done():
+                    __top.set_result(1)
+                self.__loop.stop()

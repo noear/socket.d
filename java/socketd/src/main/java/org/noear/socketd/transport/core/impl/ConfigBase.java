@@ -87,8 +87,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.codecThreads = Runtime.getRuntime().availableProcessors();
         this.exchangeThreads = Runtime.getRuntime().availableProcessors() * 4;
 
-        this.readBufferSize = 512;
-        this.writeBufferSize = 512;
+        this.readBufferSize = 1024 * 4; //1k
+        this.writeBufferSize = 1024 * 4;
 
         this.idleTimeout = 60_000L; //60秒（心跳默认为20秒）
         this.requestTimeout = 10_000L; //10秒（默认与连接超时同）
@@ -123,7 +123,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     /**
      * 无锁发送
-     * */
+     */
     @Override
     public boolean isNolockSend() {
         return nolockSend;

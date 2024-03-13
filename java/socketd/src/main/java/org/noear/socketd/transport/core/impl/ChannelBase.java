@@ -68,7 +68,7 @@ public abstract class ChannelBase implements Channel {
 
     @Override
     public void sendConnect(String uri, Map<String, String> metaMap) throws IOException {
-        send(Frames.connectFrame(getConfig().getIdGenerator().generate(), uri, metaMap), null);
+        send(Frames.connectFrame(getConfig().genId(), uri, metaMap), null);
     }
 
     @Override

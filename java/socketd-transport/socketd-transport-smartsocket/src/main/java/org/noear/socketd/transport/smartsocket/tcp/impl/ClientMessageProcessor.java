@@ -33,13 +33,10 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
         return handshakeFuture;
     }
 
-    private ChannelDefaultEx getChannel(AioSession s) {
-        return ChannelDefaultEx.get(s, client);
-    }
 
     @Override
     public void process0(AioSession s, Frame frame) {
-        ChannelInternal channel = getChannel(s);
+        ChannelInternal channel = s.getAttachment();
 
         try {
             if (frame.flag() == Flags.Connack) {
@@ -68,26 +65,33 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
     public void stateEvent0(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION: {
-                ChannelInternal channel = getChannel(s);
+                ChannelDefaultEx c = new ChannelDefaultEx<>(s, client);
+                s.setAttachment(c);
                 try {
-                    channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
+                    c.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
                 } catch (Throwable ex) {
-                    client.getProcessor().onError(channel, ex);
+                    client.getProcessor().onError(c, ex);
                 }
-            }
-            break;
-
-            case SESSION_CLOSED:
-                client.getProcessor().onClose(getChannel(s));
                 break;
+            }
+
+            case SESSION_CLOSED: {
+                ChannelDefaultEx c = s.getAttachment();
+                client.getProcessor().onClose(c);
+                break;
+            }
 
             case PROCESS_EXCEPTION:
             case DECODE_EXCEPTION:
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
-            case OUTPUT_EXCEPTION:
-                client.getProcessor().onError(getChannel(s), e);
+            case OUTPUT_EXCEPTION: {
+                ChannelDefaultEx c = s.getAttachment();
+                if (c != null) {
+                    client.getProcessor().onError(c, e);
+                }
                 break;
+            }
         }
     }
 }

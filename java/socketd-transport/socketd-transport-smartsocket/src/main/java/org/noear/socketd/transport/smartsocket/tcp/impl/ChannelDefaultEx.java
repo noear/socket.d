@@ -33,19 +33,4 @@ public class ChannelDefaultEx<S> extends ChannelDefault<S> {
     public void setDecoder(FixedLengthFrameDecoder decoder) {
         this.decoder = decoder;
     }
-
-
-    /**
-     * 通过原始会话附件获取
-     */
-    public static ChannelDefaultEx get(AioSession aioSession, ChannelSupporter<AioSession> channelSupporter) {
-        ChannelDefaultEx tmp = aioSession.getAttachment();
-
-        if (tmp == null) {
-            tmp = new ChannelDefaultEx<>(aioSession, channelSupporter);
-            aioSession.setAttachment(tmp);
-        }
-
-        return tmp;
-    }
 }

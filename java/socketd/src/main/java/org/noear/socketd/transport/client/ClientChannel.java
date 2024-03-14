@@ -69,7 +69,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                     heartbeatHandle();
                 } catch (Throwable e) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Client channel heartbeat error", e);
+                        log.debug("Client channel heartbeat error: {}", e.getMessage());
                     }
                 }
             }, client.getHeartbeatInterval(), client.getHeartbeatInterval());

@@ -61,8 +61,12 @@ public class ClusterClient implements Client {
      * 打开会话
      */
     @Override
-    public ClientSession open() throws IOException {
-        return openDo(false);
+    public ClientSession open() {
+        try {
+            return openDo(false);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**

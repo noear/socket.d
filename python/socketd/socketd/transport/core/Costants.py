@@ -94,6 +94,9 @@ class Constants:
     # 因异常关闭
     CLOSE3_ERROR = 3
 
+    # 因协议关闭开始（安全关闭）
+    CLOSE10_PROTOCOL_CLOSE_STARTING = 10
+
     # 因协议指令关闭
     CLOSE11_PROTOCOL = 11
 

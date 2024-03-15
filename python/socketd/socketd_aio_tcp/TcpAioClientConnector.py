@@ -35,6 +35,8 @@ class TcpAioClientConnector(ClientConnectorBase):
         _sch, _host, _port = tcp_url.replace("//", "").split(":")
         if self.__top is None:
             self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
+        if not self.__loop.is_running():
+            self.__top = AtomicRefer(AsyncUtil.run_forever(self.__loop))
         _port = _port.split("/")[0]
         try:
             self.__real: socket.socket = socket.create_connection((_host, _port),
@@ -65,7 +67,7 @@ class TcpAioClientConnector(ClientConnectorBase):
 
         while True:
             try:
-                if getattr(_sock, '_closed'):
+                if await self.is_closed():
                     break
                 _frame: Frame = await self.client.get_assistant().read(_sock)
                 if _frame is None:
@@ -77,12 +79,13 @@ class TcpAioClientConnector(ClientConnectorBase):
                 break
             except ConnectionAbortedError as e:
                 break
+        await self.close()
 
     async def receive(self, channel: ChannelDefault, _socket: socket.socket,
                       handshake_future: CompletableFuture) -> None:
         while True:
             try:
-                if getattr(_socket, '_closed'):
+                if await self.is_closed():
                     break
                 frame: Frame = await self.__message.get()
                 if frame is not None:
@@ -100,8 +103,13 @@ class TcpAioClientConnector(ClientConnectorBase):
             except Exception as e:
                 self.client.get_processor().on_error(channel, e)
                 break
+        await self.close()
+
+    async def is_closed(self):
+        return getattr(self.__real, '_closed')
 
     async def close(self):
+        log.debug("TcpAioClientConnector stop... ")
         if self.__real is None:
             return
         try:

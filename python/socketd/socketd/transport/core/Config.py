@@ -41,7 +41,7 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def get_id_generator(self) -> Callable[[None], Any]:
+    def get_id_generator(self) -> Callable[[], Any]:
         """
         返回ID生成器。
         """

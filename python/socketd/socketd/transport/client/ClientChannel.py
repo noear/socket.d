@@ -81,18 +81,26 @@ class ClientChannel(ChannelBase, ABC):
             self._heartbeatScheduledFuture = asyncio.create_task(_heartbeatScheduled())
 
     async def heartbeat_handle(self):
-        AssertsUtil.assert_closed(self._real)
-
-        with self:
-            try:
-                await self.prepare_check()
-                await self.heartbeatHandler.heartbeat(self.get_session())
-            except Exception as e:
-                if self.connector.autoReconnect():
-                    if self._real:
-                        await self._real.close(code=Constants.CLOSE21_ERROR)
-                    self._real = None
-                raise e
+        if self._real:
+            # 说明握手未成
+            if self._real.get_handshake() is None:
+                return
+            if AssertsUtil.is_closed_and_end(self._real):
+                logger.debug("Client channel is closed (pause heartbeat), sessionId={id}",
+                             id=self.get_session().get_session_id())
+                await self.close(self._real.is_closed())
+            # 正在关闭中
+            if self._real.is_closed():
+                return
+        try:
+            await self.prepare_check()
+            await self.heartbeatHandler.heartbeat(self.get_session())
+        except Exception as e:
+            if self.connector.autoReconnect():
+                if self._real:
+                    await self._real.close(code=Constants.CLOSE21_ERROR)
+                self._real = None
+            raise SocketDChannelException(f"Client channel heartbeat failed {e}")
 
     async def send(self, frame, acceptor):
         AssertsUtil.assert_closed(self._real)
@@ -113,6 +121,9 @@ class ClientChannel(ChannelBase, ABC):
 
     def get_session(self):
         return self._session
+
+    def is_closing(self) -> bool:
+        return False if self._real is None else self._real.is_closing()
 
     async def close(self, code):
         try:

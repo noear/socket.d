@@ -25,7 +25,11 @@ class Channel:
         ...
 
     @abstractmethod
-    def is_closed(self) -> bool:
+    def is_closing(self) -> bool:
+        ...
+
+    @abstractmethod
+    def is_closed(self) -> int:
         ...
 
     @abstractmethod
@@ -92,6 +96,7 @@ class Channel:
     def get_session(self) -> Session:
         ...
 
+    @abstractmethod
     async def close(self, code):
         ...
 

@@ -1,3 +1,4 @@
+import asyncio
 from abc import ABC
 from typing import Optional, Union
 
@@ -11,7 +12,6 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.listener.SimpleListener import SimpleListener
 from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamInternal
-from socketd.transport.utils.AsyncUtil import AsyncUtil
 
 from socketd.transport.core.config.logConfig import log
 
@@ -55,7 +55,7 @@ class ProcessorDefault(Processor, ABC):
         else:
             if channel.get_handshake() is None:
                 await channel.close(Constants.CLOSE11_PROTOCOL)
-                self.log.warning("Channel handshake is None, sessionId={}", channel.get_session().get_session_id())
+                log.warning("Channel handshake is None, sessionId={}", channel.get_session().get_session_id())
                 return
 
             channel.set_live_time()
@@ -131,12 +131,19 @@ class ProcessorDefault(Processor, ABC):
             log.warning(e)
 
     async def on_message(self, channel: ChannelInternal, message: Message):
-        AsyncUtil.thread_loop(self.listener.on_message(
-            channel.get_session(), message),
-            pool=channel.get_config().get_executor())
+        # 这里取消线程操作，如果需要在这里进行io，请使用 run_in_executor
+        # AsyncUtil.thread_loop(self.listener.on_message(
+        #     channel.get_session(), message),
+        #     pool=channel.get_config().get_executor())
+        loop = asyncio.get_running_loop()
+        # 非阻塞，在运行中
+        task: asyncio.Task = loop.create_task(self.listener.on_message(
+            channel.get_session(), message))
+        return task
 
     def on_close(self, channel: ChannelInternal):
-        self.listener.on_close(channel.get_session())
+        if channel.is_closed() == 0:
+            self.listener.on_close(channel.get_session())
 
     def on_error(self, channel: ChannelInternal, error):
         self.listener.on_error(channel.get_session(), error)

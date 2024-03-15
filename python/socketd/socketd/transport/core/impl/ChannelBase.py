@@ -35,9 +35,6 @@ class ChannelBase(Channel, ABC):
     def set_attachment(self, name, val):
         self.attachments[name] = val
 
-    def is_closed(self):
-        return self._is_closed
-
     def get_requests(self):
         return self.requests
 

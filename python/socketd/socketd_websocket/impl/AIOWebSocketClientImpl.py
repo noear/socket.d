@@ -88,7 +88,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 # 结束握手
                 return
             # frame: Frame = self.client.get_assistant().read(message)
-            frame: Frame = await self.loop.run_in_executor(None,
+            frame: Frame = await self.loop.run_in_executor(self.get_channel().get_config().get_executor(),
                                                            lambda _message: self.client.get_assistant().read(_message),
                                                            message)
             if frame is not None:

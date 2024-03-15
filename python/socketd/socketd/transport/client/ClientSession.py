@@ -13,6 +13,10 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
+    def is_closing(self) -> bool:
+        ...
+
+    @abc.abstractmethod
     def get_session_id(self) -> str:
         ...
 

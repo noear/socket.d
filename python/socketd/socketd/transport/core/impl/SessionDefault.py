@@ -1,5 +1,4 @@
 
-from abc import ABC
 from typing import Optional
 
 from socketd.transport.core.impl.SessionBase import SessionBase
@@ -18,7 +17,7 @@ from socketd.transport.stream.SubscribeStream import SubscribeStream
 from loguru import logger
 
 
-class SessionDefault(SessionBase, ABC):
+class SessionDefault(SessionBase):
 
     def __init__(self, channel: Channel):
         super().__init__(channel)
@@ -26,6 +25,9 @@ class SessionDefault(SessionBase, ABC):
 
     def is_valid(self) -> bool:
         return self._channel.is_valid()
+
+    def is_closing(self) -> bool:
+        return self._channel.is_closing()
 
     def get_remote_address(self) -> str:
         return self._channel.get_remote_address()

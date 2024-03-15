@@ -33,9 +33,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         self._streamManger: StreamManger = supporter.get_config().get_stream_manger()
         self._session: Optional[Session] = None
         self._live_time: Optional[float] = None
-
-    def is_valid(self) -> bool:
-        return self.is_closed() == 0 and self._assistant.is_valid(self._source)
+        self._close_code: Optional[int] = 0
 
     def get_remote_address(self) -> str:
         return self._assistant.get_remote_address(self._source)
@@ -102,8 +100,18 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
         return self._session
 
+    def is_valid(self) -> bool:
+        return self.is_closed() == 0 and self._assistant.is_valid(self._source)
+
+    def is_closing(self) -> bool:
+        return self._close_code == Constants.CLOSE10_PROTOCOL_CLOSE_STARTING
+
+    def is_closed(self) -> int:
+        return self._close_code if self._close_code > Constants.CLOSE10_PROTOCOL_CLOSE_STARTING else 0
+
     async def close(self, code):
         try:
+            self._close_code = code
             await super().close(code)
             await self._assistant.close(self._source)
         except Exception as e:

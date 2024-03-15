@@ -1,7 +1,11 @@
 import asyncio
+import sys
 import typing
 from concurrent.futures import Executor
 from threading import Thread
+
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 class AsyncUtil(object):
@@ -24,15 +28,24 @@ class AsyncUtil(object):
 
         def _main(_loop: asyncio.AbstractEventLoop, _future: asyncio.Future):
             asyncio.set_event_loop(_loop)
-
+            if sys.platform != "win32":
+                # 返回当前策略的当前子监视器。
+                watcher = asyncio.get_child_watcher()
+                # 给一个事件循环绑定监视器。
+                # 如果监视器之前已绑定另一个事件循环，那么在绑定新循环前会先解绑原来的事件循环。
+                watcher.attach_loop(loop)
             try:
+                future.add_done_callback(lambda f: _loop.stop())
                 _loop.run_forever()
             finally:
-                _loop.run_until_complete(_loop.shutdown_asyncgens())
-                _loop.close()
+                try:
+                    # 清理任何没有完全消耗的异步生成器。
+                    _loop.run_until_complete(_loop.shutdown_asyncgens())
+                finally:
+                    _loop.close()
 
         t: Thread = Thread(target=_main, args=(loop, future))
-        t.daemon = True
+        # t.daemon = True
         t.start()
         return future
 
@@ -54,3 +67,4 @@ class AsyncUtil(object):
         if pool:
             pool.submit(lambda x: AsyncUtil.thread_handler(*x), (loop, loop.create_task(_run())))
         return loop
+

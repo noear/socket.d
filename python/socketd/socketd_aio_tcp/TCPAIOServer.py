@@ -1,6 +1,7 @@
 import asyncio
+from concurrent.futures import Future
 import socket
-from typing import  Optional, List
+from typing import Optional, List
 
 from socketd.exception.SocketDExecption import SocketDTimeoutException
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
@@ -26,7 +27,8 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
         self.__top: Optional[asyncio.Future] = None
         self._is_close: AtomicRefer = AtomicRefer(False)
         self._sock_future_list: List[asyncio.Future] = []
-        self._server_forever_future: Optional[asyncio.Future] = None
+        self._server_forever_future: Optional[asyncio.Future | Future] = None
+        self._sock_list: List[socket.socket] = []
 
     # 服务器的回调函数
     async def handler(self, loop: asyncio.AbstractEventLoop, sock: socket.socket,
@@ -41,19 +43,19 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                     await self.get_processor().on_receive(channel, frame)
                     if frame.get_flag() == Flag.Close:
                         """客户端主动关闭"""
-                        sock.close()
                         log.debug("{sessionId} 主动退出",
                                   sessionId=channel.get_session().get_session_id())
                         break
             except SocketDTimeoutException as e:
                 await channel.send_close()
                 log.error("server handler {e}", e=e)
+                break
             except Exception as e:
                 self.get_processor().on_error(channel, e)
                 self.get_processor().on_close(channel)
-                sock.close()
                 log.error("server handler {e}", e=e)
                 break
+        sock.close()
 
     async def server_forever(self, loop: asyncio.AbstractEventLoop, listener: socket.socket):
         while True:
@@ -63,6 +65,7 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                 sock, addr = await loop.sock_accept(listener)
                 channel = ChannelDefault(sock, self)
                 self._sock_future_list.append(loop.create_task(self.handler(loop, sock, addr, channel)))
+                self._sock_list.append(sock)
             except asyncio.CancelledError as e:
                 log.warning("Server asyncio cancelled {e}", e=e)
                 break
@@ -82,16 +85,24 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
         return self._server
 
     async def close_wait(self):
-        asyncio.run_coroutine_threadsafe(asyncio.wait(self._sock_future_list), self.__loop).result()
+        # asyncio.run_coroutine_threadsafe(asyncio.wait(self._sock_future_list), self.__loop).result()
+        await asyncio.wait(self._sock_future_list, timeout=10)
+        for sock in self._sock_list:
+            sock.detach()
+            sock.close()
+        try:
+            if self._server_forever_future:
+                self._server_forever_future.result(10)
+        except asyncio.TimeoutError:
+            self._server_forever_future.cancel()
+            log.debug("Server server_forever timeout")
 
     async def stop(self):
         log.info("TcpAioServer stop...")
         # 等等执行完成
         await self._is_close.set(True)
+        await self.close_wait()
         if not self.__top.done():
             self.__top.set_result(True)
-        self._server_forever_future.cancel()
-        # await self.close_wait()
-        self.__loop.stop()
         self._server.close()
-
+        self.__top = None

@@ -8,6 +8,11 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.codec import bytes_to_int32
 from socketd.transport.core.codec.Buffer import Buffer
 from socketd.transport.core.codec.CodecByteBuffer import ByteBufferCodecWriter, ByteBufferCodecReader
+from socketd.transport.core.config.logConfig import log
+
+SHUT_RD = 0  # 断开输入流
+SHUT_WR = 1  # 断开输出流
+SHUT_RDWR = 2  # 同时断开 I/O 流
 
 
 class TcpAIOChannelAssistant(ChannelAssistant):
@@ -26,9 +31,12 @@ class TcpAIOChannelAssistant(ChannelAssistant):
             writer.close()
 
     def is_valid(self, target: socket.socket) -> bool:
-        return not getattr(target, '_closed')
+        _closed = not getattr(target, '_closed', True)
+        log.debug(_closed)
+        return _closed
 
     async def close(self, target: socket.socket) -> None:
+        target.shutdown(SHUT_RDWR)
         target.close()
 
     def get_remote_address(self, target: socket.socket) -> str:

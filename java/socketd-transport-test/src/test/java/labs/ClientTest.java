@@ -16,9 +16,10 @@ public class ClientTest {
 
     public static void main(String[] args) {
         String s1 = schemas[4];
-        String serverUrl = s1 + "://127.0.0.1:18602/path?u=a&p=2";
+        String serverUrl = s1 + "://127.0.0.1:8602/path?u=a&p=2";
 
         SocketD.createClient(serverUrl)
+                .config(c-> c.heartbeatInterval(3000))
                 .open();
     }
 }

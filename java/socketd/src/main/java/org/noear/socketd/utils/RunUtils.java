@@ -32,7 +32,7 @@ public class RunUtils {
 
         int scheduledPoolSize = 2;
         scheduledExecutor = new ScheduledThreadPoolExecutor(scheduledPoolSize,
-                new NamedThreadFactory("Socketd-echeduledExecutor-"));
+                new NamedThreadFactory("Socketd-scheduledExecutor-"));
     }
 
     public static void setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {

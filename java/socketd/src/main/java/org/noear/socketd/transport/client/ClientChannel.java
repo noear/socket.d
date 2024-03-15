@@ -69,7 +69,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                     heartbeatHandle();
                 } catch (Throwable e) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Client channel heartbeat error: {}", e.getMessage());
+                        log.debug("Client channel heartbeat failed: {link={}}", connector.getConfig().getLinkUrl());
                     }
                 }
             }, client.getHeartbeatInterval(), client.getHeartbeatInterval());
@@ -79,7 +79,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     /**
      * 心跳处理
      */
-    private void heartbeatHandle() throws IOException {
+    private void heartbeatHandle() throws Throwable {
         if (real != null) {
             //说明握手未成
             if (real.getHandshake() == null) {
@@ -114,7 +114,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 internalCloseIfError();
             }
 
-            throw new SocketDChannelException("Client channel heartbeat failed", e);
+            throw e;
         }
     }
 

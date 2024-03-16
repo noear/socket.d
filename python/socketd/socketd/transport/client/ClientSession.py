@@ -29,8 +29,7 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    async def send_and_subscribe(self, event: str, content: Entity,
-                                 timeout: int = 0) -> SubscribeStream:
+    async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0) -> SubscribeStream:
         ...
 
     @abc.abstractmethod

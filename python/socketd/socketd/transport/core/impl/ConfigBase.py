@@ -4,6 +4,8 @@ from abc import ABC
 
 from concurrent.futures import ThreadPoolExecutor
 
+from socketd.exception.SocketDExecption import SocketDException
+from socketd.transport.core.Asserts import Asserts
 from socketd.transport.core.Config import Config
 from socketd.transport.core.Codec import Codec
 from socketd.transport.core.IdGenerator import IdGenerator, GuidGenerator
@@ -18,8 +20,11 @@ from socketd.transport.stream.StreamMangerDefault import StreamMangerDefault
 
 class ConfigBase(Config, ABC):
 
-    def __init__(self, client_mode: bool):
-        self._client_mode = client_mode
+    def __init__(self, clientMode: bool):
+        self._clientMode = clientMode
+        self._serialSend = False
+        self._nolockSend = False
+
         self._streamManger: StreamManger = StreamMangerDefault(self)
         self._codec: Codec = CodecDefault(self)
 
@@ -27,29 +32,43 @@ class ConfigBase(Config, ABC):
 
         self._idGenerator: IdGenerator = GuidGenerator
         self._fragmentHandler: FragmentHandlerDefault = FragmentHandlerDefault()
-        self._fragment_size = Constants.MAX_SIZE_FRAGMENT
+        self._fragment_size = Constants.MAX_SIZE_DATA
 
-        self._core_threads = os.cpu_count() * 2
-        self._max_threads = self._core_threads * 4
+        self._ioThreads = 1
+        self._codecThreads = os.cpu_count()
+        self._exchangeThreads = os.cpu_count() * 4
 
-        self._read_buffer_size = 512
-        self._write_buffer_size = 512
+        self._readBufferSize = 1024 * 4 #4k
+        self._writeBufferSize = 1024 * 4 #4k
 
         self._sslContext = None
-        self._executor = None
+        self._exchangeExecutor = None
 
-        self._idle_timeout = 60_000
-        self._request_timeout = 10_000
-        self._stream_timeout = 1000 * 60 * 60 * 2
+        self._idleTimeout = 60_000    #60秒（心跳默认为20秒）
+        self._requestTimeout = 10_000 #10秒（默认与连接超时同）
+        self._streamTimeout = 1000 * 60 * 60 * 2 #2小时 //避免永不回调时，不能释放
 
-        self._max_requests = 10
-        self._max_udp_size = 2048
-        self.__is_thread = False
+        self._maxUdpSize = 2048
 
-        self.__logger_level = "INFO"
+        self.__isThread = False
+        self.__loggerLevel = "INFO"
 
     def client_mode(self):
-        return self._client_mode
+        return self._clientMode
+
+    def is_sequence_send(self) ->bool:
+        return self._serialSend
+
+    def serial_send(self, serialSend:bool):
+        self._serialSend = serialSend
+        return self
+
+    def is_nolock_send(self) -> bool:
+        return self._nolockSend
+
+    def nolock_send(self, nolockSend:bool):
+        self._nolockSend = nolockSend
+        return self
 
     def get_stream_manger(self) -> StreamManger:
         return self._streamManger
@@ -67,115 +86,130 @@ class ConfigBase(Config, ABC):
     def get_codec(self):
         return self._codec
 
-    def codec(self, codec):
-        assert codec is None
-        self._codec = codec
-        return self
 
     def get_fragment_handler(self):
         return self._fragmentHandler
 
     def fragment_handler(self, fragmentHandler):
-        assert fragmentHandler is None
-        if fragmentHandler is not None:
-            self._fragmentHandler = fragmentHandler
+        Asserts.assert_null("fragmentHandler", fragmentHandler);
+
+        self._fragmentHandler = fragmentHandler
+        return self
+
+    def get_fragment_size(self) -> int:
+        return self._fragment_size
+
+    def fragment_size(self, fragmentSize:int):
+        if fragmentSize > Constants.MAX_SIZE_DATA:
+            raise SocketDException("The parameter fragmentSize cannot > 16m")
+
+        if fragmentSize < Constants.MIN_FRAGMENT_SIZE:
+            raise SocketDException("The parameter fragmentSize cannot < 1k")
+
+        self._fragment_size = fragmentSize
         return self
 
     def gen_id(self) -> str:
         return self._idGenerator()
 
     def id_generator(self, idGenerator: IdGenerator):
-        if idGenerator is not None:
-            self._idGenerator = idGenerator
+        Asserts.assert_null("idGenerator", idGenerator);
+
+        self._idGenerator = idGenerator
         return self
 
     def get_ssl_context(self) -> ssl.SSLContext:
         return self._sslContext
 
-    def ssl_context(self, ssl_context: ssl.SSLContext):
-        self._sslContext = ssl_context
+    def ssl_context(self, sslContext: ssl.SSLContext):
+        self._sslContext = sslContext
         return self
 
-    def get_executor(self):
-        if self._executor is None:
-            __nThreads = self._core_threads if self.client_mode() else self._max_threads
-            self._executor = ThreadPoolExecutor(max_workers=__nThreads, thread_name_prefix="socketd-channelExecutor-")
-        return self._executor
+    def get_exchange_executor(self):
+        if self._exchangeExecutor is None:
+            __nThreads = self._exchangeThreads
+            self._exchangeExecutor = ThreadPoolExecutor(max_workers=__nThreads, thread_name_prefix="socketd-exchangeExecutor-")
+        return self._exchangeExecutor
 
-    def executor(self, executor):
-        self._executor = executor
+    def exchange_executor(self, exchangeExecutor):
+        self._exchangeExecutor = exchangeExecutor
         return self
 
-    def get_core_threads(self):
-        return self._core_threads
+    def get_io_threads(self):
+        return self._ioThreads
 
-    def core_threads(self, core_threads):
-        self._core_threads = core_threads
+    def io_threads(self, ioThreads):
+        self._ioThreads = ioThreads
         return self
 
-    def get_max_threads(self):
-        return self._max_threads
+    def get_codec_threads(self):
+        return self._codecThreads
 
-    def max_threads(self, max_threads):
-        self._max_threads = max_threads
+    def codec_threads(self, codecThreads):
+        self._codecThreads = codecThreads
+        return self
+
+    def get_exchange_threads(self):
+        return self._exchangeThreads
+
+    def exchange_threads(self, exchangeThreads):
+        self._exchangeThreads = exchangeThreads
         return self
 
     def get_read_buffer_size(self) -> int:
-        return self._read_buffer_size
+        return self._readBufferSize
 
     def read_buffer_size(self, read_buffer_size):
-        self._read_buffer_size = read_buffer_size
+        self._readBufferSize = read_buffer_size
         return self
 
     def get_write_buffer_size(self) -> int:
-        return self._write_buffer_size
+        return self._writeBufferSize
 
     def write_buffer_size(self, write_buffer_size):
-        self._write_buffer_size = write_buffer_size
+        self._writeBufferSize = write_buffer_size
         return self
 
-    def max_udp_size(self, maxUdpSize):
-        self._max_udp_size = maxUdpSize
+
+    def get_idle_timeout(self) -> float:
+        return self._idleTimeout
+
+    def idle_timeout(self, _idle_timeout: float):
+        self._idleTimeout = _idle_timeout
         return self
 
     def get_request_timeout(self) -> float:
-        return self._request_timeout
+        return self._requestTimeout
 
     def request_timeout(self, _request_time_out):
-        self._request_timeout = _request_time_out
+        self._requestTimeout = _request_time_out
         return self
 
     def get_stream_timeout(self) -> float:
-        return self._stream_timeout
+        return self._streamTimeout
 
     def stream_timeout(self, _stream_timeout):
-        self._stream_timeout = _stream_timeout
+        self._streamTimeout = _stream_timeout
         return self
 
     def is_thread(self, _is_thread):
-        self.__is_thread = _is_thread
+        self.__isThread = _is_thread
         return self
 
     def get_is_thread(self):
-        return self.__is_thread
-
-    def get_fragment_size(self) -> int:
-        return self._fragment_size
-
-    def get_idle_timeout(self) -> float:
-        return self._idle_timeout
-
-    def idle_timeout(self, _idle_timeout: float):
-        self._idle_timeout = _idle_timeout
-        return self
+        return self.__isThread
 
     def get_logger_level(self) -> str:
-        return self.__logger_level
+        return self.__loggerLevel
 
     def logger_level(self, __logger_level: str):
-        self.__logger_level = __logger_level
+        self.__loggerLevel = __logger_level
         logger.setLevel(__logger_level)
         return self
 
     def get_max_udp_size(self) -> int:
-        return self._max_udp_size
+        return self._maxUdpSize
+
+    def max_udp_size(self, maxUdpSize):
+        self._maxUdpSize = maxUdpSize
+        return self

@@ -68,7 +68,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 # frame: Frame = self.ws_aio_server.get_assistant().read(
                 #     message)
                 # # 采用线程池执行IO耗时任务
-                frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_executor(),
+                frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_exchange_executor(),
                                                           lambda _message: self.ws_aio_server.get_assistant().read(_message), message)
                 if frame is not None:
 

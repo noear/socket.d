@@ -11,19 +11,19 @@ from socketd.transport.utils.StrUtil import StrUtil
 class ClusterClientSession(ClientSession):
 
     def __init__(self, _sessionSet):
-        self._sessionSet: list[ClientSession] = _sessionSet
-        self._sessionId = StrUtil.guid()
+        self.__sessionSet: list[ClientSession] = _sessionSet
+        self.__sessionId = StrUtil.guid()
 
     def get_session_all(self) -> list[ClientSession]:
-        return self._sessionSet
+        return self.__sessionSet
 
     def get_session_any(self, diversionOrNull:str) ->  ClientSession:
         session:ClientSession
 
         if diversionOrNull:
-            session = LoadBalancer.getAnyByPoll(self._sessionSet)
+            session = LoadBalancer.get_any_by_poll(self.__sessionSet)
         else:
-            session = LoadBalancer.getAnyByHash(self._sessionSet, diversionOrNull)
+            session = LoadBalancer.get_any_by_hash(self.__sessionSet, diversionOrNull)
 
         if session:
             return session
@@ -31,44 +31,50 @@ class ClusterClientSession(ClientSession):
             raise SocketDException("No session is available!")
 
     def is_valid(self) -> bool:
-        for session in self._sessionSet:
+        for session in self.__sessionSet:
             if session.is_valid():
                 return True
         return False
 
     def is_closing(self) ->bool:
-        for session in self._sessionSet:
+        for session in self.__sessionSet:
             if session.is_closing():
                 return True
         return False
 
     def get_session_id(self) -> str:
-        return self._sessionId
+        return self.__sessionId
 
     async def send(self, event: str, content: Entity) -> SendStream:
-        return await self.get_session_any(None).send(event, content)
+        sender = self.get_session_any(None)
+
+        return await sender.send(event, content)
 
     async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
-        return await self.get_session_any(None).send_and_request(event, content, timeout)
+        sender = self.get_session_any(None)
+
+        return await sender.send_and_request(event, content, timeout)
 
     async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0) -> SubscribeStream:
-        return await self.get_session_any(None).send_and_subscribe(event, content, timeout)
+        sender = self.get_session_any(None)
+
+        return await sender.send_and_subscribe(event, content, timeout)
 
     async def close_starting(self):
-        for session in self._sessionSet:
+        for session in self.__sessionSet:
             try:
                 await session.close_starting()
             except RuntimeError as e:
                 pass
 
     async def close(self):
-        for session in self._sessionSet:
+        for session in self.__sessionSet:
             try:
                 await session.close()
             except RuntimeError as e:
                 pass
 
     def reconnect(self):
-        for session in self._sessionSet:
+        for session in self.__sessionSet:
             if not session.is_valid():
                 session.reconnect()

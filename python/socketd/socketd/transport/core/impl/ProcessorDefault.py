@@ -136,7 +136,7 @@ class ProcessorDefault(Processor, ABC):
     async def on_message(self, channel: ChannelInternal, message: Message):
         AsyncUtil.thread_loop(self.listener.on_message(
             channel.get_session(), message),
-            pool=channel.get_config().get_executor())
+            pool=channel.get_config().get_exchange_executor())
 
     def on_close(self, channel: ChannelInternal):
         self.listener.on_close(channel.get_session())

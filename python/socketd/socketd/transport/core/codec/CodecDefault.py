@@ -46,7 +46,7 @@ class CodecDefault(Codec):
             Asserts.assert_size("sid", len(sidB), Constants.MAX_SIZE_SID)
             Asserts.assert_size("event", len(event), Constants.MAX_SIZE_EVENT)
             Asserts.assert_size("metaString", len(metaStringB), Constants.MAX_SIZE_META_STRING)
-            Asserts.assert_size("data", frame.message.entity().data_size(), Constants.MAX_SIZE_FRAGMENT)
+            Asserts.assert_size("data", frame.message.entity().data_size(), Constants.MAX_SIZE_DATA)
 
             target: CodecWriter = factory(len1)
 
@@ -97,11 +97,11 @@ class CodecDefault(Codec):
             # 2. decode body
             dataRealSize = len0 - _reader.position()
             data: Optional[bytearray] = None
-            if dataRealSize > Constants.MAX_SIZE_FRAGMENT:
+            if dataRealSize > Constants.MAX_SIZE_DATA:
                 # exceeded the limit, read and discard the bytes
-                data = bytearray(Constants.MAX_SIZE_FRAGMENT)
+                data = bytearray(Constants.MAX_SIZE_DATA)
                 _reader.get_buffer().readinto(data)
-                for i in range(dataRealSize - Constants.MAX_SIZE_FRAGMENT):
+                for i in range(dataRealSize - Constants.MAX_SIZE_DATA):
                     _reader.get_buffer().read()
             else:
                 data = bytearray(_reader.get_buffer().read(dataRealSize))

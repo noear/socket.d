@@ -5,6 +5,7 @@ from typing import TypeVar, Optional
 from websockets import WebSocketCommonProtocol
 
 from socketd.transport.core import Entity
+from socketd.transport.core.Asserts import Asserts
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
 from socketd.transport.core.Message import MessageInternal, Message
@@ -13,7 +14,6 @@ from socketd.transport.core.entity.MessageBuilder import MessageBuilder
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
-from socketd.transport.utils.AssertsUtil import AssertsUtil
 from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Flags import Flags
@@ -57,7 +57,8 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         return self._assistant.get_local_address(self._source)
 
     async def send(self, frame: Frame, stream: StreamInternal) -> None:
-        AssertsUtil.assert_closed(self)
+        Asserts.assert_closed(self)
+
         if self.get_config().client_mode():
             log.debug(f"C-SEN:{frame}")
         else:
@@ -100,7 +101,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
                 await stream.on_reply(frame.message())
             else:
-                await asyncio.get_running_loop().run_in_executor(self.get_config().get_executor(),
+                await asyncio.get_running_loop().run_in_executor(self.get_config().get_exchange_executor(),
                                                                  lambda _m: asyncio.run(stream.on_reply(_m)),
                                                                  frame.message())
         else:

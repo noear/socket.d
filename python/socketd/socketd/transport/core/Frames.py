@@ -12,7 +12,7 @@ from socketd.transport.core.entity.StringEntity import StringEntity
 class Frames:
 
     @staticmethod
-    def connectFrame(sid:str, url:str, metaMap: dict[str,str]) -> Frame:
+    def connect_frame(sid:str, url:str, metaMap: dict[str,str]) -> Frame:
         entity = StringEntity(url)
         # 添加框架版本号
         entity.meta_map_put(metaMap)
@@ -23,7 +23,7 @@ class Frames:
         return Frame(Flags.Connect, message)
 
     @staticmethod
-    def connackFrame(handshake: HandshakeInternal):
+    def connack_frame(handshake: HandshakeInternal):
         entity = EntityDefault()
         # 添加框架版本号
         entity.meta_map_put(handshake.get_out_meta_map())
@@ -37,19 +37,19 @@ class Frames:
         return Frame(Flags.Connack, message)
 
     @staticmethod
-    def pingFrame():
+    def ping_frame():
         return Frame(Flags.Ping, None)
 
     @staticmethod
-    def pongFrame():
+    def pong_frame():
         return Frame(Flags.Pong, None)
 
     @staticmethod
-    def closeFrame():
+    def close_frame():
         return Frame(Flags.Close, None)
 
     @staticmethod
-    def alarmFrame(_from: Message, alarm: str):
+    def alarm_frame(_from: Message, alarm: str):
         messageBuilder = MessageBuilder()
 
         if _from:

@@ -18,10 +18,10 @@ class ChannelBase(Channel, ABC):
         self.config = config
         self.requests = AtomicRefer(0)
         self.handshake = None
-        self.live_time = 0
+        self.liveTime = 0
         self.attachments = {}
         self.__lock: threading.Lock = threading.Lock()
-        self.loop: Optional[asyncio.AbstractEventLoop] = None
+        self.__loop: Optional[asyncio.AbstractEventLoop] = None
 
     def __enter__(self):
         return self.__lock.acquire()
@@ -45,25 +45,25 @@ class ChannelBase(Channel, ABC):
         return self.handshake
 
     def set_live_time(self):
-        self.live_time = int(time.time() * 1000)
+        self.liveTime = int(time.time() * 1000)
 
     def get_live_time(self):
-        return self.live_time
+        return self.liveTime
 
     async def send_connect(self, uri, metaMap: dict[str,str]):
-        await self.send(Frames.connectFrame(self.config.gen_id(), uri, metaMap), None)
+        await self.send(Frames.connect_frame(self.config.gen_id(), uri, metaMap), None)
 
     async def send_connack(self, connect_message):
-        await self.send(Frames.connackFrame(self.get_handshake()), None)
+        await self.send(Frames.connack_frame(self.get_handshake()), None)
 
     async def send_ping(self):
-        await self.send(Frames.pingFrame(), None)
+        await self.send(Frames.ping_frame(), None)
 
     async def send_pong(self):
-        await self.send(Frames.pongFrame(), None)
+        await self.send(Frames.pong_frame(), None)
 
     async def send_close(self):
-        await self.send(Frames.closeFrame(), None)
+        await self.send(Frames.close_frame(), None)
 
     async def close(self, code: int):
         self.closeCode = code
@@ -76,8 +76,8 @@ class ChannelBase(Channel, ABC):
         pass
 
     def get_loop(self) -> asyncio.AbstractEventLoop:
-        return self.loop
+        return self.__loop
 
     def set_loop(self, loop) -> None:
-        self.loop = loop
+        self.__loop = loop
 

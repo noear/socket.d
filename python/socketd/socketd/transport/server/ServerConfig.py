@@ -39,9 +39,9 @@ class ServerConfig(ConfigBase):
                f"port={self.__port}, " \
                f"coreThreads='{self._coreThreads}', " \
                f"maxThreads={self._maxThreads}, " \
-               f"idleTimeout={self._idle_timeout}, "\
-               f"requestTimeout={self._request_timeout}, " \
-               f"streamTimeout={self._stream_timeout}, " \
+               f"idleTimeout={self._idleTimeout}, "\
+               f"requestTimeout={self._requestTimeout}, " \
+               f"streamTimeout={self._streamTimeout}, " \
                f"readBufferSize={self.__read_buffer_size}, " \
                f"writeBufferSize={self.__write_buffer_size}, " \
-               f"maxUdpSize={self._max_udp_size}}}"
+               f"maxUdpSize={self._maxUdpSize}}}"

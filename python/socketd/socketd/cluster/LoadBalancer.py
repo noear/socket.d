@@ -1,3 +1,4 @@
+from threading import RLock
 from typing import List
 
 from socketd.transport.client.ClientSession import ClientSession
@@ -5,26 +6,32 @@ from socketd.transport.utils.StrUtil import StrUtil
 
 
 class LoadBalancer:
-    _roundCounter:int = 0
+    __roundCounter:int = 0
+    __lock:RLock = RLock()
 
     @staticmethod
-    def roundCounterGet(self)->int:
-        self._roundCounter += 1
-        if self._roundCounter > 999_999:
-            self._roundCounter = 0
-        return self._roundCounter
+    def round_counter_get(self)->int:
+        self.__lock.acquire()
+
+        try:
+            self.__roundCounter += 1
+            if self.__roundCounter > 999_999:
+                self.__roundCounter = 0
+            return self.__roundCounter
+        finally:
+            self.__lock.release()
 
 
     @staticmethod
-    def getAnyByPoll(self, coll:List[ClientSession]) -> ClientSession:
-        return self.getAny(coll, self.roundCounterGet())
+    def get_any_by_poll(self, coll:List[ClientSession]) -> ClientSession:
+        return self.get_any(coll, self.round_counter_get())
 
     @staticmethod
-    def getAnyByHash(self, coll:List[ClientSession], diversion:str) -> ClientSession:
-        return self.getAny(coll, StrUtil.hash_code(diversion))
+    def get_any_by_hash(self, coll:List[ClientSession], diversion:str) -> ClientSession:
+        return self.get_any(coll, StrUtil.hash_code(diversion))
 
     @staticmethod
-    def getAny(self, coll:list[ClientSession], random:int) -> ClientSession:
+    def get_any(self, coll:list[ClientSession], random:int) -> ClientSession:
         if coll == None or coll.count() == 0:
             return None
         else:
@@ -45,7 +52,7 @@ class LoadBalancer:
 
 
     @staticmethod
-    def getFirst(self, coll:List[ClientSession]):
+    def get_first(self, coll:List[ClientSession]):
         if coll == None or coll.count() == 0:
             return None
         else:

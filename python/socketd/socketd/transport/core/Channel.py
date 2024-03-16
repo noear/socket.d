@@ -8,6 +8,7 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Message import Message
 from abc import abstractmethod
 
+from socketd.transport.stream.StreamManger import StreamInternal
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
 
@@ -85,11 +86,11 @@ class Channel:
         ...
 
     @abstractmethod
-    async def send(self, frame: 'Frame', stream: 'StreamInternal') -> None:
+    async def send(self, frame: 'Frame', stream: StreamInternal) -> None:
         ...
 
     @abstractmethod
-    async def retrieve(self, frame: Frame, stream: 'StreamInternal') -> None:
+    async def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
         ...
 
     @abstractmethod

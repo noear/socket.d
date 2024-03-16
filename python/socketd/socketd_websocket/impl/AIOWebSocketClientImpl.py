@@ -108,7 +108,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     """服务端主动关闭"""
                     # await self.close()
                     log.debug("{sessionId} 服务端主动关闭",
-                              sessionId=self.channel.get_session().get_session_id())
+                              sessionId=self.channel.get_session().session_id())
         except CancelledError as c:
             # 超时自动推出
             log.debug(c)

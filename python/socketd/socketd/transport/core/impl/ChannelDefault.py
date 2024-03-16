@@ -106,7 +106,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                                                                  frame.message())
         else:
             log.debug(
-                f"{self.get_config().get_role_name()} stream not found, sid={frame.message().sid()}, sessionId={self.get_session().get_session_id()}")
+                f"{self.get_config().get_role_name()} stream not found, sid={frame.message().sid()}, sessionId={self.get_session().session_id()}")
 
     def get_session(self) -> Session:
         if self._session is None:
@@ -120,7 +120,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
             await self._assistant.close(self._source)
         except Exception as e:
             log.warning(f"{self.get_config().get_role_name()} channel close error, "
-                        f"sessionId={self.get_session().get_session_id()} : {e}")
+                        f"sessionId={self.get_session().session_id()} : {e}")
 
     def set_session(self, __session: Session):
         self._session = __session

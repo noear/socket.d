@@ -25,7 +25,7 @@ class ClientChannel(ChannelBase, ABC):
         self.__connector: ClientConnector = connector
         self.__sessionShell = SessionDefault(self)
 
-        self.__real: ChannelInternal = None
+        self.__real: ChannelInternal|None = None
         self.__heartbeatScheduledFuture: Future | None = None
 
         if client.get_heartbeat_handler():
@@ -66,7 +66,7 @@ class ClientChannel(ChannelBase, ABC):
                 return
 
             if Asserts.is_closed_and_end(self.__real):
-                logger.debug("Client channel is closed (pause heartbeat), sessionId=" + self.get_session().get_session_id())
+                logger.debug("Client channel is closed (pause heartbeat), sessionId=" + self.get_session().session_id())
                 self.close(self.__real.is_closed())
                 return
 
@@ -115,7 +115,7 @@ class ClientChannel(ChannelBase, ABC):
         try:
             await self.internalCheck()
 
-            if not self.__real:
+            if self.__real is None:
                 raise SocketDChannelException("Client channel is not connected")
 
             await self.__real.send(frame, stream)
@@ -183,7 +183,7 @@ class ClientChannel(ChannelBase, ABC):
 
 
     async def internalCheck(self):
-        if self.__real or self.__real.is_valid() == False:
+        if self.__real is None or self.__real.is_valid() == False:
             self.connect()
             return True
         else:

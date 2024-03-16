@@ -17,7 +17,7 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    def get_session_id(self) -> str:
+    def session_id(self) -> str:
         ...
 
     @abc.abstractmethod
@@ -25,7 +25,7 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
+    async def send_and_request(self, event: str, content: Entity, timeout: int = 0) -> RequestStream:
         ...
 
     @abc.abstractmethod

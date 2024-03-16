@@ -18,11 +18,11 @@ class CodecDefault(Codec):
     def __init__(self, config: Config):
         self.config = config
 
-    def write(self, frame: Frame, factory: Callable[[int], CodecWriter]) -> CodecWriter:
+    def write(self, frame: Frame, writerFactory: Callable[[int], CodecWriter]) -> CodecWriter:
         if frame.message is None:
             # length (flag + int.bytes)
             _len = 2 * 4
-            target: CodecWriter = factory(_len)
+            target: CodecWriter = writerFactory(_len)
 
             # length
             target.put_int(_len)
@@ -48,7 +48,7 @@ class CodecDefault(Codec):
             Asserts.assert_size("metaString", len(metaStringB), Constants.MAX_SIZE_META_STRING)
             Asserts.assert_size("data", frame.message.entity().data_size(), Constants.MAX_SIZE_DATA)
 
-            target: CodecWriter = factory(len1)
+            target: CodecWriter = writerFactory(len1)
 
             # length
             target.put_int(len1)

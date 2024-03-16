@@ -34,7 +34,7 @@ class SessionBase(Session, ABC):
             self._attr_map = {}
         self._attr_map[name] = value
 
-    def get_session_id(self) -> str:
+    def session_id(self) -> str:
         if self._session_id is None:
             self._session_id = self.generate_id()
 

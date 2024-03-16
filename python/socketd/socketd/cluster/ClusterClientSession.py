@@ -42,7 +42,7 @@ class ClusterClientSession(ClientSession):
                 return True
         return False
 
-    def get_session_id(self) -> str:
+    def session_id(self) -> str:
         return self.__sessionId
 
     async def send(self, event: str, content: Entity) -> SendStream:

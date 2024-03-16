@@ -58,7 +58,7 @@ class ProcessorDefault(Processor, ABC):
         else:
             if channel.get_handshake() is None:
                 await channel.close(Constants.CLOSE1001_PROTOCOL_CLOSE)
-                self.log.warning("Channel handshake is None, sessionId={}", channel.get_session().get_session_id())
+                self.log.warning("Channel handshake is None, sessionId={}", channel.get_session().session_id())
                 return
 
             channel.set_live_time()

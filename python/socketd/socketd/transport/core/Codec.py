@@ -3,31 +3,11 @@ from abc import ABC, abstractmethod
 from io import BytesIO
 from typing import Type, TypeVar, Callable
 
-from socketd.transport.core.codec import Buffer
 from socketd.transport.core.Frame import Frame
 
 In = TypeVar("In", bound=Type)
 Out = TypeVar("Out", bound=Type)
 
-
-class Codec(ABC):
-    """
-    编解码器
-    """
-
-    @abstractmethod
-    def read(self, buffer: Buffer) -> Frame:
-        """
-        编码
-        """
-        pass
-
-    @abstractmethod
-    def write(self, frame, target: Callable) -> 'CodecWriter':
-        """
-        解码
-        """
-        pass
 
 
 class CodecReader(ABC):
@@ -64,7 +44,29 @@ class CodecWriter(ABC):
     def flush(self): ...
 
     @abstractmethod
-    def get_buffer(self) -> BytesIO: ...
+    def close(self): ...
 
     @abstractmethod
-    def close(self): ...
+    def get_buffer(self) -> BytesIO: ...
+
+
+
+class Codec(ABC):
+    """
+    编解码器
+    """
+
+    @abstractmethod
+    def read(self, reader: CodecReader) -> Frame:
+        """
+        编码
+        """
+        pass
+
+    @abstractmethod
+    def write(self, frame, writerFactory: Callable[[int], CodecWriter]) -> CodecWriter:
+        """
+        解码
+        """
+        pass
+

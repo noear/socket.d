@@ -77,7 +77,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                         """客户端主动关闭"""
                         await self.on_close(conn)
                         log.debug("{sessionId} 主动退出",
-                                  sessionId=conn.get_attachment().get_session().get_session_id())
+                                  sessionId=conn.get_attachment().get_session().session_id())
                         break
             except asyncio.CancelledError as c:
                 log.warning(c)

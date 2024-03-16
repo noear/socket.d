@@ -13,17 +13,22 @@ class Frames:
     @staticmethod
     def connectFrame(sid:str, url:str, metaMap: dict):
         entity = StringEntity(url)
-        entity.meta_put_all(metaMap)
+        entity.meta_map_put(metaMap)
         entity.meta_put(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
-        return Frame(Flags.Connect, MessageBuilder().sid(sid).event(url).entity(entity).build())
+
+        message = MessageBuilder().sid(sid).event(url).entity(entity).build()
+
+        return Frame(Flags.Connect, message)
 
     @staticmethod
     def connackFrame(connectMessage: Message):
         entity = EntityDefault()
         entity.meta_put(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
         entity.data_set(connectMessage.entity().data())
-        return Frame(Flags.Connack, MessageBuilder().sid(connectMessage.sid()).event(
-            connectMessage.event()).entity(entity).build())
+
+        message = MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build()
+
+        return Frame(Flags.Connack, message)
 
     @staticmethod
     def pingFrame():

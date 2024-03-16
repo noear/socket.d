@@ -79,10 +79,8 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                         if isinstance(fragmentEntity, MessageInternal):
                             fragmentFrame = Frame(frame.flag(), fragmentEntity)
                         else:
-                            fragmentFrame = Frame(frame.flag(), MessageBuilder().build()
-                                                  .flag(frame.flag())
-                                                  .sid(message.sid())
-                                                  .entity(fragmentEntity))
+                            messageNew = MessageBuilder().flag(frame.flag()).sid(message.sid()).entity(fragmentEntity).build()
+                            fragmentFrame = Frame(frame.flag(), messageNew)
                         await self._assistant.write(self._source, fragmentFrame)
 
                     await self.get_config().get_fragment_handler().split_fragment(self,

@@ -106,12 +106,11 @@ class CodecDefault(Codec):
             else:
                 data = bytearray(_reader.get_buffer().read(dataRealSize))
 
-            message = MessageBuilder().sid(sid).event(event).entity(
+            message = MessageBuilder().flag(Flags.of(flag)).sid(sid).event(event).entity(
                 EntityDefault().meta_string_set(metaString).data_set(data)
             ).build()
-            message.flag = Flags.of(flag)
             _reader.close()
-            return Frame(message.flag, message)
+            return Frame(message.flag(), message)
 
     def decodeString(self, reader: CodecReader, buf: Buffer, maxLen: int) -> str:
         b = bytearray(reader.get_buffer().readline(maxLen).replace(b'\n', b''))

@@ -27,10 +27,6 @@ class Message(Reply, ABC):
         ...
 
     @abstractmethod
-    def sid(self) -> str:
-        ...
-
-    @abstractmethod
     def event(self) -> str:
         ...
 
@@ -41,4 +37,5 @@ class Message(Reply, ABC):
 
 class MessageInternal(Message, ABC):
     @abstractmethod
-    def flag(self) -> int: ...
+    def flag(self) -> int:
+        ...

@@ -50,7 +50,7 @@ class ChannelBase(Channel, ABC):
     def get_live_time(self):
         return self.live_time
 
-    async def send_connect(self, uri, metaMap: dict):
+    async def send_connect(self, uri, metaMap: dict[str,str]):
         await self.send(Frames.connectFrame(self.config.gen_id(), uri, metaMap), None)
 
     async def send_connack(self, connect_message):
@@ -69,7 +69,7 @@ class ChannelBase(Channel, ABC):
         self.closeCode = code
         self.attachments.clear()
 
-    def get_config(self) -> 'Config':
+    def get_config(self) -> Config:
         return self.config
 
     def is_valid(self) -> bool:

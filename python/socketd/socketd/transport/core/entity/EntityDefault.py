@@ -26,12 +26,6 @@ class EntityDefault(Entity):
         self._meta_stringChanged = True
         return self
 
-    def meta_put_all(self, metaMap: dict):
-        if self._meta_map:
-            self._meta_map.update(metaMap)
-            self._meta_stringChanged = True
-        return self
-
     def meta_string_set(self, meta_string):
         self._meta_map = None
         self._meta_string = meta_string
@@ -49,10 +43,9 @@ class EntityDefault(Entity):
             self._meta_stringChanged = False
         return self._meta_string
 
-    def meta_map_put(self, meta_map:dict[str,str]):
-        if meta_map:
-            for k in meta_map.keys():
-                self.meta_map()[k] = meta_map[k] #䨱盖相同k的数据即可
+    def meta_map_put(self, metaMap:dict[str,str]):
+        if metaMap:
+            self.meta_map().update(metaMap)
             self._meta_stringChanged = True
         return self
 

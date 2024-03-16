@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 
 from socketd.transport.core.Codec import Codec
-from socketd.transport.core.IdGenerator import IdGenerator
 from socketd.transport.core.fragment import FragmentHandler
 from socketd.transport.stream.StreamManger import StreamManger
 
@@ -41,7 +40,7 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def gen_id(self) -> IdGenerator:
+    def gen_id(self) -> str:
         """
         生成id
         """

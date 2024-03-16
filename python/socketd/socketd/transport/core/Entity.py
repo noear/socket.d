@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Dict, Optional, Any
 from io import BytesIO
 
@@ -31,7 +31,6 @@ class Entity:
     def data_as_string(self) -> str:
         raise NotImplementedError
 
-
     def data_as_bytes(self) -> bytes:
         raise NotImplementedError
 
@@ -42,7 +41,10 @@ class Entity:
         raise NotImplementedError
 
 class Reply(Entity, ABC):
+    @abstractmethod
+    def is_end(self) -> bool:
+        ...
 
-    def is_end(self) -> bool: ...
-
-    def sid(self): ...
+    @abstractmethod
+    def sid(self) -> str:
+        ...

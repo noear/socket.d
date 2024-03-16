@@ -67,18 +67,14 @@ class SessionDefault(SessionBase, ABC):
         return stream
 
     async def reply(self, from_msg: Message, content: Entity):
-        await self._channel.send(Frame(Flags.Reply,
-                                       MessageBuilder().build()
-                                       .set_sid(from_msg.sid())
-                                       .set_event(from_msg.event())
-                                       .set_entity(content)), None)
+        message = MessageBuilder().sid(from_msg.sid()).event(from_msg.event()).entity(content).build()
+
+        await self._channel.send(Frame(Flags.Reply, message), None)
 
     async def reply_end(self, from_msg: Message, content: Entity):
-        await self._channel.send(Frame(Flags.ReplyEnd,
-                                       MessageBuilder().build()
-                                       .set_sid(from_msg.sid())
-                                       .set_event(from_msg.event())
-                                       .set_entity(content)), None)
+        message = MessageBuilder().sid(from_msg.sid()).event(from_msg.event()).entity(content).build()
+
+        await self._channel.send(Frame(Flags.ReplyEnd, message), None)
 
     async def reconnect(self):
         await self._channel.reconnect()

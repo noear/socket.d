@@ -39,8 +39,8 @@ public class HandshakeDefault implements HandshakeInternal {
         this.uri = URI.create(linkUrl);
         this.path = uri.getPath();
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
-        this.outMetaMap = new ConcurrentHashMap<>();
         this.paramMap = new ConcurrentHashMap<>();
+        this.outMetaMap = new ConcurrentHashMap<>();
 
         //添加连接参数
         String queryString = uri.getQuery();

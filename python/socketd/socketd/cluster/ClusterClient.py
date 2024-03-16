@@ -23,23 +23,29 @@ class ClusterClient(Client):
 
         self._listener = None
 
-    def connectHandler(self, connectHandler: ClientConnectHandler)  -> 'Client':
+    def connectHandler(self, connectHandler: ClientConnectHandler)  -> Client:
         self._connectHandler = connectHandler
         return self
 
-    def heartbeatHandler(self, heartbeatHandler: ClientHeartbeatHandler) -> 'Client':
+    def heartbeatHandler(self, heartbeatHandler: ClientHeartbeatHandler) -> Client:
         self._heartbeatHandler = heartbeatHandler
         return self
 
-    def config(self, configHandler: ClientConfigHandler) -> 'Client':
+    def config(self, configHandler: ClientConfigHandler) -> Client:
         self._configHandler = configHandler
         return self
 
-    def listen(self, listener: Listener) -> 'Client':
+    def listen(self, listener: Listener) -> Client:
         self._listener = listener
         return self
 
-    async def _open(self, is_throw):
+    def open(self) -> Awaitable[ClientSession]:
+        return self._open_do(False)
+
+    def openOrThrow(self) -> Awaitable[ClientSession]:
+        return self._open_do(True)
+
+    async def _open_do(self, is_throw):
         sessions: List[Session] = []
         exchangeExecutor = None
         for urls in self._serverUrls:
@@ -66,8 +72,4 @@ class ClusterClient(Client):
                 sessions.extend(await asyncio.gather(*[client.openOrThrow() if is_throw else client.open()]))
         return ClusterClientSession(sessions)
 
-    def open(self) -> Awaitable[ClientSession]:
-        return self._open(False)
 
-    def openOrThrow(self) -> Awaitable[ClientSession]:
-        return self._open(True)

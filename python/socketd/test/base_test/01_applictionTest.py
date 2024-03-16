@@ -28,10 +28,10 @@ async def application_test():
     # 发送并请求（且，等待一个答复）
     req: RequestStream = await client_session.send_and_request("demo", StringEntity("你好"), 100)
     entity: Entity = await req.await_result()
-    print(entity.get_data_as_string())
+    print(entity.data_as_string())
 
     async def send_and_subscribe_test(_entity: Entity):
-        logger.debug(f"c::subscribe::{_entity.get_data_as_string()} {_entity}")
+        logger.debug(f"c::subscribe::{_entity.data_as_string()} {_entity}")
 
     # 发送并订阅（且，接收零个或多个答复流）
     req: SubscribeStream = await client_session.send_and_subscribe("demo", StringEntity("hi"), 100)

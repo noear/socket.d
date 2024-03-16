@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from socketd.transport.core.Config import Config
 from socketd.transport.core.Codec import Codec
 from socketd.transport.core.IdGenerator import IdGenerator, GuidGenerator
-from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer
+from socketd.transport.core.codec.CodecDefault import CodecDefault
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandlerDefault
 
@@ -21,7 +21,7 @@ class ConfigBase(Config, ABC):
     def __init__(self, client_mode: bool):
         self._client_mode = client_mode
         self._streamManger: StreamManger = StreamMangerDefault(self)
-        self._codec: Codec = CodecByteBuffer(self)
+        self._codec: Codec = CodecDefault(self)
 
         self._charset = "utf-8"
 

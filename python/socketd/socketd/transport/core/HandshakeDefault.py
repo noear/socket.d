@@ -1,7 +1,7 @@
 from typing import Dict
 from urllib.parse import urlparse, parse_qsl
 
-from socketd.transport.core.Costants import EntityMetas
+from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Message import Message, MessageInternal
 
 
@@ -28,13 +28,13 @@ class HandshakeInternal(Handshake):
 class HandshakeDefault(HandshakeInternal):
     def __init__(self, message: MessageInternal):
         self.__source: MessageInternal = message
-        linkUrl = message.get_data_as_string()
+        linkUrl = message.data_as_string()
         if not linkUrl:
-            linkUrl = message.get_event()
+            linkUrl = message.event()
         self.__uri = urlparse(linkUrl)
         self.__path = self.__uri.path
-        self.__entity = message.get_entity()
-        self.__version = self.__entity.get_meta(EntityMetas.META_SOCKETD_VERSION)
+        self.__entity = message.entity()
+        self.__version = self.__entity.meta(EntityMetas.META_SOCKETD_VERSION)
         self.__param_map = self._parse_query_string(self.__uri.query)
 
     def get_uri(self):

@@ -4,21 +4,21 @@ from asyncio import Queue
 from concurrent.futures import ThreadPoolExecutor
 
 from socketd.transport.core.codec import Buffer
-from socketd.transport.core.Costants import Flag
+from socketd.transport.core.Costants import Flags
+from socketd.transport.core.entity.MessageBuilder import MessageBuilder
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.core.entity.StringEntity import StringEntity
-from socketd.transport.core.codec.CodecByteBuffer import CodecByteBuffer
+from socketd.transport.core.codec.CodecDefault import CodecDefault
 from test.uitls import calc_time
 
 
 class CodeTest(unittest.TestCase):
 
     def test01(self):
-        code = CodecByteBuffer(ServerConfig("ws"))
-        b1 = code.write(Frame(Flag.Message,
-                              MessageDefault().set_sid("1700534070000000001")
+        code = CodecDefault(ServerConfig("ws"))
+        b1 = code.write(Frame(Flags.Message,
+                              MessageBuilder().sid("1700534070000000001").build()
                               .set_entity(StringEntity("test"))
                               .set_event("demo")
                               ),
@@ -35,16 +35,16 @@ class CodeTest(unittest.TestCase):
     def test(self):
         b = Buffer(limit=100)
         print(b.size())
-        b.put_int(Flag.Message)
+        b.put_int(Flags.Message)
         print(b.size())
         print(b.getvalue())
         b.flip()
         print(b.getvalue())
         print(b.size())
-        code = CodecByteBuffer(ServerConfig("ws"))
+        code = CodecDefault(ServerConfig("ws"))
         for _ in range(100000):
-            b1 = code.write(Frame(Flag.Message,
-                                  MessageDefault().set_sid("1700534070000000001")
+            b1 = code.write(Frame(Flags.Message,
+                                  MessageBuilder().sid("1700534070000000001").build()
                                   .set_entity(StringEntity("test"))
                                   ),
                             lambda l: Buffer(100))
@@ -60,7 +60,7 @@ class CodeTest(unittest.TestCase):
     @calc_time
     def test_async(self):
         loop = asyncio.get_event_loop()
-        code = CodecByteBuffer(ServerConfig("ws"))
+        code = CodecDefault(ServerConfig("ws"))
 
         async def _test():
             tasks = []
@@ -69,10 +69,10 @@ class CodeTest(unittest.TestCase):
 
             async def _run1():
                 for _ in range(100):
-                    b1 = await loop.run_in_executor(t, lambda _code: _code.write(Frame(Flag.Message,
-                                                                                       MessageDefault().set_sid(
+                    b1 = await loop.run_in_executor(t, lambda _code: _code.write(Frame(Flags.Message,
+                                                                                       MessageBuilder().sid(
                                                                                            "1700534070000000001")
-                                                                                       .set_entity(StringEntity("test"))
+                                                                                       .entity(StringEntity("test")).build()
                                                                                        ),
                                                                                  lambda l: Buffer(100)), (code))
                     b1.seek(0)

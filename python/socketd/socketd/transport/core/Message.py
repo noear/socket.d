@@ -1,9 +1,19 @@
 from abc import ABC, abstractmethod
 
 from .Entity import Entity, Reply
+from .EntityMetas import EntityMetas
 
 
 class Message(Reply, ABC):
+    def at_name(self) -> str:
+        return self.meta("@")
+
+    def range_start(self):
+        return self.meta_as_int(EntityMetas.META_RANGE_START)
+
+    def range_size(self):
+        return self.meta_as_int(EntityMetas.META_RANGE_SIZE)
+
     @abstractmethod
     def is_request(self) -> bool:
         ...
@@ -17,18 +27,18 @@ class Message(Reply, ABC):
         ...
 
     @abstractmethod
-    def get_sid(self) -> str:
+    def sid(self) -> str:
         ...
 
     @abstractmethod
-    def get_event(self) -> str:
+    def event(self) -> str:
         ...
 
     @abstractmethod
-    def get_entity(self) -> Entity:
+    def entity(self) -> Entity:
         ...
 
 
 class MessageInternal(Message, ABC):
     @abstractmethod
-    def get_flag(self) -> int: ...
+    def flag(self) -> int: ...

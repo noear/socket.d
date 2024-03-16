@@ -9,16 +9,18 @@ from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
 from socketd.transport.core.Message import MessageInternal, Message
 from socketd.transport.core.Processor import Processor
+from socketd.transport.core.entity.MessageBuilder import MessageBuilder
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
 from socketd.transport.utils.AssertsUtil import AssertsUtil
 from socketd.transport.core.impl.ChannelBase import ChannelBase
-from socketd.transport.core.Costants import Flag, EntityMetas, Constants
+from socketd.transport.core.Costants import Constants
+from socketd.transport.core.Flags import Flags
+from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Session import Session
 from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.entity.MessageDefault import MessageDefault
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 S = TypeVar("S", bound=WebSocketCommonProtocol)
@@ -39,6 +41,15 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     def is_valid(self) -> bool:
         return self.is_closed() == 0 and self._assistant.is_valid(self._source)
 
+    def is_closing(self) -> bool:
+        return self.closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
+
+    def is_closed(self):
+        if self.closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
+            return self.closeCode
+        else:
+            return 0
+
     def get_remote_address(self) -> str:
         return self._assistant.get_remote_address(self._source)
 
@@ -52,26 +63,26 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         else:
             log.debug(f"S-SEN:{frame}")
         with self:
-            if frame.get_message() is not None:
-                message: Message = frame.get_message()
+            if frame.message() is not None:
+                message: Message = frame.message()
                 # 注册流接收器
                 if stream is not None:
-                    self._streamManger.add_stream(message.get_sid(), stream)
+                    self._streamManger.add_stream(message.sid(), stream)
 
                 # 实体进行分片
-                if message.get_entity() is not None:
-                    if message.get_entity().get_data_size() > self.get_config().get_fragment_size():
-                        message.get_meta_map()[EntityMetas.META_DATA_LENGTH] = str(message.get_data_size())
+                if message.entity() is not None:
+                    if message.entity().data_size() > self.get_config().get_fragment_size():
+                        message.meta_map()[EntityMetas.META_DATA_LENGTH] = str(message.data_size())
 
                     async def __consumer(fragmentEntity: Entity):
                         fragmentFrame: Frame
                         if isinstance(fragmentEntity, MessageInternal):
-                            fragmentFrame = Frame(frame.get_flag(), fragmentEntity)
+                            fragmentFrame = Frame(frame.flag(), fragmentEntity)
                         else:
-                            fragmentFrame = Frame(frame.get_flag(), MessageDefault()
-                                                  .set_flag(frame.get_flag())
-                                                  .set_sid(message.get_sid())
-                                                  .set_entity(fragmentEntity))
+                            fragmentFrame = Frame(frame.flag(), MessageBuilder().build()
+                                                  .flag(frame.flag())
+                                                  .sid(message.sid())
+                                                  .entity(fragmentEntity))
                         await self._assistant.write(self._source, fragmentFrame)
 
                     await self.get_config().get_fragment_handler().split_fragment(self,
@@ -85,18 +96,18 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     async def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
         """接收（接收答复帧）"""
         if stream:
-            if stream.demands() < Constants.DEMANDS_MULTIPLE or frame.get_flag() == Flag.ReplyEnd:
+            if stream.demands() < Constants.DEMANDS_MULTIPLE or frame.flag() == Flags.ReplyEnd:
                 # 如果是单收或者答复结束，则移除流接收器
-                self._streamManger.remove_stream(frame.get_message().get_sid())
+                self._streamManger.remove_stream(frame.message().sid())
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
-                await stream.on_reply(frame.get_message())
+                await stream.on_reply(frame.message())
             else:
                 await asyncio.get_running_loop().run_in_executor(self.get_config().get_executor(),
                                                                  lambda _m: asyncio.run(stream.on_reply(_m)),
-                                                                 frame.get_message())
+                                                                 frame.message())
         else:
             log.debug(
-                f"{self.get_config().get_role_name()} stream not found, sid={frame.get_message().get_sid()}, sessionId={self.get_session().get_session_id()}")
+                f"{self.get_config().get_role_name()} stream not found, sid={frame.message().sid()}, sessionId={self.get_session().get_session_id()}")
 
     def get_session(self) -> Session:
         if self._session is None:

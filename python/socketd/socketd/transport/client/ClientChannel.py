@@ -91,7 +91,7 @@ class ClientChannel(ChannelBase, ABC):
             except Exception as e:
                 if self._connector.autoReconnect():
                     if self._real:
-                        await self._real.close(code=Constants.CLOSE21_ERROR)
+                        await self._real.close(code=Constants.CLOSE2001_ERROR)
                     self._real = None
                 raise e
 
@@ -105,7 +105,7 @@ class ClientChannel(ChannelBase, ABC):
         except Exception as e:
             if self._connector.autoReconnect():
                 if self._real:
-                    await self._real.close(Constants.CLOSE21_ERROR)
+                    await self._real.close(Constants.CLOSE2001_ERROR)
                 self._real = None
             raise SocketDChannelException(f"Client channel send failed {e}")
 
@@ -149,7 +149,7 @@ class ClientChannel(ChannelBase, ABC):
                 self._isConnecting.set(True)
         try:
             if self._real:
-                await self._real.close(Constants.CLOSE22_RECONNECT)
+                await self._real.close(Constants.CLOSE2002_RECONNECT)
 
             self._real: ChannelInternal = await self._client.get_connectHandler()(self._connector)
             self._real.set_session(self._session)

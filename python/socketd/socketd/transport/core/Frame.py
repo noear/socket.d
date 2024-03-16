@@ -1,18 +1,18 @@
+from .Flags import Flags
 from .Message import Message
-from socketd.transport.core.Costants import Flag
 
 
 class Frame:
 
     def __init__(self, flag: int, message: Message):
-        self.flag = flag
-        self.message = message
+        self._flag = flag
+        self._message = message
 
-    def get_flag(self) -> int:
-        return self.flag
+    def flag(self) -> int:
+        return self._flag
 
-    def get_message(self) -> Message:
-        return self.message
+    def message(self) -> Message:
+        return self._message
 
     def __str__(self) -> str:
-        return f"Frame{{flag={Flag.name(self.flag)}, message={self.message}}}"
+        return f"Frame{{flag={Flags.name(self._flag)}, message={self._message}}}"

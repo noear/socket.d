@@ -25,6 +25,10 @@ class Channel:
         ...
 
     @abstractmethod
+    def is_closing(self) -> bool:
+        ...
+
+    @abstractmethod
     def is_closed(self) -> bool:
         ...
 

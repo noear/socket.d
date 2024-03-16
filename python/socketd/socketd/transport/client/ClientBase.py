@@ -74,7 +74,7 @@ class ClientBase(ClientInternal, ABC):
             await clientChannel.connect()
         except Exception as e:
             if isThrow:
-                await clientChannel.close(code=Constants.CLOSE28_OPEN_FAIL)
+                await clientChannel.close(code=Constants.CLOSE2008_OPEN_FAIL)
                 raise SocketDException(f"Socket.D client Connection failed {e}")
         else:
             logger.info(f"Socket.D client successfully connected: {self._config.get_link_url()}")

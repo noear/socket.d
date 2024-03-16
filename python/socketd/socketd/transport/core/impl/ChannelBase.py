@@ -14,7 +14,7 @@ from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
 class ChannelBase(Channel, ABC):
     def __init__(self, config: Config):
-        self._is_closed: Optional[int] = 0
+        self.closeCode: Optional[int] = 0
         self.config = config
         self.requests = AtomicRefer(0)
         self.handshake = None
@@ -34,9 +34,6 @@ class ChannelBase(Channel, ABC):
 
     def set_attachment(self, name, val):
         self.attachments[name] = val
-
-    def is_closed(self):
-        return self._is_closed
 
     def get_requests(self):
         return self.requests
@@ -69,7 +66,7 @@ class ChannelBase(Channel, ABC):
         await self.send(Frames.closeFrame(), None)
 
     async def close(self, code: int):
-        self._is_closed = code
+        self.closeCode = code
         self.attachments.clear()
 
     def get_config(self) -> 'Config':

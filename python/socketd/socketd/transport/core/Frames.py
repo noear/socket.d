@@ -1,9 +1,10 @@
-from socketd.transport.core.Costants import Flag, EntityMetas
+from socketd.transport.core.Flags import Flags
+from socketd.transport.core.EntityMetas import EntityMetas
 from socketd import SocketD
 from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.EntityDefault import EntityDefault
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.entity.MessageDefault import MessageDefault
+from socketd.transport.core.entity.MessageBuilder import MessageBuilder
 from socketd.transport.core.entity.StringEntity import StringEntity
 
 
@@ -14,34 +15,34 @@ class Frames:
         entity = StringEntity(url)
         entity.meta_put_all(metaMap)
         entity.meta_put(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
-        return Frame(Flag.Connect, MessageDefault().set_sid(sid).set_event(url).set_entity(entity))
+        return Frame(Flags.Connect, MessageBuilder().sid(sid).event(url).entity(entity).build())
 
     @staticmethod
     def connackFrame(connectMessage: Message):
         entity = EntityDefault()
         entity.meta_put(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
-        entity.data_set(connectMessage.get_entity().get_data())
-        return Frame(Flag.Connack, MessageDefault().set_sid(connectMessage.get_sid()).set_event(
-            connectMessage.get_event()).set_entity(entity))
+        entity.data_set(connectMessage.entity().data())
+        return Frame(Flags.Connack, MessageBuilder().sid(connectMessage.sid()).event(
+            connectMessage.event()).entity(entity).build())
 
     @staticmethod
     def pingFrame():
-        return Frame(Flag.Ping, None)
+        return Frame(Flags.Ping, None)
 
     @staticmethod
     def pongFrame():
-        return Frame(Flag.Pong, None)
+        return Frame(Flags.Pong, None)
 
     @staticmethod
     def closeFrame():
-        return Frame(Flag.Close, None)
+        return Frame(Flags.Close, None)
 
     @staticmethod
     def alarmFrame(_from: Message, alarm: str):
-        _message = MessageDefault()
+        _messageBuilder = MessageBuilder()
         if _from:
-            _message.set_sid(_from.get_sid()).set_event(_from.get_event())
-            _message.set_entity(StringEntity(alarm).meta_string_set(_from.get_data_as_string()))
+            _messageBuilder.sid(_from.sid()).event(_from.event())
+            _messageBuilder.entity(StringEntity(alarm).meta_string_set(_from.data_as_string()))
         else:
-            _message.set_entity(StringEntity(alarm))
-        return Frame(Flag.Alarm, _message)
+            _messageBuilder.entity(StringEntity(alarm))
+        return Frame(Flags.Alarm, _messageBuilder.build())

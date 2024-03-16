@@ -7,7 +7,7 @@ from websockets.server import WebSocketServer, WebSocketServerProtocol
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
-from socketd.transport.core.Costants import Flag
+from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 
 
@@ -73,7 +73,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 if frame is not None:
 
                     await self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)
-                    if frame.get_flag() == Flag.Close:
+                    if frame.flag() == Flags.Close:
                         """客户端主动关闭"""
                         await self.on_close(conn)
                         log.debug("{sessionId} 主动退出",

@@ -6,7 +6,7 @@ from websockets.legacy.server import WebSocketServer
 from loguru import logger
 from pathlib import Path
 
-from socketd.transport.core.Costants import EntityMetas
+from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Listener import Listener
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.entity.FileEntity import FileEntity
@@ -38,12 +38,12 @@ class SimpleListenerTest(Listener, ABC):
         with self.message_counter:
             self.message_counter.set(self.message_counter.get() + 1)
 
-        file_name = message.get_meta(EntityMetas.META_DATA_DISPOSITION_FILENAME)
+        file_name = message.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME)
         out_file_name = "./test.png"
         if file_name:
             logger.debug(f"file_name {file_name}")
             with open(out_file_name, "wb") as f:
-                f.write(message.get_data_as_bytes())
+                f.write(message.data_as_bytes())
 
         path = Path(out_file_name)
         assert path.exists()

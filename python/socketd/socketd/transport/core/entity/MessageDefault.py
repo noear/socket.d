@@ -2,80 +2,77 @@ from io import BytesIO
 from typing import Optional, Any, Dict
 
 from socketd.transport.core.Entity import Entity
-from socketd.transport.core.Message import Message
-from socketd.transport.core.Costants import Constants, Flag
+from socketd.transport.core.Flags import Flags
+from socketd.transport.core.Message import MessageInternal
 
 
-class MessageDefault(Message):
-    def __init__(self):
-        self.sid = Constants.DEF_SID
-        self.event = Constants.DEF_EVENT
-        self.entity: Optional[Entity] = None
-        self.flag = Flag.Unknown
+class MessageDefault(MessageInternal):
+    def __init__(self, flag:int, sid:str, event:str, entity:Entity):
+        self._flag = flag
+        self._sid = sid
+        self._event = event
+        self._entity = entity
 
-    def get_flag(self):
-        return self.flag
+    def flag(self):
+        return self._flag
 
-    def set_flag(self, flag):
-        self.flag = flag
-        return self
-
-    def set_sid(self, sid):
-        self.sid = sid
-        return self
-
-    def set_event(self, event):
-        self.event = event
-        return self
-
-    def set_entity(self, entity):
-        self.entity = entity
-        return self
+    def is_end(self):
+        return self._flag == Flags.ReplyEnd
 
     def is_request(self):
-        return self.flag == Flag.Request
+        return self._flag == Flags.Request
 
     def is_subscribe(self):
-        return self.flag == Flag.Subscribe
+        return self._flag == Flags.Subscribe
 
     def is_close(self):
-        return self.flag == Flag.Close
+        return self._flag == Flags.Close
 
-    def get_sid(self):
-        return self.sid
+    def sid(self):
+        return self._sid
 
-    def get_event(self):
-        return self.event
+    def event(self):
+        return self._event
 
-    def get_entity(self):
-        return self.entity
+    def entity(self):
+        return self._entity
 
     def __str__(self):
-        return f"Message{{sid='{self.sid}', event='{self.event}', entity={self.entity}}}"
+        return f"Message{{sid='{self._sid}', event='{self._event}', entity={self._entity}}}"
 
-    def get_meta_string(self) -> str:
-        return self.entity.get_meta_string()
+    def meta_string(self) -> str:
+        return self._entity.meta_string()
 
-    def get_meta_map(self) -> Dict[str, str]:
-        return self.entity.get_meta_map()
+    def meta_map(self) -> Dict[str, str]:
+        return self._entity.meta_map()
 
-    def get_meta(self, name: str) -> Optional[Any]:
-        return self.entity.get_meta(name)
+    def meta(self, name: str) -> Optional[Any]:
+        return self._entity.meta(name)
 
-    def get_meta_or_default(self, name: str, default: str) -> str:
-        return self.entity.get_meta_or_default(name, default)
+    def meta_or_default(self, name: str, default: str) -> str:
+        return self._entity.meta_or_default(name, default)
 
-    def get_data(self) -> BytesIO:
-        return self.entity.get_data()
+    def put_meta(self, name:str, val:str):
+        return self._entity.put_meta(name, val)
 
-    def get_data_as_string(self) -> str:
-        return self.entity.get_data_as_string()
+    def del_meta(self, name:str):
+        return self._entity.del_meta(name)
 
-    def get_data_size(self) -> int:
-        return self.entity.get_data_size()
+    def data(self) -> BytesIO:
+        return self._entity.data()
 
-    def get_data_as_bytes(self) -> bytes:
-        return self.entity.get_data_as_bytes()
+    def data_as_string(self) -> str:
+        return self._entity.data_as_string()
 
-    def is_end(self) -> bool:
-        return self.flag == Flag.ReplyEnd
+
+    def data_as_bytes(self) -> bytes:
+        return self._entity.data_as_bytes()
+
+    def data_size(self) -> int:
+        return self._entity.data_size()
+
+    def release(self):
+        if self._entity:
+            self._entity.release()
+
+

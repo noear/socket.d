@@ -45,7 +45,7 @@ class EventListener(Listener):
         if self._do_on_message_handler:
             self._do_on_message_handler(session, message)
 
-        if message_handler := self._do_on_message_routing.get(message.get_event()):
+        if message_handler := self._do_on_message_routing.get(message.event()):
             message_handler(session, message)
 
     def on_close(self, session: Session):

@@ -228,16 +228,6 @@ public class ClientChannel extends ChannelBase implements Channel {
 
 
     /**
-     * 重新连接
-     */
-    @Override
-    public void reconnect() throws IOException {
-        initHeartbeat();
-
-        internalCheck();
-    }
-
-    /**
      * 出错时
      */
     @Override
@@ -253,6 +243,7 @@ public class ClientChannel extends ChannelBase implements Channel {
         RunUtils.runAndTry(() -> heartbeatScheduledFuture.cancel(true));
         RunUtils.runAndTry(() -> connector.close());
         RunUtils.runAndTry(() -> real.close(code));
+        super.close(code);
     }
 
     /**
@@ -263,6 +254,15 @@ public class ClientChannel extends ChannelBase implements Channel {
         return sessionShell;
     }
 
+    /**
+     * 重新连接
+     */
+    @Override
+    public void reconnect() throws IOException {
+        initHeartbeat();
+
+        internalCheck();
+    }
 
     /**
      * 连接

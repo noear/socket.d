@@ -235,6 +235,6 @@ export abstract class SessionBase implements Session {
     abstract close();
 
     protected generateId() {
-        return this._channel.getConfig().getIdGenerator().generate();
+        return this._channel.getConfig().genId();
     }
 }

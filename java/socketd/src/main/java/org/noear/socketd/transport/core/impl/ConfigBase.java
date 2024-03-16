@@ -74,6 +74,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.clientMode = clientMode;
         this.serialSend = false;
         this.nolockSend = false;
+
         this.streamManger = new StreamMangerDefault(this);
         this.codec = new CodecDefault(this);
 
@@ -87,7 +88,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.codecThreads = Runtime.getRuntime().availableProcessors();
         this.exchangeThreads = Runtime.getRuntime().availableProcessors() * 4;
 
-        this.readBufferSize = 1024 * 4; //1k
+        this.readBufferSize = 1024 * 4; //4k
         this.writeBufferSize = 1024 * 4;
 
         this.idleTimeout = 60_000L; //60秒（心跳默认为20秒）

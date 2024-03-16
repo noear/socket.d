@@ -47,8 +47,8 @@ class FragmentAggregatorDefault(FragmentAggregator):
             byte.write(fragment.message.data().getvalue())
 
         return Frame(self.__main.flag(),
-                     MessageBuilder().build()
+                     MessageBuilder()
                      .flag(self.__main.flag())
                      .sid(self.__main.sid())
-                     .entity(EntityDefault().meta_map_put(self.__main.entity().meta_map()))
+                     .entity(EntityDefault().meta_map_put(self.__main.entity().meta_map())).build()
                      )

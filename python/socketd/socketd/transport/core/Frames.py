@@ -1,6 +1,7 @@
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd import SocketD
+from socketd.transport.core.HandshakeDefault import HandshakeInternal
 from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.EntityDefault import EntityDefault
 from socketd.transport.core.Frame import Frame
@@ -11,8 +12,9 @@ from socketd.transport.core.entity.StringEntity import StringEntity
 class Frames:
 
     @staticmethod
-    def connectFrame(sid:str, url:str, metaMap: dict):
+    def connectFrame(sid:str, url:str, metaMap: dict[str,str]) -> Frame:
         entity = StringEntity(url)
+        # 添加框架版本号
         entity.meta_map_put(metaMap)
         entity.meta_put(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
 
@@ -21,12 +23,16 @@ class Frames:
         return Frame(Flags.Connect, message)
 
     @staticmethod
-    def connackFrame(connectMessage: Message):
+    def connackFrame(handshake: HandshakeInternal):
         entity = EntityDefault()
+        # 添加框架版本号
+        entity.meta_map_put(handshake.get_out_meta_map())
         entity.meta_put(EntityMetas.META_SOCKETD_VERSION, SocketD.version())
-        entity.data_set(connectMessage.entity().data())
+        entity.data_set(handshake.get_source().entity().data())
 
-        message = MessageBuilder().sid(connectMessage.sid()).event(connectMessage.event()).entity(entity).build()
+        message = (MessageBuilder().sid(handshake.get_source().sid())
+                   .event(handshake.get_source().event())
+                   .entity(entity).build())
 
         return Frame(Flags.Connack, message)
 
@@ -44,10 +50,11 @@ class Frames:
 
     @staticmethod
     def alarmFrame(_from: Message, alarm: str):
-        _messageBuilder = MessageBuilder()
+        messageBuilder = MessageBuilder()
+
         if _from:
-            _messageBuilder.sid(_from.sid()).event(_from.event())
-            _messageBuilder.entity(StringEntity(alarm).meta_string_set(_from.data_as_string()))
+            messageBuilder.sid(_from.sid()).event(_from.event())
+            messageBuilder.entity(StringEntity(alarm).meta_string_set(_from.data_as_string()))
         else:
-            _messageBuilder.entity(StringEntity(alarm))
-        return Frame(Flags.Alarm, _messageBuilder.build())
+            messageBuilder.entity(StringEntity(alarm))
+        return Frame(Flags.Alarm, messageBuilder.build())

@@ -88,7 +88,7 @@ class SessionDefault(SessionBase, ABC):
         await self._channel.close(Constants.CLOSE2009_USER)
 
     def get_param(self, name: str):
-        return self.get_handshake().get_param(name)
+        return self.get_handshake().param(name)
 
     def pathNew(self, path: str):
         self.__path_new = path
@@ -96,4 +96,4 @@ class SessionDefault(SessionBase, ABC):
     def path(self) -> Optional[str]:
         if path_new := self.__path_new:
             return path_new
-        return self.get_handshake().get_uri().__str__()
+        return self.get_handshake().uri().__str__()

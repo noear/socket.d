@@ -7,47 +7,59 @@ from socketd.transport.core.Message import Message, MessageInternal
 
 class Handshake:
 
-    def get_uri(self): ...
+    def uri(self): ...
 
-    def get_param_map(self) -> Dict[str, str]: ...
+    def param_map(self) -> Dict[str, str]: ...
 
-    def get_param(self, name: str): ...
+    def param(self, name: str): ...
 
-    def get_param_or_default(self, name, value): ...
+    def param_or_default(self, name, value): ...
 
-    def get_version(self): ...
+    def version(self): ...
 
-    def put_param(self, name, value): ...
+    def param_put(self, name, value): ...
 
 
 class HandshakeInternal(Handshake):
-
     def get_source(self) -> MessageInternal: ...
+    def get_out_meta_map(self) -> dict[str,str]:...
 
 
 class HandshakeDefault(HandshakeInternal):
     def __init__(self, message: MessageInternal):
-        self.__source: MessageInternal = message
+        self._source: MessageInternal = message
         linkUrl = message.data_as_string()
         if not linkUrl:
             linkUrl = message.event()
-        self.__uri = urlparse(linkUrl)
-        self.__path = self.__uri.path
-        self.__entity = message.entity()
-        self.__version = self.__entity.meta(EntityMetas.META_SOCKETD_VERSION)
-        self.__param_map = self._parse_query_string(self.__uri.query)
+        self._uri = urlparse(linkUrl)
+        self._path = self._uri.path
+        self._entity = message.entity()
+        self._version = self._entity.meta(EntityMetas.META_SOCKETD_VERSION)
+        self._param_map = self._parse_query_string(self._uri.query)
+        self._out_meta_map:dict[str,str] = {}
 
-    def get_uri(self):
-        return self.__uri
+    def version(self):
+        return self._version
 
-    def get_param_map(self) -> Dict[str, str]:
-        return self.__param_map
+    def uri(self):
+        return self._uri
 
-    def get_param(self, name: str):
-        return self.__param_map.get(name)
+    def path(self):
+        return self._path
 
-    def get_version(self):
-        return self.__version
+    def param_map(self) -> Dict[str, str]:
+        return self._param_map
+
+    def param(self, name: str):
+        return self._param_map.get(name)
+
+    def param_or_default(self, name: str, defVal: str):
+        if data := self._param_map.get(name):
+            return data
+        else:
+            return defVal
+    def param_put(self, name, value):
+        self._param_map[name] = value
 
     @staticmethod
     def _parse_query_string(query_string):
@@ -58,12 +70,8 @@ class HandshakeDefault(HandshakeInternal):
         return params
 
     def get_source(self) -> Message:
-        return self.__source
+        return self._source
+    def get_out_meta_map(self) -> dict[str,str]:
+        return self._out_meta_map
 
-    def get_param_or_default(self, name, value):
-        if data := self.__param_map.get(name):
-            return data
-        return value
 
-    def put_param(self, name, value):
-        self.__param_map[name] = value

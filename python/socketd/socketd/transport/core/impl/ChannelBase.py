@@ -54,7 +54,7 @@ class ChannelBase(Channel, ABC):
         await self.send(Frames.connectFrame(self.config.gen_id(), uri, metaMap), None)
 
     async def send_connack(self, connect_message):
-        await self.send(Frames.connackFrame(connect_message), None)
+        await self.send(Frames.connackFrame(self.get_handshake()), None)
 
     async def send_ping(self):
         await self.send(Frames.pingFrame(), None)

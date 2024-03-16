@@ -18,9 +18,9 @@ class CodeTest(unittest.TestCase):
     def test01(self):
         code = CodecDefault(ServerConfig("ws"))
         b1 = code.write(Frame(Flags.Message,
-                              MessageBuilder().sid("1700534070000000001").build()
-                              .set_entity(StringEntity("test"))
-                              .set_event("demo")
+                              MessageBuilder().sid("1700534070000000001")
+                              .entity(StringEntity("test"))
+                              .event("demo").build()
                               ),
                         lambda l: Buffer(100))
         print(f"size {b1.size()} pos = {b1.tell()}")
@@ -44,8 +44,7 @@ class CodeTest(unittest.TestCase):
         code = CodecDefault(ServerConfig("ws"))
         for _ in range(100000):
             b1 = code.write(Frame(Flags.Message,
-                                  MessageBuilder().sid("1700534070000000001").build()
-                                  .set_entity(StringEntity("test"))
+                                  MessageBuilder().sid("1700534070000000001").entity(StringEntity("test")).build()
                                   ),
                             lambda l: Buffer(100))
             b1.seek(0)
@@ -70,8 +69,7 @@ class CodeTest(unittest.TestCase):
             async def _run1():
                 for _ in range(100):
                     b1 = await loop.run_in_executor(t, lambda _code: _code.write(Frame(Flags.Message,
-                                                                                       MessageBuilder().sid(
-                                                                                           "1700534070000000001")
+                                                                                       MessageBuilder().sid("1700534070000000001")
                                                                                        .entity(StringEntity("test")).build()
                                                                                        ),
                                                                                  lambda l: Buffer(100)), (code))

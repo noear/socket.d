@@ -21,18 +21,13 @@ public interface ClientSession extends Closeable {
 
     /**
      * 是否正在关闭中
-     * */
+     */
     boolean isClosing();
 
     /**
      * 获取会话Id
      */
     String sessionId();
-
-    /**
-     * 手动重连（一般是自动）
-     */
-    void reconnect() throws IOException;
 
     /**
      * 发送
@@ -90,4 +85,15 @@ public interface ClientSession extends Closeable {
      * 关闭开始
      */
     void closeStarting() throws IOException;
+
+    /**
+     * 关闭
+     */
+    void close() throws IOException;
+
+
+    /**
+     * 手动重连（一般是自动）
+     */
+    void reconnect() throws IOException;
 }

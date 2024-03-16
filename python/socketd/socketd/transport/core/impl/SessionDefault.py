@@ -31,13 +31,13 @@ class SessionDefault(SessionBase, ABC):
     def is_closing(self) ->bool:
         return self._channel.is_closing()
 
-    def get_remote_address(self) -> str:
+    def remote_address(self) -> str:
         return self._channel.get_remote_address()
 
-    def get_local_address(self) -> str:
+    def local_address(self) -> str:
         return self._channel.get_local_address()
 
-    def get_handshake(self) -> HandshakeDefault:
+    def handshake(self) -> HandshakeDefault:
         return self._channel.get_handshake()
 
     async def send_ping(self):
@@ -87,13 +87,13 @@ class SessionDefault(SessionBase, ABC):
                 logger.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
         await self._channel.close(Constants.CLOSE2009_USER)
 
-    def get_param(self, name: str):
-        return self.get_handshake().param(name)
+    def param(self, name: str):
+        return self.handshake().param(name)
 
-    def pathNew(self, path: str):
+    def path_new(self, path: str):
         self.__path_new = path
 
     def path(self) -> Optional[str]:
         if path_new := self.__path_new:
             return path_new
-        return self.get_handshake().uri().__str__()
+        return self.handshake().uri().__str__()

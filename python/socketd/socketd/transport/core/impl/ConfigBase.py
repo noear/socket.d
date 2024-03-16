@@ -56,7 +56,7 @@ class ConfigBase(Config, ABC):
     def client_mode(self):
         return self._clientMode
 
-    def is_sequence_send(self) ->bool:
+    def is_serial_send(self) ->bool:
         return self._serialSend
 
     def serial_send(self, serialSend:bool):

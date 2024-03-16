@@ -168,7 +168,7 @@ class ClientChannel(ChannelBase, ABC):
 
             self.__real = await self.__client.get_connect_handler()(self.__connector)
             self.__real.set_session(self.__sessionShell)
-            self.set_handshake(self.__real.get_handshake())
+            self.set_handshake(self.__real.handshake())
         except TimeoutError as t:
             logger.error(f"socketD connect timed out: {t}")
         except Exception as e:

@@ -23,10 +23,6 @@ class Message(Reply, ABC):
         ...
 
     @abstractmethod
-    def is_close(self) -> bool:
-        ...
-
-    @abstractmethod
     def event(self) -> str:
         ...
 

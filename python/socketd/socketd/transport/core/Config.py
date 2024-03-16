@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from concurrent.futures import Executor
 
 from socketd.transport.core.Codec import Codec
-from socketd.transport.core.fragment import FragmentHandler
+from socketd.transport.core import FragmentHandler
 from socketd.transport.stream.StreamManger import StreamManger
 
 
@@ -16,9 +16,11 @@ class Config(ABC):
         """
         ...
 
-    def is_sequence_send(self) ->bool:
+    @abstractmethod
+    def is_serial_send(self) ->bool:
         ...
 
+    @abstractmethod
     def is_nolock_send(self) -> bool:
         ...
 

@@ -22,7 +22,7 @@ class SimpleListenerTest(Listener):
         self.message_counter = AtomicRefer(0)
 
     async def on_open(self, session: Session):
-        params = session.get_param("auth")
+        params = session.param("auth")
         if params != "root":
             await session.close()
 

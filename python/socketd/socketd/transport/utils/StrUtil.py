@@ -5,6 +5,13 @@ class StrUtil(object):
     def guid() -> str:
         return str(uuid.uuid4()).replace("-", "")
 
+    @staticmethod
+    def is_empty(txt:str)->bool:
+        return txt is None or not txt.isalnum()
+
+    @staticmethod
+    def is_not_empty(txt:str)->bool:
+        return not StrUtil.is_empty(txt)
 
     @staticmethod
     def hash_code(txt:str)->int:

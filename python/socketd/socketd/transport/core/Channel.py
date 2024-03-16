@@ -18,7 +18,7 @@ class Channel:
         ...
 
     @abstractmethod
-    def set_attachment(self, name: str, val: Any) -> None:
+    def put_attachment(self, name: str, val: Any) -> None:
         ...
 
     @abstractmethod
@@ -82,7 +82,11 @@ class Channel:
         ...
 
     @abstractmethod
-    async def send_close(self) -> None:
+    async def send_close(self, code:int) -> None:
+        ...
+
+    @abstractmethod
+    async def send_alarm(self, _from: Message, alarm:str) -> None:
         ...
 
     @abstractmethod

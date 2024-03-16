@@ -1,25 +1,23 @@
 import asyncio
-import time
 import threading
 
 from abc import ABC
 from typing import Optional
 
 from socketd.transport.core.Channel import Channel
+from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Frames import Frames
 from socketd.transport.core.Config import Config
-
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
-
+from socketd.transport.core.HandshakeDefault import HandshakeInternal
+from socketd.transport.core.Message import Message
 
 class ChannelBase(Channel, ABC):
     def __init__(self, config: Config):
-        self.closeCode: Optional[int] = 0
         self.config = config
-        self.requests = AtomicRefer(0)
-        self.handshake = None
-        self.liveTime = 0
-        self.attachments = {}
+
+        self.handshake:HandshakeInternal = None
+        self.__attachments = {}
+
         self.__lock: threading.Lock = threading.Lock()
         self.__loop: Optional[asyncio.AbstractEventLoop] = None
 
@@ -30,25 +28,20 @@ class ChannelBase(Channel, ABC):
         return self.__lock.release()
 
     def get_attachment(self, name):
-        return self.attachments.get(name, None)
+        return self.__attachments.get(name, None)
 
-    def set_attachment(self, name, val):
-        self.attachments[name] = val
-
-    def get_requests(self):
-        return self.requests
+    def put_attachment(self, name, val):
+        if val is None:
+            self.__attachments.pop(name)
+        else:
+            self.__attachments[name] = val
 
     def set_handshake(self, handshake):
-        self.handshake = handshake
+        if handshake is not None:
+            self.handshake = handshake
 
     def get_handshake(self):
         return self.handshake
-
-    def set_live_time(self):
-        self.liveTime = int(time.time() * 1000)
-
-    def get_live_time(self):
-        return self.liveTime
 
     async def send_connect(self, uri, metaMap: dict[str,str]):
         await self.send(Frames.connect_frame(self.config.gen_id(), uri, metaMap), None)
@@ -62,12 +55,15 @@ class ChannelBase(Channel, ABC):
     async def send_pong(self):
         await self.send(Frames.pong_frame(), None)
 
-    async def send_close(self):
-        await self.send(Frames.close_frame(), None)
+    async def send_close(self, code:int):
+        await self.send(Frames.close_frame(code), None)
+
+    async def send_alarm(self, _from: Message, alarm:str):
+        await self.send(Frames.alarm_frame(_from, alarm), None)
 
     async def close(self, code: int):
-        self.closeCode = code
-        self.attachments.clear()
+        if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
+            self.__attachments.clear()
 
     def get_config(self) -> Config:
         return self.config

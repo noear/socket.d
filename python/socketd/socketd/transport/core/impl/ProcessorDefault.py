@@ -61,7 +61,7 @@ class ProcessorDefault(Processor, ABC):
                 self.log.warning("Channel handshake is None, sessionId={}", channel.get_session().session_id())
                 return
 
-            channel.set_live_time()
+            channel.set_live_time_as_now()
 
             try:
                 if frame.flag() == Flags.Ping:

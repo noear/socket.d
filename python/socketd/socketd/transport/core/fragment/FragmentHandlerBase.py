@@ -7,16 +7,15 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Message import Message, MessageInternal
 from socketd.transport.core.entity.EntityDefault import EntityDefault
-from socketd.transport.core.fragment.FragmentAggregator import FragmentAggregator
+from socketd.transport.core.FragmentAggregator import FragmentAggregator
 from socketd.transport.core.fragment.FragmentAggregatorDefault import FragmentAggregatorDefault
-from socketd.transport.core.fragment.FragmentHandler import FragmentHandler
+from socketd.transport.core.FragmentHandler import FragmentHandler
 from socketd.transport.stream.StreamManger import StreamInternal
 
 
 class FragmentHandlerBase(FragmentHandler, ABC):
 
-    async def split_fragment(self, channel: Channel, stream: StreamInternal, message: Message,
-                             consumer: Callable):
+    async def split_fragment(self, channel: Channel, stream: StreamInternal, message: MessageInternal, consumer: Callable):
         if message.data_size() > channel.get_config().get_fragment_size():
             fragment_total = message.data_size()  # channel.get_config().fragment_size
             if message.data_size() % channel.get_config().get_fragment_size() > 0:
@@ -51,14 +50,14 @@ class FragmentHandlerBase(FragmentHandler, ABC):
         aggregator = channel.get_attachment(message.sid())
         if aggregator is None:
             aggregator = FragmentAggregatorDefault(message)
-            channel.set_attachment(message.sid(), aggregator)
+            channel.put_attachment(message.sid(), aggregator)
 
         aggregator.add(index, message)
 
         if aggregator.get_data_length() > aggregator.get_data_stream_size():
             return None  # Length is not enough, wait for the next fragment package
         else:
-            channel.set_attachment(message.sid(), None)
+            channel.put_attachment(message.sid(), None)
             return aggregator.get()  # Reset as a merged frame
 
     @abstractmethod

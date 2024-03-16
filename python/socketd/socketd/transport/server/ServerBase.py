@@ -14,10 +14,11 @@ class ServerBase(Server):
     服务端基类
     """
 
-    def __init__(self, config, assistant):
+    def __init__(self, config:ServerConfig, assistant:ChannelAssistant):
+        self._config = config
+        self._assistant = assistant
+
         self._processor: Processor = ProcessorDefault()
-        self._config: ServerConfig = config
-        self._assistant: ChannelAssistant = assistant
         self.isStarted = False
 
     def get_assistant(self):
@@ -26,23 +27,16 @@ class ServerBase(Server):
         """
         return self._assistant
 
-    def config(self, consumer: Callable[[Config], Config]):
+    def get_config(self) -> ServerConfig:
+        return self._config
+
+    def config(self, consumer: Callable[[ServerConfig], None]):
         """
         获取配置
         """
         consumer(self._config)
         return self
 
-    def get_config(self) -> ServerConfig:
-        return self._config
-
-    def process(self, processor: Processor):
-        """
-        设置处理器
-        """
-        if processor is not None:
-            self._processor = processor
-        return self
 
     def get_processor(self) -> Processor:
         return self._processor
@@ -51,5 +45,6 @@ class ServerBase(Server):
         """
         设置监听器
         """
-        self._processor.set_listener(listener)
+        if listener is not None:
+            self._processor.set_listener(listener)
         return self

@@ -1,7 +1,8 @@
-import uuid
 from typing import Callable
+
+from socketd.transport.utils.StrUtil import StrUtil
 
 IdGenerator = Callable[[None], str]
 
 def GuidGenerator():
-    return str(uuid.uuid4())
+    return StrUtil.guid()

@@ -7,41 +7,45 @@ from socketd.transport.core.Channel import Channel
 class SessionBase(Session, ABC):
     def __init__(self, channel: Channel):
         self._channel = channel
-        self._attr_map = None
-        self._session_id = None
+        self._session_id = self.generate_id()
+        self._attrMap:Dict[str, Any] = None
 
-    def get_attr_map(self) -> Dict[str, Any]:
-        if self._attr_map is None:
-            self._attr_map = {}
+    def attr_map(self) -> Dict[str, Any]:
+        if self._attrMap is None:
+            self._attrMap = {}
 
-        return self._attr_map
+        return self._attrMap
 
-    def get_attr(self, name: str) -> Any:
-        if self._attr_map is None:
+    def attr_has(self, name:str) -> bool:
+        if self._attrMap is None:
+            return False
+        else:
+            return self._attrMap.__contains__(name)
+
+    def attr(self, name: str) -> Any:
+        if self._attrMap is None:
             return None
 
-        return self._attr_map.get(name)
+        return self._attrMap.get(name)
 
-    def get_attr_or_default(self, name: str, default: Any) -> Any:
-        tmp = self.get_attr(name)
+    def attr_or_default(self, name: str, defVal: Any) -> Any:
+        tmp = self.attr(name)
         if tmp is None:
-            return default
+            return defVal
         else:
             return tmp
 
-    def set_attr(self, name: str, value: Any) -> None:
-        if self._attr_map is None:
-            self._attr_map = {}
-        self._attr_map[name] = value
+    def attr_put(self, name: str, val: Any) -> None:
+        if self._attrMap is None:
+            self._attrMap = {}
+        self._attrMap[name] = val
 
     def session_id(self) -> str:
-        if self._session_id is None:
-            self._session_id = self.generate_id()
-
         return self._session_id
+
+    def live_time(self)->int:
+        return self._channel.get_live_time()
 
     def generate_id(self) -> str:
         return self._channel.get_config().gen_id()
 
-    def set_session_id(self, value):
-        self._session_id = value

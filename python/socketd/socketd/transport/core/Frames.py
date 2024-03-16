@@ -45,8 +45,11 @@ class Frames:
         return Frame(Flags.Pong, None)
 
     @staticmethod
-    def close_frame():
-        return Frame(Flags.Close, None)
+    def close_frame(code:int):
+        messageBuilder = MessageBuilder();
+        messageBuilder.entity(EntityDefault().metaPut("code", code));
+
+        return Frame(Flags.Close, messageBuilder.build())
 
     @staticmethod
     def alarm_frame(_from: Message, alarm: str):

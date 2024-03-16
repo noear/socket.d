@@ -1,9 +1,11 @@
+from abc import ABC, abstractmethod
+
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.Message import Message
+from socketd.transport.core.Message import Message, MessageInternal
 
-
-class FragmentAggregator:
-
+# 分片聚合器
+class FragmentAggregator(ABC):
+    @abstractmethod
     def get_sid(self) -> str:
         """
         获取sid
@@ -12,6 +14,7 @@ class FragmentAggregator:
         """
         ...
 
+    @abstractmethod
     def get_data_stream_size(self) -> int:
         """
         获取数据流的大小
@@ -20,6 +23,7 @@ class FragmentAggregator:
         """
         ...
 
+    @abstractmethod
     def get_data_length(self) -> int:
         """
         获取数据的长度
@@ -28,7 +32,8 @@ class FragmentAggregator:
         """
         ...
 
-    def add(self, index: int, message: Message):
+    @abstractmethod
+    def add(self, index: int, message: MessageInternal):
         '''
         添加消息到指定索引位置
 
@@ -41,6 +46,7 @@ class FragmentAggregator:
         '''
         ...
 
+    @abstractmethod
     def get(self) -> Frame: ...
 
     """

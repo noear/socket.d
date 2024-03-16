@@ -1,6 +1,6 @@
 
 from socketd.transport.core.Message import MessageInternal
-from .FragmentAggregator import FragmentAggregator
+from socketd.transport.core.FragmentAggregator import FragmentAggregator
 
 from .FragmentAggregatorDefault import FragmentAggregatorDefault
 from .FragmentHandlerBase import FragmentHandlerBase

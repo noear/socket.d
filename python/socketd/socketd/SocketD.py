@@ -7,8 +7,8 @@ from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientProvider import ClientProvider
 from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
-from socketd.transport.server.ServerFactory import ServerFactory
-from socketd_websocket.WsAioFactoy import WsAioProvider
+from socketd.transport.server.ServerProvider import ServerProvider
+from socketd_websocket.WsAioProvider import WsAioProvider
 
 
 def version() -> str:
@@ -19,10 +19,10 @@ def protocol_version() -> str:
 
 
 client_factory_map: Dict[str, ClientProvider] = {}
-server_factory_map: Dict[str, ServerFactory] = {}
+server_factory_map: Dict[str, ServerProvider] = {}
 
 
-def load_factories(factories: list[ClientProvider | ServerFactory], factory_map: Dict[str, object]) -> None:
+def load_factories(factories: list[ClientProvider | ServerProvider], factory_map: Dict[str, object]) -> None:
     for factory in factories:
         for schema in factory.schema():
             factory_map[schema] = factory

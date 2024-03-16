@@ -19,9 +19,9 @@ public interface Config {
     boolean clientMode();
 
     /**
-     * 是否顺序发送
+     * 是否串行发送
      */
-    boolean isSequenceSend();
+    boolean isSerialSend();
 
     /**
      * 是否无锁发送

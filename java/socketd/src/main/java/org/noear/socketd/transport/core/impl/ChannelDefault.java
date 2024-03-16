@@ -126,7 +126,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             sendDo(frame, stream);
         } else {
             //有锁发送，如果有数据分片场景必须要有锁！
-            boolean inFair = getConfig().isSequenceSend();
+            boolean inFair = getConfig().isSerialSend();
             if (inFair == false && frame.message() != null) {
                 String atName = frame.message().atName();
                 if (StrUtils.isNotEmpty(atName) && atName.charAt(atName.length() - 1) == '!') {

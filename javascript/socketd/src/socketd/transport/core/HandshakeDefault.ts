@@ -24,7 +24,13 @@ export class HandshakeDefault implements HandshakeInternal {
         this._outMetaMap = new Map<string, string>();
         this._paramMap = new Map<string, string>();
         let _uri = StrUtils.parseUri(linkUrl);
-        this._path = _uri.path;
+
+        if(_uri.path){
+            //tcp://1.1.1.1 连接时，path 为空
+            this._path = _uri.path;
+        }else{
+            this._path = "/";
+        }
 
         //添加连接参数
         const queryStr = _uri.query;

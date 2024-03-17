@@ -43,7 +43,7 @@ public class HandshakeDefault implements HandshakeInternal {
         this.outMetaMap = new ConcurrentHashMap<>();
 
         if (StrUtils.isEmpty(uri.getPath())) {
-            //tcp://1.1.1.1 连接时，path 为空
+            //tcp://1.1.1.1 无路径连接时，path 为空
             this.path = "/";
         } else {
             this.path = uri.getPath();

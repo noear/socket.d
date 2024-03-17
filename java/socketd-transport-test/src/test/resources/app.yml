@@ -1,0 +1,5 @@
+server.http.ioBound: false
+
+solon.logging.logger:
+  "root":
+    level: "INFO"

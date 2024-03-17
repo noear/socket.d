@@ -16,6 +16,7 @@
 
     <properties>
         <jmh.version>1.25</jmh.version>
+        <solon.version>2.7.2</solon.version>
     </properties>
 
     <dependencies>
@@ -60,11 +61,26 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-api</artifactId>
+            <version>${solon.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon.logging.simple</artifactId>
+            <version>${solon.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon.web.flux</artifactId>
+            <version>${solon.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>io.projectreactor</groupId>

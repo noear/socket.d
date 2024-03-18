@@ -44,6 +44,9 @@ class HandshakeDefault(HandshakeInternal):
         self._paramMap = self._parse_query_string(self._uri.query)
         self._outMetaMap:dict[str,str] = {}
 
+        if StrUtil.is_empty(self._path):
+            self._path = "/" # tcp://1.1.1.1 无路径连接时，path 为空
+
         self._paramMap.update(source.meta_map())
 
     def get_source(self) -> Message:

@@ -99,14 +99,14 @@ class ProcessorDefault(Processor, ABC):
         if isReply:
             stream = channel.get_stream(frame.message().sid())
 
-        if channel.get_config().get_fragment_handler().aggrEnable():
+        if channel.get_config().get_fragment_handler().aggr_enable():
             fragmentIdxStr = frame.message().entity().meta(EntityMetas.META_DATA_FRAGMENT_IDX)
             if fragmentIdxStr is not None:
                 del streamIndex
                 streamIndex = int(fragmentIdxStr)
-                frameNew: Frame = channel.get_config().get_fragment_handler().aggrFragment(channel,
-                                                                                           streamIndex,
-                                                                                           frame.message())
+                frameNew: Frame = channel.get_config().get_fragment_handler().aggr_fragment(channel,
+                                                                                            streamIndex,
+                                                                                            frame.message())
                 if stream:
                     del streamTotal
                     streamTotal = int(frame.message().meta_or_default(EntityMetas.META_DATA_FRAGMENT_TOTAL, 0))

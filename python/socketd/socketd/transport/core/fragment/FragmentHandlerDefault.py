@@ -8,8 +8,8 @@ from .FragmentHandlerBase import FragmentHandlerBase
 
 class FragmentHandlerDefault(FragmentHandlerBase):
 
-    def createFragmentAggregator(self, message: MessageInternal) -> FragmentAggregator:
+    def create_fragment_aggregator(self, message: MessageInternal) -> FragmentAggregator:
         return FragmentAggregatorDefault(message)
 
-    def aggrEnable(self) -> bool:
+    def aggr_enable(self) -> bool:
         return True

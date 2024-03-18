@@ -46,7 +46,7 @@ class FragmentHandlerBase(FragmentHandler, ABC):
             if stream is not None:
                 stream.on_progress(True, 1, 1)
 
-    def aggrFragment(self, channel: Channel, index: int, message: MessageInternal) -> Optional[Frame]:
+    def aggr_fragment(self, channel: Channel, index: int, message: MessageInternal) -> Optional[Frame]:
         aggregator = channel.get_attachment(message.sid())
         if aggregator is None:
             aggregator = FragmentAggregatorDefault(message)
@@ -61,7 +61,7 @@ class FragmentHandlerBase(FragmentHandler, ABC):
             return aggregator.get()  # Reset as a merged frame
 
     @abstractmethod
-    def createFragmentAggregator(self, message: MessageInternal) -> FragmentAggregator:
+    def create_fragment_aggregator(self, message: MessageInternal) -> FragmentAggregator:
         """创建分片聚合器"""
         ...
 

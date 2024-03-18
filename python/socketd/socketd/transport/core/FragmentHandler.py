@@ -19,13 +19,13 @@ class FragmentHandler(ABC):
         ...
 
     @abstractmethod
-    def aggrFragment(self, channel: Channel, fragmentIndex:int, message:MessageInternal)->Frame:
+    def aggr_fragment(self, channel: Channel, fragmentIndex:int, message:MessageInternal)->Frame:
         """
         聚合所有分片
         """
         ...
 
     @abstractmethod
-    def aggrEnable(self) -> bool:
+    def aggr_enable(self) -> bool:
         """聚合启用"""
         ...

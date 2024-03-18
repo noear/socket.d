@@ -23,6 +23,9 @@ class Session(ClientSession, abc.ABC):
     def handshake(self) -> HandshakeDefault:
         ...
 
+    def name(self):
+        self.param("@")
+
     @abc.abstractmethod
     def param(self, name: str)->str:
         ...
@@ -58,6 +61,10 @@ class Session(ClientSession, abc.ABC):
 
     @abc.abstractmethod
     async def send_ping(self) -> Callable | Coroutine:
+        ...
+
+    @abc.abstractmethod
+    async def send_alarm(self, _from:Message, alarm:str) -> Callable | Coroutine:
         ...
 
     @abc.abstractmethod

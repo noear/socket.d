@@ -6,8 +6,8 @@ from socketd.transport.utils.StrUtil import StrUtil
 
 
 class LoadBalancer:
-    __roundCounter:int = 0
-    __lock:RLock = RLock()
+    __roundCounter:int = 0 # 轮环计数器
+    __lock:RLock = RLock() # 计数锁
 
     @staticmethod
     def round_counter_get(self)->int:
@@ -22,14 +22,17 @@ class LoadBalancer:
             self.__lock.release()
 
 
+    # 根据 poll 获取任意一个
     @staticmethod
     def get_any_by_poll(self, coll:List[ClientSession]) -> ClientSession:
         return self.get_any(coll, self.round_counter_get())
 
+    # 根据 hash 获取任意一个
     @staticmethod
     def get_any_by_hash(self, coll:List[ClientSession], diversion:str) -> ClientSession:
         return self.get_any(coll, StrUtil.hash_code(diversion))
 
+    # 获取任意一个
     @staticmethod
     def get_any(self, coll:list[ClientSession], random:int) -> ClientSession:
         if coll == None or coll.count() == 0:
@@ -51,9 +54,10 @@ class LoadBalancer:
             return sessions[idx]
 
 
+    # 获取第一个
     @staticmethod
     def get_first(self, coll:List[ClientSession]):
-        if coll == None or coll.count() == 0:
+        if coll is None or coll.count() == 0:
             return None
         else:
             for s in coll:

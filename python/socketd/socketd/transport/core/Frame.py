@@ -4,7 +4,7 @@ from .Message import Message
 
 class Frame:
 
-    def __init__(self, flag: int, message: Message):
+    def __init__(self, flag: int, message: Message | None):
         self._flag = flag
         self._message = message
 

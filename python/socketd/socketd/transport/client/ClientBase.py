@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Awaitable
+from typing import Awaitable, Optional
 
 from socketd.exception.SocketDExecption import SocketDException
-from socketd.transport.client.Client import ClientInternal
+from socketd.transport.client.Client import ClientInternal, Client
 from socketd.transport.client.ClientChannel import ClientChannel
 from socketd.transport.client.ClientConfigHandler import ClientConfigHandler
 from socketd.transport.client.ClientConnectHandler import ClientConnectHandler, ClientConnectHandlerDefault
@@ -19,13 +19,13 @@ from loguru import logger
 
 class ClientBase(ClientInternal, ABC):
 
-    def __init__(self, client_config: ClientConfig, assistant:ChannelAssistant):
+    def __init__(self, client_config: ClientConfig, assistant: ChannelAssistant):
         self.__config: ClientConfig = client_config
         self.__assistant: ChannelAssistant = assistant
 
         self.__processor = ProcessorDefault()
-        self.__heartbeat_handler: ClientHeartbeatHandler = None
-        self.__connect_handler: ClientConnectHandler = ClientConnectHandlerDefault
+        self.__heartbeat_handler: Optional[ClientHeartbeatHandler] = None
+        self.__connect_handler: type[ClientConnectHandler] = ClientConnectHandlerDefault
 
     def get_assistant(self):
         return self.__assistant
@@ -45,7 +45,7 @@ class ClientBase(ClientInternal, ABC):
     def get_heartbeat_handler(self) -> ClientHeartbeatHandler:
         return self.__heartbeat_handler
 
-    def connect_handler(self, connectHandler: ClientConnectHandler) -> 'Client':
+    def connect_handler(self, connectHandler: ClientConnectHandler) -> Client:
         if connectHandler:
             self.__connect_handler = connectHandler
         return self
@@ -55,8 +55,7 @@ class ClientBase(ClientInternal, ABC):
             self.__heartbeat_handler = heartbeatHandler
         return self
 
-
-    def config(self, configHandler:ClientConfigHandler):
+    def config(self, configHandler: ClientConfigHandler):
         if configHandler:
             configHandler(self.__config)
         return self

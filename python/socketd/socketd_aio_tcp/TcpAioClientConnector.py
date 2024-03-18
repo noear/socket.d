@@ -1,18 +1,18 @@
 import asyncio
 import socket
-from typing import Optional, AsyncGenerator, List
+from typing import Optional, AsyncGenerator
 
 from socketd.exception.SocketDExecption import SocketDTimeoutException, SocketDConnectionException
 from socketd.transport.client.Client import ClientInternal
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
-from socketd.transport.core.Costants import Flag
+from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
-from socketd.transport.core.config.logConfig import log
 from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 
 
@@ -73,7 +73,7 @@ class TcpAioClientConnector(ClientConnectorBase):
                 if _frame is None:
                     break
                 await self.__message.put(_frame)
-                if _frame.get_flag() == Flag.Close:
+                if _frame.flag() == Flags.Close:
                     break
             except asyncio.CancelledError as e:
                 break
@@ -89,13 +89,13 @@ class TcpAioClientConnector(ClientConnectorBase):
                     break
                 frame: Frame = await self.__message.get()
                 if frame is not None:
-                    if frame.get_flag() == Flag.Connack:
+                    if frame.flag() == Flags.Connack:
                         async def future(b, _e):
                             handshake_future.accept(ClientHandshakeResult(channel, _e))
 
                         await channel.on_open_future(future)
                     await self.client.get_processor().on_receive(channel, frame)
-                    if frame.get_flag() == Flag.Close:
+                    if frame.flag() == Flags.Close:
                         break
             except SocketDConnectionException as e:
                 handshake_future.accept(ClientHandshakeResult(channel, e))

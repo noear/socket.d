@@ -25,7 +25,7 @@ class ClientConfig(ConfigBase):
 
         self.__autoReconnect = True
 
-        self.__metaMap:dict[str,str] = dict()
+        self.__metaMap: dict[str, str] = dict()
 
     def get_link_url(self) -> str:
         return self.__linkUrl
@@ -42,7 +42,7 @@ class ClientConfig(ConfigBase):
     def get_port(self) -> int:
         return self.__port
 
-    def get_meta_map(self) -> dict[str,str]:
+    def get_meta_map(self) -> dict[str, str]:
         return self.__metaMap
 
     def meta_put(self, name, val):
@@ -70,14 +70,12 @@ class ClientConfig(ConfigBase):
         self.__autoReconnect = autoReconnect
         return self
 
-
-
     def __str__(self):
         return f"ClientConfig{{schema='{self.__schema}', " \
                f"charset='{self._charset}', " \
                f"url='{self.__url}', " \
                f"ioThreads={self._ioThreads}, " \
-               f"codecThreads={self._codecThreads}, "\
+               f"codecThreads={self._codecThreads}, " \
                f"exchangeThreads={self._exchangeThreads}, " \
                f"heartbeatInterval={self.__heartbeatInterval}, " \
                f"connectTimeout={self.__connectTimeout}, " \

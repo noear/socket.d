@@ -1,3 +1,4 @@
+import asyncio
 from abc import ABC
 from typing import Optional, Union
 
@@ -49,6 +50,7 @@ class ProcessorDefault(Processor, ABC):
                         # 如果还有效，则关闭通道
                         await channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL)
                         self.on_close_internal(channel)
+
             await channel.on_open_future(_future)
             await self.on_open(channel)
         elif frame.flag() == Flags.Connack:
@@ -134,9 +136,12 @@ class ProcessorDefault(Processor, ABC):
             logger.warning(e)
 
     async def on_message(self, channel: ChannelInternal, message: Message):
-        AsyncUtil.thread_loop(self.listener.on_message(
-            channel.get_session(), message),
-            pool=channel.get_config().get_exchange_executor())
+        # 取消线程运行, io密集采用loop.run_in_executor
+        # AsyncUtil.thread_loop(self.listener.on_message(
+        #     channel.get_session(), message),
+        #     pool=channel.get_config().get_exchange_executor())
+        # 异步运行
+        task = asyncio.create_task(self.listener.on_message(channel.get_session(), message))
 
     def on_close(self, channel: ChannelInternal):
         self.listener.on_close(channel.get_session())

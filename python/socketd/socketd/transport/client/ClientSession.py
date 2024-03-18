@@ -33,7 +33,7 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    def close_starting(self):
+    async def close_starting(self):
         ...
 
     @abc.abstractmethod

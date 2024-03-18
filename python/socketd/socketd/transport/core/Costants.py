@@ -3,13 +3,14 @@ from typing import Callable
 
 Function = Callable
 
+
 class Constants:
     DEF_SID = ""
     DEF_EVENT = ""
     DEF_META_STRING = ""
     DEF_DATA = BytesIO()
 
-    #默认端口
+    # 默认端口
     DEF_PORT = 8602
 
     MAX_SIZE_SID = 64
@@ -22,7 +23,7 @@ class Constants:
     # 帧长度最大限制
     MAX_SIZE_FRAME = 1024 * 1024 * 17  # 17m
     # 分片长度最小限制
-    MIN_FRAGMENT_SIZE = 1024; # 1k
+    MIN_FRAGMENT_SIZE = 1024  # 1k
 
     THEAD_POOL_SIZE = 10
 
@@ -47,5 +48,3 @@ class Constants:
     CLOSE2008_OPEN_FAIL = 2008
     # 因用户主动关闭（不可再重连）
     CLOSE2009_USER = 2009
-
-

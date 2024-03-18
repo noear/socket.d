@@ -5,14 +5,14 @@ from typing import Optional, List
 
 from socketd.exception.SocketDExecption import SocketDTimeoutException
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
-from socketd.transport.core.Costants import Flag
+from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.server.ServerBase import ServerBase
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 
-from socketd.transport.core.config.logConfig import logger, log
 from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 
 from .TcpAIOChannelAssistant import TcpAIOChannelAssistant
@@ -41,10 +41,10 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                 frame: Frame = await loop.create_task(self.get_assistant().read(sock))
                 if frame is not None:
                     await self.get_processor().on_receive(channel, frame)
-                    if frame.get_flag() == Flag.Close:
+                    if frame.flag() == Flags.Close:
                         """客户端主动关闭"""
                         log.debug("{sessionId} 主动退出",
-                                  sessionId=channel.get_session().get_session_id())
+                                  sessionId=channel.get_session().session_id())
                         break
             except SocketDTimeoutException as e:
                 await channel.send_close()
@@ -95,7 +95,6 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                 self._server_forever_future.result(10)
         except asyncio.TimeoutError:
             self._server_forever_future.cancel()
-            log.debug("Server server_forever timeout")
 
     async def stop(self):
         log.info("TcpAioServer stop...")

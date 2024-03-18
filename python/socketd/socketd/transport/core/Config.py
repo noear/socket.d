@@ -17,7 +17,7 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def is_serial_send(self) ->bool:
+    def is_serial_send(self) -> bool:
         ...
 
     @abstractmethod
@@ -73,7 +73,6 @@ class Config(ABC):
         """
         ...
 
-
     @abstractmethod
     def get_io_threads(self) -> int:
         """
@@ -91,7 +90,6 @@ class Config(ABC):
     @abstractmethod
     def get_exchange_threads(self) -> int:
         ...
-
 
     @abstractmethod
     def get_exchange_executor(self) -> Executor:
@@ -129,14 +127,12 @@ class Config(ABC):
         """获取消息流超时（单位：毫秒）"""
         ...
 
-
     @abstractmethod
     def get_logger_level(self) -> str:
         ...
 
     @abstractmethod
     def get_is_thread(self) -> bool: ...
-
 
     @abstractmethod
     def get_max_udp_size(self) -> int:

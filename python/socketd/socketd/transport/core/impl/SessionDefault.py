@@ -1,5 +1,3 @@
-
-from abc import ABC
 from typing import Optional
 
 from socketd.transport.core.entity.MessageBuilder import MessageBuilder
@@ -19,7 +17,7 @@ from socketd.transport.stream.SubscribeStream import SubscribeStream
 from loguru import logger
 
 
-class SessionDefault(SessionBase, ABC):
+class SessionDefault(SessionBase):
 
     def __init__(self, channel: Channel):
         super().__init__(channel)
@@ -28,7 +26,7 @@ class SessionDefault(SessionBase, ABC):
     def is_valid(self) -> bool:
         return self._channel.is_valid()
 
-    def is_closing(self) ->bool:
+    def is_closing(self) -> bool:
         return self._channel.is_closing()
 
     def remote_address(self) -> str:
@@ -82,7 +80,7 @@ class SessionDefault(SessionBase, ABC):
     async def close(self):
         if self._channel.is_valid():
             try:
-                await self._channel.send_close()
+                await self._channel.send_close(Constants.CLOSE1001_PROTOCOL_CLOSE)
             except Exception as e:
                 logger.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
         await self._channel.close(Constants.CLOSE2009_USER)
@@ -97,3 +95,15 @@ class SessionDefault(SessionBase, ABC):
         if path_new := self.__path_new:
             return path_new
         return self.handshake().uri().__str__()
+
+    def param_or_default(self, name: str, defVal: str) -> str:
+        return self.handshake().param_or_default(name, defVal)
+
+    async def send_alarm(self, _from: Message, alarm: str) -> None:
+        await self._channel.send_alarm(_from, alarm)
+
+    async def close_starting(self):
+        logger.debug(
+            f"{self._channel.get_config().get_role_name()} session close starting, sessionId={self.session_id()}")
+        if self._channel.is_valid():
+            await self._channel.send_close(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING)

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # 客户端
 from abc import ABC, abstractmethod
 from asyncio.futures import Future
@@ -11,31 +13,31 @@ from socketd.transport.core.Session import Session
 from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandler
 
 
-#客户端（用于构建会话）
+# 客户端（用于构建会话）
 class Client(ABC):
-    #连接处理
+    # 连接处理
     @abstractmethod
-    def connect_handler(self, connectHandler: ClientConnectHandler) -> 'Client': ...
+    def connect_handler(self, connectHandler: ClientConnectHandler) -> Client: ...
 
-    #心跳处理
+    # 心跳处理
     @abstractmethod
-    def heartbeat_handler(self, heartbeatHandler: ClientHeartbeatHandler) -> 'Client': ...
+    def heartbeat_handler(self, heartbeatHandler: ClientHeartbeatHandler) -> Client: ...
 
-    #配置处理
+    # 配置处理
     @abstractmethod
-    def config(self, configHandler: ClientConfigHandler) -> 'Client': ...
+    def config(self, configHandler: ClientConfigHandler) -> Client: ...
 
-    #监听
+    # 监听
     @abstractmethod
-    def listen(self, listener: Listener) -> 'Client': ...
+    def listen(self, listener: Listener) -> Client: ...
 
-    #打开会话
+    # 打开会话
     @abstractmethod
     def open(self) -> Session | Future: ...
 
-    #打开会话或出异常（即要求第一次是连接成功的）
+    # 打开会话或出异常（即要求第一次是连接成功的）
     @abstractmethod
-    def open_or_throw(self) -> Session | Future:...
+    def open_or_throw(self) -> Session | Future: ...
 
 
 class ClientInternal(Client):

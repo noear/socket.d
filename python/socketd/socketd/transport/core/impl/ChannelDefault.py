@@ -2,8 +2,6 @@ import asyncio
 import time
 from typing import TypeVar, Optional
 
-from websockets import WebSocketCommonProtocol
-
 from socketd.transport.core import Entity
 from socketd.transport.core.Asserts import Asserts
 from socketd.transport.core.ChannelInternal import ChannelInternal
@@ -22,7 +20,7 @@ from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.core.Frame import Frame
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
-S = TypeVar("S", bound=WebSocketCommonProtocol)
+S = TypeVar("S")
 
 
 class ChannelDefault(ChannelBase, ChannelInternal):
@@ -32,7 +30,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
         self.onOpenFuture: Optional[CompletableFuture] = CompletableFuture()
 
-        self._source: WebSocketCommonProtocol = source
+        self._source = source
         self._processor = supporter.get_processor()
         self._assistant = supporter.get_assistant()
         self._streamManger: StreamManger = supporter.get_config().get_stream_manger()
@@ -45,7 +43,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         return self.is_closed() == 0 and self._assistant.is_valid(self._source)
 
     def is_closing(self) -> bool:
-        return self._closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
+        return self._closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING
 
     def is_closed(self):
         if self._closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
@@ -55,6 +53,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
     def get_live_time(self):
         return self._liveTime
+
     def set_live_time_as_now(self):
         self._liveTime = time.time()
 
@@ -73,10 +72,10 @@ class ChannelDefault(ChannelBase, ChannelInternal):
             log.debug(f"S-SEN:{frame}")
 
         if self.get_config().is_nolock_send():
-            self.send_do(frame, stream)
+            await self.send_do(frame, stream)
         else:
             with self:
-                self.send_do(frame, stream)
+                await self.send_do(frame, stream)
 
     async def send_do(self, frame: Frame, stream: StreamInternal):
         if frame.message() is not None:
@@ -88,14 +87,15 @@ class ChannelDefault(ChannelBase, ChannelInternal):
             # 实体进行分片
             if message.entity() is not None:
                 if message.entity().data_size() > self.get_config().get_fragment_size():
-                    message.putMeta(EntityMetas.META_DATA_LENGTH, str(message.data_size()))
+                    message.put_meta(EntityMetas.META_DATA_LENGTH, str(message.data_size()))
 
                 async def __consumer(fragmentEntity: Entity):
                     fragmentFrame: Frame
                     if isinstance(fragmentEntity, MessageInternal):
                         fragmentFrame = Frame(frame.flag(), fragmentEntity)
                     else:
-                        messageNew = MessageBuilder().flag(frame.flag()).sid(message.sid()).event(message.event()).entity(fragmentEntity).build()
+                        messageNew = MessageBuilder().flag(frame.flag()).sid(message.sid()).event(
+                            message.event()).entity(fragmentEntity).build()
                         fragmentFrame = Frame(frame.flag(), messageNew)
                     await self._assistant.write(self._source, fragmentFrame)
 
@@ -141,7 +141,6 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     def get_stream(self, sid: str) -> Stream:
         return self._streamManger.get_stream(sid)
 
-
     async def on_open_future(self, future):
         try:
             self.onOpenFuture.then_async_callback(future)
@@ -164,11 +163,8 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
             if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
                 await self._assistant.close(self._source)
-                log.debug(f"{self.get_config().get_role_Name()} channel closed, sessionId={self.get_session().session_id()}")
+                log.debug(
+                    f"{self.get_config().get_role_name()} channel closed, sessionId={self.get_session().session_id()}")
         except Exception as e:
             log.warning(f"{self.get_config().get_role_name()} channel close error, "
                         f"sessionId={self.get_session().session_id()} : {e}")
-
-
-
-

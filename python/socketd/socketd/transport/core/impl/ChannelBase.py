@@ -11,11 +11,12 @@ from socketd.transport.core.Config import Config
 from socketd.transport.core.HandshakeDefault import HandshakeInternal
 from socketd.transport.core.Message import Message
 
+
 class ChannelBase(Channel, ABC):
     def __init__(self, config: Config):
         self.config = config
 
-        self.handshake:HandshakeInternal = None
+        self.handshake: HandshakeInternal = None
         self.__attachments = {}
 
         self.__lock: threading.Lock = threading.Lock()
@@ -43,7 +44,7 @@ class ChannelBase(Channel, ABC):
     def get_handshake(self):
         return self.handshake
 
-    async def send_connect(self, uri, metaMap: dict[str,str]):
+    async def send_connect(self, uri, metaMap: dict[str, str]):
         await self.send(Frames.connect_frame(self.config.gen_id(), uri, metaMap), None)
 
     async def send_connack(self, connect_message):
@@ -55,10 +56,10 @@ class ChannelBase(Channel, ABC):
     async def send_pong(self):
         await self.send(Frames.pong_frame(), None)
 
-    async def send_close(self, code:int):
+    async def send_close(self, code: int):
         await self.send(Frames.close_frame(code), None)
 
-    async def send_alarm(self, _from: Message, alarm:str):
+    async def send_alarm(self, _from: Message, alarm: str):
         await self.send(Frames.alarm_frame(_from, alarm), None)
 
     async def close(self, code: int):
@@ -76,4 +77,3 @@ class ChannelBase(Channel, ABC):
 
     def set_loop(self, loop) -> None:
         self.__loop = loop
-

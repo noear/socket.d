@@ -9,7 +9,7 @@ from socketd.transport.core.Message import Message
 from socketd.transport.core.Entity import Entity
 
 
-class Session(ClientSession, abc.ABC):
+class Session(ClientSession):
 
     @abc.abstractmethod
     def remote_address(self) -> gethostbyaddr:
@@ -27,12 +27,13 @@ class Session(ClientSession, abc.ABC):
         self.param("@")
 
     @abc.abstractmethod
-    def param(self, name: str)->str:
+    def param(self, name: str) -> str:
         ...
 
     @abc.abstractmethod
-    def param_or_default(self, name: str, defVal:str) -> str:
+    def param_or_default(self, name: str, defVal: str) -> str:
         ...
+
     @abc.abstractmethod
     def path(self) -> Optional[str]: ...
 
@@ -44,7 +45,7 @@ class Session(ClientSession, abc.ABC):
         ...
 
     @abc.abstractmethod
-    def attr_has(self, name:str) -> bool:
+    def attr_has(self, name: str) -> bool:
         ...
 
     @abc.abstractmethod
@@ -64,7 +65,7 @@ class Session(ClientSession, abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def send_alarm(self, _from:Message, alarm:str) -> Callable | Coroutine:
+    async def send_alarm(self, _from: Message, alarm: str) -> None:
         ...
 
     @abc.abstractmethod
@@ -82,6 +83,3 @@ class Session(ClientSession, abc.ABC):
     @abc.abstractmethod
     def generate_id(self) -> str:
         ...
-
-
-

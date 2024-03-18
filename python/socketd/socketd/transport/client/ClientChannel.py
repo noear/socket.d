@@ -18,18 +18,18 @@ from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandl
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
 
-class ClientChannel(ChannelBase, ABC):
-    def __init__(self,  client:ClientInternal, connector: ClientConnector):
+class ClientChannel(ChannelBase):
+    def __init__(self, client: ClientInternal, connector: ClientConnector):
         super().__init__(connector.get_config())
         self.__client = client
         self.__connector: ClientConnector = connector
         self.__sessionShell = SessionDefault(self)
 
-        self.__real: ChannelInternal|None = None
+        self.__real: ChannelInternal | None = None
         self.__heartbeatScheduledFuture: Future | None = None
 
         if client.get_heartbeat_handler():
-            self.__heartbeatHandler = client.get_heartbeat_handler()
+            self.__heartbeatHandler: type[ClientHeartbeatHandlerDefault] = client.get_heartbeat_handler()
         else:
             self.__heartbeatHandler = ClientHeartbeatHandlerDefault
 
@@ -42,23 +42,22 @@ class ClientChannel(ChannelBase, ABC):
         try:
             if self.__loop:
                 self.__loop.stop()
+            if not self.__heartbeatScheduledFuture.done():
+                self.__heartbeatScheduledFuture.cancel()
         except Exception as e:
             logger.warning(e)
+
+    async def __heartbeatScheduled(self) -> None:
+        while True:
+            await asyncio.sleep(self.__client.get_heartbeat_interval() / 100)
+            await self.heartbeat_handle()
 
     def init_heartbeat(self):
         if self.__heartbeatScheduledFuture:
             self.__heartbeatScheduledFuture.cancel()
 
         if self.__connector.auto_reconnect():
-            async def _heartbeatScheduled():
-                while True:
-                    await asyncio.sleep(self.__client.get_heartbeat_interval() / 100)
-                    await self.heartbeat_handle()
-
-            self.__heartbeatScheduledFuture = asyncio.create_task(_heartbeatScheduled())
-            self.get_config().get_exchange_executor().submit(lambda:
-                                                    AsyncUtil.thread_handler(self.__loop,
-                                                                             self.__heartbeatScheduledFuture))
+            self.__heartbeatScheduledFuture = asyncio.create_task(self.__heartbeatScheduled())
 
     async def heartbeat_handle(self):
         if self.__real:
@@ -67,7 +66,7 @@ class ClientChannel(ChannelBase, ABC):
 
             if Asserts.is_closed_and_end(self.__real):
                 logger.debug("Client channel is closed (pause heartbeat), sessionId=" + self.get_session().session_id())
-                self.close(self.__real.is_closed())
+                await self.close(self.__real.is_closed())
                 return
 
             if self.__real.is_closing():
@@ -76,14 +75,13 @@ class ClientChannel(ChannelBase, ABC):
         with self:
             try:
                 await self.internalCheck()
-                await self.__heartbeatHandler.clientHeartbeat(self.get_session())
+                await self.__heartbeatHandler(self.get_session())
             except Exception as e:
                 if self.__connector.auto_reconnect():
                     if self.__real:
                         await self.__real.close(code=Constants.CLOSE2001_ERROR)
                     self.__real = None
                 raise e
-
 
     def is_valid(self):
         if self.__real is None:
@@ -109,13 +107,15 @@ class ClientChannel(ChannelBase, ABC):
         else:
             return self.__real.get_local_address()
 
-    async def send(self, frame, stream:StreamInternal):
+    async def send(self, frame, stream: StreamInternal):
         Asserts.assert_closed_and_end(self.__real)
 
         try:
             await self.internalCheck()
 
             if self.__real is None:
+                # 销毁心跳任务
+                self.__heartbeatScheduledFuture.cancel()
                 raise SocketDChannelException("Client channel is not connected")
 
             await self.__real.send(frame, stream)
@@ -127,7 +127,7 @@ class ClientChannel(ChannelBase, ABC):
 
             raise SocketDChannelException(f"Client channel send failed {e}")
 
-    async def retrieve(self, frame, stream:StreamInternal):
+    async def retrieve(self, frame, stream: StreamInternal):
         await self.__real.retrieve(frame, stream)
 
     async def close(self, code):
@@ -155,12 +155,13 @@ class ClientChannel(ChannelBase, ABC):
         self.init_heartbeat()
         await self.internalCheck()
 
+    @logger.catch
     async def connect(self):
         with self.__isConnecting as isConnected:
             if isConnected:
-                self.__isConnecting.set(True)
-            else:
                 return
+            else:
+                self.__isConnecting.set(True)
 
         try:
             if self.__real:
@@ -168,11 +169,12 @@ class ClientChannel(ChannelBase, ABC):
 
             self.__real = await self.__client.get_connect_handler()(self.__connector)
             self.__real.set_session(self.__sessionShell)
-            self.set_handshake(self.__real.handshake())
+            self.set_handshake(self.__real.get_handshake())
         except TimeoutError as t:
             logger.error(f"socketD connect timed out: {t}")
         except Exception as e:
             logger.error(e)
+            raise SocketDChannelException(f"socketD connect")
         finally:
             self.__isConnecting.set(False)
 
@@ -181,10 +183,17 @@ class ClientChannel(ChannelBase, ABC):
             self.__real.close(Constants.CLOSE2001_ERROR)
             self.__real = None
 
-
     async def internalCheck(self):
         if self.__real is None or self.__real.is_valid() == False:
-            self.connect()
+            await self.connect()
             return True
         else:
             return False
+
+    def is_closing(self) -> bool:
+        return self.__real.is_closing() if self.__real else 0
+
+
+
+    def get_live_time(self) -> int:
+        return self.__real.get_live_time() if self.__real else 0

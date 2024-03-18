@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Message import Message, MessageInternal
 
+
 # 分片聚合器
 class FragmentAggregator(ABC):
     @abstractmethod
@@ -34,7 +35,7 @@ class FragmentAggregator(ABC):
 
     @abstractmethod
     def add(self, index: int, message: MessageInternal):
-        '''
+        """
         添加消息到指定索引位置
 
         Args:
@@ -43,7 +44,7 @@ class FragmentAggregator(ABC):
 
         Returns:
             None
-        '''
+        """
         ...
 
     @abstractmethod

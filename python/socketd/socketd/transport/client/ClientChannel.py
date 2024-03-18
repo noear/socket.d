@@ -1,5 +1,4 @@
 import asyncio
-from abc import ABC
 from asyncio import Future
 
 from socketd.exception.SocketDExecption import SocketDException, SocketDChannelException
@@ -13,7 +12,6 @@ from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.client.ClientConnector import ClientConnector
 from loguru import logger
 
-from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandlerDefault
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 
@@ -33,15 +31,12 @@ class ClientChannel(ChannelBase):
         else:
             self.__heartbeatHandler = ClientHeartbeatHandlerDefault
 
-        self.__loop = asyncio.new_event_loop()
         self.__isConnecting = AtomicRefer(False)
 
         self.init_heartbeat()
 
     def __del__(self):
         try:
-            if self.__loop:
-                self.__loop.stop()
             if not self.__heartbeatScheduledFuture.done():
                 self.__heartbeatScheduledFuture.cancel()
         except Exception as e:
@@ -192,8 +187,6 @@ class ClientChannel(ChannelBase):
 
     def is_closing(self) -> bool:
         return self.__real.is_closing() if self.__real else 0
-
-
 
     def get_live_time(self) -> int:
         return self.__real.get_live_time() if self.__real else 0

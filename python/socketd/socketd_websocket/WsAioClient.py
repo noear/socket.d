@@ -9,7 +9,6 @@ class WsAioClient(ClientBase, ChannelSupporter):
 
     def __init__(self, config: ClientConfig):
         ClientBase.__init__(self, config, WsAioChannelAssistant(config))
-        self.client = None
 
     def create_connector(self) -> WsAioClientConnector:
         return WsAioClientConnector(self)

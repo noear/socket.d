@@ -1,7 +1,7 @@
 import os
 import ssl
 from abc import ABC
-
+from typing import Optional
 from concurrent.futures import ThreadPoolExecutor
 
 from socketd.exception.SocketDExecption import SocketDException
@@ -30,7 +30,7 @@ class ConfigBase(Config, ABC):
 
         self._charset = "utf-8"
 
-        self._idGenerator: IdGenerator = GuidGenerator
+        self._idGenerator: type[GuidGenerator] = GuidGenerator
         self._fragmentHandler: FragmentHandlerDefault = FragmentHandlerDefault()
         self._fragment_size = Constants.MAX_SIZE_DATA
 
@@ -38,35 +38,39 @@ class ConfigBase(Config, ABC):
         self._codecThreads = os.cpu_count()
         self._exchangeThreads = os.cpu_count() * 4
 
-        self._readBufferSize = 1024 * 4 #4k
-        self._writeBufferSize = 1024 * 4 #4k
+        self._readBufferSize = 1024 * 4  # 4k
+        self._writeBufferSize = 1024 * 4  # 4k
 
         self._sslContext = None
-        self._exchangeExecutor = None
+        self._exchangeExecutor: Optional[ThreadPoolExecutor] = None
 
-        self._idleTimeout = 60_000    #60秒（心跳默认为20秒）
-        self._requestTimeout = 10_000 #10秒（默认与连接超时同）
-        self._streamTimeout = 1000 * 60 * 60 * 2 #2小时 //避免永不回调时，不能释放
+        self._idleTimeout = 60_000  # 60秒（心跳默认为20秒）
+        self._requestTimeout = 10_000  # 10秒（默认与连接超时同）
+        self._streamTimeout = 1000 * 60 * 60 * 2  # 2小时 //避免永不回调时，不能释放
 
         self._maxUdpSize = 2048
 
         self.__isThread = False
         self.__loggerLevel = "INFO"
 
+    def __del__(self):
+        if self._exchangeExecutor:
+            self._exchangeExecutor.shutdown()
+
     def client_mode(self):
         return self._clientMode
 
-    def is_serial_send(self) ->bool:
+    def is_serial_send(self) -> bool:
         return self._serialSend
 
-    def serial_send(self, serialSend:bool):
+    def serial_send(self, serialSend: bool):
         self._serialSend = serialSend
         return self
 
     def is_nolock_send(self) -> bool:
         return self._nolockSend
 
-    def nolock_send(self, nolockSend:bool):
+    def nolock_send(self, nolockSend: bool):
         self._nolockSend = nolockSend
         return self
 
@@ -86,12 +90,11 @@ class ConfigBase(Config, ABC):
     def get_codec(self):
         return self._codec
 
-
     def get_fragment_handler(self):
         return self._fragmentHandler
 
     def fragment_handler(self, fragmentHandler):
-        Asserts.assert_null("fragmentHandler", fragmentHandler);
+        Asserts.assert_null("fragmentHandler", fragmentHandler)
 
         self._fragmentHandler = fragmentHandler
         return self
@@ -99,7 +102,7 @@ class ConfigBase(Config, ABC):
     def get_fragment_size(self) -> int:
         return self._fragment_size
 
-    def fragment_size(self, fragmentSize:int):
+    def fragment_size(self, fragmentSize: int):
         if fragmentSize > Constants.MAX_SIZE_DATA:
             raise SocketDException("The parameter fragmentSize cannot > 16m")
 
@@ -113,7 +116,7 @@ class ConfigBase(Config, ABC):
         return self._idGenerator()
 
     def id_generator(self, idGenerator: IdGenerator):
-        Asserts.assert_null("idGenerator", idGenerator);
+        Asserts.assert_null("idGenerator", idGenerator)
 
         self._idGenerator = idGenerator
         return self
@@ -128,7 +131,8 @@ class ConfigBase(Config, ABC):
     def get_exchange_executor(self):
         if self._exchangeExecutor is None:
             __nThreads = self._exchangeThreads
-            self._exchangeExecutor = ThreadPoolExecutor(max_workers=__nThreads, thread_name_prefix="socketd-exchangeExecutor-")
+            self._exchangeExecutor = ThreadPoolExecutor(max_workers=__nThreads,
+                                                        thread_name_prefix="socketd-exchangeExecutor-")
         return self._exchangeExecutor
 
     def exchange_executor(self, exchangeExecutor):
@@ -169,7 +173,6 @@ class ConfigBase(Config, ABC):
     def write_buffer_size(self, write_buffer_size):
         self._writeBufferSize = write_buffer_size
         return self
-
 
     def get_idle_timeout(self) -> float:
         return self._idleTimeout

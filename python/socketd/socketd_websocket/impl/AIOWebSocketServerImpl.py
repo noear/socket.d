@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 from typing import Optional, Union
 
@@ -9,7 +10,6 @@ from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
-
 
 from socketd_websocket.IWebSocketServer import IWebSocketServer
 
@@ -47,7 +47,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             channel = ChannelDefault(conn, self.ws_aio_server)
             self.set_attachment(channel)
 
-    async def on_error(self, conn: Union['AIOWebSocketServerImpl', WebSocketServerProtocol], ex: Exception):
+    async def on_error(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], ex: Exception):
         try:
             channel: Channel = conn.get_attachment()
             if channel is not None:
@@ -57,9 +57,10 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             log.error(e)
             raise e
 
-    async def on_message(self, conn: Union['AIOWebSocketServerImpl', WebSocketServerProtocol], path: str):
+    async def on_message(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], path: str):
         """ws_handler"""
         loop = asyncio.get_running_loop()
+        tasks: list[asyncio.Task] = []
         while True:
             if conn.closed:
                 break
@@ -69,10 +70,12 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 #     message)
                 # # 采用线程池执行IO耗时任务
                 frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_exchange_executor(),
-                                                          lambda _message: self.ws_aio_server.get_assistant().read(_message), message)
+                                                          lambda _message: self.ws_aio_server.get_assistant().read(
+                                                              _message), message)
                 if frame is not None:
-
-                    await self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)
+                    # 不等待直接运行
+                    tasks.append(
+                        loop.create_task(self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)))
                     if frame.flag() == Flags.Close:
                         """客户端主动关闭"""
                         await self.on_close(conn)
@@ -93,7 +96,14 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             except Exception as e:
                 log.error(e)
                 await self.on_error(conn, e)
+        try:
+            # 等待未完成任务
+            await asyncio.gather(*tasks)
+        except asyncio.CancelledError as c:
+            pass
+        except TimeoutError as e:
+            log.warning(f"server on_receive timeout {e}")
 
-    async def on_close(self, conn: Union['AIOWebSocketServerImpl', WebSocketServerProtocol]):
+    async def on_close(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol]):
         """关闭tcp,结束握手"""
         await conn.close()

@@ -1,20 +1,19 @@
 from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.client.ClientProvider import ClientProvider
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.client.Client import Client
-from socketd.transport.client.ClientProvider import ClientProvider
 from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerProvider import ServerProvider
-from socketd_websocket.WsAioClient import WsAioClient
-from socketd_websocket.WsAioServer import WsAioServer
+from socketd_aio_tcp import TCPAIOServer, TcpAioClient
 
 
-class WsAioProvider(ClientProvider, ServerProvider):
+class TcpAioProvider(ClientProvider, ServerProvider):
 
     def schema(self) -> list[str]:
-        return ["ws", "wss", "ws-python", "std:ws"]
+        return ["tcp", "tcp-python", "std:tcp"]
 
     def create_server(self, serverConfig: ServerConfig) -> Server:
-        return WsAioServer(serverConfig)
+        return TCPAIOServer(serverConfig)
 
     def create_client(self, clientConfig: ClientConfig) -> Client:
-        return WsAioClient(clientConfig)
+        return TcpAioClient(clientConfig)

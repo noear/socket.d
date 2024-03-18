@@ -18,7 +18,6 @@ from loguru import logger
 def config_handler(config: ServerConfig | ClientConfig):
     config.is_thread(False)
     config.idle_timeout(10000)
-    config.ws_max_size(2 ** 20 * 17)
     # config.set_logger_level("DEBUG")
 
 

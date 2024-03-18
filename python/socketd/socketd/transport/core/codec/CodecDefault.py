@@ -11,15 +11,12 @@ from socketd.transport.core.Config import Config
 from socketd.transport.core.codec.Buffer import Buffer
 
 
-
-
-
 class CodecDefault(Codec):
     def __init__(self, config: Config):
         self.config = config
 
     def write(self, frame: Frame, writerFactory: Callable[[int], CodecWriter]) -> CodecWriter:
-        if frame.message is None:
+        if frame.message() is None:
             # length (flag + int.bytes)
             _len = 2 * 4
             target: CodecWriter = writerFactory(_len)
@@ -27,26 +24,26 @@ class CodecDefault(Codec):
             # length
             target.put_int(_len)
             # flag
-            target.put_int(frame.flag)
+            target.put_int(frame.flag())
             target.flush()
 
             return target
         else:
             # sid
-            sidB: bytes = frame.message.sid().encode(self.config.get_charset())
+            sidB: bytes = frame.message().sid().encode(self.config.get_charset())
             # event
-            event: bytes = frame.message.event().encode(self.config.get_charset())
+            event: bytes = frame.message().event().encode(self.config.get_charset())
             # metaString
-            metaStringB: bytes = frame.message.entity().meta_string().encode(self.config.get_charset())
+            metaStringB: bytes = frame.message().entity().meta_string().encode(self.config.get_charset())
 
             # length (flag + sid + event + metaString + data + int.bytes + \n*3)
             len1 = len(sidB) + len(event) + len(
-                metaStringB) + frame.message.entity().data_size() + 1 * 3 + 2 * 4
+                metaStringB) + frame.message().entity().data_size() + 1 * 3 + 2 * 4
 
             Asserts.assert_size("sid", len(sidB), Constants.MAX_SIZE_SID)
             Asserts.assert_size("event", len(event), Constants.MAX_SIZE_EVENT)
             Asserts.assert_size("metaString", len(metaStringB), Constants.MAX_SIZE_META_STRING)
-            Asserts.assert_size("data", frame.message.entity().data_size(), Constants.MAX_SIZE_DATA)
+            Asserts.assert_size("data", frame.message().entity().data_size(), Constants.MAX_SIZE_DATA)
 
             target: CodecWriter = writerFactory(len1)
 
@@ -54,7 +51,7 @@ class CodecDefault(Codec):
             target.put_int(len1)
 
             # flag
-            target.put_int(frame.flag)
+            target.put_int(frame.flag())
 
             # sid
             target.put_bytes(sidB)
@@ -69,8 +66,8 @@ class CodecDefault(Codec):
             target.put_bytes(b'\n')
 
             # _data
-            if frame.message.entity().data() is not None:
-                target.put_bytes(frame.message.entity().data().getvalue())
+            if frame.message().entity().data() is not None:
+                target.put_bytes(frame.message().entity().data().getvalue())
             target.flush()
 
             return target

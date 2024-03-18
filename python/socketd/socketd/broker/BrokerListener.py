@@ -3,26 +3,25 @@ from socketd.transport.core import Entity
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Session import Session
 
+
 # 经纪人监听器（为不同的玩家转发消息）
 class BrokerListener(BrokerListenerBase):
     def __init__(self):
-        super.__init__(self)
+        super().__init__()
 
-
-    async def on_open(self, session:Session):
+    async def on_open(self, session: Session):
         name = session.name()
         self.add_player(name, session)
 
-    def on_close(self, session:Session):
+    def on_close(self, session: Session):
         name = session.name()
         self.remove_player(name, session)
 
-
-    async def on_message(self, requester:Session, message:Message):
+    async def on_message(self, requester: Session, message: Message):
         atName = message.at_name()
 
         if atName is None:
-            requester.send_alarm(message, "Broker message require '@' meta")
+            await requester.send_alarm(message, "Broker message require '@' meta")
             return
 
         if atName.__eq__("*"):
@@ -33,22 +32,21 @@ class BrokerListener(BrokerListenerBase):
                     self.forward_to_name(requester, message, name)
             return
 
-        if atName.endsWith("*"):
+        if atName.endswith("*"):
             # 群发模式（给同名的所有玩家）
             atName = atName[:-1]
-            if self.forward_to_name(requester, message, atName) == False:
-                requester.send_alarm(message, "Broker don't have '@" + atName + "' player")
+            if not self.forward_to_name(requester, message, atName):
+                await requester.send_alarm(message, "Broker don't have '@" + atName + "' player")
             return
         else:
             responder = self.get_player_any(atName, requester)
             if responder is not None:
                 self.forward_to_session(requester, message, responder)
             else:
-                requester.send_alarm(message, "Broker don't have '@" + atName + "' session")
-
+                await requester.send_alarm(message, "Broker don't have '@" + atName + "' session")
 
     # 批量转发消息
-    def forward_to_name(self, requester:Session, message:Message, name:str) -> bool:
+    def forward_to_name(self, requester: Session, message: Message, name: str) -> bool:
         playerAll = self.get_player_all(name)
 
         if playerAll is not None and len(playerAll) > 0:
@@ -62,15 +60,14 @@ class BrokerListener(BrokerListenerBase):
         else:
             return False
 
-
-
     # 转发消息
-    def forward_to_session(self, requester:Session, message:Message, responder:Session):
+    def forward_to_session(self, requester: Session, message: Message, responder: Session):
         if message.is_request():
-            def then_reply(reply:Entity):
+            def then_reply(reply: Entity):
                 if requester.is_valid():
                     requester.reply(message, reply)
-            def then_error(err:Exception):
+
+            def then_error(err: Exception):
                 if requester.is_valid():
                     requester.send_alarm(message, err)
 
@@ -78,13 +75,14 @@ class BrokerListener(BrokerListenerBase):
             return
 
         if message.is_subscribe():
-            def then_reply(reply:Entity):
+            def then_reply(reply: Entity):
                 if requester.is_valid():
                     if message.is_end():
                         requester.reply_end(message, reply)
                     else:
                         requester.reply(message, reply)
-            def then_error(err:Exception):
+
+            def then_error(err: Exception):
                 if requester.is_valid():
                     requester.send_alarm(message, err)
 
@@ -93,8 +91,6 @@ class BrokerListener(BrokerListenerBase):
 
         responder.send(message.event(), message)
 
-
-
-    def on_error(self, session:Session, error):
+    def on_error(self, session: Session, error):
         ...
-        #log.warn("Broker error", error)
+        # log.warn("Broker error", error)

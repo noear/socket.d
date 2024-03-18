@@ -1,6 +1,6 @@
+from socketd import SocketD
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.EntityMetas import EntityMetas
-from socketd import SocketD
 from socketd.transport.core.HandshakeDefault import HandshakeInternal
 from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.EntityDefault import EntityDefault
@@ -12,7 +12,7 @@ from socketd.transport.core.entity.StringEntity import StringEntity
 class Frames:
 
     @staticmethod
-    def connect_frame(sid:str, url:str, metaMap: dict[str,str]) -> Frame:
+    def connect_frame(sid: str, url: str, metaMap: dict[str, str]) -> Frame:
         entity = StringEntity(url)
         # 添加框架版本号
         entity.meta_map_put(metaMap)
@@ -45,9 +45,9 @@ class Frames:
         return Frame(Flags.Pong, None)
 
     @staticmethod
-    def close_frame(code:int):
-        messageBuilder = MessageBuilder();
-        messageBuilder.entity(EntityDefault().metaPut("code", code));
+    def close_frame(_code: int):
+        messageBuilder = MessageBuilder()
+        messageBuilder.entity(EntityDefault().meta_put("code", str(_code)))
 
         return Frame(Flags.Close, messageBuilder.build())
 

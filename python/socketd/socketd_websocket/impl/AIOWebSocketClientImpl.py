@@ -1,4 +1,5 @@
 import asyncio
+import concurrent.futures
 from asyncio import CancelledError
 from typing import Optional, Sequence
 from loguru import logger
@@ -30,6 +31,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         else:
             self._loop = asyncio.get_running_loop()
         self.handshake_future: Optional[CompletableFuture] = None
+        self._handler_future: Optional[concurrent.futures.Future] = None
 
     def get_channel(self):
         return self.channel
@@ -64,14 +66,15 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     await self.on_message()
                 except Exception as e:
                     log.warning(e)
-                    raise e
+                    break
+        # 挂在到self.loop 上
+        self._handler_future = asyncio.run_coroutine_threadsafe(_handler(), self.loop)
 
-        asyncio.run_coroutine_threadsafe(_handler(), self.loop)
-
+    @logger.catch
     async def on_open(self):
         try:
             log.info("Client:Websocket onOpen...")
-            await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta())
+            await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta_map())
             while self.status_state == Flags.Connect:
                 await self.on_message()
         except Exception as e:
@@ -88,7 +91,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 # 结束握手
                 return
             # frame: Frame = self.client.get_assistant().read(message)
-            frame: Frame = await self.loop.run_in_executor(None,
+            frame: Frame = await self.loop.run_in_executor(self.client.get_config().get_exchange_executor(),
                                                            lambda _message: self.client.get_assistant().read(_message),
                                                            message)
             if frame is not None:
@@ -106,7 +109,6 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 asyncio.run_coroutine_threadsafe(self.client.get_processor().on_receive(self.channel, frame), self.loop)
                 if frame.flag() == Flags.Close:
                     """服务端主动关闭"""
-                    # await self.close()
                     log.debug("{sessionId} 服务端主动关闭",
                               sessionId=self.channel.get_session().session_id())
         except CancelledError as c:
@@ -123,6 +125,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
 
     def on_close(self):
         self.client.get_processor().on_close(self.channel)
+        self._handler_future.cancel()
 
     def on_error(self, e):
         self.client.get_processor().on_error(self.channel, e)

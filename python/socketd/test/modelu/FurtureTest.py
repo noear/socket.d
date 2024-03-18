@@ -45,6 +45,7 @@ class FutureTest(unittest.TestCase):
         asyncio.run(_run())
 
     def test_call_later(self):
+        """阻塞"""
         results = []
 
         def callback(arg):
@@ -57,27 +58,27 @@ class FutureTest(unittest.TestCase):
         print(results)
 
     def test_loop(self):
-
-        async def _handle(_loop):
-            for _ in range(10):
-                print("_")
-            _loop.stop()
+        lock = asyncio.Lock()
         def _run(_loop: asyncio.AbstractEventLoop):
             asyncio.set_event_loop(_loop)
             _loop.run_forever()
 
+
         async def _handle(_loop):
             for _ in range(10):
                 print("_")
             _loop.stop()
+            lock.release()
+            return True
 
         loop = asyncio.new_event_loop()
         t = Thread(target=_run, args=(loop,))
         t.start()
-        asyncio.run_coroutine_threadsafe(_handle(loop), loop)
+        Future = asyncio.run_coroutine_threadsafe(_handle(loop), loop)
         for _ in range(10):
-            print("1")
+            print(_)
             time.sleep(0.1)
+        # print(Future.result())
 
     def test_loop1(self):
         logger.info("test_loop1")
@@ -180,3 +181,28 @@ class FutureTest(unittest.TestCase):
 
         asyncio.run(_main(get))
 
+
+    def test_send(self):
+        async def send():
+            await asyncio.sleep(2)
+            a = yield
+            print(a)
+            yield
+
+        async def _main():
+            s = send()
+            await anext(s, 1)
+            await anext(s, 2)
+
+        asyncio.run(_main())
+
+    def testTask(self):
+        async def task():
+            async def send():
+                await asyncio.sleep(1)
+                return 1
+            loop = asyncio.get_running_loop()
+            task = asyncio.run_coroutine_threadsafe(send(), loop)
+            print(task.result(timeout=3))
+            print(2)
+        asyncio.run(task())

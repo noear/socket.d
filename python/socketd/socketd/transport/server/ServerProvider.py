@@ -2,7 +2,7 @@ from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.server.Server import Server
 
 
-class ServerFactory:
+class ServerProvider:
 
     def schema(self) -> list[str]: ...
 

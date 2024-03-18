@@ -25,6 +25,7 @@ public class Frames {
         //添加框架版本号
         entity.metaMapPut(metaMap);
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
+
         return new Frame(Flags.Connect, new MessageBuilder()
                 .sid(sid)
                 .event(url) //兼容旧版本（@deprecated 2.2.2）
@@ -39,9 +40,10 @@ public class Frames {
     public static final Frame connackFrame(HandshakeInternal handshake) {
         EntityDefault entity = new EntityDefault();
         //添加框架版本号
-        entity.metaMap().putAll(handshake.getOutMetaMap());
+        entity.metaMapPut(handshake.getOutMetaMap());
         entity.metaPut(EntityMetas.META_SOCKETD_VERSION, SocketD.protocolVersion());
         entity.dataSet(handshake.getSource().entity().data());
+
         return new Frame(Flags.Connack, new MessageBuilder()
                 .sid(handshake.getSource().sid())
                 .event(handshake.getSource().event()) //兼容旧版本（@deprecated 2.2.2）
@@ -66,27 +68,27 @@ public class Frames {
      * 构建关闭帧（一般用不到）
      */
     public static final Frame closeFrame(int code) {
-        MessageBuilder message = new MessageBuilder();
-        message.entity(Entity.of().metaPut("code", String.valueOf(code)));
+        MessageBuilder messageBuilder = new MessageBuilder();
+        messageBuilder.entity(Entity.of().metaPut("code", String.valueOf(code)));
 
-        return new Frame(Flags.Close, message.build());
+        return new Frame(Flags.Close, messageBuilder.build());
     }
 
     /**
      * 构建告警帧（一般用不到）
      */
     public static final Frame alarmFrame(Message from, String alarm) {
-        MessageBuilder message = new MessageBuilder();
+        MessageBuilder messageBuilder = new MessageBuilder();
 
         if (from != null) {
             //如果有来源消息，则回传元信息
-            message.sid(from.sid());
-            message.event(from.event());
-            message.entity(new StringEntity(alarm).metaStringSet(from.metaString()));
+            messageBuilder.sid(from.sid());
+            messageBuilder.event(from.event());
+            messageBuilder.entity(new StringEntity(alarm).metaStringSet(from.metaString()));
         } else {
-            message.entity(new StringEntity(alarm));
+            messageBuilder.entity(new StringEntity(alarm));
         }
 
-        return new Frame(Flags.Alarm, message.build());
+        return new Frame(Flags.Alarm, messageBuilder.build());
     }
 }

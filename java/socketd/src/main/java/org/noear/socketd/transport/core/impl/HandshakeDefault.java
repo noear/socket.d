@@ -37,10 +37,17 @@ public class HandshakeDefault implements HandshakeInternal {
 
         this.source = source;
         this.uri = URI.create(linkUrl);
-        this.path = uri.getPath();
+
         this.version = source.meta(EntityMetas.META_SOCKETD_VERSION);
-        this.outMetaMap = new ConcurrentHashMap<>();
         this.paramMap = new ConcurrentHashMap<>();
+        this.outMetaMap = new ConcurrentHashMap<>();
+
+        if (StrUtils.isEmpty(uri.getPath())) {
+            //tcp://1.1.1.1 无路径连接时，path 为空
+            this.path = "/";
+        } else {
+            this.path = uri.getPath();
+        }
 
         //添加连接参数
         String queryString = uri.getQuery();

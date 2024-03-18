@@ -2,12 +2,12 @@ from .Client import Client
 from socketd.transport.client.ClientConfig import ClientConfig
 
 
-class ClientFactory:
+class ClientProvider:
 
     """
         协议架构
     """
-    def schema(self) -> str: ...
+    def schema(self) -> list[str]: ...
 
     """
         创建客户端

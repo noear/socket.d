@@ -100,7 +100,7 @@ public abstract class SessionBase implements Session {
     }
 
     protected String generateId() {
-        return channel.getConfig().getIdGenerator().generate();
+        return channel.getConfig().genId();
     }
 
     //不要加 hashCode, equals 重写！

@@ -43,6 +43,22 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     }
 
     /**
+     * 获取配置
+     */
+    @Override
+    public ClientConfig getConfig() {
+        return config;
+    }
+
+    /**
+     * 获取处理器
+     */
+    @Override
+    public Processor getProcessor() {
+        return processor;
+    }
+
+    /**
      * 获取连接处理器
      */
     @Override
@@ -66,22 +82,6 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
         return config.getHeartbeatInterval();
     }
 
-
-    /**
-     * 获取配置
-     */
-    @Override
-    public ClientConfig getConfig() {
-        return config;
-    }
-
-    /**
-     * 获取处理器
-     */
-    @Override
-    public Processor getProcessor() {
-        return processor;
-    }
 
     /**
      * 设置连接处理器
@@ -134,8 +134,12 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 打开会话
      */
     @Override
-    public ClientSession open() throws IOException {
-        return openDo(false);
+    public ClientSession open() {
+        try {
+            return openDo(false);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**

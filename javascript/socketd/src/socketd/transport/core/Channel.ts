@@ -228,7 +228,7 @@ export abstract class  ChannelBase implements Channel {
     }
 
     sendConnect(url: string, metaMap: Map<string, string>) {
-        this.send(Frames.connectFrame(this.getConfig().getIdGenerator().generate(), url, metaMap), null)
+        this.send(Frames.connectFrame(this.getConfig().genId(), url, metaMap), null)
     }
 
     sendConnack() {

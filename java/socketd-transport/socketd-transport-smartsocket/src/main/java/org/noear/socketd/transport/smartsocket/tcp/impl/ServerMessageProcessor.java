@@ -25,13 +25,10 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
         this.server = server;
     }
 
-    private ChannelDefaultEx getChannel(AioSession s) {
-        return ChannelDefaultEx.get(s, server);
-    }
 
     @Override
     public void process0(AioSession s, Frame frame) {
-        ChannelInternal channel = getChannel(s);
+        ChannelInternal channel = s.getAttachment();
 
         try {
             server.getProcessor().onReceive(channel, frame);
@@ -48,20 +45,26 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
     public void stateEvent0(AioSession s, StateMachineEnum state, Throwable e) {
         switch (state) {
             case NEW_SESSION:
-                //略过
+                s.setAttachment(new ChannelDefaultEx<>(s, server));
                 break;
 
-            case SESSION_CLOSED:
-                server.getProcessor().onClose(getChannel(s));
+            case SESSION_CLOSED: {
+                ChannelDefaultEx c = s.getAttachment();
+                server.getProcessor().onClose(c);
                 break;
+            }
 
             case PROCESS_EXCEPTION:
             case DECODE_EXCEPTION:
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
-            case OUTPUT_EXCEPTION:
-                server.getProcessor().onError(getChannel(s), e);
+            case OUTPUT_EXCEPTION: {
+                ChannelDefaultEx c = s.getAttachment();
+                if (c != null) {
+                    server.getProcessor().onError(c, e);
+                }
                 break;
+            }
         }
     }
 }

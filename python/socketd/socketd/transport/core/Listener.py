@@ -1,19 +1,22 @@
 import abc
 
+from socketd.transport.core.Message import Message
+from socketd.transport.core.Session import Session
 
-class Listener:
+
+class Listener(abc.ABC):
     @abc.abstractmethod
-    async def on_open(self, session):
+    async def on_open(self, session:Session):
         pass
 
     @abc.abstractmethod
-    async def on_message(self, session, message):
+    async def on_message(self, session:Session, message:Message):
         pass
 
     @abc.abstractmethod
-    def on_close(self, session):
+    def on_close(self, session:Session):
         pass
 
     @abc.abstractmethod
-    def on_error(self, session, error):
+    def on_error(self, session:Session, error):
         pass

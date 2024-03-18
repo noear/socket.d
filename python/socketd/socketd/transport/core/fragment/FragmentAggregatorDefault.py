@@ -2,13 +2,14 @@ from io import BytesIO
 
 from socketd.transport.core.entity.EntityDefault import EntityDefault
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.Message import Message, MessageInternal
-from socketd.transport.core.Costants import EntityMetas
-from socketd.transport.core.fragment.FragmentAggregator import FragmentAggregator
-from socketd.transport.core.entity.MessageDefault import MessageDefault
+from socketd.transport.core.Message import MessageInternal
+from socketd.transport.core.EntityMetas import EntityMetas
+from socketd.transport.core.FragmentAggregator import FragmentAggregator
 from socketd.exception.SocketDExecption import SocketDException
 
 from .FragmentHolder import FragmentHolder
+from ..entity.MessageBuilder import MessageBuilder
+from ...utils.StrUtil import StrUtil
 
 
 class FragmentAggregatorDefault(FragmentAggregator):
@@ -17,20 +18,21 @@ class FragmentAggregatorDefault(FragmentAggregator):
     """
 
     def __init__(self, frame: MessageInternal):
-        self.__fragments: list[FragmentHolder] = []
         self.__main: MessageInternal = frame
-        data_length: str = frame.get_meta(EntityMetas.META_DATA_LENGTH)
-        if data_length is None or not data_length.isalnum():
-            raise SocketDException(f"Missing {EntityMetas.META_DATA_LENGTH} meta, event= {frame.get_event()}")
+        self.__fragmentHolders: list[FragmentHolder] = []
+
+        data_length: str = frame.meta(EntityMetas.META_DATA_LENGTH)
+        if StrUtil.is_empty(data_length):
+            raise SocketDException(f"Missing {EntityMetas.META_DATA_LENGTH} meta, event= {frame.event()}")
         self.__data_length = int(data_length)
         self.__data_stream_size = 0
 
     def add(self, index: int, message: MessageInternal):
-        self.__fragments.insert(index, FragmentHolder(index, message))
-        self.__data_stream_size += message.get_data_size()
+        self.__fragmentHolders.insert(index, FragmentHolder(index, message))
+        self.__data_stream_size += message.data_size()
 
     def get_sid(self) -> str:
-        return self.__main.get_sid()
+        return self.__main.sid()
 
     def get_data_length(self) -> int:
         return self.__data_length
@@ -39,16 +41,16 @@ class FragmentAggregatorDefault(FragmentAggregator):
         return self.__data_stream_size
 
     def get(self) -> Frame:
-        self.__fragments.sort(key=lambda x: x.index)
+        self.__fragmentHolders.sort(key=lambda x: x.index)
 
         byte: BytesIO = BytesIO()
 
-        for fragment in self.__fragments:
-            byte.write(fragment.message.get_data().getvalue())
+        for fragment in self.__fragmentHolders:
+            byte.write(fragment.message.data().getvalue())
 
-        return Frame(self.__main.get_flag(),
-                     MessageDefault()
-                     .set_flag(self.__main.get_flag())
-                     .set_sid(self.__main.get_sid())
-                     .set_entity(EntityDefault().meta_put_all(self.__main.get_entity().get_meta_map()))
+        return Frame(self.__main.flag(),
+                     MessageBuilder()
+                     .flag(self.__main.flag())
+                     .sid(self.__main.sid())
+                     .entity(EntityDefault().meta_map_put(self.__main.entity().meta_map())).build()
                      )

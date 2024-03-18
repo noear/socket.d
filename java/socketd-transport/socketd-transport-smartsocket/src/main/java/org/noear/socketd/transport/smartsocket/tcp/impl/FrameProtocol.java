@@ -20,13 +20,11 @@ public class FrameProtocol implements Protocol<Frame> {
         this.channelSupporter = channelSupporter;
     }
 
-    private ChannelDefaultEx getChannel(AioSession s) {
-        return ChannelDefaultEx.get(s, channelSupporter);
-    }
 
     @Override
-    public Frame decode(ByteBuffer buffer, AioSession aioSession){
-        FixedLengthFrameDecoder decoder = getChannel(aioSession).getDecoder();
+    public Frame decode(ByteBuffer buffer, AioSession aioSession) {
+        ChannelDefaultEx channel = aioSession.getAttachment();
+        FixedLengthFrameDecoder decoder = channel.getDecoder();
 
         if (decoder == null) {
             if (buffer.remaining() < Integer.BYTES) {
@@ -35,14 +33,14 @@ public class FrameProtocol implements Protocol<Frame> {
                 buffer.mark();
                 decoder = new FixedLengthFrameDecoder(buffer.getInt());
                 buffer.reset();
-                getChannel(aioSession).setDecoder(decoder);
+                channel.setDecoder(decoder);
             }
         }
 
         if (decoder.decode(buffer) == false) {
             return null;
         } else {
-            getChannel(aioSession).setDecoder(null);
+            channel.setDecoder(null);
             buffer = decoder.getBuffer();
         }
 

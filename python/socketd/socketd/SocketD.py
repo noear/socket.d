@@ -4,28 +4,25 @@ import socketd.cluster.ClusterClient as ClusterClient
 from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.Client import Client
-from socketd.transport.client.ClientFactory import ClientFactory
+from socketd.transport.client.ClientProvider import ClientProvider
 from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
-from socketd.transport.server.ServerFactory import ServerFactory
-
-from socketd_websocket.WsAioFactoy import WsAioFactory
-from socketd_aio_tcp.TcpAioFactory import TcpAioFactory
+from socketd.transport.server.ServerProvider import ServerProvider
+from socketd_websocket.WsAioProvider import WsAioProvider
 
 
 def version() -> str:
     return "2.3.6"
 
-
 def protocol_version() -> str:
     return "1.0"
 
 
-client_factory_map: Dict[str, ClientFactory] = {}
-server_factory_map: Dict[str, ServerFactory] = {}
+client_factory_map: Dict[str, ClientProvider] = {}
+server_factory_map: Dict[str, ServerProvider] = {}
 
 
-def load_factories(factories: list[ClientFactory | ServerFactory], factory_map: Dict[str, object]) -> None:
+def load_factories(factories: list[ClientProvider | ServerProvider], factory_map: Dict[str, object]) -> None:
     for factory in factories:
         for schema in factory.schema():
             factory_map[schema] = factory
@@ -65,5 +62,5 @@ def create_cluster_client(*urls):
 
 
 # Initialize the client and server factory maps
-load_factories([WsAioFactory(), TcpAioFactory()], server_factory_map)
-load_factories([WsAioFactory(), TcpAioFactory()], client_factory_map)
+load_factories([WsAioProvider()], server_factory_map)
+load_factories([WsAioProvider()], client_factory_map)

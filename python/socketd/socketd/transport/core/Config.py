@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from concurrent.futures import Executor
-from typing import Callable, Any
 
 from socketd.transport.core.Codec import Codec
-from socketd.transport.core.fragment import FragmentHandler
+from socketd.transport.core import FragmentHandler
 from socketd.transport.stream.StreamManger import StreamManger
 
 
@@ -15,6 +14,14 @@ class Config(ABC):
         """
         返回一个布尔值，指示配置是否为客户端模式。
         """
+        ...
+
+    @abstractmethod
+    def is_serial_send(self) ->bool:
+        ...
+
+    @abstractmethod
+    def is_nolock_send(self) -> bool:
         ...
 
     @abstractmethod
@@ -41,9 +48,9 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def get_id_generator(self) -> Callable[[], Any]:
+    def gen_id(self) -> str:
         """
-        返回ID生成器。
+        生成id
         """
         ...
 
@@ -55,29 +62,41 @@ class Config(ABC):
         ...
 
     @abstractmethod
+    def get_fragment_size(self) -> int:
+        """获取分片大小"""
+        ...
+
+    @abstractmethod
     def get_ssl_context(self):
         """
         返回_s_sL上下文。
         """
         ...
 
-    def get_executor(self) -> Executor:
-        """
-        返回执行器（第一优先级，某些底层可能不支持）。
-        """
-        ...
 
     @abstractmethod
-    def get_core_threads(self) -> int:
+    def get_io_threads(self) -> int:
         """
         返回核心线程数（第二优先级）。
         """
         ...
 
     @abstractmethod
-    def get_max_threads(self) -> int:
+    def get_codec_threads(self) -> int:
         """
         返回最大线程数。
+        """
+        ...
+
+    @abstractmethod
+    def get_exchange_threads(self) -> int:
+        ...
+
+
+    @abstractmethod
+    def get_exchange_executor(self) -> Executor:
+        """
+        返回执行器（第一优先级，某些底层可能不支持）。
         """
         ...
 
@@ -96,10 +115,8 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def get_max_udp_size(self) -> int:
-        """
-        返回允许的最大_uDP包大小。
-        """
+    def get_idle_timeout(self) -> float:
+        """闲置超时"""
         ...
 
     @abstractmethod
@@ -113,20 +130,17 @@ class Config(ABC):
         ...
 
 
-
-    @abstractmethod
-    def get_fragment_size(self) -> int:
-        """获取分片大小"""
-        ...
-
-    @abstractmethod
-    def get_idle_timeout(self) -> float:
-        """闲置超时"""
-        ...
-
     @abstractmethod
     def get_logger_level(self) -> str:
         ...
 
     @abstractmethod
     def get_is_thread(self) -> bool: ...
+
+
+    @abstractmethod
+    def get_max_udp_size(self) -> int:
+        """
+        返回允许的最大_uDP包大小。
+        """
+        ...

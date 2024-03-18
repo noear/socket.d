@@ -95,14 +95,6 @@ public class ClusterClientSession implements ClientSession {
         return sessionId;
     }
 
-    @Override
-    public void reconnect() throws IOException {
-        for (ClientSession session : sessionSet) {
-            if (session.isValid() == false) {
-                session.reconnect();
-            }
-        }
-    }
 
     /**
      * 发送
@@ -165,6 +157,18 @@ public class ClusterClientSession implements ClientSession {
         for (ClientSession session : sessionSet) {
             //某个关闭出错，不影响别的关闭
             RunUtils.runAndTry(session::close);
+        }
+    }
+
+    /**
+     * 重新连接
+     */
+    @Override
+    public void reconnect() throws IOException {
+        for (ClientSession session : sessionSet) {
+            if (session.isValid() == false) {
+                session.reconnect();
+            }
         }
     }
 }

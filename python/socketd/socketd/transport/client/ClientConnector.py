@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.core.ChannelInternal import ChannelInternal
 
 
 class ClientConnector(ABC):
@@ -10,11 +11,11 @@ class ClientConnector(ABC):
         ...
 
     @abstractmethod
-    def autoReconnect(self):
+    def auto_reconnect(self) -> bool:
         ...
 
     @abstractmethod
-    async def connect(self):
+    async def connect(self) -> ChannelInternal:
         ...
 
     @abstractmethod

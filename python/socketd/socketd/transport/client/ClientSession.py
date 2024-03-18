@@ -13,11 +13,11 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    def is_closing(self) -> bool:
+    def is_closing(self)->bool:
         ...
 
     @abc.abstractmethod
-    def get_session_id(self) -> str:
+    def session_id(self) -> str:
         ...
 
     @abc.abstractmethod
@@ -25,12 +25,15 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    async def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
+    async def send_and_request(self, event: str, content: Entity, timeout: int = 0) -> RequestStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_subscribe(self, event: str, content: Entity,
-                                 timeout: int = 0) -> SubscribeStream:
+    async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0) -> SubscribeStream:
+        ...
+
+    @abc.abstractmethod
+    def close_starting(self):
         ...
 
     @abc.abstractmethod
@@ -38,4 +41,5 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    def reconnect(self) -> None: ...
+    def reconnect(self):
+        ...

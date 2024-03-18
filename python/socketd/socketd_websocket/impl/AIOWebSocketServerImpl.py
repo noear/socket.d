@@ -5,9 +5,9 @@ from websockets import ConnectionClosedError, ConnectionClosedOK
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
-from socketd.transport.core.config.logConfig import log
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
-from socketd.transport.core.Costants import Flag
+from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 
 from socketd_websocket.IWebSocketServer import IWebSocketServer
@@ -67,15 +67,15 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 # frame: Frame = self.ws_aio_server.get_assistant().read(
                 #     message)
                 # # 采用线程池执行IO耗时任务
-                frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_executor(),
+                frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_exchange_executor(),
                                                           lambda _message: self.ws_aio_server.get_assistant().read(_message), message)
                 if frame is not None:
                     await self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)
-                    if frame.get_flag() == Flag.Close:
+                    if frame.flag() == Flags.Close:
                         """客户端主动关闭"""
                         await self.on_close(conn)
                         log.debug("{sessionId} 主动退出",
-                                  sessionId=conn.get_attachment().get_session().get_session_id())
+                                  sessionId=conn.get_attachment().get_session().session_id())
                         break
             except asyncio.CancelledError as c:
                 log.warning(c)

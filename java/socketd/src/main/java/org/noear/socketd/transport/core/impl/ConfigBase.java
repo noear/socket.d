@@ -23,8 +23,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class ConfigBase<T extends Config> implements Config {
     //客户模式
     private final boolean clientMode;
-    //顺序发送
-    private boolean sequenceSend;
+    //串行发送
+    private boolean serialSend;
     //无锁发送
     private boolean nolockSend;
     //流管理器
@@ -72,8 +72,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
-        this.sequenceSend = false;
+        this.serialSend = false;
         this.nolockSend = false;
+
         this.streamManger = new StreamMangerDefault(this);
         this.codec = new CodecDefault(this);
 
@@ -87,8 +88,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.codecThreads = Runtime.getRuntime().availableProcessors();
         this.exchangeThreads = Runtime.getRuntime().availableProcessors() * 4;
 
-        this.readBufferSize = 512;
-        this.writeBufferSize = 512;
+        this.readBufferSize = 1024 * 4; //4k
+        this.writeBufferSize = 1024 * 4;
 
         this.idleTimeout = 60_000L; //60秒（心跳默认为20秒）
         this.requestTimeout = 10_000L; //10秒（默认与连接超时同）
@@ -105,25 +106,25 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 顺序发送
+     * 串行发送
      */
     @Override
-    public boolean isSequenceSend() {
-        return sequenceSend;
+    public boolean isSerialSend() {
+        return serialSend;
     }
 
 
     /**
-     * 配置顺序发送
+     * 配置串行发送
      */
-    public T sequenceSend(boolean sequenceSend) {
-        this.sequenceSend = sequenceSend;
+    public T serialSend(boolean serialSend) {
+        this.serialSend = serialSend;
         return (T) this;
     }
 
     /**
      * 无锁发送
-     * */
+     */
     @Override
     public boolean isNolockSend() {
         return nolockSend;
@@ -221,11 +222,11 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 获取标识生成器
+     * 生成Id
      */
     @Override
-    public IdGenerator getIdGenerator() {
-        return idGenerator;
+    public String genId() {
+        return idGenerator.generate();
     }
 
     /**

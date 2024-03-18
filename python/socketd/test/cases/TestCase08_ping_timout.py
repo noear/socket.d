@@ -15,20 +15,16 @@ from test.modelu.SimpleListenerTest import SimpleListenerTest, ClientListenerTes
 from loguru import logger
 
 
-def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+def config_handler(config: ServerConfig | ClientConfig):
     config.is_thread(False)
     config.idle_timeout(None)
     # config.set_logger_level("DEBUG")
-    config.id_generator(uuid.uuid4)
-    return config
 
 
-def c_config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+def c_config_handler(config: ServerConfig | ClientConfig):
     config.is_thread(False)
     config.idle_timeout(10000)
     config.heartbeat_interval(10000)
-    config.id_generator(uuid.uuid4)
-    return config
 
 
 class TestCase08_ping_timout(BaseTestCase):

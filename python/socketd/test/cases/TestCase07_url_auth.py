@@ -2,7 +2,7 @@ import asyncio
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
-from socketd.transport.core.config.logConfig import log
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
@@ -22,7 +22,7 @@ class SimpleListenerTest(Listener):
         self.message_counter = AtomicRefer(0)
 
     async def on_open(self, session: Session):
-        params = session.get_param("auth")
+        params = session.param("auth")
         if params != "root":
             await session.close()
 

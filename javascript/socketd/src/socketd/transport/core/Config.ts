@@ -43,7 +43,7 @@ export interface Config {
     /**
      * 获取Id生成器
      */
-    getIdGenerator(): IdGenerator;
+    genId(): string;
 
     /**
      * 获取分片处理器
@@ -208,8 +208,8 @@ export abstract class ConfigBase implements Config {
     /**
      * 获取标识生成器
      */
-    getIdGenerator(): IdGenerator {
-        return this._idGenerator;
+    genId(): string {
+        return this._idGenerator.generate();
     }
 
     /**

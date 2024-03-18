@@ -8,8 +8,9 @@ from socketd.transport.core.Frame import Frame
 from websockets.server import WebSocketServerProtocol
 from websockets.protocol import State
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
-from socketd.transport.core.codec.CodecByteBuffer import ByteBufferCodecReader, ByteBufferCodecWriter
 from socketd.transport.core.Codec import CodecWriter
+from socketd.transport.core.codec.ByteBufferCodecReader import ByteBufferCodecReader
+from socketd.transport.core.codec.ByteBufferCodecWriter import ByteBufferCodecWriter
 
 
 class WsAioChannelAssistant(ChannelAssistant):

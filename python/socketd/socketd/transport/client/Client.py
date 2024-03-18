@@ -1,46 +1,55 @@
-from __future__ import annotations
+# 客户端
 from abc import ABC, abstractmethod
-from typing import Callable
 from asyncio.futures import Future
 
 from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.client.ClientConfigHandler import ClientConfigHandler
+from socketd.transport.client.ClientConnectHandler import ClientConnectHandler
 from socketd.transport.core import Listener
-from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.Processor import Processor
 from socketd.transport.core.Session import Session
-from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
+from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandler
 
 
+#客户端（用于构建会话）
 class Client(ABC):
-
+    #连接处理
     @abstractmethod
-    def heartbeatHandler(self, handler: HeartbeatHandler) -> Client: ...
+    def connect_handler(self, connectHandler: ClientConnectHandler) -> 'Client': ...
 
+    #心跳处理
     @abstractmethod
-    def config(self, consumer: Callable[[ClientConfig], ClientConfig]) -> Client: ...
+    def heartbeat_handler(self, heartbeatHandler: ClientHeartbeatHandler) -> 'Client': ...
 
+    #配置处理
     @abstractmethod
-    def listen(self, listener: Listener) -> Client: ...
+    def config(self, configHandler: ClientConfigHandler) -> 'Client': ...
 
+    #监听
+    @abstractmethod
+    def listen(self, listener: Listener) -> 'Client': ...
+
+    #打开会话
     @abstractmethod
     def open(self) -> Session | Future: ...
 
+    #打开会话或出异常（即要求第一次是连接成功的）
     @abstractmethod
-    def openOrThrow(self) -> Session | Future: ...
+    def open_or_throw(self) -> Session | Future:...
 
 
 class ClientInternal(Client):
     @abstractmethod
-    def get_heartbeatHandler(self) -> HeartbeatHandler: ...
+    def get_connect_handler(self) -> ClientConnectHandler: ...
 
     @abstractmethod
-    def get_heartbeatInterval(self) -> int: ...
+    def get_heartbeat_handler(self) -> ClientHeartbeatHandler: ...
+
+    @abstractmethod
+    def get_heartbeat_interval(self) -> int: ...
 
     @abstractmethod
     def get_config(self) -> ClientConfig: ...
 
     @abstractmethod
     def get_processor(self) -> Processor: ...
-
-    @abstractmethod
-    def get_assistant(self) -> ChannelAssistant: ...

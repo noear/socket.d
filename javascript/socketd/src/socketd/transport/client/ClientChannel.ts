@@ -62,7 +62,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 try {
                     await this.heartbeatHandle();
                 } catch (e) {
-                    console.debug("Client channel heartbeat error", e);
+                    console.debug("Client channel heartbeat failed: {link=" + this._connector.getConfig().getLinkUrl() + "}");
                 }
             }, this._client.getHeartbeatInterval());
         }
@@ -105,7 +105,7 @@ export class ClientChannel extends ChannelBase implements Channel {
                 this.internalCloseIfError();
             }
 
-            throw new SocketDChannelException(e);
+            throw e;
         }
     }
 

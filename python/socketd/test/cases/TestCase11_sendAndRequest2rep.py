@@ -20,12 +20,10 @@ from socketd.transport.core.Listener import Listener
 from loguru import logger
 
 
-def config_handler(config: ServerConfig | ClientConfig) -> ServerConfig | ClientConfig:
+def config_handler(config: ServerConfig | ClientConfig):
     config.is_thread(True)
     config.idle_timeout(10000)
     config.logger_level("DEBUG")
-    config.id_generator(lambda: str(uuid.uuid4()))
-    return config
 
 
 class SimpleListenerTest(Listener):
@@ -41,7 +39,7 @@ class SimpleListenerTest(Listener):
     async def on_message(self, session, message: Message):
         with self.server_counter:
             self.server_counter.set(self.server_counter.get() + 1)
-        logger.info(f"server::{message.get_data_as_string()} :: {message}")
+        logger.info(f"server::{message.data_as_string()} :: {message}")
         if message.is_request():
             req: RequestStream = await session.send_and_request("demo", StringEntity("今天不好"), 100)
             # todo await_result会进行强阻塞线程，导致无法监听到其他线程修改的值，线程可见性，这里就停止0.1等待
@@ -79,7 +77,7 @@ class ClientListenerTest(Listener):
         self.message_counter = AtomicRefer(0)
 
     async def on_message(self, session: Session, message: Message):
-        logger.info(f"client: {message} {message.get_data_as_string()}")
+        logger.info(f"client: {message} {message.data_as_string()}")
         if message.is_request():
             logger.debug(f"运行::c:: {current_thread().name} eventLoop: {id(asyncio.get_running_loop())}")
             await session.reply_end(message, StringEntity("很好"))
@@ -111,7 +109,7 @@ class TestCase11_sendAndRequest2rep(BaseTestCase):
         logger.debug(f"开始等待 main {current_thread().name} eventLoop: {id(asyncio.get_running_loop())}")
         entity = await req.await_result()
         logger.debug(f"等待结束 main {current_thread().name} eventLoop: {id(asyncio.get_running_loop())}")
-        logger.info(f"c: res{entity} {entity.get_data_as_string()}")
+        logger.info(f"c: res{entity} {entity.data_as_string()}")
         await asyncio.sleep(1)
 
     def start(self):

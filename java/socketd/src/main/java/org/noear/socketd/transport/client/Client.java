@@ -34,7 +34,7 @@ public interface Client {
     /**
      * 打开会话
      */
-    ClientSession open() throws IOException;
+    ClientSession open();
 
     /**
      * 打开会话或出异常（即要求第一次是连接成功的）

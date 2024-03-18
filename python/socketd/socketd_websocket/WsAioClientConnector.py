@@ -4,11 +4,11 @@ from typing import Optional
 from websockets.client import WebSocketClientProtocol
 
 from socketd.exception.SocketDExecption import SocketDTimeoutException
-from socketd.transport.client.Client import Client, ClientInternal
+from socketd.transport.client.Client import ClientInternal
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Costants import Constants
-from socketd.transport.core.config.logConfig import logger
+from socketd.transport.core.impl.LogConfig import logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd_websocket.impl.AIOConnect import AIOConnect

@@ -1,5 +1,5 @@
 import asyncio
-import uuid
+
 from websockets.legacy.server import WebSocketServer
 
 from socketd import SocketD
@@ -15,28 +15,23 @@ from test.uitls import calc_async_time
 from loguru import logger
 
 
-def idGenerator(config):
-    return config.id_generator(uuid.uuid4)
-
-
 @calc_async_time
 async def application_test():
     server: Server = SocketD.create_server(ServerConfig("ws").port(9999))
-    server_session: WebSocketServer = await server.config(idGenerator).listen(
+    server_session: WebSocketServer = await server.listen(
         SimpleListenerTest()).start()
     await asyncio.sleep(1)
-    client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9999") \
-        .config(idGenerator).open()
+    client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9999").open()
 
     # 单向发送
     await client_session.send("demo", StringEntity("test.png"))
     # 发送并请求（且，等待一个答复）
     req: RequestStream = await client_session.send_and_request("demo", StringEntity("你好"), 100)
     entity: Entity = await req.await_result()
-    print(entity.get_data_as_string())
+    print(entity.data_as_string())
 
     async def send_and_subscribe_test(_entity: Entity):
-        logger.debug(f"c::subscribe::{_entity.get_data_as_string()} {_entity}")
+        logger.debug(f"c::subscribe::{_entity.data_as_string()} {_entity}")
 
     # 发送并订阅（且，接收零个或多个答复流）
     req: SubscribeStream = await client_session.send_and_subscribe("demo", StringEntity("hi"), 100)

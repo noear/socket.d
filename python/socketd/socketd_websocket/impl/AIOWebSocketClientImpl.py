@@ -7,11 +7,11 @@ from websockets.uri import WebSocketURI
 
 from socketd.exception.SocketDExecption import SocketDConnectionException
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
-from socketd.transport.core.config.logConfig import log
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike, ConnectionClosedOK
 
-from socketd.transport.core.Costants import Flag
+from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 from socketd_websocket import WsAioClient
@@ -20,7 +20,7 @@ from socketd_websocket import WsAioClient
 class AIOWebSocketClientImpl(WebSocketClientProtocol):
     def __init__(self, client: WsAioClient, message_loop, *args, **kwargs):
         WebSocketClientProtocol.__init__(self, *args, **kwargs)
-        self.status_state = Flag.Unknown
+        self.status_state = Flags.Unknown
         self.client = client
         self.channel = ChannelDefault(self, client)
         # 预留的新的事件循环，用于跨线程操作
@@ -58,7 +58,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             await self.on_open()
             while True:
                 await asyncio.sleep(0)
-                if self.closed or self.status_state == Flag.Close:
+                if self.closed or self.status_state == Flags.Close:
                     break
                 try:
                     await self.on_message()
@@ -71,8 +71,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
     async def on_open(self):
         try:
             log.info("Client:Websocket onOpen...")
-            await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta_map())
-            while self.status_state == Flag.Connect:
+            await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta())
+            while self.status_state == Flags.Connect:
                 await self.on_message()
         except Exception as e:
             log.error(str(e), exc_info=True)
@@ -80,7 +80,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
 
     async def on_message(self):
         """处理消息"""
-        if self.status_state == Flag.Close:
+        if self.status_state == Flags.Close:
             return
         try:
             message = await self.recv()
@@ -88,12 +88,12 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                 # 结束握手
                 return
             # frame: Frame = self.client.get_assistant().read(message)
-            frame: Frame = await self.loop.run_in_executor(self.get_channel().get_config().get_executor(),
+            frame: Frame = await self.loop.run_in_executor(None,
                                                            lambda _message: self.client.get_assistant().read(_message),
                                                            message)
             if frame is not None:
-                self.status_state = frame.get_flag()
-                if frame.get_flag() == Flag.Connack:
+                self.status_state = frame.flag()
+                if frame.flag() == Flags.Connack:
                     async def __future(b: bool, _e: Exception):
                         if _e:
                             self.handshake_future.set_e(_e)
@@ -104,11 +104,11 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     await self.channel.on_open_future(__future)
                 # 将on_receive 让新的事件循环进行回调，不阻塞当前read循环
                 asyncio.run_coroutine_threadsafe(self.client.get_processor().on_receive(self.channel, frame), self.loop)
-                if frame.get_flag() == Flag.Close:
+                if frame.flag() == Flags.Close:
                     """服务端主动关闭"""
                     # await self.close()
                     log.debug("{sessionId} 服务端主动关闭",
-                              sessionId=self.channel.get_session().get_session_id())
+                              sessionId=self.channel.get_session().session_id())
         except CancelledError as c:
             # 超时自动推出
             log.debug(c)

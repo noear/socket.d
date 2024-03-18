@@ -4,7 +4,8 @@ from io import BytesIO, TextIOWrapper, BufferedReader
 from typing import Any, Optional
 
 from socketd.transport.core.Entity import Entity
-from socketd.transport.core.Costants import Constants, EntityMetas
+from socketd.transport.core.Costants import Constants
+from socketd.transport.core.EntityMetas import EntityMetas
 
 
 class EntityDefault(Entity):
@@ -25,22 +26,16 @@ class EntityDefault(Entity):
         self._meta_stringChanged = True
         return self
 
-    def meta_put_all(self, metaMap: dict):
-        if self._meta_map:
-            self._meta_map.update(metaMap)
-            self._meta_stringChanged = True
-        return self
-
     def meta_string_set(self, meta_string):
         self._meta_map = None
         self._meta_string = meta_string
         self._meta_stringChanged = False
         return self
 
-    def get_meta_string(self):
+    def meta_string(self):
         if self._meta_stringChanged:
             buf = ""
-            for name, val in self.get_meta_map().items():
+            for name, val in self.meta_map().items():
                 buf += f"{name}={val}&"
             if len(buf) > 0:
                 buf = buf[:-1]
@@ -48,13 +43,13 @@ class EntityDefault(Entity):
             self._meta_stringChanged = False
         return self._meta_string
 
-    def meta_map_set(self, meta_map):
-        self._meta_map = meta_map
-        self._meta_string = None
-        self._meta_stringChanged = True
+    def meta_map_put(self, metaMap:dict[str,str]):
+        if metaMap:
+            self.meta_map().update(metaMap)
+            self._meta_stringChanged = True
         return self
 
-    def get_meta_map(self):
+    def meta_map(self):
         if self._meta_map is None:
             self._meta_map = {}
             self._meta_stringChanged = False
@@ -67,18 +62,36 @@ class EntityDefault(Entity):
                         self._meta_map[kv[0]] = ""
         return self._meta_map
 
-    def meta_put(self, name, val):
-        self.get_meta_map()[name] = val
+    def meta_put(self, name:str, val:str):
+        if val:
+            self.meta_map()[name] = val
+        else:
+            self.meta_map().pop(name)
+
         self._meta_stringChanged = True
         return self
 
-    def get_meta(self, name) -> Any:
-        return self.get_meta_map().get(name)
+    def meta_del(self, name:str):
+        self.meta_map().pop(name)
+        self._meta_stringChanged = True
+        return self
 
-    def get_meta_or_default(self, name, default_val):
-        if data := self.get_meta_map().get(name):
+    def meta(self, name:str) -> Any:
+        return self.meta_map().get(name)
+
+    def meta_or_default(self, name:str, default_val:str):
+        if data := self.meta_map().get(name):
             return data
         return default_val
+
+    def meta_as_int(self, name:str) ->int:
+        return int(self.meta_or_default(name,"0"))
+
+    def put_meta(self, name:str, val:str):
+        self.meta_put(name,val)
+
+    def del_meta(self, name:str):
+        self.meta_del(name)
 
     def data_set(self, data: bytes | bytearray | memoryview | BytesIO | BufferedReader):
         _type = type(data)
@@ -94,17 +107,20 @@ class EntityDefault(Entity):
             self._data_size = len(data)
         return self
 
-    def get_data(self):
+    def data(self):
         return self._data
 
-    def get_data_as_string(self):
+    def data_as_string(self):
         return self._data.getvalue().decode('utf-8')  # _assuming _data is of type bytes
 
-    def get_data_as_bytes(self) -> bytes:
+    def data_as_bytes(self) -> bytes:
         return self._data.getvalue()
 
-    def get_data_size(self):
+    def data_size(self):
         return self._data_size
 
+    def release(self):
+        ...
+
     def __str__(self):
-        return f"Entity(meta='{self.get_meta_string()}', data=byte[{self._data_size}])"
+        return f"Entity(meta='{self.meta_string()}', data=byte[{self._data_size}])"

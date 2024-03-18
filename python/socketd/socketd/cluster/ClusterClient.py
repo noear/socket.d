@@ -1,63 +1,75 @@
 import asyncio
-from asyncio import Future
-from typing import Callable, Optional, List, Awaitable, Any
+from typing import Optional, List, Awaitable, Any
 
 from socketd import SocketD
 from socketd.cluster.ClusterClientSession import ClusterClientSession
 from socketd.transport.client.Client import Client, ClientInternal
-from socketd.transport.client.ClientConfig import ClientConfig
+from socketd.transport.client.ClientConfigHandler import ClientConfigHandler
+from socketd.transport.client.ClientConnectHandler import ClientConnectHandler
 from socketd.transport.client.ClientSession import ClientSession
 from socketd.transport.core import Listener
 from socketd.transport.core.Session import Session
-from socketd.transport.core.impl.HeartbeatHandlerDefault import HeartbeatHandler
+from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandler
 
 
 class ClusterClient(Client):
 
     def __init__(self, *serverUrls):
-        self._listener = None
-        self._serverUrls: Optional[tuple[Any, ...]] = serverUrls
-        self._heartbeatHandler: Optional[HeartbeatHandler] = None
-        self._configHandler: Optional[Callable[[ClientConfig], ClientConfig]] = None
+        self.__serverUrls: Optional[tuple[Any, ...]] = serverUrls
 
-    def heartbeatHandler(self, handler: HeartbeatHandler) -> 'Client':
-        self._heartbeatHandler = handler
+        self.__connectHandler: ClientConnectHandler = None
+        self.__heartbeatHandler: ClientHeartbeatHandler = None
+        self.__configHandler: ClientConfigHandler = None
+
+        self.__listener = None
+
+    def connect_handler(self, connectHandler: ClientConnectHandler)  -> Client:
+        self.__connectHandler = connectHandler
         return self
 
-    def config(self, consumer: Callable[[ClientConfig], ClientConfig]) -> 'Client':
-        self._configHandler = consumer
+    def heartbeat_handler(self, heartbeatHandler: ClientHeartbeatHandler) -> Client:
+        self.__heartbeatHandler = heartbeatHandler
         return self
 
-    def listen(self, listener: Listener) -> 'Client':
-        self._listener = listener
+    def config(self, configHandler: ClientConfigHandler) -> Client:
+        self.__configHandler = configHandler
         return self
 
-    async def _open(self, is_throw):
+    def listen(self, listener: Listener) -> Client:
+        self.__listener = listener
+        return self
+
+    def open(self) -> Awaitable[ClientSession]:
+        return self._open_do(False)
+
+    def open_or_throw(self) -> Awaitable[ClientSession]:
+        return self._open_do(True)
+
+    async def _open_do(self, is_throw):
         sessions: List[Session] = []
-        channelExecutor = None
-        for urls in self._serverUrls:
+        exchangeExecutor = None
+        for urls in self.__serverUrls:
             for url in urls.split(","):
                 client: ClientInternal = SocketD.create_client(url)
 
-                if self._listener:
-                    client.listen(self._listener)
+                if self.__listener:
+                    client.listen(self.__listener)
 
-                if self._configHandler:
-                    client.config(self._configHandler)
+                if self.__configHandler:
+                    client.config(self.__configHandler)
 
-                if self._heartbeatHandler:
-                    client.heartbeatHandler(self._heartbeatHandler)
+                if self.__connectHandler:
+                    client.connect_handler(self.__connectHandler)
 
-                if channelExecutor is None:
-                    channelExecutor = client.get_config().get_executor()
+                if self.__heartbeatHandler:
+                    client.heartbeat_handler(self.__heartbeatHandler)
+
+                if exchangeExecutor is None:
+                    exchangeExecutor = client.get_config().get_exchange_executor()
                 else:
-                    client.get_config().executor(channelExecutor)
+                    client.get_config().exchange_executor(exchangeExecutor)
 
-                sessions.extend(await asyncio.gather(*[client.openOrThrow() if is_throw else client.open()]))
+                sessions.extend(await asyncio.gather(*[client.open_or_throw() if is_throw else client.open()]))
         return ClusterClientSession(sessions)
 
-    def open(self) -> Awaitable[ClientSession]:
-        return self._open(False)
 
-    def openOrThrow(self) -> Awaitable[ClientSession]:
-        return self._open(True)

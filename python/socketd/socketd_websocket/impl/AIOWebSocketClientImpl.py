@@ -31,7 +31,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         else:
             self._loop = asyncio.get_running_loop()
         self.handshake_future: Optional[CompletableFuture] = None
-        self._handler_future: [concurrent.futures.Future] = None
+        self._handler_future: Optional[concurrent.futures.Future] = None
 
     def get_channel(self):
         return self.channel
@@ -66,7 +66,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                     await self.on_message()
                 except Exception as e:
                     log.warning(e)
-                    raise e
+                    break
         # 挂在到self.loop 上
         self._handler_future = asyncio.run_coroutine_threadsafe(_handler(), self.loop)
 
@@ -125,6 +125,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
 
     def on_close(self):
         self.client.get_processor().on_close(self.channel)
+        self._handler_future.cancel()
 
     def on_error(self, e):
         self.client.get_processor().on_error(self.channel, e)

@@ -1,6 +1,6 @@
+from socketd import SocketD
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.EntityMetas import EntityMetas
-from socketd import SocketD
 from socketd.transport.core.HandshakeDefault import HandshakeInternal
 from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.EntityDefault import EntityDefault

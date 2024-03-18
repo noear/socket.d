@@ -1,6 +1,6 @@
 
 from .TCPAIOServer import TCPAIOServer
 from .TcpAioClient import TcpAioClient
-from .TcpAioFactory import TcpAioFactory
+from .TcpAioProvider import TcpAioProvider
 
-__all__ = ["TCPAIOServer", "TcpAioClient", "TcpAioFactory"]
+__all__ = ["TCPAIOServer", "TcpAioClient", "TcpAioProvider"]

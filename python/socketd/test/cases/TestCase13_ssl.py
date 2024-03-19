@@ -1,6 +1,5 @@
 import asyncio
 import ssl
-import uuid
 
 from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig

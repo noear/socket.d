@@ -75,13 +75,13 @@ class TestCase05_file(BaseTestCase):
             .config(config_handler).open()
         await asyncio.sleep(1)
         try:
-            with open(r"C:\Users\bai\Pictures\飞书20230728-180708.mp4",
+            with open(r"C:\Users\11450\Pictures\飞书20230728-180708.mp4",
                       "rb") as f:
                 await self.client_session.send("/path?u=a&p=2", FileEntity(f, "test.png"))
         except Exception as e:
             logger.error(e)
             raise e
-        await asyncio.sleep(10)
+        await asyncio.sleep(20)
 
     def start(self):
         super().start()

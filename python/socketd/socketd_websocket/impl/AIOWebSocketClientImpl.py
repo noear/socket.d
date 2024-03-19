@@ -1,7 +1,6 @@
 import asyncio
-import concurrent.futures
 from asyncio import CancelledError
-from typing import Optional, Sequence
+from typing import Optional, Sequence, List
 from loguru import logger
 from websockets.extensions import ClientExtensionFactory
 from websockets.uri import WebSocketURI
@@ -31,7 +30,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         else:
             self._loop = asyncio.get_running_loop()
         self.handshake_future: Optional[CompletableFuture] = None
-        self._handler_future: Optional[concurrent.futures.Future] = None
+        self._handler_future: Optional[asyncio.Future] = None
+        self.__on_receive_tasks: List[asyncio.Task] = []
 
     def get_channel(self):
         return self.channel
@@ -46,32 +46,32 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         self.handshake_future: Optional[CompletableFuture] = CompletableFuture()
         return return_data
 
+    async def _handler(self):
+        """
+        异步处理函数，用于处理握手完成后的消息处理逻辑。
+        """
+        await self.on_open()
+        while True:
+            await asyncio.sleep(0)
+            if self.closed or self.status_state == Flags.Close:
+                break
+            try:
+                await self.on_message()
+            except Exception as e:
+                log.warning(e)
+                break
+
     def connection_open(self) -> None:
         """
         打开握手完成回调函数。
         :return: 无返回值
         """
         super().connection_open()
-
-        async def _handler():
-            """
-            异步处理函数，用于处理握手完成后的消息处理逻辑。
-            """
-            await self.on_open()
-            while True:
-                await asyncio.sleep(0)
-                if self.closed or self.status_state == Flags.Close:
-                    break
-                try:
-                    await self.on_message()
-                except Exception as e:
-                    log.warning(e)
-                    break
-        # 挂在到self.loop 上
-        self._handler_future = asyncio.run_coroutine_threadsafe(_handler(), self.loop)
+        self._handler_future = self.loop.create_task(self._handler())
 
     @logger.catch
     async def on_open(self):
+        """开始建立连接"""
         try:
             log.info("Client:Websocket onOpen...")
             await self.channel.send_connect(self.client.get_config().get_url(), self.client.get_config().get_meta_map())
@@ -90,7 +90,6 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             if message is None:
                 # 结束握手
                 return
-            # frame: Frame = self.client.get_assistant().read(message)
             frame: Frame = await self.loop.run_in_executor(self.client.get_config().get_exchange_executor(),
                                                            lambda _message: self.client.get_assistant().read(_message),
                                                            message)
@@ -103,10 +102,9 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                             self.handshake_future.cancel()
                         else:
                             self.handshake_future.accept(ClientHandshakeResult(self.channel, None))
-
                     await self.channel.on_open_future(__future)
                 # 将on_receive 让新的事件循环进行回调，不阻塞当前read循环
-                asyncio.run_coroutine_threadsafe(self.client.get_processor().on_receive(self.channel, frame), self.loop)
+                self.__on_receive_tasks.append(self.loop.create_task(self.client.get_processor().on_receive(self.channel, frame)))
                 if frame.flag() == Flags.Close:
                     """服务端主动关闭"""
                     log.debug("{sessionId} 服务端主动关闭",
@@ -123,9 +121,11 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         except Exception as e:
             self.on_error(e)
 
-    def on_close(self):
+    async def on_close(self):
         self.client.get_processor().on_close(self.channel)
-        self._handler_future.cancel()
+        if self.handshake_future is not None:
+            await asyncio.wait(self.__on_receive_tasks, timeout=10)
+            await asyncio.wait([self._handler_future], timeout=10)
 
     def on_error(self, e):
         self.client.get_processor().on_error(self.channel, e)

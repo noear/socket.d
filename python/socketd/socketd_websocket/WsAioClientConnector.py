@@ -8,7 +8,7 @@ from socketd.transport.client.Client import ClientInternal
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Costants import Constants
-from socketd.transport.core.impl.LogConfig import logger
+from socketd.transport.core.impl.LogConfig import log, logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd_websocket.impl.AIOConnect import AIOConnect
@@ -34,7 +34,7 @@ class WsAioClientConnector(ClientConnectorBase):
         if self.client.get_config().get_ssl_context() is not None:
             ws_url = ws_url.replace("ws", "wss")
         self._loop = asyncio.new_event_loop()
-        self._top = AsyncUtil.run_forever(self._loop)
+        self._top = AsyncUtil.run_forever(self._loop, daemon=True)
         try:
             self.__con: AIOConnect = AIOConnect(ws_url, client=self.client,
                                                 ssl=self.client.get_config().get_ssl_context(),
@@ -67,15 +67,15 @@ class WsAioClientConnector(ClientConnectorBase):
             return
         try:
             await self.__real.close()
-            self.__real.on_close()
+            await self.__real.on_close()
             await self.stop()
         except Exception as e:
-            logger.debug(e)
+            log.debug(e)
 
     async def stop(self):
         if self._top:
-            _top = self._top
-            if not _top.done():
-                _top.set_result(1)
-        self._loop.stop()
-        logger.debug(f"Stopping WebSocket::{self._loop.is_running()}")
+            if not self._top.done():
+                self._top.set_result(1)
+        if self._loop:
+            self._loop.stop()
+            log.debug(f"Stopping WebSocket::{self._loop.is_running()}")

@@ -98,7 +98,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 await self.on_error(conn, e)
         try:
             # 等待未完成任务
-            await asyncio.gather(*tasks)
+            await asyncio.wait(tasks, timeout=10)
         except asyncio.CancelledError as c:
             pass
         except TimeoutError as e:

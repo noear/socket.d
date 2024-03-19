@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import Dict
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
@@ -7,9 +9,9 @@ from socketd.transport.core.listener.PathMapper import PathMapperDefault
 class PathListener(Listener):
 
     def __init__(self, mapper: PathMapperDefault):
-        self._mapper: PathMapperDefault = mapper
+        self._mapper: Dict[str, Listener] | PathMapperDefault = mapper
 
-    def of(self, path: str, listener: Listener) -> 'PathListener':
+    def of(self, path: str, listener: Listener) -> PathListener:
         self._mapper[path] = listener
         return self
 

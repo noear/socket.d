@@ -4,7 +4,6 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.transport.stream.StreamManger;
-import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,17 +124,10 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             //无锁发送
             sendDo(frame, stream);
         } else {
-            //有锁发送，如果有数据分片场景必须要有锁！
-            boolean inFair = getConfig().isSerialSend();
-            if (inFair == false && frame.message() != null) {
-                String atName = frame.message().atName();
-                if (StrUtils.isNotEmpty(atName) && atName.charAt(atName.length() - 1) == '!') {
-                    //如果 “name!”（即要求固定发送目标的），则用公平锁
-                    inFair = true;
-                }
-            }
+            //有锁发送 //如果有数据分片场景必须要有锁！
+            boolean isSerialSend = getConfig().isSerialSend();
 
-            if (inFair) {
+            if (isSerialSend) {
                 sendInFairLock.lock();
                 try {
                     sendDo(frame, stream);

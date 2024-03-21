@@ -69,11 +69,12 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                                             loop=loop)
             return protocol
         _sock: socket.socket = socket.socket(socket.AF_INET)
+        _sock.bind(("127.0.0.1" if not self.get_config().get_host() else self.get_config().get_host(),
+                       self.get_config().get_port()))
         _sock.settimeout(self.get_config().get_idle_timeout() / 1000)
         # 生成一个服务器
         self._server: asyncio.Server = await loop.create_server(factory,
-                                                                self.get_config().get_host(),
-                                                                self.get_config().get_port(),
+                                                                sock=_sock,
                                                                 start_serving=True,
                                                                 )
         # self._server_forever_future = loop.create_task(self._server.serve_forever())

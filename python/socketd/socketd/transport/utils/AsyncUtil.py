@@ -86,3 +86,15 @@ class AsyncUtil(object):
         elif pool:
             pool.submit(lambda x: AsyncUtil.thread_handler(*x), (loop, loop.create_task(_run())))
         return loop
+
+    @staticmethod
+    async def gather_concurrent(coros: typing.List[typing.Coroutine], limit=10):
+        """并发执行多个协程任务，并限制同时执行的数量"""
+
+        async def worker(semaphore: asyncio.Semaphore, coro):
+            async with semaphore:
+                return await coro
+
+        semaphore = asyncio.Semaphore(limit)
+        tasks = [worker(semaphore, coro) for coro in coros]
+        return await asyncio.gather(*tasks, return_exceptions=True)

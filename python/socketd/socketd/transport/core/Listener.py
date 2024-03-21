@@ -14,7 +14,7 @@ class Listener(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def on_close(self, session: Session):
+    async def on_close(self, session: Session):
         pass
 
     @abc.abstractmethod

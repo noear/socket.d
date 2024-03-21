@@ -25,7 +25,7 @@ class Processor(ABC):
         pass
 
     @abstractmethod
-    def on_close(self, channel: ChannelInternal):
+    async def on_close(self, channel: ChannelInternal):
         pass
 
     @abstractmethod

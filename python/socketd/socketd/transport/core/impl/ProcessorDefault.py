@@ -49,7 +49,7 @@ class ProcessorDefault(Processor, ABC):
                     else:
                         # 如果还有效，则关闭通道
                         await channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL)
-                        self.on_close_internal(channel)
+                        await self.on_close_internal(channel)
 
             await channel.on_open_future(_future)
             await self.on_open(channel)
@@ -72,7 +72,7 @@ class ProcessorDefault(Processor, ABC):
                     pass
                 elif frame.flag() == Flags.Close:
                     await channel.close(Constants.CLOSE1001_PROTOCOL_CLOSE)
-                    self.on_close(channel)
+                    await self.on_close(channel)
                 elif frame.flag() == Flags.Alarm:
                     e = SocketDAlarmException(frame.message())
                     stream: Union[StreamInternal, Stream] = channel.get_config().get_stream_manger() \
@@ -87,8 +87,8 @@ class ProcessorDefault(Processor, ABC):
                 elif frame.flag() in [Flags.Reply, Flags.ReplyEnd]:
                     await self.on_receive_do(channel, frame, True)
                 else:
-                    await channel.close(Constants.CLOSE12_PROTOCOL_ILLEGAL)
-                    self.on_close(channel)
+                    await channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL)
+                    await self.on_close(channel)
             except Exception as e:
                 logger.error(e)
                 self.on_error(channel, e)
@@ -143,11 +143,11 @@ class ProcessorDefault(Processor, ABC):
         # 异步运行
         task = asyncio.create_task(self.listener.on_message(channel.get_session(), message))
 
-    def on_close(self, channel: ChannelInternal):
-        self.listener.on_close(channel.get_session())
+    async def on_close(self, channel: ChannelInternal):
+        await self.listener.on_close(channel.get_session())
 
     def on_error(self, channel: ChannelInternal, error):
         self.listener.on_error(channel.get_session(), error)
 
-    def on_close_internal(self, channel: ChannelInternal):
-        self.listener.on_close(channel.get_session())
+    async def on_close_internal(self, channel: ChannelInternal):
+        await self.listener.on_close(channel.get_session())

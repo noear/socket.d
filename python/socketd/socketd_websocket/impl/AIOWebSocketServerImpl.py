@@ -65,6 +65,10 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             if conn.closed:
                 break
             try:
+                if tasks:
+                    task = tasks[0]
+                    if task.done():
+                        tasks.pop(0)
                 message = await self.recv()
                 # frame: Frame = self.ws_aio_server.get_assistant().read(
                 #     message)

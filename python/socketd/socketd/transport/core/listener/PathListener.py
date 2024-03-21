@@ -23,9 +23,9 @@ class PathListener(Listener):
         if l := self._mapper.get(session.path()):
             await l.on_message(session)
 
-    def on_close(self, session):
+    async def on_close(self, session):
         if l := self._mapper.get(session.path()):
-            l.on_close(session)
+            await l.on_close(session)
 
     def on_error(self, session, error):
         if l := self._mapper.get(session.path()):

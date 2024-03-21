@@ -44,7 +44,7 @@ class ClientChannel(ChannelBase):
 
     async def __heartbeatScheduled(self) -> None:
         while True:
-            await asyncio.sleep(self.__client.get_heartbeat_interval() / 100)
+            await asyncio.sleep(self.__client.get_heartbeat_interval() / 1000)
             await self.heartbeat_handle()
 
     def init_heartbeat(self):
@@ -118,7 +118,7 @@ class ClientChannel(ChannelBase):
             raise s
         except Exception as e:
             if self.__connector.auto_reconnect():
-                self.internalCloseIfError()
+                await self.internalCloseIfError()
 
             raise SocketDChannelException(f"Client channel send failed {e}")
 
@@ -173,9 +173,9 @@ class ClientChannel(ChannelBase):
         finally:
             self.__isConnecting.set(False)
 
-    def internalCloseIfError(self):
+    async def internalCloseIfError(self):
         if self.__real:
-            self.__real.close(Constants.CLOSE2001_ERROR)
+            await self.__real.close(Constants.CLOSE2001_ERROR)
             self.__real = None
 
     async def internalCheck(self):

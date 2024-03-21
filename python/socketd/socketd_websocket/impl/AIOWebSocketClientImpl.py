@@ -86,6 +86,10 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         if self.status_state == Flags.Close:
             return
         try:
+            if self.__on_receive_tasks:
+                task = self.__on_receive_tasks[0]
+                if task.done():
+                    self.__on_receive_tasks.pop(0)
             message = await self.recv()
             if message is None:
                 # 结束握手

@@ -1,6 +1,7 @@
 ### 2.4.7
 * 添加 Entity::metaAsDouble，metaAsLong，保持与 java 一至（方便文档统一）
 * 调整 Config::getIdGenerator 改为 genId
+* 调整 HandshakeDefault path 为空时，默认为 /
 * 调整 ByteBuffer::getBytes 为异步模式，保持与 BlobBuffer 相同体验
 * 修复 StrUtil::parseUri 没有 ? 时出错的问题
 * 简化 心跳异常日志

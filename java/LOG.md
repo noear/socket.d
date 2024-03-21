@@ -1,3 +1,13 @@
+### 2.4.7
+* 调整 读写缓冲大小配置默认 512 改为 4k（主要用在 bio 跟 aio 上）
+* 调整 smartsocket 附件的处理（简化）
+* 调整 client:open 改为无异常模式
+* 调整 Config::isSequenceSend 更名为 isSerialSend
+* 调整 Config::getIdGenerator 改为 genId
+* 调整 HandshakeDefault path 为空时，默认为 /
+* 调整 把发送锁改为配置决伫的固定模式
+* 简化 心跳异常日志
+
 ### 2.4.6
 * 添加 spi 手动注册方式
 

@@ -5,7 +5,7 @@
 * 调整 Config::isSequenceSend 更名为 isSerialSend
 * 调整 Config::getIdGenerator 改为 genId
 * 调整 HandshakeDefault path 为空时，默认为 /
-* 调整 把发送锁改为配置决伫的固定模式
+* 调整 把发送锁改为配置决定的固定模式
 * 简化 心跳异常日志
 
 ### 2.4.6

@@ -1,4 +1,5 @@
 import asyncio
+import socket
 from asyncio import StreamReader, StreamReaderProtocol, StreamWriter
 from typing import Optional, AsyncGenerator, List
 
@@ -20,6 +21,7 @@ class TcpAioClientConnector(ClientConnectorBase):
 
     def __init__(self, client: ClientInternal):
         super().__init__(client)
+        self._sock: Optional[socket.socket] = None
         self.__top: Optional[asyncio.Future] = None
         self.__real: Optional[asyncio.Transport] = None
         self.__message: asyncio.Queue = asyncio.Queue()
@@ -33,21 +35,26 @@ class TcpAioClientConnector(ClientConnectorBase):
 
     async def connect(self):
         # 处理自定义架构的影响
+        loop = asyncio.get_running_loop()
         tcp_url = self.client.get_config().get_url().replace("std:", "").replace("-python", "")
         _sch, _host, _port = tcp_url.replace("//", "").split(":")
-        _port = _port.split("/")[0]
+        _port = int(_port.split("/")[0])
         if self.__top is None:
             self._loop = asyncio.new_event_loop()
             self.__top = AsyncUtil.run_forever(self._loop, daemon=True)
         try:
-            loop = asyncio.get_running_loop()
+            
             reader = StreamReader(limit=self.get_config().get_read_buffer_size(), loop=loop)
             protocol = StreamReaderProtocol(reader, loop=loop)
+            self._sock: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self._sock.connect((_host, _port))
             transport, _ = await loop.create_connection(
-                lambda: protocol, _host, _port)
+                lambda: protocol, sock=self._sock)
             writer = StreamWriter(transport, protocol, reader, loop)
+
             self.__real: asyncio.Transport = transport
-            channel = ChannelDefault(TCPStreamIO(self.__real, reader, writer), self.client)
+
+            channel = ChannelDefault(TCPStreamIO(self._sock, reader, writer), self.client)
             self._receiveTask = loop.create_task(self.receive(channel, self._handshakeFuture))
             self.transfer_dataTask = loop.create_task(self.transfer_data(reader))
 
@@ -78,10 +85,7 @@ class TcpAioClientConnector(ClientConnectorBase):
                     await self.__message.put(_frame)
                     if _frame.flag() == Flags.Close:
                         break
-                break
             except asyncio.CancelledError as e:
-                break
-            except Exception as e:
                 break
 
     async def receive(self, channel: ChannelDefault,
@@ -126,6 +130,8 @@ class TcpAioClientConnector(ClientConnectorBase):
             return
         try:
             self.__real.close()
+            if self._sock is not None and not getattr(self._sock, "_closed"):
+                self._sock.close()
             await self.stop()
         except Exception as e:
             log.debug(e)
@@ -133,7 +139,10 @@ class TcpAioClientConnector(ClientConnectorBase):
     async def stop(self):
         self.__message_future.cancel()
         self.transfer_dataTask.cancel()
-        await asyncio.wait([self._receiveTask], timeout=5)
+        try:
+            await asyncio.wait([self._receiveTask], timeout=5)
+        except asyncio.CancelledError:
+            log.debug("_receiveTask Cancelling")
         if self.__top:
             self.__top.set_result(None)
         self._loop.stop()

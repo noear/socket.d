@@ -1,7 +1,6 @@
 import asyncio
 import socket
 from asyncio import StreamReader, StreamReaderProtocol, StreamWriter
-from concurrent.futures import Future
 from typing import Optional, List
 
 from socketd.exception.SocketDExecption import SocketDTimeoutException
@@ -23,16 +22,17 @@ from .TcpAIOChannelAssistant import TcpAIOChannelAssistant
 class TCPAIOServer(ServerBase, ChannelSupporter):
 
     def __init__(self, config: ServerConfig):
-        super().__init__(config, TcpAIOChannelAssistant(config, asyncio.get_running_loop()))
+        self._loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
+        super().__init__(config, TcpAIOChannelAssistant(config, self._loop))
         self._server: Optional[asyncio.Server] = None
+        self._sock: Optional[socket.socket] = None
         self._is_close: AtomicRefer = AtomicRefer(False)
-        self._server_forever_future: Optional[asyncio.Future | Future] = None
         self._on_receive_tasks: List[asyncio.Task] = []
 
     # 服务器的回调函数
     async def server_forever(self, reader: StreamReader, writer: StreamWriter):
 
-        channel = ChannelDefault(TCPStreamIO(self._server, reader, writer), self)
+        channel = ChannelDefault(TCPStreamIO(self._sock, reader, writer), self)
         while True:
             try:
                 if self._on_receive_tasks:
@@ -44,7 +44,7 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                     break
                 frame: Frame = await self.get_assistant().read(reader)
                 if frame is not None:
-                    self._on_receive_tasks.append(asyncio.create_task(self.get_processor().on_receive(channel, frame)))
+                    self._on_receive_tasks.append(self._loop.create_task(self.get_processor().on_receive(channel, frame)))
                     if frame.flag() == Flags.Close:
                         """客户端主动关闭"""
                         log.debug("{sessionId} 主动退出",
@@ -68,29 +68,25 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
             protocol = StreamReaderProtocol(reader, self.server_forever,
                                             loop=loop)
             return protocol
-        _sock: socket.socket = socket.socket(socket.AF_INET)
-        _sock.bind(("127.0.0.1" if not self.get_config().get_host() else self.get_config().get_host(),
-                       self.get_config().get_port()))
-        _sock.settimeout(self.get_config().get_idle_timeout() / 1000)
+
+        self._sock: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._sock.bind(("127.0.0.1" if not self.get_config().get_host() else self.get_config().get_host(),
+                         self.get_config().get_port()))
+        self._sock.settimeout(self.get_config().get_idle_timeout() / 1000)
         # 生成一个服务器
         self._server: asyncio.Server = await loop.create_server(factory,
-                                                                sock=_sock,
+                                                                sock=self._sock,
                                                                 start_serving=True,
                                                                 )
-        # self._server_forever_future = loop.create_task(self._server.serve_forever())
         return self._server
-
-    async def close_wait(self):
-        try:
-            if self._server_forever_future:
-                await asyncio.wait_for(self._server_forever_future, timeout=10)
-        except asyncio.TimeoutError:
-            pass
 
     async def stop(self):
         log.info("TcpAioServer stop...")
         # 等等执行完成
         await self._is_close.set(True)
         self._server.close()
+        if self._sock is not None and not getattr(self._sock, "_closed"):
+            self._sock.close()
         # await self._server.wait_closed()
-        await self.close_wait()
+
+

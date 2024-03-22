@@ -10,7 +10,6 @@ from socketd.transport.core.codec import bytes_to_int32
 from socketd.transport.core.codec.Buffer import Buffer
 from socketd.transport.core.codec.ByteBufferCodecReader import ByteBufferCodecReader
 from socketd.transport.core.codec.ByteBufferCodecWriter import ByteBufferCodecWriter
-from socketd.transport.core.impl.LogConfig import log
 from socketd_aio_tcp.TCPStreamIO import TCPStreamIO
 
 
@@ -32,21 +31,18 @@ class TcpAIOChannelAssistant(ChannelAssistant):
             writer.close()
 
     def is_valid(self, stream_io: TCPStreamIO) -> bool:
-        if isinstance(stream_io.server, asyncio.Transport):
-            return not stream_io.server.is_closing()
-        elif isinstance(stream_io.server, asyncio.Server):
-            return stream_io.server.is_serving()
+        return not getattr(stream_io.sock, "_closed")
 
     async def close(self, stream_io: TCPStreamIO) -> None:
+        # stream_io.sock.close()
         stream_io.writer.close()
-        stream_io.server.close()
 
     def get_remote_address(self, stream_io: TCPStreamIO) -> str:
-        target: socket.socket = stream_io.writer.get_extra_info('socket')
+        target: socket.socket = stream_io.sock
         return target.getpeername()
 
     def get_local_address(self, stream_io: TCPStreamIO) -> str:
-        target: socket.socket = stream_io.writer.get_extra_info('socket')
+        target: socket.socket = stream_io.sock
         return target.getsockname()
 
     async def read(self, reader: StreamReader) -> Frame | None:

@@ -126,7 +126,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             self.on_error(e)
 
     async def on_close(self):
-        self.client.get_processor().on_close(self.channel)
+        await self.client.get_processor().on_close(self.channel)
         if self.handshake_future is not None:
             await asyncio.wait(self.__on_receive_tasks, timeout=10)
             await asyncio.wait([self._handler_future], timeout=10)

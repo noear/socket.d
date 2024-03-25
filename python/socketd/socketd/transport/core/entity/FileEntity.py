@@ -1,4 +1,4 @@
-from io import BufferedReader
+from io import BufferedReader, BytesIO
 from typing import BinaryIO
 
 from socketd.exception.SocketDExecption import SocketDCodecException
@@ -8,9 +8,9 @@ from socketd.transport.core.entity.EntityDefault import EntityDefault
 
 class FileEntity(EntityDefault):
 
-    def __init__(self, file: BufferedReader, filename: str):
+    def __init__(self, file: BinaryIO, filename: str):
         super().__init__()
-        self._file: BufferedReader = file
+        self._file: BinaryIO = file
         self.data_set(file)
         self.meta_put(EntityMetas.META_DATA_DISPOSITION_FILENAME, filename)
 

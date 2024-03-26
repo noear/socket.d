@@ -74,7 +74,12 @@ export class ByteBuffer implements Buffer {
         let tmp = this._buf.slice(this._bufIdx, tmpEnd);
         this._bufIdx = tmpEnd;
 
-        callback(tmp);
+        //改成异步，保持与 BlobBuffer 相同的体验
+        new Promise(resolve => {
+            resolve(1);
+        }).then(()=>{
+            callback(tmp);
+        })
 
         return true;
     }

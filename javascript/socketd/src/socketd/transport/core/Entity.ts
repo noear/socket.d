@@ -38,9 +38,19 @@ export interface Entity {
     metaAsInt(name:string):number;
 
     /**
+     * 获取元信息并转为 long(int)
+     */
+    metaAsLong(name:string):number;
+
+    /**
      * 获取元信息并转为 float
      */
     metaAsFloat(name:string):number;
+
+    /**
+     * 获取元信息并转为 double(float)
+     */
+    metaAsDouble(name:string):number;
 
     /**
      * 添加元信息
@@ -254,10 +264,24 @@ export class EntityDefault implements Entity {
     }
 
     /**
+     * 获取元信息并转为 long(int)
+     */
+    metaAsLong(name: string): number {
+        return this.metaAsInt(name);
+    }
+
+    /**
      * 获取元信息并转为 float
      */
     metaAsFloat(name: string): number {
         return parseFloat(this.metaOrDefault(name, '0'));
+    }
+
+    /**
+     * 获取元信息并转为 double(float)
+     */
+    metaAsDouble(name: string): number {
+        return this.metaAsFloat(name);
     }
 
     /**

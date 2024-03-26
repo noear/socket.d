@@ -28,7 +28,7 @@ export class StrUtils {
         }
 
         let idx = str.indexOf("?");
-        if(idx){
+        if(idx > 0){
             let uri0Str = str.substring(0,idx);
             let uri1Str = str.substring(idx, str.length);
 

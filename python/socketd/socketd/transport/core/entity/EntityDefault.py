@@ -1,7 +1,7 @@
 import os
 
 from io import BytesIO, TextIOWrapper, BufferedReader
-from typing import Any, Optional
+from typing import Any, Optional, BinaryIO
 
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.Costants import Constants
@@ -93,7 +93,7 @@ class EntityDefault(Entity):
     def del_meta(self, name:str):
         self.meta_del(name)
 
-    def data_set(self, data: bytes | bytearray | memoryview | BytesIO | BufferedReader):
+    def data_set(self, data: bytes | bytearray | memoryview | BytesIO | BinaryIO):
         _type = type(data)
         if _type == BytesIO:
             self._data = data

@@ -20,7 +20,7 @@ class TestCase02_auto_reconnect(BaseTestCase):
         self.server: Server
         self.server_session: WebSocketServer
         self.client_session: Session
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
 
     async def _start(self):
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
@@ -31,9 +31,10 @@ class TestCase02_auto_reconnect(BaseTestCase):
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
-        await self.client_session.send_and_request("demo", StringEntity("test"), 100)
+        await self.client_session.send("demo", StringEntity("test"))
 
         await self.server.stop()
+        # self.client_session.close()
         del self.server_session
         await asyncio.sleep(10)
         self.server_session = await _server.start()

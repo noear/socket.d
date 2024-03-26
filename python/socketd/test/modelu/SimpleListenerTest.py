@@ -36,7 +36,7 @@ class SimpleListenerTest(Listener, ABC):
             await session.reply_end(message, StringEntity("ok test"))
             await session.reply(message, StringEntity("reply"))
 
-    def on_close(self, session):
+    async def on_close(self, session):
         with self.close_counter:
             self.close_counter.set(self.close_counter.get() + 1)
 
@@ -46,7 +46,7 @@ class SimpleListenerTest(Listener, ABC):
 
 def config_handler(config: ServerConfig | ClientConfig):
     config.is_thread(False)
-    config.idle_timeout(10000)
+    config.idle_timeout(1500)
     # config.set_logger_level("DEBUG")
 
 

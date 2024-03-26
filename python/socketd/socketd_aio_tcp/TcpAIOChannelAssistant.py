@@ -1,5 +1,6 @@
 import asyncio
 import socket
+from asyncio import StreamReader
 
 from socketd.transport.core import Config
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
@@ -9,11 +10,7 @@ from socketd.transport.core.codec import bytes_to_int32
 from socketd.transport.core.codec.Buffer import Buffer
 from socketd.transport.core.codec.ByteBufferCodecReader import ByteBufferCodecReader
 from socketd.transport.core.codec.ByteBufferCodecWriter import ByteBufferCodecWriter
-from socketd.transport.core.impl.LogConfig import log
-
-SHUT_RD = 0  # 断开输入流
-SHUT_WR = 1  # 断开输出流
-SHUT_RDWR = 2  # 同时断开 I/O 流
+from socketd_aio_tcp.TCPStreamIO import TCPStreamIO
 
 
 class TcpAIOChannelAssistant(ChannelAssistant):
@@ -21,39 +18,40 @@ class TcpAIOChannelAssistant(ChannelAssistant):
         self.config = config
         self.loop = loop
 
-    async def write(self, source: socket.socket, frame: Frame) -> None:
+    async def write(self, stream_io: TCPStreamIO, frame: Frame) -> None:
         writer: CodecWriter = self.config.get_codec().write(frame,
                                                             lambda size: ByteBufferCodecWriter(Buffer(limit=size)))
         if writer is not None:
             _data = writer.get_buffer().getvalue()
             _len = len(_data)
-            await self.loop.sock_sendall(source, _len.to_bytes(length=4, byteorder='big', signed=False))
-            await self.loop.sock_sendall(source, _data)
+            stream_io.writer.write(_len.to_bytes(length=4, byteorder='big', signed=False))
+            stream_io.writer.write(_data)
+            # Flush the write buffer
+            await stream_io.writer.drain()
             writer.close()
 
-    def is_valid(self, target: socket.socket) -> bool:
-        _closed = not getattr(target, '_closed', True)
-        log.debug(_closed)
-        return _closed
+    def is_valid(self, stream_io: TCPStreamIO) -> bool:
+        return not getattr(stream_io.sock, "_closed")
 
-    async def close(self, target: socket.socket) -> None:
-        target.shutdown(SHUT_RDWR)
-        target.close()
+    async def close(self, stream_io: TCPStreamIO) -> None:
+        stream_io.sock.close()
+        stream_io.writer.close()
 
-    def get_remote_address(self, target: socket.socket) -> str:
+    def get_remote_address(self, stream_io: TCPStreamIO) -> str:
+        target: socket.socket = stream_io.sock
         return target.getpeername()
 
-    def get_local_address(self, target: socket.socket) -> str:
+    def get_local_address(self, stream_io: TCPStreamIO) -> str:
+        target: socket.socket = stream_io.sock
         return target.getsockname()
 
-    async def read(self, sock: socket.socket) -> Frame | None:
-        loop = asyncio.get_running_loop()
-        lenBt = await loop.sock_recv(sock, 4)
+    async def read(self, reader: StreamReader) -> Frame | None:
+        lenBt = await reader.read(4)
         if lenBt is None:
             return None
 
         _len = bytes_to_int32(lenBt)
-        _buffer = await loop.sock_recv(sock, _len)
+        _buffer = await reader.read(_len)
         if _buffer is None:
             return None
         buffer = Buffer(len(_buffer), _buffer)

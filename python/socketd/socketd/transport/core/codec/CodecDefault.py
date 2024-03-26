@@ -90,7 +90,6 @@ class CodecDefault(Codec):
             sid = self.decodeString(_reader, by, Constants.MAX_SIZE_SID)
             event = self.decodeString(_reader, by, Constants.MAX_SIZE_EVENT)
             metaString = self.decodeString(_reader, by, Constants.MAX_SIZE_META_STRING)
-
             # 2. decode body
             dataRealSize = len0 - _reader.position()
             data: Optional[bytearray] = None
@@ -106,6 +105,7 @@ class CodecDefault(Codec):
             message = MessageBuilder().flag(Flags.of(flag)).sid(sid).event(event).entity(
                 EntityDefault().meta_string_set(metaString).data_set(data)
             ).build()
+            by.close()
             _reader.close()
             return Frame(message.flag(), message)
 

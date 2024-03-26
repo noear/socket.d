@@ -37,9 +37,9 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    def close(self):
+    async def close(self):
         ...
 
     @abc.abstractmethod
-    def reconnect(self):
+    async def reconnect(self):
         ...

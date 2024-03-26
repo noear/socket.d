@@ -65,6 +65,10 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
             if conn.closed:
                 break
             try:
+                if tasks:
+                    task = tasks[0]
+                    if task.done():
+                        tasks.pop(0)
                 message = await self.recv()
                 # frame: Frame = self.ws_aio_server.get_assistant().read(
                 #     message)
@@ -98,7 +102,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
                 await self.on_error(conn, e)
         try:
             # 等待未完成任务
-            await asyncio.gather(*tasks)
+            await asyncio.wait(tasks, timeout=10)
         except asyncio.CancelledError as c:
             pass
         except TimeoutError as e:

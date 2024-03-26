@@ -20,12 +20,12 @@ class TestCase01_client_send(BaseTestCase):
         self.server: Server = None
         self.server_session: WebSocketServer = None
         self.client_session: Session = None
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
 
     async def _start(self):
         s = SimpleListenerTest()
         self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
-        self.server_session: Server = await self.server.config(config_handler) .listen(s) .start()
+        self.server_session: Server = await self.server.config(config_handler).listen(s).start()
         await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
@@ -54,8 +54,8 @@ class TestCase01_client_send(BaseTestCase):
 
     def stop(self):
         super().stop()
-
         self.loop.run_until_complete(self._stop())
+        self.loop.stop()
 
     def on_error(self):
         super().on_error()

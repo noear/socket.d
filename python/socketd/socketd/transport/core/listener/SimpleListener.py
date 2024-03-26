@@ -11,7 +11,7 @@ class SimpleListener(Listener):
     async def on_message(self, session: Session, message: Message):
         pass
 
-    def on_close(self, session: Session):
+    async def on_close(self, session: Session):
         pass
 
     def on_error(self, session: Session, error):

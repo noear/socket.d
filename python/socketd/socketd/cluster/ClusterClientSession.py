@@ -17,8 +17,8 @@ class ClusterClientSession(ClientSession):
     def get_session_all(self) -> list[ClientSession]:
         return self.__sessionSet
 
-    def get_session_any(self, diversionOrNull:str) ->  ClientSession:
-        session:ClientSession
+    def get_session_any(self, diversionOrNull: str | None) -> ClientSession:
+        session: ClientSession
 
         if diversionOrNull:
             session = LoadBalancer.get_any_by_poll(self.__sessionSet)
@@ -36,7 +36,7 @@ class ClusterClientSession(ClientSession):
                 return True
         return False
 
-    def is_closing(self) ->bool:
+    def is_closing(self) -> bool:
         for session in self.__sessionSet:
             if session.is_closing():
                 return True
@@ -74,7 +74,7 @@ class ClusterClientSession(ClientSession):
             except RuntimeError as e:
                 pass
 
-    def reconnect(self):
+    async def reconnect(self):
         for session in self.__sessionSet:
             if not session.is_valid():
-                session.reconnect()
+                await session.reconnect()

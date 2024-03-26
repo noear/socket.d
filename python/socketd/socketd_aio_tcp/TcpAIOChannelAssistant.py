@@ -34,7 +34,7 @@ class TcpAIOChannelAssistant(ChannelAssistant):
         return not getattr(stream_io.sock, "_closed")
 
     async def close(self, stream_io: TCPStreamIO) -> None:
-        # stream_io.sock.close()
+        stream_io.sock.close()
         stream_io.writer.close()
 
     def get_remote_address(self, stream_io: TCPStreamIO) -> str:

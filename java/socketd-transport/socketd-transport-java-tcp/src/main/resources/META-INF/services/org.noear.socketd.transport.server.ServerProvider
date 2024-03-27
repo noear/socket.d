@@ -1,1 +1,2 @@
 org.noear.socketd.transport.java_tcp.TcpBioProvider
+org.noear.socketd.transport.java_tcp_nio.TcpNioProvider

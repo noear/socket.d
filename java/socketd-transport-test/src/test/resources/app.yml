@@ -1,5 +1,9 @@
 server.http.ioBound: false
 
+solon.logging.appender:
+  console:
+    level: "INFO"
+
 solon.logging.logger:
   "root":
     level: "INFO"

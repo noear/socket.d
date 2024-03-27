@@ -30,8 +30,8 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
     //助理
     private final T assistant;
 
-    public ClientBase(ClientConfig clientConfig, T assistant) {
-        this.config = clientConfig;
+    public ClientBase(ClientConfig config, T assistant) {
+        this.config = config;
         this.assistant = assistant;
     }
 

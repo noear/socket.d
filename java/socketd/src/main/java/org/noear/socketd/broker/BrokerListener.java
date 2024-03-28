@@ -56,7 +56,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
             }
         } else {
             //单发模式（给同名的某个玩家，轮询负截均衡）
-            Session responder = getPlayerAny(atName, requester);
+            Session responder = getPlayerAny(atName, requester, message);
 
             if (responder != null) {
                 //转发消息

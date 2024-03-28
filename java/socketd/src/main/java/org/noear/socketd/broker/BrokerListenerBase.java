@@ -1,6 +1,8 @@
 package org.noear.socketd.broker;
 
 import org.noear.socketd.cluster.LoadBalancer;
+import org.noear.socketd.transport.core.EntityMetas;
+import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.utils.StrUtils;
 
@@ -88,19 +90,29 @@ public abstract class BrokerListenerBase {
      * @param atName 目标名字
      * @since 2.3
      */
-    public Session getPlayerAny(String atName, Session requester) throws IOException {
+    public Session getPlayerAny(String atName, Session requester, Message message) throws IOException {
         if (StrUtils.isEmpty(atName)) {
             return null;
         }
 
         if (atName.endsWith("!")) {
             atName = atName.substring(0, atName.length() - 1);
+            String x_hash = null;
 
-            if (requester == null) {
-                return LoadBalancer.getAnyByPoll(getPlayerAll(atName));
+            if(message != null){
+                message.meta(EntityMetas.META_X_Hash);
+            }
+
+            if (StrUtils.isEmpty(x_hash)) {
+                if (requester == null) {
+                    return LoadBalancer.getAnyByPoll(getPlayerAll(atName));
+                } else {
+                    //使用请求者 ip 分流
+                    return LoadBalancer.getAnyByHash(getPlayerAll(atName), requester.remoteAddress().getHostName());
+                }
             } else {
-                //使用请求者 ip 分流
-                return LoadBalancer.getAnyByHash(getPlayerAll(atName), requester.remoteAddress().getHostName());
+                //使用指定 hash 分流
+                return LoadBalancer.getAnyByHash(getPlayerAll(atName), x_hash);
             }
         } else {
             return LoadBalancer.getAnyByPoll(getPlayerAll(atName));

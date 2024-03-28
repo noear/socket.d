@@ -18,6 +18,11 @@ public interface EntityMetas {
     String META_X_REAL_IP = "X-Real-IP";
 
     /**
+     * 负载均衡哈希
+     * */
+    String META_X_Hash = "X-Hash";
+
+    /**
      * 数据长度
      */
     String META_DATA_LENGTH = "Data-Length";

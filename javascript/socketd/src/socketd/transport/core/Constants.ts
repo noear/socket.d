@@ -222,6 +222,14 @@ export const EntityMetas= {
      */
     META_SOCKETD_VERSION: "Socket.D",
     /**
+     * 发起端真实IP
+     * */
+    META_X_REAL_IP: "X-Real-IP",
+    /**
+     * 负载均衡哈希
+     * */
+    META_X_Hash: "X-Hash",
+    /**
      * 数据长度
      */
     META_DATA_LENGTH: "Data-Length",

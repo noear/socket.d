@@ -1,5 +1,7 @@
 import {LoadBalancer} from "../cluster/LoadBalancer";
 import {Session} from "../transport/core/Session";
+import {Message} from "../transport/core/Message";
+import {EntityMetas} from "../transport/core/Constants";
 
 export abstract class BrokerListenerBase {
     private _sessionAll = new Map<string, Session>();
@@ -70,19 +72,29 @@ export abstract class BrokerListenerBase {
      * @param atName 目标名字
      * @since 2.3
      */
-    getPlayerAny(atName: string, requester?: Session): Session | null {
+    getPlayerAny(atName: string, requester?: Session, message?:Message): Session | null {
         if (!atName) {
             return null;
         }
 
         if (atName.endsWith("!")) {
             atName = atName.substring(0, atName.length - 1);
+            let x_hash: string | null = null;
 
-            if (requester == null) {
-                return LoadBalancer.getAnyByPoll(this.getPlayerAll(atName));
+            if (message != null) {
+                x_hash = message.meta(EntityMetas.META_X_Hash);
+            }
+
+            if (!x_hash) {
+                if (requester == null) {
+                    return LoadBalancer.getAnyByPoll(this.getPlayerAll(atName));
+                } else {
+                    //使用请求者 ip 分流
+                    return LoadBalancer.getAnyByHash(this.getPlayerAll(atName), requester.remoteAddress()!.address);
+                }
             } else {
-                //使用请求者 ip 分流
-                return LoadBalancer.getAnyByHash(this.getPlayerAll(atName), requester.remoteAddress()!.address);
+                //使用指定 hash 分流
+                return LoadBalancer.getAnyByHash(this.getPlayerAll(atName), x_hash);
             }
         } else {
             return LoadBalancer.getAnyByPoll(this.getPlayerAll(atName));

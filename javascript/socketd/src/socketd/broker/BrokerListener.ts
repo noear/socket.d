@@ -41,7 +41,7 @@ export class BrokerListener extends BrokerListenerBase implements Listener {
             }
         } else {
             //单发模式（给同名的某个玩家，轮询负截均衡）
-            let responder = this.getPlayerAny(atName, requester);
+            let responder = this.getPlayerAny(atName, requester, message);
 
             if (responder != null) {
                 //转发消息

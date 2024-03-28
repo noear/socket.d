@@ -100,7 +100,7 @@ public abstract class BrokerListenerBase {
             String x_hash = null;
 
             if(message != null){
-                message.meta(EntityMetas.META_X_Hash);
+                x_hash = message.meta(EntityMetas.META_X_Hash);
             }
 
             if (StrUtils.isEmpty(x_hash)) {

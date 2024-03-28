@@ -2,7 +2,9 @@ from abc import ABC
 from typing import Dict, List
 from socketd.cluster.LoadBalancer import LoadBalancer
 from socketd.transport.client.ClientSession import ClientSession
+from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Listener import Listener
+from socketd.transport.core.Message import Message
 from socketd.transport.core.Session import Session
 from socketd.transport.utils.StrUtil import StrUtil
 
@@ -38,18 +40,24 @@ class BrokerListenerBase(Listener, ABC):
         return self.__playerSessions[name]
 
     # 获取任意一个玩家会话
-    def get_player_any(self, atName: str, requester: Session | None) -> ClientSession | None:
+    def get_player_any(self, atName: str, requester: Session | None, message: Message | None) -> ClientSession | None:
         if StrUtil.is_empty(atName):
             return None
 
         if atName.endswith("!"):
             atName = atName[:-1]
+            x_hash = None
 
-            if requester is None:
-                return LoadBalancer.get_any_by_poll(self.get_player_all(atName))
+            if message is not None:
+                x_hash = message.meta(EntityMetas.META_X_Hash)
+
+            if StrUtil.is_empty(x_hash):
+                if requester is None:
+                    return LoadBalancer.get_any_by_poll(self.get_player_all(atName))
+                else: # 使用请求者 ip 分流
+                    return LoadBalancer.get_any_by_hash(self.get_player_all(atName), requester.remote_address())
             else:
-                return LoadBalancer.get_any_by_hash(self.get_player_all(atName),
-                                                    requester.remote_address())  # 使用请求者 ip 分流
+                return LoadBalancer.get_any_by_hash(self.get_player_all(atName), x_hash)
         else:
             return LoadBalancer.get_any_by_poll(self.get_player_all(atName))
 

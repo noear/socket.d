@@ -39,7 +39,7 @@ class BrokerListener(BrokerListenerBase):
                 await requester.send_alarm(message, "Broker don't have '@" + atName + "' player")
             return
         else:
-            responder = self.get_player_any(atName, requester)
+            responder = self.get_player_any(atName, requester, message)
             if responder is not None:
                 self.forward_to_session(requester, message, responder)
             else:

@@ -1,5 +1,6 @@
 import {EntityDefault, StringEntity} from "./Entity";
-import {EntityMetas, Flags} from "./Constants";
+import {EntityMetas} from "./EntityMetas";
+import {Flags} from "./Flags";
 import {Message, MessageBuilder, MessageInternal} from "./Message";
 import {SocketD} from "../../SocketD";
 import {HandshakeInternal} from "./Handshake";

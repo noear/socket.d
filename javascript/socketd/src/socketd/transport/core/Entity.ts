@@ -1,6 +1,7 @@
 import {StrUtils} from "../../utils/StrUtils";
 import {ArrayBufferCodecReader, CodecReader} from "./Codec";
-import {Constants, EntityMetas} from "./Constants";
+import {Constants} from "./Constants";
+import {EntityMetas} from "./EntityMetas";
 import {BlobBuffer, type Buffer, ByteBuffer} from "./Buffer";
 import {SocketDException} from "../../exception/SocketDException";
 

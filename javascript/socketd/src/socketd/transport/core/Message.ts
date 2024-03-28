@@ -1,5 +1,7 @@
 
-import {Constants, EntityMetas, Flags} from "./Constants";
+import {Constants} from "./Constants";
+import {EntityMetas} from "./EntityMetas";
+import {Flags} from "./Flags";
 import type {Entity, Reply} from "./Entity";
 import type {CodecReader} from "./Codec";
 import type {Buffer} from "./Buffer";

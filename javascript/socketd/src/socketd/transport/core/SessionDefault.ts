@@ -4,7 +4,8 @@ import type {Handshake} from "./Handshake";
 import {Entity, EntityDefault} from "./Entity";
 import {Message, MessageBuilder} from "./Message";
 import {Frame} from "./Frame";
-import {Constants, Flags} from "./Constants";
+import {Constants} from "./Constants";
+import {Flags} from "./Flags";
 import {
     SendStreamImpl,
     RequestStream,

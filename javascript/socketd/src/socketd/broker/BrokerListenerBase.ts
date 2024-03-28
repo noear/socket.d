@@ -1,7 +1,7 @@
 import {LoadBalancer} from "../cluster/LoadBalancer";
 import {Session} from "../transport/core/Session";
 import {Message} from "../transport/core/Message";
-import {EntityMetas} from "../transport/core/Constants";
+import {EntityMetas} from "../transport/core/EntityMetas";
 
 export abstract class BrokerListenerBase {
     private _sessionAll = new Map<string, Session>();

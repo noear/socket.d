@@ -1,6 +1,6 @@
 import type {HandshakeInternal} from "./Handshake";
 import type {MessageInternal} from "./Message";
-import {EntityMetas} from "./Constants";
+import {EntityMetas} from "./EntityMetas";
 import {StrUtils} from "../../utils/StrUtils";
 
 export class HandshakeDefault implements HandshakeInternal {

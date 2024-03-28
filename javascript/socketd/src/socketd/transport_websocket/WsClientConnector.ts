@@ -13,7 +13,7 @@ import type {IoConsumer} from "../transport/core/Typealias";
 import {ClientHandshakeResult} from "../transport/client/ClientHandshakeResult";
 import {EnvBridge} from "./impl/EnvBridge";
 import {ChannelDefault} from "../transport/core/ChannelDefault";
-import {Flags} from "../transport/core/Constants";
+import {Flags} from "../transport/core/Flags";
 import {SocketDConnectionException} from "../exception/SocketDException";
 
 export class WsClientConnector extends ClientConnectorBase<WsClient> {

@@ -2,7 +2,7 @@ import {MessageBuilder, MessageInternal} from "./Message";
 import {EntityDefault} from "./Entity";
 import {Frame} from "./Frame";
 import {FragmentHolder} from "./FragmentHolder";
-import {EntityMetas} from "./Constants";
+import {EntityMetas} from "./EntityMetas";
 import {SocketDCodecException} from "../../exception/SocketDException";
 
 

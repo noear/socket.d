@@ -2,7 +2,7 @@ import type {Channel} from "./Channel";
 import type {Frame} from "./Frame";
 import type {MessageInternal} from "./Message";
 import {Entity, EntityDefault} from "./Entity";
-import {EntityMetas} from "./Constants";
+import {EntityMetas} from "./EntityMetas";
 import {FragmentAggregator, FragmentAggregatorDefault} from "./FragmentAggregator";
 import type {IoConsumer} from "./Typealias";
 import {StreamInternal} from "../stream/Stream";

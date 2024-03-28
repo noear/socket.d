@@ -10,7 +10,7 @@ import type {RouteSelector} from "./transport/core/RouteSelector";
 import type {IoBiConsumer} from "./transport/core/Typealias";
 import type {Session} from "./transport/core/Session";
 import type {Message} from "./transport/core/Message";
-import {EntityMetas} from "./transport/core/Constants";
+import {EntityMetas} from "./transport/core/EntityMetas";
 import {ServerProvider} from "./transport/server/ServerProvider";
 import {ServerConfig} from "./transport/server/ServerConfig";
 import {Server} from "./transport/server/Server";
@@ -41,7 +41,7 @@ export class SocketD {
      * 框架版本号
      */
     static version(): string {
-        return "2.4.7";
+        return "2.4.8";
     }
 
     /**

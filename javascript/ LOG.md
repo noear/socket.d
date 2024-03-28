@@ -1,3 +1,6 @@
+### 2.4.8
+* 添加 X-Hash 元信息支持
+
 ### 2.4.7
 * 添加 Entity::metaAsDouble，metaAsLong，保持与 java 一至（方便文档统一）
 * 调整 Config::getIdGenerator 改为 genId

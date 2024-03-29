@@ -73,7 +73,7 @@ export class ProcessorDefault implements Processor {
     }
 
 
-    onReceive(channel: ChannelInternal, frame:Frame) {
+    onReceive(channel: ChannelInternal, frame: Frame) {
         if (channel.getConfig().clientMode()) {
             //console.debug("C-REV:" + frame);
         } else {
@@ -84,12 +84,21 @@ export class ProcessorDefault implements Processor {
         if (frame.flag() == Flags.Connect) {
             channel.setHandshake(new HandshakeDefault(frame.message()!));
             channel.onOpenFuture((r, err) => {
-                if (r && channel.isValid()) {
-                    //如果还有效，则发送链接确认
-                    try {
-                        channel.sendConnack(); //->Connack
-                    } catch (err) {
-                        this.onError(channel, err);
+                if (r) {
+                    //如果无异常
+                    if (channel.isValid()) {
+                        //如果还有效，则发送链接确认
+                        try {
+                            channel.sendConnack(); //->Connack
+                        } catch (err) {
+                            this.onError(channel, err);
+                        }
+                    }
+                }else{
+                    //如果有异常
+                    if (channel.isValid()) {
+                        //如果还有效，则关闭通道
+                        this.onCloseInternal(channel, Constants.CLOSE2001_ERROR);
                     }
                 }
             })
@@ -135,11 +144,7 @@ export class ProcessorDefault implements Processor {
                             code = Constants.CLOSE1001_PROTOCOL_CLOSE;
                         }
 
-                        channel.close(code);
-
-                        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-                            this.onCloseInternal(channel);
-                        }
+                        this.onCloseInternal(channel, code);
                         break;
                     }
                     case Flags.Alarm: {
@@ -154,6 +159,8 @@ export class ProcessorDefault implements Processor {
                         }
                         break;
                     }
+                    case Flags.Pressure: //预留
+                        break;
                     case Flags.Message:
                     case Flags.Request:
                     case Flags.Subscribe: {
@@ -166,8 +173,7 @@ export class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL);
-                        this.onCloseInternal(channel);
+                        this.onCloseInternal(channel, Constants.CLOSE1002_PROTOCOL_ILLEGAL);
                     }
                 }
             } catch (e) {
@@ -176,7 +182,7 @@ export class ProcessorDefault implements Processor {
         }
     }
 
-    onReceiveDo(channel: ChannelInternal, frame:Frame, isReply:boolean) {
+    onReceiveDo(channel: ChannelInternal, frame: Frame, isReply: boolean) {
         let stream: StreamInternal<any> | null = null;
         let streamIndex = 1;
         let streamTotal = 1;
@@ -199,7 +205,7 @@ export class ProcessorDefault implements Processor {
                 }
 
                 if (frameNew == null) {
-                    if(stream){
+                    if (stream) {
                         stream.onProgress(false, streamIndex, streamTotal);
                     }
                     return;
@@ -211,7 +217,7 @@ export class ProcessorDefault implements Processor {
 
         //执行接收处理
         if (isReply) {
-            if(stream){
+            if (stream) {
                 stream.onProgress(false, streamIndex, streamTotal);
             }
             channel.retrieve(frame, stream);
@@ -243,12 +249,16 @@ export class ProcessorDefault implements Processor {
 
     onClose(channel: ChannelInternal) {
         if (channel.isClosed() == 0) {
-            this.onCloseInternal(channel);
+            this.onCloseInternal(channel, Constants.CLOSE2003_DISCONNECTION);
         }
     }
 
-    onCloseInternal(channel: ChannelInternal) {
-        this._listener.onClose(channel.getSession())
+    onCloseInternal(channel: ChannelInternal, code: number) {
+        channel.close(code);
+
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            this._listener.onClose(channel.getSession());
+        }
     }
 
     onError(channel: ChannelInternal, error: any) {

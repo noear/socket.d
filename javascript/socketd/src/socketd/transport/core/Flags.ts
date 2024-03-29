@@ -35,6 +35,10 @@ export const Flags = {
      */
     Alarm: 31,
     /**
+     * 压力（预留做背压控制）
+     */
+    Pressure: 32,
+    /**
      * 消息
      */
     Message: 40, //消息(c<->s)
@@ -69,6 +73,8 @@ export const Flags = {
                 return this.Close;
             case 31:
                 return this.Alarm;
+            case 32:
+                return this.Pressure;
             case 40:
                 return this.Message;
             case 41:
@@ -97,6 +103,8 @@ export const Flags = {
                 return "Close";
             case this.Alarm:
                 return "Alarm";
+            case this.Pressure:
+                return "Pressure";
             case this.Message:
                 return "Message";
             case this.Request:

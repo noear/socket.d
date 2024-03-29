@@ -46,6 +46,10 @@ export const Constants = {
      */
     CLOSE2002_RECONNECT: 2002,
     /**
+     * 因连接断开
+     */
+    CLOSE2003_DISCONNECTION: 2003,
+    /**
      * 因打开失败关闭
      */
     CLOSE2008_OPEN_FAIL :2008,

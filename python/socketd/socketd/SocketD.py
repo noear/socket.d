@@ -53,7 +53,7 @@ def create_client(server_url: str) -> Client:
     if schema is None:
         raise ValueError("Invalid server URL.")
 
-    client_config = ClientConfig(server_url[4:])
+    client_config = ClientConfig(server_url)
     factory = client_factory_map.get(schema)
     if factory is None:
         raise RuntimeError(f"No ClientBroker providers were found. {client_config.get_schema()}")

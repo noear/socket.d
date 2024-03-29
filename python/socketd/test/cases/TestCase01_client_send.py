@@ -28,8 +28,7 @@ class TestCase01_client_send(BaseTestCase):
         self.server_session: Server = await self.server.config(config_handler).listen(s).start()
         await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
-        self.client_session: Session = await SocketD.create_client(serverUrl) \
-            .config(config_handler).open()
+        self.client_session: Session = await SocketD.create_client(serverUrl).config(config_handler).open()
         await self.client_session.send_and_request("demo", StringEntity("test"), 100)
 
         for _ in range(100):

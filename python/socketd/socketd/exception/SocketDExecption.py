@@ -9,64 +9,30 @@ class SocketDException(RuntimeError):
 
 
 class SocketDAlarmException(SocketDException):
-    def __init__(self, message):
-        super().__init__(self)
-        self.message = message
-
-    def __str__(self):
-        return self.message
+    """ 告警"""
+    pass
 
 
 class SocketDChannelException(SocketDException):
     """ 通道"""
-
-    def __init__(self, message):
-        super().__init__(self)
-        self.message = message
-
-    def __str__(self):
-        return self.message
+    pass
 
 
 class SocketDCodecException(SocketDException):
     """ 编码"""
-
-    def __init__(self, message):
-        super().__init__(self)
-        self.message = message
-
-    def __str__(self):
-        return self.message
+    pass
 
 
 class SocketDConnectionException(SocketDException):
     """连接"""
-
-    def __init__(self, message):
-        super().__init__(self)
-        self.message = message
-
-    def __str__(self):
-        return self.message
+    pass
 
 
 class SocketDSizeLimitException(SocketDException):
     """ 超长"""
-
-    def __init__(self, message):
-        super().__init__(self)
-        self.message = message
-
-    def __str__(self):
-        return self.message
+    pass
 
 
 class SocketDTimeoutException(SocketDException):
     """ 超时"""
-
-    def __init__(self, message):
-        super().__init__(self)
-        self.message = message
-
-    def __str__(self):
-        return self.message
+    pass

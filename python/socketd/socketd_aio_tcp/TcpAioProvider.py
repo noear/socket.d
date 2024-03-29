@@ -10,7 +10,7 @@ from socketd_aio_tcp import TCPAIOServer, TcpAioClient
 class TcpAioProvider(ClientProvider, ServerProvider):
 
     def schema(self) -> list[str]:
-        return ["tcp", "tcp-python", "std:tcp", "sd:tcp"]
+        return ["tcp", "tcp-python", "sd:tcp"]
 
     def create_server(self, serverConfig: ServerConfig) -> Server:
         return TCPAIOServer(serverConfig)

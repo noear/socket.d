@@ -11,7 +11,7 @@ from socketd_websocket.WsAioServer import WsAioServer
 class WsAioProvider(ClientProvider, ServerProvider):
 
     def schema(self) -> list[str]:
-        return ["ws", "wss", "ws-python", "std:ws"]
+        return ["ws", "wss", "ws-python", "sd:ws"]
 
     def create_server(self, serverConfig: ServerConfig) -> Server:
         return WsAioServer(serverConfig)

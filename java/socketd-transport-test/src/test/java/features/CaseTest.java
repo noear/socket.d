@@ -2,11 +2,16 @@ package features;
 
 import features.cases.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.noear.solon.test.SolonJUnit5Extension;
+import org.noear.solon.test.SolonTest;
 
 /**
  * @author noear
  * @since 2.0
  */
+@ExtendWith(SolonJUnit5Extension.class)
+@SolonTest
 public class CaseTest {
     static final String[] schemas = new String[]{
             "sd:tcp-java",
@@ -477,6 +482,23 @@ public class CaseTest {
             String s1 = schemas[i];
 
             BaseTestCase testCase = new TestCase36_sendAlarm_async(s1, 3600 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void TestCase37_closeStartingOfServer() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase37_closeStartingOfServer(s1, 3700 + i);
             try {
                 testCase.start();
                 testCase.stop();

@@ -9,18 +9,18 @@ from socketd.transport.core.Session import Session
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
-from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler, ClientListenerTest
+from test.modelu.SimpleListenerTest import SimpleListenerTest, config_handler
 from loguru import logger
 
 
-class TestCase16_openAnTry(BaseTestCase):
+class TestCase16_connect(BaseTestCase):
 
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server = None
         self.server_session: WebSocketServer = None
-        self.client_session: Session = None
         self.loop = asyncio.get_event_loop()
+        self.client_session_queue = asyncio.Queue()
 
     async def _start(self):
         s = SimpleListenerTest()
@@ -29,16 +29,22 @@ class TestCase16_openAnTry(BaseTestCase):
             .config(config_handler) \
             .listen(s) \
             .start()
-
         await asyncio.sleep(1)
-        self.client_session: Session = await SocketD.create_cluster_client(f"{self.schema}://127.0.0.1:{self.port}/",
-                                                                           f"{self.schema}://127.0.0.1:{self.port}/") \
-            .listen(ClientListenerTest()) \
-            .config(config_handler).open()
+        serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
 
-        await self.client_session.send("demo", StringEntity("test"))
+        async def _main():
+            for _ in range(10):
+                client_session: Session = await SocketD.create_client(serverUrl) \
+                    .config(config_handler).open()
+                await client_session.send_and_request("demo", StringEntity("test"), 100)
 
-        await asyncio.sleep(2)
+                for _ in range(3):
+                    await client_session.send("demo", StringEntity("test"))
+                await self.client_session_queue.put(client_session)
+
+        # 并发连接到服务器 10 * 10
+        await asyncio.gather(*[_main() for _ in range(10)])
+        await asyncio.sleep(30)
         logger.info(
             f" message {s.server_counter.get()}")
 
@@ -47,8 +53,10 @@ class TestCase16_openAnTry(BaseTestCase):
         self.loop.run_until_complete(self._start())
 
     async def _stop(self):
-        if self.client_session:
-            await self.client_session.close()
+        if not self.client_session_queue.empty():
+            for _ in range(self.client_session_queue.qsize()):
+                client_session = await self.client_session_queue.get()
+                await client_session.close()
 
         if self.server_session:
             self.server_session.close()

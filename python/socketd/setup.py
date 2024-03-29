@@ -1,35 +1,22 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*_
-import sys
+from setuptools import setup,find_packages
 
-from setuptools import find_packages
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
-if sys.version_info <= (3, 10):
-    from distutils.core import setup
-elif sys.version_info >= (3, 12):
-    from setuptools import setup
 setup(
-    name='socketD',  # 包的名字
-    version='2.4.9',  # 版本号
-    description=long_description,  # 描述
-    author='bai,noear',  # 作者
-    author_email='loserbai@foxmail.com,9979331@qq.com',  # 你的邮箱**
-    url='https://socketd.noear.org/',  # 可以写github上的地址，或者其他地址
-    packages=find_packages(exclude=['test']),  # 包内不需要引用的文件夹
-
-    # 依赖包
-    install_requires=[
+    name='socket.d',
+    version='2.4.9',
+    description='@noear/socket.d python project',
+    author='noear,bai',
+    url='https://socketd.noear.org/',
+    packages=find_packages(exclude=['test']),   # 包内不需要引用的文件夹
+    install_requires=[                          # 依赖包
         'loguru',
         'websockets'
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Operating System :: Microsoft'  # 你的操作系统
+        'Development Status :: 5 - RC',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',  # BSD认证
-        'Programming Language :: Python',  # 支持的语言
-        'Programming Language :: Python :: 3',  # python版本 。。。
+        'License :: Apache-2.0',
         'Programming Language :: Python :: 3.12',
         'Topic :: Software Development :: Libraries'
     ],

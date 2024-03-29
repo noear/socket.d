@@ -159,7 +159,7 @@ class ProcessorDefault(Processor, ABC):
         task = asyncio.create_task(self.listener.on_message(channel.get_session(), message))
 
     async def on_close(self, channel: ChannelInternal):
-        if channel.isClosed() == 0:
+        if channel.is_closed() == 0:
             await self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION)
 
     def on_error(self, channel: ChannelInternal, error):

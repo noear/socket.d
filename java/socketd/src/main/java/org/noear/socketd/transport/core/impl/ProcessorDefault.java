@@ -34,7 +34,7 @@ public class ProcessorDefault implements Processor {
     /**
      * 接收处理
      */
-    public void onReceive(ChannelInternal channel, Frame frame)  {
+    public void onReceive(ChannelInternal channel, Frame frame) {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
                 log.debug("C-REV:{}", frame);
@@ -49,8 +49,8 @@ public class ProcessorDefault implements Processor {
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
-            channel.onOpenFuture((r,e)-> {
-                if (e == null) {
+            channel.onOpenFuture((r, e) -> {
+                if (r) {
                     //如果无异常
                     if (channel.isValid()) {
                         //如果还有效，则发送链接确认
@@ -64,8 +64,7 @@ public class ProcessorDefault implements Processor {
                     //如果有异常
                     if (channel.isValid()) {
                         //如果还有效，则关闭通道
-                        channel.close(Constants.CLOSE2001_ERROR);
-                        onCloseInternal(channel);
+                        onCloseInternal(channel, Constants.CLOSE2001_ERROR);
                     }
                 }
             });
@@ -80,7 +79,7 @@ public class ProcessorDefault implements Processor {
             if (channel.getHandshake() == null) {
                 channel.close(Constants.CLOSE1001_PROTOCOL_CLOSE);
 
-                if(frame.flag() == Flags.Close){
+                if (frame.flag() == Flags.Close) {
                     //说明握手失败了
                     throw new SocketDConnectionException("Connection request was rejected");
                 }
@@ -117,11 +116,7 @@ public class ProcessorDefault implements Processor {
                             code = Constants.CLOSE1001_PROTOCOL_CLOSE;
                         }
 
-                        channel.close(code);
-
-                        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-                            onCloseInternal(channel);
-                        }
+                        onCloseInternal(channel, code);
                         break;
                     }
                     case Flags.Alarm: {
@@ -136,6 +131,8 @@ public class ProcessorDefault implements Processor {
                         }
                         break;
                     }
+                    case Flags.Pressure: //预留
+                        break;
                     case Flags.Message:
                     case Flags.Request:
                     case Flags.Subscribe: {
@@ -148,8 +145,7 @@ public class ProcessorDefault implements Processor {
                         break;
                     }
                     default: {
-                        channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL);
-                        onCloseInternal(channel);
+                        onCloseInternal(channel, Constants.CLOSE1002_PROTOCOL_ILLEGAL);
                     }
                 }
             } catch (Throwable e) {
@@ -254,7 +250,7 @@ public class ProcessorDefault implements Processor {
     @Override
     public void onClose(ChannelInternal channel) {
         if (channel.isClosed() == 0) {
-            onCloseInternal(channel);
+            onCloseInternal(channel, Constants.CLOSE2003_DISCONNECTION);
         }
     }
 
@@ -263,8 +259,12 @@ public class ProcessorDefault implements Processor {
      *
      * @param channel 通道
      */
-    private void onCloseInternal(ChannelInternal channel){
-        listener.onClose(channel.getSession());
+    private void onCloseInternal(ChannelInternal channel, int code) {
+        channel.close(code);
+
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            listener.onClose(channel.getSession());
+        }
     }
 
     /**

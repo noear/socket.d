@@ -36,6 +36,10 @@ public interface Flags {
      */
     int Alarm = 31;
     /**
+     * 压力（预留做背压控制）
+     */
+    int Pressure = 32;
+    /**
      * 消息
      */
     int Message = 40; //消息(c<->s)
@@ -70,6 +74,8 @@ public interface Flags {
                 return Close;
             case 31:
                 return Alarm;
+            case 32:
+                return Pressure;
             case 40:
                 return Message;
             case 41:
@@ -99,6 +105,8 @@ public interface Flags {
                 return "Close";
             case Alarm:
                 return "Alarm";
+            case Pressure:
+                return "Pressure";
             case Message:
                 return "Message";
             case Request:

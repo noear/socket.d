@@ -27,7 +27,7 @@ public interface Constants {
     ByteBuffer DEF_DATA = ByteBuffer.wrap(new byte[]{});
     /**
      * 默认端口
-     * */
+     */
     int DEF_PORT = 8602;
 
 
@@ -85,6 +85,7 @@ public interface Constants {
      * 因协议非法关闭
      */
     int CLOSE1002_PROTOCOL_ILLEGAL = 1002;
+
     /**
      * 因异常关闭
      */
@@ -93,6 +94,10 @@ public interface Constants {
      * 因重连关闭
      */
     int CLOSE2002_RECONNECT = 2002;
+    /**
+     * 因连接断开
+     */
+    int CLOSE2003_DISCONNECTION = 2003;
     /**
      * 因打开失败关闭
      */

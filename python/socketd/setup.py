@@ -11,7 +11,7 @@ elif sys.version_info >= (3, 12):
     from setuptools import setup
 setup(
     name='socketD',  # 包的名字
-    version='0.0.1',  # 版本号
+    version='2.4.9',  # 版本号
     description=long_description,  # 描述
     author='bai,noear',  # 作者
     author_email='loserbai@foxmail.com,9979331@qq.com',  # 你的邮箱**
@@ -30,9 +30,9 @@ setup(
         'License :: OSI Approved :: BSD License',  # BSD认证
         'Programming Language :: Python',  # 支持的语言
         'Programming Language :: Python :: 3',  # python版本 。。。
-        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Software Development :: Libraries'
     ],
     zip_safe=True,
-    python_requires='>=3.10', # 建议使用3.12及以上
+    python_requires='>=3.12', # 建议使用3.12及以上
 )

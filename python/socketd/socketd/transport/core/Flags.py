@@ -7,6 +7,7 @@ class Flags:
     Pong = 21
     Close = 30
     Alarm = 31
+    Pressure = 32
     Message = 40
     Request = 41
     Subscribe = 42
@@ -27,6 +28,8 @@ class Flags:
             return Flags.Close
         elif code == 31:
             return Flags.Alarm
+        elif code == 32:
+            return Flags.Pressure
         elif code == 40:
             return Flags.Message
         elif code == 41:
@@ -54,6 +57,8 @@ class Flags:
             return "Close"
         elif code == 31:
             return "Alarm"
+        elif code == 32:
+            return "Pressure"
         elif code == 40:
             return "Message"
         elif code == 41:

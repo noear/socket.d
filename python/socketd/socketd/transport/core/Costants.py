@@ -44,6 +44,8 @@ class Constants:
     CLOSE2001_ERROR = 2001
     # 因重连关闭
     CLOSE2002_RECONNECT = 2002
+    # 因连接断开
+    CLOSE2003_DISCONNECTION = 2003
     # 因打开失败关闭
     CLOSE2008_OPEN_FAIL = 2008
     # 因用户主动关闭（不可再重连）

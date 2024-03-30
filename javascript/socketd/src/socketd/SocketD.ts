@@ -23,8 +23,8 @@ export class SocketD {
      * */
     static EntityMetas = EntityMetas;
 
-    private static clientProviderMap: Map<String, ClientProvider> = new Map<String, ClientProvider>();
-    private static serverProviderMap: Map<String, ServerProvider> = new Map<String, ServerProvider>();
+    private static clientProviderMap: Map<string, ClientProvider> = new Map<string, ClientProvider>();
+    private static serverProviderMap: Map<string, ServerProvider> = new Map<string, ServerProvider>();
 
     static {
         const provider = new WsProvider();
@@ -127,11 +127,9 @@ export class SocketD {
     /**
      * 创建实体
      * */
-    static newEntity(data?: String | Blob | ArrayBuffer): EntityDefault {
+    static newEntity(data?: string | Blob | ArrayBuffer): EntityDefault {
         if (!data) {
             return new EntityDefault();
-        } else if (toString.call(data) === '[object String]') {
-            return new StringEntity(data.toString());
         } else if (data instanceof File) {
             return new FileEntity(data);
         } else if (data instanceof ArrayBuffer) {

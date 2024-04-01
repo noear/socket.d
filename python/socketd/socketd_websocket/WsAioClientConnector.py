@@ -28,7 +28,7 @@ class WsAioClientConnector(ClientConnectorBase):
         logger.info('Start connecting to: {}'.format(self.client.get_config().get_url()))
 
         # 处理自定义架构的影响
-        ws_url = self.client.get_config().get_url().replace("std:", "").replace("-python", "")
+        ws_url = self.client.get_config().get_url().replace("-python", "")
 
         # 支持 ssl
         if self.client.get_config().get_ssl_context() is not None:

@@ -67,6 +67,8 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
             return;
         }
 
+        super.stop();
+
         try {
             if (server != null) {
                 server.stop();

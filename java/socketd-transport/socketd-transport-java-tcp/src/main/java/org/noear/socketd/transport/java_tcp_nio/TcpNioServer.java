@@ -44,6 +44,12 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
 
     @Override
     public Server start() throws IOException {
+        if (isStarted) {
+            throw new IllegalStateException("Socket.D server started");
+        } else {
+            isStarted = true;
+        }
+
         selector = Selector.open();
 
         serverSocketChannel = ServerSocketChannel.open();
@@ -189,6 +195,14 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
 
     @Override
     public void stop() {
+        if (isStarted) {
+            isStarted = false;
+        } else {
+            return;
+        }
+
+        super.stop();
+
         if (selector != null) {
             RunUtils.runAndTry(selector::close);
         }

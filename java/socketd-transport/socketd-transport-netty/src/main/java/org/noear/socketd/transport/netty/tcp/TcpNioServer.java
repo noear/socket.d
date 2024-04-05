@@ -90,6 +90,8 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             return;
         }
 
+        super.stop();
+
         try {
             if (server != null) {
                 server.channel().close();

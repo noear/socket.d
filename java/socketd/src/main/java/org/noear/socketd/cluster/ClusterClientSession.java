@@ -142,10 +142,10 @@ public class ClusterClientSession implements ClientSession {
     }
 
     @Override
-    public void closeStarting() throws IOException {
+    public void preclose() throws IOException {
         for (ClientSession session : sessionSet) {
             //某个关闭出错，不影响别的关闭
-            RunUtils.runAndTry(session::closeStarting);
+            RunUtils.runAndTry(session::preclose);
         }
     }
 

@@ -13,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -29,7 +27,6 @@ public class TestCase37_closeStartingOfServer extends BaseTestCase {
     }
 
     private Server server;
-    private List<Session> serverSessions = new ArrayList<>();
     private ClientSession clientSession;
 
     private AtomicInteger messageCounter = new AtomicInteger();
@@ -44,11 +41,6 @@ public class TestCase37_closeStartingOfServer extends BaseTestCase {
         server = SocketD.createServer(getSchema())
                 .config(c -> c.port(getPort()))
                 .listen(new SimpleListener() {
-                    @Override
-                    public void onOpen(Session session) throws IOException {
-                        serverSessions.add(session);
-                    }
-
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
                         System.out.println("::" + message);
@@ -65,7 +57,6 @@ public class TestCase37_closeStartingOfServer extends BaseTestCase {
         //休息下，启动可能要等会儿
         Thread.sleep(1000);
 
-
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl)
@@ -78,23 +69,16 @@ public class TestCase37_closeStartingOfServer extends BaseTestCase {
 
         //for server
         Thread.sleep(100);
-        for (Session s1 : serverSessions) {
-            s1.closeStarting();
-        }
-        Thread.sleep(100);
-        for (Session s1 : serverSessions) {
-            s1.close();
-        }
-        Thread.sleep(100);
+        server.prestop();
+        Thread.sleep(200);
         server.stop();
-        serverSessions.clear();
-        Thread.sleep(2000);
+        Thread.sleep(200);
 
         assert clientSession.isValid() == false;
 
         server.start();
 
-        Thread.sleep(2000);
+        Thread.sleep(200);
 
         clientSession.sendAndRequest("/user/get", new StringEntity("hi")).thenReply(reply -> {
             replayCounter.incrementAndGet();
@@ -116,8 +100,6 @@ public class TestCase37_closeStartingOfServer extends BaseTestCase {
         if (server != null) {
             server.stop();
         }
-
-        serverSessions.clear();
 
         super.stop();
     }

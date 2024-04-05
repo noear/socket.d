@@ -261,7 +261,7 @@ public class SessionDefault extends SessionBase {
      * 关闭开始
      */
     @Override
-    public void closeStarting() throws IOException {
+    public void preclose() throws IOException {
         if (log.isDebugEnabled()) {
             log.debug("{} session close starting, sessionId={}",
                     channel.getConfig().getRoleName(), sessionId());

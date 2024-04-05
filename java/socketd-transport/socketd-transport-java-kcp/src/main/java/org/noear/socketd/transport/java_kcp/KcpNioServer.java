@@ -66,6 +66,14 @@ public class KcpNioServer extends ServerBase<KcpNioChannelAssistant> implements 
 
     @Override
     public void stop() {
+        if (isStarted) {
+            isStarted = false;
+        } else {
+            return;
+        }
+
+        super.stop();
+
         if (server != null) {
             server.stop();
         }

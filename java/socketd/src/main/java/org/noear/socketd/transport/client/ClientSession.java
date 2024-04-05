@@ -83,11 +83,21 @@ public interface ClientSession extends Closeable {
 
     /**
      * 关闭开始
+     *
+     * @deprecated 2.4
      */
-    void closeStarting() throws IOException;
+    @Deprecated
+    default void closeStarting() throws IOException{
+        preclose();
+    }
 
     /**
-     * 关闭
+     * 预关闭（发送预关闭指令，通知对端不要再主动发消息过来了）
+     */
+    void preclose() throws IOException;
+
+    /**
+     * 关闭（发送关闭指令，并关闭连接）
      */
     void close() throws IOException;
 

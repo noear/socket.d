@@ -148,9 +148,4 @@ public interface Session extends ClientSession, Closeable {
      * @param entity 实体
      */
     void replyEnd(Message from, Entity entity) throws IOException;
-
-    /**
-     * 关闭开始
-     */
-    void closeStarting() throws IOException;
 }

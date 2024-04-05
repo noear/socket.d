@@ -31,5 +31,5 @@ public interface ClientConnector {
     /**
      * 关闭
      */
-    void close();
+    void close() throws IOException;
 }

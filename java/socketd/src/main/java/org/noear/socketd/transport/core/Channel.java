@@ -30,7 +30,7 @@ public interface Channel {
 
     /**
      * 是否正在关闭
-     * */
+     */
     boolean isClosing();
 
     /**
@@ -85,7 +85,6 @@ public interface Channel {
 
     /**
      * 发送连接确认（握手）
-     *
      */
     void sendConnack() throws IOException;
 
@@ -108,7 +107,7 @@ public interface Channel {
 
     /**
      * 发送告警
-     * */
+     */
     void sendAlarm(Message from, String alarm) throws IOException;
 
     /**

@@ -69,6 +69,8 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
             return;
         }
 
+        super.stop();
+
         try {
             if (this._server != null) {
                 this._server.close();

@@ -58,6 +58,16 @@ export interface ClientSession {
     sendAndSubscribe(event: string, entity: Entity, timeout?: number): SubscribeStream;
 
     /**
+     * 关闭开始
+     */
+    closeStarting();
+
+    /**
+     * 预关闭
+     * */
+    preclose();
+
+    /**
      * 关闭
      * */
     close();

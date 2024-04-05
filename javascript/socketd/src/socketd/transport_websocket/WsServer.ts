@@ -7,7 +7,6 @@ import {SdWebSocket, SdWebSocketCloseEvent, SdWebSocketErrorEvent, SdWebSocketEv
 } from "./impl/SdWebSocket";
 import {SocketD} from "../SocketD";
 import NodeWebSocket from 'ws';
-import {ChannelDefault} from "../transport/core/ChannelDefault";
 import {SdWebSocketNodeJs} from "./impl/SdWebSocketNodeJs";
 import {ServerConfig} from "../transport/server/ServerConfig";
 import {Constants} from "../transport/core/Constants";

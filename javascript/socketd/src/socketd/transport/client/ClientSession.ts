@@ -1,6 +1,5 @@
 import type {Entity} from "../core/Entity";
 import {RequestStream, SendStream, SubscribeStream} from "../stream/Stream";
-import {IoConsumer} from "../core/Typealias";
 
 /**
  * 客户会话

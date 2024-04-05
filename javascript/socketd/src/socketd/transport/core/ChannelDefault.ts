@@ -186,12 +186,14 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     close(code) {
         try {
+            let closeCodeOld = this._closeCode;
             this._closeCode = code;
 
             super.close(code);
 
-            if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-                //外面的 sendClose 是异步的，所以晚会儿关闭
+            if (closeCodeOld > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING
+                && code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+                //如果有效且非预关闭，则尝试关闭源 //外面的 sendClose 是异步的，所以晚会儿关闭
                 setTimeout(() => {
                     this._assistant.close(this._source);
                 }, 100);

@@ -20,12 +20,12 @@ import java.util.*;
  */
 public class ClusterClientSession implements ClientSession {
     //会话集合
-    private final List<ClientSession> sessionSet;
+    private final List<ClientSession> sessionList;
     //会话id
     private final String sessionId;
 
     public ClusterClientSession(List<ClientSession> sessions) {
-        this.sessionSet = sessions;
+        this.sessionList = sessions;
         this.sessionId = StrUtils.guid();
     }
 
@@ -33,7 +33,7 @@ public class ClusterClientSession implements ClientSession {
      * 获取所有会话
      */
     public List<ClientSession> getSessionAll() {
-        return Collections.unmodifiableList(sessionSet);
+        return Collections.unmodifiableList(sessionList);
     }
 
     /**
@@ -46,9 +46,9 @@ public class ClusterClientSession implements ClientSession {
         ClientSession session = null;
 
         if (StrUtils.isEmpty(diversionOrNull)) {
-            session = LoadBalancer.getAnyByPoll(sessionSet);
+            session = LoadBalancer.getAnyByPoll(sessionList);
         } else {
-            session = LoadBalancer.getAnyByHash(sessionSet, diversionOrNull);
+            session = LoadBalancer.getAnyByHash(sessionList, diversionOrNull);
         }
 
         if (session == null) {
@@ -70,7 +70,7 @@ public class ClusterClientSession implements ClientSession {
 
     @Override
     public boolean isValid() {
-        for (ClientSession session : sessionSet) {
+        for (ClientSession session : sessionList) {
             if (session.isValid()) {
                 return true;
             }
@@ -81,7 +81,7 @@ public class ClusterClientSession implements ClientSession {
 
     @Override
     public boolean isClosing() {
-        for (ClientSession session : sessionSet) {
+        for (ClientSession session : sessionList) {
             if (session.isClosing()) {
                 return true;
             }
@@ -143,7 +143,7 @@ public class ClusterClientSession implements ClientSession {
 
     @Override
     public void preclose() throws IOException {
-        for (ClientSession session : sessionSet) {
+        for (ClientSession session : sessionList) {
             //某个关闭出错，不影响别的关闭
             RunUtils.runAndTry(session::preclose);
         }
@@ -154,7 +154,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public void close() throws IOException {
-        for (ClientSession session : sessionSet) {
+        for (ClientSession session : sessionList) {
             //某个关闭出错，不影响别的关闭
             RunUtils.runAndTry(session::close);
         }
@@ -165,7 +165,7 @@ public class ClusterClientSession implements ClientSession {
      */
     @Override
     public void reconnect() throws IOException {
-        for (ClientSession session : sessionSet) {
+        for (ClientSession session : sessionList) {
             if (session.isValid() == false) {
                 session.reconnect();
             }

@@ -6,9 +6,8 @@ import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.utils.RunUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务端基类
@@ -18,8 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class ServerBase<T extends ChannelAssistant> implements Server,Listener {
     private final Processor processor = new ProcessorDefault();
-    private final List<Session> sessionList = new ArrayList<>();
-    private final ReentrantLock sessionLock = new ReentrantLock();
+    private final Collection<Session> sessionSet = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private Listener listener = new SimpleListener();
 
     private final ServerConfig config;
@@ -114,15 +112,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
      * 执行预停止（发送 close-starting 指令）
      */
     protected void prestopDo() {
-        List<Session> tmp;
-        sessionLock.lock();
-        try {
-            tmp = new ArrayList<>(sessionList);
-        } finally {
-            sessionLock.unlock();
-        }
-
-        for (Session s1 : tmp) {
+        for (Session s1 : sessionSet) {
             if (s1.isValid()) {
                 RunUtils.runAndTry(s1::preclose);
             }
@@ -133,15 +123,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
      * 执行预停止（发送 close 指令）
      */
     protected void stopDo() {
-        List<Session> tmp;
-        sessionLock.lock();
-        try {
-            tmp = new ArrayList<>(sessionList);
-        } finally {
-            sessionLock.unlock();
-        }
-
-        for (Session s1 : tmp) {
+        for (Session s1 : sessionSet) {
             if (s1.isValid()) {
                 RunUtils.runAndTry(s1::close);
             }
@@ -149,29 +131,14 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
     }
 
     protected void sessionAdd(Session s) {
-        sessionLock.lock();
-        try {
-            sessionList.add(s);
-        } finally {
-            sessionLock.unlock();
-        }
+        sessionSet.add(s);
     }
 
     protected void sessionRemove(Session s) {
-        sessionLock.lock();
-        try {
-            sessionList.remove(s);
-        } finally {
-            sessionLock.unlock();
-        }
+        sessionSet.remove(s);
     }
 
     protected void sessionClear() {
-        sessionLock.lock();
-        try {
-            sessionList.clear();
-        } finally {
-            sessionLock.unlock();
-        }
+        sessionSet.clear();
     }
 }

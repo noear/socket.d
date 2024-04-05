@@ -21,7 +21,7 @@ public class StopTest {
             "sd:kcp-java",//7
     };
 
-    static int schemaIdx = 0;//6,5,4,3,2,1
+    static int schemaIdx = 7;//6,5,4,3,2,1
 
     /**
      * 启动服务，给别的客户端调试

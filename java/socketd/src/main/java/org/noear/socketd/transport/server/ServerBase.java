@@ -16,12 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2.0
  */
 public abstract class ServerBase<T extends ChannelAssistant> implements Server,Listener {
-    private final Processor processor = new ProcessorDefault();
-    private final Collection<Session> sessionSet = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    private Listener listener = new SimpleListener();
+    protected final Processor processor = new ProcessorDefault();
+    protected final Collection<Session> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    protected Listener listener = new SimpleListener();
 
-    private final ServerConfig config;
-    private final T assistant;
+    protected final ServerConfig config;
+    protected final T assistant;
     protected boolean isStarted;
 
     public ServerBase(ServerConfig config, T assistant) {
@@ -83,12 +83,11 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
     @Override
     public void stop() {
         stopDo();
-        sessionClear();
     }
 
     @Override
     public void onOpen(Session s) throws IOException {
-        sessionAdd(s);
+        sessions.add(s);
         listener.onOpen(s);
     }
 
@@ -99,7 +98,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
 
     @Override
     public void onClose(Session s) {
-        sessionRemove(s);
+        sessions.remove(s);
         listener.onClose(s);
     }
 
@@ -112,7 +111,7 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
      * 执行预停止（发送 close-starting 指令）
      */
     protected void prestopDo() {
-        for (Session s1 : sessionSet) {
+        for (Session s1 : sessions) {
             if (s1.isValid()) {
                 RunUtils.runAndTry(s1::preclose);
             }
@@ -123,22 +122,11 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
      * 执行预停止（发送 close 指令）
      */
     protected void stopDo() {
-        for (Session s1 : sessionSet) {
+        for (Session s1 : sessions) {
             if (s1.isValid()) {
                 RunUtils.runAndTry(s1::close);
             }
         }
-    }
-
-    protected void sessionAdd(Session s) {
-        sessionSet.add(s);
-    }
-
-    protected void sessionRemove(Session s) {
-        sessionSet.remove(s);
-    }
-
-    protected void sessionClear() {
-        sessionSet.clear();
+        sessions.clear();
     }
 }

@@ -6,4 +6,4 @@ solon.logging.appender:
 
 solon.logging.logger:
   "root":
-    level: "TRACE"
+    level: "INFO"

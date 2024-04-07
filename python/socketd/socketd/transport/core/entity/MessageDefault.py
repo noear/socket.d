@@ -52,6 +52,9 @@ class MessageDefault(MessageInternal):
     def meta_or_default(self, name: str, default: str) -> str:
         return self._entity.meta_or_default(name, default)
 
+    def meta_as_int(self, name:str) ->int:
+        return self._entity.meta_as_int(name)
+
     def put_meta(self, name:str, val:str):
         return self._entity.put_meta(name, val)
 

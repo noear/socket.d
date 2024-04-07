@@ -1,15 +1,16 @@
-from typing import Callable
+from typing import Callable, Set
 
 from socketd.transport.core.Listener import Listener
+from socketd.transport.core.Message import Message
 from socketd.transport.core.Processor import Processor
+from socketd.transport.core.Session import Session
+from socketd.transport.core.listener.SimpleListener import SimpleListener
 from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
-from socketd.transport.core.Config import Config
 
-
-class ServerBase(Server):
+class ServerBase(Server,Listener):
     """
     服务端基类
     """
@@ -17,9 +18,13 @@ class ServerBase(Server):
     def __init__(self, config:ServerConfig, assistant:ChannelAssistant):
         self._config = config
         self._assistant = assistant
+        self._isStarted:bool = False
 
         self._processor: Processor = ProcessorDefault()
-        self.isStarted = False
+        self._sessions:Set[Session] = set()
+        self._listener: Listener = SimpleListener()
+
+        self._processor.set_listener(self)
 
     def get_assistant(self):
         """
@@ -46,5 +51,36 @@ class ServerBase(Server):
         设置监听器
         """
         if listener is not None:
-            self._processor.set_listener(listener)
+            self._listener = listener
         return self
+
+    async def prestop(self):
+        await self.prestop_do()
+
+    async def stop(self):
+        await self.stop_do()
+
+    async def on_open(self, s: Session):
+        self._sessions.add(s)
+        await self._listener.on_open(s)
+
+    async def on_message(self, s: Session, m: Message):
+        await self._listener.on_message(s,m)
+
+    async def on_close(self, s: Session):
+        self._sessions.remove(s)
+        await self._listener.on_close(s)
+
+    def on_error(self, s: Session, e):
+        self._listener.on_error(s)
+
+    async def prestop_do(self):
+        for s1 in self._sessions:
+            if s1.is_valid():
+                await s1.preclose()
+    async def stop_do(self):
+        for s1 in self._sessions:
+            if s1.is_valid():
+                await s1.close()
+
+        self._sessions.clear()

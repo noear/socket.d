@@ -157,11 +157,13 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
     async def close(self, code):
         try:
+            closeCodeOld = self._closeCode;
             self._closeCode = code
 
             await super().close(code)
 
-            if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
+            if closeCodeOld > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING and code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
+                # 如果有效且非预关闭，则尝试关闭源
                 await self._assistant.close(self._source)
                 log.debug(
                     f"{self.get_config().get_role_name()} channel closed, sessionId={self.get_session().session_id()}")

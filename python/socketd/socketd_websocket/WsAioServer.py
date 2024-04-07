@@ -17,14 +17,13 @@ class WsAioServer(ServerBase):
 
     def __init__(self, config: ServerConfig):
         super().__init__(config, WsAioChannelAssistant(config))
-        self.server: Optional[Serve] = None
-        self.__is_started = False
+        self._server: Optional[Serve] = None
 
     async def start(self) -> WebSocketServer:
-        if self.__is_started:
+        if self._isStarted:
             raise Exception("Server started")
         else:
-            self.__is_started = True
+            self._isStarted = True
         _server = AIOServe(ws_handler=None,
                            host="0.0.0.0" if self.get_config().get_host() is None else self.get_config().get_host(),
                            port=self.get_config().get_port(),
@@ -36,21 +35,26 @@ class WsAioServer(ServerBase):
                            logger=logger,
                            max_size=Constants.MAX_SIZE_FRAME,
                            )
-        self.server = _server
+        self._server = _server
         log.info("Server started: {server=" + self.get_config().get_local_url() + "}")
-        return await self.server
+        return await self._server
 
     def message_all(self, message: str):
         """广播"""
-        broadcast(self.server.ws_server.websockets, message)
+        broadcast(self._server.ws_server.websockets, message)
 
     def register(self, protocol: WebSocketServerProtocol) -> None:
         """注册"""
-        self.server.ws_server.register(protocol)
+        self._server.ws_server.register(protocol)
 
     async def stop(self):
-        log.info("WsAioServer stop...")
-        self.server.ws_server.close()
-        await self.server.ws_server.wait_closed()
-        self.__is_started = False
-        log.info("WsAioServer stop ok...")
+        if self._isStarted:
+            self._isStarted = False
+        else:
+            return
+
+        await super().stop();
+
+        if self._server is not None:
+            self._server.ws_server.close()
+            await self._server.ws_server.wait_closed()

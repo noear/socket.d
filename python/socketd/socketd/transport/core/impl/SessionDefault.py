@@ -74,8 +74,11 @@ class SessionDefault(SessionBase):
 
         await self._channel.send(Frame(Flags.ReplyEnd, message), None)
 
-    async def reconnect(self):
-        await self._channel.reconnect()
+    async def preclose(self):
+        logger.debug(
+            f"{self._channel.get_config().get_role_name()} session close starting, sessionId={self.session_id()}")
+        if self._channel.is_valid():
+            await self._channel.send_close(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING)
 
     async def close(self):
         if self._channel.is_valid():
@@ -91,6 +94,9 @@ class SessionDefault(SessionBase):
     def path_new(self, path: str):
         self.__path_new = path
 
+    async def reconnect(self):
+        await self._channel.reconnect()
+
     def path(self) -> Optional[str]:
         if path_new := self.__path_new:
             return path_new
@@ -102,8 +108,4 @@ class SessionDefault(SessionBase):
     async def send_alarm(self, _from: Message, alarm: str) -> None:
         await self._channel.send_alarm(_from, alarm)
 
-    async def close_starting(self):
-        logger.debug(
-            f"{self._channel.get_config().get_role_name()} session close starting, sessionId={self.session_id()}")
-        if self._channel.is_valid():
-            await self._channel.send_close(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING)
+

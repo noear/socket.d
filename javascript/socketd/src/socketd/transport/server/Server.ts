@@ -55,7 +55,7 @@ export interface Server {
  */
 export abstract class ServerBase<T extends ChannelAssistant<any>> implements Server,Listener {
     protected _processor: Processor = new ProcessorDefault();
-    protected _sessionSet: Set<Session> = new Set<Session>();
+    protected _sessions: Set<Session> = new Set<Session>();
     protected _listener: Listener = new SimpleListener();
 
     private _config: ServerConfig;
@@ -120,11 +120,10 @@ export abstract class ServerBase<T extends ChannelAssistant<any>> implements Ser
 
     stop() {
         this.stopDo();
-        this._sessionSet.clear();
     }
 
     onOpen(s: Session) {
-        this._sessionSet.add(s);
+        this._sessions.add(s);
         this._listener.onOpen(s);
     }
 
@@ -133,7 +132,7 @@ export abstract class ServerBase<T extends ChannelAssistant<any>> implements Ser
     }
 
     onClose(s: Session) {
-        this._sessionSet.delete(s);
+        this._sessions.delete(s);
         this._listener.onClose(s);
     }
 
@@ -142,7 +141,7 @@ export abstract class ServerBase<T extends ChannelAssistant<any>> implements Ser
     }
 
     protected prestopDo() {
-        for (let s1 of this._sessionSet) {
+        for (let s1 of this._sessions) {
             if (s1.isValid()) {
                 RunUtils.runAndTry(() => s1.preclose());
             }
@@ -150,10 +149,11 @@ export abstract class ServerBase<T extends ChannelAssistant<any>> implements Ser
     }
 
     protected stopDo() {
-        for (let s1 of this._sessionSet) {
+        for (let s1 of this._sessions) {
             if (s1.isValid()) {
                 RunUtils.runAndTry(() => s1.close());
             }
         }
+        this._sessions.clear();
     }
 }

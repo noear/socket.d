@@ -11,10 +11,8 @@ from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 
-from socketd_websocket.IWebSocketServer import IWebSocketServer
 
-
-class AIOWebSocketServerImpl(WebSocketServerProtocol, IWebSocketServer):
+class AIOWebSocketServerImpl(WebSocketServerProtocol):
 
     def __init__(self, ws_handler, ws_server: WebSocketServer, ws_aio_server: 'WsAioServer',
                  *args, **kwargs):

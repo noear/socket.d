@@ -106,7 +106,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         if stream is not None:
             stream.on_progress(True, 1, 1)
 
-    async def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
+    def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
         """接收（接收答复帧）"""
         if stream is not None:
             if stream.demands() < Constants.DEMANDS_MULTIPLE or frame.flag() == Flags.ReplyEnd:
@@ -114,11 +114,12 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                 self._streamManger.remove_stream(frame.message().sid())
 
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
-                await stream.on_reply(frame.message())
+                # 单收时，内部已经是异步机制
+                stream.on_reply(frame.message())
             else:
-                await asyncio.get_running_loop().run_in_executor(self.get_config().get_exchange_executor(),
-                                                                 lambda _m: asyncio.run(stream.on_reply(_m)),
-                                                                 frame.message())
+                #stream.on_reply(frame.message())
+                # 改为异步处理，避免卡死Io线程
+                asyncio.get_running_loop().run_in_executor(self.get_config().get_exchange_executor(), lambda _m: asyncio.run(stream.on_reply(_m)), frame.message())
         else:
             log.debug(
                 f"{self.get_config().get_role_name()} stream not found, sid={frame.message().sid()}, sessionId={self.get_session().session_id()}")

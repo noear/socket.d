@@ -28,6 +28,18 @@ class ChannelBase(Channel, ABC):
     def __exit__(self, exc_type, exc_val, exc_tb):
         return self.__lock.release()
 
+    def get_config(self) -> Config:
+        return self.config
+
+    def is_valid(self) -> bool:
+        pass
+
+    def get_loop(self) -> asyncio.AbstractEventLoop:
+        return self.__loop
+
+    def set_loop(self, loop) -> None:
+        self.__loop = loop
+
     def get_attachment(self, name):
         return self.__attachments.get(name, None)
 
@@ -66,14 +78,3 @@ class ChannelBase(Channel, ABC):
         if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             self.__attachments.clear()
 
-    def get_config(self) -> Config:
-        return self.config
-
-    def is_valid(self) -> bool:
-        pass
-
-    def get_loop(self) -> asyncio.AbstractEventLoop:
-        return self.__loop
-
-    def set_loop(self, loop) -> None:
-        self.__loop = loop

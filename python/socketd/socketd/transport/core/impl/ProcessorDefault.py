@@ -55,11 +55,11 @@ class ProcessorDefault(Processor, ABC):
                         await self.on_close_internal(channel, Constants.CLOSE2001_ERROR)
 
             await channel.on_open_future(_future)
-            await self.on_open(channel)
+            self.on_open(channel)
         elif frame.flag() == Flags.Connack:
             # if client
             channel.set_handshake(HandshakeDefault(frame.message()))
-            await self.on_open(channel)
+            self.on_open(channel)
         else:
             if channel.get_handshake() is None:
                 await channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL)
@@ -141,11 +141,14 @@ class ProcessorDefault(Processor, ABC):
         if isReply:
             if stream:
                 stream.on_progress(False, streamIndex, streamTotal)
-            await channel.retrieve(frame, stream)
+            channel.retrieve(frame, stream)
         else:
-            await self.on_message(channel, frame.message())
+            self.on_message(channel, frame.message())
 
-    async def on_open(self, channel: ChannelInternal):
+    def on_open(self, channel: ChannelInternal):
+        asyncio.create_task(self.on_open_do(channel))
+
+    async def on_open_do(self, channel: ChannelInternal):
         try:
             await self.listener.on_open(channel.get_session())
             channel.do_open_future(True, None)
@@ -153,23 +156,19 @@ class ProcessorDefault(Processor, ABC):
             logger.warning("{} channel listener onOpen error", channel.get_config().get_role_name(), e)
             channel.do_open_future(False, e)
 
-    async def on_message(self, channel: ChannelInternal, message: Message):
+    def on_message(self, channel: ChannelInternal, message: Message):
+        asyncio.create_task(self.on_message_do(channel, message))
+
+    async def on_message_do(self, channel: ChannelInternal, message: Message):
         try:
             await self.listener.on_message(channel.get_session(), message)
         except Exception as e:
             logger.warning("{} channel listener onMessage error", channel.get_config().get_role_name(), e)
             self.on_error(channel, e)
 
-        # 取消线程运行, io密集采用loop.run_in_executor
-        # AsyncUtil.thread_loop(self.listener.on_message(
-        #     channel.get_session(), message),
-        #     pool=channel.get_config().get_exchange_executor())
-        # 异步运行
-        #task = asyncio.create_task(self.listener.on_message(channel.get_session(), message))
-
-    async def on_close(self, channel: ChannelInternal):
+    def on_close(self, channel: ChannelInternal):
         if channel.is_closed() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
-            await self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION)
+            self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION)
 
     async def on_close_internal(self, channel: ChannelInternal, code: int):
         await channel.close(code)

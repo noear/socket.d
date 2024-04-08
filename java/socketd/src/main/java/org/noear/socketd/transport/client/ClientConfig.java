@@ -16,6 +16,7 @@ import java.util.Map;
 public class ClientConfig extends ConfigBase<ClientConfig> {
     //通讯架构（tcp, ws, udp）
     private final String schema;
+    private final String schemaRaw;
 
     //连接地址
     private final String linkUrl;
@@ -35,6 +36,13 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
 
     public ClientConfig(String url) {
         super(true);
+
+        int idx = url.indexOf("://");
+        if (idx < 2) {
+            throw new IllegalArgumentException("The serverUrl invalid: " + url);
+        }
+
+        this.schemaRaw = url.substring(0, idx);
 
         //支持 sd: 开头的架构
         if (url.startsWith("sd:")) {
@@ -71,7 +79,14 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     }
 
     /**
-     * 获取通讯架构（tcp, ws, udp）
+     * 获取原始协议架构
+     */
+    public String getSchemaRaw() {
+        return schemaRaw;
+    }
+
+    /**
+     * 获取协议架构（tcp, ws, udp）
      */
     public String getSchema() {
         return schema;

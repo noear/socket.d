@@ -12,6 +12,7 @@ import org.noear.socketd.utils.StrUtils;
  */
 public class ServerConfig extends ConfigBase<ServerConfig> {
     private final String schema;
+    private final String schemaRaw;
 
     //主机名
     private String host;
@@ -20,6 +21,9 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
 
     public ServerConfig(String schema) {
         super(false);
+
+        this.schemaRaw = schema;
+
         //支持 sd: 开头的架构
         if(schema.startsWith("sd:")){
             schema = schema.substring(3);
@@ -31,6 +35,12 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
         this.port = 8602;
     }
 
+    /**
+     * 获取原始协议架构
+     */
+    public String getSchemaRaw() {
+        return schemaRaw;
+    }
 
     /**
      * 获取协议架构

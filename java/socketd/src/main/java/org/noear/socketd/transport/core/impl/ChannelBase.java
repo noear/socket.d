@@ -45,14 +45,6 @@ public abstract class ChannelBase implements Channel {
         }
     }
 
-
-    @Override
-    public void close(int code) {
-        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            attachments.clear();
-        }
-    }
-
     @Override
     public void setHandshake(HandshakeInternal handshake) {
         if(handshake != null) {
@@ -94,5 +86,13 @@ public abstract class ChannelBase implements Channel {
     @Override
     public void sendAlarm(Message from, String alarm) throws IOException {
         send(Frames.alarmFrame(from, alarm), null);
+    }
+
+
+    @Override
+    public void close(int code) {
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            attachments.clear();
+        }
     }
 }

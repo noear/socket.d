@@ -2,14 +2,15 @@ import {ConfigBase} from "../core/Config";
 import {StrUtils} from "../../utils/StrUtils";
 
 export class ClientConfig extends ConfigBase {
-    //通讯架构（tcp, ws, udp）
-    private _schema: string;
+    //协议架构（tcp, ws, udp, ...）
+    private readonly _schema: string;
+    private readonly _schemaCleaned: string;
 
     //连接地址
-    private _linkUrl: string;
-    private _url: string;
-    private _host: string;
-    private _port: number;
+    private readonly _linkUrl: string;
+    private readonly _url: string;
+    private readonly _host: string;
+    private readonly _port: number;
     private _metaMap: Map<string, string> = new Map<string, string>();
 
     //心跳间隔（毫秒）
@@ -24,6 +25,13 @@ export class ClientConfig extends ConfigBase {
     constructor(url: string) {
         super(true);
 
+        const idx = url.indexOf("://");
+        if (idx < 2) {
+            throw new Error("The serverUrl invalid: " + url);
+        }
+
+        this._schema = url.substring(0, idx);
+
         //支持 sd: 开头的架构
         if (url.startsWith("sd:")) {
             url = url.substring(3);
@@ -36,7 +44,7 @@ export class ClientConfig extends ConfigBase {
 
         this._host = _uri.host;
         this._port = parseInt(_uri.port);
-        this._schema = _uri.protocol;
+        this._schemaCleaned = _uri.protocol;
 
         if (this._port < 0) {
             this._port = 8602;
@@ -50,7 +58,7 @@ export class ClientConfig extends ConfigBase {
 
 
     /**
-     * 获取通讯架构（tcp, ws, udp）
+     * 获取协议架构（tcp, ws, udp）
      */
     getSchema(): string {
         return this._schema;
@@ -155,7 +163,7 @@ export class ClientConfig extends ConfigBase {
 
     toString(): string {
         return "ClientConfig{" +
-            "schema='" + this._schema + '\'' +
+            "schema='" + this._schemaCleaned + '\'' +
             ", charset=" + this._charset +
             ", url='" + this._url + '\'' +
             ", ioThreads=" + this._ioThreads +

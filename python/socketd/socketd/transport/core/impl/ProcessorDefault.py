@@ -36,6 +36,7 @@ class ProcessorDefault(Processor, ABC):
             logger.debug(f"S-REV:{frame}")
 
         if frame.flag() == Flags.Connect:
+            # if server
             connectMessage = frame.message()
             channel.set_handshake(HandshakeDefault(connectMessage))
 
@@ -56,16 +57,17 @@ class ProcessorDefault(Processor, ABC):
             await channel.on_open_future(_future)
             await self.on_open(channel)
         elif frame.flag() == Flags.Connack:
+            # if client
             channel.set_handshake(HandshakeDefault(frame.message()))
             await self.on_open(channel)
         else:
             if channel.get_handshake() is None:
-                await channel.close(Constants.CLOSE1001_PROTOCOL_CLOSE)
+                await channel.close(Constants.CLOSE1002_PROTOCOL_ILLEGAL)
 
                 if frame.flag() == Flags.Close:
                     raise SocketDConnectionException("Connection request was rejected")
 
-                self.log.warning("Channel handshake is None, sessionId={}", channel.get_session().session_id())
+                self.log.warning("{} channel handshake is None, sessionId={}", channel.get_config().get_role_name(), channel.get_session().session_id())
                 return
 
             # 更新最后活动时间
@@ -88,9 +90,9 @@ class ProcessorDefault(Processor, ABC):
                     await self.on_close_internal(channel, code)
                 elif frame.flag() == Flags.Alarm:
                     e = SocketDAlarmException(frame.message())
-                    stream: Union[StreamInternal, Stream] = channel.get_config().get_stream_manger().get_stream(frame.message().sid())
+                    stream: StreamInternal = channel.get_config().get_stream_manger().get_stream(frame.message().sid())
 
-                    if stream:
+                    if stream is None:
                         self.on_error(channel, e)
                     else:
                         channel.get_config().get_stream_manger().remove_stream(frame.message().sid())
@@ -118,13 +120,14 @@ class ProcessorDefault(Processor, ABC):
             # 尝试聚合分片处理
             fragmentIdxStr = frame.message().entity().meta(EntityMetas.META_DATA_FRAGMENT_IDX)
             if fragmentIdxStr is not None:
-                #解析分片索引
+                # 解析分片索引
                 del streamIndex
                 streamIndex = int(fragmentIdxStr)
                 frameNew: Frame = channel.get_config().get_fragment_handler().aggr_fragment(channel,
                                                                                             streamIndex,
                                                                                             frame.message())
                 if stream:
+                    # 解析分片总数
                     del streamTotal
                     streamTotal = int(frame.message().meta_or_default(EntityMetas.META_DATA_FRAGMENT_TOTAL, 0))
                 if frameNew is None:
@@ -151,22 +154,29 @@ class ProcessorDefault(Processor, ABC):
             channel.do_open_future(False, e)
 
     async def on_message(self, channel: ChannelInternal, message: Message):
+        try:
+            await self.listener.on_message(channel.get_session(), message)
+        except Exception as e:
+            logger.warning("{} channel listener onMessage error", channel.get_config().get_role_name(), e)
+            self.on_error(channel, e)
+
         # 取消线程运行, io密集采用loop.run_in_executor
         # AsyncUtil.thread_loop(self.listener.on_message(
         #     channel.get_session(), message),
         #     pool=channel.get_config().get_exchange_executor())
         # 异步运行
-        task = asyncio.create_task(self.listener.on_message(channel.get_session(), message))
+        #task = asyncio.create_task(self.listener.on_message(channel.get_session(), message))
 
     async def on_close(self, channel: ChannelInternal):
-        if channel.is_closed() == 0:
+        if channel.is_closed() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             await self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION)
-
-    def on_error(self, channel: ChannelInternal, error):
-        self.listener.on_error(channel.get_session(), error)
 
     async def on_close_internal(self, channel: ChannelInternal, code: int):
         await channel.close(code)
 
         if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             await self.listener.on_close(channel.get_session())
+
+    def on_error(self, channel: ChannelInternal, error):
+        self.listener.on_error(channel.get_session(), error)
+

@@ -11,8 +11,9 @@ import org.noear.socketd.utils.StrUtils;
  * @since 2.0
  */
 public class ServerConfig extends ConfigBase<ServerConfig> {
+    //协议架构（tcp, ws, udp, ...）
     private final String schema;
-    private final String schemaRaw;
+    private final String schemaCleaned;
 
     //主机名
     private String host;
@@ -22,28 +23,21 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
     public ServerConfig(String schema) {
         super(false);
 
-        this.schemaRaw = schema;
+        this.schema = schema;
 
         //支持 sd: 开头的架构
         if(schema.startsWith("sd:")){
             schema = schema.substring(3);
         }
 
-        this.schema = schema;
+        this.schemaCleaned = schema;
 
         this.host = "";
         this.port = 8602;
     }
 
     /**
-     * 获取原始协议架构
-     */
-    public String getSchemaRaw() {
-        return schemaRaw;
-    }
-
-    /**
-     * 获取协议架构
+     * 获取协议架构（用于查找供应者）
      */
     public String getSchema() {
         return schema;
@@ -84,16 +78,16 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
      */
     public String getLocalUrl() {
         if (StrUtils.isEmpty(host)) {
-            return "sd:" + schema + "://127.0.0.1:" + port;
+            return "sd:" + schemaCleaned + "://127.0.0.1:" + port;
         } else {
-            return "sd:" + schema + "://" + host + ":" + port;
+            return "sd:" + schemaCleaned + "://" + host + ":" + port;
         }
     }
 
     @Override
     public String toString() {
         return "ServerConfig{" +
-                "schema='" + schema + '\'' +
+                "schema='" + schemaCleaned + '\'' +
                 ", charset=" + charset +
                 ", host='" + host + '\'' +
                 ", port=" + port +

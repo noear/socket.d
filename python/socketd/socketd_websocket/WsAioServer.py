@@ -3,6 +3,7 @@ from typing import Optional
 from websockets.server import WebSocketServer, serve as Serve, WebSocketServerProtocol
 from websockets import broadcast
 
+from socketd import SocketD
 from socketd.transport.core.Costants import Constants
 from socketd.transport.server.ServerBase import ServerBase
 from socketd_websocket.WsAioChannelAssistant import WsAioChannelAssistant
@@ -19,13 +20,23 @@ class WsAioServer(ServerBase):
         super().__init__(config, WsAioChannelAssistant(config))
         self._server: Optional[Serve] = None
 
+    def get_title(self):
+        return "ws/aio/py-websocket/v" + SocketD.version();
+
     async def start(self) -> WebSocketServer:
         if self._isStarted:
-            raise Exception("Server started")
+            raise Exception("Socket.D server started")
         else:
             self._isStarted = True
-        _server = AIOServe(ws_handler=None,
-                           host="0.0.0.0" if self.get_config().get_host() is None else self.get_config().get_host(),
+
+        __host:str
+        if self.get_config().get_host() is None:
+            __host = "0.0.0.0"
+        else:
+            __host = self.get_config().get_host()
+
+        self._server = AIOServe(ws_handler=None,
+                           host=__host,
                            port=self.get_config().get_port(),
                            create_protocol=AIOWebSocketServerImpl,
                            ws_aio_server=self,
@@ -35,17 +46,9 @@ class WsAioServer(ServerBase):
                            logger=logger,
                            max_size=Constants.MAX_SIZE_FRAME,
                            )
-        self._server = _server
-        log.info("Server started: {server=" + self.get_config().get_local_url() + "}")
+
+        log.info("Socket.D server started: {server=" + self.get_config().get_local_url() + "}")
         return await self._server
-
-    def message_all(self, message: str):
-        """广播"""
-        broadcast(self._server.ws_server.websockets, message)
-
-    def register(self, protocol: WebSocketServerProtocol) -> None:
-        """注册"""
-        self._server.ws_server.register(protocol)
 
     async def stop(self):
         if self._isStarted:

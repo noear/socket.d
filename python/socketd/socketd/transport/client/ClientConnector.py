@@ -21,7 +21,3 @@ class ClientConnector(ABC):
     @abstractmethod
     async def close(self):
         ...
-
-    @abstractmethod
-    async def stop(self):
-        ...

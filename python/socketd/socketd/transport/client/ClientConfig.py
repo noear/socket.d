@@ -1,10 +1,18 @@
 from urllib.parse import urlparse
+
+from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.core.impl.ConfigBase import ConfigBase
 
 
 class ClientConfig(ConfigBase):
     def __init__(self, url: str):
         super().__init__(True)
+
+        idx = url.index("://")
+        if idx < 2:
+            raise SocketDException(f"The serverUrl invalid: {url}")
+
+        self.__schema = url[:idx]
 
         if url.startswith("sd:"):
             url = url[3:]
@@ -15,7 +23,7 @@ class ClientConfig(ConfigBase):
         self.__url = url
         self.__host = uri.hostname
         self.__port = uri.port
-        self.__schema = uri.scheme
+        self.__schemaCleaned = uri.scheme
 
         if not self.__port:
             self.__port = 8602
@@ -71,7 +79,7 @@ class ClientConfig(ConfigBase):
         return self
 
     def __str__(self):
-        return f"ClientConfig{{schema='{self.__schema}', " \
+        return f"ClientConfig{{schema='{self.__schemaCleaned}', " \
                f"charset='{self._charset}', " \
                f"url='{self.__url}', " \
                f"ioThreads={self._ioThreads}, " \

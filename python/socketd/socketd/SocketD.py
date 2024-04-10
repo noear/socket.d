@@ -1,7 +1,6 @@
-from typing import Dict, Optional
+from typing import Dict
 
 import socketd.cluster.ClusterClient as ClusterClient
-from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientProvider import ClientProvider
@@ -25,11 +24,6 @@ def protocol_version() -> str:
 client_factory_map: Dict[str, ClientProvider] = {}
 server_factory_map: Dict[str, ServerProvider] = {}
 
-
-def load_factories(factories: list[ClientProvider | ServerProvider], factory_map: Dict[str, object]) -> None:
-    for factory in factories:
-        for schema in factory.schema():
-            factory_map[schema] = factory
 def create_server(schemaOrConfig: str | ServerConfig) -> Server:
     Asserts.assert_null("schemaOrConfig", schemaOrConfig)
     config:ServerConfig
@@ -84,6 +78,11 @@ def create_client_or_null(config: ClientConfig) -> Client:
 def create_cluster_client(*urls):
     return ClusterClient(*urls)
 
+
+def load_factories(factories: list[ClientProvider | ServerProvider], factory_map: Dict[str, object]) -> None:
+    for factory in factories:
+        for schema in factory.schema():
+            factory_map[schema] = factory
 
 # Initialize the client and server factory maps
 load_factories([WsAioProvider(), TcpAioProvider()], server_factory_map)

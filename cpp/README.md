@@ -1,1 +1,1 @@
-# socketd for C/C++
+# socket.d for C/C++

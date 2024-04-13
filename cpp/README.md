@@ -9,11 +9,11 @@
 
 Only for Linux.
 
-## Git Clone
+## Git clone
 
 * Cloning main project
 ```
-git clone https://github.com/necyber/socket.d.git
+git clone -b dev https://github.com/necyber/socket.d.git
 ```
 * Initialize the local configuration file by registering the paths of the submodules.
 ```
@@ -25,7 +25,19 @@ git submodule update
 ```
 
 ## Build
+* Build libhv
+Ref: https://github.com/ithewei/libhv
 ```
+cd socket.d/cpp/3rd/libhv
+./configure
+make
+sudo make install
+```
+
+
+* Build 
+```
+cd socket.d/cpp
 make clean
 make
 ```

@@ -12,16 +12,23 @@ Only for Linux.
 ## Git Clone
 
 * Cloning main project
-git clone {http/ssh}
+```
+git clone https://github.com/necyber/socket.d.git
+```
 * Initialize the local configuration file by registering the paths of the submodules.
+```
 git submodule init
+```
 * Pull all data and check out the appropriate submodule commit.
+```
 git submodule update
+```
 
 ## Build
-
+```
 make clean
 make
+```
 
 ## Bug reports
 

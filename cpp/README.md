@@ -1,1 +1,1 @@
-占位
+# socketd for C/C++

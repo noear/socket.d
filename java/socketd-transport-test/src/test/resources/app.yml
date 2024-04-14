@@ -2,7 +2,7 @@ server.http.ioBound: false
 
 solon.logging.appender:
   console:
-    level: "TRACE"
+    level: "INFO"
 
 solon.logging.logger:
   "root":

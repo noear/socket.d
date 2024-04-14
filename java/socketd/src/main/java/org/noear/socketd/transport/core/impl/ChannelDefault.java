@@ -273,18 +273,18 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     @Override
     public void close(int code) {
         try {
-            int closeCodeOld = closeCode;
             this.closeCode = code;
 
             super.close(code);
 
-            if (closeCodeOld > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING
-                    && code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-                //如果有效且非预关闭，则尝试关闭源
-                assistant.close(source);
+            if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+                if (assistant.isValid(source)) {
+                    //如果有效且非预关闭，则尝试关闭源
+                    assistant.close(source);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("{} channel closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} channel closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
+                    }
                 }
             }
         } catch (Throwable e) {

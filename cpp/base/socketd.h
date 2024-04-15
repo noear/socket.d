@@ -52,6 +52,25 @@ typedef struct sd_package_s {
     sd_frame_t frame;
 } sd_package_t;
 
+typedef struct sd_channel_s sd_channel_t;
+
+typedef struct sd_session_s {
+    char sid[64];
+    char* uri;   //handshake uri
+    char* path;  //handshake path
+    sd_channel_t* channle;
+} sd_session_t;
+
+typedef struct sd_channel_s {
+    int fd;
+    void* hio;
+    void* attachment;
+    char remote_address[64];
+    char local_address[64];
+    sd_session_t* session;
+} sd_channel_t;
+
+
 void free_meta_and_data(sd_package_t* pkg);
 void free_entity_meta_and_data(sd_entity_t* entity);
 
@@ -66,6 +85,13 @@ void sd_send_message(const char* sid, const char* event, sd_entity_t* entity, vo
 void sd_send_request(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 void sd_send_replay(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 void sd_send_endreplay(const char* sid, const char* event, sd_entity_t* entity, void* hio);
+
+sd_session_t* new_session(sd_channel_t* channel);
+void free_session(sd_session_t* session);
+sd_channel_t* new_channel();
+void free_channel(sd_channel_t* channel);
+
+void* sd_hio(sd_session_t* session);
 
 // helper
 uint32_t swap_endian(uint32_t x);

@@ -4,6 +4,7 @@
 #include "hv/hmutex.h"
 #include "hv/hloop.h"
 #include "hv/hsocket.h"
+#include "socketd.h"
 
 typedef struct tcp_server_s {
     // connect: host:port
@@ -22,29 +23,19 @@ typedef struct tcp_server_s {
     haccept_cb accept_fn;
 } tcp_server_t;
 
-typedef struct sd_channel_s sd_channel_t;
-
-typedef struct sd_session_s {
-    char sid[64];
-    char* uri;   //handshake uri
-    char* path;  //handshake path
-    sd_channel_t* channle;
-} sd_session_t;
-
-typedef struct sd_channel_s {
-    int fd;
-    void* hio;
-    void* attachment;
-    char remote_address[64];
-    char local_address[64];
-    sd_session_t session;
-} sd_channel_t;
-
+typedef struct sd_server_event_s {
+    int (*onopen)(const sd_session_t*, const void*);
+    int (*onclose)(const sd_session_t*, const void*);
+    int (*onmessage)(const sd_session_t*, const void*);
+    int (*onerror)(const sd_session_t*, const void*);
+} sd_server_event_t;
 
 typedef tcp_server_t* sd_server_t;
 
 sd_server_t sd_create_tcp_server(int port);
 void sd_start_tcp_server(sd_server_t fd);
 void sd_destory_tcp_server(sd_server_t fd);
+
+void sd_regist_server(sd_server_t fd, sd_server_event_t e);
 
 #endif

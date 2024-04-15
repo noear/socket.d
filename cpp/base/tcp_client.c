@@ -2,7 +2,6 @@
 #include "hv/hbase.h"
 #include "uuid4.h"
 #include "sds.h"
-#include "socketd.h"
 #include "tcp_client.h"
 
 static unpack_setting_t socketd_unpack_setting = {
@@ -13,6 +12,13 @@ static unpack_setting_t socketd_unpack_setting = {
     .length_field_bytes = 4,
     .length_adjustment = -4,
     .length_field_coding = ENCODE_BY_BIG_ENDIAN,
+};
+
+static struct sd_client_event_s client_event = {
+    .onconnack = 0,
+    .onclose = 0,
+    .onmessage = 0,
+    .onerror = 0,
 };
 
 struct event_handler_s {
@@ -57,12 +63,9 @@ void parse_client_config(const char* surl, tcp_client_t* config) {
     if (config->port <= 0) config->port = 8602;
 }
 
-sds generate_id() {
-    char buf[UUID4_LEN] = { 0 };
+void generate_id(char* buf, size_t len) {
     uuid4_init();
     uuid4_generate(buf);
-    sds ret = sdsnew(buf);
-    return ret;
 }
 
 void sd_no_support(uint32_t n) {
@@ -70,16 +73,18 @@ void sd_no_support(uint32_t n) {
     exit(0);
 }
 
-void on_connect_handler(void* channel, sd_package_t* sd) {
-
+void on_connect_handler(sd_channel_t* channel, sd_package_t* sd) {
+    sd_no_support(sd->frame.flag);
 }
 
 // TODO: Socket.D=1.0
-void on_connack_handler(void* channel, sd_package_t* sd) {
-
+void on_connack_handler(sd_channel_t* channel, sd_package_t* sd) {
+    if (client_event.onconnack) {
+        client_event.onconnack(channel->session, &sd->frame.message);
+    }
 }
 
-void on_ping_handler(void* channel, sd_package_t* sd) {
+void on_ping_handler(sd_channel_t* channel, sd_package_t* sd) {
     char buf[8] = { 0 };
     uint32_t* p = (uint32_t*)&buf[0];
     *p = swap_endian(8);
@@ -91,7 +96,7 @@ void on_ping_handler(void* channel, sd_package_t* sd) {
     hio_write((hio_t*)channel, &buf[0], 8);
 }
 
-void on_pong_handler(void* channel, sd_package_t* sd) {
+void on_pong_handler(sd_channel_t* channel, sd_package_t* sd) {
     char buf[8] = { 0 };
     uint32_t* p = (uint32_t*)&buf[0];
     *p = swap_endian(8);
@@ -105,27 +110,27 @@ void on_pong_handler(void* channel, sd_package_t* sd) {
     hio_write((hio_t*)channel, &buf[0], 8);
 }
 
-void on_close_handler(void* channel, sd_package_t* sd) {
+void on_close_handler(sd_channel_t* channel, sd_package_t* sd) {
     sd_no_support(sd->frame.flag);
 }
 
-void on_alarm_handler(void* channel, sd_package_t* sd) {
+void on_alarm_handler(sd_channel_t* channel, sd_package_t* sd) {
     sd_no_support(sd->frame.flag);
 }
 
-void on_message_handler(void* channel, sd_package_t* sd) {
+void on_message_handler(sd_channel_t* channel, sd_package_t* sd) {
     sd_no_support(sd->frame.flag);
 }
 
-void on_request_handler(void* channel, sd_package_t* sd) {
+void on_request_handler(sd_channel_t* channel, sd_package_t* sd) {
     sd_no_support(sd->frame.flag);
 }
 
-void on_subscribe_handler(void* channel, sd_package_t* sd) {
+void on_subscribe_handler(sd_channel_t* channel, sd_package_t* sd) {
     sd_no_support(sd->frame.flag);
 }
 
-void on_reply_handler(void* channel, sd_package_t* sd) {
+void on_reply_handler(sd_channel_t* channel, sd_package_t* sd) {
     const char* event = sd->frame.message.event;
     if (event && strlen(event) > 0) {
         int n = sizeof(replay_event_handler_table) / sizeof(event_handler_t);
@@ -138,7 +143,7 @@ void on_reply_handler(void* channel, sd_package_t* sd) {
     }
 }
 
-void on_endreply_handler(void* channel, sd_package_t* sd) {
+void on_endreply_handler(sd_channel_t* channel, sd_package_t* sd) {
     const char* event = sd->frame.message.event;
     if (event && strlen(event) > 0) {
         int n = sizeof(replay_event_handler_table) / sizeof(event_handler_t);
@@ -151,11 +156,11 @@ void on_endreply_handler(void* channel, sd_package_t* sd) {
     }
 }
 
-void on_default_handler(void* channel, sd_package_t* sd) {
+void on_default_handler(sd_channel_t* channel, sd_package_t* sd) {
     sd_no_support(sd->frame.flag);
 }
 
-void client_on_handler(void* channel, sd_package_t* sd) {
+void client_on_handler(sd_channel_t* channel, sd_package_t* sd) {
     switch (sd->frame.flag) {
     case CONNECT_FRAME: on_connect_handler(channel, sd); break;
     case CONNACK_FRAME: on_connack_handler(channel, sd); break;
@@ -172,14 +177,26 @@ void client_on_handler(void* channel, sd_package_t* sd) {
     }
 }
 
+void hand_shake(hio_t* io, sd_channel_t* channel, const char* url) {
+    if (channel && channel->session == NULL) {
+        channel->session = new_session(channel);
+        generate_id(channel->session->sid, UUID4_LEN);
+    }
+
+    if (channel && channel->session) {
+        sd_entity_t entity = { 0 };        
+        sd_send_connect(channel->session->sid, url, &entity, io);
+    }
+}
+
 void client_on_recv(hio_t* io, void* buf, int readbytes) {
     printf("on_recv fd=%d readbytes=%d\n", hio_fd(io), readbytes);
 
-    //tcp_client_t* cli = (tcp_client_t*)hevent_userdata(io);
+    tcp_client_t* cli = (tcp_client_t*)hevent_userdata(io);
 
     sd_package_t sd;
     sd_decode(&sd, (char*)buf, readbytes);
-    client_on_handler(io, &sd);
+    client_on_handler(cli->channel, &sd);
     free_meta_and_data(&sd);
 }
 
@@ -187,13 +204,13 @@ void client_on_connect(hio_t* io) {
     printf("client on connect: connfd=%d\n", hio_fd(io));
     tcp_client_t* cli = (tcp_client_t*)hevent_userdata(io);
     cli->connected = 1;
-    sds sid = generate_id();
-    strcpy(cli->session.sid, sid);
-    sdsfree(sid);
 
-    // ÎÕÊÖ
-    sd_entity_t entity = { 0 };
-    sd_send_connect(cli->session.sid, cli->url, &entity, io);
+    sd_channel_t* channel = new_channel((void*)io);
+    channel->hio = io;
+    channel->fd = hio_fd(io);
+    cli->channel = channel;
+
+    hand_shake(io, channel, cli->url);
 
     hio_setcb_read(io, client_on_recv);
     hio_read(io);
@@ -201,8 +218,16 @@ void client_on_connect(hio_t* io) {
 
 void client_on_close(hio_t* io) {
     printf("onclose: connfd=%d error=%d\n", hio_fd(io), hio_error(io));
-    //sd_client_t* cli = (sd_client_t*)hevent_userdata(io);
+    tcp_client_t* cli = (tcp_client_t*)hevent_userdata(io);
+    
+    if (cli && cli->channel) {
+        if (cli->channel->session) {
+            free(cli->channel->session);
+        }
 
+        hevent_set_userdata(io, NULL);
+        free_channel(cli->channel);
+    }
 }
 
 void client_on_timer(htimer_t* timer) {
@@ -298,4 +323,8 @@ void sd_start_tcp_client(sd_client_t fd) {
 void sd_destory_tcp_client(sd_client_t fd) {
     tcp_client_t* cli = fd;
     tcp_client_free(cli);
+}
+
+void sd_regist_client(sd_client_t fd, sd_client_event_t e) {
+    client_event = e;
 }

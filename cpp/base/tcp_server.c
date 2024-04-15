@@ -2,7 +2,6 @@
 #include "hv/hsocket.h"
 #include "hv/hbase.h"
 #include "hv/herr.h"
-#include "socketd.h"
 #include "sds.h"
 #include "tcp_server.h"
 
@@ -14,6 +13,13 @@ static unpack_setting_t socketd_unpack_setting = {
     .length_field_bytes = 4,
     .length_adjustment = -4,
     .length_field_coding = ENCODE_BY_BIG_ENDIAN,
+};
+
+static struct sd_server_event_s server_event = {
+    .onopen = 0,
+    .onclose = 0,
+    .onmessage = 0,
+    .onerror = 0,
 };
 
 struct event_handler_s {
@@ -87,21 +93,15 @@ void tcp_server_create(tcp_server_t* srv) {
     srv->io = listenio;
 }
 
-sd_channel_t* new_channel() {
-    void* p = malloc(sizeof(sd_channel_t));
-    if (p) memset(p, 0, sizeof(sd_channel_t));
-    return (sd_channel_t*)p;
-}
-
-void free_channel(sd_channel_t* channel) {
-    free(channel);
-}
-
 static void on_tcp_close(hio_t* io) {
     printf("on_close fd=%d error=%d\n", hio_fd(io), hio_error(io));
 
     sd_channel_t* channel = (sd_channel_t*)hio_context(io);
     if (channel) {
+        if (channel->session) {
+            free(channel->session);
+        }
+
         hio_set_context(io, NULL);
         free_channel(channel);
     }
@@ -119,9 +119,16 @@ void parse_handshake_param(sd_session_t* session, sd_message_t* msg) {
 }
 
 void on_connect_handler(sd_channel_t* channel, sd_package_t* sd) {
-    strcpy(channel->session.sid, sd->frame.message.sid);
+    if (channel->session == NULL) {
+        channel->session = new_session(channel);
+    }
 
-    parse_handshake_param(&channel->session, &sd->frame.message);
+    strcpy(channel->session->sid, sd->frame.message.sid);
+    parse_handshake_param(channel->session, &sd->frame.message);
+
+    if (server_event.onopen) {
+        server_event.onopen(channel->session, &sd->frame.message);
+    }
 
     sd_send_connack(sd->frame.message.sid, sd->frame.message.event, &sd->frame.message.entity, channel->hio);
 }
@@ -165,6 +172,11 @@ void on_alarm_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_message_handler(sd_channel_t* channel, sd_package_t* sd) {
+    if (server_event.onmessage) {
+        server_event.onmessage(channel->session, &sd->frame.message);
+        return;
+    }
+
     const char* event = sd->frame.message.event;
     if (event && strlen(event) > 0) {
         int n = sizeof(message_event_handler_table) / sizeof(event_handler_t);
@@ -293,4 +305,8 @@ void sd_start_tcp_server(sd_server_t fd) {
 void sd_destory_tcp_server(sd_server_t fd) {
 	tcp_server_t* srv = (tcp_server_t*)fd;
 	tcp_server_free(srv);
+}
+
+void sd_regist_server(sd_server_t fd, sd_server_event_t e) {
+    server_event = e;
 }

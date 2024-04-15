@@ -276,3 +276,31 @@ void sd_send_replay(const char* sid, const char* event, sd_entity_t* entity, voi
 void sd_send_endreplay(const char* sid, const char* event, sd_entity_t* entity, void* hio) {
     sd_send_raw(END_REPLAY_FRAME, sid, event, entity, hio);
 }
+
+sd_session_t* new_session(sd_channel_t* channel) {
+    sd_session_t* s = malloc(sizeof(sd_session_t));
+    memset(s, 0, sizeof(sd_session_t));
+    s->channle = channel;
+    return s;
+}
+
+void free_session(sd_session_t* session) {
+    free(session);
+}
+
+sd_channel_t* new_channel() {
+    void* p = malloc(sizeof(sd_channel_t));
+    if (p) memset(p, 0, sizeof(sd_channel_t));
+    return (sd_channel_t*)p;
+}
+
+void free_channel(sd_channel_t* channel) {
+    free(channel);
+}
+
+void* sd_hio(sd_session_t* session) {
+    if (session && session->channle) {
+        return session->channle->hio;
+    }
+    return NULL;
+}

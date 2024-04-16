@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include "tcp_server.h"
 
-int on_open(const sd_session_t* session, const void* message);
-int on_message(const sd_session_t* session, const void* message);
+int on_open(const sd_session_t* session, sd_message_t* message);
+int on_message(const sd_session_t* session, sd_message_t* message);
 
 static sd_server_event_t onevent = {
     .onopen = on_open,
@@ -17,7 +17,7 @@ static sd_server_event_t onevent = {
     .onerror = 0,
 };
 
-int on_open(const sd_session_t* session, const void* message) {
+int on_open(const sd_session_t* session, sd_message_t* message) {
     printf("accept connfd=%d [%s] <= [%s]\n",
         session->channle->fd,
         session->channle->local_address,
@@ -26,9 +26,17 @@ int on_open(const sd_session_t* session, const void* message) {
     return 0;
 }
 
-int on_message(const sd_session_t* session, const void* message) {
-    const sd_message_t* msg = (const sd_message_t*)message;
+int on_message(const sd_session_t* session, sd_message_t* message) {
+    if (session == NULL || message == NULL) {
+        printf("on_message() argu error!");
+        exit(-1);
+    }
+
+    sd_message_t* msg = (sd_message_t*)message;
     if (msg && msg->entity.data) {
+        //print request meta and data
+        const char* user = sd_meta(&msg->entity, "user");
+        printf("request: user=%s\n", user);
         printf("%s, You too!\n", msg->entity.data);
     }
 

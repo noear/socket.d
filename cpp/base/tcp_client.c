@@ -184,7 +184,8 @@ void hand_shake(hio_t* io, sd_channel_t* channel, const char* url) {
     }
 
     if (channel && channel->session) {
-        sd_entity_t entity = { 0 };        
+        sd_entity_t entity = { 0 };
+        init_entity(&entity);
         sd_send_connect(channel->session->sid, url, &entity, io);
     }
 }
@@ -194,10 +195,11 @@ void client_on_recv(hio_t* io, void* buf, int readbytes) {
 
     tcp_client_t* cli = (tcp_client_t*)hevent_userdata(io);
 
-    sd_package_t sd;
+    sd_package_t sd = { 0 };
+    init_package(&sd);
     sd_decode(&sd, (char*)buf, readbytes);
     client_on_handler(cli->channel, &sd);
-    free_meta_and_data(&sd);
+    free_entity_meta_and_data(&sd.frame.message.entity);
 }
 
 void client_on_connect(hio_t* io) {

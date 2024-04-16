@@ -2,6 +2,7 @@
 #define SOCKETD_H_
 
 #include "sd_entity_metas.h"
+#include "meta.h"
 
 /**
  * 10 Connect Frame
@@ -30,6 +31,8 @@
 #define END_REPLAY_FRAME 49
 
 typedef struct sd_entity_s {
+    struct list_head metalist;
+
     uint32_t metalen;
     uint32_t datalen;
     char* meta;
@@ -70,10 +73,9 @@ typedef struct sd_channel_s {
     sd_session_t* session;
 } sd_channel_t;
 
-
-void free_meta_and_data(sd_package_t* pkg);
+void init_package(sd_package_t* pkg);
+void init_entity(sd_entity_t* entity);
 void free_entity_meta_and_data(sd_entity_t* entity);
-
 void populate_entity_data(sd_entity_t* entity, const char* text);
 
 sd_package_t* sd_decode(sd_package_t* sd, char* buf, uint32_t len);
@@ -86,10 +88,21 @@ void sd_send_request(const char* sid, const char* event, sd_entity_t* entity, vo
 void sd_send_replay(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 void sd_send_endreplay(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 
+/*session opt*/
 sd_session_t* new_session(sd_channel_t* channel);
 void free_session(sd_session_t* session);
 sd_channel_t* new_channel();
 void free_channel(sd_channel_t* channel);
+
+/*meta opt*/
+void meta_list_init(sd_entity_t* entity);
+void sd_put_meta(sd_entity_t* entity, const char* name, const char* value);
+const char* sd_meta(sd_entity_t* entity, const char* name);
+int sd_meta_as_int(sd_entity_t* entity, const char* name);
+long long sd_meta_as_long(sd_entity_t* entity, const char* name);
+double sd_meta_as_double(sd_entity_t* entity, const char* name);
+void parse_meta_string(sd_entity_t* entity, const char* meta);
+char* format_meta_string(sd_entity_t* entity);
 
 void* sd_hio(sd_session_t* session);
 

@@ -24,10 +24,10 @@ typedef struct tcp_server_s {
 } tcp_server_t;
 
 typedef struct sd_server_event_s {
-    int (*onopen)(const sd_session_t*, const void*);
-    int (*onclose)(const sd_session_t*, const void*);
-    int (*onmessage)(const sd_session_t*, const void*);
-    int (*onerror)(const sd_session_t*, const void*);
+    int (*onopen)(const sd_session_t*, sd_message_t*);
+    int (*onclose)(const sd_session_t*, sd_message_t*);
+    int (*onmessage)(const sd_session_t*, sd_message_t*);
+    int (*onerror)(const sd_session_t*, sd_message_t*);
 } sd_server_event_t;
 
 typedef tcp_server_t* sd_server_t;

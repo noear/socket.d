@@ -18,7 +18,8 @@ all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
 	./3rd/sds/sds.c \
-	./base/socketd.c
+	./base/socketd.c \
+	./base/meta.c
 
 OBJS = $(SRCS:.c=.o)
 

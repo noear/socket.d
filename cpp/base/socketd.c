@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include "sds.h"
 #include "hv/hloop.h"
 #include "hv/hbase.h"
 #include "socketd.h"
@@ -26,19 +27,23 @@ void print_package_info(const char* msg, struct sd_package_s* sd) {
     }
 }
 
-sd_package_t* new_sd_package() {
-    void* p = malloc(sizeof(sd_package_t));
-    if (p)  memset(p, 0, sizeof(sd_package_t));
-    return (sd_package_t*)p;
+void init_package(sd_package_t* pkg) {
+    if (pkg) {
+        memset(pkg, 0, sizeof(sd_package_t));
+        init_entity(&pkg->frame.message.entity);
+    }
 }
 
-void free_sd_package(sd_package_t* pkg) {
-    free(pkg);
+void init_entity(sd_entity_t* entity) {
+    if (entity) {
+        memset(entity, 0, sizeof(sd_entity_t));
+        meta_list_init(entity);
+    }
 }
 
 void free_entity_meta_and_data(sd_entity_t* entity) {
     if (entity->meta)
-        free(entity->meta);
+        sdsfree(entity->meta);
 
     if (entity->data)
         free(entity->data);
@@ -47,10 +52,6 @@ void free_entity_meta_and_data(sd_entity_t* entity) {
     entity->metalen = 0;
     entity->data = 0;
     entity->datalen = 0;
-}
-
-void free_meta_and_data(sd_package_t* pkg) {
-    free_entity_meta_and_data(&pkg->frame.message.entity);
 }
 
 bool is_entity_empty(sd_entity_t* e) {
@@ -131,21 +132,26 @@ sd_package_t* sd_decode(sd_package_t* sd, char* buf, uint32_t len) {
     if (sp) {
         if (*(++sp) == '\n') sp++;
         size_t len = sp - p;
-        sd->frame.message.entity.metalen = len;
-        sd->frame.message.entity.meta = (char*)malloc(len);
-        if (sd->frame.message.entity.meta) {
-            memset(sd->frame.message.entity.meta, 0, len);
-            memcpy(sd->frame.message.entity.meta, p, len);
+        if (len > 0) {
+            sd->frame.message.entity.metalen = len;
+            sd->frame.message.entity.meta = sdsnewlen(p, len);
+            //sd->frame.message.entity.meta = (char*)malloc(len);
+            //if (sd->frame.message.entity.meta) {
+            //    memset(sd->frame.message.entity.meta, 0, len);
+            //    memcpy(sd->frame.message.entity.meta, p, len);
+            //}
         }
         p = sp;
     }
     
     size_t datalen = len - (p - buf);
-    sd->frame.message.entity.datalen = datalen;
-    sd->frame.message.entity.data = (char*)malloc(datalen + 1);
-    if (sd->frame.message.entity.data) {
-        memset(sd->frame.message.entity.data, 0, datalen + 1);
-        memcpy(sd->frame.message.entity.data, p, datalen);
+    if (datalen > 0) {
+        sd->frame.message.entity.datalen = datalen;
+        sd->frame.message.entity.data = (char*)malloc(datalen + 1);
+        if (sd->frame.message.entity.data) {
+            memset(sd->frame.message.entity.data, 0, datalen + 1);
+            memcpy(sd->frame.message.entity.data, p, datalen);
+        }
     }
 
     print_package_info("Receive Message", sd);
@@ -216,7 +222,7 @@ sd_entity_t* new_entity_string(const char* text) {
 
 void free_entity(sd_entity_t* e) {
     if (e->metalen && e->meta) {
-        free(e->meta);
+        sdsfree(e->meta);
     }
 
     if (e->datalen && e->data) {
@@ -233,12 +239,18 @@ void free_entity(sd_entity_t* e) {
 }
 
 void sd_send_raw(uint32_t flag, const char* sid, const char* event, sd_entity_t* entity, void* hio) {
-    sd_package_t reply;
-    memset(&reply, 0, sizeof(reply));
+    sd_package_t reply = { 0 };
+    init_package(&reply);
 
     reply.frame.flag = flag;
     strcpy(reply.frame.message.sid, sid);
     strcpy(reply.frame.message.event, event);
+
+    sds metastr = format_meta_string(entity);
+    if (metastr) {
+        entity->metalen = sdslen(metastr);
+        entity->meta = metastr;
+    }
     reply.frame.message.entity = *entity;
 
     char* buf = 0;

@@ -248,12 +248,13 @@ static void on_tcp_recv(hio_t* io, void* buf, int readbytes) {
     assert(channel != NULL);
     channel->hio = io;
 
-    sd_package_t sd;
+    sd_package_t sd = { 0 };
+    init_package(&sd);
     sd_decode(&sd, (char*)buf, readbytes);
 
     on_handler(channel, &sd);
 
-    free_meta_and_data(&sd);
+    free_entity_meta_and_data(&sd.frame.message.entity);
 }
 
 static void on_tcp_accept(hio_t* io) {

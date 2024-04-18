@@ -278,10 +278,13 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             super.close(code);
 
             if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-                assistant.close(source);
+                if (assistant.isValid(source)) {
+                    //如果有效且非预关闭，则尝试关闭源
+                    assistant.close(source);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("{} channel closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} channel closed, sessionId={}", getConfig().getRoleName(), getSession().sessionId());
+                    }
                 }
             }
         } catch (Throwable e) {

@@ -87,7 +87,7 @@ class Channel(ABC):
         ...
 
     @abstractmethod
-    async def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
+    def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
         ...
 
     @abstractmethod

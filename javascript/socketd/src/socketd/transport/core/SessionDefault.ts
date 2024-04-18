@@ -238,6 +238,10 @@ export class SessionDefault extends SessionBase {
     }
 
     closeStarting() {
+        this.preclose();
+    }
+
+    preclose() {
         console.debug(`${this._channel.getConfig().getRoleName()} session close starting, sessionId=${this.sessionId()}`);
 
         if (this._channel.isValid()) {

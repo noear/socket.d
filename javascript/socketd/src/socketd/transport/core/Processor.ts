@@ -248,7 +248,7 @@ export class ProcessorDefault implements Processor {
     }
 
     onClose(channel: ChannelInternal) {
-        if (channel.isClosed() == 0) {
+        if (channel.isClosed() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
             this.onCloseInternal(channel, Constants.CLOSE2003_DISCONNECTION);
         }
     }

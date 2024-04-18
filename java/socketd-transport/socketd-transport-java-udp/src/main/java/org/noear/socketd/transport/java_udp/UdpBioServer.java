@@ -125,6 +125,8 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
             return;
         }
 
+        super.stop();
+
         try {
             if (server != null) {
                 server.close();

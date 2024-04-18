@@ -1,6 +1,5 @@
 import type {Entity} from "../core/Entity";
 import {RequestStream, SendStream, SubscribeStream} from "../stream/Stream";
-import {IoConsumer} from "../core/Typealias";
 
 /**
  * 客户会话
@@ -56,6 +55,16 @@ export interface ClientSession {
      * @return 流
      */
     sendAndSubscribe(event: string, entity: Entity, timeout?: number): SubscribeStream;
+
+    /**
+     * 关闭开始
+     */
+    closeStarting();
+
+    /**
+     * 预关闭
+     * */
+    preclose();
 
     /**
      * 关闭

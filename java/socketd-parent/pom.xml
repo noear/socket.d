@@ -6,7 +6,7 @@
 
     <groupId>org.noear</groupId>
     <artifactId>socketd-parent</artifactId>
-    <version>2.4.9</version>
+    <version>2.4.10</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -18,13 +18,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
-        <socketd.version>2.4.9</socketd.version>
+        <socketd.version>2.4.10</socketd.version>
 
-        <slf4j.version>2.0.9</slf4j.version>
+        <slf4j.version>2.0.12</slf4j.version>
         <junit5.version>5.9.1</junit5.version>
         <smartsocket.version>1.5.43</smartsocket.version>
         <java-websocket.version>1.5.3</java-websocket.version>
-        <netty.version>4.1.101.Final</netty.version>
+        <netty.version>4.1.107.Final</netty.version>
 
         <maven-compiler.version>3.11.0</maven-compiler.version>
         <maven-assembly.version>3.6.0</maven-assembly.version>

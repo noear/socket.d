@@ -17,15 +17,15 @@ class Processor(ABC):
         pass
 
     @abstractmethod
-    async def on_open(self, channel: ChannelInternal):
+    def on_open(self, channel: ChannelInternal):
         pass
 
     @abstractmethod
-    async def on_message(self, channel: ChannelInternal, message:Message):
+    def on_message(self, channel: ChannelInternal, message:Message):
         pass
 
     @abstractmethod
-    async def on_close(self, channel: ChannelInternal):
+    def on_close(self, channel: ChannelInternal):
         pass
 
     @abstractmethod

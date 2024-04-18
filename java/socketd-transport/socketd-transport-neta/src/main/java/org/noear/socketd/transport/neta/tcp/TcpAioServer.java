@@ -79,6 +79,8 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             return;
         }
 
+        super.stop();
+
         try {
             if (server != null) {
                 server.shutdown();

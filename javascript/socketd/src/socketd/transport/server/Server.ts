@@ -1,8 +1,11 @@
 import {IoConsumer} from "../core/Typealias";
 import {ServerConfig} from "./ServerConfig";
-import {Listener} from "../core/Listener";
+import {Listener, SimpleListener} from "../core/Listener";
 import {ChannelAssistant} from "../core/ChannelAssistant";
 import {Processor, ProcessorDefault} from "../core/Processor";
+import {Session} from "../core/Session";
+import {Message} from "../core/Message";
+import {RunUtils} from "../../utils/RunUtils";
 
 /**
  * 服务端
@@ -50,8 +53,10 @@ export interface Server {
  * @author noear
  * @since 2.0
  */
-export abstract class ServerBase<T extends ChannelAssistant<any>> implements Server {
-    private _processor: Processor = new ProcessorDefault();
+export abstract class ServerBase<T extends ChannelAssistant<any>> implements Server,Listener {
+    protected _processor: Processor = new ProcessorDefault();
+    protected _sessions: Set<Session> = new Set<Session>();
+    protected _listener: Listener = new SimpleListener();
 
     private _config: ServerConfig;
     private _assistant: T;
@@ -102,12 +107,53 @@ export abstract class ServerBase<T extends ChannelAssistant<any>> implements Ser
      */
     listen(listener: Listener): Server {
         if (listener) {
-            this._processor.setListener(listener);
+            this._listener = listener;
         }
         return this;
     }
 
     abstract start(): Server;
 
-    abstract stop();
+    prestop() {
+        this.prestopDo();
+    }
+
+    stop() {
+        this.stopDo();
+    }
+
+    onOpen(s: Session) {
+        this._sessions.add(s);
+        this._listener.onOpen(s);
+    }
+
+    onMessage(s: Session, m: Message) {
+        this._listener.onMessage(s, m);
+    }
+
+    onClose(s: Session) {
+        this._sessions.delete(s);
+        this._listener.onClose(s);
+    }
+
+    onError(s: Session, e: any) {
+        this._listener.onError(s, e);
+    }
+
+    protected prestopDo() {
+        for (let s1 of this._sessions) {
+            if (s1.isValid()) {
+                RunUtils.runAndTry(() => s1.preclose());
+            }
+        }
+    }
+
+    protected stopDo() {
+        for (let s1 of this._sessions) {
+            if (s1.isValid()) {
+                RunUtils.runAndTry(() => s1.close());
+            }
+        }
+        this._sessions.clear();
+    }
 }

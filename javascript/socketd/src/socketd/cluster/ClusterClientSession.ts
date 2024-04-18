@@ -33,8 +33,8 @@ export class ClusterClientSession implements ClientSession {
     /**
      * 获取任一个会话（轮询负栽均衡）
      */
-    getSessionAny(diversionOrNull:string | null): ClientSession {
-        let session: ClientSession|null = null;
+    getSessionAny(diversionOrNull: string | null): ClientSession {
+        let session: ClientSession | null = null;
 
         if (diversionOrNull) {
             session = LoadBalancer.getAnyByHash(this._sessionSet, diversionOrNull);
@@ -135,13 +135,27 @@ export class ClusterClientSession implements ClientSession {
         return sender.sendAndSubscribe(event, content, timeout);
     }
 
+    closeStarting() {
+        this.preclose();
+    }
+
+    /**
+     * 预关闭
+     * */
+    preclose() {
+        for (const s of this._sessionSet) {
+            //某个关闭出错，不影响别的关闭
+            RunUtils.runAndTry(s.preclose.bind(s));
+        }
+    }
+
     /**
      * 关闭
      */
     close() {
-        for (const session of this._sessionSet) {
+        for (const s of this._sessionSet) {
             //某个关闭出错，不影响别的关闭
-            RunUtils.runAndTry(session.close);
+            RunUtils.runAndTry(s.close.bind(s));
         }
     }
 }

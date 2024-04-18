@@ -5,10 +5,12 @@ class ServerConfig(ConfigBase):
     def __init__(self, schema):
         super().__init__(False)
 
+        self.__schema = schema
+
         if schema.startswith("sd:"):
             schema = schema[3:]
 
-        self.__schema = schema
+        self.__schemaCleaned = schema;
         self.__host = ""
         self.__port = 8602
 
@@ -31,12 +33,12 @@ class ServerConfig(ConfigBase):
 
     def get_local_url(self) ->str:
         if self.__host:
-            return f"sd:{self.__schema}://{self.__host}:{self.__port}"
+            return f"sd:{self.__schemaCleaned}://{self.__host}:{self.__port}"
         else:
-            return f"sd:{self.__schema}://127.0.0.1:{self.__port}"
+            return f"sd:{self.__schemaCleaned}://127.0.0.1:{self.__port}"
 
     def __str__(self):
-        return f"ServerConfig{{schema='{self.__schema}', " \
+        return f"ServerConfig{{schema='{self.__schemaCleaned}', " \
                f"charset='{self._charset}', "\
                f"host='{self.__host}', " \
                f"port={self.__port}, " \

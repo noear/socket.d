@@ -184,6 +184,8 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
             return;
         }
 
+        super.stop();
+
         try {
             if (server != null) {
                 server.close();

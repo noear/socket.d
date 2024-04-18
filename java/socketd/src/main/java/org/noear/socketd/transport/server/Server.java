@@ -37,6 +37,11 @@ public interface Server {
     Server start() throws IOException;
 
     /**
+     * 预停止
+     * */
+    void prestop();
+
+    /**
      * 停止
      */
     void stop();

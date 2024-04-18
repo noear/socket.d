@@ -2,11 +2,16 @@ package features;
 
 import features.cases.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.noear.solon.test.SolonJUnit5Extension;
+import org.noear.solon.test.SolonTest;
 
 /**
  * @author noear
  * @since 2.0
  */
+@ExtendWith(SolonJUnit5Extension.class)
+@SolonTest
 public class CaseTest2 {
     static final String[] schemas = new String[]{
             "sd:tcp-java",

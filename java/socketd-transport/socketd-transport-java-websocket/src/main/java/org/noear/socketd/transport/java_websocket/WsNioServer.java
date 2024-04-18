@@ -30,7 +30,7 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
 
     @Override
     public String getTitle() {
-        return "ws/nio/java-websocket 1.5/v" + SocketD.version();
+        return "ws/nio/java-websocket 1.5/" + SocketD.version();
     }
 
     @Override
@@ -66,6 +66,8 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
         } else {
             return;
         }
+
+        super.stop();
 
         try {
             if (server != null) {

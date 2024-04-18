@@ -1,3 +1,7 @@
+### 2.4.10
+* 添加 preclose 和 prestop（简化二段式停止操作）
+* 调整 通道关闭打印条件（避免多次打印）
+
 ### 2.4.9
 * 添加 CLOSE2003_DISCONNECTION 关闭码
 * 添加 Pressure 帧类型（预留做背压控制）

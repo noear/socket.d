@@ -60,10 +60,10 @@ class ClusterClientSession(ClientSession):
 
         return await sender.send_and_subscribe(event, content, timeout)
 
-    async def close_starting(self):
+    async def preclose(self):
         for session in self.__sessionSet:
             try:
-                await session.close_starting()
+                await session.preclose()
             except RuntimeError as e:
                 pass
 

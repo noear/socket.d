@@ -68,7 +68,7 @@ public class TestCase33_closeStarting extends BaseTestCase {
             replayCounter.incrementAndGet();
         });
         Thread.sleep(100);
-        ((Session)clientSession).closeStarting();
+        clientSession.preclose();
         Thread.sleep(100);
 
         clientSession.sendAndRequest("/user/get", new StringEntity("hi")).thenReply(reply -> {

@@ -14,8 +14,9 @@ import java.util.Map;
  * @since 2.0
  */
 public class ClientConfig extends ConfigBase<ClientConfig> {
-    //通讯架构（tcp, ws, udp）
+    //协议架构（tcp, ws, udp, ...）
     private final String schema;
+    private final String schemaCleaned;
 
     //连接地址
     private final String linkUrl;
@@ -36,6 +37,13 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     public ClientConfig(String url) {
         super(true);
 
+        int idx = url.indexOf("://");
+        if (idx < 2) {
+            throw new IllegalArgumentException("The serverUrl invalid: " + url);
+        }
+
+        this.schema = url.substring(0, idx);
+
         //支持 sd: 开头的架构
         if (url.startsWith("sd:")) {
             url = url.substring(3);
@@ -47,7 +55,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
         this.url = url;
         this.host = uri.getHost();
         this.port = (uri.getPort() < 0 ? Constants.DEF_PORT : uri.getPort());
-        this.schema = uri.getScheme();
+        this.schemaCleaned = uri.getScheme();
 
         this.connectTimeout = 10_000;
         this.heartbeatInterval = 20_000;
@@ -71,7 +79,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     }
 
     /**
-     * 获取通讯架构（tcp, ws, udp）
+     * 获取协议架构（用于查找供应者）
      */
     public String getSchema() {
         return schema;
@@ -165,7 +173,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
     @Override
     public String toString() {
         return "ClientConfig{" +
-                "schema='" + schema + '\'' +
+                "schema='" + schemaCleaned + '\'' +
                 ", charset=" + charset +
                 ", url='" + url + '\'' +
                 ", ioThreads=" + ioThreads +

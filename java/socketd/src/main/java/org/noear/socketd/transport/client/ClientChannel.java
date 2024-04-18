@@ -40,7 +40,7 @@ public class ClientChannel extends ChannelBase implements Channel {
     //连接状态
     private AtomicBoolean isConnecting = new AtomicBoolean(false);
 
-    public ClientChannel(ClientInternal client,ClientConnector connector) {
+    public ClientChannel(ClientInternal client, ClientConnector connector) {
         super(connector.getConfig());
         this.client = client;
         this.connector = connector;
@@ -98,7 +98,7 @@ public class ClientChannel extends ChannelBase implements Channel {
             }
 
             //或者正在关闭中
-            if(real.isClosing()){
+            if (real.isClosing()) {
                 return;
             }
         }
@@ -183,7 +183,6 @@ public class ClientChannel extends ChannelBase implements Channel {
             return real.getLocalAddress();
         }
     }
-
 
 
     /**

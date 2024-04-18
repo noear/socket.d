@@ -30,14 +30,11 @@ class BrokerListener(BrokerListenerBase):
             if nameAll is not None and len(nameAll) > 0:
                 for name in nameAll:
                     self.forward_to_name(requester, message, name)
-            return
-
-        if atName.endswith("*"):
+        elif atName.endswith("*"):
             # 群发模式（给同名的所有玩家）
             atName = atName[:-1]
             if not self.forward_to_name(requester, message, atName):
                 await requester.send_alarm(message, "Broker don't have '@" + atName + "' player")
-            return
         else:
             responder = self.get_player_any(atName, requester, message)
             if responder is not None:

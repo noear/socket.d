@@ -191,12 +191,14 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             super.close(code);
 
             if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-                //外面的 sendClose 是异步的，所以晚会儿关闭
-                setTimeout(() => {
-                    this._assistant.close(this._source);
-                }, 100);
+                if (this._assistant.isValid(this._source)) {
+                    //如果有效且非预关闭，则尝试关闭源 //外面的 sendClose 是异步的，所以晚会儿关闭
+                    setTimeout(() => {
+                        this._assistant.close(this._source);
+                    }, 100);
 
-                console.debug(`${this.getConfig().getRoleName()} channel closed, sessionId=${this.getSession().sessionId()}`);
+                    console.debug(`${this.getConfig().getRoleName()} channel closed, sessionId=${this.getSession().sessionId()}`);
+                }
             }
         } catch (e) {
             console.warn(`${this.getConfig().getRoleName()} channel close error, sessionId=${this.getSession().sessionId()}`, e);

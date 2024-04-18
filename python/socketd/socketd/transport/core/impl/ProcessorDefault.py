@@ -1,8 +1,6 @@
 import asyncio
 from abc import ABC
-from typing import Optional, Union
-
-from loguru import logger
+from typing import Optional
 
 from socketd.exception.SocketDExecption import SocketDAlarmException, SocketDConnectionException
 from socketd.transport.core.ChannelInternal import ChannelInternal
@@ -13,17 +11,15 @@ from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Frame import Frame
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.listener.SimpleListener import SimpleListener
-from socketd.transport.stream.Stream import Stream
 from socketd.transport.stream.StreamManger import StreamInternal
-from socketd.transport.utils.AsyncUtil import AsyncUtil
 
 
 class ProcessorDefault(Processor, ABC):
 
     def __init__(self):
         self.listener = SimpleListener()
-        self.log = logger.opt()
 
     def set_listener(self, listener):
         if listener is not None:
@@ -31,9 +27,9 @@ class ProcessorDefault(Processor, ABC):
 
     async def on_receive(self, channel: ChannelInternal, frame):
         if channel.get_config().client_mode():
-            logger.debug(f"C-REV:{frame}")
+            log.debug(f"C-REV:{frame}")
         else:
-            logger.debug(f"S-REV:{frame}")
+            log.debug(f"S-REV:{frame}")
 
         if frame.flag() == Flags.Connect:
             # if server
@@ -42,7 +38,7 @@ class ProcessorDefault(Processor, ABC):
 
             async def _future(r: bool, e: Exception):
                 if r:
-                    #如果无异常
+                    # 如果无异常
                     if channel.is_valid():
                         try:
                             await channel.send_connack(connectMessage)
@@ -67,7 +63,8 @@ class ProcessorDefault(Processor, ABC):
                 if frame.flag() == Flags.Close:
                     raise SocketDConnectionException("Connection request was rejected")
 
-                self.log.warning("{} channel handshake is None, sessionId={}", channel.get_config().get_role_name(), channel.get_session().session_id())
+                log.warning("{} channel handshake is None, sessionId={}", channel.get_config().get_role_name(),
+                                 channel.get_session().session_id())
                 return
 
             # 更新最后活动时间
@@ -79,9 +76,9 @@ class ProcessorDefault(Processor, ABC):
                 elif frame.flag() == Flags.Pong:
                     pass
                 elif frame.flag() == Flags.Close:
-                    code:int = 0
+                    code: int = 0
 
-                    if frame.message()  is not None:
+                    if frame.message() is not None:
                         code = frame.message().meta_as_int("code")
 
                     if code == 0:
@@ -141,7 +138,7 @@ class ProcessorDefault(Processor, ABC):
         if isReply:
             if stream:
                 stream.on_progress(False, streamIndex, streamTotal)
-            channel.retrieve(frame, stream)
+            await channel.retrieve(frame, stream)
         else:
             self.on_message(channel, frame.message())
 
@@ -153,7 +150,7 @@ class ProcessorDefault(Processor, ABC):
             await self.listener.on_open(channel.get_session())
             channel.do_open_future(True, None)
         except Exception as e:
-            logger.warning("{} channel listener onOpen error", channel.get_config().get_role_name(), e)
+            log.warning("{} channel listener onOpen error", channel.get_config().get_role_name(), e)
             channel.do_open_future(False, e)
 
     def on_message(self, channel: ChannelInternal, message: Message):
@@ -163,12 +160,12 @@ class ProcessorDefault(Processor, ABC):
         try:
             await self.listener.on_message(channel.get_session(), message)
         except Exception as e:
-            logger.warning("{} channel listener onMessage error", channel.get_config().get_role_name(), e)
+            log.warning("{} channel listener onMessage error", channel.get_config().get_role_name(), e)
             self.on_error(channel, e)
 
     def on_close(self, channel: ChannelInternal):
         if channel.is_closed() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
-            self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION)
+            asyncio.create_task(self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION))
 
     async def on_close_internal(self, channel: ChannelInternal, code: int):
         await channel.close(code)
@@ -178,4 +175,3 @@ class ProcessorDefault(Processor, ABC):
 
     def on_error(self, channel: ChannelInternal, error):
         self.listener.on_error(channel.get_session(), error)
-

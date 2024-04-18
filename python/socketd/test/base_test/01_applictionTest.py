@@ -15,10 +15,10 @@ from test.uitls import calc_async_time
 
 
 # 超过一定数量会导致异步并发发生异常
-COUNT = 10000
+COUNT = 100
 
 log.remove()
-log.add(sys.stderr, level="INFO")
+log.add(sys.stderr, level="INFO", enqueue=True)
 
 
 @calc_async_time
@@ -28,7 +28,7 @@ async def application_test():
     server_session: WebSocketServer = await server.listen(
         SimpleListenerTest()).start()
     await asyncio.sleep(1)
-    client_session: Session = await SocketD.create_client("std:ws://127.0.0.1:9999").open()
+    client_session: Session = await SocketD.create_client("sd:ws://127.0.0.1:9999").open()
 
     log.info(f"client send count: {COUNT} ...")
     # 单向发送

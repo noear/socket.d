@@ -32,7 +32,7 @@ int on_connack(sd_session_t* session, sd_message_t* message) {
 }
 
 int main(int argc, char** argv) {
-    sd_client_t cli = sd_create_tcp_client("sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3");
+    sd_client_t cli = sd_create_tcp_client("sd:tcp://127.0.0.1:8602/admin?u=noear&p=2");
     if (cli == 0) {
         printf("sd_create_tcp_client() error!\n");
         return -1;

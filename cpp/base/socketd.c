@@ -42,6 +42,8 @@ void init_entity(sd_entity_t* entity) {
 }
 
 void free_entity_meta_and_data(sd_entity_t* entity) {
+    meta_list_free(entity);
+
     if (entity->meta)
         sdsfree(entity->meta);
 
@@ -135,11 +137,6 @@ sd_package_t* sd_decode(sd_package_t* sd, char* buf, uint32_t len) {
         if (len > 0) {
             sd->frame.message.entity.metalen = len;
             sd->frame.message.entity.meta = sdsnewlen(p, len);
-            //sd->frame.message.entity.meta = (char*)malloc(len);
-            //if (sd->frame.message.entity.meta) {
-            //    memset(sd->frame.message.entity.meta, 0, len);
-            //    memcpy(sd->frame.message.entity.meta, p, len);
-            //}
         }
         p = sp;
     }
@@ -297,6 +294,7 @@ sd_session_t* new_session(sd_channel_t* channel) {
 }
 
 void free_session(sd_session_t* session) {
+    param_list_free(session);
     free(session);
 }
 

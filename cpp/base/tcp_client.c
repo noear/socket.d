@@ -186,7 +186,9 @@ void hand_shake(hio_t* io, sd_channel_t* channel, const char* url) {
     if (channel && channel->session) {
         sd_entity_t entity = { 0 };
         init_entity(&entity);
+        populate_entity_data(&entity, url);
         sd_send_connect(channel->session->sid, url, &entity, io);
+        free_entity_meta_and_data(&entity);
     }
 }
 
@@ -224,11 +226,13 @@ void client_on_close(hio_t* io) {
     
     if (cli && cli->channel) {
         if (cli->channel->session) {
-            free(cli->channel->session);
+            free_session(cli->channel->session);
+            cli->channel->session = NULL;
         }
 
         hevent_set_userdata(io, NULL);
         free_channel(cli->channel);
+        cli->channel = 0;
     }
 }
 

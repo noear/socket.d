@@ -99,23 +99,19 @@ static void on_tcp_close(hio_t* io) {
     sd_channel_t* channel = (sd_channel_t*)hio_context(io);
     if (channel) {
         if (channel->session) {
-            free(channel->session);
+            free_session(channel->session);
+            channel->session = NULL;
         }
 
         hio_set_context(io, NULL);
         free_channel(channel);
+        channel = NULL;
     }
 }
 
 void sd_no_support(uint32_t n) {
     printf("******No support flag(%d)******", n);
     exit(0);
-}
-
-// tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d
-// sd:tcp://127.0.0.1:8602/admin?u=noear&p=2
-void parse_handshake_param(sd_session_t* session, sd_message_t* msg) {
-    // TODO: ...key value
 }
 
 void on_connect_handler(sd_channel_t* channel, sd_package_t* sd) {

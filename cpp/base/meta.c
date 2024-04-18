@@ -47,6 +47,16 @@ void meta_list_init(sd_entity_t* entity) {
 	list_init(&entity->metalist);
 }
 
+// TODO: free list
+void meta_list_free(sd_entity_t* entity) {
+	struct list_node* node;
+	sd_meta_t* cur;
+	list_for_each(node, &entity->metalist) {
+		cur = list_entry(node, sd_meta_t, node);
+		delete_meta(cur);
+	}
+}
+
 void sd_put_meta_raw(sd_entity_t* entity, sd_meta_t* m) {
 	list_add(&m->node, &entity->metalist);
 }
@@ -102,7 +112,7 @@ void parse_meta_string(sd_entity_t* entity, const char* meta) {
 	char* str = malloc(len + 1);
 	memset(str, 0, len + 1);
 	strcpy(str, meta);
-	char* p = "&"; //用于分割的字符集合
+	char* p = "&"; //split
 	char* s = NULL;
 	for (s = strtok(str, p); s != NULL; s = strtok(NULL, p)) {
 		char* q = strchr(s, '=');

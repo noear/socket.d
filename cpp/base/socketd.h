@@ -59,9 +59,10 @@ typedef struct sd_channel_s sd_channel_t;
 
 typedef struct sd_session_s {
     char sid[64];
-    char* uri;   //handshake uri
-    char* path;  //handshake path
+    char uri[2048];   //handshake uri
+    char path[128];  //handshake path
     sd_channel_t* channle;
+    struct list_head paramlist; //handshake parameter list
 } sd_session_t;
 
 typedef struct sd_channel_s {
@@ -96,6 +97,7 @@ void free_channel(sd_channel_t* channel);
 
 /*meta opt*/
 void meta_list_init(sd_entity_t* entity);
+void meta_list_free(sd_entity_t* entity);
 void sd_put_meta(sd_entity_t* entity, const char* name, const char* value);
 const char* sd_meta(sd_entity_t* entity, const char* name);
 int sd_meta_as_int(sd_entity_t* entity, const char* name);
@@ -103,6 +105,13 @@ long long sd_meta_as_long(sd_entity_t* entity, const char* name);
 double sd_meta_as_double(sd_entity_t* entity, const char* name);
 void parse_meta_string(sd_entity_t* entity, const char* meta);
 char* format_meta_string(sd_entity_t* entity);
+
+/*param opt*/
+void param_list_init(sd_session_t* session);
+void param_list_free(sd_session_t* session);
+void sd_put_param(sd_session_t* session, const char* name, const char* value);
+const char* sd_param(sd_session_t* session, const char* name);
+void parse_handshake_param(sd_session_t* session, sd_message_t* msg);
 
 void* sd_hio(sd_session_t* session);
 

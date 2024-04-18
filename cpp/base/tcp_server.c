@@ -19,6 +19,7 @@ static struct sd_server_event_s server_event = {
     .onopen = 0,
     .onclose = 0,
     .onmessage = 0,
+    .onrequest = 0,
     .onerror = 0,
 };
 
@@ -186,6 +187,11 @@ void on_message_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_request_handler(sd_channel_t* channel, sd_package_t* sd) {
+    if (server_event.onrequest) {
+        server_event.onrequest(channel->session, &sd->frame.message);
+        return;
+    }
+
     const char* event = sd->frame.message.event;
     if (event && strlen(event) > 0) {
         int n = sizeof(request_event_handler_table) / sizeof(event_handler_t);

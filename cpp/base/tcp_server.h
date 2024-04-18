@@ -27,6 +27,7 @@ typedef struct sd_server_event_s {
     int (*onopen)(const sd_session_t*, sd_message_t*);
     int (*onclose)(const sd_session_t*, sd_message_t*);
     int (*onmessage)(const sd_session_t*, sd_message_t*);
+    int (*onrequest)(const sd_session_t*, sd_message_t*);
     int (*onerror)(const sd_session_t*, sd_message_t*);
 } sd_server_event_t;
 

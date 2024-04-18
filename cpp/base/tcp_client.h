@@ -31,6 +31,7 @@ typedef struct sd_client_event_s {
     int (*onconnack)(sd_session_t*, sd_message_t*);
     int (*onclose)(sd_session_t*, sd_message_t*);
     int (*onmessage)(sd_session_t*, sd_message_t*);
+    int (*onreplay)(sd_session_t*, sd_message_t*);
     int (*onerror)(sd_session_t*, sd_message_t*);
 } sd_client_event_t;
 

@@ -12,9 +12,11 @@ TARGET1 = ./bin/connect_ack_tcpserver
 TARGET2 = ./bin/connect_ack_tcpclient
 TARGET3 = ./bin/helloworld_tcpserver
 TARGET4 = ./bin/helloworld_tcpclient
+TARGET3 = ./bin/send_request_tcpserver
+TARGET4 = ./bin/send_request_tcpclient
 
 .PHONY:all
-all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)
+all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6)
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
 	./3rd/sds/sds.c \
@@ -44,11 +46,21 @@ $(TARGET4):$(OBJS) ./examples/helloworld_tcpclient.c ./base/tcp_client.c
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(TARGET5):$(OBJS) ./examples/send_request_tcpserver.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(TARGET6):$(OBJS) ./examples/send_request_tcpclient.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) 
+	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) 
 
 prepare:
 	$(MKDIR) bin

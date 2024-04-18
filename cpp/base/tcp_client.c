@@ -18,6 +18,7 @@ static struct sd_client_event_s client_event = {
     .onconnack = 0,
     .onclose = 0,
     .onmessage = 0,
+    .onreplay = 0,
     .onerror = 0,
 };
 
@@ -131,6 +132,14 @@ void on_subscribe_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_reply_handler(sd_channel_t* channel, sd_package_t* sd) {
+    assert(channel != NULL);
+    assert(sd != NULL);
+
+    if (client_event.onreplay) {
+        client_event.onreplay(channel->session, &sd->frame.message);
+        return;
+    }
+
     const char* event = sd->frame.message.event;
     if (event && strlen(event) > 0) {
         int n = sizeof(replay_event_handler_table) / sizeof(event_handler_t);
@@ -144,6 +153,11 @@ void on_reply_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_endreply_handler(sd_channel_t* channel, sd_package_t* sd) {
+    if (client_event.onreplay) {
+        client_event.onreplay(channel->session, &sd->frame.message);
+        return;
+    }
+
     const char* event = sd->frame.message.event;
     if (event && strlen(event) > 0) {
         int n = sizeof(replay_event_handler_table) / sizeof(event_handler_t);

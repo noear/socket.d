@@ -1,6 +1,4 @@
 import asyncio
-import time
-from threading import Thread
 from typing import Optional
 
 from websockets.legacy.server import WebSocketServer
@@ -10,7 +8,6 @@ from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.core.listener.EventListener import EventListener
-from socketd.transport.utils.AsyncUtil import AsyncUtil
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
@@ -73,7 +70,7 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
 
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
-            .config(config_handler).listen(EventListener().do_on_close_handler(do_on_close)).open()
+            .config(config_handler).listen(EventListener().do_on_close(do_on_close)).open()
 
         await self.client_session.send("/demo", StringEntity("test"))
 

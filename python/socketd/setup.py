@@ -8,7 +8,7 @@ setup(
     description='@noear/socket.d python project',
     author='noear,bai',
     url='https://socketd.noear.org/',
-    packages=["socketd","socketd_aio_tcp","socketd_websocket"],   # 包内不需要引用的文件夹
+    packages=find_packages(exclude=['*test*']),   # 包内不需要引用的文件夹
     install_requires=[                          # 依赖包
         'loguru',
         'websockets'

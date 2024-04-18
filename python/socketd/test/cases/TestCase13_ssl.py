@@ -16,16 +16,21 @@ from loguru import logger
 
 
 def get_s_ssl():
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    ssl_context.load_cert_chain(certfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\test.pem",
-                                keyfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\test.key")
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.check_hostname = False
+    ssl_context.load_cert_chain(certfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.crt",
+                                keyfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.key")
     return ssl_context
 
 
 def get_c_ssl():
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    ssl_context.verify_mode = ssl.CERT_REQUIRED  # 强制要求进行证书验证
     ssl_context.check_hostname = False
-    ssl_context.load_verify_locations(r"D:\java_items\socketd\python\socketd\test\cases\ssl\test.pem")
+    # 添加 CA 证书路径
+    ssl_context.load_cert_chain(certfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\client.crt",
+                                keyfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\client.key")
+    ssl_context.load_verify_locations(r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.crt")
     return ssl_context
 
 
@@ -40,7 +45,7 @@ class TestCase13_ssl(BaseTestCase):
 
     async def _start(self):
         s = SimpleListenerTest()
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
+        self.server: Server = SocketD.create_server(ServerConfig("ws").port(self.port))
 
         def s_config_handler(config: ServerConfig | ClientConfig):
             config.idle_timeout(10000)
@@ -50,7 +55,7 @@ class TestCase13_ssl(BaseTestCase):
         self.server_session: WebSocketServer = await self.server.config(s_config_handler).listen(
             s).start()
         await asyncio.sleep(1)
-        serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
+        serverUrl = "ws" + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
 
         def c_config_handler(config: ServerConfig | ClientConfig):
             config.idle_timeout(10000)

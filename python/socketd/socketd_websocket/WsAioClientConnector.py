@@ -25,7 +25,7 @@ class WsAioClientConnector(ClientConnectorBase):
 
     async def connect(self) -> Channel:
         # 关闭之前的资源
-        self.close()
+        await self.close()
 
         # 处理自定义架构的影响
         ws_url = self.client.get_config().get_url().replace("-python://", "://")

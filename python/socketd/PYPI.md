@@ -4,7 +4,9 @@
 * 安装依赖
 
 ```
-pip install -r requests.txt
+pip install -r reqeusts.txt
+
+pip install -r reqeusts.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 ### 发布

@@ -36,7 +36,7 @@ class TcpAioClientConnector(ClientConnectorBase):
     async def connect(self):
         # 处理自定义架构的影响
         loop = asyncio.get_running_loop()
-        tcp_url = self.client.get_config().get_url().replace("std:", "").replace("-python", "")
+        tcp_url = self.client.get_config().get_url().replace("-python", "")
         _sch, _host, _port = tcp_url.replace("//", "").split(":")
         _port = int(_port.split("/")[0])
         if self.__top is None:

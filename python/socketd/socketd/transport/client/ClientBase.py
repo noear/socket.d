@@ -11,10 +11,10 @@ from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Session import Session
 from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandler
+from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.client.ClientConfig import ClientConfig
 
-from loguru import logger
 
 
 class ClientBase(ClientInternal, ABC):
@@ -76,13 +76,13 @@ class ClientBase(ClientInternal, ABC):
 
         try:
             await clientChannel.connect()
-            logger.info(f"Socket.D client successfully connected: link={self.get_config().get_link_url()}")
+            log.info(f"Socket.D client successfully connected: link={self.get_config().get_link_url()}")
         except Exception as e:
             if isThrow:
                 await clientChannel.close(code=Constants.CLOSE2008_OPEN_FAIL)
                 raise SocketDException(f"Socket.D client Connection failed {e}")
             else:
-                logger.info(f"Socket.D client Connection failed: link={self.get_config().get_link_url()}")
+                log.info(f"Socket.D client Connection failed: link={self.get_config().get_link_url()}")
 
         return clientChannel.get_session()
 

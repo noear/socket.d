@@ -1,8 +1,8 @@
 /*
- * send and request tcp client
+ * Send and request tcp client
  *
  * @build   make
- * @client  bin/send_request_tcpclieant
+ * @client  bin/Demo02_SendAndRequestClient:
  */
 #include <stdio.h>
 #include "tcp_client.h"

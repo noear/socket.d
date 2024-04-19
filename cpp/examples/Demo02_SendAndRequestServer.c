@@ -1,8 +1,8 @@
 /*
- * send and request tcp server
+ * Send and request tcp server
  *
  * @build   make
- * @server  bin/send_request_tcpserver
+ * @server  bin/Demo02_SendAndRequestServer
  */
 #include <stdio.h>
 #include "tcp_server.h"

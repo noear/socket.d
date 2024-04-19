@@ -10,10 +10,10 @@ HV_LIB = -lhv
 
 TARGET1 = ./bin/connect_ack_tcpserver
 TARGET2 = ./bin/connect_ack_tcpclient
-TARGET3 = ./bin/helloworld_tcpserver
-TARGET4 = ./bin/helloworld_tcpclient
-TARGET3 = ./bin/send_request_tcpserver
-TARGET4 = ./bin/send_request_tcpclient
+TARGET3 = ./bin/Demo02_SendServer
+TARGET4 = ./bin/Demo02_SendClient
+TARGET5 = ./bin/send_request_tcpserver
+TARGET6 = ./bin/send_request_tcpclient
 
 .PHONY:all
 all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6)
@@ -36,12 +36,12 @@ $(TARGET2):$(OBJS) ./examples/connect_ack_tcpclient.c ./base/tcp_client.c
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET3):$(OBJS) ./examples/helloworld_tcpserver.c ./base/tcp_server.c
+$(TARGET3):$(OBJS) ./examples/Demo02_SendServer.c ./base/tcp_server.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET4):$(OBJS) ./examples/helloworld_tcpclient.c ./base/tcp_client.c
+$(TARGET4):$(OBJS) ./examples/Demo02_SendClient.c ./base/tcp_client.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^

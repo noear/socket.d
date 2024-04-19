@@ -1,8 +1,8 @@
 /*
- * helloworld tcp server
+ * Send server
  *
  * @build   make
- * @server  bin/helloworld_tcpserver
+ * @server  bin/Demo02_SendServer
  */
 #include <stdio.h>
 #include "tcp_server.h"

@@ -1,8 +1,8 @@
 /*
- * tcp client helloworld
+ * Send client
  *
  * @build   make
- * @client  bin/helloworld_tcpclient
+ * @client  bin/Demo02_SendClient
  */
 #include <stdio.h>
 #include "tcp_client.h"

@@ -9,7 +9,7 @@ from socketd.exception.SocketDExecption import SocketDException
 
 from .FragmentHolder import FragmentHolder
 from ..entity.MessageBuilder import MessageBuilder
-from ...utils.StrUtil import StrUtil
+from ...utils.StrUtils import StrUtil
 
 
 class FragmentAggregatorDefault(FragmentAggregator):

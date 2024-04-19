@@ -5,7 +5,7 @@ from socketd.transport.core import Entity
 from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.stream.SendStream import SendStream
 from socketd.transport.stream.SubscribeStream import SubscribeStream
-from socketd.transport.utils.StrUtil import StrUtil
+from socketd.transport.utils.StrUtils import StrUtil
 
 
 class ClusterClientSession(ClientSession):

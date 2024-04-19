@@ -1,6 +1,6 @@
 from typing import Callable
 
-from socketd.transport.utils.StrUtil import StrUtil
+from socketd.transport.utils.StrUtils import StrUtil
 
 IdGenerator = Callable[[None], str]
 

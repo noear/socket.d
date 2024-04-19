@@ -3,7 +3,7 @@ from urllib.parse import urlparse, parse_qsl
 
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Message import Message, MessageInternal
-from socketd.transport.utils.StrUtil import StrUtil
+from socketd.transport.utils.StrUtils import StrUtil
 
 
 class Handshake:

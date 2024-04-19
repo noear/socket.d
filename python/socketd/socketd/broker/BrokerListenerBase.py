@@ -6,7 +6,7 @@ from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Session import Session
-from socketd.transport.utils.StrUtil import StrUtil
+from socketd.transport.utils.StrUtils import StrUtil
 
 
 # 经纪人监听器基类（实现玩家封闭管理）

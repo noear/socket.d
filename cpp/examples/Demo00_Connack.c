@@ -1,6 +1,4 @@
 /*
- * connect_ack_tcp_server
- *
  * @build   make
  */
 #include <stdio.h>

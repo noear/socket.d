@@ -9,7 +9,7 @@ from socketd.exception.SocketDExecption import SocketDException
 
 from .FragmentHolder import FragmentHolder
 from ..entity.MessageBuilder import MessageBuilder
-from ...utils.StrUtils import StrUtil
+from ...utils.StrUtils import StrUtils
 
 
 class FragmentAggregatorDefault(FragmentAggregator):
@@ -22,7 +22,7 @@ class FragmentAggregatorDefault(FragmentAggregator):
         self.__fragmentHolders: list[FragmentHolder] = []
 
         data_length: str = frame.meta(EntityMetas.META_DATA_LENGTH)
-        if StrUtil.is_empty(data_length):
+        if StrUtils.is_empty(data_length):
             raise SocketDException(f"Missing {EntityMetas.META_DATA_LENGTH} meta, event= {frame.event()}")
         self.__data_length = int(data_length)
         self.__data_stream_size = 0

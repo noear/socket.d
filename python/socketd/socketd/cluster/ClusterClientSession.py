@@ -5,14 +5,14 @@ from socketd.transport.core import Entity
 from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.stream.SendStream import SendStream
 from socketd.transport.stream.SubscribeStream import SubscribeStream
-from socketd.transport.utils.StrUtils import StrUtil
+from socketd.transport.utils.StrUtils import StrUtils
 
 
 class ClusterClientSession(ClientSession):
 
     def __init__(self, _sessionSet):
         self.__sessionSet: list[ClientSession] = _sessionSet
-        self.__sessionId = StrUtil.guid()
+        self.__sessionId = StrUtils.guid()
 
     def get_session_all(self) -> list[ClientSession]:
         return self.__sessionSet

@@ -10,7 +10,7 @@ from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.impl.LogConfig import log, logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
-from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.AsyncUtils import AsyncUtils
 from socketd_websocket.impl.AIOConnect import AIOConnect
 from socketd_websocket.impl.AIOWebSocketClientImpl import AIOWebSocketClientImpl
 
@@ -35,7 +35,7 @@ class WsAioClientConnector(ClientConnectorBase):
             ws_url = ws_url.replace("ws", "wss")
 
         self._loop = asyncio.new_event_loop()
-        self._top = AsyncUtil.run_forever(self._loop, daemon=True)
+        self._top = AsyncUtils.run_forever(self._loop, daemon=True)
 
         try:
             self.__con: AIOConnect = AIOConnect(uri=ws_url,

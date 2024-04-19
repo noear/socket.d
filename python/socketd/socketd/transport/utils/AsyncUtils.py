@@ -8,7 +8,7 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
-class AsyncUtil(object):
+class AsyncUtils(object):
 
     @staticmethod
     def thread_handler(_loop: asyncio.AbstractEventLoop, fn: asyncio.Task):
@@ -47,7 +47,7 @@ class AsyncUtil(object):
 
             try:
                 future.add_done_callback(
-                    lambda f: AsyncUtil.stop(_loop))
+                    lambda f: AsyncUtils.stop(_loop))
                 _loop.run_forever()
             finally:
                 try:
@@ -81,10 +81,10 @@ class AsyncUtil(object):
                 loop.stop()
 
         if thread:
-            t = Thread(target=AsyncUtil.thread_handler, args=(loop, loop.create_task(_run())))
+            t = Thread(target=AsyncUtils.thread_handler, args=(loop, loop.create_task(_run())))
             t.start()
         elif pool:
-            pool.submit(lambda x: AsyncUtil.thread_handler(*x), (loop, loop.create_task(_run())))
+            pool.submit(lambda x: AsyncUtils.thread_handler(*x), (loop, loop.create_task(_run())))
         return loop
 
     @staticmethod

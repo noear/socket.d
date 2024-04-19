@@ -3,7 +3,7 @@ from urllib.parse import urlparse, parse_qsl
 
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Message import Message, MessageInternal
-from socketd.transport.utils.StrUtils import StrUtil
+from socketd.transport.utils.StrUtils import StrUtils
 
 
 class Handshake:
@@ -33,7 +33,7 @@ class HandshakeInternal(Handshake):
 class HandshakeDefault(HandshakeInternal):
     def __init__(self, source: MessageInternal):
         linkUrl = source.data_as_string()
-        if StrUtil.is_empty(linkUrl):
+        if StrUtils.is_empty(linkUrl):
             # 兼容旧版本（@deprecated 2.2）
             linkUrl = source.event()
 
@@ -44,7 +44,7 @@ class HandshakeDefault(HandshakeInternal):
         self._paramMap = self._parse_query_string(self._uri.query)
         self._outMetaMap:dict[str,str] = {}
 
-        if StrUtil.is_empty(self._path):
+        if StrUtils.is_empty(self._path):
             self._path = "/" # tcp://1.1.1.1 无路径连接时，path 为空
 
         self._paramMap.update(source.meta_map())
@@ -84,7 +84,7 @@ class HandshakeDefault(HandshakeInternal):
     @staticmethod
     def _parse_query_string(query_string):
         params = {}
-        if StrUtil.is_not_empty(query_string):
+        if StrUtils.is_not_empty(query_string):
             for name, value in parse_qsl(query_string):
                 params[name] = value
         return params

@@ -6,7 +6,7 @@ from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Session import Session
-from socketd.transport.utils.StrUtils import StrUtil
+from socketd.transport.utils.StrUtils import StrUtils
 
 
 # 经纪人监听器基类（实现玩家封闭管理）
@@ -41,7 +41,7 @@ class BrokerListenerBase(Listener, ABC):
 
     # 获取任意一个玩家会话
     def get_player_any(self, atName: str, requester: Session | None, message: Message | None) -> ClientSession | None:
-        if StrUtil.is_empty(atName):
+        if StrUtils.is_empty(atName):
             return None
 
         if atName.endswith("!"):
@@ -51,7 +51,7 @@ class BrokerListenerBase(Listener, ABC):
             if message is not None:
                 x_hash = message.meta(EntityMetas.META_X_Hash)
 
-            if StrUtil.is_empty(x_hash):
+            if StrUtils.is_empty(x_hash):
                 if requester is None:
                     return LoadBalancer.get_any_by_poll(self.get_player_all(atName))
                 else: # 使用请求者 ip 分流
@@ -63,7 +63,7 @@ class BrokerListenerBase(Listener, ABC):
 
     # 添加玩家会话
     def add_player(self, name: str, session: Session):
-        if StrUtil.is_not_empty(name):
+        if StrUtils.is_not_empty(name):
             tmp: List[Session] = self.__playerSessions.get(name)
             if tmp is None:
                 tmp = [session]
@@ -74,7 +74,7 @@ class BrokerListenerBase(Listener, ABC):
 
     # 移除玩家会话
     def remove_player(self, name: str, session: Session):
-        if StrUtil.is_not_empty(name):
+        if StrUtils.is_not_empty(name):
             tmp: list[Session] = self.get_player_all(name)
             if tmp is not None:
                 tmp.remove(session)

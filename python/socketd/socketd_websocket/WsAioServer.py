@@ -19,6 +19,9 @@ class WsAioServer(ServerBase):
         super().__init__(config, WsAioChannelAssistant(config))
         self._server: Optional[Serve] = None
 
+    def __del__(self):
+        del self._server
+
     def get_title(self):
         return "ws/aio/py-websocket/v" + SocketD.version();
 
@@ -48,6 +51,7 @@ class WsAioServer(ServerBase):
 
         log.info("Socket.D server started: {server=" + self.get_config().get_local_url() + "}")
         await self._server
+        return self
 
     async def stop(self):
         if self._isStarted:

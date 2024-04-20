@@ -6,7 +6,7 @@ import time
 import unittest
 from threading import Thread
 
-from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.AsyncUtils import AsyncUtils
 from loguru import logger
 
 from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
@@ -35,7 +35,7 @@ class FutureTest(unittest.TestCase):
 
         async def _run():
             loop = asyncio.new_event_loop()
-            t = Thread(target=lambda: AsyncUtil.thread_handler(loop, loop.create_task(_test())))
+            t = Thread(target=lambda: AsyncUtils.thread_handler(loop, loop.create_task(_test())))
             t.start()
             for i in range(10):
                 await asyncio.sleep(1)
@@ -80,7 +80,7 @@ class FutureTest(unittest.TestCase):
         logger.info("test_loop1")
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        top = AsyncUtil.run_forever(loop)
+        top = AsyncUtils.run_forever(loop)
         num = AtomicRefer(0)
 
         async def _run(s, _top):
@@ -129,7 +129,7 @@ class FutureTest(unittest.TestCase):
                 for _ in range(10):
                     logger.debug(f"_")
 
-            top = AsyncUtil.run_forever(loop)
+            top = AsyncUtils.run_forever(loop)
             # top2 = AsyncUtil.run_forever(loop2)
             _time = asyncio.get_event_loop().time()
             for _ in range(50000):
@@ -198,7 +198,7 @@ class FutureTest(unittest.TestCase):
         :return:
         """
         loop = asyncio.new_event_loop()
-        stop = AsyncUtil.run_forever(loop, daemon=True)
+        stop = AsyncUtils.run_forever(loop, daemon=True)
 
         async def task():
             num = AtomicRefer(0)

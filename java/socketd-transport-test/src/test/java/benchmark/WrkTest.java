@@ -1,5 +1,6 @@
 package benchmark;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Entity;
@@ -7,6 +8,8 @@ import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Mapping;
 import org.noear.solon.core.event.AppBeanLoadEndEvent;
+import org.noear.solon.test.SolonJUnit5Extension;
+import org.noear.solon.test.SolonTest;
 import reactor.core.publisher.Mono;
 
 /**
@@ -15,6 +18,8 @@ import reactor.core.publisher.Mono;
  * @author noear
  * @since 2.4
  */
+@ExtendWith(SolonJUnit5Extension.class)
+@SolonTest
 public class WrkTest {
     public static void main(String[] args) {
         Solon.start(WrkTest.class, args, app -> {

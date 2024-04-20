@@ -11,7 +11,7 @@ from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.impl.LogConfig import log
-from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.AsyncUtils import AsyncUtils
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 from socketd_aio_tcp.TCPStreamIO import TCPStreamIO
@@ -36,12 +36,12 @@ class TcpAioClientConnector(ClientConnectorBase):
     async def connect(self):
         # 处理自定义架构的影响
         loop = asyncio.get_running_loop()
-        tcp_url = self.client.get_config().get_url().replace("std:", "").replace("-python", "")
+        tcp_url = self.client.get_config().get_url().replace("-python", "")
         _sch, _host, _port = tcp_url.replace("//", "").split(":")
         _port = int(_port.split("/")[0])
         if self.__top is None:
             self._loop = asyncio.new_event_loop()
-            self.__top = AsyncUtil.run_forever(self._loop, daemon=True)
+            self.__top = AsyncUtils.run_forever(self._loop, daemon=True)
         try:
             
             reader = StreamReader(limit=self.get_config().get_read_buffer_size(), loop=loop)

@@ -7,7 +7,7 @@ import {
     SdWebSocketErrorEvent,
     SdWebSocketEvent,
     SdWebSocketListener,
-    SdWebSocketMessageEvent
+    SdWebSocketMessageEvent, SdWebSocketPingEvent, SdWebSocketPongEvent
 } from "./impl/SdWebSocket";
 import type {IoConsumer} from "../transport/core/Typealias";
 import {ClientHandshakeResult} from "../transport/client/ClientHandshakeResult";
@@ -115,6 +115,13 @@ export class WebSocketClientImpl implements SdWebSocketListener {
     onError(e: SdWebSocketErrorEvent) {
         this.handshakeFutureDo(e.error());
         this._client.getProcessor().onError(this._channel, e.error());
+    }
+
+    onPing(e: SdWebSocketPingEvent) {
+
+    }
+
+    onPong(e: SdWebSocketPongEvent) {
     }
 
     private handshakeFutureDo(e) {

@@ -1,7 +1,7 @@
 import unittest
 import asyncio
 
-from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.AsyncUtils import AsyncUtils
 from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
 from socketd.transport.utils.sync_api import AtomicRefer as AtomicRefer_
 from test.uitls import calc_time
@@ -41,7 +41,7 @@ class Demo:
 async def main():
     a = AtomicRefer(10)
     loop = asyncio.new_event_loop()
-    future = AsyncUtil.run_forever(loop)
+    future = AsyncUtils.run_forever(loop)
     async with a as t:
         logger.debug(t)
         # tasks = [add2(a, 1000) for _ in range(10)]

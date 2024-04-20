@@ -2,7 +2,7 @@ from threading import RLock
 from typing import List
 
 from socketd.transport.client.ClientSession import ClientSession
-from socketd.transport.utils.StrUtil import StrUtil
+from socketd.transport.utils.StrUtils import StrUtils
 
 
 class LoadBalancer:
@@ -29,7 +29,7 @@ class LoadBalancer:
     # 根据 hash 获取任意一个
     @staticmethod
     def get_any_by_hash(coll: List[ClientSession], diversion: str) -> ClientSession:
-        return LoadBalancer.get_any(coll, StrUtil.hash_code(diversion))
+        return LoadBalancer.get_any(coll, StrUtils.hash_code(diversion))
 
     # 获取任意一个
     @staticmethod

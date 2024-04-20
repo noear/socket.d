@@ -59,7 +59,8 @@ void param_list_free(sd_session_t* session) {
 	sd_param_t* cur;
 	list_for_each(node, &session->paramlist) {
 		cur = list_entry(node, sd_param_t, node);
-		delete_param(cur);
+		//delete_param(cur);
+		if (cur == NULL) printf("error param_list_free()\n");
 	}
 }
 

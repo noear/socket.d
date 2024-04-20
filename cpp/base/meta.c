@@ -40,6 +40,7 @@ void delete_meta(sd_meta_t* m) {
 		if (m->name)	sdsfree(m->name);
 		if (m->value)	sdsfree(m->value);
 		free(m);
+		m = NULL;
 	}
 }
 
@@ -53,7 +54,8 @@ void meta_list_free(sd_entity_t* entity) {
 	sd_meta_t* cur;
 	list_for_each(node, &entity->metalist) {
 		cur = list_entry(node, sd_meta_t, node);
-		delete_meta(cur);
+		//delete_meta(cur);
+		if (cur == NULL) printf("error meta_list_free()\n");
 	}
 }
 

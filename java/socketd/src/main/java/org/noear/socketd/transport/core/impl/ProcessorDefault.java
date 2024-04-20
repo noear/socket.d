@@ -31,6 +31,11 @@ public class ProcessorDefault implements Processor {
         }
     }
 
+    @Override
+    public Listener getListener() {
+        return listener;
+    }
+
     /**
      * 接收处理
      */
@@ -261,10 +266,6 @@ public class ProcessorDefault implements Processor {
      */
     private void onCloseInternal(ChannelInternal channel, int code) {
         channel.close(code);
-
-        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            listener.onClose(channel.getSession());
-        }
     }
 
     /**

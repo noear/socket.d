@@ -47,6 +47,7 @@ class WsAioServer(ServerBase):
                            ssl=self.get_config().get_ssl_context(),
                            logger=logger,
                            max_size=Constants.MAX_SIZE_FRAME,
+                           timeout=self.get_config().get_idle_timeout()
                            )
 
         log.info("Socket.D server started: {server=" + self.get_config().get_local_url() + "}")

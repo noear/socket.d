@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger("socketD")
 # 异步默认日志
 logging.getLogger("asyncio").setLevel(logging.WARNING)
-# 少用默认logging ，因为他会阻塞你的线程
-# 删除原本的处理器
+# 删除原本的处理器 # 少用默认logging ，因为他会阻塞你的线程
 _logger.remove()
+# 日志用这个
 log = _logger.opt(colors=True)

@@ -197,7 +197,7 @@ void hand_shake(hio_t* io, sd_channel_t* channel, const char* url) {
     if (channel && channel->session) {
         sd_entity_t entity = { 0 };
         init_entity(&entity);
-        populate_entity_data(&entity, url);
+        string_entity_data(&entity, url);
         sd_send_connect(channel->session->sid, url, &entity, io);
         free_entity_meta_and_data(&entity);
     }

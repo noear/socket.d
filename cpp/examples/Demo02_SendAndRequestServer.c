@@ -34,7 +34,7 @@ int on_request(const sd_session_t* session, sd_message_t* message) {
     if (message && message->entity.data) {
         sd_entity_t entity = { 0 };
         init_entity(&entity);
-        populate_entity_data(&entity, "You too! hello world.");
+        string_entity_data(&entity, "You too! hello world.");
         sd_send_replay(session->sid, "/demo-replay", &entity, session->channle->hio);
         free_entity_meta_and_data(&entity);
     }

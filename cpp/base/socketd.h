@@ -77,7 +77,7 @@ typedef struct sd_channel_s {
 void init_package(sd_package_t* pkg);
 void init_entity(sd_entity_t* entity);
 void free_entity_meta_and_data(sd_entity_t* entity);
-void populate_entity_data(sd_entity_t* entity, const char* text);
+void string_entity_data(sd_entity_t* entity, const char* text);
 
 sd_package_t* sd_decode(sd_package_t* sd, char* buf, uint32_t len);
 void sd_encode(struct sd_package_s* sd, char** pbuf, uint32_t* plen);

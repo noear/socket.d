@@ -35,19 +35,19 @@ int on_subscribe(const sd_session_t* session, sd_message_t* message) {
     if (message && message->entity.data) {
         sd_entity_t entity1 = { 0 };
         init_entity(&entity1);      
-        populate_entity_data(&entity1, "And you too.");
+        string_entity_data(&entity1, "And you too.");
         sd_send_replay(session->sid, "/demo", &entity1, session->channle->hio);
         free_entity_meta_and_data(&entity1);
 
         sd_entity_t entity2 = { 0 };
         init_entity(&entity2);
-        populate_entity_data(&entity2, "Hello world.");
+        string_entity_data(&entity2, "Hello world.");
         sd_send_replay(session->sid, "/demo", &entity2, session->channle->hio);
         free_entity_meta_and_data(&entity2);
 
         sd_entity_t entity3 = { 0 };
         init_entity(&entity3);
-        populate_entity_data(&entity3, "Welcome.");
+        string_entity_data(&entity3, "Welcome.");
         sd_send_endreplay(session->sid, "/demo", &entity3, session->channle->hio);
         free_entity_meta_and_data(&entity3);
     }

@@ -24,7 +24,7 @@ int on_connack(sd_session_t* session, sd_message_t* message) {
     // send and subscribe
     sd_entity_t entity = { 0 };
     init_entity(&entity);
-    populate_entity_data(&entity, "hello wrold!");
+    string_entity_data(&entity, "hello wrold!");
     sd_send_subscribe(session->sid, "/demo", &entity, hio);
     printf("Send and subscribe: %s\n", entity.data);
     free_entity_meta_and_data(&entity);

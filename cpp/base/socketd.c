@@ -64,7 +64,7 @@ bool is_entity_empty(sd_entity_t* e) {
 /***
  * note: free memory of meta/data
  */
-void populate_entity_data(sd_entity_t* entity, const char* text) {
+void string_entity_data(sd_entity_t* entity, const char* text) {
     if (!is_entity_empty(entity))
         free_entity_meta_and_data(entity);
 

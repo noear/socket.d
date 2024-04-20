@@ -23,7 +23,7 @@ int on_connack(sd_session_t* session, sd_message_t* message) {
     init_entity(&entity);
     sd_put_meta(&entity, "user", "noear");
     sd_put_meta(&entity, "opt", "send");
-    populate_entity_data(&entity, "Hello world");
+    string_entity_data(&entity, "Hello world");
     sd_send_message(session->sid, "/demo_send", &entity, hio);
     printf("on_connack: send %s", entity.data);
     free_entity_meta_and_data(&entity);

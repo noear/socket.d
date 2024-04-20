@@ -34,10 +34,11 @@ int on_message(const sd_session_t* session, sd_message_t* message) {
 
     sd_message_t* msg = (sd_message_t*)message;
     if (msg && msg->entity.data) {
-        //print request meta and data
         const char* user = sd_meta(&msg->entity, "user");
-        printf("request: user=%s\n", user);
-        printf("%s, You too!\n", msg->entity.data);
+        if (user) {
+            printf("Recv: user=%s\n", user);
+        }
+        printf("Recv: %s\n", msg->entity.data);
     }
 
     return 0;

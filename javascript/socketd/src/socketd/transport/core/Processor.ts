@@ -22,6 +22,11 @@ export interface Processor {
     setListener(listener: Listener);
 
     /**
+     * 获取监听器
+     * */
+    getListener();
+
+    /**
      * 接收处理
      */
     onReceive(channel: ChannelInternal, frame: Frame);
@@ -72,6 +77,9 @@ export class ProcessorDefault implements Processor {
         }
     }
 
+    getListener() {
+        return this._listener;
+    }
 
     onReceive(channel: ChannelInternal, frame: Frame) {
         if (channel.getConfig().clientMode()) {
@@ -94,7 +102,7 @@ export class ProcessorDefault implements Processor {
                             this.onError(channel, err);
                         }
                     }
-                }else{
+                } else {
                     //如果有异常
                     if (channel.isValid()) {
                         //如果还有效，则关闭通道
@@ -255,10 +263,6 @@ export class ProcessorDefault implements Processor {
 
     onCloseInternal(channel: ChannelInternal, code: number) {
         channel.close(code);
-
-        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            this._listener.onClose(channel.getSession());
-        }
     }
 
     onError(channel: ChannelInternal, error: any) {

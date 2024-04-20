@@ -19,7 +19,9 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
         self.ws_aio_server = ws_aio_server
         self.__ws_server: WebSocketServer = ws_server
         self.__attachment: Optional[Channel] = None
-        WebSocketServerProtocol.__init__(self=self, ws_handler=self.on_message, ws_server=self.__ws_server,
+        WebSocketServerProtocol.__init__(self=self,
+                                         ws_handler=self.on_message,
+                                         ws_server=self.__ws_server,
                                          *args,
                                          **kwargs)
 

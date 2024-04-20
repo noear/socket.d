@@ -38,6 +38,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         self._session: Optional[Session] = None
         self._liveTime: Optional[float] = None
         self._closeCode: int = 0
+        self._isCloseNotified = False;
 
     def is_valid(self) -> bool:
         return self.is_closed() == 0 and self._assistant.is_valid(self._source)
@@ -170,3 +171,16 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         except Exception as e:
             log.warning(f"{self.get_config().get_role_name()} channel close error, "
                         f"sessionId={self.get_session().session_id()} : {e}")
+
+        if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
+            await self.on_close_do()
+
+
+    async def on_close_do(self):
+        if self._isCloseNotified == False:
+            self._isCloseNotified = True
+            try:
+                await self._processor.get_listener().on_close(self.get_session())
+            except Exception as e:
+                ...
+

@@ -25,6 +25,9 @@ class ProcessorDefault(Processor, ABC):
         if listener is not None:
             self.listener = listener
 
+    def get_listener(self):
+        return self.listener
+
     async def on_receive(self, channel: ChannelInternal, frame):
         if channel.get_config().client_mode():
             log.debug(f"C-REV:{frame}")
@@ -169,9 +172,6 @@ class ProcessorDefault(Processor, ABC):
 
     async def on_close_internal(self, channel: ChannelInternal, code: int):
         await channel.close(code)
-
-        if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
-            await self.listener.on_close(channel.get_session())
 
     def on_error(self, channel: ChannelInternal, error):
         self.listener.on_error(channel.get_session(), error)

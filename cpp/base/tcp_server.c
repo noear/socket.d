@@ -205,7 +205,9 @@ void on_request_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_subscribe_handler(sd_channel_t* channel, sd_package_t* sd) {
-    sd_no_support(sd->frame.flag);
+    if (server_event.onsubscribe) {
+        server_event.onsubscribe(channel->session, &sd->frame.message);
+    }
 }
 
 void on_reply_handler(sd_channel_t* channel, sd_package_t* sd) {

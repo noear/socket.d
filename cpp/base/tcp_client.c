@@ -132,9 +132,6 @@ void on_subscribe_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_reply_handler(sd_channel_t* channel, sd_package_t* sd) {
-    assert(channel != NULL);
-    assert(sd != NULL);
-
     if (client_event.onreplay) {
         client_event.onreplay(channel->session, &sd->frame.message);
         return;

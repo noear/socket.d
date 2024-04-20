@@ -14,9 +14,11 @@ TARGET3 = ./bin/Demo02_SendServer
 TARGET4 = ./bin/Demo02_SendClient
 TARGET5 = ./bin/Demo02_SendAndRequestServer
 TARGET6 = ./bin/Demo02_SendAndRequestClient
+TARGET7 = ./bin/Demo02_SendAndSubscribeServer
+TARGET8 = ./bin/Demo02_SendAndSubscribeClient
 
 .PHONY:all
-all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6)
+all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8)
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
 	./3rd/sds/sds.c \
@@ -56,11 +58,22 @@ $(TARGET6):$(OBJS) ./examples/Demo02_SendAndRequestClient.c ./base/tcp_client.c
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(TARGET7):$(OBJS) ./examples/Demo02_SendAndSubscribeServer.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(TARGET8):$(OBJS) ./examples/Demo02_SendAndSubscribeClient.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) 
+	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) 
 
 prepare:
 	$(MKDIR) bin

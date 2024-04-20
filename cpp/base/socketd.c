@@ -278,6 +278,10 @@ void sd_send_request(const char* sid, const char* event, sd_entity_t* entity, vo
     sd_send_raw(REQUEST_FRAME, sid, event, entity, hio);
 }
 
+void sd_send_subscribe(const char* sid, const char* event, sd_entity_t* entity, void* hio) {
+    sd_send_raw(SUBSCRIBE_FRAME, sid, event, entity, hio);
+}
+
 void sd_send_replay(const char* sid, const char* event, sd_entity_t* entity, void* hio) {
     sd_send_raw(REPLAY_FRAME, sid, event, entity, hio);
 }

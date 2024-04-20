@@ -1,0 +1,9 @@
+[submodule "cpp/3rd/libhv"]
+	path = cpp/3rd/libhv
+	url = https://github.com/ithewei/libhv.git
+[submodule "cpp/3rd/sds"]
+	path = cpp/3rd/sds
+	url = https://github.com/antirez/sds.git
+[submodule "cpp/3rd/uuid4"]
+	path = cpp/3rd/uuid4
+	url = https://github.com/rxi/uuid4.git

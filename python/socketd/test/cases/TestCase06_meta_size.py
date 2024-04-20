@@ -4,7 +4,6 @@ from socketd.exception.SocketDExecption import SocketDChannelException
 from test.modelu.BaseTestCase import BaseTestCase
 
 import time
-from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
 from socketd import SocketD
@@ -20,15 +19,15 @@ class TestCase06_meta_size(BaseTestCase):
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server = None
-        self.server_session: WebSocketServer = None
         self.client_session: Session = None
         self.loop = asyncio.get_event_loop()
         self.listener = SimpleListenerTest()
 
     async def _start(self):
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
-        self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
-            self.listener).start()
+        self.server: Server = await (SocketD.create_server(ServerConfig(self.schema).port(self.port))
+                               .config(config_handler)
+                               .listen(self.listener)
+                               .start())
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
@@ -53,8 +52,6 @@ class TestCase06_meta_size(BaseTestCase):
         if self.client_session:
             await self.client_session.close()
 
-        if self.server_session:
-            self.server_session.close()
         if self.server:
             await self.server.stop()
 

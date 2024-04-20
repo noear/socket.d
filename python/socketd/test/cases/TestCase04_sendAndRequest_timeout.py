@@ -18,15 +18,14 @@ class TestCase04_sendAndRequest_timeout(BaseTestCase):
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server
-        self.server_session: WebSocketServer
         self.client_session: Session
         self.loop = asyncio.get_event_loop()
 
     async def _start(self):
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
         _simple = SimpleListenerTest()
-        _server = self.server.config(config_handler).listen(_simple)
-        self.server_session: WebSocketServer = await _server.start()
+        self.server: Server = await (SocketD.create_server(ServerConfig(self.schema).port(self.port))
+                               .config(config_handler)
+                               .listen(_simple).start())
 
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
@@ -47,8 +46,6 @@ class TestCase04_sendAndRequest_timeout(BaseTestCase):
         if self.client_session:
             await self.client_session.close()
 
-        if self.server_session:
-            self.server_session.close()
         if self.server:
             await self.server.stop()
 

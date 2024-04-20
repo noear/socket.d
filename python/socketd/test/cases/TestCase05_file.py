@@ -1,8 +1,7 @@
 import asyncio
-import uuid
+import platform
 from abc import ABC
 
-from websockets.legacy.server import WebSocketServer
 from loguru import logger
 from pathlib import Path
 
@@ -19,6 +18,8 @@ from socketd import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.server.Server import Server
 
+def is_mac_os():
+    return 'Darwin' in platform.system()
 
 def config_handler(config: ServerConfig | ClientConfig):
     config.is_thread(False)
@@ -60,23 +61,27 @@ class TestCase05_file(BaseTestCase):
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server
-        self.server_session: WebSocketServer
         self.client_session: Session
         self.loop = asyncio.get_event_loop()
         self._simple = SimpleListenerTest()
 
+        if is_mac_os():
+            self._upload_file_name = "/Users/noear/Movies/snack3-rce-poc.mov"
+        else:
+            self._upload_file_name = r"C:\Users\11450\Pictures\飞书20230728-180708.mp4"
+
     async def _start(self):
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
-        _server = self.server.config(config_handler).listen(self._simple)
-        self.server_session: WebSocketServer = await _server.start()
+        self.server: Server = await (SocketD.create_server(ServerConfig(self.schema).port(self.port))
+                               .config(config_handler).listen(self._simple)
+                               .start())
+
         await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
         await asyncio.sleep(1)
         try:
-            with open(r"C:\Users\11450\Pictures\飞书20230728-180708.mp4",
-                      "rb") as f:
+            with open(self._upload_file_name, "rb") as f:
                 await self.client_session.send("/path?u=a&p=2", FileEntity(f, "test.png"))
         except Exception as e:
             logger.error(e)
@@ -93,8 +98,6 @@ class TestCase05_file(BaseTestCase):
         if self.client_session:
             await self.client_session.close()
 
-        if self.server_session:
-            self.server_session.close()
         if self.server:
             await self.server.stop()
 

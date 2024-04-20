@@ -1,7 +1,6 @@
 import asyncio
 from typing import Optional
 
-from websockets.legacy.server import WebSocketServer
 from loguru import logger
 
 from socketd.transport.core.Listener import Listener
@@ -53,15 +52,14 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
         super().__init__(schema, port)
         self.top: Optional[asyncio.Future]  = None
         self.server: Optional[Server] = None
-        self.server_session: Optional[WebSocketServer] = None
         self.client_session: Optional[Session] = None
         self.loop = asyncio.get_event_loop()
         self._simple = SimpleListenerTest()
 
     async def _start(self):
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
-        _server = self.server.config(config_handler).listen(self._simple)
-        self.server_session: WebSocketServer = await _server.start()
+        self.server: Server = await (SocketD.create_server(ServerConfig(self.schema).port(self.port)).config(config_handler)
+                               .listen(self._simple)
+                               .start())
 
         def do_on_close(session: Session):
             logger.debug("do_on_close")
@@ -91,8 +89,7 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
             await self.client_session.close()
         if self.top:
             self.top.set_result(0)
-        if self.server_session:
-            self.server_session.close()
+
         if self.server:
             await self.server.stop()
 

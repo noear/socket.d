@@ -1,7 +1,6 @@
 from typing import Optional
 
-from websockets.server import WebSocketServer, serve as Serve, WebSocketServerProtocol
-from websockets import broadcast
+from websockets.server import serve as Serve
 
 from socketd import SocketD
 from socketd.transport.core.Costants import Constants
@@ -23,7 +22,7 @@ class WsAioServer(ServerBase):
     def get_title(self):
         return "ws/aio/py-websocket/v" + SocketD.version();
 
-    async def start(self) -> WebSocketServer:
+    async def start(self):
         if self._isStarted:
             raise Exception("Socket.D server started")
         else:
@@ -48,7 +47,7 @@ class WsAioServer(ServerBase):
                            )
 
         log.info("Socket.D server started: {server=" + self.get_config().get_local_url() + "}")
-        return await self._server
+        await self._server
 
     async def stop(self):
         if self._isStarted:

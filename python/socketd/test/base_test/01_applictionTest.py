@@ -1,8 +1,6 @@
 import asyncio
 import sys
 
-from websockets.legacy.server import WebSocketServer
-
 from socketd import SocketD
 from socketd.transport.core import Entity
 from socketd.transport.core.Session import Session
@@ -24,9 +22,9 @@ log.add(sys.stderr, level="INFO", enqueue=True)
 @calc_async_time
 async def application_test():
     loop = asyncio.get_running_loop()
-    server: Server = SocketD.create_server(ServerConfig("ws").port(9999))
-    server_session: WebSocketServer = await server.listen(
-        SimpleListenerTest()).start()
+    server: Server = await (SocketD.create_server(ServerConfig("ws").port(9999))
+                      .listen(SimpleListenerTest())
+                      .start())
     await asyncio.sleep(1)
     client_session: Session = await SocketD.create_client("sd:ws://127.0.0.1:9999").open()
 
@@ -72,8 +70,6 @@ async def application_test():
     await asyncio.sleep(3)
     # 关闭客户端会话
     await client_session.close()
-    # 关闭服务端端会话
-    server_session.close()
     # 停止服务端端
     await server.stop()
 

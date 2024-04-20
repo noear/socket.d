@@ -1,9 +1,10 @@
 import {Server, ServerBase} from "../transport/server/Server";
 import {WsChannelAssistant} from "./WsChannelAssistant";
 import {ChannelSupporter} from "../transport/core/ChannelSupporter";
-import {SdWebSocket, SdWebSocketCloseEvent, SdWebSocketErrorEvent, SdWebSocketEvent,
+import {
+    SdWebSocket, SdWebSocketCloseEvent, SdWebSocketErrorEvent, SdWebSocketEvent,
     SdWebSocketListener,
-    SdWebSocketMessageEvent
+    SdWebSocketMessageEvent, SdWebSocketPingEvent, SdWebSocketPongEvent
 } from "./impl/SdWebSocket";
 import {SocketD} from "../SocketD";
 import NodeWebSocket from 'ws';
@@ -53,7 +54,7 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
 
         this._server.on("connection", (ws,req) => {
             //做转换与绑定
-            new SdWebSocketNodeJs(ws, req, serverListener);
+            new SdWebSocketNodeJs(this.getConfig(), ws, req, serverListener);
         });
 
         console.info("Socket.D server started: {server=" + this.getConfig().getLocalUrl() + "}");
@@ -92,8 +93,7 @@ export class SdWebSocketServerListener implements SdWebSocketListener {
     }
 
     onOpen(e: SdWebSocketEvent): void {
-        let channel = e.socket().attachment();
-        this._server.getProcessor().onClose(channel);
+        //...
     }
 
     onMessage(e: SdWebSocketMessageEvent): void {
@@ -115,6 +115,31 @@ export class SdWebSocketServerListener implements SdWebSocketListener {
         if (channel) {
             //有可能未 onOpen，就 onError 了；此时通道未成
             this._server.getProcessor().onError(channel, e.error());
+        }
+    }
+
+    onPing(e: SdWebSocketPingEvent) {
+        if (this.assertHandshake(e.socket())) {
+
+        }
+    }
+
+    onPong(e: SdWebSocketPongEvent) {
+        if (this.assertHandshake(e.socket())) {
+
+        }
+    }
+
+    assertHandshake(conn: SdWebSocket) {
+        let channel = conn.attachment();
+
+        if (channel == null || channel.getHandshake() == null) {
+            conn.close();
+
+            console.warn("Server channel no handshake onPingPong");
+            return false;
+        } else {
+            return true;
         }
     }
 }

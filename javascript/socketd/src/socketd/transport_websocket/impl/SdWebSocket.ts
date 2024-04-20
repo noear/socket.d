@@ -19,6 +19,8 @@ export interface SdWebSocketListener {
     onMessage(e: SdWebSocketMessageEvent): void;
     onClose(e: SdWebSocketCloseEvent): void;
     onError(e: SdWebSocketErrorEvent): void;
+    onPing(e: SdWebSocketPingEvent): void;
+    onPong(e: SdWebSocketPongEvent): void;
 }
 
 export enum SdWebSocketState {
@@ -44,6 +46,14 @@ export interface SdWebSocketCloseEvent extends SdWebSocketEvent {
 export interface SdWebSocketErrorEvent extends SdWebSocketEvent {
     socket():SdWebSocket;
     error(): any;
+}
+
+export interface SdWebSocketPingEvent extends SdWebSocketEvent {
+    socket():SdWebSocket;
+}
+
+export interface SdWebSocketPongEvent extends SdWebSocketEvent {
+    socket():SdWebSocket;
 }
 
 export class SdWebSocketEventImpl implements SdWebSocketEvent {
@@ -101,6 +111,30 @@ export class SdWebSocketErrorEventImpl implements SdWebSocketErrorEvent {
 
     error(): any {
         return this._error;
+    }
+}
+
+export class SdWebSocketPingEventImpl implements SdWebSocketPingEvent {
+    private _socket: SdWebSocket;
+
+    constructor(socket: SdWebSocket) {
+        this._socket = socket;
+    }
+
+    socket(): SdWebSocket {
+        return this._socket;
+    }
+}
+
+export class SdWebSocketPongEventImpl implements SdWebSocketPongEvent {
+    private _socket: SdWebSocket;
+
+    constructor(socket: SdWebSocket) {
+        this._socket = socket;
+    }
+
+    socket(): SdWebSocket {
+        return this._socket;
     }
 }
 

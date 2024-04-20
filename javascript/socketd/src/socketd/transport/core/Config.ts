@@ -155,7 +155,7 @@ export abstract class ConfigBase implements Config {
         this._readBufferSize = 512;
         this._writeBufferSize = 512;
 
-        this._idleTimeout = 0; //默认不关（提供用户特殊场景选择）
+        this._idleTimeout = 60_000; //60秒
         this._requestTimeout = 10_000; //10秒（默认与连接超时同）
         this._streamTimeout = 1000 * 60 * 60 * 2;//2小时 //避免永不回调时，不能释放
         this._maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464

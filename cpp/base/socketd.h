@@ -84,6 +84,8 @@ void sd_encode(struct sd_package_s* sd, char** pbuf, uint32_t* plen);
 
 void sd_send_connect(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 void sd_send_connack(const char* sid, const char* event, sd_entity_t* entity, void* hio);
+void sd_send_close(const char* sid, const char* event, sd_entity_t* entity, void* hio);
+void sd_send_alarm(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 void sd_send_message(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 void sd_send_request(const char* sid, const char* event, sd_entity_t* entity, void* hio);
 void sd_send_subscribe(const char* sid, const char* event, sd_entity_t* entity, void* hio);

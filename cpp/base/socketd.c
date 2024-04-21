@@ -270,6 +270,14 @@ void sd_send_connack(const char* sid, const char* event, sd_entity_t* entity, vo
     sd_send_raw(CONNACK_FRAME, sid, event, entity, hio);
 }
 
+void sd_send_close(const char* sid, const char* event, sd_entity_t* entity, void* hio) {
+    sd_send_raw(CLOSE_FRAME, sid, event, entity, hio);
+}
+
+void sd_send_alarm(const char* sid, const char* event, sd_entity_t* entity, void* hio) {
+    sd_send_raw(ALARM_FRAME, sid, event, entity, hio);
+}
+
 void sd_send_message(const char* sid, const char* event, sd_entity_t* entity, void* hio) {
     sd_send_raw(MESSAGE_FRAME, sid, event, entity, hio);
 }

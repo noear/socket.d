@@ -18,10 +18,15 @@ TARGET7 = ./bin/Demo02_SendAndSubscribeServer
 TARGET8 = ./bin/Demo02_SendAndSubscribeClient
 FileServer = ./bin/Demo03_FileServer
 FileClient = ./bin/Demo03_FileClient
+FlowControlServer = ./bin/Demo03_FlowControlServer
+FlowControlClient = ./bin/Demo03_FlowControlClient
+
 
 .PHONY:all
 all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) \
-	$(FileServer) $(FileClient)
+	$(FileServer) $(FileClient) \
+	$(FlowControlServer) $(FlowControlClient)
+
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
 	./3rd/sds/sds.c \
@@ -81,12 +86,24 @@ $(FileClient):$(OBJS) ./examples/Demo03_FileClient.c ./base/tcp_client.c
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(FlowControlServer):$(OBJS) ./examples/Demo03_FlowControlServer.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(FlowControlClient):$(OBJS) ./examples/Demo03_FlowControlClient.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
 
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) $(FileServer) $(FileClient)
+	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) \
+	$(FileServer) $(FileClient) \
+	$(FlowControlServer) $(FlowControlClient) \
 
 prepare:
 	$(MKDIR) bin

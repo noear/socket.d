@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
@@ -113,6 +114,31 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
             }
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
+        if (assertHandshake(session)) {
+            super.handlePongMessage(session, message);
+        }
+    }
+
+    /**
+     * 禁止 ws 客户端连接 sd:ws 服务（避免因为 ws 心跳，又不会触发空闲超时）
+     */
+    protected boolean assertHandshake(WebSocketSession conn) throws IOException {
+        ChannelInternal channel = getChannel(conn);
+
+        if (channel == null || channel.getHandshake() == null) {
+            conn.close();
+
+            if (log.isWarnEnabled()) {
+                log.warn("Server channel no handshake onPingPong");
+            }
+            return false;
+        } else {
+            return true;
         }
     }
 

@@ -2,6 +2,7 @@ package org.noear.socketd.transport.java_websocket.impl;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
+import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.noear.socketd.transport.core.ChannelInternal;
@@ -33,37 +34,38 @@ public class WebSocketServerImpl extends WebSocketServer {
         this.server = server;
     }
 
-
-    private ChannelInternal getChannel(WebSocket conn) {
-        if(conn == null){
-            return null;
+    @Override
+    public void onWebsocketPing(WebSocket conn, Framedata f) {
+        if (assertHandshake(conn)) {
+            super.onWebsocketPing(conn, f);
         }
+    }
 
-        ChannelInternal channel = conn.getAttachment();
-
-        if (channel == null) {
-            //直接从附件拿，不一定可靠
-            channel = new ChannelDefault<>(conn, server);
-            conn.setAttachment(channel);
+    @Override
+    public void onWebsocketPong(WebSocket conn, Framedata f) {
+        if (assertHandshake(conn)) {
+            super.onWebsocketPong(conn, f);
         }
-
-        return channel;
     }
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        getChannel(conn);
+        conn.setAttachment(new ChannelDefault<>(conn, server));
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        ChannelInternal channel = getChannel(conn);
-        server.getProcessor().onClose(channel);
+        ChannelInternal channel = conn.getAttachment();
+        if (channel != null && channel.getHandshake() != null) {
+            server.getProcessor().onClose(channel);
+        }
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        //普通 websocket 握手都通不过
+        //文本请求不支持
+        conn.close();
+
         if (log.isWarnEnabled()) {
             log.warn("Server channel unsupported onMessage(String test)");
         }
@@ -75,7 +77,7 @@ public class WebSocketServerImpl extends WebSocketServer {
             //用于支持 socket.d 控制 idleTimeout //前端也可能会关闭自动 pingPong
             ((WebSocketImpl) conn).updateLastPong();
 
-            ChannelInternal channel = getChannel(conn);
+            ChannelInternal channel = conn.getAttachment();
             Frame frame = server.getAssistant().read(message);
 
             if (frame != null) {
@@ -89,7 +91,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onError(WebSocket conn, Exception ex) {
         try {
-            ChannelInternal channel = getChannel(conn);
+            ChannelInternal channel = conn.getAttachment();
 
             if (channel != null) {
                 //有可能未 onOpen，就 onError 了；此时通道未成
@@ -108,6 +110,24 @@ public class WebSocketServerImpl extends WebSocketServer {
             setConnectionLostTimeout((int) (server.getConfig().getIdleTimeout() / 1000L));
         } else {
             setConnectionLostTimeout(0);
+        }
+    }
+
+    /**
+     * 禁止 ws 客户端连接 sd:ws 服务（避免因为 ws 心跳，又不会触发空闲超时）
+     */
+    protected boolean assertHandshake(WebSocket conn) {
+        ChannelInternal channel = conn.getAttachment();
+
+        if (channel == null || channel.getHandshake() == null) {
+            conn.close();
+
+            if (log.isWarnEnabled()) {
+                log.warn("Server channel no handshake onPingPong");
+            }
+            return false;
+        } else {
+            return true;
         }
     }
 }

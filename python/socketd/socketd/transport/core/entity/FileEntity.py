@@ -1,4 +1,3 @@
-from io import BufferedReader, BytesIO
 from typing import BinaryIO
 
 from socketd.exception.SocketDExecption import SocketDCodecException

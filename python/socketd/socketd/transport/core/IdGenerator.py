@@ -1,9 +1,9 @@
 from typing import Callable
 
-from socketd.transport.utils.StrUtil import StrUtil
+from socketd.transport.utils.StrUtils import StrUtils
 
 IdGenerator = Callable[[None], str]
 
 
 def GuidGenerator():
-    return StrUtil.guid()
+    return StrUtils.guid()

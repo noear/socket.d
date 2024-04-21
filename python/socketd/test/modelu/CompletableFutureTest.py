@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from loguru import logger
 
-from socketd.transport.utils.AsyncUtil import AsyncUtil
+from socketd.transport.utils.AsyncUtils import AsyncUtils
 from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 
@@ -53,7 +53,7 @@ class CompletableFutureTest(unittest.TestCase):
         async def _main():
             with ThreadPoolExecutor() as executor:
                 loop = asyncio.get_running_loop()
-                AsyncUtil.thread_loop(c.get(100), pool=executor)
+                AsyncUtils.thread_loop(c.get(100), pool=executor)
                 await loop.run_in_executor(executor, lambda c: asyncio.run(_test(c)), c)
         asyncio.run(_main())
 

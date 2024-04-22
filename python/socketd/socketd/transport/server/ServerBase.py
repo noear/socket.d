@@ -9,6 +9,8 @@ from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
+from socketd.transport.utils.RunUtils import RunUtils
+
 
 class ServerBase(Server,Listener):
     """
@@ -72,15 +74,17 @@ class ServerBase(Server,Listener):
         await self._listener.on_close(s)
 
     async def on_error(self, s: Session, e):
-        await self._listener.on_error(s, e)
+        RunUtils.taskTry(self._listener.on_error(s, e))
 
     async def prestop_do(self):
-        for s1 in self._sessions:
+        tmp = list(self._sessions)
+        for s1 in tmp:
             if s1.is_valid():
                 await s1.preclose()
 
     async def stop_do(self):
-        for s1 in self._sessions:
+        tmp = list(self._sessions)
+        for s1 in tmp:
             if s1.is_valid():
                 await s1.close()
 

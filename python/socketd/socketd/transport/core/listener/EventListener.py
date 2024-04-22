@@ -1,4 +1,4 @@
-from typing import Callable, Union, Dict
+from typing import Callable, Union, Dict, Coroutine
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
@@ -12,11 +12,11 @@ class EventListener(Listener):
     """
 
     def __init__(self):
-        self._doOnOpenHandler: Union[Callable[[Session], None], None] = None
-        self._doOnMessageHandler: Union[Callable[[Session, Message], None], None] = None
-        self._doOnCloseHandler: Union[Callable[[Session], None], None] = None
-        self._doOnErrorHandler: Union[Callable[[Session, Exception], None], None] = None
-        self._eventRouteSelector: Dict[str, Callable[[Session, Message], None]] = {}
+        self._doOnOpenHandler: Union[Callable[[Session], Coroutine], None] = None
+        self._doOnMessageHandler: Union[Callable[[Session, Message], Coroutine], None] = None
+        self._doOnCloseHandler: Union[Callable[[Session], Coroutine], None] = None
+        self._doOnErrorHandler: Union[Callable[[Session, Exception], Coroutine], None] = None
+        self._eventRouteSelector: Dict[str, Callable[[Session, Message], Coroutine]] = {}
 
     def do_on_open(self, handler: Callable[[Session], None]) -> 'EventListener':
         self._doOnOpenHandler = handler

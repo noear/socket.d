@@ -65,19 +65,20 @@ class ServerBase(Server,Listener):
         await self._listener.on_open(s)
 
     async def on_message(self, s: Session, m: Message):
-        await self._listener.on_message(s,m)
+        await self._listener.on_message(s, m)
 
     async def on_close(self, s: Session):
         self._sessions.remove(s)
         await self._listener.on_close(s)
 
     def on_error(self, s: Session, e):
-        self._listener.on_error(s)
+        self._listener.on_error(s, e)
 
     async def prestop_do(self):
         for s1 in self._sessions:
             if s1.is_valid():
                 await s1.preclose()
+                
     async def stop_do(self):
         for s1 in self._sessions:
             if s1.is_valid():

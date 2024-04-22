@@ -11,7 +11,7 @@ class PathListener(Listener):
     def __init__(self):
         _pathRouteSelector:RouteSelector = RouteSelectorDefault()
 
-    def of(self, path: str, listener: Listener) -> PathListener:
+    def doOf(self, path: str, listener: Listener) -> PathListener:
         self._pathRouteSelector.put(path, listener)
         return self
 

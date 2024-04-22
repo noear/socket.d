@@ -18,11 +18,11 @@ class EventListener(Listener):
         self._doOnErrorHandler: Union[Callable[[Session, Exception], None], None] = None
         self._eventRouteSelector: Union[Dict[str, Callable[[Session, Message], None]], None] = None
 
-    def do_on_open(self, _on_open_handler: Callable[[Session, Message], None]) -> 'EventListener':
+    def do_on_open(self, _on_open_handler: Callable[[Session], None]) -> 'EventListener':
         self._doOnOpenHandler = _on_open_handler
         return self
 
-    def do_on_message(self, _on_message_handler: Callable[[Session], None]) -> 'EventListener':
+    def do_on_message(self, _on_message_handler: Callable[[Session, Message], None]) -> 'EventListener':
         self._doOnMessageHandler = _on_message_handler
         return self
 
@@ -30,12 +30,13 @@ class EventListener(Listener):
         self._doOnCloseHandler = _on_close_handler
         return self
 
-    def do_on_error_handler(self, _on_error_handler: Callable[[Session, Exception], None]) -> 'EventListener':
+    def do_on_error(self, _on_error_handler: Callable[[Session, Exception], None]) -> 'EventListener':
         self._doOnErrorHandler = _on_error_handler
         return self
 
-    def do_on(self, event: str, handler: Callable[[Session, Message], None]):
+    def do_on(self, event: str, handler: Callable[[Session, Message], None]) -> 'EventListener':
         self._eventRouteSelector[event] = handler
+        return self
 
     async def on_open(self, session: Session):
         if self._doOnOpenHandler:

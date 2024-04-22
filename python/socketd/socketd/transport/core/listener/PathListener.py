@@ -3,30 +3,30 @@ from typing import Dict
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
-from socketd.transport.core.listener.PathMapper import PathMapperDefault
+from socketd.transport.core.listener.RouteSelector import RouteSelector
+from socketd.transport.core.listener.RouteSelectorDefault import RouteSelectorDefault
 
 
 class PathListener(Listener):
-
-    def __init__(self, mapper: PathMapperDefault):
-        self._mapper: Dict[str, Listener] | PathMapperDefault = mapper
+    def __init__(self):
+        _pathRouteSelector:RouteSelector = RouteSelectorDefault()
 
     def of(self, path: str, listener: Listener) -> PathListener:
-        self._mapper[path] = listener
+        self._pathRouteSelector.put(path, listener)
         return self
 
     async def on_open(self, session: Session):
-        if l := self._mapper.get(session.path()):
+        if l := self._pathRouteSelector.select(session.path()):
             await l.on_open(session)
 
     async def on_message(self, session, message):
-        if l := self._mapper.get(session.path()):
-            await l.on_message(session)
+        if l := self._pathRouteSelector.select(session.path()):
+            await l.on_message(session, message)
 
     async def on_close(self, session):
-        if l := self._mapper.get(session.path()):
+        if l := self._pathRouteSelector.select(session.path()):
             await l.on_close(session)
 
-    def on_error(self, session, error):
-        if l := self._mapper.get(session.path()):
-            l.on_error(session)
+    def on_error(self, session, error:Exception):
+        if l := self._pathRouteSelector.select(session.path()):
+            l.on_error(session, error)

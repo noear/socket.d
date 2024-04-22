@@ -1,11 +1,12 @@
 from __future__ import annotations
 import asyncio
-from typing import Optional, Union
+from typing import Optional, Union, Awaitable
 
-from websockets import ConnectionClosedError, ConnectionClosedOK
+from websockets import ConnectionClosedError, ConnectionClosedOK, Data
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
+from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Flags import Flags
@@ -25,10 +26,10 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
                                          *args,
                                          **kwargs)
 
-    def set_attachment(self, obj: Channel):
+    def set_attachment(self, obj: ChannelInternal):
         self.__attachment = obj
 
-    def get_attachment(self) -> Channel:
+    def get_attachment(self) -> ChannelInternal:
         return self.__attachment
 
     def connection_open(self) -> None:
@@ -41,6 +42,20 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
         """socket_handshake"""
         log.debug("handshake_handler")
 
+    async def ping(self, data: Optional[Data] = None) -> Awaitable[None]:
+        is_ok = await self.assert_handshake()
+        if is_ok:
+            return super().ping(data)
+        else:
+            return None;
+
+
+    async def pong(self, data: Data = b"") -> None:
+        is_ok = await self.assert_handshake()
+        if is_ok:
+            await super().pong(data)
+
+
     def on_open(self, conn) -> None:
         """create_protocol"""
         if self.get_attachment() is None:
@@ -49,7 +64,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
 
     async def on_error(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], ex: Exception):
         try:
-            channel: Channel = conn.get_attachment()
+            channel: ChannelInternal = conn.get_attachment()
             if channel is not None:
                 # 有可能未 onOpen，就 onError 了；此时通道未成
                 self.ws_aio_server.get_processor().on_error(channel, ex)
@@ -111,3 +126,12 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
     async def on_close(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol]):
         """关闭tcp,结束握手"""
         await conn.close()
+
+    async def assert_handshake(self) -> bool:
+        channel: ChannelInternal = self.get_attachment()
+        if channel is None or channel.get_handshake() is None:
+            await self.close()
+            log.warning("Server channel no handshake onPingPong")
+            return False
+        else:
+            return True

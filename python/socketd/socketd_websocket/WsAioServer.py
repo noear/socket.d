@@ -42,8 +42,6 @@ class WsAioServer(ServerBase):
                            port=self.get_config().get_port(),
                            create_protocol=AIOWebSocketServerImpl,
                            ws_aio_server=self,
-                           ping_interval=self.get_config().get_idle_timeout(),
-                           ping_timeout=self.get_config().get_idle_timeout(),
                            ssl=self.get_config().get_ssl_context(),
                            logger=logger,
                            max_size=Constants.MAX_SIZE_FRAME

@@ -16,7 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：大文本的提交 30M
  *
  * @author noear
  * @since 2.0

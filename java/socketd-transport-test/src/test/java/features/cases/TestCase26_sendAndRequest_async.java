@@ -16,7 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 异步（一般在 Broker 里用）
+ * 测试：sendAndRequest() 异步模式（一般在 Broker 里用）
  *
  * @author noear
  * @since 2.0

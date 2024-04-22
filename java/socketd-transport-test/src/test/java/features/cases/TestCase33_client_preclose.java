@@ -2,12 +2,12 @@ package features.cases;
 
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
-import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.client.ClientSession;
+import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
-import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.core.entity.StringEntity;
+import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +16,15 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：客户端预关闭
  *
  * @author noear
  * @since 2.0
  */
-public class TestCase15_size extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase15_size.class);
+public class TestCase33_client_preclose extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase33_client_preclose.class);
 
-    public TestCase15_size(String schema, int port) {
+    public TestCase33_client_preclose(String schema, int port) {
         super(schema, port);
     }
 
@@ -32,6 +32,7 @@ public class TestCase15_size extends BaseTestCase {
     private ClientSession clientSession;
 
     private AtomicInteger messageCounter = new AtomicInteger();
+    private AtomicInteger replayCounter = new AtomicInteger();
 
     @Override
     public void start() throws Exception {
@@ -45,8 +46,12 @@ public class TestCase15_size extends BaseTestCase {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
                         System.out.println("::" + message);
-                        messageCounter.incrementAndGet();
-
+                        if (message.isRequest()) {
+                            messageCounter.incrementAndGet();
+                            if(session.isValid() && session.isClosing() == false) {
+                                session.reply(message, Entity.of());
+                            }
+                        }
                     }
                 })
                 .start();
@@ -59,22 +64,22 @@ public class TestCase15_size extends BaseTestCase {
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl).openOrThow();
 
-        StringBuilder meta = new StringBuilder(4000);
-        while (meta.length() < 50000) {
-            meta.append("asdfqjwoefjasdfkqowefijqowefjqowefjoqwiefjqoweifjqowef");
-        }
+        clientSession.sendAndRequest("/user/get", new StringEntity("hi")).thenReply(reply -> {
+            replayCounter.incrementAndGet();
+        });
+        Thread.sleep(100);
+        clientSession.preclose();
+        Thread.sleep(100);
 
-        try {
-            clientSession.send("/user/size", new StringEntity("hi").metaPut("test", meta.toString()));
-        } catch (SocketDException e) {
-            e.printStackTrace();
-        }
-        clientSession.send("/user/size", new StringEntity("hi").metaPut("test", "ok"));
+        clientSession.sendAndRequest("/user/get", new StringEntity("hi")).thenReply(reply -> {
+            replayCounter.incrementAndGet();
+        });
 
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
-        System.out.println("counter: " + messageCounter.get());
-        Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
+        System.out.println("counter: " + messageCounter.get() +", replay: " + replayCounter.get());
+        Assertions.assertEquals(messageCounter.get(), 2, getSchema() + ":server 收的消息数量对不上");
+        Assertions.assertEquals(replayCounter.get(), 1, getSchema() + ":server 答复消息数量对不上");
     }
 
     @Override

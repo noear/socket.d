@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：客户端通过监听获取得内部 session ，通过它做关闭
  *
  * @author noear
  * @since 2.0

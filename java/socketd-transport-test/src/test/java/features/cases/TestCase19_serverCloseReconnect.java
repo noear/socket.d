@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 自动重链测试（发先四条，停止，启动，再发四条）
+ * 测试：服务端关闭，客户端手动重连
  *
  * @author noear
  * @since 2.0

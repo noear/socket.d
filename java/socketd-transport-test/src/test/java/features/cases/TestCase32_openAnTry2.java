@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：集群客户端先打开（此时没服务端），通过心跳重试连上后打开的服务端
  *
  * @author noear
  * @since 2.0

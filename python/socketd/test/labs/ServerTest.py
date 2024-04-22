@@ -9,37 +9,37 @@ from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.listener.EventListener import EventListener
 
 
-def do_on_open(s:Session):
+async def do_on_open(s:Session):
     s.handshake().out_meta("test", "1")
     log.info("onOpen: " + s.session_id())
 
-def do_on_message(s:Session, m:Message):
-    log.info("onMessage: " + m)
+async def do_on_message(s:Session, m:Message):
+    log.info("onMessage: " + str(m))
 
-def doOn_demo(s:Session, m:Message):
+async def doOn_demo(s:Session, m:Message):
     if m.is_request():
-        s.reply(m, StringEntity("me to! ref:" + m.data_as_string()))
+        await s.reply(m, StringEntity("me to! ref:" + m.data_as_string()))
 
     if m.is_subscribe():
         size = m.range_size()
         for i in range(size):
-            s.reply(m, StringEntity("me to-" + i))
-        s.reply_end(m, StringEntity("welcome to my home!"))
+            await s.reply(m, StringEntity("me to-" + str(i)))
+        await s.reply_end(m, StringEntity("welcome to my home!"))
 
-def doOn_upload(s:Session, m:Message):
+async def doOn_upload(s:Session, m:Message):
     if m.is_request():
         fileName = m.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME)
         if fileName is None:
-            s.reply(m, StringEntity("file received: " + fileName + ", size: " + m.data_size()))
+            await s.reply(m, StringEntity("file received: " + fileName + ", size: " + str(m.data_size())))
         else:
-            s.reply(m, StringEntity("no file! size: " + m.data_size()))
+            await s.reply(m, StringEntity("no file! size: " + str(m.data_size())))
 
-def doOn_download(s:Session, m:Message):
+async def doOn_download(s:Session, m:Message):
     if m.is_request():
         fileEntity = StringEntity("...")
-        s.reply(m, fileEntity)
+        await s.reply(m, fileEntity)
 
-def doOn_push(s:Session, m:Message):
+async def doOn_push(s:Session, m:Message):
     if s.attr_has("push"):
         return
 
@@ -48,15 +48,16 @@ def doOn_push(s:Session, m:Message):
     for i in range(100):
         if s.attr_has("push") is False:
             break
-        s.send("/push", "push test")
+        await s.send("/push", StringEntity("push test"))
 
-def doOn_unpush(s:Session, m:Message):
+async def doOn_unpush(s:Session, m:Message):
     s.attr_map().pop("push")
 
-def do_on_close(s:Session):
+async def do_on_close(s:Session):
     log.info("onClose: " + s.session_id())
-def do_on_error(s:Session, err:Exception):
-    log.warning("onError: " + s.session_id())
+async def do_on_error(s:Session, err:Exception):
+    log.warning("onError: " + s.session_id(), err)
+    print(err)
 
 def buildListener():
     return (EventListener().do_on_open(do_on_open)

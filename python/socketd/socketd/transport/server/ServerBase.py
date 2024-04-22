@@ -71,8 +71,8 @@ class ServerBase(Server,Listener):
         self._sessions.remove(s)
         await self._listener.on_close(s)
 
-    def on_error(self, s: Session, e):
-        self._listener.on_error(s, e)
+    async def on_error(self, s: Session, e):
+        await self._listener.on_error(s, e)
 
     async def prestop_do(self):
         for s1 in self._sessions:

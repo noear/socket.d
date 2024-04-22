@@ -40,19 +40,19 @@ class EventListener(Listener):
 
     async def on_open(self, session: Session):
         if self._doOnOpenHandler:
-            self._doOnOpenHandler(session)
+            await self._doOnOpenHandler(session)
 
     async def on_message(self, session: Session, message: Message):
         if self._doOnMessageHandler:
-            self._doOnMessageHandler(session, message)
+            await self._doOnMessageHandler(session, message)
 
         if message_handler := self._eventRouteSelector.get(message.event()):
-            message_handler(session, message)
+            await message_handler(session, message)
 
-    def on_close(self, session: Session):
+    async def on_close(self, session: Session):
         if self._doOnCloseHandler:
-            self._doOnCloseHandler(session)
+            await self._doOnCloseHandler(session)
 
-    def on_error(self, session: Session, error: Exception):
+    async def on_error(self, session: Session, error: Exception):
         if self._doOnErrorHandler:
-            self._doOnErrorHandler(session, error)
+             await self._doOnErrorHandler(session, error)

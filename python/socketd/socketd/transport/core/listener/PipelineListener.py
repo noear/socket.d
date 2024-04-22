@@ -32,9 +32,9 @@ class PipelineListener(Listener):
         for listener in self._deque:
             await listener.on_close(session)
 
-    def on_error(self, session: Session, error:Exception):
+    async def on_error(self, session: Session, error:Exception):
         for listener in self._deque:
-            listener.on_error(session, error)
+            await listener.on_error(session, error)
 
 
 

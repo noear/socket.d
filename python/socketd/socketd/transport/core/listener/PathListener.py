@@ -27,6 +27,6 @@ class PathListener(Listener):
         if l := self._pathRouteSelector.select(session.path()):
             await l.on_close(session)
 
-    def on_error(self, session, error:Exception):
+    async def on_error(self, session, error:Exception):
         if l := self._pathRouteSelector.select(session.path()):
-            l.on_error(session, error)
+            await l.on_error(session, error)

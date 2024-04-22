@@ -14,6 +14,7 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.listener.SimpleListener import SimpleListener
 from socketd.transport.stream.StreamManger import StreamInternal
+from socketd.transport.utils.RunUtils import RunUtils
 
 
 class ProcessorDefault(Processor, ABC):
@@ -174,4 +175,4 @@ class ProcessorDefault(Processor, ABC):
         await channel.close(code)
 
     def on_error(self, channel: ChannelInternal, error):
-        self.listener.on_error(channel.get_session(), error)
+        RunUtils.taskTry(self.listener.on_error(channel.get_session(), error))

@@ -41,6 +41,9 @@ class CodecWriter(ABC):
     def put_int(self, _num: int): ...
 
     @abstractmethod
+    def put_char(self, _char: int): ...
+
+    @abstractmethod
     def flush(self): ...
 
     @abstractmethod

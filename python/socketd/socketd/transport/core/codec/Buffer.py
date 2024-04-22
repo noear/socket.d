@@ -21,15 +21,22 @@ class Buffer(BytesIO):
         rem = self.__size - self.tell()
         return rem if rem > 0 else 0
 
-    def limit(self):
-        return self.__limit
+    def position(self) -> int:
+        ...
 
     def size(self):
         return self.__size
 
+    def limit(self):
+        return self.__limit
+
     def put_int(self, num: int):
         super().write(num.to_bytes(length=4, byteorder='big', signed=False))
         self.__size += 4
+
+    def put_char(self, char:int):
+        super().write(char.to_bytes(length=2, byteorder='big', signed=False))
+        self.__size += 2
 
     def get_int(self):
         return int.from_bytes(self.read1(4), byteorder='big', signed=False)

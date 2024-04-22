@@ -43,14 +43,18 @@ class FragmentAggregatorDefault(FragmentAggregator):
     def get(self) -> Frame:
         self.__fragmentHolders.sort(key=lambda x: x.index)
 
-        byte: BytesIO = BytesIO()
+        dataBuffer: BytesIO = BytesIO()
 
         for fragment in self.__fragmentHolders:
-            byte.write(fragment.message.data().getvalue())
+            dataBuffer.write(fragment.message.data().getvalue())
+
+        entity = EntityDefault().meta_map_put(self.__main.meta_map()).data_set(dataBuffer)
+        entity.meta_map().pop(EntityMetas.META_DATA_FRAGMENT_IDX)
 
         return Frame(self.__main.flag(),
                      MessageBuilder()
                      .flag(self.__main.flag())
                      .sid(self.__main.sid())
-                     .entity(EntityDefault().meta_map_put(self.__main.entity().meta_map())).build()
-                     )
+                     .event(self.__main.event())
+                     .entity(entity)
+                     .build())

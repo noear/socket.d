@@ -29,7 +29,7 @@ async def doOn_demo(s:Session, m:Message):
 async def doOn_upload(s:Session, m:Message):
     if m.is_request():
         fileName = m.meta(EntityMetas.META_DATA_DISPOSITION_FILENAME)
-        if fileName is None:
+        if fileName:
             await s.reply(m, StringEntity("file received: " + fileName + ", size: " + str(m.data_size())))
         else:
             await s.reply(m, StringEntity("no file! size: " + str(m.data_size())))

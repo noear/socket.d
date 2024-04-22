@@ -78,7 +78,7 @@ class ServerBase(Server,Listener):
         for s1 in self._sessions:
             if s1.is_valid():
                 await s1.preclose()
-                
+
     async def stop_do(self):
         for s1 in self._sessions:
             if s1.is_valid():

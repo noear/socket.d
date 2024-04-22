@@ -16,22 +16,22 @@ class EventListener(Listener):
         self._doOnMessageHandler: Union[Callable[[Session, Message], None], None] = None
         self._doOnCloseHandler: Union[Callable[[Session], None], None] = None
         self._doOnErrorHandler: Union[Callable[[Session, Exception], None], None] = None
-        self._eventRouteSelector: Union[Dict[str, Callable[[Session, Message], None]], None] = None
+        self._eventRouteSelector: Dict[str, Callable[[Session, Message], None]] = {}
 
-    def do_on_open(self, _on_open_handler: Callable[[Session], None]) -> 'EventListener':
-        self._doOnOpenHandler = _on_open_handler
+    def do_on_open(self, handler: Callable[[Session], None]) -> 'EventListener':
+        self._doOnOpenHandler = handler
         return self
 
-    def do_on_message(self, _on_message_handler: Callable[[Session, Message], None]) -> 'EventListener':
-        self._doOnMessageHandler = _on_message_handler
+    def do_on_message(self, handler: Callable[[Session, Message], None]) -> 'EventListener':
+        self._doOnMessageHandler = handler
         return self
 
-    def do_on_close(self, _on_close_handler: Callable[[Session, Exception], None]) -> 'EventListener':
-        self._doOnCloseHandler = _on_close_handler
+    def do_on_close(self, handler: Callable[[Session], None]) -> 'EventListener':
+        self._doOnCloseHandler = handler
         return self
 
-    def do_on_error(self, _on_error_handler: Callable[[Session, Exception], None]) -> 'EventListener':
-        self._doOnErrorHandler = _on_error_handler
+    def do_on_error(self, handler: Callable[[Session, Exception], None]) -> 'EventListener':
+        self._doOnErrorHandler = handler
         return self
 
     def do_on(self, event: str, handler: Callable[[Session, Message], None]) -> 'EventListener':

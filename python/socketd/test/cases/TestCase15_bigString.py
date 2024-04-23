@@ -1,11 +1,8 @@
 import asyncio
-import uuid
 
 from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from test.modelu.BaseTestCase import BaseTestCase
-
-from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
 from socketd.transport.server.ServerConfig import ServerConfig
@@ -26,15 +23,14 @@ class TestCase15_bigString(BaseTestCase):
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server = None
-        self.server_session: WebSocketServer = None
         self.client_session: Session = None
         self.loop = asyncio.get_event_loop()
 
     async def _start(self):
         s = SimpleListenerTest()
-        self.server: Server = SocketD.create_server(ServerConfig(self.schema).port(self.port))
-        self.server_session: WebSocketServer = await self.server.config(config_handler).listen(
-            s).start()
+        self.server: Server = await (SocketD.create_server(ServerConfig(self.schema).port(self.port))
+                                     .config(config_handler).listen(s)
+                                     .start())
 
         await asyncio.sleep(1)
 
@@ -54,8 +50,6 @@ class TestCase15_bigString(BaseTestCase):
         if self.client_session:
             await self.client_session.close()
 
-        if self.server_session:
-            self.server_session.close()
         if self.server:
             await self.server.stop()
 

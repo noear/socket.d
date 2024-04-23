@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：客户端请求并发送，服务端发送告警，客户端进行类型识别
  *
  * @author noear
  * @since 2.0

@@ -10,6 +10,7 @@ import org.noear.socketd.transport.java_kcp.impl.ServerKcpListener;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +76,7 @@ public class KcpNioServer extends ServerBase<KcpNioChannelAssistant> implements 
         super.stop();
 
         if (server != null) {
+            RunUtils.runAndTry(() -> Thread.sleep(100));
             server.stop();
         }
     }

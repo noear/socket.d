@@ -46,4 +46,11 @@ public interface Processor {
      * @param error   错误信息
      */
     void onError(ChannelInternal channel, Throwable error);
+
+    /**
+     * 执行关闭通知
+     *
+     * @param channel 通道
+     */
+    void doCloseNotice(ChannelInternal channel);
 }

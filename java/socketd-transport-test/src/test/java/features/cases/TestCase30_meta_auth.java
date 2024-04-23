@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：客户端发送元信息鉴权
  *
  * @author noear
  * @since 2.0

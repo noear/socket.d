@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 
@@ -292,6 +293,20 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                 log.warn("{} channel close error, sessionId={}",
                         getConfig().getRoleName(), getSession().sessionId(), e);
             }
+        }
+
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            this.onCloseDo();
+        }
+    }
+
+
+    private AtomicBoolean isCloseNotified = new AtomicBoolean(false);
+
+    private void onCloseDo() {
+        if (isCloseNotified.get() == false) {
+            isCloseNotified.set(true);
+            processor.doCloseNotice(this);
         }
     }
 }

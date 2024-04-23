@@ -145,6 +145,9 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                     Frame frame = getAssistant().read(socket);
                     if (frame != null) {
                         getProcessor().onReceive(channel, frame);
+                    } else {
+                        //休息10ms（避免cpu过高）
+                        Thread.sleep(10);
                     }
                 } catch (SocketTimeoutException e) {
                     //说明 idleTimeout

@@ -18,5 +18,5 @@ class Listener(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def on_error(self, session: Session, error):
+    async def on_error(self, session: Session, error):
         pass

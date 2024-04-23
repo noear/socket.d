@@ -105,7 +105,7 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase14_file() throws Exception {
+    public void TestCase14_fileUpload() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
@@ -113,7 +113,7 @@ public class CaseTest {
                 continue;
             }
 
-            BaseTestCase testCase = new TestCase14_file(s1, 1400 + i);
+            BaseTestCase testCase = new TestCase14_fileUpload(s1, 1400 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -126,7 +126,7 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase15_size() throws Exception {
+    public void TestCase15_metaSizeLimit() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
@@ -134,7 +134,7 @@ public class CaseTest {
                 continue;
             }
 
-            BaseTestCase testCase = new TestCase15_size(s1, 1500 + i);
+            BaseTestCase testCase = new TestCase15_metaSizeLimit(s1, 1500 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -354,7 +354,7 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase29_download() throws Exception {
+    public void TestCase29_downloadProgress() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
@@ -362,7 +362,7 @@ public class CaseTest {
                 continue;
             }
 
-            BaseTestCase testCase = new TestCase29_download(s1, 2900 + i);
+            BaseTestCase testCase = new TestCase29_downloadProgress(s1, 2900 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -426,11 +426,11 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase33_closeStarting() throws Exception {
+    public void TestCase33_client_preclose() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            BaseTestCase testCase = new TestCase33_closeStarting(s1, 3300 + i);
+            BaseTestCase testCase = new TestCase33_client_preclose(s1, 3300 + i);
             try {
                 testCase.start();
                 testCase.stop();
@@ -494,11 +494,45 @@ public class CaseTest {
     }
 
     @Test
-    public void TestCase37_closeStartingOfServer() throws Exception {
+    public void TestCase37_server_prestop() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
-            BaseTestCase testCase = new TestCase37_closeStartingOfServer(s1, 3700 + i);
+            BaseTestCase testCase = new TestCase37_server_prestop(s1, 3700 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void TestCase38_clientCloseSelf() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase38_clientCloseSelf(s1, 3800 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void TestCase39_serverCloseSelf() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase39_serverCloseSelf(s1, 3900 + i);
             try {
                 testCase.start();
                 testCase.stop();

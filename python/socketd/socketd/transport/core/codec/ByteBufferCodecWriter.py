@@ -12,7 +12,10 @@ class ByteBufferCodecWriter(CodecWriter):
         self.__buffer.write(_bytes)
 
     def put_int(self, _num: int):
-        self.__buffer.write(_num.to_bytes(length=4, byteorder='little', signed=False))
+        self.__buffer.put_int(_num)
+
+    def put_char(self, _char: int):
+        self.__buffer.put_char(_char)
 
     def flush(self):
         self.__buffer.flush()

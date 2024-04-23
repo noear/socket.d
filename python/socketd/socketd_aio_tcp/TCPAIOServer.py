@@ -78,7 +78,7 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                                                                 sock=self._sock,
                                                                 start_serving=True,
                                                                 )
-        return self._server
+        await self._server
 
     async def stop(self):
         log.info("TcpAioServer stop...")

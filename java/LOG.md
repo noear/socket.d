@@ -1,5 +1,8 @@
 ### 2.4.11
+* 调整 本端关闭时，也触发本端的 onClose 事件
 * 禁止 ws 客户端连接 sd:ws 服务（避免因为 ws 心跳，又不会触发空闲超时）
+* 优化 socketd-transport-java-kcp 服务端停止处理（添加延时，确保指令发送完成）
+* 优化 socketd-transport-java-tcp 在某些操作系统下空跑可能 cpu 过高的问题
 
 ### 2.4.10
 * 添加 preclose 和 prestop（简化二段式停止操作）

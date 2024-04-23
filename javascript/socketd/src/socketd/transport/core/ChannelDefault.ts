@@ -13,6 +13,7 @@ import {ChannelBase, ChannelInternal} from "./Channel";
 import {SessionDefault} from "./SessionDefault";
 import type { IoBiConsumer } from "./Typealias";
 import {SocketAddress} from "./SocketAddress";
+import {RunUtils} from "../../utils/RunUtils";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _source: S;
@@ -202,6 +203,17 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         } catch (e) {
             console.warn(`${this.getConfig().getRoleName()} channel close error, sessionId=${this.getSession().sessionId()}`, e);
+        }
+
+        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+            this.onCloseDo();
+        }
+    }
+    private _isCloseNotified:boolean = false;
+    private onCloseDo(){
+        if (this._isCloseNotified == false) {
+            this._isCloseNotified = true;
+            this._processor.doCloseNotice(this);
         }
     }
 }

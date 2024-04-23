@@ -11,7 +11,7 @@ class ServerConfig(ConfigBase):
             schema = schema[3:]
 
         self.__schemaCleaned = schema;
-        self.__host = ""
+        self.__host = "0.0.0.0"
         self.__port = 8602
 
     def get_schema(self):

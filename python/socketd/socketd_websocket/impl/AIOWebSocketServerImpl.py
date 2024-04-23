@@ -2,10 +2,11 @@ from __future__ import annotations
 import asyncio
 from typing import Optional, Union
 
-from websockets import ConnectionClosedError, ConnectionClosedOK
+from websockets.frames import Opcode
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
+from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Flags import Flags
@@ -19,25 +20,29 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
         self.ws_aio_server = ws_aio_server
         self.__ws_server: WebSocketServer = ws_server
         self.__attachment: Optional[Channel] = None
-        WebSocketServerProtocol.__init__(self=self, ws_handler=self.on_message, ws_server=self.__ws_server,
+        WebSocketServerProtocol.__init__(self=self,
+                                         ws_handler=self.on_message,
+                                         ws_server=self.__ws_server,
                                          *args,
                                          **kwargs)
 
-    def set_attachment(self, obj: Channel):
+    def set_attachment(self, obj: ChannelInternal):
         self.__attachment = obj
 
-    def get_attachment(self) -> Channel:
+    def get_attachment(self) -> ChannelInternal:
         return self.__attachment
 
     def connection_open(self) -> None:
         """握手完成回调"""
         super().connection_open()
-        log.debug("AIOWebSocketServerImpl connection_open")
         self.on_open(self)
 
-    def handshake_handler(self):
-        """socket_handshake"""
-        log.debug("handshake_handler")
+    async def read_frame(self, max_size: Optional[int]) -> Frame:
+        frame = await super().read_frame(max_size)
+        if frame is not None:
+            if frame.opcode == Opcode.PONG:
+                await self.assert_handshake()
+        return frame
 
     def on_open(self, conn) -> None:
         """create_protocol"""
@@ -47,13 +52,12 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
 
     async def on_error(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], ex: Exception):
         try:
-            channel: Channel = conn.get_attachment()
+            channel: ChannelInternal = conn.get_attachment()
             if channel is not None:
                 # 有可能未 onOpen，就 onError 了；此时通道未成
                 self.ws_aio_server.get_processor().on_error(channel, ex)
         except Exception as e:
-            log.error(e)
-            raise e
+            log.warning(e)
 
     async def on_message(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], path: str):
         """ws_handler"""
@@ -68,9 +72,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
                     if task.done():
                         tasks.pop(0)
                 message = await self.recv()
-                # frame: Frame = self.ws_aio_server.get_assistant().read(
-                #     message)
-                # # 采用线程池执行IO耗时任务
+                # 采用线程池执行IO耗时任务
                 frame: Frame = await loop.run_in_executor(self.ws_aio_server.get_config().get_exchange_executor(),
                                                           lambda _message: self.ws_aio_server.get_assistant().read(
                                                               _message), message)
@@ -79,33 +81,25 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
                     tasks.append(
                         loop.create_task(self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)))
                     if frame.flag() == Flags.Close:
-                        """客户端主动关闭"""
-                        await self.on_close(conn)
-                        log.debug("{sessionId} 主动退出",
-                                  sessionId=conn.get_attachment().get_session().session_id())
+                        # 不需要再 while(true) 了 //其它处理在 processor
                         break
-            except asyncio.CancelledError as c:
-                log.warning(c)
-                break
-            except ConnectionClosedOK as e:
-                # received 1000 (OK); then sent 1000 (OK) 或者 1001  成功直接忽略
-                log.info(e)
-                break
-            except ConnectionClosedError as e:
-                # 客户端异常关闭
-                log.error(e)
-                break
+
             except Exception as e:
-                log.error(e)
                 await self.on_error(conn, e)
-        try:
-            # 等待未完成任务
-            await asyncio.wait(tasks, timeout=10)
-        except asyncio.CancelledError as c:
-            pass
-        except TimeoutError as e:
-            log.warning(f"server on_receive timeout {e}")
+
 
     async def on_close(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol]):
         """关闭tcp,结束握手"""
         await conn.close()
+
+    async def assert_handshake(self) -> bool:
+        channel: ChannelInternal = self.get_attachment()
+        if channel is None or channel.get_handshake() is None:
+            try:
+                await self.close()
+            except Exception:
+                ...
+            log.warning("Server channel no handshake onPingPong")
+            return False
+        else:
+            return True

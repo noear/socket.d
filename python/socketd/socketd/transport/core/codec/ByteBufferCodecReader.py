@@ -13,7 +13,7 @@ class ByteBufferCodecReader(CodecReader):
         return self.__buffer.getvalue()
 
     def get_int(self) -> int:
-        return int.from_bytes(self.__buffer.read1(4), byteorder='little', signed=False)
+        return int.from_bytes(self.__buffer.read1(4), byteorder='big', signed=False)
 
     def skip_bytes(self, size):
         self.__buffer.seek(self.__buffer.tell() + size)

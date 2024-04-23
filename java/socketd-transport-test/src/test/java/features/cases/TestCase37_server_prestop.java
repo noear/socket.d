@@ -16,13 +16,15 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 测试：服务端预停止
+ *
  * @author noear
  * @since 2.0
  */
-public class TestCase37_closeStartingOfServer extends BaseTestCase {
-    private static Logger log = LoggerFactory.getLogger(TestCase37_closeStartingOfServer.class);
+public class TestCase37_server_prestop extends BaseTestCase {
+    private static Logger log = LoggerFactory.getLogger(TestCase37_server_prestop.class);
 
-    public TestCase37_closeStartingOfServer(String schema, int port) {
+    public TestCase37_server_prestop(String schema, int port) {
         super(schema, port);
     }
 

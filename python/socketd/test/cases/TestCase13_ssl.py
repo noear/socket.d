@@ -1,11 +1,10 @@
 import asyncio
 import ssl
+import platform
 
 from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from test.modelu.BaseTestCase import BaseTestCase
-
-from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
 from socketd.transport.server.ServerConfig import ServerConfig
@@ -14,11 +13,18 @@ from socketd.transport.server.Server import Server
 from test.modelu.SimpleListenerTest import SimpleListenerTest
 from loguru import logger
 
+def is_mac_os():
+    return 'Darwin' in platform.system()
 
 def get_s_ssl():
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     ssl_context.check_hostname = False
-    ssl_context.load_cert_chain(certfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.crt",
+
+    if is_mac_os():
+        ssl_context.load_cert_chain(certfile=r"/Users/noear/WORK/work_github/noear/socketd/python/socketd/test/cases/ssl/server.crt",
+                                    keyfile=r"/Users/noear/WORK/work_github/noear/socketd/python/socketd/test/cases/ssl/server.key")
+    else:
+        ssl_context.load_cert_chain(certfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.crt",
                                 keyfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.key")
     return ssl_context
 
@@ -28,9 +34,15 @@ def get_c_ssl():
     ssl_context.verify_mode = ssl.CERT_REQUIRED  # 强制要求进行证书验证
     ssl_context.check_hostname = False
     # 添加 CA 证书路径
-    ssl_context.load_cert_chain(certfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\client.crt",
+    if is_mac_os():
+        ssl_context.load_cert_chain(certfile=r"/Users/noear/WORK/work_github/noear/socketd/python/socketd/test/cases/ssl/client.crt",
+                                    keyfile=r"/Users/noear/WORK/work_github/noear/socketd/python/socketd/test/cases/ssl/client.key")
+        ssl_context.load_verify_locations(r"/Users/noear/WORK/work_github/noear/socketd/python/socketd/test/cases/ssl/server.crt")
+    else:
+        ssl_context.load_cert_chain(certfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\client.crt",
                                 keyfile=r"D:\java_items\socketd\python\socketd\test\cases\ssl\client.key")
-    ssl_context.load_verify_locations(r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.crt")
+        ssl_context.load_verify_locations(r"D:\java_items\socketd\python\socketd\test\cases\ssl\server.crt")
+
     return ssl_context
 
 
@@ -39,21 +51,19 @@ class TestCase13_ssl(BaseTestCase):
     def __init__(self, schema, port):
         super().__init__(schema, port)
         self.server: Server = None
-        self.server_session: WebSocketServer = None
         self.client_session: Session = None
         self.loop = asyncio.get_event_loop()
 
     async def _start(self):
-        s = SimpleListenerTest()
-        self.server: Server = SocketD.create_server(ServerConfig("ws").port(self.port))
-
         def s_config_handler(config: ServerConfig | ClientConfig):
             config.idle_timeout(10000)
             # config.set_logger_level("DEBUG")
             config.ssl_context(get_s_ssl())
 
-        self.server_session: WebSocketServer = await self.server.config(s_config_handler).listen(
-            s).start()
+        s = SimpleListenerTest()
+        self.server: Server = await (SocketD.create_server(ServerConfig("ws").port(self.port))
+                               .config(s_config_handler).listen(s)
+                               .start())
         await asyncio.sleep(1)
         serverUrl = "ws" + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
 
@@ -81,8 +91,6 @@ class TestCase13_ssl(BaseTestCase):
         if self.client_session:
             await self.client_session.close()
 
-        if self.server_session:
-            self.server_session.close()
         if self.server:
             await self.server.stop()
 

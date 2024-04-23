@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：长时间休息（2分钟，有心跳但不重连）
  *
  * @author noear
  * @since 2.0

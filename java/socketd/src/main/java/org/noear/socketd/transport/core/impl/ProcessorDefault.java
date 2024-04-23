@@ -261,10 +261,6 @@ public class ProcessorDefault implements Processor {
      */
     private void onCloseInternal(ChannelInternal channel, int code) {
         channel.close(code);
-
-        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            listener.onClose(channel.getSession());
-        }
     }
 
     /**
@@ -276,5 +272,18 @@ public class ProcessorDefault implements Processor {
     @Override
     public void onError(ChannelInternal channel, Throwable error) {
         listener.onError(channel.getSession(), error);
+    }
+
+    /**
+     * 执行关闭通知
+     *
+     * @param channel 通道
+     */
+    public void doCloseNotice(ChannelInternal channel) {
+        try {
+            listener.onClose(channel.getSession());
+        } catch (Throwable error) {
+            this.onError(channel, error);
+        }
     }
 }

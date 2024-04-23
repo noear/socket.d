@@ -8,6 +8,7 @@ import {Flags} from "./Flags";
 import {SocketDAlarmException, SocketDConnectionException} from "../../exception/SocketDException";
 import {HandshakeDefault} from "./HandshakeDefault";
 import {StreamInternal} from "../stream/Stream";
+import {Session} from "./Session";
 
 /**
  * 处理器
@@ -57,6 +58,14 @@ export interface Processor {
      * @param error   错误信息
      */
     onError(channel: ChannelInternal, error: Error);
+
+
+    /**
+     * 执行关闭通知
+     *
+     * @param channel 通道
+     */
+    doCloseNotice(channel: ChannelInternal);
 }
 
 export class ProcessorDefault implements Processor {
@@ -71,7 +80,6 @@ export class ProcessorDefault implements Processor {
             this._listener = listener;
         }
     }
-
 
     onReceive(channel: ChannelInternal, frame: Frame) {
         if (channel.getConfig().clientMode()) {
@@ -94,7 +102,7 @@ export class ProcessorDefault implements Processor {
                             this.onError(channel, err);
                         }
                     }
-                }else{
+                } else {
                     //如果有异常
                     if (channel.isValid()) {
                         //如果还有效，则关闭通道
@@ -255,13 +263,17 @@ export class ProcessorDefault implements Processor {
 
     onCloseInternal(channel: ChannelInternal, code: number) {
         channel.close(code);
-
-        if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            this._listener.onClose(channel.getSession());
-        }
     }
 
     onError(channel: ChannelInternal, error: any) {
-        this._listener.onError(channel.getSession(), error)
+        this._listener.onError(channel.getSession(), error);
+    }
+
+    doCloseNotice(channel: ChannelInternal) {
+        try {
+            this._listener.onClose(channel.getSession());
+        } catch (err) {
+            this.onError(channel, err)
+        }
     }
 }

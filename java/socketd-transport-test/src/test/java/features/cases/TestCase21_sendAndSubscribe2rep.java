@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndSubscribe() 双向链式互发
+ * 测试：发送并订阅，双向互发
  *
  * @author noear
  * @since 2.0

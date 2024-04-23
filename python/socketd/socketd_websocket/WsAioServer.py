@@ -1,7 +1,6 @@
 from typing import Optional
 
-from websockets.server import WebSocketServer, serve as Serve, WebSocketServerProtocol
-from websockets import broadcast
+from websockets.server import serve as Serve
 
 from socketd import SocketD
 from socketd.transport.core.Costants import Constants
@@ -20,10 +19,13 @@ class WsAioServer(ServerBase):
         super().__init__(config, WsAioChannelAssistant(config))
         self._server: Optional[Serve] = None
 
+    def __del__(self):
+        del self._server
+
     def get_title(self):
         return "ws/aio/py-websocket/v" + SocketD.version();
 
-    async def start(self) -> WebSocketServer:
+    async def start(self):
         if self._isStarted:
             raise Exception("Socket.D server started")
         else:
@@ -40,15 +42,14 @@ class WsAioServer(ServerBase):
                            port=self.get_config().get_port(),
                            create_protocol=AIOWebSocketServerImpl,
                            ws_aio_server=self,
-                           ping_interval=self.get_config().get_idle_timeout(),
-                           ping_timeout=self.get_config().get_idle_timeout(),
                            ssl=self.get_config().get_ssl_context(),
                            logger=logger,
-                           max_size=Constants.MAX_SIZE_FRAME,
+                           max_size=Constants.MAX_SIZE_FRAME
                            )
 
         log.info("Socket.D server started: {server=" + self.get_config().get_local_url() + "}")
-        return await self._server
+        await self._server
+        return self
 
     async def stop(self):
         if self._isStarted:

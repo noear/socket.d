@@ -19,7 +19,7 @@ import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * sendAndRequest() 超时
+ * 测试：上传小文件 200kb<（无分片）
  *
  * @author noear
  * @since 2.0

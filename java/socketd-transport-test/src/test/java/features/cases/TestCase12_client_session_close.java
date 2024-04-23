@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 会话关闭测试（关好后，不能再自动重链）
+ * 测试：会话关闭测试（关好后，不能再自动重链）
  *
  * @author noear
  * @since 2.0

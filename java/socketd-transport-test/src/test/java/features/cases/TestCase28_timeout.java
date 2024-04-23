@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 以客户端为主的基本消息测试
+ * 测试：客户端发送请求（或订阅）超时回调通知
  *
  * @author noear
  * @since 2.0

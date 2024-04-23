@@ -133,6 +133,9 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                     }
 
                     client.getProcessor().onReceive(channel, frame);
+                } else {
+                    //休息10ms（避免cpu过高）
+                    Thread.sleep(10);
                 }
             } catch (Exception e) {
                 if (e instanceof SocketDConnectionException) {

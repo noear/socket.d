@@ -20,19 +20,22 @@ FileServer = ./bin/Demo03_FileServer
 FileClient = ./bin/Demo03_FileClient
 FlowControlServer = ./bin/Demo03_FlowControlServer
 FlowControlClient = ./bin/Demo03_FlowControlClient
-
+Send2Server = ./bin/Demo03_Send2Server
+Send2Client = ./bin/Demo03_Send2Client
 
 .PHONY:all
 all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) \
 	$(FileServer) $(FileClient) \
-	$(FlowControlServer) $(FlowControlClient)
+	$(FlowControlServer) $(FlowControlClient) \
+	$(Send2Server) $(Send2Client)
 
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
 	./3rd/sds/sds.c \
 	./base/socketd.c \
 	./base/meta.c \
-	./base/param.c
+	./base/param.c \
+	./base/attr.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -96,6 +99,16 @@ $(FlowControlClient):$(OBJS) ./examples/Demo03_FlowControlClient.c ./base/tcp_cl
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(Send2Server):$(OBJS) ./examples/Demo03_Send2Server.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(Send2Client):$(OBJS) ./examples/Demo03_Send2Client.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
 
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
@@ -104,6 +117,7 @@ clean:
 	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) \
 	$(FileServer) $(FileClient) \
 	$(FlowControlServer) $(FlowControlClient) \
+	$(Send2Server) $(Send2Client)
 
 prepare:
 	$(MKDIR) bin

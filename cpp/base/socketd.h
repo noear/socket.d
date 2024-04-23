@@ -3,6 +3,8 @@
 
 #include "sd_entity_metas.h"
 #include "meta.h"
+#include "param.h"
+#include "attr.h"
 
 /**
  * 10 Connect Frame
@@ -63,6 +65,7 @@ typedef struct sd_session_s {
     char path[128];  //handshake path
     sd_channel_t* channle;
     struct list_head paramlist; //handshake parameter list
+    struct list_head attrlist;  //attribute list
 } sd_session_t;
 
 typedef struct sd_channel_s {
@@ -116,9 +119,17 @@ void sd_put_param(sd_session_t* session, const char* name, const char* value);
 const char* sd_param(sd_session_t* session, const char* name);
 void parse_handshake_param(sd_session_t* session, sd_message_t* msg);
 
-void* sd_hio(sd_session_t* session);
+/*attr opt*/
+void attr_list_init(sd_session_t* session);
+void attr_list_free(sd_session_t* session);
+sd_attr_t* sd_put_attr(sd_session_t* session, const char* name, const char* value);
+sd_attr_t* sd_put_attr_as_int(sd_session_t* session, const char* name, int value);
+const char* sd_attr(sd_session_t* session, const char* name);
+const char* sd_attr_or_default(sd_session_t* session, const char* name, const char* dv);
+int sd_attr_or_default_as_int(sd_session_t* session, const char* name, int dv);
 
 // helper
+void* sd_hio(sd_session_t* session);
 uint32_t swap_endian(uint32_t x);
 void print_package_info(const char* msg, struct sd_package_s* sd);
 

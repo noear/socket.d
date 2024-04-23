@@ -8,6 +8,7 @@ import {Flags} from "./Flags";
 import {SocketDAlarmException, SocketDConnectionException} from "../../exception/SocketDException";
 import {HandshakeDefault} from "./HandshakeDefault";
 import {StreamInternal} from "../stream/Stream";
+import {Session} from "./Session";
 
 /**
  * 处理器
@@ -20,11 +21,6 @@ export interface Processor {
      * 设置监听器
      */
     setListener(listener: Listener);
-
-    /**
-     * 获取监听器
-     * */
-    getListener();
 
     /**
      * 接收处理
@@ -62,6 +58,14 @@ export interface Processor {
      * @param error   错误信息
      */
     onError(channel: ChannelInternal, error: Error);
+
+
+    /**
+     * 执行关闭通知
+     *
+     * @param channel 通道
+     */
+    doCloseNotice(channel: ChannelInternal);
 }
 
 export class ProcessorDefault implements Processor {
@@ -75,10 +79,6 @@ export class ProcessorDefault implements Processor {
         if (listener != null) {
             this._listener = listener;
         }
-    }
-
-    getListener() {
-        return this._listener;
     }
 
     onReceive(channel: ChannelInternal, frame: Frame) {
@@ -266,6 +266,14 @@ export class ProcessorDefault implements Processor {
     }
 
     onError(channel: ChannelInternal, error: any) {
-        this._listener.onError(channel.getSession(), error)
+        this._listener.onError(channel.getSession(), error);
+    }
+
+    doCloseNotice(channel: ChannelInternal) {
+        try {
+            this._listener.onClose(channel.getSession());
+        } catch (err) {
+            this.onError(channel, err)
+        }
     }
 }

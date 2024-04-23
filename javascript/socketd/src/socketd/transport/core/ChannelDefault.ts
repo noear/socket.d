@@ -206,14 +206,14 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            RunUtils.runAndTry(this.onCloseDo.bind(this));
+            this.onCloseDo();
         }
     }
     private _isCloseNotified:boolean = false;
     private onCloseDo(){
         if (this._isCloseNotified == false) {
             this._isCloseNotified = true;
-            this._processor.getListener().onClose(this.getSession());
+            this._processor.doCloseNotice(this);
         }
     }
 }

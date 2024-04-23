@@ -13,11 +13,6 @@ public interface Processor {
     void setListener(Listener listener);
 
     /**
-     * 获取监听器
-     */
-    Listener getListener();
-
-    /**
      * 接收处理
      */
     void onReceive(ChannelInternal channel, Frame frame);
@@ -51,4 +46,11 @@ public interface Processor {
      * @param error   错误信息
      */
     void onError(ChannelInternal channel, Throwable error);
+
+    /**
+     * 执行关闭通知
+     *
+     * @param channel 通道
+     */
+    void doCloseNotice(ChannelInternal channel);
 }

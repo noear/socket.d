@@ -4,7 +4,6 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.transport.stream.StreamManger;
-import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -297,7 +296,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
 
         if (code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
-            RunUtils.runAndTry(this::onCloseDo);
+            this.onCloseDo();
         }
     }
 
@@ -307,7 +306,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private void onCloseDo() {
         if (isCloseNotified.get() == false) {
             isCloseNotified.set(true);
-            processor.getListener().onClose(getSession());
+            processor.doCloseNotice(this);
         }
     }
 }

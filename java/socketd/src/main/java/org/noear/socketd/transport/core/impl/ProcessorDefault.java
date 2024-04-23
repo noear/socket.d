@@ -31,11 +31,6 @@ public class ProcessorDefault implements Processor {
         }
     }
 
-    @Override
-    public Listener getListener() {
-        return listener;
-    }
-
     /**
      * 接收处理
      */
@@ -277,5 +272,18 @@ public class ProcessorDefault implements Processor {
     @Override
     public void onError(ChannelInternal channel, Throwable error) {
         listener.onError(channel.getSession(), error);
+    }
+
+    /**
+     * 执行关闭通知
+     *
+     * @param channel 通道
+     */
+    public void doCloseNotice(ChannelInternal channel) {
+        try {
+            listener.onClose(channel.getSession());
+        } catch (Exception error) {
+            this.onError(channel, error);
+        }
     }
 }

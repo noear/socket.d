@@ -9,7 +9,7 @@ from socketd.transport.server.Server import Server
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
-from socketd.transport.utils.RunUtils import RunUtils
+from socketd.utils.RunUtils import RunUtils
 
 
 class ServerBase(Server,Listener):
@@ -73,7 +73,7 @@ class ServerBase(Server,Listener):
         self._sessions.remove(s)
         await RunUtils.waitTry(self._listener.on_close(s))
 
-    async def on_error(self, s: Session, e):
+    async def on_error(self, s: Session, e:Exception):
         await RunUtils.waitTry(self._listener.on_error(s, e))
 
     async def prestop_do(self):

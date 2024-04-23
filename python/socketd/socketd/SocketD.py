@@ -14,7 +14,7 @@ from socketd_aio_tcp.TcpAioProvider import TcpAioProvider
 
 
 def version() -> str:
-    return "2.4.10"
+    return "2.4.11"
 
 
 def protocol_version() -> str:

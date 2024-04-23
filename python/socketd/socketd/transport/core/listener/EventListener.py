@@ -3,7 +3,7 @@ from typing import Callable, Union, Dict, Coroutine
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
 from socketd.transport.core.Message import Message
-from socketd.transport.utils.RunUtils import RunUtils
+from socketd.utils.RunUtils import RunUtils
 
 
 class EventListener(Listener):

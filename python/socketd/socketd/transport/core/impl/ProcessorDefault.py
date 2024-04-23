@@ -1,4 +1,3 @@
-import asyncio
 from abc import ABC
 from typing import Optional
 
@@ -14,7 +13,7 @@ from socketd.transport.core.Frame import Frame
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.listener.SimpleListener import SimpleListener
 from socketd.transport.stream.StreamManger import StreamInternal
-from socketd.transport.utils.RunUtils import RunUtils
+from socketd.utils.RunUtils import RunUtils
 
 
 class ProcessorDefault(Processor, ABC):

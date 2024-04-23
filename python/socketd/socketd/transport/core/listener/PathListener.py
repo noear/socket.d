@@ -4,7 +4,7 @@ from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
 from socketd.transport.core.listener.RouteSelector import RouteSelector
 from socketd.transport.core.listener.RouteSelectorDefault import RouteSelectorDefault
-from socketd.transport.utils.RunUtils import RunUtils
+from socketd.utils.RunUtils import RunUtils
 
 
 class PathListener(Listener):

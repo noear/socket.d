@@ -282,7 +282,7 @@ public class ProcessorDefault implements Processor {
     public void doCloseNotice(ChannelInternal channel) {
         try {
             listener.onClose(channel.getSession());
-        } catch (Exception error) {
+        } catch (Throwable error) {
             this.onError(channel, error);
         }
     }

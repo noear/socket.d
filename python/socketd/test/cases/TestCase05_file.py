@@ -44,7 +44,7 @@ class SimpleListenerTest(Listener, ABC):
         if file_name:
             logger.debug(f"file_name {file_name}")
             with open(out_file_name, "wb") as f:
-                f.write(message.data_as_bytes())
+                f.write(message.data())
 
         path = Path(out_file_name)
         assert path.exists()

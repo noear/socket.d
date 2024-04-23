@@ -112,7 +112,9 @@ void on_pong_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_close_handler(sd_channel_t* channel, sd_package_t* sd) {
-    sd_no_support(sd->frame.flag);
+    if (client_event.onclose) {
+        client_event.onclose(channel->session, &sd->frame.message);
+    }
 }
 
 void on_alarm_handler(sd_channel_t* channel, sd_package_t* sd) {
@@ -120,7 +122,9 @@ void on_alarm_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_message_handler(sd_channel_t* channel, sd_package_t* sd) {
-    sd_no_support(sd->frame.flag);
+    if (client_event.onmessage) {
+        client_event.onmessage(channel->session, &sd->frame.message);
+    }
 }
 
 void on_request_handler(sd_channel_t* channel, sd_package_t* sd) {
@@ -190,8 +194,11 @@ void client_on_handler(sd_channel_t* channel, sd_package_t* sd) {
 
 void hand_shake(hio_t* io, sd_channel_t* channel, const char* url) {
     if (channel && channel->session == NULL) {
-        channel->session = new_session(channel);
-        generate_id(channel->session->sid, UUID4_LEN);
+        sd_session_t* session = new_session(channel);        
+        param_list_init(session);
+        attr_list_init(session);
+        generate_id(session->sid, UUID4_LEN);
+        channel->session = session;
     }
 
     if (channel && channel->session) {

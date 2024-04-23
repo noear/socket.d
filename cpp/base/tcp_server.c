@@ -117,7 +117,10 @@ void sd_no_support(uint32_t n) {
 
 void on_connect_handler(sd_channel_t* channel, sd_package_t* sd) {
     if (channel->session == NULL) {
-        channel->session = new_session(channel);
+        sd_session_t* session = new_session(channel);        
+        param_list_init(session);
+        attr_list_init(session);
+        channel->session = session;
     }
 
     strcpy(channel->session->sid, sd->frame.message.sid);

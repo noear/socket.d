@@ -67,8 +67,6 @@ void param_list_free(sd_session_t* session) {
 // tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3d
 // sd:tcp://127.0.0.1:8602/admin?u=noear&p=2
 void parse_handshake_param(sd_session_t* session, sd_message_t* msg) {
-	param_list_init(session);
-
     if (msg->entity.data && msg->entity.datalen) {
 		char* buf = malloc(msg->entity.datalen + 1);
 		memset(buf, 0, msg->entity.datalen + 1);

@@ -11,13 +11,16 @@
 
 <p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/org.noear/socketd">
-        <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Maven%20Central" alt="Maven" />
+        <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Latest-Version" alt="Latest-Version" />
     </a>
     <a target="_blank" href="LICENSE">
-		<img src="https://img.shields.io/:license-Apache2-blue.svg" alt="Apache 2" />
+		<img src="https://img.shields.io/:License-Apache 2.0-blue.svg" alt="Apache 2.0" />
 	</a>
-   <a>
+    <a>
 		<img src="https://img.shields.io/badge/Java-8~22-green.svg" alt="Java-8~22" />
+	</a>
+    <a>
+		<img src="https://img.shields.io/badge/Kotlin-8+-green.svg" alt="Kotlin-8+" />
 	</a>
     <a>
 		<img src="https://img.shields.io/badge/JavaScript-es6+-green.svg" alt="JavaScript-es6+" />
@@ -30,7 +33,7 @@
         <img src='https://gitee.com/noear/socketd/badge/star.svg' alt='gitee star'/>
     </a>
     <a target="_blank" href='https://github.com/noear/socketd/stargazers'>
-        <img src="https://img.shields.io/github/stars/noear/socketd.svg?logo=github" alt="github star"/>
+        <img src="https://img.shields.io/github/stars/noear/socketd.svg?style=flat&logo=github" alt="github star"/>
     </a>
 </p>
 

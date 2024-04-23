@@ -1,12 +1,9 @@
 
 import asyncio
-import uuid
 
 from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from test.modelu.BaseTestCase import BaseTestCase
-
-from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
 from socketd.transport.server.ServerConfig import ServerConfig

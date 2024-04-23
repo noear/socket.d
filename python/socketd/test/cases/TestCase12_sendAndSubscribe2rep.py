@@ -1,5 +1,4 @@
 import asyncio
-import uuid
 
 from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
@@ -7,8 +6,6 @@ from socketd.transport.core.Message import Message
 from socketd.transport.stream import SubscribeStream
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
-
-from websockets.legacy.server import WebSocketServer
 
 from socketd.transport.core.Session import Session
 from socketd.transport.server.ServerConfig import ServerConfig

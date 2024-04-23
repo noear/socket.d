@@ -2,7 +2,6 @@ import asyncio
 
 from test.modelu.BaseTestCase import BaseTestCase
 
-from websockets.legacy.server import WebSocketServer
 from loguru import logger
 
 from socketd.transport.core.Session import Session

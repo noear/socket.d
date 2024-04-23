@@ -6,8 +6,6 @@ from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
-from websockets.legacy.server import WebSocketServer
-
 from socketd.transport.core.Session import Session
 from socketd import SocketD
 from socketd.transport.server.ServerConfig import ServerConfig

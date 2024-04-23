@@ -14,10 +14,6 @@ class Processor(ABC):
         pass
 
     @abstractmethod
-    def get_listener(self) -> Listener:
-        pass
-
-    @abstractmethod
     def on_receive(self, channel: Channel, frame:Frame):
         pass
 
@@ -35,4 +31,7 @@ class Processor(ABC):
 
     @abstractmethod
     def on_error(self, channel: ChannelInternal, error):
+        pass
+    @abstractmethod
+    def do_close_notice(self, channel: ChannelInternal):
         pass

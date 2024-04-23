@@ -48,27 +48,22 @@ async def doOn_push(s:Session, m:Message):
     for i in range(100):
         if s.attr_has("push") is False:
             break
+        await asyncio.sleep(0.1)
         await s.send("/push", StringEntity("push test"))
 
 async def doOn_unpush(s:Session, m:Message):
     s.attr_map().pop("push")
 
-async def do_on_close(s:Session):
-    log.info("onClose: " + s.session_id())
-async def do_on_error(s:Session, err:Exception):
-    log.warning("onError: " + s.session_id(), err)
-    print(err)
-
 def buildListener():
     return (EventListener().do_on_open(do_on_open)
      .do_on_message(do_on_message)
-     .do_on_close(do_on_close)
-     .do_on_error(do_on_error)
+     .do_on_close(lambda s:log.info("onClose: " + s.session_id()))
+     .do_on_error(lambda s,err: log.warning("onError: " + s.session_id(), err))
      .do_on("/demo", doOn_demo)
      .do_on("/upload", doOn_upload)
      .do_on("/download", doOn_download)
      .do_on("/push", doOn_push)
-     .do_on("/unpush", doOn_push)
+     .do_on("/unpush", lambda s,m: s.attr_map().pop("push"))
      )
 
 async def main():

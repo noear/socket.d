@@ -26,9 +26,6 @@ class ProcessorDefault(Processor, ABC):
         if listener is not None:
             self.listener = listener
 
-    def get_listener(self):
-        return self.listener
-
     async def on_receive(self, channel: ChannelInternal, frame):
         if channel.get_config().client_mode():
             log.debug(f"C-REV:{frame}")
@@ -147,7 +144,7 @@ class ProcessorDefault(Processor, ABC):
             self.on_message(channel, frame.message())
 
     def on_open(self, channel: ChannelInternal):
-        asyncio.create_task(self.on_open_do(channel))
+        RunUtils.taskTry(self.on_open_do(channel))
 
     async def on_open_do(self, channel: ChannelInternal):
         try:
@@ -158,7 +155,7 @@ class ProcessorDefault(Processor, ABC):
             channel.do_open_future(False, e)
 
     def on_message(self, channel: ChannelInternal, message: Message):
-        asyncio.create_task(self.on_message_do(channel, message))
+        RunUtils.taskTry(self.on_message_do(channel, message))
 
     async def on_message_do(self, channel: ChannelInternal, message: Message):
         try:
@@ -169,10 +166,19 @@ class ProcessorDefault(Processor, ABC):
 
     def on_close(self, channel: ChannelInternal):
         if channel.is_closed() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
-            asyncio.create_task(self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION))
+            RunUtils.taskTry(self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION))
 
     async def on_close_internal(self, channel: ChannelInternal, code: int):
         await channel.close(code)
 
     def on_error(self, channel: ChannelInternal, error):
         RunUtils.taskTry(self.listener.on_error(channel.get_session(), error))
+
+    def do_close_notice(self, channel: ChannelInternal):
+         RunUtils.taskTry(self.do_close_notice_internal(channel))
+
+    async def do_close_notice_internal(self, channel: ChannelInternal):
+        try:
+            await RunUtils.waitTry(self.listener.on_close(channel))
+        except Exception as e:
+            self.on_error(channel, e)

@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import Dict
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
 from socketd.transport.core.listener.RouteSelector import RouteSelector
 from socketd.transport.core.listener.RouteSelectorDefault import RouteSelectorDefault
+from socketd.transport.utils.RunUtils import RunUtils
 
 
 class PathListener(Listener):
@@ -17,16 +17,16 @@ class PathListener(Listener):
 
     async def on_open(self, session: Session):
         if l := self._pathRouteSelector.select(session.path()):
-            await l.on_open(session)
+            await RunUtils.waitTry(l.on_open(session))
 
     async def on_message(self, session, message):
         if l := self._pathRouteSelector.select(session.path()):
-            await l.on_message(session, message)
+            await RunUtils.waitTry(l.on_message(session, message))
 
     async def on_close(self, session):
         if l := self._pathRouteSelector.select(session.path()):
-            await l.on_close(session)
+            await RunUtils.waitTry(l.on_close(session))
 
     async def on_error(self, session, error:Exception):
         if l := self._pathRouteSelector.select(session.path()):
-            await l.on_error(session, error)
+            await RunUtils.waitTry(l.on_error(session, error))

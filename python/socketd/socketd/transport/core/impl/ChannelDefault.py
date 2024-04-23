@@ -173,14 +173,11 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                         f"sessionId={self.get_session().session_id()} : {e}")
 
         if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
-            await self.on_close_do()
+            self.on_close_do()
 
 
-    async def on_close_do(self):
+    def on_close_do(self):
         if self._isCloseNotified == False:
             self._isCloseNotified = True
-            try:
-                await self._processor.get_listener().on_close(self.get_session())
-            except Exception as e:
-                ...
+            self._processor.do_close_notice(self)
 

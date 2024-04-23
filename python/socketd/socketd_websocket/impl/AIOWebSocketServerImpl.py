@@ -2,6 +2,7 @@ from __future__ import annotations
 import asyncio
 from typing import Optional, Union
 
+from websockets import ConnectionClosedOK
 from websockets.frames import Opcode
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
@@ -84,14 +85,15 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
                         # 不需要再 while(true) 了 //其它处理在 processor
                         break
 
+
+            except asyncio.CancelledError as e:
+                break
+            except ConnectionClosedOK as e:
+                break
             except Exception as e:
                 await self.on_error(conn, e)
 
-
-    async def on_close(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol]):
-        """关闭tcp,结束握手"""
-        await conn.close()
-
+    # 未签名前，禁止 ping/pong
     async def assert_handshake(self) -> bool:
         channel: ChannelInternal = self.get_attachment()
         if channel is None or channel.get_handshake() is None:

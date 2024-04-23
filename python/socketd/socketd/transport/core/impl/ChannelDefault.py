@@ -19,6 +19,7 @@ from socketd.transport.core.Session import Session
 from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.core.Frame import Frame
 from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.transport.utils.RunUtils import RunUtils
 
 S = TypeVar("S")
 
@@ -161,12 +162,12 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         try:
             self._closeCode = code
 
-            await super().close(code)
+            await RunUtils.waitTry(super().close(code))
 
             if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
                 if self._assistant.is_valid(self._source):
                     # 如果有效且非预关闭，则尝试关闭源
-                    await self._assistant.close(self._source)
+                    await RunUtils.waitTry(self._assistant.close(self._source))
                     log.debug(f"{self.get_config().get_role_name()} channel closed, sessionId={self.get_session().session_id()}")
         except Exception as e:
             log.warning(f"{self.get_config().get_role_name()} channel close error, "

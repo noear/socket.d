@@ -179,6 +179,6 @@ class ProcessorDefault(Processor, ABC):
 
     async def do_close_notice_internal(self, channel: ChannelInternal):
         try:
-            await RunUtils.waitTry(self.listener.on_close(channel))
+            await RunUtils.waitTry(self.listener.on_close(channel.get_session()))
         except Exception as e:
             self.on_error(channel, e)

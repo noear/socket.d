@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from socketd import SocketD
 from socketd.transport.core.EntityMetas import EntityMetas
@@ -12,9 +13,6 @@ from socketd.transport.core.listener.EventListener import EventListener
 async def do_on_open(s:Session):
     s.handshake().out_meta("test", "1")
     log.info("onOpen: " + s.session_id())
-
-async def do_on_message(s:Session, m:Message):
-    log.info("onMessage: " + str(m))
 
 async def doOn_demo(s:Session, m:Message):
     if m.is_request():
@@ -51,20 +49,21 @@ async def doOn_push(s:Session, m:Message):
         await asyncio.sleep(0.1)
         await s.send("/push", StringEntity("push test"))
 
-async def doOn_unpush(s:Session, m:Message):
-    s.attr_map().pop("push")
+async def doOn_error(s:Session, err:Exception):
+    logging.exception(f"---onError: \n{err}")
 
 def buildListener():
-    return (EventListener().do_on_open(do_on_open)
-     .do_on_message(do_on_message)
-     .do_on_close(lambda s:log.info("onClose: " + s.session_id()))
-     .do_on_error(lambda s,err: log.warning("onError: " + s.session_id(), err))
-     .do_on("/demo", doOn_demo)
-     .do_on("/upload", doOn_upload)
-     .do_on("/download", doOn_download)
-     .do_on("/push", doOn_push)
-     .do_on("/unpush", lambda s,m: s.attr_map().pop("push"))
-     )
+    return (EventListener()
+             .do_on_open(do_on_open)
+             .do_on_message(lambda s,m: log.info("onMessage: " + str(m)))
+             .do_on_close(lambda s:log.info("onClose: " + s.session_id()))
+             .do_on_error(doOn_error)
+             .do_on("/demo", doOn_demo)
+             .do_on("/upload", doOn_upload)
+             .do_on("/download", doOn_download)
+             .do_on("/push", doOn_push)
+             .do_on("/unpush", lambda s,m: s.attr_map().pop("push"))
+            )
 
 async def main():
     await (SocketD.create_server("sd:ws")

@@ -64,17 +64,17 @@ class ServerBase(Server,Listener):
 
     async def on_open(self, s: Session):
         self._sessions.add(s)
-        await self._listener.on_open(s)
+        await RunUtils.waitTry(self._listener.on_open(s))
 
     async def on_message(self, s: Session, m: Message):
-        await self._listener.on_message(s, m)
+        await RunUtils.waitTry(self._listener.on_message(s, m))
 
     async def on_close(self, s: Session):
         self._sessions.remove(s)
-        await self._listener.on_close(s)
+        await RunUtils.waitTry(self._listener.on_close(s))
 
     async def on_error(self, s: Session, e):
-        RunUtils.taskTry(self._listener.on_error(s, e))
+        await RunUtils.waitTry(self._listener.on_error(s, e))
 
     async def prestop_do(self):
         tmp = list(self._sessions)

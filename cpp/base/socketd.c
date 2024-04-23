@@ -307,6 +307,7 @@ sd_session_t* new_session(sd_channel_t* channel) {
 
 void free_session(sd_session_t* session) {
     param_list_free(session);
+    attr_list_free(session);
     free(session);
 }
 

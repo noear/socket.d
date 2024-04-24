@@ -13,35 +13,35 @@ from socketd.transport.utils.CompletableFuture import CompletableFuture
 class RequestStreamImpl(StreamBase, RequestStream):
     def __init__(self, sid: str, timeout: int):
         super().__init__(sid, Constants.DEMANDS_SINGLE, timeout)
-        self._future: CompletableFuture = CompletableFuture()
+        self.__future: CompletableFuture = CompletableFuture()
 
     def is_done(self):
-        return self._future.done()
+        return self.__future.done()
 
     def __await__(self):
         try:
-            return self._future.get(self.timeout() / 1000.0)
+            return self.__future.get(self.timeout() / 1000.0)
         except asyncio.TimeoutError as _e:
             raise SocketDTimeoutException(f"Request reply timeout>{self.timeout()}  sid={self.sid()}")
         except Exception as _e:
             raise SocketDException(f"Request failed, sid= sid={self.sid()} {str(_e)}")
 
     async def get(self) -> Reply:
-        if self._future.done():
-            return self._future.get_result()
+        if self.__future.done():
+            return self.__future.get_result()
         return await self.__await__()
 
     async def on_reply(self, reply: MessageInternal):
-        return await self._future.set_result(reply)
+        return await self.__future.set_result(reply)
 
-    def then_reply(self, onReply: Callable[[MessageInternal], None]) -> 'RequestStream':
-        self._future.then_callback(onReply)
+    def then_reply(self, onReply: Callable[[MessageInternal], None]) -> RequestStream:
+        self.__future.then_callback(onReply)
         return self
 
-    def then_error(self, onError: Callable[[Exception], None]) -> 'RequestStream':
+    def then_error(self, onError: Callable[[Exception], None]) -> RequestStream:
         super().then_error_do(onError)
         return self
 
-    def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> 'RequestStream':
-        super().then_progress(onProgress)
+    def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> RequestStream:
+        super().then_progress_do(onProgress)
         return self

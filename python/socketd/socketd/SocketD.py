@@ -134,7 +134,7 @@ def create_client_or_null(config: ClientConfig) -> Client:
         return factory.create_client(config)
 
 
-def create_cluster_client(*urls):
+def create_cluster_client(*urls) -> Client:
     return ClusterClient(*urls)
 
 

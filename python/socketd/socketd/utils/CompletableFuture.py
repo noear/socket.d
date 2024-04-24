@@ -1,7 +1,7 @@
 import asyncio
 import functools
 from threading import Lock
-from typing import Generic, TypeVar, Callable, Union, Coroutine
+from typing import Generic, TypeVar, Callable
 
 from loguru import logger
 

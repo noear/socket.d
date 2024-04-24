@@ -1,15 +1,14 @@
 import asyncio
-import functools
 import sys
 import time
 
 import unittest
 from threading import Thread
 
-from socketd.transport.utils.AsyncUtils import AsyncUtils
+from socketd.utils.AsyncUtils import AsyncUtils
 from loguru import logger
 
-from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
+from socketd.utils.async_api.AtomicRefer import AtomicRefer
 from test.uitls import calc_async_time
 
 

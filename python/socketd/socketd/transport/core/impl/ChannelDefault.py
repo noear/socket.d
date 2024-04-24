@@ -18,7 +18,7 @@ from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Session import Session
 from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.core.Frame import Frame
-from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.utils.CompletableFuture import CompletableFuture
 from socketd.utils.RunUtils import RunUtils
 
 S = TypeVar("S")

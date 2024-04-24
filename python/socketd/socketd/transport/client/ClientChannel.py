@@ -13,7 +13,7 @@ from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.client.ClientConnector import ClientConnector
 
 from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandlerDefault
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 
 
 class ClientChannel(ChannelBase):

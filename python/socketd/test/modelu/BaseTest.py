@@ -6,7 +6,7 @@ from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.SimpleListenerTest import SimpleListenerTest
 from test.uitls import calc_async_time
 

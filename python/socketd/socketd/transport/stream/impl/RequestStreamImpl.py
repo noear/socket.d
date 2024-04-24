@@ -7,7 +7,7 @@ from socketd.transport.core.Entity import Reply
 from socketd.transport.core.Message import MessageInternal
 from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.stream.impl.StreamBase import StreamBase
-from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.utils.CompletableFuture import CompletableFuture
 
 
 class RequestStreamImpl(StreamBase, RequestStream):

@@ -13,7 +13,7 @@ from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.server.ServerBase import ServerBase
 from socketd.transport.server.ServerConfig import ServerConfig
 
-from socketd.transport.utils.async_api.AtomicRefer import AtomicRefer
+from socketd.utils.async_api.AtomicRefer import AtomicRefer
 from .TCPStreamIO import TCPStreamIO
 
 from .TcpAIOChannelAssistant import TcpAIOChannelAssistant

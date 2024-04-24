@@ -1,4 +1,3 @@
-import sys
 import unittest
 import asyncio
 import time
@@ -6,7 +5,7 @@ import time
 from loguru import logger
 from websockets import serve, WebSocketServerProtocol, connect
 
-from socketd.transport.utils.AsyncUtils import AsyncUtils
+from socketd.utils.AsyncUtils import AsyncUtils
 from test.uitls import calc_async_time
 
 

@@ -10,7 +10,7 @@ from socketd.transport.core.Listener import Listener
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.entity.FileEntity import FileEntity
 from socketd.transport.core.Message import Message
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session

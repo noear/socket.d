@@ -1,4 +1,3 @@
-import uuid
 from abc import ABC
 
 from socketd.transport.core.Listener import Listener
@@ -7,7 +6,7 @@ from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.StringEntity import StringEntity
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 
 from loguru import logger
 

@@ -13,7 +13,7 @@ from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike
 
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
-from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.utils.CompletableFuture import CompletableFuture
 from socketd_websocket import WsAioClient
 
 

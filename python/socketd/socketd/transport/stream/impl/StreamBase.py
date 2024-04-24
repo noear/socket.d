@@ -6,7 +6,7 @@ from socketd.exception.SocketDExecption import SocketDTimeoutException
 from socketd.transport.core.Message import MessageInternal
 from socketd.transport.stream.Stream import StreamInternal
 from socketd.transport.stream.StreamManger import StreamManger
-from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.utils.CompletableFuture import CompletableFuture
 
 
 class StreamBase(StreamInternal, ABC):

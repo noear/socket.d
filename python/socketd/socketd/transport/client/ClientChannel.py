@@ -8,7 +8,7 @@ from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.impl.SessionDefault import SessionDefault
-from socketd.transport.stream.StreamManger import StreamInternal
+from socketd.transport.stream.Stream import StreamInternal
 from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.client.ClientConnector import ClientConnector
 

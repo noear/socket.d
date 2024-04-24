@@ -1,14 +1,22 @@
-from socketd.transport.core.Costants import Constants
-from socketd.transport.stream.StreamBase import StreamBase
+from abc import abstractmethod
+from typing import Callable
+
+from socketd.transport.stream.Stream import Stream
 
 
-class SendStream(StreamBase):
+class SendStream(Stream):
+    @abstractmethod
+    def then_error(self, onError: Callable[[Exception], None]) -> 'SendStream':
+        """
+        异常发生
+        :param onError: 当异常发生时执行的函数，接受一个异常参数
+        """
+        ...
 
-    def __init__(self, sid: str):
-        super().__init__(sid, Constants.DEMANDS_ZERO, 0)
-
-    async def on_reply(self, reply):
-        pass
-
-    def is_done(self):
-        return True
+    @abstractmethod
+    def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> 'SendStream':
+        """
+        进度发生时
+        :param onProgress (isSend, val, max)
+        """
+        ...

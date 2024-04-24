@@ -19,7 +19,7 @@ class CompletableFuture(Generic[T]):
         self._future: asyncio.Task = loop.create_task(_future) if _future else loop.create_future()
         self._lock = Lock()
 
-    def get(self, timeout):
+    def get(self, timeout:float):
         with self._lock:
             async def _get():
                 await asyncio.wait_for(self._future, timeout)

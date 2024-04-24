@@ -27,10 +27,10 @@ class TestCase01_client_send(BaseTestCase):
         await asyncio.sleep(1)
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl).config(config_handler).open()
-        await self.client_session.send_and_request("demo", StringEntity("test"), 100)
+        self.client_session.send_and_request("demo", StringEntity("test"), 100)
 
         for _ in range(100):
-            await self.client_session.send("demo", StringEntity("test"))
+            self.client_session.send("demo", StringEntity("test"))
 
         await asyncio.sleep(2)
         logger.info(

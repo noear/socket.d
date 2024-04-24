@@ -10,7 +10,7 @@ from socketd.transport.core.entity.EntityDefault import EntityDefault
 from socketd.transport.core.FragmentAggregator import FragmentAggregator
 from socketd.transport.core.fragment.FragmentAggregatorDefault import FragmentAggregatorDefault
 from socketd.transport.core.FragmentHandler import FragmentHandler
-from socketd.transport.stream.StreamManger import StreamInternal
+from socketd.transport.stream.Stream import StreamInternal
 
 
 class FragmentHandlerBase(FragmentHandler, ABC):

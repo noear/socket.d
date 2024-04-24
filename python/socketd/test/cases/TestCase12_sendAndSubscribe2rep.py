@@ -101,7 +101,7 @@ class TestCase12_sendAndSubscribe2rep(BaseTestCase):
         async def send_and_subscribe_test(entity):
             logger.debug(f"c::subscribe::{entity.data_as_string()} {entity}")
 
-        req: SubscribeStream = await self.client_session.send_and_subscribe("demo", StringEntity("hi"), 100)
+        req: SubscribeStream = self.client_session.send_and_subscribe("demo", StringEntity("hi"), 100)
         req.then_reply(send_and_subscribe_test)
         await asyncio.sleep(3)
 

@@ -33,11 +33,11 @@ class Client(ABC):
 
     # 打开会话
     @abstractmethod
-    def open(self) -> Session | Future: ...
+    async def open(self) -> Session: ...
 
     # 打开会话或出异常（即要求第一次是连接成功的）
     @abstractmethod
-    def open_or_throw(self) -> Session | Future: ...
+    async def open_or_throw(self) -> Session: ...
 
 
 class ClientInternal(Client):

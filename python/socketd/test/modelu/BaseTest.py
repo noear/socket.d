@@ -39,21 +39,21 @@ class BaseTest:
     @calc_async_time
     async def send(self, count=100000):
         for _ in range(count):
-            await self.__client_session.send("demo", StringEntity("test"))
+            self.__client_session.send("demo", StringEntity("test"))
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
 
     @calc_async_time
     async def send_and_request(self, count=100000):
         for _ in range(count):
-            await self.__client_session.send_and_request("demo", StringEntity("test"), 100)
+            self.__client_session.send_and_request("demo", StringEntity("test"), 100)
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
 
     @calc_async_time
     async def send_and_subscribe(self, count=100000):
         for _ in range(count):
-            await self.__client_session.send_and_subscribe("demo", StringEntity("test"),  100)
+            self.__client_session.send_and_subscribe("demo", StringEntity("test"),  100)
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
 

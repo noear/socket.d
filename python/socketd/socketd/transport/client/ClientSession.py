@@ -21,19 +21,16 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
-    async def send(self, event: str, content: Entity) -> SendStream:
+    def send(self, event: str, content: Entity) -> SendStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_request(self, event: str, content: Entity, timeout: int = 0) -> RequestStream:
+    def send_and_request(self, event: str, content: Entity, timeout: int = 0) -> RequestStream:
         ...
 
     @abc.abstractmethod
-    async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0) -> SubscribeStream:
+    def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0) -> SubscribeStream:
         ...
-
-    async def close_starting(self):
-        self.preclose()
 
     @abc.abstractmethod
     async def preclose(self):

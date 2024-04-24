@@ -16,6 +16,11 @@ from socketd.transport.stream.SubscribeStream import SubscribeStream
 
 from loguru import logger
 
+from socketd.transport.stream.impl.RequestStreamImpl import RequestStreamImpl
+from socketd.transport.stream.impl.SendStreamImpl import SendStreamImpl
+from socketd.transport.stream.impl.SubscribeStreamImpl import SubscribeStreamImpl
+from socketd.utils.RunUtils import RunUtils
+
 
 class SessionDefault(SessionBase):
 
@@ -41,27 +46,27 @@ class SessionDefault(SessionBase):
     async def send_ping(self):
         await self._channel.send_ping()
 
-    async def send(self, topic: str, content: Entity) -> SendStream:
+    def send(self, topic: str, content: Entity) -> SendStream:
         message = MessageBuilder().sid(self.generate_id()).event(topic).entity(content).build()
 
-        stream: SendStream = SendStream(message.sid())
-        await self._channel.send(Frame(Flags.Message, message), stream)
+        stream: SendStream = SendStreamImpl(message.sid())
+        RunUtils.taskTry(self._channel.send(Frame(Flags.Message, message), stream))
         return stream
 
-    async def send_and_request(self, event: str, content: Entity,
+    def send_and_request(self, event: str, content: Entity,
                                timeout: int = 100) -> RequestStream:
 
         if timeout < 100:
             timeout = self._channel.get_config().get_request_timeout() / 1000
         message = MessageBuilder().sid(self.generate_id()).event(event).entity(content).build()
-        stream = RequestStream(message.sid(), timeout)
-        await self._channel.send(Frame(Flags.Request, message), stream)
+        stream:RequestStream = RequestStreamImpl(message.sid(), timeout)
+        RunUtils.taskTry(self._channel.send(Frame(Flags.Request, message), stream))
         return stream
 
-    async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0):
+    def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0):
         message = MessageBuilder().sid(self.generate_id()).event(event).entity(content).build()
-        stream = SubscribeStream(message.sid(), timeout)
-        await self._channel.send(Frame(Flags.Subscribe, message), stream)
+        stream:SubscribeStream = SubscribeStreamImpl(message.sid(), timeout)
+        RunUtils.taskTry(self._channel.send(Frame(Flags.Subscribe, message), stream))
         return stream
 
     async def reply(self, from_msg: Message, content: Entity):

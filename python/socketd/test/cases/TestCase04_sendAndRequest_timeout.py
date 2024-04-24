@@ -30,8 +30,8 @@ class TestCase04_sendAndRequest_timeout(BaseTestCase):
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
         try:
-            await self.client_session.send("demo", StringEntity("test"))
-            await self.client_session.send_and_request("demo", StringEntity("test"), 100)
+            self.client_session.send("demo", StringEntity("test"))
+            self.client_session.send_and_request("demo", StringEntity("test"), 100)
         except Exception as e:
             pass
         await asyncio.sleep(5)

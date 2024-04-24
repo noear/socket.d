@@ -1,6 +1,7 @@
 import logging
 
-from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
+from socketd.transport.stream.Stream import StreamInternal
+from socketd.transport.stream.StreamManger import StreamManger
 
 logger = logging.getLogger(__name__)
 

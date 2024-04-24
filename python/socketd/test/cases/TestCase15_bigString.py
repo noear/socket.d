@@ -37,7 +37,7 @@ class TestCase15_bigString(BaseTestCase):
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
-        await self.client_session.send("demo", StringEntity("qwertyuiopasdfghjklzxcvbnmlajofiadsf" * 1024 * 1024 * 30))
+        self.client_session.send("demo", StringEntity("qwertyuiopasdfghjklzxcvbnmlajofiadsf" * 1024 * 1024 * 30))
         await asyncio.sleep(10)
         logger.info(
             f" message {s.server_counter.get()}")

@@ -1,11 +1,13 @@
+import asyncio
 from abc import ABC, abstractmethod
-from typing import Callable
+
+from socketd.transport.stream.StreamManger import StreamManger
 
 
 class Stream(ABC):
 
     @abstractmethod
-    def get_sid(self) -> str:
+    def sid(self) -> str:
         """流ID"""
         ...
 
@@ -14,19 +16,27 @@ class Stream(ABC):
         """是否结束接收"""
         ...
 
-    @abstractmethod
-    def timeout(self):
-        """超时设定（单位：毫秒）"""
-        ...
+
+
+class StreamInternal(Stream, ABC):
 
     @abstractmethod
-    def then_error(self, onError: Callable[[Exception], None]):
-        """
-        异常发生
-
-        :param onError: 当异常发生时执行的函数，接受一个异常参数
-        """
-        ...
+    def demands(self) -> int: ...
 
     @abstractmethod
-    def then_progress(self, on_progress: Callable[[bool, int, int], None]): ...
+    def timeout(self) -> float: ...
+
+    @abstractmethod
+    def insurance_start(self, streamManger: StreamManger, streamTimeout: float) -> None: ...
+
+    @abstractmethod
+    def insurance_cancel(self) -> None: ...
+
+    @abstractmethod
+    async def on_reply(self, reply) -> None | asyncio.Future: ...
+
+    @abstractmethod
+    def on_error(self, error): ...
+
+    @abstractmethod
+    def on_progress(self, is_send, val, max_val): ...

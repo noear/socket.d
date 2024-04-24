@@ -47,7 +47,7 @@ async def doOn_push(s:Session, m:Message):
         if s.attr_has("push") is False:
             break
         await asyncio.sleep(0.1)
-        await s.send("/push", StringEntity("push test"))
+        s.send("/push", StringEntity("push test"))
 
 async def doOn_error(s:Session, err:Exception):
     logging.exception(f"---onError: \n{err}")

@@ -70,11 +70,11 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).listen(EventListener().do_on_close(do_on_close)).open()
 
-        await self.client_session.send("/demo", StringEntity("test"))
+        self.client_session.send("/demo", StringEntity("test"))
 
         await asyncio.sleep(10)
-        await self.client_session.send("/demo", StringEntity("test"))
-        await self.client_session.send("/demo", StringEntity("test"))
+        self.client_session.send("/demo", StringEntity("test"))
+        self.client_session.send("/demo", StringEntity("test"))
         await asyncio.sleep(1)
         logger.info(f"counter {self._simple.server_counter.get()} ")
 

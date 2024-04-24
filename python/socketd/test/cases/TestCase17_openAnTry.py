@@ -31,7 +31,7 @@ class TestCase17_openAnTry(BaseTestCase):
             .listen(ClientListenerTest()) \
             .config(config_handler).open()
 
-        await self.client_session.send("demo", StringEntity("test"))
+        self.client_session.send("demo", StringEntity("test"))
 
         await asyncio.sleep(2)
         logger.info(

@@ -82,7 +82,7 @@ class TestCase05_file(BaseTestCase):
         await asyncio.sleep(1)
         try:
             with open(self._upload_file_name, "rb") as f:
-                await self.client_session.send("/path?u=a&p=2", FileEntity(f, "test.png"))
+                self.client_session.send("/path?u=a&p=2", FileEntity(f, "test.png"))
         except Exception as e:
             logger.error(e)
             raise e

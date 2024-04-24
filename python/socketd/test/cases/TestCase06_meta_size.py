@@ -34,10 +34,10 @@ class TestCase06_meta_size(BaseTestCase):
         __meta = "*=1&" * 50000
         start_time = time.monotonic()
         try:
-            await self.client_session.send("demo", StringEntity("test").meta_string_set(__meta))
+            self.client_session.send("demo", StringEntity("test").meta_string_set(__meta))
         except SocketDChannelException as s:
             logger.error(str(s))
-        await self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
+        self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
         end_time = time.monotonic()
         logger.info(f"Coroutine send took {(end_time - start_time) * 1000.0} monotonic to complete.")
         await asyncio.sleep(3)

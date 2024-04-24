@@ -1,28 +1,30 @@
-from typing import Callable, Optional
+from abc import abstractmethod
+from typing import Callable
 
 from socketd.transport.core.Entity import Reply
-from socketd.transport.core.Costants import Constants
-from socketd.transport.stream.StreamBase import StreamBase
+from socketd.transport.stream.Stream import Stream
 
 
-class SubscribeStream(StreamBase):
+class SubscribeStream(Stream):
+    @abstractmethod
+    def then_error(self, onError: Callable[[Exception], None]) -> 'SubscribeStream':
+        """
+        异常发生
+        :param onError: 当异常发生时执行的函数，接受一个异常参数
+        """
+        ...
 
-    def __init__(self, sid: str, timeout):
-        super().__init__(sid, Constants.DEMANDS_MULTIPLE, timeout)
-        self.__isDone: Optional[bool] = None
-        self.__doOnReply: Optional[Callable] = None
+    @abstractmethod
+    def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> 'SubscribeStream':
+        """
+        进度发生时
+        :param onProgress (isSend, val, max)
+        """
+        ...
 
-    async def on_reply(self, reply: Reply):
-        self.__isDone = reply.is_end()
-        try:
-            if self.__doOnReply:
-                await self.__doOnReply(reply)
-        except Exception as e:
-            self.on_error(e)
-
-    def is_done(self):
-        return self.__isDone
-
-    def then_reply(self, __doOnReply: Callable):
-        self.__doOnReply = __doOnReply
-        return self
+    @abstractmethod
+    def then_reply(self, onReply: Callable[[Reply], None]) -> 'SubscribeStream':
+        """
+        答复发生时
+        """
+        ...

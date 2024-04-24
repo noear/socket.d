@@ -12,7 +12,7 @@ from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.impl.LogConfig import log
 from socketd.transport.core.listener.SimpleListener import SimpleListener
-from socketd.transport.stream.StreamManger import StreamInternal
+from socketd.transport.stream.Stream import StreamInternal
 from socketd.utils.RunUtils import RunUtils
 
 

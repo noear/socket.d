@@ -46,9 +46,9 @@ class TestCase08_ping_timout(BaseTestCase):
             .config(c_config_handler).open()
         # 超过设置的20，引发异常
         await asyncio.sleep(22)
-        await self.client_session.send("demo", StringEntity("test"))
+        self.client_session.send("demo", StringEntity("test"))
         await asyncio.sleep(22)
-        await self.client_session.send("demo", StringEntity("test"))
+        self.client_session.send("demo", StringEntity("test"))
         await asyncio.sleep(4)
         logger.info(
             f" message {s.server_counter.get()}")

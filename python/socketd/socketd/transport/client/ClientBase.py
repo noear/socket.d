@@ -86,11 +86,11 @@ class ClientBase(ClientInternal, ABC):
 
         return clientChannel.get_session()
 
-    def open(self) -> Awaitable[Session]:
-        return self._open_do(False)
+    async def open(self) -> Session:
+        return await self._open_do(False)
 
-    def open_or_throw(self) -> Awaitable[Session]:
-        return self._open_do(True)
+    async def open_or_throw(self) -> Session:
+        return await self._open_do(True)
 
     @abstractmethod
     def create_connector(self):

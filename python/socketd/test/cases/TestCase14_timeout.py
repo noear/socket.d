@@ -39,7 +39,7 @@ class TestCase14_timeout(BaseTestCase):
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(c_config_handler).open()
         await asyncio.sleep(100)
-        await self.client_session.send("demo", StringEntity("test"))
+        self.client_session.send("demo", StringEntity("test"))
         await asyncio.sleep(5)
         logger.info(
             f" message {s.server_counter.get()}")

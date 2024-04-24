@@ -9,8 +9,8 @@ from socketd.transport.core.ChannelSupporter import ChannelSupporter
 from socketd.transport.core.Message import MessageInternal, Message
 from socketd.transport.core.entity.MessageBuilder import MessageBuilder
 from socketd.transport.core.impl.LogConfig import log
-from socketd.transport.stream.Stream import Stream
-from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
+from socketd.transport.stream.Stream import Stream, StreamInternal
+from socketd.transport.stream.StreamManger import StreamManger
 from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Flags import Flags

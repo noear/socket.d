@@ -6,7 +6,7 @@ from socketd.transport.core.Entity import Reply
 
 class RequestStream(Stream):
     @abstractmethod
-    async def get(self) -> Reply:
+    async def waiter(self) -> Reply:
         ...
 
     @abstractmethod

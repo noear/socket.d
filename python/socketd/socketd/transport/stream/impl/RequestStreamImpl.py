@@ -26,7 +26,7 @@ class RequestStreamImpl(StreamBase, RequestStream):
         except Exception as _e:
             raise SocketDException(f"Request failed, sid= sid={self.sid()} {str(_e)}")
 
-    async def get(self) -> Reply:
+    async def waiter(self) -> Reply:
         if self.__future.done():
             return self.__future.get_result()
         return await self.__await__()

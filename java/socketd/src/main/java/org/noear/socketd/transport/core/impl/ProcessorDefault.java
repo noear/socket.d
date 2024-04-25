@@ -275,7 +275,8 @@ public class ProcessorDefault implements Processor {
             listener.onError(channel.getSession(), error);
         } catch (Throwable e) {
             if (log.isWarnEnabled()) {
-                log.warn(e.getMessage(), e);
+                log.warn("{} channel listener onError error",
+                        channel.getConfig().getRoleName(), e);
             }
         }
     }

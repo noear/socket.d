@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.AttributeKey;
+import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
@@ -36,7 +37,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Datag
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
 
-        DatagramTagert tagert = new DatagramTagert(ctx.channel(), null,true);
+        DatagramTagert tagert = new DatagramTagert(ctx, null,true);
         channel = new ChannelDefault<>(tagert, client);
         ctx.attr(CHANNEL_KEY).set(channel);
 
@@ -50,13 +51,23 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Datag
         Frame frame = client.getAssistant().read(packet.content());
 
         if (frame != null) {
-            if (frame.flag() == Flags.Connack) {
-                channel.onOpenFuture((r, e) -> {
-                    handshakeFuture.complete(new ClientHandshakeResult(channel, e));
-                });
-            }
+            try {
+                if (frame.flag() == Flags.Connack) {
+                    channel.onOpenFuture((r, e) -> {
+                        handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                    });
+                }
 
-            client.getProcessor().onReceive(channel, frame);
+                client.getProcessor().onReceive(channel, frame);
+            } catch (Exception e) {
+                if (e instanceof SocketDConnectionException) {
+                    //说明握手失败了
+                    handshakeFuture.complete(new ClientHandshakeResult(channel, e));
+                    return;
+                }
+
+                client.getProcessor().onError(channel, e);
+            }
         }
     }
 

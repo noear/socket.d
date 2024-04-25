@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include "tcp_server.h"
 
-int on_open(const sd_session_t* session, sd_message_t* message);
-int on_request(const sd_session_t* session, sd_message_t* message);
+int on_open(sd_session_t* session, sd_message_t* message);
+int on_request(sd_session_t* session, sd_message_t* message);
 
 static sd_server_event_t onevent = {
     .onopen = on_open,
@@ -18,7 +18,7 @@ static sd_server_event_t onevent = {
     .onerror = 0,
 };
 
-int on_open(const sd_session_t* session, sd_message_t* message) {
+int on_open(sd_session_t* session, sd_message_t* message) {
     printf("accept connfd=%d [%s] <= [%s]\n",
         session->channle->fd,
         session->channle->local_address,
@@ -27,7 +27,7 @@ int on_open(const sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
-int on_request(const sd_session_t* session, sd_message_t* message) {
+int on_request(sd_session_t* session, sd_message_t* message) {
     assert(session != NULL);
     assert(message != NULL);
 

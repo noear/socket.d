@@ -22,26 +22,12 @@ static struct sd_client_event_s client_event = {
     .onerror = 0,
 };
 
-struct event_handler_s {
-    const char* name;
-    int (*fn)(const void*, sd_entity_t*);
-};
-
-typedef struct event_handler_s event_handler_t;
-typedef struct event_handler_s path_handler_t;
-typedef struct event_handler_s interceptor_handler_t;
-
-int on_event_r1(const void* io, sd_entity_t* entity) {
-    return 0;
-}
-
-int on_event_r2(const void* io, sd_entity_t* entity) {
+int on_event1(sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
 event_handler_t replay_event_handler_table[] = {
-    {"#r1", on_event_r1},
-    {"#r2", on_event_r2},
+    {"/m1", on_event1},
 };
 
 // sd:tcp://127.0.0.1:8602/?token=1b0VsGusEkddgr3
@@ -146,7 +132,7 @@ void on_reply_handler(sd_channel_t* channel, sd_package_t* sd) {
         int n = sizeof(replay_event_handler_table) / sizeof(event_handler_t);
         for (int i = 0; i < n; i++) {
             if (strcmp(event, replay_event_handler_table[i].name) == 0) {
-                replay_event_handler_table[i].fn(channel, &sd->frame.message.entity);
+                replay_event_handler_table[i].fn(channel->session, &sd->frame.message);
                 break;
             }
         }
@@ -164,7 +150,7 @@ void on_endreply_handler(sd_channel_t* channel, sd_package_t* sd) {
         int n = sizeof(replay_event_handler_table) / sizeof(event_handler_t);
         for (int i = 0; i < n; i++) {
             if (strcmp(event, replay_event_handler_table[i].name) == 0) {
-                replay_event_handler_table[i].fn(channel, &sd->frame.message.entity);
+                replay_event_handler_table[i].fn(channel->session, &sd->frame.message);
                 break;
             }
         }

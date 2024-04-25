@@ -1,22 +1,30 @@
 /*
- * Helloworld tcp server
+ * Send server
  *
  * @build   make
- * @server  bin/Demo01_HelloworldServer
+ * @server  bin/Demo04_EventListenerServer
  */
 #include <stdio.h>
 #include "tcp_server.h"
 
 int on_open(sd_session_t* session, sd_message_t* message);
-int on_request(sd_session_t* session, sd_message_t* message);
+int on_message(sd_session_t* session, sd_message_t* message);
 
 static sd_server_event_t onevent = {
     .onopen = on_open,
     .onclose = 0,
-    .onmessage = 0,
-    .onrequest = on_request,
+    .onmessage = on_message,
     .onerror = 0,
 };
+
+static void session_send_string(sd_session_t* session, const char* sid, const char* event, const char* data) {
+    void* hio = sd_hio(session);
+    sd_entity_t entity = { 0 };
+    init_entity(&entity);
+    string_entity_data(&entity, data);
+    sd_send_message(sid, event, &entity, hio);
+    free_entity_meta_and_data(&entity);
+}
 
 int on_open(sd_session_t* session, sd_message_t* message) {
     printf("accept connfd=%d [%s] <= [%s]\n",
@@ -27,16 +35,10 @@ int on_open(sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
-int on_request(sd_session_t* session, sd_message_t* message) {
-    assert(session != NULL);
-    assert(message != NULL);
-
+int on_message(sd_session_t* session, sd_message_t* message) {
     if (message && message->entity.data) {
-        sd_entity_t entity = { 0 };
-        init_entity(&entity);
-        string_entity_data(&entity, "And you too..");
-        sd_send_endreplay(session->sid, "/demo", &entity, session->channle->hio);
-        free_entity_meta_and_data(&entity);
+        session_send_string(session, message->sid, "/demo1", "Me too!");
+        session_send_string(session, message->sid, "/demo2", "Me too!");
     }
 
     return 0;

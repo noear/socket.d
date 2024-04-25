@@ -5,6 +5,7 @@
 #include "sds.h"
 #include "hv/hloop.h"
 #include "hv/hbase.h"
+#include "const.h"
 #include "socketd.h"
 
 uint32_t swap_endian(uint32_t x) {
@@ -309,6 +310,18 @@ void free_session(sd_session_t* session) {
     param_list_free(session);
     attr_list_free(session);
     free(session);
+}
+
+void close_session(sd_session_t* session, const char* sid, const char* event) {
+    char pcode[64] = { 0 };
+    sprintf(pcode, "%d", CLOSE1001_PROTOCOL_CLOSE);
+
+    void* hio = sd_hio(session);
+    sd_entity_t entity = { 0 };
+    init_entity(&entity);
+    sd_put_meta(&entity, "code", pcode);
+    sd_send_close(sid, event, &entity, hio);
+    free_entity_meta_and_data(&entity);
 }
 
 sd_channel_t* new_channel() {

@@ -8,9 +8,9 @@
 #include "sds.h"
 #include "tcp_server.h"
 
-int on_open(const sd_session_t* session, sd_message_t* message);
-int on_message(const sd_session_t* session, sd_message_t* message);
-int on_request(const sd_session_t* session, sd_message_t* message);
+int on_open(sd_session_t* session, sd_message_t* message);
+int on_message(sd_session_t* session, sd_message_t* message);
+int on_request(sd_session_t* session, sd_message_t* message);
 
 
 static sd_server_event_t onevent = {
@@ -21,7 +21,7 @@ static sd_server_event_t onevent = {
     .onerror = 0,
 };
 
-int on_open(const sd_session_t* session, sd_message_t* message) {
+int on_open(sd_session_t* session, sd_message_t* message) {
     printf("accept connfd=%d [%s] <= [%s]\n",
         session->channle->fd,
         session->channle->local_address,
@@ -30,7 +30,7 @@ int on_open(const sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
-int on_message(const sd_session_t* session, sd_message_t* message) {
+int on_message(sd_session_t* session, sd_message_t* message) {
     if (message && message->entity.data) {
         printf("server::sid=%s;event=%s;entity=%s\n",
             message->sid, message->event, message->entity.data);
@@ -45,7 +45,7 @@ int on_message(const sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
-int on_request(const sd_session_t* session, sd_message_t* message) {
+int on_request(sd_session_t* session, sd_message_t* message) {
     if (message && message->entity.data) {
         printf("server::sid=%s;event=%s;entity=%s\n", 
             message->sid, message->event, message->entity.data);

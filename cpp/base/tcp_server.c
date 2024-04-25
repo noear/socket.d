@@ -23,22 +23,13 @@ static struct sd_server_event_s server_event = {
     .onerror = 0,
 };
 
-struct event_handler_s {
-    const char* name;
-    int (*fn)(const sd_channel_t*, sd_entity_t*);
-};
-
-typedef struct event_handler_s event_handler_t;
-typedef struct event_handler_s path_handler_t;
-typedef struct event_handler_s interceptor_handler_t;
-
 static void on_tcp_accept(hio_t* io);
 
-int on_message1(const sd_channel_t* channel, sd_entity_t* entity) {
+int on_message1(sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
-int on_request1(const sd_channel_t* channel, sd_entity_t* entity) {
+int on_request1(sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
@@ -182,7 +173,7 @@ void on_message_handler(sd_channel_t* channel, sd_package_t* sd) {
         int n = sizeof(message_event_handler_table) / sizeof(event_handler_t);
         for (int i = 0; i < n; i++) {
             if (strcmp(event, message_event_handler_table[i].name) == 0) {
-                message_event_handler_table[i].fn(channel, &sd->frame.message.entity);
+                message_event_handler_table[i].fn(channel->session, &sd->frame.message);
                 break;
             }
         }
@@ -200,7 +191,7 @@ void on_request_handler(sd_channel_t* channel, sd_package_t* sd) {
         int n = sizeof(request_event_handler_table) / sizeof(event_handler_t);
         for (int i = 0; i < n; i++) {
             if (strcmp(event, request_event_handler_table[i].name) == 0) {
-                request_event_handler_table[i].fn(channel, &sd->frame.message.entity);
+                request_event_handler_table[i].fn(channel->session, &sd->frame.message);
                 break;
             }
         }

@@ -8,7 +8,7 @@ from socketd.transport.client.Client import ClientInternal
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Costants import Constants
-from socketd.transport.core.impl.LogConfig import log, logger
+from socketd.utils.LogConfig import log, logger
 from socketd.transport.client.ClientConnectorBase import ClientConnectorBase
 from socketd.utils.AsyncUtils import AsyncUtils
 from socketd_websocket.impl.AIOConnect import AIOConnect

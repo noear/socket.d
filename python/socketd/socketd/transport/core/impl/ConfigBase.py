@@ -13,7 +13,7 @@ from socketd.transport.core.codec.CodecDefault import CodecDefault
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.fragment.FragmentHandlerDefault import FragmentHandlerDefault
 
-from socketd.transport.core.impl.LogConfig import logger
+from socketd.utils.LogConfig import logger
 from socketd.transport.stream.StreamManger import StreamManger
 from socketd.transport.stream.StreamMangerDefault import StreamMangerDefault
 

@@ -10,7 +10,7 @@ from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.utils.AsyncUtils import AsyncUtils
 from socketd.utils.CompletableFuture import CompletableFuture
 

@@ -6,7 +6,7 @@ from socketd.transport.client.Client import ClientInternal
 from socketd.transport.core.Asserts import Asserts
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Costants import Constants
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.stream.Stream import StreamInternal
 from socketd.transport.core.impl.ChannelBase import ChannelBase

@@ -10,7 +10,7 @@ from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.listener.SimpleListener import SimpleListener
 from socketd.transport.stream.Stream import StreamInternal
 from socketd.utils.RunUtils import RunUtils
@@ -171,10 +171,16 @@ class ProcessorDefault(Processor, ABC):
         await channel.close(code)
 
     def on_error(self, channel: ChannelInternal, error):
-        RunUtils.taskTry(self.listener.on_error(channel.get_session(), error))
+        RunUtils.taskTry(self.on_error_internal(channel, error))
+
+    async def on_error_internal(self, channel: ChannelInternal, error):
+        try:
+            await RunUtils.waitTry(self.listener.on_error(channel.get_session(), error))
+        except Exception as e:
+            log.warning("{} channel listener onError error", channel.get_config().get_role_name(), e)
 
     def do_close_notice(self, channel: ChannelInternal):
-         RunUtils.taskTry(self.do_close_notice_internal(channel))
+        RunUtils.taskTry(self.do_close_notice_internal(channel))
 
     async def do_close_notice_internal(self, channel: ChannelInternal):
         try:

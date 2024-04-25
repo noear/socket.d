@@ -6,7 +6,7 @@ from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Session import Session
 from socketd.transport.core.entity.StringEntity import StringEntity
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.listener.EventListener import EventListener
 
 

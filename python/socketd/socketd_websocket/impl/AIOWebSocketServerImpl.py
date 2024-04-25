@@ -8,7 +8,7 @@ from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.ChannelInternal import ChannelInternal
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame

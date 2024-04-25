@@ -4,7 +4,7 @@ import sys
 from socketd import SocketD
 from socketd.transport.core import Entity
 from socketd.transport.core.Session import Session
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server

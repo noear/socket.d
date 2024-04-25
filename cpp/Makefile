@@ -8,26 +8,33 @@ INCLUDE = -I./base -I./examples -I./3rd/libhv/include -I./3rd/sds -I./3rd/uuid4/
 LIBDIR = -L./3rd/libhv/lib
 HV_LIB = -lhv
 
-TARGET1 = ./bin/Demo01_HelloworldServer
-TARGET2 = ./bin/Demo01_HelloworldClient
-TARGET3 = ./bin/Demo02_SendServer
-TARGET4 = ./bin/Demo02_SendClient
-TARGET5 = ./bin/Demo02_SendAndRequestServer
-TARGET6 = ./bin/Demo02_SendAndRequestClient
-TARGET7 = ./bin/Demo02_SendAndSubscribeServer
-TARGET8 = ./bin/Demo02_SendAndSubscribeClient
+HelloworldServer = ./bin/Demo01_HelloworldServer
+HelloworldClient = ./bin/Demo01_HelloworldClient
+SendServer = ./bin/Demo02_SendServer
+SendClient = ./bin/Demo02_SendClient
+SendAndRequestServer = ./bin/Demo02_SendAndRequestServer
+SendAndRequestClient = ./bin/Demo02_SendAndRequestClient
+SendAndSubscribeServer = ./bin/Demo02_SendAndSubscribeServer
+SendAndSubscribeClient = ./bin/Demo02_SendAndSubscribeClient
 FileServer = ./bin/Demo03_FileServer
 FileClient = ./bin/Demo03_FileClient
 FlowControlServer = ./bin/Demo03_FlowControlServer
 FlowControlClient = ./bin/Demo03_FlowControlClient
 Send2Server = ./bin/Demo03_Send2Server
 Send2Client = ./bin/Demo03_Send2Client
+EventListenerServer = ./bin/Demo04_EventListenerServer
+EventListenerClient = ./bin/Demo04_EventListenerClient
+
 
 .PHONY:all
-all:prepare $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) \
+all:prepare $(HelloworldServer) $(HelloworldClient) \
+	$(SendServer) $(SendClient) \
+	$(SendAndRequestServer) $(SendAndRequestClient) \
+	$(SendAndSubscribeServer) $(SendAndSubscribeClient) \
 	$(FileServer) $(FileClient) \
 	$(FlowControlServer) $(FlowControlClient) \
-	$(Send2Server) $(Send2Client)
+	$(Send2Server) $(Send2Client) \
+	$(EventListenerServer) $(EventListenerClient)
 
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
@@ -39,42 +46,42 @@ SRCS =  ./3rd/uuid4/src/uuid4.c \
 
 OBJS = $(SRCS:.c=.o)
 
-$(TARGET1):$(OBJS) ./examples/Demo01_HelloworldServer.c ./base/tcp_server.c
+$(HelloworldServer):$(OBJS) ./examples/Demo01_HelloworldServer.c ./base/tcp_server.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET2):$(OBJS) ./examples/Demo01_HelloworldClient.c ./base/tcp_client.c
+$(HelloworldClient):$(OBJS) ./examples/Demo01_HelloworldClient.c ./base/tcp_client.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET3):$(OBJS) ./examples/Demo02_SendServer.c ./base/tcp_server.c
+$(SendServer):$(OBJS) ./examples/Demo02_SendServer.c ./base/tcp_server.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET4):$(OBJS) ./examples/Demo02_SendClient.c ./base/tcp_client.c
+$(SendClient):$(OBJS) ./examples/Demo02_SendClient.c ./base/tcp_client.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET5):$(OBJS) ./examples/Demo02_SendAndRequestServer.c ./base/tcp_server.c
+$(SendAndRequestServer):$(OBJS) ./examples/Demo02_SendAndRequestServer.c ./base/tcp_server.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET6):$(OBJS) ./examples/Demo02_SendAndRequestClient.c ./base/tcp_client.c
+$(SendAndRequestClient):$(OBJS) ./examples/Demo02_SendAndRequestClient.c ./base/tcp_client.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET7):$(OBJS) ./examples/Demo02_SendAndSubscribeServer.c ./base/tcp_server.c
+$(SendAndSubscribeServer):$(OBJS) ./examples/Demo02_SendAndSubscribeServer.c ./base/tcp_server.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
-$(TARGET8):$(OBJS) ./examples/Demo02_SendAndSubscribeClient.c ./base/tcp_client.c
+$(SendAndSubscribeClient):$(OBJS) ./examples/Demo02_SendAndSubscribeClient.c ./base/tcp_client.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
@@ -109,15 +116,29 @@ $(Send2Client):$(OBJS) ./examples/Demo03_Send2Client.c ./base/tcp_client.c
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(EventListenerServer):$(OBJS) ./examples/Demo04_EventListenerServer.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(EventListenerClient):$(OBJS) ./examples/Demo04_EventListenerClient.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
 
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
 
 clean:
-	rm -rf $(OBJS) $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5) $(TARGET6) $(TARGET7) $(TARGET8) \
+	rm -rf $(OBJS) $(HelloworldServer) $(HelloworldClient) \
+	$(SendServer) $(SendClient) \
+	$(SendAndRequestServer) $(SendAndRequestClient) \
+	$(SendAndSubscribeServer) $(SendAndSubscribeClient) \
 	$(FileServer) $(FileClient) \
 	$(FlowControlServer) $(FlowControlClient) \
-	$(Send2Server) $(Send2Client)
+	$(Send2Server) $(Send2Client) \
+	$(EventListenerServer) $(EventListenerClient)
 
 prepare:
 	$(MKDIR) bin

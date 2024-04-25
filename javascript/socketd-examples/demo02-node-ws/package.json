@@ -3,7 +3,7 @@
   "description": "SocketD Node Test Project",
   "author": "aoshiguchen",
   "dependencies": {
-    "@noear/socket.d": "2.4.11",
+    "@noear/socket.d": "2.4.12",
     "ws": "^8.16.0"
   }
 }

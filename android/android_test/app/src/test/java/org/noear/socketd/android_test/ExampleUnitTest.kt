@@ -1,4 +1,4 @@
-package org.noear.android_test
+package org.noear.socketd.android_test
 
 import org.junit.Test
 

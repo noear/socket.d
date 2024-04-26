@@ -1,4 +1,4 @@
-package org.noear.android_test
+package org.noear.socketd.android_test
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("org.noear.android_test", appContext.packageName)
+        assertEquals("org.noear.socketd.android_test", appContext.packageName)
     }
 }

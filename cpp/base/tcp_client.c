@@ -99,8 +99,12 @@ void on_pong_handler(sd_channel_t* channel, sd_package_t* sd) {
 
 void on_close_handler(sd_channel_t* channel, sd_package_t* sd) {
     if (client_event.onclose) {
-        client_event.onclose(channel->session, &sd->frame.message);
+        int ret = client_event.onclose(channel->session, &sd->frame.message);
+        if (ret != 0)   return;
     }
+
+    void* hio = channel->hio;
+    hloop_stop(hevent_loop(hio));
 }
 
 void on_alarm_handler(sd_channel_t* channel, sd_package_t* sd) {

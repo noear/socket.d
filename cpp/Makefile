@@ -22,6 +22,8 @@ FlowControlServer = ./bin/Demo03_FlowControlServer
 FlowControlClient = ./bin/Demo03_FlowControlClient
 Send2Server = ./bin/Demo03_Send2Server
 Send2Client = ./bin/Demo03_Send2Client
+UrlAuthServer = ./bin/Demo03_UrlAuthServer
+UrlAuthClient = ./bin/Demo03_UrlAuthClient
 EventListenerServer = ./bin/Demo04_EventListenerServer
 EventListenerClient = ./bin/Demo04_EventListenerClient
 
@@ -34,6 +36,7 @@ all:prepare $(HelloworldServer) $(HelloworldClient) \
 	$(FileServer) $(FileClient) \
 	$(FlowControlServer) $(FlowControlClient) \
 	$(Send2Server) $(Send2Client) \
+	$(UrlAuthServer) $(UrlAuthClient) \
 	$(EventListenerServer) $(EventListenerClient)
 
 
@@ -116,6 +119,16 @@ $(Send2Client):$(OBJS) ./examples/Demo03_Send2Client.c ./base/tcp_client.c
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(UrlAuthServer):$(OBJS) ./examples/Demo03_UrlAuthServer.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(UrlAuthClient):$(OBJS) ./examples/Demo03_UrlAuthClient.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
 $(EventListenerServer):$(OBJS) ./examples/Demo04_EventListenerServer.c ./base/tcp_server.c
 	@echo TARGET:$@
 	@echo OBJECTS:$^
@@ -138,6 +151,7 @@ clean:
 	$(FileServer) $(FileClient) \
 	$(FlowControlServer) $(FlowControlClient) \
 	$(Send2Server) $(Send2Client) \
+	$(UrlAuthServer) $(UrlAuthClient) \
 	$(EventListenerServer) $(EventListenerClient)
 
 prepare:

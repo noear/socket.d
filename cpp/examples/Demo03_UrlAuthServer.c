@@ -1,8 +1,8 @@
 /*
- * Send server
+ * Url Auth Server
  *
  * @build   make
- * @server  bin/Demo04_EventListenerServer
+ * @server  bin/Demo03_UrlAuthServer
  */
 #include <stdio.h>
 #include "tcp_server.h"
@@ -23,13 +23,17 @@ int on_open(sd_session_t* session, sd_message_t* message) {
         session->channle->local_address,
         session->channle->remote_address);
 
+    const char* user = sd_param(session, "u");
+    if (user == 0 || strcmp(user, "noear") != 0) { //如果不是 noear，关闭会话
+        close_session(session, message->sid, message->event);
+    }
+
     return 0;
 }
 
-int on_message(sd_session_t* session, sd_message_t* message) {
-    if (message && message->entity.data) {
-        session_send_string(session, message->sid, "/demo1", "Me too!");
-        session_send_string(session, message->sid, "/demo2", "Me too!");
+int on_message(sd_session_t* session, sd_message_t* msg) {
+    if (msg && msg->entity.data) {
+        printf("Recv: %s\n", msg->entity.data);
     }
 
     return 0;

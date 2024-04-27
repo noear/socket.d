@@ -35,15 +35,6 @@ int on_event_demo2(sd_session_t* session, sd_message_t* message) {
     return 0;
 }
 
-static void session_send_string(sd_session_t* session, const char* sid, const char* event, const char* data) {
-    void* hio = sd_hio(session);
-    sd_entity_t entity = { 0 };
-    init_entity(&entity);
-    string_entity_data(&entity, data);
-    sd_send_message(sid, event, &entity, hio);
-    free_entity_meta_and_data(&entity);
-}
-
 int on_connack(sd_session_t* session, sd_message_t* message) {
     session_send_string(session, message->sid, "/order", "Hi");
     session_send_string(session, message->sid, "/user", "Hi");

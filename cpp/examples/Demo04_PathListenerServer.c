@@ -1,8 +1,8 @@
 /*
- * Send server
+ * Path Listener Server
  *
  * @build   make
- * @server  bin/Demo04_EventListenerServer
+ * @server  bin/Demo04_PathListenerServer
  */
 #include <stdio.h>
 #include "tcp_server.h"
@@ -23,22 +23,33 @@ int on_open(sd_session_t* session, sd_message_t* message) {
         session->channle->local_address,
         session->channle->remote_address);
 
+    //管理员频道
+    if (session->path && strcmp(session->path, "/admin") == 0) {
+        const char* user = sd_param(session, "u");
+        if (user == 0 || strcmp(user, "admin") != 0) {
+            close_session(session, message->sid, message->event);
+        }
+    }
+
     return 0;
 }
 
-int on_message(sd_session_t* session, sd_message_t* message) {
-    if (message && message->entity.data) {
-        session_send_string(session, message->sid, "/demo1", "Me too!");
-        session_send_string(session, message->sid, "/demo2", "Me too!");
+int on_message(sd_session_t* session, sd_message_t* msg) {
+    //用户频道
+    if (session->path && strcmp(session->path, "/") == 0) {
+        const char* user = sd_param(session, "u");
+        if (msg && msg->entity.data) {
+            printf("user::%s::%s\n", user, msg->entity.data);
+        }
     }
 
     return 0;
 }
 
 int main(int argc, char** argv) {
-	int port = 8602;
+    int port = 8602;
 
-	printf("Starting server on %d ...\n", port);
+    printf("Starting server on %d ...\n", port);
     sd_server_t server = sd_create_tcp_server(port);
     if (server == 0) {
         printf("sd_create_tcp_server() error!\n");

@@ -324,6 +324,15 @@ void close_session(sd_session_t* session, const char* sid, const char* event) {
     free_entity_meta_and_data(&entity);
 }
 
+void session_send_string(sd_session_t* session, const char* sid, const char* event, const char* data) {
+    void* hio = sd_hio(session);
+    sd_entity_t entity = { 0 };
+    init_entity(&entity);
+    string_entity_data(&entity, data);
+    sd_send_message(sid, event, &entity, hio);
+    free_entity_meta_and_data(&entity);
+}
+
 sd_channel_t* new_channel() {
     void* p = malloc(sizeof(sd_channel_t));
     if (p) memset(p, 0, sizeof(sd_channel_t));

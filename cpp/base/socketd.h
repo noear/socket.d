@@ -99,6 +99,7 @@ void sd_send_endreplay(const char* sid, const char* event, sd_entity_t* entity, 
 sd_session_t* new_session(sd_channel_t* channel);
 void free_session(sd_session_t* session);
 void close_session(sd_session_t* session, const char* sid, const char* event);
+void session_send_string(sd_session_t* session, const char* sid, const char* event, const char* data);
 
 /*channel opt*/
 sd_channel_t* new_channel();

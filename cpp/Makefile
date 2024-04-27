@@ -26,6 +26,8 @@ UrlAuthServer = ./bin/Demo03_UrlAuthServer
 UrlAuthClient = ./bin/Demo03_UrlAuthClient
 EventListenerServer = ./bin/Demo04_EventListenerServer
 EventListenerClient = ./bin/Demo04_EventListenerClient
+PathListenerServer = ./bin/Demo04_PathListenerServer
+PathListenerClient = ./bin/Demo04_PathListenerClient
 
 
 .PHONY:all
@@ -37,7 +39,8 @@ all:prepare $(HelloworldServer) $(HelloworldClient) \
 	$(FlowControlServer) $(FlowControlClient) \
 	$(Send2Server) $(Send2Client) \
 	$(UrlAuthServer) $(UrlAuthClient) \
-	$(EventListenerServer) $(EventListenerClient)
+	$(EventListenerServer) $(EventListenerClient) \
+	$(PathListenerServer) $(PathListenerClient)
 
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
@@ -139,6 +142,16 @@ $(EventListenerClient):$(OBJS) ./examples/Demo04_EventListenerClient.c ./base/tc
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(PathListenerServer):$(OBJS) ./examples/Demo04_PathListenerServer.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(PathListenerClient):$(OBJS) ./examples/Demo04_PathListenerClient.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
 
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
@@ -152,7 +165,9 @@ clean:
 	$(FlowControlServer) $(FlowControlClient) \
 	$(Send2Server) $(Send2Client) \
 	$(UrlAuthServer) $(UrlAuthClient) \
-	$(EventListenerServer) $(EventListenerClient)
+	$(EventListenerServer) $(EventListenerClient) \
+	$(PathListenerServer) $(PathListenerClient)
+
 
 prepare:
 	$(MKDIR) bin

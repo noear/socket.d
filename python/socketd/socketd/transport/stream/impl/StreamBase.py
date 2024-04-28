@@ -17,7 +17,6 @@ class StreamBase(StreamInternal, ABC):
         self.__timeout = timeout
         self.__demands = demands
 
-        self.__onError: Callable[[Exception], None] = None
         self.__doOnError: Callable[[Exception], None] = None
         self.__doOnProgress: Callable[[bool, int, int], None] = None
 
@@ -30,7 +29,7 @@ class StreamBase(StreamInternal, ABC):
         return True
 
     def then_error_do(self, onError: Callable[[Exception], None]):
-        self.__onError = onError
+        self.__doOnError = onError
 
     def then_progress_do(self, onProgress: Callable[[bool, int, int], None]):
         self.__doOnProgress = onProgress
@@ -63,7 +62,7 @@ class StreamBase(StreamInternal, ABC):
         ...
 
     def on_error(self, error: Exception):
-        if error:
+        if error and self.__doOnError:
             self.__doOnError(error)
 
     def on_progress(self, is_send, val, max_val):

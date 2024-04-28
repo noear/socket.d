@@ -10,7 +10,7 @@ class RequestStream(Stream):
         ...
 
     @abstractmethod
-    def then_error(self, onError: Callable[[Exception], None]) -> 'SendStream':
+    def then_error(self, onError: Callable[[Exception], None]) -> 'RequestStream':
         """
         异常发生
         :param onError: 当异常发生时执行的函数，接受一个异常参数
@@ -18,7 +18,7 @@ class RequestStream(Stream):
         ...
 
     @abstractmethod
-    def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> 'SendStream':
+    def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> 'RequestStream':
         """
         进度发生时
         :param onProgress (isSend, val, max)
@@ -26,7 +26,7 @@ class RequestStream(Stream):
         ...
 
     @abstractmethod
-    def then_reply(self, onReply: Callable[[Reply], None]) -> 'SendStream':
+    def then_reply(self, onReply: Callable[[Reply], None]) -> 'RequestStream':
         """
         答复发生时
         """

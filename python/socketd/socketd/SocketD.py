@@ -1,6 +1,6 @@
 from typing import Dict
 
-import socketd.cluster.ClusterClient as ClusterClient
+from socketd.cluster.ClusterClient import ClusterClient
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.client.Client import Client
 from socketd.transport.client.ClientProvider import ClientProvider
@@ -81,7 +81,7 @@ def create_client_or_null(config: ClientConfig) -> Client | None:
 
 
 def create_cluster_client(*urls) -> Client:
-    return ClusterClient(*urls)
+    return ClusterClient(urls)
 
 
 # Initialize the client and server factory maps

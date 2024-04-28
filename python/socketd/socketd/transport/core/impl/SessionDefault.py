@@ -14,11 +14,10 @@ from socketd.transport.stream.SendStream import SendStream
 
 from socketd.transport.stream.SubscribeStream import SubscribeStream
 
-from loguru import logger
-
 from socketd.transport.stream.impl.RequestStreamImpl import RequestStreamImpl
 from socketd.transport.stream.impl.SendStreamImpl import SendStreamImpl
 from socketd.transport.stream.impl.SubscribeStreamImpl import SubscribeStreamImpl
+from socketd.utils.LogConfig import log
 from socketd.utils.RunUtils import RunUtils
 
 
@@ -54,7 +53,10 @@ class SessionDefault(SessionBase):
         return stream
 
     def send_and_request(self, event: str, content: Entity,
-                               timeout: int = 100) -> RequestStream:
+                               timeout: int|None = 100) -> RequestStream:
+
+        if timeout is None:
+            timeout = 100
 
         if timeout < 100:
             timeout = self._channel.get_config().get_request_timeout() / 1000
@@ -80,7 +82,7 @@ class SessionDefault(SessionBase):
         await self._channel.send(Frame(Flags.ReplyEnd, message), None)
 
     async def preclose(self):
-        logger.debug(
+        log.debug(
             f"{self._channel.get_config().get_role_name()} session close starting, sessionId={self.session_id()}")
         if self._channel.is_valid():
             await self._channel.send_close(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING)
@@ -90,7 +92,7 @@ class SessionDefault(SessionBase):
             try:
                 await self._channel.send_close(Constants.CLOSE1001_PROTOCOL_CLOSE)
             except Exception as e:
-                logger.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
+                log.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
         await self._channel.close(Constants.CLOSE2009_USER)
 
     def param(self, name: str):

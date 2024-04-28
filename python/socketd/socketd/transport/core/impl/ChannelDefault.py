@@ -170,8 +170,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                     await RunUtils.waitTry(self._assistant.close(self._source))
                     log.debug(f"{self.get_config().get_role_name()} channel closed, sessionId={self.get_session().session_id()}")
         except Exception as e:
-            log.warning(f"{self.get_config().get_role_name()} channel close error, "
-                        f"sessionId={self.get_session().session_id()} : {e}")
+            log.warning(f"{self.get_config().get_role_name()} channel close error, sessionId={self.get_session().session_id()} : {e}")
 
         if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             self.on_close_do()

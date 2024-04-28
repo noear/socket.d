@@ -1,7 +1,6 @@
 import asyncio
 from asyncio import CancelledError
 from typing import Optional, Sequence, List
-from loguru import logger
 from websockets.extensions import ClientExtensionFactory
 from websockets.uri import WebSocketURI
 
@@ -69,7 +68,6 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         super().connection_open()
         self._handler_future = self.loop.create_task(self._handler())
 
-    @logger.catch
     async def on_open(self):
         """开始建立连接"""
         try:
@@ -119,9 +117,9 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             raise c
         except SocketDConnectionException as s:
             self.handshake_future.accept(ClientHandshakeResult(self.channel, s))
-            logger.warning(s)
+            log.warning(s)
         except ConnectionClosedOK as e:
-            logger.info(e)
+            log.info(e)
         except Exception as e:
             self.on_error(e)
 

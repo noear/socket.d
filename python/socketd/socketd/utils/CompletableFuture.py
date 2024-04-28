@@ -3,7 +3,7 @@ import functools
 from threading import Lock
 from typing import Generic, TypeVar, Callable
 
-from loguru import logger
+from socketd.utils.LogConfig import log
 
 T = TypeVar('T')
 
@@ -14,7 +14,7 @@ class CompletableFuture(Generic[T]):
         if loop is None:
             loop = asyncio.get_running_loop()
         if _future and not asyncio.iscoroutine(_future):
-            logger.warning("{name}对象不是协程对象", name=_future.__name__)
+            log.warning("{name} invalid coroutine object", name=_future.__name__)
             return
         self._future: asyncio.Task = loop.create_task(_future) if _future else loop.create_future()
         self._lock = Lock()

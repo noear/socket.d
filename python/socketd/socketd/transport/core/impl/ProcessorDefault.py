@@ -63,8 +63,7 @@ class ProcessorDefault(Processor, ABC):
                 if frame.flag() == Flags.Close:
                     raise SocketDConnectionException("Connection request was rejected")
 
-                log.warning("{} channel handshake is None, sessionId={}", channel.get_config().get_role_name(),
-                                 channel.get_session().session_id())
+                log.warning(f"{channel.get_config().get_role_name()} channel handshake is None, sessionId={channel.get_session().session_id()}")
                 return
 
             # 更新最后活动时间
@@ -150,7 +149,7 @@ class ProcessorDefault(Processor, ABC):
             await RunUtils.waitTry(self.listener.on_open(channel.get_session()))
             channel.do_open_future(True, None)
         except Exception as e:
-            log.warning("{} channel listener onOpen error", channel.get_config().get_role_name(), e)
+            log.warning(f"{channel.get_config().get_role_name()} channel listener onOpen error: {e}")
             channel.do_open_future(False, e)
 
     def on_message(self, channel: ChannelInternal, message: Message):
@@ -160,7 +159,7 @@ class ProcessorDefault(Processor, ABC):
         try:
             await self.listener.on_message(channel.get_session(), message)
         except Exception as e:
-            log.warning("{} channel listener onMessage error", channel.get_config().get_role_name(), e)
+            log.warning(f"{channel.get_config().get_role_name()} channel listener onMessage error: {e}")
             self.on_error(channel, e)
 
     def on_close(self, channel: ChannelInternal):
@@ -177,7 +176,7 @@ class ProcessorDefault(Processor, ABC):
         try:
             await RunUtils.waitTry(self.listener.on_error(channel.get_session(), error))
         except Exception as e:
-            log.warning("{} channel listener onError error", channel.get_config().get_role_name(), e)
+            log.warning(f"{channel.get_config().get_role_name()} channel listener onError error: {e}")
 
     def do_close_notice(self, channel: ChannelInternal):
         RunUtils.taskTry(self.do_close_notice_internal(channel))

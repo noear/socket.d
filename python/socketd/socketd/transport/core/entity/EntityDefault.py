@@ -6,6 +6,7 @@ from typing import Any, Optional, BinaryIO
 from socketd.transport.core.Entity import Entity
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.EntityMetas import EntityMetas
+from socketd.utils.MapUtils import MapUtils
 
 
 class EntityDefault(Entity):
@@ -66,13 +67,13 @@ class EntityDefault(Entity):
         if val:
             self.meta_map()[name] = val
         else:
-            self.meta_map().pop(name)
+            MapUtils.remove(self.meta_map(), name)
 
         self._meta_stringChanged = True
         return self
 
     def meta_del(self, name:str):
-        self.meta_map().pop(name)
+        MapUtils.remove(self.meta_map(), name)
         self._meta_stringChanged = True
         return self
 

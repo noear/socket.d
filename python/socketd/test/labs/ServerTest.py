@@ -62,7 +62,7 @@ def buildListener():
              .do_on("/upload", doOn_upload)
              .do_on("/download", doOn_download)
              .do_on("/push", doOn_push)
-             .do_on("/unpush", lambda s,m: s.attr_map().pop("push"))
+             .do_on("/unpush", lambda s,m: s.attr_del("push"))
             )
 
 async def main():

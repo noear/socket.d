@@ -6,6 +6,7 @@ from socketd.transport.core.Message import MessageInternal
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.FragmentAggregator import FragmentAggregator
 from socketd.exception.SocketDExecption import SocketDException
+from socketd.utils.MapUtils import MapUtils
 
 from .FragmentHolder import FragmentHolder
 from ..entity.MessageBuilder import MessageBuilder
@@ -49,7 +50,7 @@ class FragmentAggregatorDefault(FragmentAggregator):
             dataBuffer.write(fragment.message.data().getvalue())
 
         entity = EntityDefault().meta_map_put(self.__main.meta_map()).data_set(dataBuffer)
-        entity.meta_map().pop(EntityMetas.META_DATA_FRAGMENT_IDX)
+        MapUtils.remove(entity.meta_map(), EntityMetas.META_DATA_FRAGMENT_IDX)
 
         return Frame(self.__main.flag(),
                      MessageBuilder()

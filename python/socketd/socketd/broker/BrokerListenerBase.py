@@ -6,6 +6,7 @@ from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Session import Session
+from socketd.utils.MapUtils import MapUtils
 from socketd.utils.StrUtils import StrUtils
 
 
@@ -79,4 +80,4 @@ class BrokerListenerBase(Listener, ABC):
             if tmp is not None:
                 tmp.remove(session)
 
-        self.__sessionAll.pop(session.session_id())
+        MapUtils.remove(self.__sessionAll, session.session_id())

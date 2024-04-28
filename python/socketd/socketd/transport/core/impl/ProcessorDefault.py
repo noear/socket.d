@@ -147,7 +147,7 @@ class ProcessorDefault(Processor, ABC):
 
     async def on_open_do(self, channel: ChannelInternal):
         try:
-            await self.listener.on_open(channel.get_session())
+            await RunUtils.waitTry(self.listener.on_open(channel.get_session()))
             channel.do_open_future(True, None)
         except Exception as e:
             log.warning("{} channel listener onOpen error", channel.get_config().get_role_name(), e)

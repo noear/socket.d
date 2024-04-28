@@ -10,6 +10,7 @@ from socketd.transport.core.Frames import Frames
 from socketd.transport.core.Config import Config
 from socketd.transport.core.HandshakeDefault import HandshakeInternal
 from socketd.transport.core.Message import Message
+from socketd.utils.MapUtils import MapUtils
 
 
 class ChannelBase(Channel, ABC):
@@ -17,7 +18,7 @@ class ChannelBase(Channel, ABC):
         self.config = config
 
         self.handshake: HandshakeInternal = None
-        self.__attachments = {}
+        self.__attachments:dict = {}
 
         self.__lock: threading.Lock = threading.Lock()
         self.__loop: Optional[asyncio.AbstractEventLoop] = None
@@ -45,7 +46,7 @@ class ChannelBase(Channel, ABC):
 
     def put_attachment(self, name, val):
         if val is None:
-            self.__attachments.pop(name)
+            MapUtils.remove(self.__attachments, name)
         else:
             self.__attachments[name] = val
 

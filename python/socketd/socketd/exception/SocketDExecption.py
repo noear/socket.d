@@ -1,3 +1,6 @@
+from socketd.transport.core.Message import Message
+
+
 class SocketDException(RuntimeError):
 
     def __init__(self, message):
@@ -10,7 +13,11 @@ class SocketDException(RuntimeError):
 
 class SocketDAlarmException(SocketDException):
     """ 告警"""
-    pass
+    def __init__(self, alarm:Message):
+        super().__init__(alarm.data_as_string())
+        self.__alarm = alarm
+    def get_alarm(self):
+        return self.__alarm
 
 
 class SocketDChannelException(SocketDException):

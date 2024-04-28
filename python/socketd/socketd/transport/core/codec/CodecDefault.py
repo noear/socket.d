@@ -32,16 +32,15 @@ class CodecDefault(Codec):
             # sid
             sidB: bytes = frame.message().sid().encode(self.config.get_charset())
             # event
-            event: bytes = frame.message().event().encode(self.config.get_charset())
+            eventB: bytes = frame.message().event().encode(self.config.get_charset())
             # metaString
             metaStringB: bytes = frame.message().entity().meta_string().encode(self.config.get_charset())
 
-            # length (flag + sid + event + metaString + data + int.bytes + \n*3)
-            len1 = len(sidB) + len(event) + len(
-                metaStringB) + frame.message().entity().data_size() + 1 * 3 + 2 * 4
+            # length (len[int] + flag[int] + sid + event + metaString + data + \n*3)
+            len1 = 4 + 4 + len(sidB) + len(eventB) + len(metaStringB) + frame.message().data_size() + 2 * 3
 
             Asserts.assert_size("sid", len(sidB), Constants.MAX_SIZE_SID)
-            Asserts.assert_size("event", len(event), Constants.MAX_SIZE_EVENT)
+            Asserts.assert_size("event", len(eventB), Constants.MAX_SIZE_EVENT)
             Asserts.assert_size("metaString", len(metaStringB), Constants.MAX_SIZE_META_STRING)
             Asserts.assert_size("data", frame.message().entity().data_size(), Constants.MAX_SIZE_DATA)
 
@@ -58,7 +57,7 @@ class CodecDefault(Codec):
             target.put_char(10) #'\n'
 
             # event
-            target.put_bytes(event)
+            target.put_bytes(eventB)
             target.put_char(10)
 
             # metaString

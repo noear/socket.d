@@ -19,9 +19,9 @@ setup(
         'License :: OSI Approved',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries'
     ],
     zip_safe=True,
-    python_requires='>=3.12', # 建议使用3.12及以上
+    python_requires='>=3.10', # 建议使用3.10及以上
 )

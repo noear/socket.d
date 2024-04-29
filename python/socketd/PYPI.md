@@ -7,6 +7,8 @@
 pip install -r reqeusts.txt
 
 pip install -r reqeusts.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
+
+pip3 install setuptools -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 ### 发布

@@ -118,7 +118,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
                 # 单收时，内部已经是异步机制
-                await stream.on_reply(frame.message())
+                await RunUtils.waitTry(stream.on_reply(frame.message()))
             else:
                 # 改为异步处理，避免卡死Io线程
                 asyncio.get_running_loop().run_in_executor(self.get_config().get_exchange_executor(),

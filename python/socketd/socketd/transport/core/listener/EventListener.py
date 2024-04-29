@@ -41,7 +41,7 @@ class EventListener(Listener):
 
     async def on_open(self, session: Session):
         if self._doOnOpenHandler:
-            await RunUtils.waitTry(await self._doOnOpenHandler(session))
+            await RunUtils.waitTry(self._doOnOpenHandler(session))
 
     async def on_message(self, session: Session, message: Message):
         if self._doOnMessageHandler:

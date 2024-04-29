@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from asyncio import Future
 
 from socketd.exception.SocketDExecption import SocketDException, SocketDChannelException
@@ -40,7 +41,8 @@ class ClientChannel(ChannelBase):
             if not self.__heartbeatScheduledFuture.done():
                 self.__heartbeatScheduledFuture.cancel()
         except Exception as e:
-            log.warning(e)
+            e_msg = traceback.format_exc()
+            log.warning(e_msg)
 
     async def __heartbeatScheduled(self) -> None:
         while True:

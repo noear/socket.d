@@ -1,3 +1,4 @@
+import traceback
 from typing import Optional
 
 from socketd.transport.core.entity.MessageBuilder import MessageBuilder
@@ -92,7 +93,8 @@ class SessionDefault(SessionBase):
             try:
                 await self._channel.send_close(Constants.CLOSE1001_PROTOCOL_CLOSE)
             except Exception as e:
-                log.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
+                e_msg = traceback.format_exc()
+                log.warning(f" {self._channel.get_config().get_role_name()} channel send_close error \n{e_msg}")
         await self._channel.close(Constants.CLOSE2009_USER)
 
     def param(self, name: str):

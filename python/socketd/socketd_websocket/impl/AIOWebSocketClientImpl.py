@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from asyncio import CancelledError
 from typing import Optional, Sequence, List
 from websockets.extensions import ClientExtensionFactory
@@ -57,7 +58,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             try:
                 await self.on_message()
             except Exception as e:
-                log.warning(e)
+                e_msg = traceback.format_exc()
+                log.warning(e_msg)
                 break
 
     def connection_open(self) -> None:
@@ -116,8 +118,9 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             log.debug(c)
             raise c
         except SocketDConnectionException as s:
+            s_msg = traceback.format_exc()
             self.handshake_future.accept(ClientHandshakeResult(self.channel, s))
-            log.warning(s)
+            log.warning(s_msg)
         except ConnectionClosedOK as e:
             log.info(e)
         except Exception as e:

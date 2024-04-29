@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+import traceback
 from typing import Optional, Union
 
 from websockets import ConnectionClosedOK
@@ -58,7 +59,8 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
                 # 有可能未 onOpen，就 onError 了；此时通道未成
                 self.ws_aio_server.get_processor().on_error(channel, ex)
         except Exception as e:
-            log.warning(e)
+            e_msg = traceback.format_exc()
+            log.warning(e_msg)
 
     async def on_message(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], path: str):
         """ws_handler"""

@@ -1,5 +1,6 @@
 import asyncio
 import time
+import traceback
 from typing import TypeVar, Optional
 
 from socketd.transport.core import Entity
@@ -170,7 +171,8 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                     await RunUtils.waitTry(self._assistant.close(self._source))
                     log.debug(f"{self.get_config().get_role_name()} channel closed, sessionId={self.get_session().session_id()}")
         except Exception as e:
-            log.warning(f"{self.get_config().get_role_name()} channel close error, sessionId={self.get_session().session_id()} : {e}")
+            e_msg = traceback.format_exc()
+            log.warning(f"{self.get_config().get_role_name()} channel close error, sessionId={self.get_session().session_id()} \n{e_msg}")
 
         if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             self.on_close_do()

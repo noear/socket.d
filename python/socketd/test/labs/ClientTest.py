@@ -31,7 +31,7 @@ async def main():
         # 打印
         log.info(reply.data_as_string()) or (reply.is_end() and log.info("the end!"))
     ).then_error(lambda err:
-         log.error(err)
+        log.error(err)
     )
 
     await asyncio.Future()

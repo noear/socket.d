@@ -29,9 +29,9 @@ class SubscribeStreamImpl(StreamBase, SubscribeStream):
         return self
 
     def then_error(self, onError: Callable[[Exception], None]) -> SubscribeStream:
-        super().then_error_do(onError)
+        self._then_error_do(onError)
         return self
 
     def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> SubscribeStream:
-        super().then_progress_do(onProgress)
+        self._then_progress_do(onProgress)
         return self

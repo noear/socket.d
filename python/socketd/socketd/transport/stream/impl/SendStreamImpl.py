@@ -16,7 +16,7 @@ class SendStreamImpl(StreamBase, SendStream):
         ...
 
     def then_error(self, onError: Callable[[Exception], None]) -> 'SendStream':
-        super().then_error_do(onError)
+        super()._then_error_do(onError)
         return self
 
 

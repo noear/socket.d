@@ -29,10 +29,10 @@ class StreamBase(StreamInternal, ABC):
     def is_done(self):
         return True
 
-    def then_error_do(self, onError: Callable[[Exception], None]):
+    def _then_error_do(self, onError: Callable[[Exception], None]):
         self.__doOnError = onError
 
-    def then_progress_do(self, onProgress: Callable[[bool, int, int], None]):
+    def _then_progress_do(self, onProgress: Callable[[bool, int, int], None]):
         self.__doOnProgress = onProgress
 
     def demands(self) -> int:

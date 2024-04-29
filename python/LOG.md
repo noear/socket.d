@@ -1,3 +1,7 @@
+### 2.4.14
+* 修复 EventListener:on_open 错误
+* 优化 RequestStreamImpl 协程处理处理
+
 ### 2.4.13
 * 优化 协议跨语言编码解兼容
 * 优化 异步栈的日志记录

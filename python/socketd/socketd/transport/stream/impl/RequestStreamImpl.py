@@ -8,6 +8,7 @@ from socketd.transport.core.Message import MessageInternal
 from socketd.transport.stream.RequestStream import RequestStream
 from socketd.transport.stream.impl.StreamBase import StreamBase
 from socketd.utils.CompletableFuture import CompletableFuture
+from socketd.utils.RunUtils import RunUtils
 
 
 class RequestStreamImpl(StreamBase, RequestStream):
@@ -32,13 +33,16 @@ class RequestStreamImpl(StreamBase, RequestStream):
         return await self.__await__()
 
     async def on_reply(self, reply: MessageInternal):
-        return await self.__future.set_result(reply)
+        self.__future.accept(reply)
 
     def then_reply(self, onReply: Callable[[MessageInternal], None]) -> RequestStream:
-        self.__future.then_callback(onReply)
+        async def _then_reply_do(r: MessageInternal, e: Exception):
+            onReply(r)
+        self.__future.then_async_callback(_then_reply_do)
         return self
 
     def then_error(self, onError: Callable[[Exception], None]) -> RequestStream:
+        RunUtils.taskTry(self.__future.cancel())
         super().then_error_do(onError)
         return self
 

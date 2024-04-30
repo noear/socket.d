@@ -16,10 +16,10 @@ class SendStreamImpl(StreamBase, SendStream):
         ...
 
     def then_error(self, onError: Callable[[Exception], None]) -> 'SendStream':
-        super()._then_error_do(onError)
+        self._then_error_do(onError)
         return self
 
 
     def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> 'SendStream':
-        super().then_progress(onProgress)
+        self.then_progress(onProgress)
         return self

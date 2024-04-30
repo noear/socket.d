@@ -1,9 +1,8 @@
 from __future__ import annotations
 import asyncio
-import traceback
 from typing import Optional, Union
 
-from websockets import ConnectionClosedOK
+from websockets import ConnectionClosedOK, ConnectionClosedError, ConnectionClosed
 from websockets.frames import Opcode
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
@@ -52,15 +51,18 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
             channel = ChannelDefault(conn, self.ws_aio_server)
             self.set_attachment(channel)
 
-    async def on_error(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], ex: Exception):
-        try:
-            channel: ChannelInternal = conn.get_attachment()
-            if channel is not None:
-                # 有可能未 onOpen，就 onError 了；此时通道未成
-                self.ws_aio_server.get_processor().on_error(channel, ex)
-        except Exception as e:
-            e_msg = traceback.format_exc()
-            log.warning(e_msg)
+    def on_close(self, conn) -> None:
+        channel: ChannelInternal = conn.get_attachment()
+        if channel is not None:
+            # 有可能未 onOpen，就 onClose 了；此时通道未成
+            self.ws_aio_server.get_processor().on_close(channel)
+
+
+    def on_error(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], ex: Exception):
+        channel: ChannelInternal = conn.get_attachment()
+        if channel is not None:
+            # 有可能未 onOpen，就 onError 了；此时通道未成
+            self.ws_aio_server.get_processor().on_error(channel, ex)
 
     async def on_message(self, conn: Union[AIOWebSocketServerImpl, WebSocketServerProtocol], path: str):
         """ws_handler"""
@@ -91,9 +93,11 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
             except asyncio.CancelledError as e:
                 break
             except ConnectionClosedOK as e:
-                break
+                self.on_close(conn)
+            except ConnectionClosedError as e:
+                self.on_close(conn)
             except Exception as e:
-                await self.on_error(conn, e)
+                self.on_error(conn, e)
 
     # 未签名前，禁止 ping/pong
     async def assert_handshake(self) -> bool:

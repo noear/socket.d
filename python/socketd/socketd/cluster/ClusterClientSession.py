@@ -50,12 +50,12 @@ class ClusterClientSession(ClientSession):
 
         return sender.send(event, content)
 
-    def send_and_request(self, event: str, content: Entity, timeout: int) -> RequestStream:
+    def send_and_request(self, event: str, content: Entity, timeout: float = 0) -> RequestStream:
         sender = self.get_session_any(None)
 
         return sender.send_and_request(event, content, timeout)
 
-    def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0) -> SubscribeStream:
+    def send_and_subscribe(self, event: str, content: Entity, timeout: float = 0) -> SubscribeStream:
         sender = self.get_session_any(None)
 
         return sender.send_and_subscribe(event, content, timeout)

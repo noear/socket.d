@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author noear
@@ -21,6 +24,7 @@ import java.nio.ByteBuffer;
  */
 public class WebSocketServerImpl extends WebSocketServer {
     static final Logger log = LoggerFactory.getLogger(WebSocketServerImpl.class);
+    public static final String WS_HANDSHAKE_HEADER = "ws-handshake-header";
 
     private WsNioServer server;
 
@@ -50,7 +54,19 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        conn.setAttachment(new ChannelDefault<>(conn, server));
+        ChannelDefault channel = new ChannelDefault<>(conn, server);
+        conn.setAttachment(channel);
+
+        //头信息
+        Map<String, String> headerMap = new HashMap<>();
+
+        Iterator<String> httpFields = handshake.iterateHttpFields();
+        while (httpFields.hasNext()) {
+            String name = httpFields.next();
+            headerMap.put(name, handshake.getFieldValue(name));
+        }
+
+        channel.getSession().attrPut(WS_HANDSHAKE_HEADER, headerMap);
     }
 
     @Override

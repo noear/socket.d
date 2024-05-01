@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class WebSocketServerImpl extends WebSocketServer {
     static final Logger log = LoggerFactory.getLogger(WebSocketServerImpl.class);
-    public static final String WS_HANDSHAKE_HEADER = "ws-handshake-header";
+    public static final String WS_HANDSHAKE_HEADER = "ws-handshake-headers";
 
     private WsNioServer server;
 

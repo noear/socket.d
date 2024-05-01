@@ -49,6 +49,10 @@ class Session(ClientSession):
         ...
 
     @abc.abstractmethod
+    def attr_del(self, name: str):
+        ...
+
+    @abc.abstractmethod
     def attr(self, name: str) -> Union[None, Any]:
         ...
 

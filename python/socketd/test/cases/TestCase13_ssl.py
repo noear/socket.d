@@ -74,10 +74,10 @@ class TestCase13_ssl(BaseTestCase):
 
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(c_config_handler).open()
-        await self.client_session.send_and_request("demo", StringEntity("test"), 100)
+        self.client_session.send_and_request("demo", StringEntity("test"), 100)
 
         for _ in range(100):
-            await self.client_session.send("demo", StringEntity("test"))
+            self.client_session.send("demo", StringEntity("test"))
 
         await asyncio.sleep(5)
         logger.info(

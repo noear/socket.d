@@ -8,5 +8,5 @@ from loguru import logger as _logger
 logger = logging.getLogger("socketD")
 # 异步默认日志
 logging.getLogger("asyncio").setLevel(logging.WARNING)
-# 日志用这个
-log = _logger.opt(colors=True)
+# 日志用这个（为能用 True，否则格式化异常时会出错）
+log = _logger.opt(colors=False)

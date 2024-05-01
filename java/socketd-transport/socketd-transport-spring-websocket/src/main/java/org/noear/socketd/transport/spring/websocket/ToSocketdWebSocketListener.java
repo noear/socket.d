@@ -1,8 +1,6 @@
 package org.noear.socketd.transport.spring.websocket;
 
 import org.noear.socketd.transport.core.*;
-import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
-import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.noear.socketd.transport.core.impl.ProcessorDefault;
 import org.slf4j.Logger;
@@ -14,8 +12,9 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 转到 Sokcet.D 协议的 WebSocketListener（服务端、客户端，都可用）
@@ -25,12 +24,14 @@ import java.nio.ByteBuffer;
  */
 public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
     static final String SOCKETD_KEY = "SOCKETD_KEY";
+    public static final String WS_HANDSHAKE_HEADER = "ws-handshake-headers";
 
     static final Logger log = LoggerFactory.getLogger(ToSocketdWebSocketListener.class);
 
     private final Config config;
     private final InnerChannelAssistant assistant;
     private final Processor processor;
+    private final InnerListenerWrapper listenerWrapper;
 
     private final InnerChannelSupporter supporter;
 
@@ -41,7 +42,9 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
     public ToSocketdWebSocketListener(Config config, Listener listener) {
         this.config = config;
         this.assistant = new InnerChannelAssistant(config);
+        this.listenerWrapper = new InnerListenerWrapper();
         this.processor = new ProcessorDefault();
+        this.processor.setListener(listenerWrapper);
         this.supporter = new InnerChannelSupporter(this);
 
         if (listener == null) {
@@ -57,7 +60,7 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
      * 设置 Socket.D 监听器
      */
     public void setListener(Listener listener) {
-        this.processor.setListener(listener);
+        this.listenerWrapper.setListener(listener);
     }
 
     /**
@@ -76,7 +79,14 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        getChannel(session);
+        ChannelInternal channel = getChannel(session);
+
+        //头信息
+        Map<String, String> headerMap = new HashMap<>();
+        for (Map.Entry<String, List<String>> kv : session.getHandshakeHeaders().entrySet()) {
+            headerMap.put(kv.getKey(), String.join(",", kv.getValue()));
+        }
+        channel.getSession().attrPut(WS_HANDSHAKE_HEADER, headerMap);
     }
 
     @Override
@@ -162,44 +172,6 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
         @Override
         public Config getConfig() {
             return l.config;
-        }
-    }
-
-    private static class InnerChannelAssistant implements ChannelAssistant<WebSocketSession> {
-        private final Config config;
-
-        public InnerChannelAssistant(Config config) {
-            this.config = config;
-        }
-
-        @Override
-        public void write(WebSocketSession target, Frame frame) throws IOException {
-            ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
-            target.sendMessage(new BinaryMessage(writer.getBuffer()));
-        }
-
-        public Frame read(ByteBuffer buffer) throws IOException {
-            return config.getCodec().read(new ByteBufferCodecReader(buffer));
-        }
-
-        @Override
-        public boolean isValid(WebSocketSession target) {
-            return target.isOpen();
-        }
-
-        @Override
-        public void close(WebSocketSession target) throws IOException {
-            target.close();
-        }
-
-        @Override
-        public InetSocketAddress getRemoteAddress(WebSocketSession target) throws IOException {
-            return target.getRemoteAddress();
-        }
-
-        @Override
-        public InetSocketAddress getLocalAddress(WebSocketSession target) throws IOException {
-            return target.getLocalAddress();
         }
     }
 }

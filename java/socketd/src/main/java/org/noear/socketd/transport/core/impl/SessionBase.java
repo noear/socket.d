@@ -89,6 +89,17 @@ public abstract class SessionBase implements Session {
         return this;
     }
 
+    /**
+     * 删除附件
+     */
+    @Override
+    public <T> Session attrDel(String name) {
+        if (attrMap != null) {
+            attrMap.remove(name);
+        }
+        return this;
+    }
+
     @Override
     public String sessionId() {
         return sessionId;

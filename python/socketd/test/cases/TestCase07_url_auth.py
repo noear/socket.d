@@ -2,8 +2,8 @@ import asyncio
 
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
-from socketd.transport.core.impl.LogConfig import log
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.LogConfig import log
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session
@@ -58,13 +58,13 @@ class TestCase07_url_auth(BaseTestCase):
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
         try:
-            await self.client_session.send("demo", StringEntity("root").meta_put("name", "root"))
+            self.client_session.send("demo", StringEntity("root").meta_put("name", "root"))
             await self.client_session.close()
             serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?auth=123"
             self.client_session: Session = await SocketD.create_client(serverUrl) \
                 .config(config_handler).open()
 
-            await self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
+            self.client_session.send("demo", StringEntity("test").meta_put("name", "bai"))
         except Exception as e:
             log.error(e)
         log.info(f" message {s.message_counter.get()}")

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Awaitable, Optional
+from typing import Optional
 
 from socketd.exception.SocketDExecption import SocketDException
 from socketd.transport.client.Client import ClientInternal, Client
@@ -11,7 +11,7 @@ from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Session import Session
 from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandler
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.impl.ProcessorDefault import ProcessorDefault
 from socketd.transport.client.ClientConfig import ClientConfig
 
@@ -86,11 +86,11 @@ class ClientBase(ClientInternal, ABC):
 
         return clientChannel.get_session()
 
-    def open(self) -> Awaitable[Session]:
-        return self._open_do(False)
+    async def open(self) -> Session:
+        return await self._open_do(False)
 
-    def open_or_throw(self) -> Awaitable[Session]:
-        return self._open_do(True)
+    async def open_or_throw(self) -> Session:
+        return await self._open_do(True)
 
     @abstractmethod
     def create_connector(self):

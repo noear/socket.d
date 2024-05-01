@@ -75,6 +75,8 @@ public class TestCase30_meta_auth extends BaseTestCase {
                 .openOrThow();
         clientSession.send("/demo", new StringEntity("hi"));
 
+        Thread.sleep(10);
+
         //会失败
         try {
             ClientSession session2 = SocketD.createClient(getSchema() + "://127.0.0.1:" + getPort() + "/?u=solon&p=1").openOrThow();

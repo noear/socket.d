@@ -4,7 +4,7 @@ from socketd import SocketD
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.Message import Message
 from socketd.transport.stream import SubscribeStream
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session
@@ -101,7 +101,7 @@ class TestCase12_sendAndSubscribe2rep(BaseTestCase):
         async def send_and_subscribe_test(entity):
             logger.debug(f"c::subscribe::{entity.data_as_string()} {entity}")
 
-        req: SubscribeStream = await self.client_session.send_and_subscribe("demo", StringEntity("hi"), 100)
+        req: SubscribeStream = self.client_session.send_and_subscribe("demo", StringEntity("hi"), 100)
         req.then_reply(send_and_subscribe_test)
         await asyncio.sleep(3)
 

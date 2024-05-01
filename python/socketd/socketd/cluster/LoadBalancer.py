@@ -2,7 +2,7 @@ from threading import RLock
 from typing import List
 
 from socketd.transport.client.ClientSession import ClientSession
-from socketd.transport.utils.StrUtils import StrUtils
+from socketd.utils.StrUtils import StrUtils
 
 
 class LoadBalancer:

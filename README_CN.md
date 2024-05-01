@@ -11,29 +11,29 @@
 
 <p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/org.noear/socketd">
-        <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Maven%20Central" alt="Maven" />
+        <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Latest-Version" alt="Latest-Version" />
     </a>
     <a target="_blank" href="LICENSE">
-		<img src="https://img.shields.io/:license-Apache2-blue.svg" alt="Apache 2" />
+		<img src="https://img.shields.io/:License-Apache 2.0-blue.svg" alt="Apache 2.0" />
 	</a>
-   <a target="_blank" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
-		<img src="https://img.shields.io/badge/JDK-8-green.svg" alt="jdk-8" />
+    <a>
+		<img src="https://img.shields.io/badge/Java-8~22-green.svg" alt="Java-8~22" />
 	</a>
-    <a target="_blank" href="https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html">
-		<img src="https://img.shields.io/badge/JDK-11-green.svg" alt="jdk-11" />
+    <a>
+		<img src="https://img.shields.io/badge/Kotlin-8+-green.svg" alt="Kotlin-8+" />
 	</a>
-    <a target="_blank" href="https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html">
-		<img src="https://img.shields.io/badge/JDK-17-green.svg" alt="jdk-17" />
+    <a>
+		<img src="https://img.shields.io/badge/JavaScript-es6+-green.svg" alt="JavaScript-es6+" />
 	</a>
-    <a target="_blank" href="https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html">
-		<img src="https://img.shields.io/badge/JDK-21-green.svg" alt="jdk-21" />
+    <a>
+		<img src="https://img.shields.io/badge/Python-3.12+-green.svg" alt="Python-3.12+" />
 	</a>
     <br />
     <a target="_blank" href='https://gitee.com/noear/socketd/stargazers'>
         <img src='https://gitee.com/noear/socketd/badge/star.svg' alt='gitee star'/>
     </a>
     <a target="_blank" href='https://github.com/noear/socketd/stargazers'>
-        <img src="https://img.shields.io/github/stars/noear/socketd.svg?logo=github" alt="github star"/>
+        <img src="https://img.shields.io/github/stars/noear/socketd.svg?style=flat&logo=github" alt="github star"/>
     </a>
 </p>
 

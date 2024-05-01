@@ -8,7 +8,6 @@ import {Flags} from "./Flags";
 import {SocketDAlarmException, SocketDConnectionException} from "../../exception/SocketDException";
 import {HandshakeDefault} from "./HandshakeDefault";
 import {StreamInternal} from "../stream/Stream";
-import {Session} from "./Session";
 
 /**
  * 处理器
@@ -266,7 +265,11 @@ export class ProcessorDefault implements Processor {
     }
 
     onError(channel: ChannelInternal, error: any) {
-        this._listener.onError(channel.getSession(), error);
+        try {
+            this._listener.onError(channel.getSession(), error);
+        } catch (e) {
+            console.warn(`${channel.getConfig().getRoleName()} channel listener onError error`, e);
+        }
     }
 
     doCloseNotice(channel: ChannelInternal) {

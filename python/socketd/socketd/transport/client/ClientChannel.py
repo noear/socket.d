@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from asyncio import Future
 
 from socketd.exception.SocketDExecption import SocketDException, SocketDChannelException
@@ -6,14 +7,14 @@ from socketd.transport.client.Client import ClientInternal
 from socketd.transport.core.Asserts import Asserts
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Costants import Constants
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.impl.SessionDefault import SessionDefault
-from socketd.transport.stream.StreamManger import StreamInternal
+from socketd.transport.stream.Stream import StreamInternal
 from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.client.ClientConnector import ClientConnector
 
 from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandlerDefault
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 
 
 class ClientChannel(ChannelBase):
@@ -40,7 +41,8 @@ class ClientChannel(ChannelBase):
             if not self.__heartbeatScheduledFuture.done():
                 self.__heartbeatScheduledFuture.cancel()
         except Exception as e:
-            log.warning(e)
+            e_msg = traceback.format_exc()
+            log.warning(e_msg)
 
     async def __heartbeatScheduled(self) -> None:
         while True:

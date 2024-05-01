@@ -3,7 +3,7 @@ from typing import Callable, Union, Dict, Coroutine
 from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Session import Session
 from socketd.transport.core.Message import Message
-from socketd.transport.utils.RunUtils import RunUtils
+from socketd.utils.RunUtils import RunUtils
 
 
 class EventListener(Listener):
@@ -41,7 +41,7 @@ class EventListener(Listener):
 
     async def on_open(self, session: Session):
         if self._doOnOpenHandler:
-            await RunUtils.waitTry(await self._doOnOpenHandler(session))
+            await RunUtils.waitTry(self._doOnOpenHandler(session))
 
     async def on_message(self, session: Session, message: Message):
         if self._doOnMessageHandler:

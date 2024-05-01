@@ -1,5 +1,5 @@
 import asyncio
-from typing import Optional, List, Awaitable, Any
+from typing import List
 
 from socketd import SocketD
 from socketd.cluster.ClusterClientSession import ClusterClientSession
@@ -14,8 +14,8 @@ from socketd.transport.client.ClientHeartbeatHandler import ClientHeartbeatHandl
 
 class ClusterClient(Client):
 
-    def __init__(self, *serverUrls):
-        self.__serverUrls: Optional[tuple[Any, ...]] = serverUrls
+    def __init__(self, serverUrls:tuple[str]):
+        self.__serverUrls:tuple[str] = serverUrls
 
         self.__connectHandler: ClientConnectHandler = None
         self.__heartbeatHandler: ClientHeartbeatHandler = None
@@ -39,11 +39,11 @@ class ClusterClient(Client):
         self.__listener = listener
         return self
 
-    def open(self) -> Awaitable[ClientSession]:
-        return self._open_do(False)
+    async def open(self) -> ClientSession:
+        return await self._open_do(False)
 
-    def open_or_throw(self) -> Awaitable[ClientSession]:
-        return self._open_do(True)
+    async def open_or_throw(self) -> ClientSession:
+        return await self._open_do(True)
 
     async def _open_do(self, is_throw):
         sessions: List[Session] = []
@@ -69,7 +69,8 @@ class ClusterClient(Client):
                 else:
                     client.get_config().exchange_executor(exchangeExecutor)
 
-                sessions.extend(await asyncio.gather(*[client.open_or_throw() if is_throw else client.open()]))
+                sesssion = await (client.open_or_throw() if is_throw else client.open())
+                sessions.append(sesssion)
         return ClusterClientSession(sessions)
 
 

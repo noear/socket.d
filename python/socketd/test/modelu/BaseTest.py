@@ -6,7 +6,7 @@ from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.server.ServerConfig import ServerConfig
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.server.Server import Server
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.SimpleListenerTest import SimpleListenerTest
 from test.uitls import calc_async_time
 
@@ -39,21 +39,21 @@ class BaseTest:
     @calc_async_time
     async def send(self, count=100000):
         for _ in range(count):
-            await self.__client_session.send("demo", StringEntity("test"))
+            self.__client_session.send("demo", StringEntity("test"))
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
 
     @calc_async_time
     async def send_and_request(self, count=100000):
         for _ in range(count):
-            await self.__client_session.send_and_request("demo", StringEntity("test"), 100)
+            self.__client_session.send_and_request("demo", StringEntity("test"), 100)
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
 
     @calc_async_time
     async def send_and_subscribe(self, count=100000):
         for _ in range(count):
-            await self.__client_session.send_and_subscribe("demo", StringEntity("test"),  100)
+            self.__client_session.send_and_subscribe("demo", StringEntity("test"),  100)
             with self.__c_lock:
                 self.__c_lock.set(self.__c_lock.get() + 1)
 

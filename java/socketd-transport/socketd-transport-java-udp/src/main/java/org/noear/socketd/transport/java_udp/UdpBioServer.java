@@ -3,6 +3,7 @@ package org.noear.socketd.transport.java_udp;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
+import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.java_udp.impl.DatagramFrame;
 import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.core.impl.ChannelDefault;
@@ -75,7 +76,8 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
                     continue;
                 }
 
-                ChannelInternal channel = getChannel(datagramFrame);
+                boolean isNewConnect = datagramFrame.getFrame().flag() == Flags.Connect;
+                ChannelInternal channel = getChannel(datagramFrame, isNewConnect);
 
                 try {
                     serverExecutor.submit(() -> {
@@ -103,9 +105,21 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
         }
     }
 
-    private ChannelInternal getChannel(DatagramFrame datagramFrame) {
+    private ChannelInternal getChannel(DatagramFrame datagramFrame, boolean isNewConnect) {
         String addressAndPort = datagramFrame.getPacketAddress();
         ChannelInternal channel0 = channelMap.get(addressAndPort);
+
+        if (isNewConnect) {
+            if (channel0 != null) {
+                //如果是新连接，并且有旧的通道；先把旧的关闭
+                try {
+                    getProcessor().onClose(channel0);
+                } catch (Throwable e) {
+                    getProcessor().onError(channel0, e);
+                }
+                channel0 = null;
+            }
+        }
 
         if (channel0 == null) {
             DatagramTagert tagert = new DatagramTagert(server, datagramFrame.getPacket(), false);

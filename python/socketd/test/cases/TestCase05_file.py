@@ -10,7 +10,7 @@ from socketd.transport.core.Listener import Listener
 from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core.entity.FileEntity import FileEntity
 from socketd.transport.core.Message import Message
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session
@@ -44,7 +44,7 @@ class SimpleListenerTest(Listener, ABC):
         if file_name:
             logger.debug(f"file_name {file_name}")
             with open(out_file_name, "wb") as f:
-                f.write(message.data_as_bytes())
+                f.write(message.data())
 
         path = Path(out_file_name)
         assert path.exists()
@@ -82,7 +82,7 @@ class TestCase05_file(BaseTestCase):
         await asyncio.sleep(1)
         try:
             with open(self._upload_file_name, "rb") as f:
-                await self.client_session.send("/path?u=a&p=2", FileEntity(f, "test.png"))
+                self.client_session.send("/path?u=a&p=2", FileEntity(f, "test.png"))
         except Exception as e:
             logger.error(e)
             raise e

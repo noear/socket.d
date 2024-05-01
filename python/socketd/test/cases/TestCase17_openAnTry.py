@@ -26,12 +26,13 @@ class TestCase17_openAnTry(BaseTestCase):
                                .start())
 
         await asyncio.sleep(1)
-        self.client_session: Session = await SocketD.create_cluster_client(f"{self.schema}://127.0.0.1:{self.port}/",
-                                                                           f"{self.schema}://127.0.0.1:{self.port}/") \
-            .listen(ClientListenerTest()) \
-            .config(config_handler).open()
+        self.client_session: Session = await (SocketD.create_cluster_client(f"{self.schema}://127.0.0.1:{self.port}/",
+                                                                           f"{self.schema}://127.0.0.1:{self.port}/")
+                                              .listen(ClientListenerTest())
+                                              .config(config_handler)
+                                              .open())
 
-        await self.client_session.send("demo", StringEntity("test"))
+        self.client_session.send("demo", StringEntity("test"))
 
         await asyncio.sleep(2)
         logger.info(

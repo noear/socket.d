@@ -29,7 +29,7 @@ class TestCase02_auto_reconnect(BaseTestCase):
         serverUrl = self.schema + "://127.0.0.1:" + str(self.port) + "/path?u=a&p=2"
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).open()
-        await self.client_session.send("demo", StringEntity("test"))
+        self.client_session.send("demo", StringEntity("test"))
 
         await self.server.stop()
         # self.client_session.close()
@@ -38,9 +38,9 @@ class TestCase02_auto_reconnect(BaseTestCase):
         await self.server.start()
 
         for _ in range(3):
-            await self.client_session.send("demo", StringEntity("test"))
+            self.client_session.send("demo", StringEntity("test"))
 
-        await self.client_session.send_and_subscribe("demo", StringEntity("test"), 100)
+        self.client_session.send_and_subscribe("demo", StringEntity("test"), 100)
         await asyncio.sleep(1)
         logger.info(f"counter {_simple.server_counter.get()} ")
 

@@ -1,36 +1,34 @@
-import asyncio
+from abc import abstractmethod
 from typing import Callable
-from socketd.exception.SocketDExecption import SocketDTimeoutException, SocketDException
-from socketd.transport.core.Costants import Constants
+from socketd.transport.stream.Stream import Stream
 from socketd.transport.core.Entity import Reply
-from socketd.transport.stream.StreamBase import StreamBase
-from socketd.transport.utils.CompletableFuture import CompletableFuture
 
 
-class RequestStream(StreamBase):
+class RequestStream(Stream):
+    @abstractmethod
+    async def waiter(self) -> Reply:
+        ...
 
-    def __init__(self, sid: str, timeout: int):
-        super().__init__(sid, Constants.DEMANDS_SINGLE, timeout)
-        self._future: CompletableFuture = CompletableFuture()
+    @abstractmethod
+    def then_error(self, onError: Callable[[Exception], None]) -> 'RequestStream':
+        """
+        异常发生
+        :param onError: 当异常发生时执行的函数，接受一个异常参数
+        """
+        ...
 
-    def is_done(self):
-        return self._future.done()
+    @abstractmethod
+    def then_progress(self, onProgress: Callable[[bool, int, int], None]) -> 'RequestStream':
+        """
+        进度发生时
+        :param onProgress (isSend, val, max)
+        """
+        ...
 
-    def __await__(self):
-        try:
-            return self._future.get(self.timeout())
-        except asyncio.TimeoutError as _e:
-            raise SocketDTimeoutException(f"Request reply timeout>{self.timeout()}  sid={self.get_sid()}")
-        except Exception as _e:
-            raise SocketDException(f"Request failed, sid= sid={self.get_sid()} {str(_e)}")
+    @abstractmethod
+    def then_reply(self, onReply: Callable[[Reply], None]) -> 'RequestStream':
+        """
+        答复发生时
+        """
+        ...
 
-    async def await_result(self):
-        if self._future.done():
-            return self._future.get_result()
-        return await self.__await__()
-
-    async def on_reply(self, message: Reply):
-        return await self._future.set_result(message)
-
-    def then_reply(self, onReply: Callable[[Reply], None]):
-        self._future.then_callback(onReply)

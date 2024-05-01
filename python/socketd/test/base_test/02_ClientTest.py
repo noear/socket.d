@@ -25,9 +25,9 @@ async def main():
     client_session: Session = await SocketD.create_client("std:tcp://127.0.0.1:7779").config(config_handler).open()
     start_time = time.monotonic()
     for _ in range(10):
-        await client_session.send("demo", StringEntity("test.png"))
-        e = await client_session.send_and_request("demo", StringEntity("test.png"), 100)
-        await client_session.send_and_subscribe("demo", StringEntity("test.png"), 100)
+        client_session.send("demo", StringEntity("test.png"))
+        client_session.send_and_request("demo", StringEntity("test.png"), 100)
+        client_session.send_and_subscribe("demo", StringEntity("test.png"), 100)
         # logger.debug("send_and_request={e}", e=e)
     # await asyncio.gather(*[client_session.send("demo", StringEntity("test.png")) for _ in range(10000)])
     end_time = time.monotonic()

@@ -1,19 +1,19 @@
 import asyncio
+import traceback
 from asyncio import CancelledError
 from typing import Optional, Sequence, List
-from loguru import logger
 from websockets.extensions import ClientExtensionFactory
 from websockets.uri import WebSocketURI
 
 from socketd.exception.SocketDExecption import SocketDConnectionException
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.impl.ChannelDefault import ChannelDefault
 from websockets import WebSocketClientProtocol, Origin, Subprotocol, HeadersLike, ConnectionClosedOK
 
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.Frame import Frame
-from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.utils.CompletableFuture import CompletableFuture
 from socketd_websocket import WsAioClient
 
 
@@ -58,7 +58,8 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             try:
                 await self.on_message()
             except Exception as e:
-                log.warning(e)
+                e_msg = traceback.format_exc()
+                log.warning(e_msg)
                 break
 
     def connection_open(self) -> None:
@@ -69,7 +70,6 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
         super().connection_open()
         self._handler_future = self.loop.create_task(self._handler())
 
-    @logger.catch
     async def on_open(self):
         """开始建立连接"""
         try:
@@ -118,10 +118,11 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
             log.debug(c)
             raise c
         except SocketDConnectionException as s:
+            s_msg = traceback.format_exc()
             self.handshake_future.accept(ClientHandshakeResult(self.channel, s))
-            logger.warning(s)
+            log.warning(s_msg)
         except ConnectionClosedOK as e:
-            logger.info(e)
+            log.info(e)
         except Exception as e:
             self.on_error(e)
 

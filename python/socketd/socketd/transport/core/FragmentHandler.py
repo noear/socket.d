@@ -3,7 +3,7 @@ from typing import Callable
 
 from socketd.transport.core.Frame import Frame
 from socketd.transport.core.Message import MessageInternal
-from socketd.transport.stream.StreamManger import StreamInternal
+from socketd.transport.stream.Stream import StreamInternal
 from socketd.transport.core import Channel
 
 

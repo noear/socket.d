@@ -1,5 +1,6 @@
 import asyncio
 import time
+import traceback
 from typing import TypeVar, Optional
 
 from socketd.transport.core import Entity
@@ -8,9 +9,9 @@ from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.ChannelSupporter import ChannelSupporter
 from socketd.transport.core.Message import MessageInternal, Message
 from socketd.transport.core.entity.MessageBuilder import MessageBuilder
-from socketd.transport.core.impl.LogConfig import log
-from socketd.transport.stream.Stream import Stream
-from socketd.transport.stream.StreamManger import StreamManger, StreamInternal
+from socketd.utils.LogConfig import log
+from socketd.transport.stream.Stream import Stream, StreamInternal
+from socketd.transport.stream.StreamManger import StreamManger
 from socketd.transport.core.impl.ChannelBase import ChannelBase
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Flags import Flags
@@ -18,7 +19,8 @@ from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Session import Session
 from socketd.transport.core.impl.SessionDefault import SessionDefault
 from socketd.transport.core.Frame import Frame
-from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.utils.CompletableFuture import CompletableFuture
+from socketd.utils.RunUtils import RunUtils
 
 S = TypeVar("S")
 
@@ -116,7 +118,7 @@ class ChannelDefault(ChannelBase, ChannelInternal):
 
             if stream.demands() < Constants.DEMANDS_MULTIPLE:
                 # 单收时，内部已经是异步机制
-                await stream.on_reply(frame.message())
+                await RunUtils.waitTry(stream.on_reply(frame.message()))
             else:
                 # 改为异步处理，避免卡死Io线程
                 asyncio.get_running_loop().run_in_executor(self.get_config().get_exchange_executor(),
@@ -161,16 +163,16 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         try:
             self._closeCode = code
 
-            await super().close(code)
+            await RunUtils.waitTry(super().close(code))
 
             if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
                 if self._assistant.is_valid(self._source):
                     # 如果有效且非预关闭，则尝试关闭源
-                    await self._assistant.close(self._source)
+                    await RunUtils.waitTry(self._assistant.close(self._source))
                     log.debug(f"{self.get_config().get_role_name()} channel closed, sessionId={self.get_session().session_id()}")
         except Exception as e:
-            log.warning(f"{self.get_config().get_role_name()} channel close error, "
-                        f"sessionId={self.get_session().session_id()} : {e}")
+            e_msg = traceback.format_exc()
+            log.warning(f"{self.get_config().get_role_name()} channel close error, sessionId={self.get_session().session_id()} \n{e_msg}")
 
         if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             self.on_close_do()

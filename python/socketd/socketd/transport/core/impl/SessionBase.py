@@ -2,6 +2,7 @@ from abc import ABC
 from typing import Any, Dict
 from socketd.transport.core.Session import Session
 from socketd.transport.core.Channel import Channel
+from socketd.utils.MapUtils import MapUtils
 
 
 class SessionBase(Session, ABC):
@@ -21,6 +22,10 @@ class SessionBase(Session, ABC):
             return False
         else:
             return self._attrMap.__contains__(name)
+
+    def attr_del(self, name: str):
+        if self._attrMap is not None:
+            MapUtils.remove(self._attrMap, name)
 
     def attr(self, name: str) -> Any:
         if self._attrMap is None:

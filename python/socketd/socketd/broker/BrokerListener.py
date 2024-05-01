@@ -90,4 +90,4 @@ class BrokerListener(BrokerListenerBase):
 
     def on_error(self, session: Session, error):
         ...
-        # log.warn("Broker error", error)
+        # log.warning("Broker error", error)

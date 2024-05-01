@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.netty.udp.impl;
 
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 
 import java.io.Closeable;
@@ -16,10 +16,11 @@ import java.net.InetSocketAddress;
  */
 public class DatagramTagert implements Closeable {
     private final boolean isClient;
-    private final Channel socket;
+    private final ChannelHandlerContext ctx;
     private final DatagramPacket packet;
-    public DatagramTagert(Channel socket, DatagramPacket packet, boolean isClient){
-        this.socket = socket;
+
+    public DatagramTagert(ChannelHandlerContext ctx, DatagramPacket packet, boolean isClient) {
+        this.ctx = ctx;
         this.packet = packet;
         this.isClient = isClient;
     }
@@ -27,29 +28,29 @@ public class DatagramTagert implements Closeable {
 
     public void send(byte[] bytes) throws IOException {
         if (isClient) {
-            socket.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), (InetSocketAddress)socket.remoteAddress()));
+            ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), (InetSocketAddress) ctx.channel().remoteAddress()));
         } else {
-            socket.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), packet.sender()));
+            ctx.channel().writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), packet.sender()));
         }
     }
 
     public InetSocketAddress getRemoteAddress() {
         if (isClient) {
-            return (InetSocketAddress) socket.remoteAddress();
+            return (InetSocketAddress) ctx.channel().remoteAddress();
         } else {
             return packet.sender();
         }
     }
 
     public InetSocketAddress getLocalAddress() {
-        return (InetSocketAddress) socket.localAddress();
+        return (InetSocketAddress) ctx.channel().localAddress();
     }
 
 
     @Override
     public void close() throws IOException {
         if (isClient) {
-            socket.close();
+            ctx.close();
         }
     }
 }

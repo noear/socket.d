@@ -20,7 +20,7 @@ public class CaseTest {
 //            "sd:tcp-neta",
             "sd:ws-java",
             "sd:udp-java",
-//            "sd:udp-netty",
+            "sd:udp-netty",
             "sd:kcp-java",
     };
 
@@ -336,10 +336,6 @@ public class CaseTest {
     public void TestCase28_timeout() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
-
-            if (s1.contains("udp") || s1.contains("kcp")) {
-                continue;
-            }
 
             BaseTestCase testCase = new TestCase28_timeout(s1, 2800 + i);
             try {

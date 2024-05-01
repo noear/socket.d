@@ -1,4 +1,4 @@
-import asyncio
+import traceback
 from abc import ABC
 from typing import Optional
 
@@ -11,10 +11,10 @@ from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.impl.LogConfig import log
+from socketd.utils.LogConfig import log
 from socketd.transport.core.listener.SimpleListener import SimpleListener
-from socketd.transport.stream.StreamManger import StreamInternal
-from socketd.transport.utils.RunUtils import RunUtils
+from socketd.transport.stream.Stream import StreamInternal
+from socketd.utils.RunUtils import RunUtils
 
 
 class ProcessorDefault(Processor, ABC):
@@ -64,8 +64,7 @@ class ProcessorDefault(Processor, ABC):
                 if frame.flag() == Flags.Close:
                     raise SocketDConnectionException("Connection request was rejected")
 
-                log.warning("{} channel handshake is None, sessionId={}", channel.get_config().get_role_name(),
-                                 channel.get_session().session_id())
+                log.warning(f"{channel.get_config().get_role_name()} channel handshake is None, sessionId={channel.get_session().session_id()}")
                 return
 
             # 更新最后活动时间
@@ -148,10 +147,11 @@ class ProcessorDefault(Processor, ABC):
 
     async def on_open_do(self, channel: ChannelInternal):
         try:
-            await self.listener.on_open(channel.get_session())
+            await RunUtils.waitTry(self.listener.on_open(channel.get_session()))
             channel.do_open_future(True, None)
         except Exception as e:
-            log.warning("{} channel listener onOpen error", channel.get_config().get_role_name(), e)
+            e_msg = traceback.format_exc()
+            log.warning(f"{channel.get_config().get_role_name()} channel listener onOpen error \n{e_msg}")
             channel.do_open_future(False, e)
 
     def on_message(self, channel: ChannelInternal, message: Message):
@@ -161,7 +161,8 @@ class ProcessorDefault(Processor, ABC):
         try:
             await self.listener.on_message(channel.get_session(), message)
         except Exception as e:
-            log.warning("{} channel listener onMessage error", channel.get_config().get_role_name(), e)
+            e_msg = traceback.format_exc()
+            log.warning(f"{channel.get_config().get_role_name()} channel listener onMessage error \n{e_msg}")
             self.on_error(channel, e)
 
     def on_close(self, channel: ChannelInternal):
@@ -172,13 +173,20 @@ class ProcessorDefault(Processor, ABC):
         await channel.close(code)
 
     def on_error(self, channel: ChannelInternal, error):
-        RunUtils.taskTry(self.listener.on_error(channel.get_session(), error))
+        RunUtils.taskTry(self.on_error_internal(channel, error))
+
+    async def on_error_internal(self, channel: ChannelInternal, error):
+        try:
+            await RunUtils.waitTry(self.listener.on_error(channel.get_session(), error))
+        except Exception as e:
+            e_msg = traceback.format_exc()
+            log.warning(f"{channel.get_config().get_role_name()} channel listener onError error \n{e_msg}")
 
     def do_close_notice(self, channel: ChannelInternal):
-         RunUtils.taskTry(self.do_close_notice_internal(channel))
+        RunUtils.taskTry(self.do_close_notice_internal(channel))
 
     async def do_close_notice_internal(self, channel: ChannelInternal):
         try:
-            await RunUtils.waitTry(self.listener.on_close(channel))
+            await RunUtils.waitTry(self.listener.on_close(channel.get_session()))
         except Exception as e:
             self.on_error(channel, e)

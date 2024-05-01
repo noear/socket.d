@@ -9,7 +9,6 @@ import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.netty.udp.impl.NettyClientInboundHandler;
 import org.noear.socketd.transport.client.ClientConnectorBase;
-import org.noear.socketd.exception.SocketDTimeoutException;
 import org.noear.socketd.utils.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +65,7 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
             }
         } catch (TimeoutException e) {
             close();
-            throw new SocketDTimeoutException("Connection timeout: " + client.getConfig().getLinkUrl());
+            throw new SocketDConnectionException("Connection timeout: " + client.getConfig().getLinkUrl());
         } catch (Throwable e) {
             close();
 

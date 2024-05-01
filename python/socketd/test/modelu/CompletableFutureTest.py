@@ -1,12 +1,11 @@
 import asyncio
-import concurrent
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 
 from loguru import logger
 
-from socketd.transport.utils.AsyncUtils import AsyncUtils
-from socketd.transport.utils.CompletableFuture import CompletableFuture
+from socketd.utils.AsyncUtils import AsyncUtils
+from socketd.utils.CompletableFuture import CompletableFuture
 
 
 class CompletableFutureTest(unittest.TestCase):

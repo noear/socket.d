@@ -65,6 +65,7 @@ export abstract class ServerBase<T extends ChannelAssistant<any>> implements Ser
     constructor(config: ServerConfig, assistant: T) {
         this._config = config;
         this._assistant = assistant;
+        this._processor.setListener(this);
     }
 
     /**

@@ -2,7 +2,7 @@
 from socketd.transport.core import Listener
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Session import Session
-from socketd.transport.utils.RunUtils import RunUtils
+from socketd.utils.RunUtils import RunUtils
 
 
 class PipelineListener(Listener):

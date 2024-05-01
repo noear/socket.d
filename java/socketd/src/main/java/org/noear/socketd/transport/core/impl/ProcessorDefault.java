@@ -271,7 +271,14 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onError(ChannelInternal channel, Throwable error) {
-        listener.onError(channel.getSession(), error);
+        try {
+            listener.onError(channel.getSession(), error);
+        } catch (Throwable e) {
+            if (log.isWarnEnabled()) {
+                log.warn("{} channel listener onError error",
+                        channel.getConfig().getRoleName(), e);
+            }
+        }
     }
 
     /**

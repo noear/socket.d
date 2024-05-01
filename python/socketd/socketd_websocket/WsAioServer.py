@@ -10,7 +10,7 @@ from socketd.transport.server.ServerConfig import ServerConfig
 from socketd_websocket.impl.AIOServe import AIOServe
 from socketd_websocket.impl.AIOWebSocketServerImpl import AIOWebSocketServerImpl
 
-from socketd.transport.core.impl.LogConfig import logger, log
+from socketd.utils.LogConfig import logger, log
 
 
 class WsAioServer(ServerBase):

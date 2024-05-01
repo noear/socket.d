@@ -99,6 +99,13 @@ public interface Session extends ClientSession, Closeable {
     <T> Session attrPut(String name, T value);
 
     /**
+     * 删除属性
+     *
+     * @param name  名字
+     */
+    <T> Session attrDel(String name);
+
+    /**
      * 是否有效
      */
     boolean isValid();

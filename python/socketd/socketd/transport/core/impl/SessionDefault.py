@@ -1,3 +1,4 @@
+import traceback
 from typing import Optional
 
 from socketd.transport.core.entity.MessageBuilder import MessageBuilder
@@ -14,7 +15,11 @@ from socketd.transport.stream.SendStream import SendStream
 
 from socketd.transport.stream.SubscribeStream import SubscribeStream
 
-from loguru import logger
+from socketd.transport.stream.impl.RequestStreamImpl import RequestStreamImpl
+from socketd.transport.stream.impl.SendStreamImpl import SendStreamImpl
+from socketd.transport.stream.impl.SubscribeStreamImpl import SubscribeStreamImpl
+from socketd.utils.LogConfig import log
+from socketd.utils.RunUtils import RunUtils
 
 
 class SessionDefault(SessionBase):
@@ -41,27 +46,38 @@ class SessionDefault(SessionBase):
     async def send_ping(self):
         await self._channel.send_ping()
 
-    async def send(self, topic: str, content: Entity) -> SendStream:
+    def send(self, topic: str, content: Entity) -> SendStream:
         message = MessageBuilder().sid(self.generate_id()).event(topic).entity(content).build()
 
-        stream: SendStream = SendStream(message.sid())
-        await self._channel.send(Frame(Flags.Message, message), stream)
+        stream: SendStream = SendStreamImpl(message.sid())
+        RunUtils.taskTry(self._channel.send(Frame(Flags.Message, message), stream))
         return stream
 
-    async def send_and_request(self, event: str, content: Entity,
-                               timeout: int = 100) -> RequestStream:
+    def send_and_request(self, event: str, content: Entity, timeout: float|None = 0) -> RequestStream:
+        if timeout is None:
+            timeout = 0
 
-        if timeout < 100:
-            timeout = self._channel.get_config().get_request_timeout() / 1000
+        if timeout < 0:
+            timeout = self._channel.get_config().get_stream_timeout()
+
+        if timeout == 0:
+            timeout = self._channel.get_config().get_request_timeout()
+
         message = MessageBuilder().sid(self.generate_id()).event(event).entity(content).build()
-        stream = RequestStream(message.sid(), timeout)
-        await self._channel.send(Frame(Flags.Request, message), stream)
+        stream:RequestStream = RequestStreamImpl(message.sid(), timeout)
+        RunUtils.taskTry(self._channel.send(Frame(Flags.Request, message), stream))
         return stream
 
-    async def send_and_subscribe(self, event: str, content: Entity, timeout: int = 0):
+    def send_and_subscribe(self, event: str, content: Entity, timeout: float = 0):
+        if timeout is None:
+            timeout = 0
+
+        if timeout <= 0:
+            timeout = self._channel.get_config().get_stream_timeout()
+
         message = MessageBuilder().sid(self.generate_id()).event(event).entity(content).build()
-        stream = SubscribeStream(message.sid(), timeout)
-        await self._channel.send(Frame(Flags.Subscribe, message), stream)
+        stream:SubscribeStream = SubscribeStreamImpl(message.sid(), timeout)
+        RunUtils.taskTry(self._channel.send(Frame(Flags.Subscribe, message), stream))
         return stream
 
     async def reply(self, from_msg: Message, content: Entity):
@@ -75,7 +91,7 @@ class SessionDefault(SessionBase):
         await self._channel.send(Frame(Flags.ReplyEnd, message), None)
 
     async def preclose(self):
-        logger.debug(
+        log.debug(
             f"{self._channel.get_config().get_role_name()} session close starting, sessionId={self.session_id()}")
         if self._channel.is_valid():
             await self._channel.send_close(Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING)
@@ -85,7 +101,8 @@ class SessionDefault(SessionBase):
             try:
                 await self._channel.send_close(Constants.CLOSE1001_PROTOCOL_CLOSE)
             except Exception as e:
-                logger.warning(f" {self._channel.get_config().get_role_name()} channel send_close error {e}")
+                e_msg = traceback.format_exc()
+                log.warning(f" {self._channel.get_config().get_role_name()} channel send_close error \n{e_msg}")
         await self._channel.close(Constants.CLOSE2009_USER)
 
     def param(self, name: str):

@@ -7,7 +7,7 @@ from socketd.transport.core.Listener import Listener
 from socketd.transport.core.Message import Message
 from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.core.listener.EventListener import EventListener
-from socketd.transport.utils.sync_api.AtomicRefer import AtomicRefer
+from socketd.utils.sync_api.AtomicRefer import AtomicRefer
 from test.modelu.BaseTestCase import BaseTestCase
 
 from socketd.transport.core.Session import Session
@@ -70,11 +70,11 @@ class TestCase10_serverCloseReconnect(BaseTestCase):
         self.client_session: Session = await SocketD.create_client(serverUrl) \
             .config(config_handler).listen(EventListener().do_on_close(do_on_close)).open()
 
-        await self.client_session.send("/demo", StringEntity("test"))
+        self.client_session.send("/demo", StringEntity("test"))
 
         await asyncio.sleep(10)
-        await self.client_session.send("/demo", StringEntity("test"))
-        await self.client_session.send("/demo", StringEntity("test"))
+        self.client_session.send("/demo", StringEntity("test"))
+        self.client_session.send("/demo", StringEntity("test"))
         await asyncio.sleep(1)
         logger.info(f"counter {self._simple.server_counter.get()} ")
 

@@ -28,7 +28,7 @@ public interface StreamInternal<T extends Stream> extends Stream<T> {
     void insuranceStart(StreamManger streamManger, long streamTimeout);
 
     /**
-     * 保险取消息
+     * 保险取消
      */
     void insuranceCancel();
 

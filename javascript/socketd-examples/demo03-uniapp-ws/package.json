@@ -3,6 +3,6 @@
   "description": "SocketD Uniapp Test Project",
   "author": "ZhangQi",
   "dependencies": {
-    "@noear/socket.d": "2.4.10"
+    "@noear/socket.d": "2.4.14"
   }
 }

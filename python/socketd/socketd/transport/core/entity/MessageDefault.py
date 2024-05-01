@@ -78,4 +78,7 @@ class MessageDefault(MessageInternal):
         if self._entity:
             self._entity.release()
 
+    def __str__(self):
+        return f"Message(sid='{self._sid}', event='{self._event}', entity='{self._entity}')"
+
 

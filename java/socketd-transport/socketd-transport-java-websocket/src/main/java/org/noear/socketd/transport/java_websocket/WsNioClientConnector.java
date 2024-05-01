@@ -48,6 +48,7 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
             real.setConnectionLostTimeout((int) (client.getConfig().getIdleTimeout() / 1000L));
         }
 
+        real.setReuseAddr(true);
         real.connect();
 
         try {

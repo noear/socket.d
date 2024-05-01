@@ -28,6 +28,8 @@ EventListenerServer = ./bin/Demo04_EventListenerServer
 EventListenerClient = ./bin/Demo04_EventListenerClient
 PathListenerServer = ./bin/Demo04_PathListenerServer
 PathListenerClient = ./bin/Demo04_PathListenerClient
+MqServer = ./bin/Demo05_MqServer
+MqClient = ./bin/Demo05_MqClient
 
 
 .PHONY:all
@@ -40,7 +42,8 @@ all:prepare $(HelloworldServer) $(HelloworldClient) \
 	$(Send2Server) $(Send2Client) \
 	$(UrlAuthServer) $(UrlAuthClient) \
 	$(EventListenerServer) $(EventListenerClient) \
-	$(PathListenerServer) $(PathListenerClient)
+	$(PathListenerServer) $(PathListenerClient) \
+	$(MqServer) $(MqClient)
 
 
 SRCS =  ./3rd/uuid4/src/uuid4.c \
@@ -152,6 +155,17 @@ $(PathListenerClient):$(OBJS) ./examples/Demo04_PathListenerClient.c ./base/tcp_
 	@echo OBJECTS:$^
 	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
 
+$(MqServer):$(OBJS) ./examples/Demo05_MqServer.c ./base/tcp_server.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+$(MqClient):$(OBJS) ./examples/Demo05_MqClient.c ./base/tcp_client.c
+	@echo TARGET:$@
+	@echo OBJECTS:$^
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBDIR) $(HV_LIB) -o $@ $^
+
+
 
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -o $@ -c $<
@@ -166,7 +180,8 @@ clean:
 	$(Send2Server) $(Send2Client) \
 	$(UrlAuthServer) $(UrlAuthClient) \
 	$(EventListenerServer) $(EventListenerClient) \
-	$(PathListenerServer) $(PathListenerClient)
+	$(PathListenerServer) $(PathListenerClient) \
+	$(MqServer) $(MqClient)
 
 
 prepare:

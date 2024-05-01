@@ -44,8 +44,6 @@ void parse_client_config(const char* surl, tcp_client_t* config) {
     config->host = sdsnewlen(p1, p2 - p1);
 
     p2 += 1;
-    char* p3 = strchr(p1, '/');
-	if (p3 == NULL) return;
     config->port = atoi(p2);
     if (config->port <= 0) config->port = 8602;
 }

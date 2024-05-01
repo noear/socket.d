@@ -85,11 +85,20 @@ void tcp_server_create(tcp_server_t* srv) {
     srv->io = listenio;
 }
 
+static void before_channel_close(sd_channel_t* channel) {
+    if (server_event.onclose) {
+        sd_message_t message = { 0 };
+        server_event.onclose(channel->session, &message);
+    }
+}
+
 static void on_tcp_close(hio_t* io) {
     printf("on_close fd=%d error=%d\n", hio_fd(io), hio_error(io));
 
     sd_channel_t* channel = (sd_channel_t*)hio_context(io);
     if (channel) {
+        before_channel_close(channel);
+
         if (channel->session) {
             free_session(channel->session);
             channel->session = NULL;
@@ -155,11 +164,15 @@ void on_pong_handler(sd_channel_t* channel, sd_package_t* sd) {
 }
 
 void on_close_handler(sd_channel_t* channel, sd_package_t* sd) {
-    sd_no_support(sd->frame.flag);
+    if (server_event.onclose) {
+        server_event.onclose(channel->session, &sd->frame.message);
+    }
 }
 
 void on_alarm_handler(sd_channel_t* channel, sd_package_t* sd) {
-    sd_no_support(sd->frame.flag);
+    if (server_event.onerror) {
+        server_event.onerror(channel->session, &sd->frame.message);
+    }
 }
 
 void on_message_handler(sd_channel_t* channel, sd_package_t* sd) {

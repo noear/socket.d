@@ -84,7 +84,7 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
         //头信息
         Map<String, String> headerMap = new HashMap<>();
         for (Map.Entry<String, List<String>> kv : session.getHandshakeHeaders().entrySet()) {
-            headerMap.put(kv.getKey(), String.join(",", kv.getValue()));
+            headerMap.put(kv.getKey(), String.join(";", kv.getValue()));
         }
         channel.getSession().attrPut(WS_HANDSHAKE_HEADER, headerMap);
     }

@@ -37,20 +37,17 @@ public class SocketD {
     /**
      * 客户端提供者
      */
-    static Map<String, ClientProvider> clientProviderMap;
+    static Map<String, ClientProvider> clientProviderMap = new HashMap<>();
 
     /**
      * 服务端提供者
      */
-    static Map<String, ServerProvider> serverProviderMap;
+    static Map<String, ServerProvider> serverProviderMap = new HashMap<>();
 
     /**
      * 加载 spi
      * */
     static {
-        clientProviderMap = new HashMap<>();
-        serverProviderMap = new HashMap<>();
-
         ServiceLoader.load(ClientProvider.class).iterator().forEachRemaining(clientProvider -> {
             registerClientProvider(clientProvider);
         });
@@ -60,12 +57,18 @@ public class SocketD {
         });
     }
 
+    /**
+     * 手动注册客户端提供者
+     * */
     public static void registerClientProvider(ClientProvider clientProvider) {
         for (String s : clientProvider.schemas()) {
             clientProviderMap.put(s, clientProvider);
         }
     }
 
+    /**
+     * 手动注册服务端提供者
+     * */
     public static void registerServerProvider(ServerProvider serverProvider) {
         for (String s : serverProvider.schemas()) {
             serverProviderMap.put(s, serverProvider);

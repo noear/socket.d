@@ -28,12 +28,19 @@ export class SocketD {
 
     static {
         const provider = new WsProvider();
-        for (const s of provider.schemas()) {
-            this.clientProviderMap.set(s, provider);
-        }
+        SocketD.registerClientProvider(provider);
+        SocketD.registerServerProvider(provider);
+    }
 
-        for (const s of provider.schemas()) {
-            this.serverProviderMap.set(s, provider);
+    static registerClientProvider(clientProvider: ClientProvider) {
+        for (let s of clientProvider.schemas()) {
+            SocketD.clientProviderMap.set(s, clientProvider);
+        }
+    }
+
+    static registerServerProvider(serverProvider:ServerProvider) {
+        for (let s of serverProvider.schemas()) {
+            SocketD.serverProviderMap.set(s, serverProvider);
         }
     }
 

@@ -14,20 +14,23 @@ from socketd_aio_tcp.TcpAioProvider import TcpAioProvider
 
 
 def version() -> str:
-    return "2.4.14"
+    return "2.4.15"
 
 
 def protocol_version() -> str:
     return "1.0"
 
 
-client_factory_map: Dict[str, ClientProvider] = {}
-server_factory_map: Dict[str, ServerProvider] = {}
+__client_provider_map: Dict[str, ClientProvider] = {}
+__server_provider_map: Dict[str, ServerProvider] = {}
 
-def load_factories(factories: list[ClientProvider | ServerProvider], factory_map: Dict[str, object]) -> None:
-    for factory in factories:
-        for schema in factory.schema():
-            factory_map[schema] = factory
+def register_client_provider(clientProvider: ClientProvider):
+    for s in clientProvider.schema():
+        __client_provider_map[s] = clientProvider
+
+def register_server_provider(serverProvider: ServerProvider):
+    for s in serverProvider.schema():
+        __server_provider_map[s] = serverProvider
 
 def create_server(schemaOrConfig: str | ServerConfig) -> Server:
     Asserts.assert_null("schemaOrConfig", schemaOrConfig)
@@ -46,12 +49,12 @@ def create_server(schemaOrConfig: str | ServerConfig) -> Server:
         return server
 
 def create_server_or_null(config: ServerConfig) -> Server:
-    factory = server_factory_map.get(config.get_schema())
+    provider = __server_provider_map.get(config.get_schema())
 
-    if factory is None:
+    if provider is None:
         return None
     else:
-        return factory.create_server(config)
+        return provider.create_server(config)
 
 
 def create_client(urlOrConfig: str | ClientConfig) -> Client:
@@ -73,17 +76,18 @@ def create_client(urlOrConfig: str | ClientConfig) -> Client:
 def create_client_or_null(config: ClientConfig) -> Client | None:
     Asserts.assert_null("config", config)
 
-    factory = client_factory_map.get(config.get_schema())
-    if factory is None:
+    provider = __client_provider_map.get(config.get_schema())
+    if provider is None:
         return None
     else:
-        return factory.create_client(config)
+        return provider.create_client(config)
 
 
 def create_cluster_client(*urls) -> Client:
     return ClusterClient(urls)
 
 
-# Initialize the client and server factory maps
-load_factories([WsAioProvider(), TcpAioProvider()], server_factory_map)
-load_factories([WsAioProvider(), TcpAioProvider()], client_factory_map)
+# Initialize the client and server provider maps
+for p in [WsAioProvider(), TcpAioProvider()]:
+    register_client_provider(p)
+    register_server_provider(p)

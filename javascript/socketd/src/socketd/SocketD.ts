@@ -38,7 +38,7 @@ export class SocketD {
         }
     }
 
-    static registerServerProvider(serverProvider:ServerProvider) {
+    static registerServerProvider(serverProvider: ServerProvider) {
         for (let s of serverProvider.schemas()) {
             SocketD.serverProviderMap.set(s, serverProvider);
         }
@@ -48,7 +48,7 @@ export class SocketD {
      * 框架版本号
      */
     static version(): string {
-        return "2.4.14";
+        return "2.4.15";
     }
 
     /**
@@ -137,14 +137,14 @@ export class SocketD {
     static newEntity(data?: string | Blob | ArrayBuffer): EntityDefault {
         if (!data) {
             return new EntityDefault();
-        } else if (data instanceof File) {
+        } else if (typeof (File) != 'undefined' && data instanceof File) {
             return new FileEntity(data);
-        } else if (data instanceof ArrayBuffer) {
+        } else if (typeof (ArrayBuffer) != 'undefined' &&  data instanceof ArrayBuffer) {
             return new EntityDefault().dataSet(data);
-        } else if (data instanceof Blob) {
+        } else if (typeof (Blob) != 'undefined' &&  data instanceof Blob) {
             return new EntityDefault().dataSet(data);
         } else {
-            return new StringEntity(data.toString());
+            return new StringEntity(String(data));
         }
     }
 

@@ -1,3 +1,6 @@
+### 2.4.16
+* 添加 ListenerWrapper 类，方便应用定制
+
 ### 2.4.15
 * 添加 Session::attrDel 接口
 * 优化 java-websocket 适配，增加 header 转移

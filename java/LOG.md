@@ -1,3 +1,9 @@
+### 2.4.15
+* 添加 Session::attrDel 接口
+* 优化 java-websocket 适配，增加 header 转移
+* 优化 spring-websocket 适配，增加 header 转移
+* 优化 java-websocket 适配，增加 setReuseAddr(true) 配置
+
 ### 2.4.12
 * 调整 Processor:onError 添加 try-catch 处理
 * 优化 socketd-transport-netty udp 的连接状态管理

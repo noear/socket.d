@@ -1,3 +1,7 @@
+### 2.4.15
+* 添加 提供者手动注册接口
+* 优化 SocketD.newEntity 与小程序的兼容性（小程不支持 File、Blob 类型）
+
 ### 2.4.12
 * 调整 Processor:onError 添加 try-catch 处理
 

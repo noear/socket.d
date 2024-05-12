@@ -1,3 +1,8 @@
+### 2.4.15
+* 修复 stream.on_reply 非异步调用出错的问题
+* 优化 流的超时处理
+* 调整 语言版本需求改为 3.10
+
 ### 2.4.14
 * 修复 EventListener:on_open 错误
 * 优化 RequestStreamImpl 协程处理处理

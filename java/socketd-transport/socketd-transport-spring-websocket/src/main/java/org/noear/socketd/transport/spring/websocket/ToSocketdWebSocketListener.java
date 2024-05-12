@@ -60,7 +60,7 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
      * 设置 Socket.D 监听器
      */
     public void setListener(Listener listener) {
-        this.listenerWrapper.wrap(listener);
+        this.listenerWrapper.setListener(listener);
     }
 
     /**

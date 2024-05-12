@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.core.listener.SimpleListener;
+
 import java.io.IOException;
 
 /**
@@ -9,38 +11,31 @@ import java.io.IOException;
  * @since 2.4
  */
 public class ListenerWrapper implements Listener {
-    private Listener listener;
+    private Listener listener = new SimpleListener();
 
-    public ListenerWrapper wrap(Listener listener) {
-        this.listener = listener;
-        return this;
+    public void setListener(Listener listener) {
+        if (listener != null) {
+            this.listener = listener;
+        }
     }
 
     @Override
     public void onOpen(Session session) throws IOException {
-        if (listener != null) {
-            listener.onOpen(session);
-        }
+        listener.onOpen(session);
     }
 
     @Override
     public void onMessage(Session session, Message message) throws IOException {
-        if (listener != null) {
-            listener.onMessage(session, message);
-        }
+        listener.onMessage(session, message);
     }
 
     @Override
     public void onClose(Session session) {
-        if (listener != null) {
-            listener.onClose(session);
-        }
+        listener.onClose(session);
     }
 
     @Override
     public void onError(Session session, Throwable error) {
-        if (listener != null) {
-            listener.onError(session, error);
-        }
+        listener.onError(session, error);
     }
 }

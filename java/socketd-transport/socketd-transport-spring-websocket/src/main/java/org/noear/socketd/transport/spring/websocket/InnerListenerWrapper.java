@@ -11,12 +11,14 @@ import java.util.Map;
  * @since 2.4
  */
 class InnerListenerWrapper extends ListenerWrapper {
+    public static final String WS_HANDSHAKE_HEADER = "ws-handshake-headers";
+
     @Override
     public void onOpen(Session s) throws IOException {
-        Map<String, String> headerMap = s.attr(ToSocketdWebSocketListener.WS_HANDSHAKE_HEADER);
+        Map<String, String> headerMap = s.attr(WS_HANDSHAKE_HEADER);
         if (headerMap != null) {
             s.handshake().paramMap().putAll(headerMap);
-            s.attrDel(ToSocketdWebSocketListener.WS_HANDSHAKE_HEADER);
+            s.attrDel(WS_HANDSHAKE_HEADER);
         }
 
         super.onOpen(s);

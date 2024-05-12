@@ -24,7 +24,6 @@ import java.util.Map;
  */
 public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
     static final String SOCKETD_KEY = "SOCKETD_KEY";
-    public static final String WS_HANDSHAKE_HEADER = "ws-handshake-headers";
 
     static final Logger log = LoggerFactory.getLogger(ToSocketdWebSocketListener.class);
 
@@ -86,7 +85,7 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
         for (Map.Entry<String, List<String>> kv : session.getHandshakeHeaders().entrySet()) {
             headerMap.put(kv.getKey(), String.join(";", kv.getValue()));
         }
-        channel.getSession().attrPut(WS_HANDSHAKE_HEADER, headerMap);
+        channel.getSession().attrPut(InnerListenerWrapper.WS_HANDSHAKE_HEADER, headerMap);
     }
 
     @Override

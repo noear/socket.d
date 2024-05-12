@@ -26,7 +26,7 @@
 		<img src="https://img.shields.io/badge/JavaScript-es6+-green.svg" alt="JavaScript-es6+" />
 	</a>
     <a>
-		<img src="https://img.shields.io/badge/Python-3.12+-green.svg" alt="Python-3.12+" />
+		<img src="https://img.shields.io/badge/Python-3.10+-green.svg" alt="Python-3.10+" />
 	</a>
     <br />
     <a target="_blank" href='https://gitee.com/noear/socketd/stargazers'>

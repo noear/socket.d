@@ -36,6 +36,8 @@ class CompletableFuture(Generic[T]):
 
     def then_async_callback(self, _fn):
         def callback(fn: asyncio.Future):
+            if fn.cancelled():
+                return
             asyncio.run_coroutine_threadsafe(_fn(fn.result(), fn.exception()), asyncio.get_running_loop())
         self._future.add_done_callback(functools.partial(callback))
 

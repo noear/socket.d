@@ -117,4 +117,14 @@ public interface Config {
      * 允许最大UDP包大小
      */
     int getMaxUdpSize();
+
+    /**
+     * 使用最大内存限制
+     */
+    boolean useMaxMemoryLimit();
+
+    /**
+     * 允许最大内存使用比例（0.x->1.0）
+     */
+    float getMaxMemoryRatio();
 }

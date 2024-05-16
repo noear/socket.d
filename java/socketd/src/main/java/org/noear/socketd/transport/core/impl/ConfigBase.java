@@ -69,6 +69,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected long streamTimeout;
     //最大udp包大小
     protected int maxUdpSize;
+    //使用最大内存限制
+    private boolean useMaxMemoryLimit;
+    //最大内存比例
+    protected float maxMemoryRatio;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
@@ -95,6 +99,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.requestTimeout = 10_000L; //10秒（默认与连接超时同）
         this.streamTimeout = 1000 * 60 * 60 * 2;//2小时 //避免永不回调时，不能释放
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
+        this.maxMemoryRatio = 0.0F;
+        this.useMaxMemoryLimit = false;
     }
 
     /**
@@ -434,6 +440,23 @@ public abstract class ConfigBase<T extends Config> implements Config {
      */
     public T maxUdpSize(int maxUdpSize) {
         this.maxUdpSize = maxUdpSize;
+        return (T) this;
+    }
+
+    @Override
+    public boolean useMaxMemoryLimit() {
+        return useMaxMemoryLimit;
+    }
+
+    @Override
+    public float getMaxMemoryRatio() {
+        return maxMemoryRatio;
+    }
+
+    public T maxMemoryRatio(float maxMemoryRatio) {
+        this.maxMemoryRatio = maxMemoryRatio;
+        //太低不启用
+        this.useMaxMemoryLimit = maxMemoryRatio > 0.2F;
         return (T) this;
     }
 }

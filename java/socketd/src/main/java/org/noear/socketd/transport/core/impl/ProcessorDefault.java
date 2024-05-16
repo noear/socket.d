@@ -5,6 +5,7 @@ import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.stream.StreamInternal;
+import org.noear.socketd.utils.MemoryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +137,9 @@ public class ProcessorDefault implements Processor {
                     case Flags.Message:
                     case Flags.Request:
                     case Flags.Subscribe: {
-                        onReceiveDo(channel, frame, false);
+                        if (chkMemoryLimit(channel, frame)) {
+                            onReceiveDo(channel, frame, false);
+                        }
                         break;
                     }
                     case Flags.Reply:
@@ -152,6 +155,29 @@ public class ProcessorDefault implements Processor {
                 onError(channel, e);
             }
         }
+    }
+
+    /**
+     * 检测内存限制（跨语方不方便迁移时略过）
+     *
+     * @return 是否通过
+     */
+    private boolean chkMemoryLimit(ChannelInternal channel, Frame frame) {
+        if (channel.getConfig().useMaxMemoryLimit()) {
+            float useMemoryRatio = MemoryUtils.getUseMemoryRatio();
+
+            if (useMemoryRatio > channel.getConfig().getMaxMemoryRatio()) {
+                try {
+                    channel.sendAlarm(frame.message(), String.format("memory usage is out of limit: %.2f%%", useMemoryRatio * 100));
+                } catch (Throwable e) {
+                    onError(channel, e);
+                }
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void onReceiveDo(ChannelInternal channel, Frame frame, boolean isReply) throws IOException {
@@ -288,7 +314,10 @@ public class ProcessorDefault implements Processor {
      */
     public void doCloseNotice(ChannelInternal channel) {
         try {
-            listener.onClose(channel.getSession());
+            if (channel.getHandshake() != null) {
+                //如果没有 handshake 成功，不需要通知了
+                listener.onClose(channel.getSession());
+            }
         } catch (Throwable error) {
             this.onError(channel, error);
         }

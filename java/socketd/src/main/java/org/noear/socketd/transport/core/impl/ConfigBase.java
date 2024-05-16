@@ -443,16 +443,25 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
+    /**
+     * 使用最大内存限制
+     */
     @Override
     public boolean useMaxMemoryLimit() {
         return useMaxMemoryLimit;
     }
 
+    /**
+     * 允许最大内存使用比例（0.x->1.0）
+     */
     @Override
     public float getMaxMemoryRatio() {
         return maxMemoryRatio;
     }
 
+    /**
+     * 配置允许最大内存使用比例（0.x->1.0）
+     */
     public T maxMemoryRatio(float maxMemoryRatio) {
         this.maxMemoryRatio = maxMemoryRatio;
         //太低不启用

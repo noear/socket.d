@@ -167,13 +167,19 @@ public class ProcessorDefault implements Processor {
             float useMemoryRatio = MemoryUtils.getUseMemoryRatio();
 
             if (useMemoryRatio > channel.getConfig().getMaxMemoryRatio()) {
-                try {
-                    channel.sendAlarm(frame.message(), String.format("memory usage is out of limit: %.2f%%", useMemoryRatio * 100));
-                } catch (Throwable e) {
-                    onError(channel, e);
-                }
+                if (frame.message().meta(EntityMetas.META_X_UNLIMITED) == null) {
+                    //限制流量
+                    try {
+                        channel.sendAlarm(frame.message(), String.format("memory usage is out of limit: %.2f%%", useMemoryRatio * 100));
+                    } catch (Throwable e) {
+                        onError(channel, e);
+                    }
 
-                return false;
+                    return false;
+                } else {
+                    //不限制流量
+                    return true;
+                }
             }
         }
 

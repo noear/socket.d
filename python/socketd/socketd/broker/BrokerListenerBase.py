@@ -50,7 +50,7 @@ class BrokerListenerBase(Listener, ABC):
             x_hash = None
 
             if message is not None:
-                x_hash = message.meta(EntityMetas.META_X_Hash)
+                x_hash = message.meta(EntityMetas.META_X_HASH)
 
             if StrUtils.is_empty(x_hash):
                 if requester is None:

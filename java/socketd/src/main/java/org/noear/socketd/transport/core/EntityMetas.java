@@ -15,12 +15,29 @@ public interface EntityMetas {
     /**
      * 发起端真实IP
      * */
+    @Deprecated
     String META_X_REAL_IP = "X-Real-IP";
+
+    /**
+     * 发起端真实IP
+     * */
+    String META_X_IP = "X-IP";
 
     /**
      * 负载均衡哈希
      * */
+    String META_X_HASH = "X-Hash";
+
+    /**
+     * 负载均衡哈希
+     * */
+    @Deprecated
     String META_X_Hash = "X-Hash";
+
+    /**
+     * 不限制流量
+     * */
+    String META_X_UNLIMITED = "X-Unlimited";
 
     /**
      * 数据长度

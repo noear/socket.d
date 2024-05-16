@@ -67,10 +67,10 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-//    implementation("org.noear:socketd-transport-smartsocket:2.4.16")
-    implementation("org.noear:socketd-transport-java-tcp:2.4.16")
-    implementation("org.noear:socketd-transport-java-udp:2.4.16")
-    implementation("org.noear:socketd-transport-java-websocket:2.4.16")
+//    implementation("org.noear:socketd-transport-smartsocket:2.4.17")
+    implementation("org.noear:socketd-transport-java-tcp:2.4.17")
+    implementation("org.noear:socketd-transport-java-udp:2.4.17")
+    implementation("org.noear:socketd-transport-java-websocket:2.4.17")
 
     implementation("com.github.tony19:logback-android:3.0.0")
 }

@@ -13,11 +13,15 @@ export const EntityMetas= {
     /**
      * 发起端真实IP
      * */
-    META_X_REAL_IP: "X-Real-IP",
+    META_X_IP: "X-IP",
     /**
      * 负载均衡哈希
      * */
-    META_X_Hash: "X-Hash",
+    META_X_HASH: "X-Hash",
+    /**
+     * 不限制流量
+     * */
+    META_X_UNLIMITED: "X-Unlimited",
     /**
      * 数据长度
      */

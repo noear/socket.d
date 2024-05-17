@@ -170,7 +170,7 @@ public class ProcessorDefault implements Processor {
                 if (frame.message().meta(EntityMetas.META_X_UNLIMITED) == null) {
                     //限制流量
                     try {
-                        channel.sendAlarm(frame.message(), channel.getConfig().getRoleName() + String.format(" memory usage is out of limit: %.2f%%", useMemoryRatio * 100));
+                        channel.sendAlarm(frame.message(), channel.getConfig().getRoleName() + String.format(" memory usage over limit: %.2f%%", useMemoryRatio * 100));
                     } catch (Throwable e) {
                         onError(channel, e);
                     }

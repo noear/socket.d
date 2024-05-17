@@ -1,3 +1,6 @@
+### 2.5.17
+* 添加 EntityMetas.META_X_UNLIMITED
+
 ### 2.4.15
 * 修复 stream.on_reply 非异步调用出错的问题
 * 优化 流的超时处理

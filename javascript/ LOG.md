@@ -1,3 +1,6 @@
+### 2.5.17
+* 添加 EntityMetas.META_X_UNLIMITED
+
 ### 2.4.15
 * 添加 提供者手动注册接口
 * 优化 SocketD.newEntity 与小程序的兼容性（小程不支持 File、Blob 类型）

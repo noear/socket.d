@@ -3,6 +3,8 @@
 
 ### 2.4.17
 * 添加 内存战比限制支持
+* 添加 EntityMetas.META_X_UNLIMITED
+* 添加 EntityMetas.META_X_HASH, 另 META_X_Hash 标为弃用
 
 ### 2.4.16
 * 添加 ListenerWrapper 类，方便应用定制

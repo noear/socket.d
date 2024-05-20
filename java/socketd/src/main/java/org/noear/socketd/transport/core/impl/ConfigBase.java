@@ -89,8 +89,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.fragmentSize = Constants.MAX_SIZE_DATA;
 
         this.ioThreads = 1;
-        this.codecThreads = Runtime.getRuntime().availableProcessors();
-        this.exchangeThreads = Runtime.getRuntime().availableProcessors() * 4;
+        this.codecThreads = 2;
+        this.exchangeThreads = 4;
 
         this.readBufferSize = 1024 * 4; //4k
         this.writeBufferSize = 1024 * 4;

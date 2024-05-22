@@ -276,7 +276,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
                     exchangeExecutor = exchangeExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
                             0L, TimeUnit.MILLISECONDS,
                             new LinkedBlockingQueue<Runnable>(),
-                            new NamedThreadFactory("Socketd-channelExecutor-"));
+                            new NamedThreadFactory("Socketd-exchangeExecutor-"));
                 }
             } finally {
                 EXECUTOR_LOCK.unlock();

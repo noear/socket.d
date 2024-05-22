@@ -49,10 +49,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected int ioThreads;
     //解码线程数
     protected int codecThreads;
-    //交换线程数
-    protected int exchangeThreads;
+    //工作线程数
+    protected int workThreads;
 
-    //交换执行器
+    //工作执行器
     private volatile ExecutorService workExecutor;
     private volatile ExecutorService workExecutorSelfNew;
 
@@ -90,7 +90,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
         this.ioThreads = 1;
         this.codecThreads = Runtime.getRuntime().availableProcessors();
-        this.exchangeThreads = Runtime.getRuntime().availableProcessors() * 4;
+        this.workThreads = Runtime.getRuntime().availableProcessors() * 4;
 
         this.readBufferSize = 1024 * 4; //4k
         this.writeBufferSize = 1024 * 4;
@@ -289,8 +289,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     /**
      * 配置交换执行器
      */
-    public T exchangeExecutor(ExecutorService exchangeExecutor) {
-        this.workExecutor = exchangeExecutor;
+    public T workExecutor(ExecutorService workExecutor) {
+        this.workExecutor = workExecutor;
 
         if (workExecutorSelfNew != null) {
             //谁 new 的，谁 shutdown
@@ -298,6 +298,16 @@ public abstract class ConfigBase<T extends Config> implements Config {
         }
 
         return (T) this;
+    }
+
+    /**
+     * 配置交换执行器
+     *
+     * @deprecated 2.4
+     */
+    @Deprecated
+    public T exchangeExecutor(ExecutorService workExecutor) {
+        return workExecutor(workExecutor);
     }
 
     /**
@@ -337,15 +347,25 @@ public abstract class ConfigBase<T extends Config> implements Config {
      */
     @Override
     public int getWorkThreads() {
-        return exchangeThreads;
+        return workThreads;
     }
 
     /**
      * 配置交换线程数
      */
-    public T exchangeThreads(int exchangeThreads) {
-        this.exchangeThreads = exchangeThreads;
+    public T workThreads(int workThreads) {
+        this.workThreads = workThreads;
         return (T) this;
+    }
+
+    /**
+     * 配置交换线程数
+     *
+     * @deprecated 2.4
+     */
+    @Deprecated
+    public T exchangeThreads(int workThreads) {
+        return workThreads(workThreads);
     }
 
 

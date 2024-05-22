@@ -8,7 +8,7 @@ public class Demo03_Config {
         //::启动服务端
         SocketD.createServer("sd:ws")
                 .config(c -> c.port(8602))
-                .config(sc->sc.exchangeThreads(2).sslContext(null))
+                .config(sc->sc.workThreads(2).sslContext(null))
                 .start();
 
         Thread.sleep(1000); //等会儿，确保服务端启动完成

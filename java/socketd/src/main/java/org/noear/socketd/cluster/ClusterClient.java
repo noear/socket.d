@@ -110,7 +110,7 @@ public class ClusterClient implements Client {
                 if (exchangeExecutor == null) {
                     exchangeExecutor = client.getConfig().getWorkExecutor();
                 } else {
-                    client.getConfig().exchangeExecutor(exchangeExecutor);
+                    client.getConfig().workExecutor(exchangeExecutor);
                 }
 
                 if (isThow) {

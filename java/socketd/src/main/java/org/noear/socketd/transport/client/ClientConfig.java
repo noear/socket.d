@@ -178,7 +178,7 @@ public class ClientConfig extends ConfigBase<ClientConfig> {
                 ", url='" + url + '\'' +
                 ", ioThreads=" + ioThreads +
                 ", codecThreads=" + codecThreads +
-                ", exchangeThreads=" + exchangeThreads +
+                ", exchangeThreads=" + workThreads +
                 ", heartbeatInterval=" + heartbeatInterval +
                 ", connectTimeout=" + connectTimeout +
                 ", idleTimeout=" + idleTimeout +

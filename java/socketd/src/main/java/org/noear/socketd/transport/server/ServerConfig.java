@@ -93,7 +93,7 @@ public class ServerConfig extends ConfigBase<ServerConfig> {
                 ", port=" + port +
                 ", ioThreads=" + ioThreads +
                 ", codecThreads=" + codecThreads +
-                ", exchangeThreads=" + exchangeThreads +
+                ", exchangeThreads=" + workThreads +
                 ", idleTimeout=" + idleTimeout +
                 ", requestTimeout=" + requestTimeout +
                 ", streamTimeout=" + streamTimeout +

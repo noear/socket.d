@@ -16,7 +16,7 @@ import org.noear.socketd.transport.server.ServerConfig;
 public class WsNioProvider implements ClientProvider, ServerProvider {
     @Override
     public String[] schemas() {
-        return new String[]{"ws", "wss", "ws-java", "sd:ws", "sd:wss", "sd:ws-java"};
+        return new String[]{"ws", "wss", "ws-java", "wss-java", "sd:ws", "sd:wss", "sd:ws-java", "sd:wss-java"};
     }
 
     @Override

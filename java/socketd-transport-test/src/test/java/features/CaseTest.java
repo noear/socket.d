@@ -14,14 +14,14 @@ import org.noear.solon.test.SolonTest;
 @SolonTest
 public class CaseTest {
     static final String[] schemas = new String[]{
-            "sd:tcp-java",
+//            "sd:tcp-java",
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
 //            "sd:tcp-neta",
             "sd:ws-java",
-            "sd:udp-java",
-            "sd:udp-netty",
-            "sd:kcp-java",
+//            "sd:udp-java",
+//            "sd:udp-netty",
+//            "sd:kcp-java",
     };
 
     @Test

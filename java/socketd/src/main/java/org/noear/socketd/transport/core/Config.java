@@ -79,14 +79,32 @@ public interface Config {
     int getCodecThreads();
 
     /**
-     * 交换线程数
+     * 工作线程数
      */
-    int getExchangeThreads();
+    int getWorkThreads();
+
+    /**
+     * 工作执行器
+     */
+    ExecutorService getWorkExecutor();
+
+    /**
+     * 交换线程数
+     * @deprecated 2.4
+     */
+    @Deprecated
+    default int getExchangeThreads(){
+        return getWorkThreads();
+    }
 
     /**
      * 交换执行器
+     * @deprecated 2.4
      */
-    ExecutorService getExchangeExecutor();
+    @Deprecated
+    default ExecutorService getExchangeExecutor(){
+        return getWorkExecutor();
+    }
 
     /**
      * 获取读缓冲大小

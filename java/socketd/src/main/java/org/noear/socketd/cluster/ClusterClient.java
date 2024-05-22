@@ -108,7 +108,7 @@ public class ClusterClient implements Client {
 
                 //复用交换执行器（省点线程数）
                 if (exchangeExecutor == null) {
-                    exchangeExecutor = client.getConfig().getExchangeExecutor();
+                    exchangeExecutor = client.getConfig().getWorkExecutor();
                 } else {
                     client.getConfig().exchangeExecutor(exchangeExecutor);
                 }

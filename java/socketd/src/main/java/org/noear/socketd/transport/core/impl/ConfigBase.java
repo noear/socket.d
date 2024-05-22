@@ -53,8 +53,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected int exchangeThreads;
 
     //交换执行器
-    private volatile ExecutorService exchangeExecutor;
-    private volatile ExecutorService exchangeExecutorSelfNew;
+    private volatile ExecutorService workExecutor;
+    private volatile ExecutorService workExecutorSelfNew;
 
     //读缓冲大小
     protected int readBufferSize;
@@ -267,34 +267,34 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 获取交换执行器
      */
     @Override
-    public ExecutorService getExchangeExecutor() {
-        if (exchangeExecutor == null) {
+    public ExecutorService getWorkExecutor() {
+        if (workExecutor == null) {
             EXECUTOR_LOCK.lock();
             try {
-                if (exchangeExecutor == null) {
-                    int nThreads = getExchangeThreads();
-                    exchangeExecutor = exchangeExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
+                if (workExecutor == null) {
+                    int nThreads = getWorkThreads();
+                    workExecutor = workExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
                             0L, TimeUnit.MILLISECONDS,
                             new LinkedBlockingQueue<Runnable>(),
-                            new NamedThreadFactory("Socketd-exchangeExecutor-"));
+                            new NamedThreadFactory("Socketd-work-"));
                 }
             } finally {
                 EXECUTOR_LOCK.unlock();
             }
         }
 
-        return exchangeExecutor;
+        return workExecutor;
     }
 
     /**
      * 配置交换执行器
      */
     public T exchangeExecutor(ExecutorService exchangeExecutor) {
-        this.exchangeExecutor = exchangeExecutor;
+        this.workExecutor = exchangeExecutor;
 
-        if (exchangeExecutorSelfNew != null) {
+        if (workExecutorSelfNew != null) {
             //谁 new 的，谁 shutdown
-            exchangeExecutorSelfNew.shutdown();
+            workExecutorSelfNew.shutdown();
         }
 
         return (T) this;
@@ -336,7 +336,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
      * 获取交换线程数
      */
     @Override
-    public int getExchangeThreads() {
+    public int getWorkThreads() {
         return exchangeThreads;
     }
 

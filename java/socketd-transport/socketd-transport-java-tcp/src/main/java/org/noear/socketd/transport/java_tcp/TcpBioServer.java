@@ -68,7 +68,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
             isStarted = true;
         }
 
-        serverExecutor = Executors.newFixedThreadPool(getConfig().getExchangeThreads());
+        serverExecutor = Executors.newFixedThreadPool(getConfig().getWorkThreads());
         server = createServer();
 
         serverExecutor.submit(this::accept);

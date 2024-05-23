@@ -110,7 +110,6 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
         clientThread = new Thread(() -> {
             receive(channel, real, handshakeFuture);
         });
-        clientThread.setDaemon(true);
         clientThread.start();
 
         //开始发连接包

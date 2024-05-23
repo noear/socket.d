@@ -9,7 +9,6 @@
 ### 2.4.18
 * 优化 内存超限提示
 
-
 ### 2.4.17
 * 添加 内存战比限制支持
 * 添加 EntityMetas.META_X_UNLIMITED

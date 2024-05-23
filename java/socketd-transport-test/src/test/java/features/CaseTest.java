@@ -20,7 +20,7 @@ public class CaseTest {
 //            "sd:tcp-neta",
             "sd:ws-java",
             "sd:udp-java",
-//            "sd:udp-netty",
+            "sd:udp-netty",
             "sd:kcp-java",
     };
 

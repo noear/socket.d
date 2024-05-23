@@ -7,6 +7,7 @@ import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
 import org.noear.socketd.transport.stream.impl.StreamMangerDefault;
 import org.noear.socketd.transport.stream.StreamManger;
 import org.noear.socketd.utils.NamedThreadFactory;
+import org.noear.socketd.utils.RunUtils;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
@@ -487,5 +488,20 @@ public abstract class ConfigBase<T extends Config> implements Config {
         //太低不启用
         this.useMaxMemoryLimit = maxMemoryRatio > 0.2F;
         return (T) this;
+    }
+
+    @Override
+    public void release() {
+        if (workExecutor != null) {
+            ExecutorService tmp = workExecutor;
+            workExecutor = null;
+            RunUtils.runAndTry(tmp::shutdown);
+        }
+
+        if (workExecutorSelfNew != null) {
+            ExecutorService tmp = workExecutorSelfNew;
+            workExecutorSelfNew = null;
+            RunUtils.runAndTry(tmp::shutdown);
+        }
     }
 }

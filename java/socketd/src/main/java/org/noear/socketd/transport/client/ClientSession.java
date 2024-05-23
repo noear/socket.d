@@ -101,7 +101,6 @@ public interface ClientSession extends Closeable {
      */
     void close() throws IOException;
 
-
     /**
      * 手动重连（一般是自动）
      */

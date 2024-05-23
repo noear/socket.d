@@ -22,6 +22,7 @@ public class ClusterClient implements Client {
     private ClientHeartbeatHandler heartbeatHandler;
     private ClientConfigHandler configHandler;
     private Listener listener;
+    private List<ClientInternal> clientList = new ArrayList<>();
 
     public ClusterClient(String... serverUrls) {
         this.serverUrls = serverUrls;
@@ -79,7 +80,7 @@ public class ClusterClient implements Client {
 
     private ClientSession openDo(boolean isThow) throws IOException {
         List<ClientSession> sessionList = new ArrayList<>();
-        ExecutorService exchangeExecutor = null;
+        ExecutorService workExecutor = null;
 
         for (String urls : serverUrls) {
             for (String url : urls.split(",")) {
@@ -107,10 +108,10 @@ public class ClusterClient implements Client {
                 }
 
                 //复用交换执行器（省点线程数）
-                if (exchangeExecutor == null) {
-                    exchangeExecutor = client.getConfig().getWorkExecutor();
+                if (workExecutor == null) {
+                    workExecutor = client.getConfig().getWorkExecutor();
                 } else {
-                    client.getConfig().workExecutor(exchangeExecutor);
+                    client.getConfig().workExecutor(workExecutor);
                 }
 
                 if (isThow) {
@@ -118,9 +119,18 @@ public class ClusterClient implements Client {
                 } else {
                     sessionList.add(client.open());
                 }
+
+                clientList.add(client);
             }
         }
 
         return new ClusterClientSession(sessionList);
+    }
+
+    @Override
+    public void shutdown() {
+        for (Client client : clientList) {
+            client.shutdown();
+        }
     }
 }

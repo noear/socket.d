@@ -90,19 +90,21 @@ public interface Config {
 
     /**
      * 交换线程数
+     *
      * @deprecated 2.4
      */
     @Deprecated
-    default int getExchangeThreads(){
+    default int getExchangeThreads() {
         return getWorkThreads();
     }
 
     /**
      * 交换执行器
+     *
      * @deprecated 2.4
      */
     @Deprecated
-    default ExecutorService getExchangeExecutor(){
+    default ExecutorService getExchangeExecutor() {
         return getWorkExecutor();
     }
 
@@ -145,4 +147,9 @@ public interface Config {
      * 允许最大内存使用比例（0.x->1.0）
      */
     float getMaxMemoryRatio();
+
+    /**
+     * 释放资源
+     */
+    void release();
 }

@@ -128,6 +128,5 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
             }
         }
         sessions.clear();
-        getConfig().release();
     }
 }

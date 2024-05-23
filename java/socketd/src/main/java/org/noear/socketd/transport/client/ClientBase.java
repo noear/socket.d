@@ -180,11 +180,4 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
      * 创建连接器
      */
     protected abstract ClientConnector createConnector();
-
-    @Override
-    public void shutdown() {
-        if (config != null) {
-            config.release();
-        }
-    }
 }

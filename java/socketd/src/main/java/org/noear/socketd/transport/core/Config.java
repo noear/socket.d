@@ -147,9 +147,4 @@ public interface Config {
      * 允许最大内存使用比例（0.x->1.0）
      */
     float getMaxMemoryRatio();
-
-    /**
-     * 释放资源
-     */
-    void release();
 }

@@ -1,6 +1,7 @@
 package org.noear.socketd.broker;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.entity.MessageBuilder;
 import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +37,12 @@ public class BrokerListener extends BrokerListenerBase implements Listener, Broa
         String atName = message.atName();
 
         if (atName == null) {
-            requester.sendAlarm(message, "Broker message require '@' meta");
-            return;
-        }
-
-        onMessageDo(requester, message, atName);
-    }
-
-    protected void onMessageDo(Session requester, Message message, String atName) throws IOException {
-        if (atName == null) {
-            throw new SocketException("Broker message require 'atName' param");
+            if (requester != null) {
+                requester.sendAlarm(message, "Broker message require '@' meta");
+                return;
+            } else {
+                throw new SocketException("Broker message require '@' meta");
+            }
         }
 
         if (atName.equals("*")) {
@@ -85,12 +82,17 @@ public class BrokerListener extends BrokerListenerBase implements Listener, Broa
     }
 
     /**
-     * 转发消息
+     * 广播
      *
-     * @param message 消息
+     * @param event  事件
+     * @param entity 实体（转发方式 https://socketd.noear.org/article/737 ）
      */
-    public void forwardTo(Message message, String atName) throws IOException {
-        onMessageDo(null, message, atName);
+    @Override
+    public void broadcast(String event, Entity entity) throws IOException{
+        onMessage(null, new MessageBuilder()
+                .flag(Flags.Message)
+                .event(event)
+                .entity(entity).build());
     }
 
     /**

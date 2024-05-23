@@ -14,14 +14,14 @@ import org.noear.solon.test.SolonTest;
 @SolonTest
 public class CaseTest {
     static final String[] schemas = new String[]{
-//            "sd:tcp-java",
+            "sd:tcp-java",
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
 //            "sd:tcp-neta",
             "sd:ws-java",
-//            "sd:udp-java",
+            "sd:udp-java",
 //            "sd:udp-netty",
-//            "sd:kcp-java",
+            "sd:kcp-java",
     };
 
     @Test
@@ -546,6 +546,23 @@ public class CaseTest {
             String s1 = schemas[i];
 
             BaseTestCase testCase = new TestCase41_memoryLimit(s1, 4100 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
+    public void TestCase42_broadcastBroker() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase42_broadcastBroker(s1, 4200 + i);
             try {
                 testCase.start();
                 testCase.stop();

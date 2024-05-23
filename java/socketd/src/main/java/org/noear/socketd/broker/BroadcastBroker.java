@@ -1,5 +1,6 @@
 package org.noear.socketd.broker;
 
+import org.noear.socketd.transport.core.Entity;
 import org.noear.socketd.transport.core.Message;
 
 import java.io.IOException;
@@ -12,10 +13,10 @@ import java.io.IOException;
  */
 public interface BroadcastBroker {
     /**
-     * 转发
+     * 广播
      *
-     * @param message 消息
-     * @param atName  目标（转发方式 https://socketd.noear.org/article/737 ）
+     * @param event  事件
+     * @param entity 实体（转发方式 https://socketd.noear.org/article/737 ）
      */
-    void forwardTo(Message message, String atName) throws IOException;
+    void broadcast(String event, Entity entity) throws IOException;
 }

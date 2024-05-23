@@ -26,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
     private static final Logger log = LoggerFactory.getLogger(KcpNioClientConnector.class);
 
+    private KcpClient kcpClient;
     private Ukcp real;
 
     public KcpNioClientConnector(KcpNioClient client) {
@@ -55,7 +56,7 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
             channelConfig.setTimeoutMillis(client.getConfig().getIdleTimeout());
         }
 
-        KcpClient kcpClient = new KcpClient();
+        kcpClient = new KcpClient();
         kcpClient.init(channelConfig);
 
         ClientKcpListener kcpListener = new ClientKcpListener(client);
@@ -92,6 +93,10 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
         try {
             if (real != null) {
                 real.close();
+            }
+
+            if (kcpClient != null) {
+                kcpClient.stop();
             }
         } catch (Throwable e) {
             log.debug("{}", e);

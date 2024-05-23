@@ -1,8 +1,14 @@
-### 2.4.18
-* 优化 内存超限提示
+### 2.5.0
 * 添加 BroadcastBroker 接口（提供类似 stomp 的体验）
 * 添加 LoadBalancer:isActive 接口
+* 添加 java-websocket 适配子协议验证（避免别人乱连）
+* 添加 spring-websocket 适配子协议验证（避免别人乱连）
 * 修复 server.stop 后不能自动通出的进程问题
+* 修复 session.close() 后不能自动通出的进程问题
+
+### 2.4.18
+* 优化 内存超限提示
+
 
 ### 2.4.17
 * 添加 内存战比限制支持

@@ -27,6 +27,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
 
     private AioQuickClient real;
+    private Thread connectThread;
 
     public TcpAioClientConnector(TcpAioClient client) {
         super(client);
@@ -40,13 +41,14 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         ClientMessageProcessor messageProcessor = new ClientMessageProcessor(client);
 
 
-        RunUtils.async(() -> {
+        connectThread = new Thread(() -> {
             try {
                 connectDo(messageProcessor);
             } catch (Throwable e) {
                 messageProcessor.getHandshakeFuture().complete(new ClientHandshakeResult(null, e));
             }
         });
+        connectThread.start();
 
         try {
             //等待握手结果
@@ -109,6 +111,10 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         try {
             if (real != null) {
                 real.shutdown();
+            }
+
+            if (connectThread != null) {
+                connectThread.interrupt();
             }
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {

@@ -7,7 +7,6 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.impl.ChannelDefault;
-import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,8 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpBioClientConnector.class);
 
     private Socket real;
-    private Thread clientThread;
+    private Thread receiveThread;
+    private Thread connectThread;
 
     public TcpBioClientConnector(TcpBioClient client) {
         super(client);
@@ -41,13 +41,14 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
         CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
-        RunUtils.async(() -> {
+        connectThread = new Thread(() -> {
             try {
                 connectDo(handshakeFuture);
             } catch (Throwable e) {
                 handshakeFuture.complete(new ClientHandshakeResult(null, e));
             }
         });
+        connectThread.start();
 
         try {
             //等待握手结果
@@ -107,17 +108,17 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
 
         ChannelInternal channel = new ChannelDefault<>(real, client);
 
-        clientThread = new Thread(() -> {
+        receiveThread = new Thread(() -> {
             receive(channel, real, handshakeFuture);
         });
-        clientThread.start();
+        receiveThread.start();
 
         //开始发连接包
         channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
     }
 
     private void receive(ChannelInternal channel, Socket socket, CompletableFuture<ClientHandshakeResult> handshakeFuture) {
-        while (!clientThread.isInterrupted()) {
+        while (!receiveThread.isInterrupted()) {
             try {
                 if (socket.isClosed()) {
                     client.getProcessor().onClose(channel);
@@ -160,8 +161,12 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                 real.close();
             }
 
-            if (clientThread != null) {
-                clientThread.interrupt();
+            if (receiveThread != null) {
+                receiveThread.interrupt();
+            }
+
+            if (connectThread != null) {
+                connectThread.interrupt();
             }
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {

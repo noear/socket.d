@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,7 +16,7 @@ import java.util.Collection;
  * @author noear
  * @since 2.1
  */
-public class BrokerListener extends BrokerListenerBase implements Listener {
+public class BrokerListener extends BrokerListenerBase implements Listener, BroadcastBroker {
     protected static final Logger log = LoggerFactory.getLogger(BrokerListener.class);
 
     @Override
@@ -39,6 +40,14 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
             return;
         }
 
+        onMessageDo(requester, message, atName);
+    }
+
+    protected void onMessageDo(Session requester, Message message, String atName) throws IOException {
+        if (atName == null) {
+            throw new SocketException("Broker message require 'atName' param");
+        }
+
         if (atName.equals("*")) {
             //广播模式（给所有玩家）
             Collection<String> nameAll = getNameAll();
@@ -52,7 +61,11 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
             atName = atName.substring(0, atName.length() - 1);
 
             if (forwardToName(requester, message, atName) == false) {
-                requester.sendAlarm(message, "Broker don't have '@" + atName + "' player");
+                if (requester != null) {
+                    requester.sendAlarm(message, "Broker don't have '@" + atName + "' player");
+                } else {
+                    throw new SocketException("Broker don't have '@" + atName + "' player");
+                }
             }
         } else {
             //单发模式（给同名的某个玩家，轮询负截均衡）
@@ -62,9 +75,22 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
                 //转发消息
                 forwardToSession(requester, message, responder);
             } else {
-                requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
+                if (requester != null) {
+                    requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
+                } else {
+                    throw new SocketException("Broker don't have '@" + atName + "' session");
+                }
             }
         }
+    }
+
+    /**
+     * 转发消息
+     *
+     * @param message 消息
+     */
+    public void forwardTo(Message message, String atName) throws IOException {
+        onMessageDo(null, message, atName);
     }
 
     /**
@@ -105,18 +131,18 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
     public void forwardToSession(Session requester, Message message, Session responder) throws IOException {
         if (message.isRequest()) {
             responder.sendAndRequest(message.event(), message, -1).thenReply(reply -> {
-                if (requester.isValid()) {
+                if (requester != null && requester.isValid()) {
                     requester.reply(message, reply);
                 }
             }).thenError(err -> {
                 //传递异常
-                if (requester.isValid()) {
+                if (requester != null && requester.isValid()) {
                     RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
                 }
             });
         } else if (message.isSubscribe()) {
             responder.sendAndSubscribe(message.event(), message).thenReply(reply -> {
-                if (requester.isValid()) {
+                if (requester != null && requester.isValid()) {
                     if (reply.isEnd()) {
                         requester.replyEnd(message, reply);
                     } else {
@@ -125,7 +151,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener {
                 }
             }).thenError(err -> {
                 //传递异常
-                if (requester.isValid()) {
+                if (requester != null && requester.isValid()) {
                     RunUtils.runAndTry(() -> requester.sendAlarm(message, err.getMessage()));
                 }
             });

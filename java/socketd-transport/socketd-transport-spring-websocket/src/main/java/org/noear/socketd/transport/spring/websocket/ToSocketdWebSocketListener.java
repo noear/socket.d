@@ -1,17 +1,16 @@
 package org.noear.socketd.transport.spring.websocket;
 
+import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.impl.ChannelDefault;
 import org.noear.socketd.transport.core.impl.ProcessorDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.socket.BinaryMessage;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.PongMessage;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,7 @@ import java.util.Map;
  * @author noear
  * @since 2.3
  */
-public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
+public class ToSocketdWebSocketListener extends BinaryWebSocketHandler implements SubProtocolCapable {
     static final String SOCKETD_KEY = "SOCKETD_KEY";
 
     static final Logger log = LoggerFactory.getLogger(ToSocketdWebSocketListener.class);
@@ -149,6 +148,11 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler {
         } else {
             return true;
         }
+    }
+
+    @Override
+    public List<String> getSubProtocols() {
+        return Collections.singletonList(SocketD.protocolName());
     }
 
     private static class InnerChannelSupporter implements ChannelSupporter<WebSocketSession> {

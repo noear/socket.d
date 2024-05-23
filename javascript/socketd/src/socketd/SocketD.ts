@@ -52,6 +52,13 @@ export class SocketD {
     }
 
     /**
+     * 协议名
+     */
+    static protocolName(): string {
+        return "Socket.D";
+    }
+
+    /**
      * 协议版本号
      */
     static protocolVersion(): string {
@@ -139,9 +146,9 @@ export class SocketD {
             return new EntityDefault();
         } else if (typeof (File) != 'undefined' && data instanceof File) {
             return new FileEntity(data);
-        } else if (typeof (ArrayBuffer) != 'undefined' &&  data instanceof ArrayBuffer) {
+        } else if (typeof (ArrayBuffer) != 'undefined' && data instanceof ArrayBuffer) {
             return new EntityDefault().dataSet(data);
-        } else if (typeof (Blob) != 'undefined' &&  data instanceof Blob) {
+        } else if (typeof (Blob) != 'undefined' && data instanceof Blob) {
             return new EntityDefault().dataSet(data);
         } else {
             return new StringEntity(String(data));

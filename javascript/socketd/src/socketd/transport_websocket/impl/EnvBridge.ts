@@ -41,21 +41,21 @@ export class EnvBridge {
         }
     }
 
-    static createSdWebSocketClient(url: string, connector: SdWebSocketListener) {
+    static createSdWebSocketClient(url: string, listener: SdWebSocketListener) {
         let runtime = this.getRuntime();
 
         if (runtime == Runtime.Weixin) {
             console.info("Client channel use xeixin api!");
-            return new SdWebSocketWeixinClient(url, connector);
+            return new SdWebSocketWeixinClient(url, listener);
         } else if (runtime == Runtime.Uniapp) {
             console.info("Client channel use uniapp api!");
-            return new SdWebSocketUniappClient(url, connector);
+            return new SdWebSocketUniappClient(url, listener);
         } else if (runtime == Runtime.NodeJs) {
             console.info("Client channel use nodejs api");
-            return new SdWebSocketNodeJsClient(url, connector);
+            return new SdWebSocketNodeJsClient(url, listener);
         } else {
             console.info("Client channel use browser api");
-            return new SdWebSocketBrowserClient(url, connector);
+            return new SdWebSocketBrowserClient(url, listener);
         }
     }
 }

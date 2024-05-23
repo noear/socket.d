@@ -8,13 +8,14 @@ import {
 } from "./SdWebSocket";
 import NodeWebSocket from 'ws';
 import {SocketAddress} from "../../transport/core/SocketAddress";
+import {SocketD} from "../../SocketD";
 
 export class SdWebSocketNodeJsClient implements SdWebSocket {
     private _real: NodeWebSocket;
     private _listener: SdWebSocketListener;
 
     constructor(url: string, listener: SdWebSocketListener) {
-        this._real = new NodeWebSocket(url);
+        this._real = new NodeWebSocket(url, SocketD.protocolName());
         this._listener = listener;
         this._real.binaryType = "arraybuffer";
 

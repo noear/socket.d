@@ -8,6 +8,7 @@ import {
     SdWebSocketErrorEventImpl
 } from "./SdWebSocket";
 import {SocketAddress} from "../../transport/core/SocketAddress";
+import {SocketD} from "../../SocketD";
 
 export class SdWebSocketUniappClient implements SdWebSocket {
     private _real: any;
@@ -17,7 +18,7 @@ export class SdWebSocketUniappClient implements SdWebSocket {
     constructor(url: string, listener: SdWebSocketListener) {
         this._state = SdWebSocketState.CONNECTING;
         // @ts-ignore
-        this._real = uni.connectSocket({url: url, success:(r)=>{}});//SocketTask
+        this._real = uni.connectSocket({url: url, protocols:[SocketD.protocolName()], success:(r)=>{}});//SocketTask
         this._listener = listener;
 
         this._real.onOpen(this.onOpen.bind(this));

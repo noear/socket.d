@@ -8,6 +8,7 @@ import {
     SdWebSocketErrorEventImpl
 } from "./SdWebSocket";
 import {SocketAddress} from "../../transport/core/SocketAddress";
+import {SocketD} from "../../SocketD";
 
 export class SdWebSocketWeixinClient implements SdWebSocket {
     private _real: any;
@@ -17,7 +18,7 @@ export class SdWebSocketWeixinClient implements SdWebSocket {
     constructor(url: string, listener: SdWebSocketListener) {
         this._state = SdWebSocketState.CONNECTING;
         // @ts-ignore
-        this._real = wx.connectSocket({url: url});//SocketTask
+        this._real = wx.connectSocket({url: url, protocols:[SocketD.protocolName()]});//SocketTask
         this._listener = listener;
         this._real.binaryType = "arraybuffer";
 

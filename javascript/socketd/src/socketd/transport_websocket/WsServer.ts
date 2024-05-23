@@ -33,6 +33,7 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
         if(this.getConfig().getHttpServer()){
             this._server = new NodeWebSocket.Server({
                 server: this.getConfig().getHttpServer(),
+                handleProtocols: ((protocols,request)=> SocketD.protocolName()),
                 maxPayload: Constants.MAX_SIZE_FRAME
             });
         }else{
@@ -40,11 +41,13 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
                 this._server = new NodeWebSocket.Server({
                     port: this.getConfig().getPort(),
                     host: this.getConfig().getHost(),
+                    handleProtocols: ((protocols,request)=> SocketD.protocolName()),
                     maxPayload: Constants.MAX_SIZE_FRAME
                 });
             } else {
                 this._server = new NodeWebSocket.Server({
                     port: this.getConfig().getPort(),
+                    handleProtocols: ((protocols,request)=> SocketD.protocolName()),
                     maxPayload: Constants.MAX_SIZE_FRAME
                 });
             }

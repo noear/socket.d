@@ -22,17 +22,17 @@ public class RunUtils {
     private static ScheduledExecutorService scheduledExecutor;
 
     static {
-        singleExecutor = Executors.newSingleThreadExecutor(new NamedThreadFactory("Socketd-singleExecutor-"));
+        singleExecutor = Executors.newSingleThreadExecutor(new NamedThreadFactory("Socketd-singleExecutor-").daemon(true));
 
         int asyncPoolSize = Math.max(Runtime.getRuntime().availableProcessors(), 2);
         asyncExecutor = new ThreadPoolExecutor(asyncPoolSize, asyncPoolSize,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(),
-                new NamedThreadFactory("Socketd-asyncExecutor-"));
+                new NamedThreadFactory("Socketd-asyncExecutor-").daemon(true));
 
         int scheduledPoolSize = 2;
         scheduledExecutor = new ScheduledThreadPoolExecutor(scheduledPoolSize,
-                new NamedThreadFactory("Socketd-scheduledExecutor-"));
+                new NamedThreadFactory("Socketd-scheduledExecutor-").daemon(true));
     }
 
     public static void setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {

@@ -90,6 +90,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                 throw new IllegalStateException(e);
             }
         });
+        clientThread.setDaemon(true);
         clientThread.start();
 
         //开始发连接包

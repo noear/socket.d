@@ -22,7 +22,6 @@ public class ClusterClient implements Client {
     private ClientHeartbeatHandler heartbeatHandler;
     private ClientConfigHandler configHandler;
     private Listener listener;
-    private List<ClientInternal> clientList = new ArrayList<>();
 
     public ClusterClient(String... serverUrls) {
         this.serverUrls = serverUrls;
@@ -119,18 +118,9 @@ public class ClusterClient implements Client {
                 } else {
                     sessionList.add(client.open());
                 }
-
-                clientList.add(client);
             }
         }
 
         return new ClusterClientSession(sessionList);
-    }
-
-    @Override
-    public void shutdown() {
-        for (Client client : clientList) {
-            client.shutdown();
-        }
     }
 }

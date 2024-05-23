@@ -277,7 +277,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
                     workExecutor = workExecutorSelfNew = new ThreadPoolExecutor(nThreads, nThreads,
                             0L, TimeUnit.MILLISECONDS,
                             new LinkedBlockingQueue<Runnable>(),
-                            new NamedThreadFactory("Socketd-work-"));
+                            new NamedThreadFactory("Socketd-work-").daemon(true));
                 }
             } finally {
                 EXECUTOR_LOCK.unlock();
@@ -488,20 +488,5 @@ public abstract class ConfigBase<T extends Config> implements Config {
         //太低不启用
         this.useMaxMemoryLimit = maxMemoryRatio > 0.2F;
         return (T) this;
-    }
-
-    @Override
-    public void release() {
-        if (workExecutor != null) {
-            ExecutorService tmp = workExecutor;
-            workExecutor = null;
-            RunUtils.runAndTry(tmp::shutdown);
-        }
-
-        if (workExecutorSelfNew != null) {
-            ExecutorService tmp = workExecutorSelfNew;
-            workExecutorSelfNew = null;
-            RunUtils.runAndTry(tmp::shutdown);
-        }
     }
 }

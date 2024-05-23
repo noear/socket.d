@@ -28,6 +28,13 @@ public class SocketD {
     }
 
     /**
+     * 协议名
+     */
+    public static String protocolName() {
+        return "Socket.D";
+    }
+
+    /**
      * 协议版本号
      */
     public static String protocolVersion() {
@@ -59,7 +66,7 @@ public class SocketD {
 
     /**
      * 手动注册客户端提供者
-     * */
+     */
     public static void registerClientProvider(ClientProvider clientProvider) {
         for (String s : clientProvider.schemas()) {
             clientProviderMap.put(s, clientProvider);
@@ -68,7 +75,7 @@ public class SocketD {
 
     /**
      * 手动注册服务端提供者
-     * */
+     */
     public static void registerServerProvider(ServerProvider serverProvider) {
         for (String s : serverProvider.schemas()) {
             serverProviderMap.put(s, serverProvider);

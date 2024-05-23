@@ -1,5 +1,6 @@
 from typing import Optional
 
+from websockets import Subprotocol
 from websockets.server import serve as Serve
 
 from socketd import SocketD
@@ -41,6 +42,7 @@ class WsAioServer(ServerBase):
                            host=__host,
                            port=self.get_config().get_port(),
                            create_protocol=AIOWebSocketServerImpl,
+                           subprotocols=[Subprotocol(SocketD.protocol_name())],
                            ws_aio_server=self,
                            ssl=self.get_config().get_ssl_context(),
                            logger=logger,

@@ -1,8 +1,10 @@
 import asyncio
 from typing import Optional
 
+from websockets import Subprotocol
 from websockets.client import WebSocketClientProtocol
 
+from socketd import SocketD
 from socketd.exception.SocketDExecption import SocketDTimeoutException
 from socketd.transport.client.Client import ClientInternal
 from socketd.transport.client.ClientHandshakeResult import ClientHandshakeResult
@@ -42,6 +44,7 @@ class WsAioClientConnector(ClientConnectorBase):
                                                 client=self.client,
                                                 ssl=self.client.get_config().get_ssl_context(),
                                                 create_protocol=AIOWebSocketClientImpl,
+                                                subprotocols=[Subprotocol(SocketD.protocol_name())],
                                                 ping_timeout=self.client.get_config().get_idle_timeout() / 1000,
                                                 ping_interval=self.client.get_config().get_idle_timeout() / 1000,
                                                 logger=logger,

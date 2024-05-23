@@ -1,4 +1,7 @@
-### 2.5.17
+### 2.5.0
+* 添加 websocket 适配子协议验证（避免乱连）
+
+### 2.4.17
 * 添加 EntityMetas.META_X_UNLIMITED
 
 ### 2.4.15

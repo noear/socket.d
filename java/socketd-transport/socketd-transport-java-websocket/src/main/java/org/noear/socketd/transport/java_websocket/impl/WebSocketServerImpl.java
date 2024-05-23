@@ -2,9 +2,13 @@ package org.noear.socketd.transport.java_websocket.impl;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
+import org.java_websocket.drafts.Draft;
+import org.java_websocket.exceptions.InvalidDataException;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.handshake.ServerHandshakeBuilder;
 import org.java_websocket.server.WebSocketServer;
+import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.java_websocket.WsNioServer;
 import org.noear.socketd.transport.core.Frame;
@@ -50,6 +54,13 @@ public class WebSocketServerImpl extends WebSocketServer {
         if (assertHandshake(conn)) {
             super.onWebsocketPong(conn, f);
         }
+    }
+
+    @Override
+    public ServerHandshakeBuilder onWebsocketHandshakeReceivedAsServer(WebSocket conn, Draft draft, ClientHandshake request) throws InvalidDataException {
+        ServerHandshakeBuilder tmp = super.onWebsocketHandshakeReceivedAsServer(conn, draft, request);
+        tmp.put("Sec-WebSocket-Protocol", SocketD.protocolName());
+        return tmp;
     }
 
     @Override

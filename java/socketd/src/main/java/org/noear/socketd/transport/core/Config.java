@@ -5,6 +5,7 @@ import org.noear.socketd.transport.stream.StreamManger;
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Semaphore;
 
 /**
  * 配置接口
@@ -147,4 +148,9 @@ public interface Config {
      * 允许最大内存使用比例（0.x->1.0）
      */
     float getMaxMemoryRatio();
+
+    /**
+     * 写信号量（其它语言不方便的，不用迁移）
+     */
+    Semaphore getWriteSemaphore();
 }

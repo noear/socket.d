@@ -25,8 +25,8 @@ public class DebugTest {
      */
     @Test
     public  void main() throws Exception {
-        String s1 = schemas[6];
-        BaseTestCase testCase = new TestCase37_server_prestop(s1, 8602);
+        String s1 = schemas[2];
+        BaseTestCase testCase = new TestCase44_semaphore(s1, 8602);
         try {
             testCase.start();
             //testCase.stop();

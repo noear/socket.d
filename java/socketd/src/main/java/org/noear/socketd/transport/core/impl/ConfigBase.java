@@ -7,7 +7,6 @@ import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
 import org.noear.socketd.transport.stream.impl.StreamMangerDefault;
 import org.noear.socketd.transport.stream.StreamManger;
 import org.noear.socketd.utils.NamedThreadFactory;
-import org.noear.socketd.utils.RunUtils;
 
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
@@ -74,6 +73,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     private boolean useMaxMemoryLimit;
     //最大内存比例
     protected float maxMemoryRatio;
+    //允许并发控制
+    protected Semaphore writeSemaphore;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
@@ -90,7 +91,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.fragmentSize = Constants.MAX_SIZE_DATA;
 
         this.ioThreads = 1;
-        
+
         this.codecThreads = Runtime.getRuntime().availableProcessors();
         this.workThreads = Runtime.getRuntime().availableProcessors() * 4;
 
@@ -489,6 +490,21 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.maxMemoryRatio = maxMemoryRatio;
         //太低不启用
         this.useMaxMemoryLimit = maxMemoryRatio > 0.2F;
+        return (T) this;
+    }
+
+    @Override
+    public Semaphore getWriteSemaphore() {
+        return writeSemaphore;
+    }
+
+    public T writeSemaphore(int permits, boolean fair) {
+        if (permits < 1) {
+            this.writeSemaphore = null;
+        } else {
+            this.writeSemaphore = new Semaphore(permits, fair);
+        }
+
         return (T) this;
     }
 }

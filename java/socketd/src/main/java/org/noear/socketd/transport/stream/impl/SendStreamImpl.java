@@ -9,7 +9,7 @@ import org.noear.socketd.transport.stream.SendStream;
  */
 public class SendStreamImpl extends StreamBase<SendStream> implements SendStream {
     public SendStreamImpl(String sid) {
-        super(sid, Constants.DEMANDS_ZERO, 0);
+        super(sid, Constants.DEMANDS_ZERO, 10);
     }
 
     /**

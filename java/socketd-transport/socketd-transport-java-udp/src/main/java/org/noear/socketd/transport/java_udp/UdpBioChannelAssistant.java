@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.java_udp;
 
 import org.noear.socketd.transport.core.ChannelAssistant;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
@@ -62,9 +63,15 @@ public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> 
      * 写入
      */
     @Override
-    public void write(DatagramTagert target, Frame frame) throws IOException {
-        ByteBufferCodecWriter writer= config.getCodec().write(frame, i-> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
-        target.send(writer.getBuffer().array());
+    public void write(DatagramTagert target, Frame frame, ChannelInternal channel) throws IOException {
+        try {
+            channel.writeAcquire(frame);
+
+            ByteBufferCodecWriter writer = config.getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
+            target.send(writer.getBuffer().array());
+        } finally {
+            channel.writeRelease(frame);
+        }
     }
 
     @Override

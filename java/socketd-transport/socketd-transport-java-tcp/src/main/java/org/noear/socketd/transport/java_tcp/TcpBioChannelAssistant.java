@@ -1,9 +1,6 @@
 package org.noear.socketd.transport.java_tcp;
 
-import org.noear.socketd.transport.core.ChannelAssistant;
-import org.noear.socketd.transport.core.Config;
-import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 
@@ -50,13 +47,21 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
     }
 
     @Override
-    public void write(Socket source, Frame frame) throws IOException {
-        OutputStream output = source.getOutputStream();
-//        config.getCodec().write(frame, i -> new OutputStreamBufferWriter(output));
-//        output.flush();
-        ByteBuffer buffer = config.getCodec().write(frame, (i) -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
-        output.write(buffer.array());
-        output.flush();
+    public void write(Socket source, Frame frame, ChannelInternal channel) throws IOException {
+        if (frame == null) {
+            return;
+        }
+
+        try {
+            channel.writeAcquire(frame);
+
+            OutputStream output = source.getOutputStream();
+            ByteBuffer buffer = config.getCodec().write(frame, (i) -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
+            output.write(buffer.array());
+            output.flush();
+        } finally {
+            channel.writeRelease(frame);
+        }
     }
 
     public Frame read(Socket source) throws IOException {

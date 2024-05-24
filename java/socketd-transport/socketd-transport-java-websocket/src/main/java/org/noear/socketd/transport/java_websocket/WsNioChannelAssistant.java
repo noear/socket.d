@@ -2,6 +2,7 @@ package org.noear.socketd.transport.java_websocket;
 
 import org.java_websocket.WebSocket;
 import org.noear.socketd.transport.core.ChannelAssistant;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
@@ -25,9 +26,15 @@ public class WsNioChannelAssistant implements ChannelAssistant<WebSocket> {
     }
 
     @Override
-    public void write(WebSocket source, Frame frame) throws IOException {
-        ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
-        source.send(writer.getBuffer());
+    public void write(WebSocket source, Frame frame, ChannelInternal channel) throws IOException {
+        try {
+            channel.writeAcquire(frame);
+
+            ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
+            source.send(writer.getBuffer());
+        } finally {
+            channel.writeRelease(frame);
+        }
     }
 
     @Override

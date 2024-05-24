@@ -123,7 +123,7 @@ public class ProcessorDefault implements Processor {
                     case Flags.Alarm: {
                         //结束流，并异常通知
                         SocketDAlarmException exception = new SocketDAlarmException(frame.message());
-                        StreamInternal stream = channel.getConfig().getStreamManger().getStream(frame.message().sid());
+                        StreamInternal stream = channel.getStream(frame.message().sid());
                         if (stream == null) {
                             onError(channel, exception);
                         } else {

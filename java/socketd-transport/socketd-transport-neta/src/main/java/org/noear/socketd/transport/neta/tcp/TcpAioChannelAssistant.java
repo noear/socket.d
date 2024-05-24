@@ -2,6 +2,7 @@ package org.noear.socketd.transport.neta.tcp;
 
 import net.hasor.neta.channel.NetChannel;
 import org.noear.socketd.transport.core.ChannelAssistant;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 
 import java.io.IOException;
@@ -13,8 +14,17 @@ import java.net.InetSocketAddress;
  */
 public class TcpAioChannelAssistant implements ChannelAssistant<NetChannel> {
     @Override
-    public void write(NetChannel target, Frame frame) throws IOException {
-        target.sendData(frame);
+    public void write(NetChannel target, Frame frame, ChannelInternal channel) throws IOException {
+        try {
+            channel.writeAcquire(frame);
+
+            target.sendData(frame).onFinal(future -> {
+                channel.writeRelease(frame);
+            });
+        } catch (RuntimeException e) {
+            channel.writeRelease(frame);
+            throw e;
+        }
     }
 
     @Override

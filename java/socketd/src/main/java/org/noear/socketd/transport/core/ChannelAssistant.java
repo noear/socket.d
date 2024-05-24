@@ -13,10 +13,11 @@ public interface ChannelAssistant<T> {
     /**
      * 写入
      *
-     * @param target 目标
-     * @param frame  帧
+     * @param target  目标
+     * @param frame   帧
+     * @param channel 通道
      */
-    void write(T target, Frame frame) throws IOException;
+    void write(T target, Frame frame, ChannelInternal channel) throws IOException;
 
     /**
      * 是否有效

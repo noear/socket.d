@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.java_tcp_nio;
 
 import org.noear.socketd.transport.core.ChannelAssistant;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
@@ -29,13 +30,16 @@ public class TcpNioChannelAssistant implements ChannelAssistant<SocketChannel> {
         this.config = config;
     }
     @Override
-    public void write(SocketChannel target, Frame frame) throws IOException {
+    public void write(SocketChannel target, Frame frame, ChannelInternal channel) throws IOException {
         //后面，再加个写管道处理
-        ByteBuffer buffer = getConfig().getCodec().write(frame, i->new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
+        try {
+            channel.writeAcquire(frame);
 
-
-        target.write(buffer);
-        //target.write(emptyBuffer); //模拟flush操作
+            ByteBuffer buffer = getConfig().getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
+            target.write(buffer);
+        } finally {
+            channel.writeRelease(frame);
+        }
     }
 
     public Frame read(SocketChannel target, NioAttachment attachment, ByteBuffer buffer){

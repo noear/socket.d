@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.netty.udp;
 
 import io.netty.buffer.ByteBuf;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 import org.noear.socketd.transport.netty.udp.impl.DatagramTagert;
@@ -24,10 +25,16 @@ public class UdpNioChannelAssistant implements ChannelAssistant<DatagramTagert> 
         this.config = config;
     }
     @Override
-    public void write(DatagramTagert target, Frame frame) throws IOException {
-        ByteBufferCodecWriter writer = config.getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
+    public void write(DatagramTagert target, Frame frame, ChannelInternal channel) throws IOException {
+        try {
+            channel.writeAcquire(frame);
 
-        target.send(writer.getBuffer().array());
+            ByteBufferCodecWriter writer = config.getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
+
+            target.send(writer.getBuffer().array());
+        } finally {
+            channel.writeRelease(frame);
+        }
     }
 
     public Frame read(ByteBuf inBuf) throws Exception {

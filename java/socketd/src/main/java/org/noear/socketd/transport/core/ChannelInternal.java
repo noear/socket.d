@@ -2,6 +2,7 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.stream.StreamInternal;
 
+import java.util.concurrent.Semaphore;
 import java.util.function.BiConsumer;
 
 /**
@@ -18,7 +19,7 @@ public interface ChannelInternal extends Channel {
 
     /**
      * 更新最后活动时间
-     * */
+     */
     void setLiveTimeAsNow();
 
     /**
@@ -35,4 +36,32 @@ public interface ChannelInternal extends Channel {
      * 执行打开时
      */
     void doOpenFuture(boolean isOk, Throwable error);
+
+    /**
+     * 写申请
+     */
+    default void writeAcquire(Frame frame) {
+        if (frame.flag() < Flags.Message) {
+            return;
+        }
+
+        Semaphore tmp = getConfig().getWriteSemaphore();
+        if (tmp != null) {
+            tmp.acquireUninterruptibly();
+        }
+    }
+
+    /**
+     * 写释放
+     */
+    default void writeRelease(Frame frame) {
+        if (frame.flag() < Flags.Message) {
+            return;
+        }
+
+        Semaphore tmp = getConfig().getWriteSemaphore();
+        if (tmp != null) {
+            tmp.release();
+        }
+    }
 }

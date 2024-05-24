@@ -22,12 +22,18 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession> {
     }
 
     @Override
-    public void write(AioSession source, Frame frame) throws IOException {
+    public void write(AioSession source, Frame frame, ChannelInternal channel) throws IOException {
         if (source.isInvalid()) {
             //触发自动重链
             throw new NotActiveException();
         } else {
-            config.getCodec().write(frame, i -> new TcpAioBufferWriter(source.writeBuffer()));
+            try {
+                channel.writeAcquire(frame);
+
+                config.getCodec().write(frame, i -> new TcpAioBufferWriter(source.writeBuffer()));
+            } finally {
+                channel.writeRelease(frame);
+            }
         }
     }
 

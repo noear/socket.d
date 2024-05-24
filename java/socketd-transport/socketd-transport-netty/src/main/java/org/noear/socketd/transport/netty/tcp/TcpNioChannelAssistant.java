@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.netty.tcp;
 
 import io.netty.channel.Channel;
+import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.ChannelAssistant;
 
@@ -16,9 +17,17 @@ import java.net.InetSocketAddress;
  */
 public class TcpNioChannelAssistant implements ChannelAssistant<Channel> {
     @Override
-    public void write(Channel target, Frame frame) throws IOException {
+    public void write(Channel target, Frame frame, ChannelInternal channel) throws IOException {
         if (target.isActive()) {
-            target.writeAndFlush(frame);
+            try {
+                channel.writeAcquire(frame);
+                target.writeAndFlush(frame).addListener(future -> {
+                    channel.writeRelease(frame);
+                });
+            } catch (RuntimeException e) {
+                channel.writeRelease(frame);
+                throw e;
+            }
         } else {
             //触发自动重链
             throw new NotActiveException();

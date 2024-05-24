@@ -41,7 +41,7 @@ public class TestCase44_semaphore extends BaseTestCase {
         super.start();
         //server
         server = SocketD.createServer(getSchema())
-                .config(c -> c.port(getPort()).codecThreads(1).ioThreads(1).serialSend(true).writeSemaphore(10,true))
+                .config(c -> c.port(getPort()).codecThreads(1).ioThreads(1).serialSend(true).writeSemaphore(10))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
@@ -72,7 +72,7 @@ public class TestCase44_semaphore extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).config(c->c.writeSemaphore(10,true)).openOrThow();
+        clientSession = SocketD.createClient(serverUrl).config(c->c.writeSemaphore(10)).openOrThow();
         clientSession.send("/user/created", new StringEntity("hi"));
 
         Reply response = clientSession.sendAndRequest("/user/get", new StringEntity("hi")).await();

@@ -498,11 +498,11 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return writeSemaphore;
     }
 
-    public T writeSemaphore(int permits, boolean fair) {
+    public T writeSemaphore(int permits) {
         if (permits < 1) {
             this.writeSemaphore = null;
         } else {
-            this.writeSemaphore = new Semaphore(permits, fair);
+            this.writeSemaphore = new Semaphore(permits, true);
         }
 
         return (T) this;

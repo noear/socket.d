@@ -13,6 +13,11 @@ export interface ClientSession {
     isValid(): boolean;
 
     /**
+     * 是否活跃
+     */
+    isActive(): boolean;
+
+    /**
      * 是否正在关闭中
      * */
     isClosing(): boolean;

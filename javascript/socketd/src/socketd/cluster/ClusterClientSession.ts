@@ -72,6 +72,19 @@ export class ClusterClientSession implements ClientSession {
     }
 
     /**
+     * 是否活跃
+     * */
+    isActive(): boolean {
+        for (const session of this._sessionSet) {
+            if (session.isActive()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * 是否关闭中
      * */
     isClosing(): boolean {

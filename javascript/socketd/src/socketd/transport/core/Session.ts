@@ -215,6 +215,10 @@ export abstract class SessionBase implements Session {
 
     abstract isValid(): boolean ;
 
+    isActive(): boolean {
+        return this.isValid() && this.isClosing() == false;
+    }
+
     abstract isClosing(): boolean;
 
     abstract reconnect();

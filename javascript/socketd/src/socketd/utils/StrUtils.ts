@@ -1,4 +1,10 @@
 
+/**
+ * 字会串工具
+ *
+ * @author noear
+ * @since 2.0
+ */
 export class StrUtils {
     static guid(): string {
         let guid = "";

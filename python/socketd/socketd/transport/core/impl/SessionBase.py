@@ -48,6 +48,9 @@ class SessionBase(Session, ABC):
     def session_id(self) -> str:
         return self._session_id
 
+    def is_active(self) -> bool:
+        return self.is_valid() and self.is_closing() == False
+
     def live_time(self)->int:
         return self._channel.get_live_time()
 

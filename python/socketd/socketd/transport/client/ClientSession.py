@@ -13,6 +13,10 @@ class ClientSession:
         ...
 
     @abc.abstractmethod
+    def is_active(self) -> bool:
+        ...
+
+    @abc.abstractmethod
     def is_closing(self)->bool:
         ...
 

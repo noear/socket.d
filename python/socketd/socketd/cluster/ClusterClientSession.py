@@ -36,6 +36,12 @@ class ClusterClientSession(ClientSession):
                 return True
         return False
 
+    def is_active(self) -> bool:
+        for session in self.__sessionSet:
+            if session.is_active():
+                return True
+        return False
+
     def is_closing(self) -> bool:
         for session in self.__sessionSet:
             if session.is_closing():

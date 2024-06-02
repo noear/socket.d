@@ -2,6 +2,7 @@ from threading import RLock
 from typing import List
 
 from socketd.transport.client.ClientSession import ClientSession
+from socketd.utils.SessionUtils import SessionUtils
 from socketd.utils.StrUtils import StrUtils
 
 
@@ -39,7 +40,7 @@ class LoadBalancer:
         else:
             sessions: List[ClientSession] = []
             for s in coll:
-                if s.is_valid() and not s.is_closing():
+                if SessionUtils.is_active(s):
                     sessions.append(s)
 
             if sessions.__len__() == 0:
@@ -59,7 +60,7 @@ class LoadBalancer:
             return None
         else:
             for s in coll:
-                if s.is_valid() and not s.is_closing():
+                if SessionUtils.is_active(s):
                     return s
 
             return None

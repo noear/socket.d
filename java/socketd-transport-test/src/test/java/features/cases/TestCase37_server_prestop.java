@@ -48,7 +48,7 @@ public class TestCase37_server_prestop extends BaseTestCase {
                         System.out.println("::" + message);
                         if (message.isRequest()) {
                             messageCounter.incrementAndGet();
-                            if (session.isValid() && session.isClosing() == false) {
+                            if (session.isActive()) {
                                 session.reply(message, Entity.of());
                             }
                         }

@@ -20,6 +20,11 @@ public interface ClientSession extends Closeable {
     boolean isValid();
 
     /**
+     * 是否活跃
+     * */
+    boolean isActive();
+
+    /**
      * 是否正在关闭中
      */
     boolean isClosing();

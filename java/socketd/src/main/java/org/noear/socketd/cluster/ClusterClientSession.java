@@ -80,6 +80,17 @@ public class ClusterClientSession implements ClientSession {
     }
 
     @Override
+    public boolean isActive() {
+        for (ClientSession session : sessionList) {
+            if (session.isActive()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean isClosing() {
         for (ClientSession session : sessionList) {
             if (session.isClosing()) {

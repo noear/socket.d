@@ -11,7 +11,7 @@ public class SessionUtils {
      * 是否活动的
      */
     public static boolean isActive(ClientSession s) {
-        return s != null && s.isValid() && !s.isClosing();
+        return s != null && s.isActive();
     }
 
     /**

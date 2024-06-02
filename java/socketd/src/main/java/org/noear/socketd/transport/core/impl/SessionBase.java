@@ -101,6 +101,11 @@ public abstract class SessionBase implements Session {
     }
 
     @Override
+    public boolean isActive() {
+        return isValid() && isClosing() == false;
+    }
+
+    @Override
     public String sessionId() {
         return sessionId;
     }

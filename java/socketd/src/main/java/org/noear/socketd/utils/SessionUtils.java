@@ -3,8 +3,10 @@ package org.noear.socketd.utils;
 import org.noear.socketd.transport.client.ClientSession;
 
 /**
+ * 会话工具（主要检测状态）
+ *
  * @author noear
- * @since 2.4
+ * @since 2.5
  */
 public class SessionUtils {
     /**

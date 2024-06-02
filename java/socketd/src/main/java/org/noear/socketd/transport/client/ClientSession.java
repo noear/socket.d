@@ -21,7 +21,7 @@ public interface ClientSession extends Closeable {
 
     /**
      * 是否活跃
-     * */
+     */
     boolean isActive();
 
     /**

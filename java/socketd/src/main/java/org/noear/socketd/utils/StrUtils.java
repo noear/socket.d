@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 工具
+ * 字会串工具
  *
  * @author noear
  * @since 2.0

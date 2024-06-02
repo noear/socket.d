@@ -1,7 +1,6 @@
 package org.noear.socketd.broker;
 
 import org.noear.socketd.transport.core.Entity;
-import org.noear.socketd.transport.core.Message;
 
 import java.io.IOException;
 

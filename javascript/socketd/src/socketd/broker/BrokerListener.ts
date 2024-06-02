@@ -1,10 +1,15 @@
 import {BrokerListenerBase} from "./BrokerListenerBase";
 import {Listener} from "../transport/core/Listener";
 import {Session} from "../transport/core/Session";
-import {Message} from "../transport/core/Message";
+import {Message, MessageBuilder} from "../transport/core/Message";
 import {RunUtils} from "../utils/RunUtils";
+import {BroadcastBroker} from "./BroadcastBroker";
+import {Entity} from "../transport/core/Entity";
+import {Flags} from "../transport/core/Flags";
+import {SocketDException} from "../exception/SocketDException";
+import {SessionUtils} from "../utils/SessionUtils";
 
-export class BrokerListener extends BrokerListenerBase implements Listener {
+export class BrokerListener extends BrokerListenerBase implements Listener, BroadcastBroker {
     onOpen(session: Session) {
         let name = session.name();
         this.addPlayer(name, session);
@@ -16,11 +21,15 @@ export class BrokerListener extends BrokerListenerBase implements Listener {
         this.removePlayer(name, session);
     }
 
-    onMessage(requester: Session, message: Message) {
+    onMessage(requester: Session|null, message: Message) {
         let atName = message.atName();
 
         if (!atName) {
-            requester.sendAlarm(message, "Broker message require '@' meta");
+            if(requester!=null) {
+                requester.sendAlarm(message, "Broker message require '@' meta");
+            }else{
+                throw new SocketDException("Broker message require '@' meta");
+            }
             return;
         }
 
@@ -37,7 +46,11 @@ export class BrokerListener extends BrokerListenerBase implements Listener {
             atName = atName.substring(0, atName.length() - 1);
 
             if (this.forwardToName(requester, message, atName) == false) {
-                requester.sendAlarm(message, "Broker don't have '@" + atName + "' player");
+                if (requester != null) {
+                    requester.sendAlarm(message, "Broker don't have '@" + atName + "' player");
+                } else {
+                    throw new SocketDException("Broker don't have '@" + atName + "' player");
+                }
             }
         } else {
             //单发模式（给同名的某个玩家，轮询负截均衡）
@@ -47,9 +60,26 @@ export class BrokerListener extends BrokerListenerBase implements Listener {
                 //转发消息
                 this.forwardToSession(requester, message, responder);
             } else {
-                requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
+                if (requester != null) {
+                    requester.sendAlarm(message, "Broker don't have '@" + atName + "' session");
+                } else {
+                    throw new SocketDException("Broker don't have '@" + atName + "' session");
+                }
             }
         }
+    }
+
+    /**
+     * 广播
+     *
+     * @param event  事件
+     * @param entity 实体（转发方式 https://socketd.noear.org/article/737 ）
+     */
+    broadcast(event: string, entity: Entity) {
+        this.onMessage(null, new MessageBuilder()
+            .flag(Flags.Message)
+            .event(event)
+            .entity(entity).build());
     }
 
     /**
@@ -59,7 +89,7 @@ export class BrokerListener extends BrokerListenerBase implements Listener {
      * @param message   消息
      * @param name      目标玩家名字
      */
-    forwardToName(requester: Session, message: Message, name: string | null): boolean {
+    forwardToName(requester: Session|null, message: Message, name: string | null): boolean {
         let playerAll = this.getPlayerAll(name);
         if (playerAll != null && playerAll.size > 0) {
             for (let responder of playerAll) {
@@ -87,31 +117,31 @@ export class BrokerListener extends BrokerListenerBase implements Listener {
      * @param message   消息
      * @param responder 目标玩家会话
      */
-    forwardToSession(requester: Session, message: Message, responder: Session) {
+    forwardToSession(requester: Session|null, message: Message, responder: Session) {
         if (message.isRequest()) {
             responder.sendAndRequest(message.event(), message, -1).thenReply(reply => {
-                if (requester.isValid()) {
-                    requester.reply(message, reply);
+                if (SessionUtils.isValid(requester)) {
+                    requester!.reply(message, reply);
                 }
             }).thenError(err => {
                 //传递异常
-                if (requester.isValid()) {
-                    RunUtils.runAndTry(() => requester.sendAlarm(message, err.message));
+                if (SessionUtils.isValid(requester)) {
+                    RunUtils.runAndTry(() => requester!.sendAlarm(message, err.message));
                 }
             });
         } else if (message.isSubscribe()) {
             responder.sendAndSubscribe(message.event(), message).thenReply(reply => {
-                if (requester.isValid()) {
+                if (SessionUtils.isValid(requester)) {
                     if (reply.isEnd()) {
-                        requester.replyEnd(message, reply);
+                        requester!.replyEnd(message, reply);
                     } else {
-                        requester.reply(message, reply);
+                        requester!.reply(message, reply);
                     }
                 }
             }).thenError(err => {
                 //传递异常
-                if (requester.isValid()) {
-                    RunUtils.runAndTry(() => requester.sendAlarm(message, err.message));
+                if (SessionUtils.isValid(requester)) {
+                    RunUtils.runAndTry(() => requester!.sendAlarm(message, err.message));
                 }
             });
         } else {

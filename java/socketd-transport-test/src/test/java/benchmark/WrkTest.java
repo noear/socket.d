@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
  * @author noear
  * @since 2.4
  */
-@ExtendWith(SolonJUnit5Extension.class)
 @SolonTest
 public class WrkTest {
     public static void main(String[] args) {

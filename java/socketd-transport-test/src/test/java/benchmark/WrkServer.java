@@ -18,7 +18,6 @@ import java.io.IOException;
  * @author noear
  * @since 2.4
  */
-@ExtendWith(SolonJUnit5Extension.class)
 @SolonTest
 public class WrkServer implements LifecycleBean {
     public static final int schemasIdx = 3;

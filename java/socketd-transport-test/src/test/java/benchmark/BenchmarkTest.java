@@ -15,7 +15,6 @@ import java.util.List;
  * @author noear
  * @since 2.0
  */
-@ExtendWith(SolonJUnit5Extension.class)
 @SolonTest
 public class BenchmarkTest {
     static final String[] schemas = new String[]{

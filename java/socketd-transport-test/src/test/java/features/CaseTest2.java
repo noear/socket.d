@@ -10,7 +10,6 @@ import org.noear.solon.test.SolonTest;
  * @author noear
  * @since 2.0
  */
-@ExtendWith(SolonJUnit5Extension.class)
 @SolonTest
 public class CaseTest2 {
     static final String[] schemas = new String[]{

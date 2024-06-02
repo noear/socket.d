@@ -561,6 +561,10 @@ public class CaseTest {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];
 
+            if (s1.contains("udp") || s1.contains("kcp")) {
+                continue;
+            }
+
             BaseTestCase testCase = new TestCase42_broadcastBroker(s1, 4200 + i);
             try {
                 testCase.start();

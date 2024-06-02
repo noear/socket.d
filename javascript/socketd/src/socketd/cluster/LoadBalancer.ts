@@ -1,5 +1,6 @@
 import {ClientSession} from "../transport/client/ClientSession";
 import {IoSupplier} from "../transport/core/Typealias";
+import {SessionUtils} from "../utils/SessionUtils";
 
 /**
  * 负载均衡器
@@ -55,7 +56,7 @@ export class LoadBalancer {
             //查找可用的会话
             let sessions = new Array<T>();
             for (let s of coll) {
-                if (s.isValid() && !s.isClosing()) {
+                if (SessionUtils.isActive(s)) {
                     sessions.push(s);
                 }
             }
@@ -84,7 +85,7 @@ export class LoadBalancer {
         } else {
             //查找可用的会话
             for (let s of coll) {
-                if (s.isValid() && !s.isClosing()) {
+                if (SessionUtils.isActive(s)) {
                     return s;
                 }
             }

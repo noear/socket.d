@@ -1,8 +1,10 @@
+### 2.5.3
+* 修复 在 ios/android 上检测 TextEncoder 出错的问题（2.3.10 出现的）
+
 ### 2.5.2
 * 添加 SessionUtils 工具类
 * 添加 Session::isActive()
 * 添加 BroadcastBroker 接口（提供类似 stomp 的体验）
-* 修复 在 ios/android 模拟器上检测 TextEncoder 出错的问题
 
 ### 2.5.0
 * 添加 websocket 适配子协议验证（避免乱连）

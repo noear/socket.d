@@ -1,3 +1,8 @@
+### 2.5.2
+* 添加 SessionUtils 工具类
+* 添加 Session::isActive() 
+* 移除 LoadBalancer:isActive() 接口
+ 
 ### 2.5.1
 * 添加 写信号控制（避免 netty 写过了暴内存）
 
@@ -6,8 +11,8 @@
 * 添加 spring-websocket 适配子协议验证（避免乱连）
 * 添加 BroadcastBroker 接口（提供类似 stomp 的体验）
 * 添加 LoadBalancer:isActive 接口
-* 修复 server.stop 后不能自动通出的进程问题
-* 修复 session.close() 后不能自动通出的进程问题
+* 修复 server.stop 后不能自动退出的进程问题
+* 修复 session.close() 后不能自动退出的进程问题
 
 ### 2.4.18
 * 优化 内存超限提示

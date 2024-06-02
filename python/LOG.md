@@ -1,3 +1,8 @@
+### 2.5.2
+* 添加 SessionUtils 工具类
+* 添加 Session::isActive()
+* 添加 BroadcastBroker 接口（提供类似 stomp 的体验）
+
 ### 2.5.0
 * 添加 websocket 适配子协议验证（避免乱连）
 

@@ -25,6 +25,7 @@
         <smartsocket.version>1.5.43</smartsocket.version>
         <java-websocket.version>1.5.3</java-websocket.version>
         <netty.version>4.1.107.Final</netty.version>
+        <aeron.version>1.37.0</aeron.version>
 
         <maven-compiler.version>3.11.0</maven-compiler.version>
         <maven-assembly.version>3.6.0</maven-assembly.version>
@@ -33,6 +34,7 @@
 
     <modules>
         <module>../socketd</module>
+        <module>../socketd-transport/socketd-transport-aeron</module>
         <module>../socketd-transport/socketd-transport-java-kcp</module>
         <module>../socketd-transport/socketd-transport-java-tcp</module>
         <module>../socketd-transport/socketd-transport-java-udp</module>

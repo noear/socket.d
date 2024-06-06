@@ -19,6 +19,17 @@
             <groupId>org.noear</groupId>
             <artifactId>socketd</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.aeron</groupId>
+            <artifactId>aeron-client</artifactId>
+            <version>${aeron.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.aeron</groupId>
+            <artifactId>aeron-driver</artifactId>
+            <version>${aeron.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -227,7 +227,7 @@ public class ProcessorDefault implements Processor {
             }
             channel.retrieve(frame, stream);
         } else {
-            onMessage(channel, frame.message());
+            onMessage(channel, frame);
         }
     }
 
@@ -257,21 +257,29 @@ public class ProcessorDefault implements Processor {
      * 收到消息时
      *
      * @param channel 通道
-     * @param message 消息
+     * @param frame 帧
      */
     @Override
-    public void onMessage(ChannelInternal channel, Message message) {
-        channel.getConfig().getWorkExecutor().submit(() -> {
-            try {
-                listener.onMessage(channel.getSession(), message);
-            } catch (Throwable e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("{} channel listener onMessage error",
-                            channel.getConfig().getRoleName(), e);
+    public void onMessage(ChannelInternal channel, Frame frame) {
+        channel.readAcquire(frame);
+
+        try {
+            channel.getConfig().getWorkExecutor().submit(() -> {
+                try {
+                    listener.onMessage(channel.getSession(), frame.message());
+                } catch (Throwable e) {
+                    if (log.isWarnEnabled()) {
+                        log.warn("{} channel listener onMessage error",
+                                channel.getConfig().getRoleName(), e);
+                    }
+                    onError(channel, e);
+                } finally {
+                    channel.readRelease(frame);
                 }
-                onError(channel, e);
-            }
-        });
+            });
+        } catch (Throwable e) {
+            channel.readRelease(frame);
+        }
     }
 
     /**

@@ -28,9 +28,9 @@ public interface Processor {
      * 收到消息时
      *
      * @param channel 通道
-     * @param message 消息
+     * @param frame   帧
      */
-    void onMessage(ChannelInternal channel, Message message);
+    void onMessage(ChannelInternal channel, Frame frame);
 
     /**
      * 关闭时

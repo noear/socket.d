@@ -64,4 +64,33 @@ public interface ChannelInternal extends Channel {
             tmp.release();
         }
     }
+
+
+    /**
+     * 写申请
+     */
+    default void readAcquire(Frame frame) {
+        if (frame.flag() < Flags.Message) {
+            return;
+        }
+
+        Semaphore tmp = getConfig().getReadSemaphore();
+        if (tmp != null) {
+            tmp.acquireUninterruptibly();
+        }
+    }
+
+    /**
+     * 写释放
+     */
+    default void readRelease(Frame frame) {
+        if (frame.flag() < Flags.Message) {
+            return;
+        }
+
+        Semaphore tmp = getConfig().getReadSemaphore();
+        if (tmp != null) {
+            tmp.release();
+        }
+    }
 }

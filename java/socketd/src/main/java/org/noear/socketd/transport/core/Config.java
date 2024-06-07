@@ -153,4 +153,9 @@ public interface Config {
      * 写信号量（其它语言不方便的，不用迁移）
      */
     Semaphore getWriteSemaphore();
+
+    /**
+     * 读信号量（其它语言不方便的，不用迁移）
+     */
+    Semaphore getReadSemaphore();
 }

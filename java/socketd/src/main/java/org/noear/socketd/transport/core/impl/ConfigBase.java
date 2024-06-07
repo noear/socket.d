@@ -73,8 +73,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
     private boolean useMaxMemoryLimit;
     //最大内存比例
     protected float maxMemoryRatio;
-    //允许并发控制
+    //允许并发写控制
     protected Semaphore writeSemaphore;
+    //允许并发读控制
+    protected Semaphore readSemaphore;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
@@ -493,16 +495,43 @@ public abstract class ConfigBase<T extends Config> implements Config {
         return (T) this;
     }
 
+    /**
+     * 写信号量（其它语言不方便的，不用迁移）
+     */
     @Override
     public Semaphore getWriteSemaphore() {
         return writeSemaphore;
     }
 
+    /**
+     * 配置写信号量（其它语言不方便的，不用迁移）
+     */
     public T writeSemaphore(int permits) {
         if (permits < 1) {
             this.writeSemaphore = null;
         } else {
             this.writeSemaphore = new Semaphore(permits, true);
+        }
+
+        return (T) this;
+    }
+
+    /**
+     * 读信号量（其它语言不方便的，不用迁移）
+     */
+    @Override
+    public Semaphore getReadSemaphore() {
+        return readSemaphore;
+    }
+
+    /**
+     * 配置读信号量（其它语言不方便的，不用迁移）
+     */
+    public T readSemaphore(int permits) {
+        if (permits < 1) {
+            this.readSemaphore = null;
+        } else {
+            this.readSemaphore = new Semaphore(permits, true);
         }
 
         return (T) this;

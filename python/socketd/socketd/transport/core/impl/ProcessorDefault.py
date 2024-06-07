@@ -140,7 +140,7 @@ class ProcessorDefault(Processor, ABC):
                 stream.on_progress(False, streamIndex, streamTotal)
             await channel.retrieve(frame, stream)
         else:
-            self.on_message(channel, frame.message())
+            self.on_message(channel, frame)
 
     def on_open(self, channel: ChannelInternal):
         RunUtils.taskTry(self.on_open_do(channel))
@@ -154,8 +154,8 @@ class ProcessorDefault(Processor, ABC):
             log.warning(f"{channel.get_config().get_role_name()} channel listener onOpen error \n{e_msg}")
             channel.do_open_future(False, e)
 
-    def on_message(self, channel: ChannelInternal, message: Message):
-        RunUtils.taskTry(self.on_message_do(channel, message))
+    def on_message(self, channel: ChannelInternal, frame: Frame):
+        RunUtils.taskTry(self.on_message_do(channel, frame.message()))
 
     async def on_message_do(self, channel: ChannelInternal, message: Message):
         try:

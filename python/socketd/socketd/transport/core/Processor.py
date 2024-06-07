@@ -4,7 +4,6 @@ from socketd.transport.core import Listener
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Frame import Frame
-from socketd.transport.core.Message import Message
 
 
 class Processor(ABC):
@@ -14,7 +13,7 @@ class Processor(ABC):
         pass
 
     @abstractmethod
-    def on_receive(self, channel: Channel, frame:Frame):
+    def on_receive(self, channel: Channel, frame: Frame):
         pass
 
     @abstractmethod
@@ -22,7 +21,7 @@ class Processor(ABC):
         pass
 
     @abstractmethod
-    def on_message(self, channel: ChannelInternal, message:Message):
+    def on_message(self, channel: ChannelInternal, frame: Frame):
         pass
 
     @abstractmethod

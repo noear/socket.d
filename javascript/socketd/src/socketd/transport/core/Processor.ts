@@ -1,6 +1,5 @@
 import {Listener, SimpleListener} from "./Listener";
 import type {ChannelInternal} from "./Channel";
-import type {Message} from "./Message";
 import type {Frame} from "./Frame";
 import {Constants} from "./Constants";
 import {EntityMetas} from "./EntityMetas";
@@ -37,9 +36,9 @@ export interface Processor {
      * 收到消息时
      *
      * @param channel 通道
-     * @param message 消息
+     * @param frame   帧
      */
-    onMessage(channel: ChannelInternal, message: Message);
+    onMessage(channel: ChannelInternal, frame: Frame);
 
 
     /**
@@ -229,7 +228,7 @@ export class ProcessorDefault implements Processor {
             }
             channel.retrieve(frame, stream);
         } else {
-            this.onMessage(channel, frame.message());
+            this.onMessage(channel, frame);
         }
     }
 
@@ -244,9 +243,9 @@ export class ProcessorDefault implements Processor {
         }
     }
 
-    onMessage(channel: ChannelInternal, message) {
+    onMessage(channel: ChannelInternal, frame: Frame) {
         try {
-            this._listener.onMessage(channel.getSession(), message)
+            this._listener.onMessage(channel.getSession(), frame.message()!)
         } catch (e) {
             console.warn(`${channel.getConfig().getRoleName()} channel listener onMessage error`, e);
 

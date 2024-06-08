@@ -6,6 +6,8 @@ import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.transport.stream.StreamManger;
 import org.noear.socketd.utils.RunUtils;
 import org.noear.socketd.utils.TriConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
@@ -17,6 +19,8 @@ import java.util.function.Consumer;
  * @since 2.0
  */
 public abstract class StreamBase<T extends Stream> implements StreamInternal<T> {
+    private static final Logger log = LoggerFactory.getLogger(Stream.class);
+
     //保险任务
     private ScheduledFuture<?> insuranceFuture;
 
@@ -94,6 +98,10 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
     public void onError(Throwable error) {
         if (doOnError != null) {
             doOnError.accept(error);
+        } else {
+            if(log.isWarnEnabled()){
+                log.warn("{}", error);
+            }
         }
     }
 

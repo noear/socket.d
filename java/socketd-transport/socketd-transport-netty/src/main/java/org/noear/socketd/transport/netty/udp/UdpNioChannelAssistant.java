@@ -30,7 +30,6 @@ public class UdpNioChannelAssistant implements ChannelAssistant<DatagramTagert> 
             channel.writeAcquire(frame);
 
             ByteBufferCodecWriter writer = config.getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
-
             target.send(writer.getBuffer().array());
         } finally {
             channel.writeRelease(frame);

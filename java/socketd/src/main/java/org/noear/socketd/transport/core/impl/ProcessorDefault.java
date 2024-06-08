@@ -170,7 +170,13 @@ public class ProcessorDefault implements Processor {
                 if (frame.message().meta(EntityMetas.META_X_UNLIMITED) == null) {
                     //限制流量
                     try {
-                        channel.sendAlarm(frame.message(), channel.getConfig().getRoleName() + String.format(" memory usage over limit: %.2f%%", useMemoryRatio * 100));
+                        String alarm = String.format(" memory usage over limit: %.2f%%", useMemoryRatio * 100);
+
+                        if (log.isWarnEnabled()) {
+                            log.warn("Local " + alarm + ", frame: " + frame);
+                        }
+
+                        channel.sendAlarm(frame.message(), channel.getConfig().getRoleName() + alarm + ", frame: " + frame);
                     } catch (Throwable e) {
                         onError(channel, e);
                     }
@@ -261,9 +267,9 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onMessage(ChannelInternal channel, Frame frame) {
-        channel.readAcquire(frame);
-
         try {
+            channel.readAcquire(frame);
+
             channel.getConfig().getWorkExecutor().submit(() -> {
                 try {
                     listener.onMessage(channel.getSession(), frame.message());
@@ -279,6 +285,7 @@ public class ProcessorDefault implements Processor {
             });
         } catch (Throwable e) {
             channel.readRelease(frame);
+            onError(channel, e);
         }
     }
 

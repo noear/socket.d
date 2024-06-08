@@ -30,6 +30,7 @@ public class KcpNioChannelAssistant implements ChannelAssistant<Ukcp> {
 
         try {
             channel.writeAcquire(frame);
+
             NettyBufferCodecWriter writer = config.getCodec().write(frame, i -> new NettyBufferCodecWriter(Unpooled.buffer(i)));
             target.write(writer.getBuffer());
             writer.getBuffer().release();

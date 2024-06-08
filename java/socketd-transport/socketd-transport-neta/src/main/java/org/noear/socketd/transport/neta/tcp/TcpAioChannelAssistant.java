@@ -21,9 +21,14 @@ public class TcpAioChannelAssistant implements ChannelAssistant<NetChannel> {
             target.sendData(frame).onFinal(future -> {
                 channel.writeRelease(frame);
             });
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             channel.writeRelease(frame);
-            throw e;
+
+            if (e instanceof IOException) {
+                throw e;
+            } else {
+                throw new IOException(e);
+            }
         }
     }
 

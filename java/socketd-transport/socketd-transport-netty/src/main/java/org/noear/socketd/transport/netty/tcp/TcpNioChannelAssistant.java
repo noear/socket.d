@@ -24,9 +24,14 @@ public class TcpNioChannelAssistant implements ChannelAssistant<Channel> {
                 target.writeAndFlush(frame).addListener(future -> {
                     channel.writeRelease(frame);
                 });
-            } catch (RuntimeException e) {
+            } catch (Throwable e) {
                 channel.writeRelease(frame);
-                throw e;
+
+                if (e instanceof IOException) {
+                    throw e;
+                } else {
+                    throw new IOException(e);
+                }
             }
         } else {
             //触发自动重链

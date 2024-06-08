@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.netty.tcp;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelPromise;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.ChannelAssistant;
@@ -20,10 +21,13 @@ public class TcpNioChannelAssistant implements ChannelAssistant<Channel> {
     public void write(Channel target, Frame frame, ChannelInternal channel) throws IOException {
         if (target.isActive()) {
             try {
-                channel.writeAcquire(frame);
-                target.writeAndFlush(frame).addListener(future -> {
+                ChannelPromise channelPromise = target.newPromise();
+                channelPromise.addListener(future -> {
                     channel.writeRelease(frame);
                 });
+
+                channel.writeAcquire(frame);
+                target.writeAndFlush(frame, channelPromise);
             } catch (Throwable e) {
                 channel.writeRelease(frame);
 

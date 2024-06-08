@@ -99,8 +99,8 @@ public abstract class StreamBase<T extends Stream> implements StreamInternal<T> 
         if (doOnError != null) {
             doOnError.accept(error);
         } else {
-            if(log.isWarnEnabled()){
-                log.warn("{}", error);
+            if (log.isWarnEnabled()) {
+                log.warn("sid={}", sid(), error);
             }
         }
     }

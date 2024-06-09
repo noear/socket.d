@@ -77,16 +77,21 @@ public class Frames {
     /**
      * 构建告警帧（一般用不到）
      */
-    public static final Frame alarmFrame(Message from, String alarm) {
+    public static final Frame alarmFrame(Message from, Entity alarm) {
         MessageBuilder messageBuilder = new MessageBuilder();
 
         if (from != null) {
+            EntityDefault entity = new EntityDefault();
+            entity.metaStringSet(from.metaString());
+            entity.dataSet(alarm.data());
+            entity.metaMapPut(alarm.metaMap());
+
             //如果有来源消息，则回传元信息
             messageBuilder.sid(from.sid());
             messageBuilder.event(from.event());
-            messageBuilder.entity(new StringEntity(alarm).metaStringSet(from.metaString()));
+            messageBuilder.entity(entity);
         } else {
-            messageBuilder.entity(new StringEntity(alarm));
+            messageBuilder.entity(alarm);
         }
 
         return new Frame(Flags.Alarm, messageBuilder.build());

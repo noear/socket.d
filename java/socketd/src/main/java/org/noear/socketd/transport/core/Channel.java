@@ -114,7 +114,7 @@ public interface Channel {
     /**
      * 发送告警
      */
-    void sendAlarm(Message from, String alarm) throws IOException;
+    void sendAlarm(Message from, Entity alarm) throws IOException;
 
     /**
      * 发送

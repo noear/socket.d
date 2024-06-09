@@ -36,6 +36,10 @@ public class BrokerListener extends BrokerListenerBase implements Listener, Broa
 
     @Override
     public void onMessage(Session requester, Message message) throws IOException {
+        onMessageDo(requester, message);
+    }
+
+    protected void onMessageDo(Session requester, Message message) throws IOException {
         String atName = message.atName();
 
         if (atName == null) {
@@ -91,7 +95,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener, Broa
      */
     @Override
     public void broadcast(String event, Entity entity) throws IOException{
-        onMessage(null, new MessageBuilder()
+        onMessageDo(null, new MessageBuilder()
                 .flag(Flags.Message)
                 .event(event)
                 .entity(entity).build());
@@ -133,8 +137,19 @@ public class BrokerListener extends BrokerListenerBase implements Listener, Broa
      * @param responder 目标玩家会话
      */
     public void forwardToSession(Session requester, Message message, Session responder) throws IOException {
+        forwardToSession(requester, message, responder, -1);
+    }
+
+    /**
+     * 转发消息
+     *
+     * @param requester 请求玩家
+     * @param message   消息
+     * @param responder 目标玩家会话
+     */
+    public void forwardToSession(Session requester, Message message, Session responder, long timeout) throws IOException {
         if (message.isRequest()) {
-            responder.sendAndRequest(message.event(), message, -1).thenReply(reply -> {
+            responder.sendAndRequest(message.event(), message, timeout).thenReply(reply -> {
                 if (SessionUtils.isValid(requester)) {
                     requester.reply(message, reply);
                 }
@@ -145,7 +160,7 @@ public class BrokerListener extends BrokerListenerBase implements Listener, Broa
                 }
             });
         } else if (message.isSubscribe()) {
-            responder.sendAndSubscribe(message.event(), message).thenReply(reply -> {
+            responder.sendAndSubscribe(message.event(), message, timeout).thenReply(reply -> {
                 if (SessionUtils.isValid(requester)) {
                     if (reply.isEnd()) {
                         requester.replyEnd(message, reply);

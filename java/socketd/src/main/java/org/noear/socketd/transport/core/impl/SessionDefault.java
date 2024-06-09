@@ -122,7 +122,7 @@ public class SessionDefault extends SessionBase {
     }
 
     @Override
-    public void sendAlarm(Message from, String alarm) throws IOException {
+    public void sendAlarm(Message from, Entity alarm) throws IOException {
         channel.sendAlarm(from, alarm);
     }
 

@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.client.ClientSession;
+import org.noear.socketd.transport.core.entity.StringEntity;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -138,7 +139,14 @@ public interface Session extends ClientSession, Closeable {
     /**
      * 发送告警
      */
-    void sendAlarm(Message from, String alarm) throws IOException;
+    void sendAlarm(Message from, Entity alarm) throws IOException;
+
+    /**
+     * 发送告警
+     */
+    default void sendAlarm(Message from, String alarm) throws IOException {
+        sendAlarm(from, new StringEntity(alarm));
+    }
 
     /**
      * 答复

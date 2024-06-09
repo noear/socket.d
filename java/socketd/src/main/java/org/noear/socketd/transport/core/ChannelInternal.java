@@ -23,6 +23,11 @@ public interface ChannelInternal extends Channel {
     void setLiveTimeAsNow();
 
     /**
+     * 更新告警代码
+     * */
+    void setAlarmCode(int alarmCode);
+
+    /**
      * 获取流
      */
     StreamInternal getStream(String sid);

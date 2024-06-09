@@ -84,7 +84,7 @@ public abstract class ChannelBase implements Channel {
     }
 
     @Override
-    public void sendAlarm(Message from, String alarm) throws IOException {
+    public void sendAlarm(Message from, Entity alarm) throws IOException {
         send(Frames.alarmFrame(from, alarm), null);
     }
 

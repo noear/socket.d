@@ -42,6 +42,8 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private BiConsumer<Boolean, Throwable> onOpenFuture;
     //关闭代号（用于做关闭异常提醒）//可能协议关；可能用户关
     private int closeCode;
+    //告警代号
+    private int alarmCode;
 
     public ChannelDefault(S source, ChannelSupporter<S> supporter) {
         super(supporter.getConfig());
@@ -90,6 +92,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         liveTime = System.currentTimeMillis();
     }
 
+    @Override
+    public void setAlarmCode(int alarmCode) {
+        this.alarmCode = alarmCode;
+    }
+
     /**
      * 获取远程地址
      */
@@ -122,36 +129,47 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
             }
         }
 
-        //
-        //如果是单线程语言的，只需要使用无锁发送
-        //
+        //是否串行发送
+        boolean isSerialSend = getConfig().isSerialSend();
 
-        if (getConfig().isNolockSend()) {
-            //无锁发送
-            sendDo(frame, stream);
+        if (isSerialSend) {
+            //公平锁
+            sendInFairLock.lock();
+            try {
+                sendDo(frame, stream);
+            } finally {
+                sendInFairLock.unlock();
+            }
         } else {
-            //有锁发送 //如果有数据分片场景必须要有锁！
-            boolean isSerialSend = getConfig().isSerialSend();
-
-            if (isSerialSend) {
-                sendInFairLock.lock();
-                try {
-                    sendDo(frame, stream);
-                } finally {
-                    sendInFairLock.unlock();
-                }
-            } else {
-                sendNoFairLock.lock();
-                try {
-                    sendDo(frame, stream);
-                } finally {
-                    sendNoFairLock.unlock();
-                }
+            //非公平锁
+            sendNoFairLock.lock();
+            try {
+                sendDo(frame, stream);
+            } finally {
+                sendNoFairLock.unlock();
             }
         }
     }
 
     private void sendDo(Frame frame, StreamInternal stream) throws IOException {
+        if(alarmCode == Constants.ALARM3001_PRESSURE) {
+            if (frame.flag() >= Flags.Message && frame.flag() <= Flags.Subscribe) {
+                if (frame.message().meta(EntityMetas.META_X_UNLIMITED) == null) {
+                    try {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Too much pressure, sleep=100ms");
+                        }
+
+                        setAlarmCode(0);
+                        Thread.sleep(100);
+                    } catch (Throwable ex) {
+                        //略过
+                    }
+                }
+            }
+        }
+
+
         if (frame.message() != null) {
             MessageInternal message = frame.message();
 

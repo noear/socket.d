@@ -26,7 +26,10 @@ public interface Config {
 
     /**
      * 是否无锁发送
+     *
+     * @deprecated 2.5
      */
+    @Deprecated
     boolean isNolockSend();
 
     /**

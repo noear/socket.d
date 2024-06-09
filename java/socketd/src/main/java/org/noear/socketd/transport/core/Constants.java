@@ -106,4 +106,9 @@ public interface Constants {
      * 因用户主动关闭（不可再重连）
      */
     int CLOSE2009_USER = 2009;
+
+    /**
+     * 因压力告警
+     */
+    int ALARM3001_PRESSURE = 3001;
 }

@@ -3,6 +3,7 @@ package org.noear.socketd.transport.core.impl;
 import org.noear.socketd.exception.SocketDAlarmException;
 import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.transport.core.entity.PressureEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.utils.MemoryUtils;
@@ -123,6 +124,8 @@ public class ProcessorDefault implements Processor {
                     case Flags.Alarm: {
                         //结束流，并异常通知
                         SocketDAlarmException exception = new SocketDAlarmException(frame.message());
+                        channel.setAlarmCode(exception.getAlarmCode());
+
                         StreamInternal stream = channel.getStream(frame.message().sid());
                         if (stream == null) {
                             onError(channel, exception);
@@ -172,11 +175,12 @@ public class ProcessorDefault implements Processor {
                     try {
                         String alarm = String.format(" memory usage over limit: %.2f%%", useMemoryRatio * 100);
 
-                        if (log.isWarnEnabled()) {
-                            log.warn("Local " + alarm + ", frame: " + frame);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Local " + alarm + ", frame: " + frame);
                         }
 
-                        channel.sendAlarm(frame.message(), channel.getConfig().getRoleName() + alarm + ", frame: " + frame);
+                        PressureEntity pressure = new PressureEntity(channel.getConfig().getRoleName() + alarm);
+                        channel.sendAlarm(frame.message(), pressure);
                     } catch (Throwable e) {
                         onError(channel, e);
                     }

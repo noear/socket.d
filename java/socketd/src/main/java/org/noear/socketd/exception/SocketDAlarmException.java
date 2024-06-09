@@ -10,6 +10,7 @@ import org.noear.socketd.transport.core.Message;
  */
 public class SocketDAlarmException extends SocketDException {
     private Message alarm;
+    private int alarmCode;
 
     /**
      * 获取告警
@@ -18,8 +19,16 @@ public class SocketDAlarmException extends SocketDException {
         return alarm;
     }
 
+    /**
+     * 获取告警代码
+     */
+    public int getAlarmCode() {
+        return alarmCode;
+    }
+
     public SocketDAlarmException(Message alarm) {
         super(alarm.dataAsString());
         this.alarm = alarm;
+        this.alarmCode = alarm.metaAsInt("code");
     }
 }

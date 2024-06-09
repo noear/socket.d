@@ -39,9 +39,7 @@ public class RequestStreamImpl extends StreamBase<RequestStream> implements Requ
      */
     @Override
     public void onError(Throwable error) {
-        if (doOnError != null) {
-            doOnError.accept(error);
-        }
+        super.onError(error);
 
         future.completeExceptionally(error);
     }

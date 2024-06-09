@@ -102,6 +102,15 @@ public class ClusterClientSession implements ClientSession {
     }
 
     @Override
+    public int closeCode() {
+        for (ClientSession session : sessionList) {
+            return session.closeCode();
+        }
+
+        return 0;
+    }
+
+    @Override
     public String sessionId() {
         return sessionId;
     }

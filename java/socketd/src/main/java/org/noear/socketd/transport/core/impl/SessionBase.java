@@ -115,6 +115,11 @@ public abstract class SessionBase implements Session {
         return channel.getLiveTime();
     }
 
+    @Override
+    public int closeCode() {
+        return channel.closeCode();
+    }
+
     protected String generateId() {
         return channel.getConfig().genId();
     }

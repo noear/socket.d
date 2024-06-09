@@ -152,6 +152,15 @@ public class ClientChannel extends ChannelBase implements Channel {
     }
 
     @Override
+    public int closeCode() {
+        if (real == null) {
+            return 0;
+        } else {
+            return real.closeCode();
+        }
+    }
+
+    @Override
     public long getLiveTime() {
         if (real == null) {
             return 0L;

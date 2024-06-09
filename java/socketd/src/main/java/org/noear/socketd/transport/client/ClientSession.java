@@ -92,7 +92,7 @@ public interface ClientSession extends Closeable {
      * @deprecated 2.4
      */
     @Deprecated
-    default void closeStarting() throws IOException{
+    default void closeStarting() throws IOException {
         preclose();
     }
 
@@ -105,6 +105,11 @@ public interface ClientSession extends Closeable {
      * 关闭（发送关闭指令，并关闭连接）
      */
     void close() throws IOException;
+
+    /**
+     * 关闭代码
+     */
+    int closeCode();
 
     /**
      * 手动重连（一般是自动）

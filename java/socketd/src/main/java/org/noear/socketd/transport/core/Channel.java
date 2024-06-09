@@ -40,6 +40,11 @@ public interface Channel {
     int isClosed();
 
     /**
+     * 关闭代码
+     */
+    int closeCode();
+
+    /**
      * 关闭（1协议关，2用户关）
      */
     void close(int code);

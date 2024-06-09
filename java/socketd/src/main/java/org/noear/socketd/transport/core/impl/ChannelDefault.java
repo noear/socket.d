@@ -76,6 +76,11 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     @Override
+    public int closeCode() {
+        return closeCode;
+    }
+
+    @Override
     public long getLiveTime() {
         return liveTime;
     }

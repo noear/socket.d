@@ -4,6 +4,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.ChannelSupporter;
@@ -52,11 +53,15 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
         bossGroup = new NioEventLoopGroup(getConfig().getIoThreads(), new NamedThreadFactory("nettyTcpServerBoss-"));
         workGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
 
+        //io 比例
         workGroup.setIoRatio(getConfig().getIoRatio());
+
+        //整流处理
+        GlobalTrafficShapingHandler shapingHandler = new GlobalTrafficShapingHandler(workGroup, config.getWriteRateLimit(), config.getReadRateLimit(), 1000);
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
-            ChannelHandler channelHandler = new NettyChannelInitializer(getConfig(), workGroup, inboundHandler);
+            ChannelHandler channelHandler = new NettyChannelInitializer(getConfig(), shapingHandler, inboundHandler);
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)

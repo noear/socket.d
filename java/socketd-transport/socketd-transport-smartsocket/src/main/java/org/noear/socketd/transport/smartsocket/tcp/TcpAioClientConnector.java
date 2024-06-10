@@ -6,7 +6,6 @@ import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.tcp.impl.ClientMessageProcessor;
-import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.IdleStatePlugin;
@@ -26,12 +25,16 @@ import java.util.concurrent.TimeoutException;
  */
 public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
-
+    private static RateLimiterPlugin rateLimiterPlugin;
     private AioQuickClient real;
     private Thread connectThread;
 
     public TcpAioClientConnector(TcpAioClient client) {
         super(client);
+
+        if (rateLimiterPlugin == null) {
+            rateLimiterPlugin = new RateLimiterPlugin<>(getConfig().getReadRateLimit(), getConfig().getWriteRateLimit());
+        }
     }
 
     @Override
@@ -91,7 +94,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
 
         //速率控制
         if (getConfig().getReadRateLimit() > 0) {
-            messageProcessor.addPlugin(new RateLimiterPlugin<>(getConfig().getReadRateLimit(), getConfig().getWriteRateLimit()));
+            messageProcessor.addPlugin(rateLimiterPlugin);
         }
 
 

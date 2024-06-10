@@ -23,10 +23,7 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession> {
 
     @Override
     public void write(AioSession source, Frame frame, ChannelInternal channel) throws IOException {
-        if (source.isInvalid()) {
-            //触发自动重链
-            throw new NotActiveException();
-        } else {
+        if (source.isInvalid() == false) {
             try {
                 channel.writeAcquire(frame);
 
@@ -34,6 +31,9 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession> {
             } finally {
                 channel.writeRelease(frame);
             }
+        } else {
+            //触发自动重链
+            throw new NotActiveException();
         }
     }
 

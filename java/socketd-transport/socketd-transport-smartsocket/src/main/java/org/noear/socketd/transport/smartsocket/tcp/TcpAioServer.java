@@ -13,6 +13,7 @@ import org.noear.socketd.transport.smartsocket.tcp.impl.ServerMessageProcessor;
 import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.smartboot.socket.extension.plugins.RateLimiterPlugin;
 import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickServer;
 import org.smartboot.socket.transport.AioSession;
@@ -64,6 +65,11 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
             //闲置超时
             if (getConfig().getIdleTimeout() > 0) {
                 messageProcessor.addPlugin(new IdleStatePluginEx<>((int) getConfig().getIdleTimeout(), true, false));
+            }
+
+            //速率控制
+            if (getConfig().getReadRateLimit() > 0) {
+                messageProcessor.addPlugin(new RateLimiterPlugin<>(getConfig().getReadRateLimit(), getConfig().getWriteRateLimit()));
             }
 
             if (StrUtils.isEmpty(getConfig().getHost())) {

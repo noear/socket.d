@@ -161,4 +161,14 @@ public interface Config {
      * 读信号量（其它语言不方便的，不用迁移）
      */
     Semaphore getReadSemaphore();
+
+    /**
+     * 写速率限制
+     */
+    int getWriteRateLimit();
+
+    /**
+     * 读速率限制
+     */
+    int getReadRateLimit();
 }

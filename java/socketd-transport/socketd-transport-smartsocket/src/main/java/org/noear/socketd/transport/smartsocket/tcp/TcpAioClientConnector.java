@@ -10,6 +10,7 @@ import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.IdleStatePlugin;
+import org.smartboot.socket.extension.plugins.RateLimiterPlugin;
 import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickClient;
 
@@ -86,6 +87,11 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         //闲置超时
         if (client.getConfig().getIdleTimeout() > 0) {
             messageProcessor.addPlugin(new IdleStatePlugin<>((int) client.getConfig().getIdleTimeout(), true, false));
+        }
+
+        //速率控制
+        if (getConfig().getReadRateLimit() > 0) {
+            messageProcessor.addPlugin(new RateLimiterPlugin<>(getConfig().getReadRateLimit(), getConfig().getWriteRateLimit()));
         }
 
 

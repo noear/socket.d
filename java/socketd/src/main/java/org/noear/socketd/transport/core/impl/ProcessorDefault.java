@@ -319,16 +319,15 @@ public class ProcessorDefault implements Processor {
                 channel.getConfig().getStreamManger().removeStream(frame.message().sid());
             }
 
-            if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
-                //单收时，内部已经是异步机制
+            channel.getConfig().getWorkExecutor().submit(() -> {
                 stream.onReply(frame.message());
-            } else {
-                //改为异步处理，避免卡死Io线程
-                channel.getConfig().getWorkExecutor().submit(() -> {
-                    stream.onReply(frame.message());
-                });
-            }
+                listener.onReply(channel.getSession(), frame.message());
+            });
         } else {
+            channel.getConfig().getWorkExecutor().submit(() -> {
+                listener.onReply(channel.getSession(), frame.message());
+            });
+
             if (log.isDebugEnabled()) {
                 log.debug("{} stream not found, sid={}, sessionId={}",
                         channel.getConfig().getRoleName(), frame.message().sid(), channel.getSession().sessionId());
@@ -339,6 +338,7 @@ public class ProcessorDefault implements Processor {
     @Override
     public <S> void onSend(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException{
         channelAssistant.write(target, frame, channel);
+        listener.onSend(channel.getSession(), frame);
     }
 
     /**

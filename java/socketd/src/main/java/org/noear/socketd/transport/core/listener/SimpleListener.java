@@ -1,8 +1,6 @@
 package org.noear.socketd.transport.core.listener;
 
-import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.Message;
-import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.*;
 
 import java.io.IOException;
 
@@ -31,6 +29,28 @@ public class SimpleListener implements Listener {
      */
     @Override
     public void onMessage(Session session, Message message) throws IOException {
+
+    }
+
+    /**
+     * 收到答复时
+     *
+     * @param session 会话
+     * @param reply   答复
+     */
+    @Override
+    public void onReply(Session session, Reply reply) {
+
+    }
+
+    /**
+     * 发送消息时
+     *
+     * @param session 会话
+     * @param frame   帧
+     */
+    @Override
+    public void onSend(Session session, Frame frame) {
 
     }
 

@@ -1,8 +1,6 @@
 package org.noear.socketd.transport.core.listener;
 
-import org.noear.socketd.transport.core.Listener;
-import org.noear.socketd.transport.core.Message;
-import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.IoBiConsumer;
 import org.noear.socketd.utils.IoConsumer;
 
@@ -19,6 +17,8 @@ import java.util.function.Consumer;
 public class EventListener implements Listener {
     private IoConsumer<Session> doOnOpenHandler;
     private MessageHandler doOnMessageHandler;
+    private BiConsumer<Session, Reply> doOnReplyHandler;
+    private BiConsumer<Session, Frame> doOnSendHandler;
     private Consumer<Session> doOnCloseHandler;
     private BiConsumer<Session, Throwable> doOnErrorHandler;
 
@@ -80,6 +80,32 @@ public class EventListener implements Listener {
         MessageHandler messageHandler = eventRouteSelector.select(message.event());
         if (messageHandler != null) {
             messageHandler.handle(session, message);
+        }
+    }
+
+    /**
+     * 收到答复时
+     *
+     * @param session 会话
+     * @param reply   答复
+     */
+    @Override
+    public void onReply(Session session, Reply reply) {
+        if (doOnReplyHandler != null) {
+            doOnReplyHandler.accept(session, reply);
+        }
+    }
+
+    /**
+     * 发送消息时
+     *
+     * @param session 会话
+     * @param frame   帧
+     */
+    @Override
+    public void onSend(Session session, Frame frame) {
+        if (doOnSendHandler != null) {
+            doOnSendHandler.accept(session, frame);
         }
     }
 

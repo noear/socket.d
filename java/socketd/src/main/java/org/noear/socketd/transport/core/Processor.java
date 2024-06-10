@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.transport.stream.StreamInternal;
+
 /**
  * 协议处理器
  *
@@ -31,6 +33,15 @@ public interface Processor {
      * @param frame   帧
      */
     void onMessage(ChannelInternal channel, Frame frame);
+
+    /**
+     * 收到签复时
+     *
+     * @param channel 通道
+     * @param frame   帧
+     * @param stream  流
+     */
+    void onReply(ChannelInternal channel, Frame frame, StreamInternal stream);
 
     /**
      * 关闭时

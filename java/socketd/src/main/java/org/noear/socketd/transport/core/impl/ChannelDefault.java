@@ -213,37 +213,6 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         }
     }
 
-
-    /**
-     * 接收（接收答复帧）
-     *
-     * @param frame 帧
-     */
-    @Override
-    public void retrieve(Frame frame, StreamInternal stream) {
-        if (stream != null) {
-            if (stream.demands() < Constants.DEMANDS_MULTIPLE || frame.flag() == Flags.ReplyEnd) {
-                //如果是单收或者答复结束，则移除流接收器
-                streamManger.removeStream(frame.message().sid());
-            }
-
-            if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
-                //单收时，内部已经是异步机制
-                stream.onReply(frame.message());
-            } else {
-                //改为异步处理，避免卡死Io线程
-                getConfig().getWorkExecutor().submit(() -> {
-                    stream.onReply(frame.message());
-                });
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("{} stream not found, sid={}, sessionId={}",
-                        getConfig().getRoleName(), frame.message().sid(), getSession().sessionId());
-            }
-        }
-    }
-
     /**
      * 手动重连（一般是自动）
      */

@@ -129,13 +129,6 @@ public interface Channel {
      */
     void send(Frame frame, StreamInternal stream) throws IOException;
 
-    /**
-     * 接收（接收答复帧）
-     *
-     * @param frame  帧
-     * @param stream 流
-     */
-    void retrieve(Frame frame, StreamInternal stream);
 
     /**
      * 手动重连（一般是自动）

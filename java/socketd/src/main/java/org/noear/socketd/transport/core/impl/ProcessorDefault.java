@@ -238,7 +238,7 @@ public class ProcessorDefault implements Processor {
             if (stream != null) {
                 stream.onProgress(false, streamIndex, streamTotal);
             }
-            channel.retrieve(frame, stream);
+            onReply(channel, frame, stream);
         } else {
             onMessage(channel, frame);
         }
@@ -301,6 +301,37 @@ public class ProcessorDefault implements Processor {
                 channel.readRelease(frame);
             }
             onError(channel, e);
+        }
+    }
+
+    /**
+     * 收到签复时
+     *
+     * @param channel 通道
+     * @param frame   帧
+     * @param stream  流
+     */
+    public void onReply(ChannelInternal channel, Frame frame, StreamInternal stream) {
+        if (stream != null) {
+            if (stream.demands() < Constants.DEMANDS_MULTIPLE || frame.flag() == Flags.ReplyEnd) {
+                //如果是单收或者答复结束，则移除流接收器
+                channel.getConfig().getStreamManger().removeStream(frame.message().sid());
+            }
+
+            if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
+                //单收时，内部已经是异步机制
+                stream.onReply(frame.message());
+            } else {
+                //改为异步处理，避免卡死Io线程
+                channel.getConfig().getWorkExecutor().submit(() -> {
+                    stream.onReply(frame.message());
+                });
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("{} stream not found, sid={}, sessionId={}",
+                        channel.getConfig().getRoleName(), frame.message().sid(), channel.getSession().sessionId());
+            }
         }
     }
 

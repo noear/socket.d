@@ -81,6 +81,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected int writeRateLimit;
     //读速率限制
     protected int readRateLimit;
+    //IO比例（1-100）
+    protected int ioRatio = 50;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
@@ -558,6 +560,16 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     public T writeRateLimit(int writeRateLimit) {
         this.writeRateLimit = writeRateLimit;
+        return (T) this;
+    }
+
+    @Override
+    public int getIoRatio() {
+        return ioRatio;
+    }
+
+    public T ioRatio(int ioRatio) {
+        this.ioRatio = ioRatio;
         return (T) this;
     }
 }

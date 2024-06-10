@@ -41,6 +41,8 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
         workGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpClientWork-"));
 
+        workGroup.setIoRatio(getConfig().getIoRatio());
+
         try {
             Bootstrap bootstrap = new Bootstrap();
 

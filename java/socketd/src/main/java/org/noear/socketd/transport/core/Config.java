@@ -171,4 +171,9 @@ public interface Config {
      * 读速率限制
      */
     int getReadRateLimit();
+
+    /**
+     * Io比例（1 - 100，def=50）
+     */
+    int getIoRatio();
 }

@@ -45,6 +45,9 @@ public class RunUtils {
         }
     }
 
+    public static ScheduledExecutorService getScheduledExecutor() {
+        return scheduledExecutor;
+    }
 
     public static void setAsyncExecutor(ExecutorService asyncExecutor) {
         if (asyncExecutor != null) {

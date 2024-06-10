@@ -29,8 +29,8 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
     private static final Logger log = LoggerFactory.getLogger(TcpNioServer.class);
     private ChannelFuture server;
 
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workGroup;
+    private NioEventLoopGroup bossGroup;
+    private NioEventLoopGroup workGroup;
 
     public TcpNioServer(ServerConfig config) {
         super(config, new TcpNioChannelAssistant());
@@ -51,6 +51,8 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
 
         bossGroup = new NioEventLoopGroup(getConfig().getIoThreads(), new NamedThreadFactory("nettyTcpServerBoss-"));
         workGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpServerWork-"));
+
+        workGroup.setIoRatio(getConfig().getIoRatio());
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);

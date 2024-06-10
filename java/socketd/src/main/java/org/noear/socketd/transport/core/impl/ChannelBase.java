@@ -88,6 +88,10 @@ public abstract class ChannelBase implements Channel {
         send(Frames.alarmFrame(from, alarm), null);
     }
 
+    @Override
+    public void sendPressure(Message from, Entity pressure) throws IOException {
+        send(Frames.pressureFrame(from, pressure), null);
+    }
 
     @Override
     public void close(int code) {

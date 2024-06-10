@@ -143,10 +143,18 @@ public interface Session extends ClientSession, Closeable {
 
     /**
      * 发送告警
+     *
+     * @deprecated
      */
+    @Deprecated
     default void sendAlarm(Message from, String alarm) throws IOException {
         sendAlarm(from, new StringEntity(alarm));
     }
+
+    /**
+     * 发送压力
+     * */
+    void sendPressure(Message from, Entity pressure) throws IOException;
 
     /**
      * 答复

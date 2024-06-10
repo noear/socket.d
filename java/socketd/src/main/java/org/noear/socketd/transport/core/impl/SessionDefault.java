@@ -126,6 +126,11 @@ public class SessionDefault extends SessionBase {
         channel.sendAlarm(from, alarm);
     }
 
+    @Override
+    public void sendPressure(Message from, Entity pressure) throws IOException {
+        channel.sendPressure(from, pressure);
+    }
+
     /**
      * 发送
      *

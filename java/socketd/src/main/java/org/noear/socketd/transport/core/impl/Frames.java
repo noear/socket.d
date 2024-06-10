@@ -65,7 +65,7 @@ public class Frames {
     }
 
     /**
-     * 构建关闭帧（一般用不到）
+     * 构建关闭帧
      */
     public static final Frame closeFrame(int code) {
         MessageBuilder messageBuilder = new MessageBuilder();
@@ -75,7 +75,7 @@ public class Frames {
     }
 
     /**
-     * 构建告警帧（一般用不到）
+     * 构建告警帧
      */
     public static final Frame alarmFrame(Message from, Entity alarm) {
         MessageBuilder messageBuilder = new MessageBuilder();
@@ -95,5 +95,28 @@ public class Frames {
         }
 
         return new Frame(Flags.Alarm, messageBuilder.build());
+    }
+
+    /**
+     * 构建压力帧
+     */
+    public static final Frame pressureFrame(Message from, Entity pressure) {
+        MessageBuilder messageBuilder = new MessageBuilder();
+
+        if (from != null) {
+            EntityDefault entity = new EntityDefault();
+            entity.metaStringSet(from.metaString());
+            entity.dataSet(pressure.data());
+            entity.metaMapPut(pressure.metaMap());
+
+            //如果有来源消息，则回传元信息
+            messageBuilder.sid(from.sid());
+            messageBuilder.event(from.event());
+            messageBuilder.entity(entity);
+        } else {
+            messageBuilder.entity(pressure);
+        }
+
+        return new Frame(Flags.Pressure, messageBuilder.build());
     }
 }

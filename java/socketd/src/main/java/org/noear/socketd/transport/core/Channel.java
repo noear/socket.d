@@ -112,9 +112,14 @@ public interface Channel {
     void sendClose(int code) throws IOException;
 
     /**
-     * 发送告警
+     * 发送告警（中断当前处理）
      */
     void sendAlarm(Message from, Entity alarm) throws IOException;
+
+    /**
+     * 发送压力（不中断当前处理）
+     */
+    void sendPressure(Message form, Entity pressure) throws IOException;
 
     /**
      * 发送

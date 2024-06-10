@@ -135,8 +135,11 @@ public class ProcessorDefault implements Processor {
                         }
                         break;
                     }
-                    case Flags.Pressure: //预留
+                    case Flags.Pressure: {
+                        int code = frame.message().metaAsInt("code");
+                        channel.setAlarmCode(code);
                         break;
+                    }
                     case Flags.Message:
                     case Flags.Request:
                     case Flags.Subscribe: {
@@ -271,8 +274,12 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onMessage(ChannelInternal channel, Frame frame) {
+        boolean readLimited = channel.getSession().attrHas(EntityMetas.META_X_UNLIMITED) == false;
+
         try {
-            channel.readAcquire(frame);
+            if (readLimited) {
+                channel.readAcquire(frame);
+            }
 
             channel.getConfig().getWorkExecutor().submit(() -> {
                 try {
@@ -284,11 +291,15 @@ public class ProcessorDefault implements Processor {
                     }
                     onError(channel, e);
                 } finally {
-                    channel.readRelease(frame);
+                    if (readLimited) {
+                        channel.readRelease(frame);
+                    }
                 }
             });
         } catch (Throwable e) {
-            channel.readRelease(frame);
+            if (readLimited) {
+                channel.readRelease(frame);
+            }
             onError(channel, e);
         }
     }

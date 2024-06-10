@@ -311,6 +311,7 @@ public class ProcessorDefault implements Processor {
      * @param frame   帧
      * @param stream  流
      */
+    @Override
     public void onReply(ChannelInternal channel, Frame frame, StreamInternal stream) {
         if (stream != null) {
             if (stream.demands() < Constants.DEMANDS_MULTIPLE || frame.flag() == Flags.ReplyEnd) {
@@ -333,6 +334,11 @@ public class ProcessorDefault implements Processor {
                         channel.getConfig().getRoleName(), frame.message().sid(), channel.getSession().sessionId());
             }
         }
+    }
+
+    @Override
+    public <S> void onSend(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException{
+        channelAssistant.write(target, frame, channel);
     }
 
     /**

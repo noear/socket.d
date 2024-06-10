@@ -2,6 +2,8 @@ package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.stream.StreamInternal;
 
+import java.io.IOException;
+
 /**
  * 协议处理器
  *
@@ -42,6 +44,17 @@ public interface Processor {
      * @param stream  流
      */
     void onReply(ChannelInternal channel, Frame frame, StreamInternal stream);
+
+
+    /**
+     * 发送时
+     *
+     * @param channel          通道
+     * @param frame            帧
+     * @param channelAssistant 通道助理
+     * @param target           发送目标
+     */
+    <S> void onSend(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException;
 
     /**
      * 关闭时

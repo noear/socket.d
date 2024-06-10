@@ -200,14 +200,14 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                                 .build());
                     }
 
-                    assistant.write(source, fragmentFrame, this);
+                    processor.onSend(this, fragmentFrame, assistant, source);
                 });
                 return;
             }
         }
 
         //不满足分片条件，直接发
-        assistant.write(source, frame, this);
+        processor.onSend(this, frame, assistant, source);
         if (stream != null) {
             stream.onProgress(true, 1, 1);
         }

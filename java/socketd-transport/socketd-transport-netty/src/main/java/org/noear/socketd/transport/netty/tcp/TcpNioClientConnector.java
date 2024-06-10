@@ -29,7 +29,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpNioClientConnector.class);
 
     private ChannelFuture real;
-    private NioEventLoopGroup workerGroup;
+    private NioEventLoopGroup workGroup;
     public TcpNioClientConnector(TcpNioClient client) {
         super(client);
     }
@@ -39,15 +39,15 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
         //关闭之前的资源
         close();
 
-        workerGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpClientWork-"));
+        workGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpClientWork-"));
 
         try {
             Bootstrap bootstrap = new Bootstrap();
 
             NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
-            ChannelHandler handler = new NettyChannelInitializer(client.getConfig(), inboundHandler);
+            ChannelHandler handler = new NettyChannelInitializer(client.getConfig(), workGroup, inboundHandler);
 
-            real = bootstrap.group(workerGroup)
+            real = bootstrap.group(workGroup)
                     .channel(NioSocketChannel.class)
                     .handler(handler)
                     .connect(client.getConfig().getHost(),
@@ -83,8 +83,8 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
                 real.channel().close();
             }
 
-            if (workerGroup != null) {
-                workerGroup.shutdownGracefully();
+            if (workGroup != null) {
+                workGroup.shutdownGracefully();
             }
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {

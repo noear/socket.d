@@ -2,6 +2,7 @@ package org.noear.socketd.transport.netty.tcp.impl;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -11,6 +12,7 @@ import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.utils.RunUtils;
 
 import javax.net.ssl.SSLEngine;
 import java.util.concurrent.TimeUnit;
@@ -22,10 +24,12 @@ import java.util.concurrent.TimeUnit;
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final SimpleChannelInboundHandler<Frame> processor;
     private final Config config;
+    private final GlobalTrafficShapingHandler globalTrafficShapingHandler;
 
-    public NettyChannelInitializer(Config config, SimpleChannelInboundHandler<Frame> processor) {
+    public NettyChannelInitializer(Config config, EventLoopGroup eventLoopGroup, SimpleChannelInboundHandler<Frame> processor) {
         this.processor = processor;
         this.config = config;
+        this.globalTrafficShapingHandler = new GlobalTrafficShapingHandler(eventLoopGroup, config.getWriteRateLimit(), config.getReadRateLimit(), 1000);
     }
 
     @Override
@@ -42,7 +46,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         }
 
         if (config.getReadRateLimit() > 0) {
-            pipeline.addLast(new GlobalTrafficShapingHandler(ch.eventLoop().parent(), config.getWriteRateLimit(), config.getReadRateLimit(), 1000));
+            pipeline.addLast(globalTrafficShapingHandler);
         }
 
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Constants.MAX_SIZE_FRAME, 0, 4, -4, 0));

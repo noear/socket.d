@@ -54,7 +54,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
 
         try {
             NettyServerInboundHandler inboundHandler = new NettyServerInboundHandler(this);
-            ChannelHandler channelHandler = new NettyChannelInitializer(getConfig(), inboundHandler);
+            ChannelHandler channelHandler = new NettyChannelInitializer(getConfig(), workGroup, inboundHandler);
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)

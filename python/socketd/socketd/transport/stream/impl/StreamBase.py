@@ -7,6 +7,7 @@ from socketd.transport.core.Message import MessageInternal
 from socketd.transport.stream.Stream import StreamInternal
 from socketd.transport.stream.StreamManger import StreamManger
 from socketd.utils.CompletableFuture import CompletableFuture
+from socketd.utils.LogConfig import log
 from socketd.utils.RunUtils import RunUtils
 
 
@@ -64,8 +65,10 @@ class StreamBase(StreamInternal, ABC):
         ...
 
     def on_error(self, error: Exception):
-        if error and self.__doOnError:
+        if self.__doOnError:
             RunUtils.taskTry(self.__doOnError(error))
+        else:
+            log.debug(f"The stream error, sid={self.sid()}", error)
 
     def on_progress(self, is_send, val, max_val):
         if self.__doOnProgress:

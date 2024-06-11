@@ -36,8 +36,8 @@ class RequestStreamImpl(StreamBase, RequestStream):
         self.__future.accept(reply)
 
     def on_error(self, error: Exception):
-        self.__future.cancel()
         super().on_error(error)
+        self.__future.cancel()
 
     def then_reply(self, onReply: Callable[[MessageInternal], None]) -> RequestStream:
         async def _then_reply_do(r: MessageInternal, e: Exception):

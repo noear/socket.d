@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.transport.core.Channel;
+import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Session;
 
 import java.util.Map;
@@ -98,6 +99,11 @@ public abstract class SessionBase implements Session {
             attrMap.remove(name);
         }
         return this;
+    }
+
+    @Override
+    public Config config() {
+        return channel.getConfig();
     }
 
     @Override

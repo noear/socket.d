@@ -17,8 +17,8 @@ import java.util.function.Consumer;
 public class EventListener implements Listener {
     private IoConsumer<Session> doOnOpenHandler;
     private MessageHandler doOnMessageHandler;
-    private BiConsumer<Session, Reply> doOnReplyHandler;
-    private BiConsumer<Session, Frame> doOnSendHandler;
+    private BiConsumer<Session, Message> doOnReplyHandler;
+    private BiConsumer<Session, Message> doOnSendHandler;
     private Consumer<Session> doOnCloseHandler;
     private BiConsumer<Session, Throwable> doOnErrorHandler;
 
@@ -87,12 +87,12 @@ public class EventListener implements Listener {
      * 收到答复时
      *
      * @param session 会话
-     * @param reply   答复
+     * @param message 消息
      */
     @Override
-    public void onReply(Session session, Reply reply) {
+    public void onReply(Session session, Message message) {
         if (doOnReplyHandler != null) {
-            doOnReplyHandler.accept(session, reply);
+            doOnReplyHandler.accept(session, message);
         }
     }
 
@@ -100,12 +100,12 @@ public class EventListener implements Listener {
      * 发送消息时
      *
      * @param session 会话
-     * @param frame   帧
+     * @param message 消息
      */
     @Override
-    public void onSend(Session session, Frame frame) {
+    public void onSend(Session session, Message message) {
         if (doOnSendHandler != null) {
-            doOnSendHandler.accept(session, frame);
+            doOnSendHandler.accept(session, message);
         }
     }
 

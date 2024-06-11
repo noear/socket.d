@@ -67,12 +67,12 @@ public class PipelineListener implements Listener {
      * 收到答复时
      *
      * @param session 会话
-     * @param reply   答复
+     * @param message 消息
      */
     @Override
-    public void onReply(Session session, Reply reply) {
+    public void onReply(Session session, Message message) {
         for (Listener listener : deque) {
-            listener.onReply(session, reply);
+            listener.onReply(session, message);
         }
     }
 
@@ -80,12 +80,12 @@ public class PipelineListener implements Listener {
      * 发送消息时
      *
      * @param session 会话
-     * @param frame   帧
+     * @param message 消息
      */
     @Override
-    public void onSend(Session session, Frame frame) {
+    public void onSend(Session session, Message message) {
         for (Listener listener : deque) {
-            listener.onSend(session, frame);
+            listener.onSend(session, message);
         }
     }
 

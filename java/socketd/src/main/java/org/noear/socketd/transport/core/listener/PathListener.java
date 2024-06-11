@@ -79,22 +79,30 @@ public class PathListener implements Listener {
      * 收到答复时
      *
      * @param session 会话
-     * @param reply   答复
+     * @param message 消息
      */
     @Override
-    public void onReply(Session session, Reply reply) {
+    public void onReply(Session session, Message message) {
+        Listener l1 = pathRouteSelector.select(session.path());
 
+        if (l1 != null) {
+            l1.onReply(session, message);
+        }
     }
 
     /**
      * 发送消息时
      *
      * @param session 会话
-     * @param frame   帧
+     * @param message 消息
      */
     @Override
-    public void onSend(Session session, Frame frame) {
+    public void onSend(Session session, Message message) {
+        Listener l1 = pathRouteSelector.select(session.path());
 
+        if (l1 != null) {
+            l1.onSend(session, message);
+        }
     }
 
     @Override

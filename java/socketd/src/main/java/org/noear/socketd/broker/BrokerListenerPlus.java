@@ -20,11 +20,11 @@ public class BrokerListenerPlus extends BrokerListener {
     //经理人消息队列
     private final transient Queue<BrokerData<Message>> brokerMessageQueue = new ConcurrentLinkedQueue<>();
     //经理人消息记数器
-    protected final transient AtomicLong brokerMessageCount = new AtomicLong(0L);
+    protected final transient AtomicLong brokerMessageCounter = new AtomicLong(0L);
 
     @Override
     public void onMessage(Session requester, Message message) throws IOException {
-        brokerMessageCount.incrementAndGet();
+        brokerMessageCounter.incrementAndGet();
         brokerMessageQueue.add(new BrokerData<>(requester, message));
     }
 
@@ -34,7 +34,7 @@ public class BrokerListenerPlus extends BrokerListener {
 
             try {
                 if (brokerData != null) {
-                    brokerMessageCount.decrementAndGet();
+                    brokerMessageCounter.decrementAndGet();
                     onMessageDo(brokerData.requester, brokerData.data);
                 } else {
                     //如果没数据，休息会儿

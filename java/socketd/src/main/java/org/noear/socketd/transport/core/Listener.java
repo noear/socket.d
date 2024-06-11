@@ -28,18 +28,18 @@ public interface Listener {
      * 收到答复时
      *
      * @param session 会话
-     * @param reply   答复
+     * @param message 消息
      */
-    default void onReply(Session session, Reply reply) {
+    default void onReply(Session session, Message message) {
     }
 
     /**
      * 发送消息时
      *
      * @param session 会话
-     * @param frame   帧
+     * @param message 消息
      */
-    default void onSend(Session session, Frame frame) {
+    default void onSend(Session session, Message message) {
     }
 
     /**

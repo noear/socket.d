@@ -336,9 +336,12 @@ public class ProcessorDefault implements Processor {
     }
 
     @Override
-    public <S> void onSend(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException{
+    public <S> void onSend(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException {
         channelAssistant.write(target, frame, channel);
-        listener.onSend(channel.getSession(), frame);
+
+        if (frame.flag() >= Flags.Message) {
+            listener.onSend(channel.getSession(), frame.message());
+        }
     }
 
     /**

@@ -26,6 +26,11 @@ public interface Session extends ClientSession, Closeable {
     InetSocketAddress localAddress() throws IOException;
 
     /**
+     * 通道配置
+     * */
+    Config config();
+
+    /**
      * 获取握手信息
      */
     Handshake handshake();

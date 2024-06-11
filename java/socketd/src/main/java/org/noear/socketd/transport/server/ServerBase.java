@@ -97,13 +97,13 @@ public abstract class ServerBase<T extends ChannelAssistant> implements Server,L
     }
 
     @Override
-    public void onReply(Session s, Reply r) {
-        listener.onReply(s, r);
+    public void onReply(Session s, Message m) {
+        listener.onReply(s, m);
     }
 
     @Override
-    public void onSend(Session s, Frame f) {
-        listener.onSend(s, f);
+    public void onSend(Session s, Message m) {
+        listener.onSend(s, m);
     }
 
     @Override

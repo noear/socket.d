@@ -6,6 +6,7 @@ from socketd.transport.core.Channel import Channel
 from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Frame import Frame
+from socketd.transport.stream.Stream import StreamInternal
 
 S = TypeVar("S")
 
@@ -16,11 +17,11 @@ class Processor(ABC):
         pass
 
     @abstractmethod
-    async def send_frame(self, channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant[S], target: S):
+    def send_frame(self, channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant[S], target: S):
         pass
 
     @abstractmethod
-    async def reve_frame(self, channel: Channel, frame: Frame):
+    def reve_frame(self, channel: Channel, frame: Frame):
         pass
 
     @abstractmethod
@@ -30,6 +31,10 @@ class Processor(ABC):
     @abstractmethod
     def on_message(self, channel: ChannelInternal, frame: Frame):
         pass
+
+    @abstractmethod
+    def on_reply(self, channel: ChannelInternal, frame: Frame, stream: StreamInternal) -> None:
+        ...
 
     @abstractmethod
     def on_close(self, channel: ChannelInternal):

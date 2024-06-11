@@ -1,3 +1,4 @@
+import asyncio
 import traceback
 from abc import ABC
 from typing import Optional, Callable, TypeVar
@@ -154,7 +155,7 @@ class ProcessorDefault(Processor, FrameIoHandler, ABC):
         if isReply:
             if stream:
                 stream.on_progress(False, streamIndex, streamTotal)
-            await channel.retrieve(frame, stream)
+            await self.on_reply(channel, frame, stream)
         else:
             self.on_message(channel, frame)
 
@@ -180,6 +181,24 @@ class ProcessorDefault(Processor, FrameIoHandler, ABC):
             e_msg = traceback.format_exc()
             log.warning(f"{channel.get_config().get_role_name()} channel listener onMessage error \n{e_msg}")
             self.on_error(channel, e)
+
+    async def on_reply(self, channel: ChannelInternal, frame: Frame, stream: StreamInternal) -> None:
+        """接收（接收答复帧）"""
+        if stream is not None:
+            if stream.demands() < Constants.DEMANDS_MULTIPLE or frame.flag() == Flags.ReplyEnd:
+                # 如果是单收或者答复结束，则移除流接收器
+                channel.get_config().get_stream_manger().remove_stream(frame.message().sid())
+
+            if stream.demands() < Constants.DEMANDS_MULTIPLE:
+                # 单收时，内部已经是异步机制
+                await RunUtils.waitTry(stream.on_reply(frame.message()))
+            else:
+                # 改为异步处理，避免卡死Io线程
+                asyncio.get_running_loop().run_in_executor(self.get_config().get_exchange_executor(),
+                                                           lambda _m: asyncio.run(stream.on_reply(_m)), frame.message())
+        else:
+            log.debug(
+                f"{channel.get_config().get_role_name()} stream not found, sid={frame.message().sid()}, sessionId={channel.get_session().session_id()}")
 
     def on_close(self, channel: ChannelInternal):
         if channel.close_code() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:

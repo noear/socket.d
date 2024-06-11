@@ -86,9 +86,6 @@ class Channel(ABC):
     async def send(self, frame: 'Frame', stream: Optional[StreamInternal]) -> None:
         ...
 
-    @abstractmethod
-    async def retrieve(self, frame: Frame, stream: StreamInternal) -> None:
-        ...
 
     @abstractmethod
     def get_session(self) -> Session:

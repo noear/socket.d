@@ -7,6 +7,7 @@ import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Reply;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
+import org.noear.socketd.transport.core.impl.TrafficLimiterDefault;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
 import org.slf4j.Logger;
@@ -41,11 +42,11 @@ public class TestCase44_semaphore extends BaseTestCase {
         super.start();
         //server
         server = SocketD.createServer(getSchema())
-                .config(c -> c.port(getPort()).codecThreads(1).ioThreads(1).serialSend(true).writeSemaphore(10))
+                .config(c -> c.port(getPort()).codecThreads(1).ioThreads(1).serialSend(true).trafficLimiter(new TrafficLimiterDefault(10)))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {
-                        System.out.println("::" + session.liveTime() +"::" + message);
+                        System.out.println("::" + session.liveTime() + "::" + message);
                         serverOnMessageCounter.incrementAndGet();
 
                         if (message.isRequest()) {
@@ -72,7 +73,7 @@ public class TestCase44_semaphore extends BaseTestCase {
 
         //client
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
-        clientSession = SocketD.createClient(serverUrl).config(c->c.writeSemaphore(10)).openOrThow();
+        clientSession = SocketD.createClient(serverUrl).config(c -> c.trafficLimiter(new TrafficLimiterDefault(10))).openOrThow();
         clientSession.send("/user/created", new StringEntity("hi"));
 
         Reply response = clientSession.sendAndRequest("/user/get", new StringEntity("hi")).await();

@@ -31,15 +31,8 @@ public class TcpNioChannelAssistant implements ChannelAssistant<SocketChannel> {
     }
     @Override
     public void write(SocketChannel target, Frame frame, ChannelInternal channel) throws IOException {
-        //后面，再加个写管道处理
-        try {
-            channel.writeAcquire(frame);
-
-            ByteBuffer buffer = getConfig().getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
-            target.write(buffer);
-        } finally {
-            channel.writeRelease(frame);
-        }
+        ByteBuffer buffer = getConfig().getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
+        target.write(buffer);
     }
 
     public Frame read(SocketChannel target, NioAttachment attachment, ByteBuffer buffer){

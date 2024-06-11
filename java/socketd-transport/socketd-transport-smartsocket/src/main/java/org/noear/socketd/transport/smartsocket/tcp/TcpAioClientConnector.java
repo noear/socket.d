@@ -9,7 +9,6 @@ import org.noear.socketd.transport.smartsocket.tcp.impl.ClientMessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.IdleStatePlugin;
-import org.smartboot.socket.extension.plugins.RateLimiterPlugin;
 import org.smartboot.socket.extension.plugins.SslPlugin;
 import org.smartboot.socket.transport.AioQuickClient;
 
@@ -25,16 +24,11 @@ import java.util.concurrent.TimeoutException;
  */
 public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
-    private static RateLimiterPlugin rateLimiterPlugin;
     private AioQuickClient real;
     private Thread connectThread;
 
     public TcpAioClientConnector(TcpAioClient client) {
         super(client);
-
-        if (rateLimiterPlugin == null) {
-            rateLimiterPlugin = new RateLimiterPlugin<>(getConfig().getReadRateLimit(), getConfig().getWriteRateLimit());
-        }
     }
 
     @Override
@@ -91,12 +85,6 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         if (client.getConfig().getIdleTimeout() > 0) {
             messageProcessor.addPlugin(new IdleStatePlugin<>((int) client.getConfig().getIdleTimeout(), true, false));
         }
-
-        //速率控制
-        if (getConfig().getReadRateLimit() > 0) {
-            messageProcessor.addPlugin(rateLimiterPlugin);
-        }
-
 
         real = new AioQuickClient(client.getConfig().getHost(), client.getConfig().getPort(), client.frameProtocol(), messageProcessor);
 

@@ -15,21 +15,7 @@ import java.net.InetSocketAddress;
 public class TcpAioChannelAssistant implements ChannelAssistant<NetChannel> {
     @Override
     public void write(NetChannel target, Frame frame, ChannelInternal channel) throws IOException {
-        try {
-            channel.writeAcquire(frame);
-
-            target.sendData(frame).onFinal(future -> {
-                channel.writeRelease(frame);
-            });
-        } catch (Throwable e) {
-            channel.writeRelease(frame);
-
-            if (e instanceof IOException) {
-                throw e;
-            } else {
-                throw new IOException(e);
-            }
-        }
+        target.sendData(frame);
     }
 
     @Override

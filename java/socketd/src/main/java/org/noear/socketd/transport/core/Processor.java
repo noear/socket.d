@@ -1,8 +1,7 @@
 package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.stream.StreamInternal;
-
-import java.io.IOException;
+import org.noear.socketd.utils.IoCompletionHandler;
 
 /**
  * 协议处理器
@@ -24,7 +23,7 @@ public interface Processor {
      * @param channelAssistant 通道助理
      * @param target           发送目标
      */
-    <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException;
+    <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target, IoCompletionHandler completionHandler);
 
 
     /**

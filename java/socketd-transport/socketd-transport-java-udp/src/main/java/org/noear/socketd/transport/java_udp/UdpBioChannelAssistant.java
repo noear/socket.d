@@ -64,14 +64,8 @@ public class UdpBioChannelAssistant implements ChannelAssistant<DatagramTagert> 
      */
     @Override
     public void write(DatagramTagert target, Frame frame, ChannelInternal channel) throws IOException {
-        try {
-            channel.writeAcquire(frame);
-
-            ByteBufferCodecWriter writer = config.getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
-            target.send(writer.getBuffer().array());
-        } finally {
-            channel.writeRelease(frame);
-        }
+        ByteBufferCodecWriter writer = config.getCodec().write(frame, i -> new ByteBufferCodecWriter(ByteBuffer.allocate(i)));
+        target.send(writer.getBuffer().array());
     }
 
     @Override

@@ -73,16 +73,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     private boolean useMaxMemoryLimit;
     //最大内存比例
     protected float maxMemoryRatio;
-    //并发写信号控制
-    protected Semaphore writeSemaphore;
-    //并发读信号控制
-    protected Semaphore readSemaphore;
-    //写速率限制
-    protected int writeRateLimit;
-    //读速率限制
-    protected int readRateLimit;
-    //IO比例（1-100）
-    protected int ioRatio = 50;
+    //帧率处理器
+    protected TrafficLimiter trafficLimiter;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
@@ -113,6 +105,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
         this.maxMemoryRatio = 0.0F;
         this.useMaxMemoryLimit = false;
+
+        this.trafficLimiter = new TrafficLimiterDefault(50_000);
     }
 
     /**
@@ -502,74 +496,18 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 写信号量（其它语言不方便的，不用迁移）
+     * 帧率处理器
      */
     @Override
-    public Semaphore getWriteSemaphore() {
-        return writeSemaphore;
+    public TrafficLimiter getTrafficLimiter() {
+        return trafficLimiter;
     }
 
     /**
-     * 配置写信号量（其它语言不方便的，不用迁移）
+     * 配置帧率处理器
      */
-    public T writeSemaphore(int permits) {
-        if (permits < 1) {
-            this.writeSemaphore = null;
-        } else {
-            this.writeSemaphore = new Semaphore(permits, true);
-        }
-
-        return (T) this;
-    }
-
-    /**
-     * 读信号量（其它语言不方便的，不用迁移）
-     */
-    @Override
-    public Semaphore getReadSemaphore() {
-        return readSemaphore;
-    }
-
-    /**
-     * 配置读信号量（其它语言不方便的，不用迁移）
-     */
-    public T readSemaphore(int permits) {
-        if (permits < 1) {
-            this.readSemaphore = null;
-        } else {
-            this.readSemaphore = new Semaphore(permits, true);
-        }
-
-        return (T) this;
-    }
-
-    @Override
-    public int getReadRateLimit() {
-        return readRateLimit;
-    }
-
-    public T readRateLimit(int readRateLimit) {
-        this.readRateLimit = readRateLimit;
-        return (T) this;
-    }
-
-    @Override
-    public int getWriteRateLimit() {
-        return writeRateLimit;
-    }
-
-    public T writeRateLimit(int writeRateLimit) {
-        this.writeRateLimit = writeRateLimit;
-        return (T) this;
-    }
-
-    @Override
-    public int getIoRatio() {
-        return ioRatio;
-    }
-
-    public T ioRatio(int ioRatio) {
-        this.ioRatio = ioRatio;
+    public T trafficLimiter(TrafficLimiter trafficLimiter) {
+        this.trafficLimiter = trafficLimiter;
         return (T) this;
     }
 }

@@ -200,18 +200,19 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                                 .build());
                     }
 
-                    processor.sendFrame(this, fragmentFrame, assistant, source);
+                    processor.sendFrame(this, fragmentFrame, assistant, source, null);
                 });
                 return;
             }
         }
 
         //不满足分片条件，直接发
-        processor.sendFrame(this, frame, assistant, source);
+        processor.sendFrame(this, frame, assistant, source, null);
         if (stream != null) {
             stream.onProgress(true, 1, 1);
         }
     }
+
 
     /**
      * 手动重连（一般是自动）

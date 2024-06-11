@@ -24,19 +24,9 @@ public class KcpNioChannelAssistant implements ChannelAssistant<Ukcp> {
 
     @Override
     public void write(Ukcp target, Frame frame, ChannelInternal channel) throws IOException {
-        if (frame == null) {
-            return;
-        }
-
-        try {
-            channel.writeAcquire(frame);
-
-            NettyBufferCodecWriter writer = config.getCodec().write(frame, i -> new NettyBufferCodecWriter(Unpooled.buffer(i)));
-            target.write(writer.getBuffer());
-            writer.getBuffer().release();
-        } finally {
-            channel.writeRelease(frame);
-        }
+        NettyBufferCodecWriter writer = config.getCodec().write(frame, i -> new NettyBufferCodecWriter(Unpooled.buffer(i)));
+        target.write(writer.getBuffer());
+        writer.getBuffer().release();
     }
 
     @Override

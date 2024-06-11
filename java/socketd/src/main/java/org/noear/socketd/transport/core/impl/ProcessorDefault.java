@@ -1,11 +1,13 @@
 package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.exception.SocketDAlarmException;
+import org.noear.socketd.exception.SocketDChannelException;
 import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.PressureEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.stream.StreamInternal;
+import org.noear.socketd.utils.IoCompletionHandler;
 import org.noear.socketd.utils.MemoryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,7 @@ import java.io.IOException;
  * @author noear
  * @since 2.0
  */
-public class ProcessorDefault implements Processor {
+public class ProcessorDefault implements Processor, FrameIoHandler{
     private static Logger log = LoggerFactory.getLogger(ProcessorDefault.class);
 
     private Listener listener = new SimpleListener();
@@ -42,11 +44,40 @@ public class ProcessorDefault implements Processor {
      * @param target           发送目标
      */
     @Override
-    public <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException {
-        channelAssistant.write(target, frame, channel);
+    public <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target, IoCompletionHandler completionHandler) {
+        if (frame == null) {
+            return;
+        }
 
-        if (frame.flag() >= Flags.Message) {
-            listener.onSend(channel.getSession(), frame.message());
+        if (channel.isValid() == false) {
+            throw new SocketDChannelException("Channel is invalid");
+        }
+
+        if(channel.getConfig().getTrafficLimiter() == null) {
+            sendFrameHandle(channel, frame, channelAssistant, target, completionHandler);
+        }else{
+            channel.getConfig().getTrafficLimiter().sendFrame(this, channel, frame, channelAssistant, target, completionHandler);
+        }
+    }
+
+    @Override
+    public <S> void sendFrameHandle(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target, IoCompletionHandler completionHandler) {
+        try {
+            channelAssistant.write(target, frame, channel);
+
+            if (completionHandler != null) {
+                completionHandler.completed(true, null);
+            }
+
+            if (frame.flag() >= Flags.Message) {
+                listener.onSend(channel.getSession(), frame.message());
+            }
+        } catch (Throwable ex) {
+            if (completionHandler != null) {
+                completionHandler.completed(false, ex);
+            } else {
+                onError(channel, ex);
+            }
         }
     }
 
@@ -56,7 +87,17 @@ public class ProcessorDefault implements Processor {
      * @param channel 通道
      * @param frame   帧
      */
+    @Override
     public void reveFrame(ChannelInternal channel, Frame frame) {
+        if(channel.getConfig().getTrafficLimiter() == null) {
+            reveFrameHandle(channel, frame);
+        }else{
+            channel.getConfig().getTrafficLimiter().reveFrame(this, channel, frame);
+        }
+    }
+
+    @Override
+    public void reveFrameHandle(ChannelInternal channel, Frame frame) {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
                 log.debug("C-REV:{}", frame);
@@ -294,13 +335,8 @@ public class ProcessorDefault implements Processor {
      */
     @Override
     public void onMessage(ChannelInternal channel, Frame frame) {
-        boolean readLimited = channel.getSession().attrHas(EntityMetas.META_X_UNLIMITED) == false;
 
         try {
-            if (readLimited) {
-                channel.readAcquire(frame);
-            }
-
             channel.getConfig().getWorkExecutor().submit(() -> {
                 try {
                     listener.onMessage(channel.getSession(), frame.message());
@@ -310,16 +346,9 @@ public class ProcessorDefault implements Processor {
                                 channel.getConfig().getRoleName(), e);
                     }
                     onError(channel, e);
-                } finally {
-                    if (readLimited) {
-                        channel.readRelease(frame);
-                    }
                 }
             });
         } catch (Throwable e) {
-            if (readLimited) {
-                channel.readRelease(frame);
-            }
             onError(channel, e);
         }
     }

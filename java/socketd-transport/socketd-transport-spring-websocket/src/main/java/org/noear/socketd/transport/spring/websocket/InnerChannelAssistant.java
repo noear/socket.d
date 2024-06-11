@@ -26,14 +26,8 @@ class InnerChannelAssistant implements ChannelAssistant<WebSocketSession> {
 
     @Override
     public void write(WebSocketSession target, Frame frame, ChannelInternal channel) throws IOException {
-        try {
-            channel.writeAcquire(frame);
-
-            ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
-            target.sendMessage(new BinaryMessage(writer.getBuffer()));
-        } finally {
-            channel.writeRelease(frame);
-        }
+        ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
+        target.sendMessage(new BinaryMessage(writer.getBuffer()));
     }
 
     public Frame read(ByteBuffer buffer) throws IOException {

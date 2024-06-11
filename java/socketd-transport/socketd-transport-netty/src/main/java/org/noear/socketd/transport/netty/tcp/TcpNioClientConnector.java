@@ -29,18 +29,12 @@ import java.util.concurrent.TimeoutException;
  */
 public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpNioClientConnector.class);
-    private static GlobalTrafficShapingHandler shapingHandler;
 
     private ChannelFuture real;
     private NioEventLoopGroup workGroup;
 
     public TcpNioClientConnector(TcpNioClient client) {
         super(client);
-
-        //整流处理
-        if (shapingHandler == null) {
-            shapingHandler = new GlobalTrafficShapingHandler(RunUtils.getScheduledExecutor(), getConfig().getWriteRateLimit(), getConfig().getReadRateLimit(), 1000);
-        }
     }
 
     @Override
@@ -50,13 +44,13 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
 
         workGroup = new NioEventLoopGroup(getConfig().getCodecThreads(), new NamedThreadFactory("nettyTcpClientWork-"));
 
-        workGroup.setIoRatio(getConfig().getIoRatio());
+        //workGroup.setIoRatio(getConfig().getIoRatio());
 
         try {
             Bootstrap bootstrap = new Bootstrap();
 
             NettyClientInboundHandler inboundHandler = new NettyClientInboundHandler(client);
-            ChannelHandler handler = new NettyChannelInitializer(client.getConfig(), shapingHandler, inboundHandler);
+            ChannelHandler handler = new NettyChannelInitializer(client.getConfig(), inboundHandler);
 
             real = bootstrap.group(workGroup)
                     .channel(NioSocketChannel.class)

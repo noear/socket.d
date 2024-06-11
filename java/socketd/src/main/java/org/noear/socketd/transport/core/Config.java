@@ -5,7 +5,6 @@ import org.noear.socketd.transport.stream.StreamManger;
 import javax.net.ssl.SSLContext;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Semaphore;
 
 /**
  * 配置接口
@@ -153,27 +152,7 @@ public interface Config {
     float getMaxMemoryRatio();
 
     /**
-     * 写信号量（其它语言不方便的，不用迁移）
+     * 流量限制器
      */
-    Semaphore getWriteSemaphore();
-
-    /**
-     * 读信号量（其它语言不方便的，不用迁移）
-     */
-    Semaphore getReadSemaphore();
-
-    /**
-     * 写速率限制
-     */
-    int getWriteRateLimit();
-
-    /**
-     * 读速率限制
-     */
-    int getReadRateLimit();
-
-    /**
-     * Io比例（1 - 100，def=50）
-     */
-    int getIoRatio();
+    TrafficLimiter getTrafficLimiter();
 }

@@ -48,20 +48,10 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
 
     @Override
     public void write(Socket source, Frame frame, ChannelInternal channel) throws IOException {
-        if (frame == null) {
-            return;
-        }
-
-        try {
-            channel.writeAcquire(frame);
-
-            OutputStream output = source.getOutputStream();
-            ByteBuffer buffer = config.getCodec().write(frame, (i) -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
-            output.write(buffer.array());
-            output.flush();
-        } finally {
-            channel.writeRelease(frame);
-        }
+        OutputStream output = source.getOutputStream();
+        ByteBuffer buffer = config.getCodec().write(frame, (i) -> new ByteBufferCodecWriter(ByteBuffer.allocate(i))).getBuffer();
+        output.write(buffer.array());
+        output.flush();
     }
 
     public Frame read(Socket source) throws IOException {

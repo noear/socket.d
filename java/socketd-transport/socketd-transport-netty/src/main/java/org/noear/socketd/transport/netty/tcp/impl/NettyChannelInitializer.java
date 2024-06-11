@@ -7,7 +7,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Frame;
@@ -22,12 +21,10 @@ import java.util.concurrent.TimeUnit;
 public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final SimpleChannelInboundHandler<Frame> processor;
     private final Config config;
-    private final GlobalTrafficShapingHandler globalTrafficShapingHandler;
 
-    public NettyChannelInitializer(Config config, GlobalTrafficShapingHandler globalTrafficShapingHandler, SimpleChannelInboundHandler<Frame> processor) {
+    public NettyChannelInitializer(Config config, SimpleChannelInboundHandler<Frame> processor) {
         this.processor = processor;
         this.config = config;
-        this.globalTrafficShapingHandler = globalTrafficShapingHandler;
     }
 
     @Override
@@ -41,10 +38,6 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
                 engine.setNeedClientAuth(true);
             }
             pipeline.addFirst(new SslHandler(engine));
-        }
-
-        if (config.getReadRateLimit() > 0) {
-            pipeline.addLast(globalTrafficShapingHandler);
         }
 
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Constants.MAX_SIZE_FRAME, 0, 4, -4, 0));

@@ -27,14 +27,8 @@ public class WsNioChannelAssistant implements ChannelAssistant<WebSocket> {
 
     @Override
     public void write(WebSocket source, Frame frame, ChannelInternal channel) throws IOException {
-        try {
-            channel.writeAcquire(frame);
-
-            ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
-            source.send(writer.getBuffer());
-        } finally {
-            channel.writeRelease(frame);
-        }
+        ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
+        source.send(writer.getBuffer());
     }
 
     @Override

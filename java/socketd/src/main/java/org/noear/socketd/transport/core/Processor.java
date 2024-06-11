@@ -17,9 +17,24 @@ public interface Processor {
     void setListener(Listener listener);
 
     /**
-     * 接收处理
+     * 发送帧
+     *
+     * @param channel          通道
+     * @param frame            帧
+     * @param channelAssistant 通道助理
+     * @param target           发送目标
      */
-    void onReceive(ChannelInternal channel, Frame frame);
+    <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException;
+
+
+    /**
+     * 接收帧
+     *
+     * @param channel 通道
+     * @param frame   帧
+     */
+    void reveFrame(ChannelInternal channel, Frame frame);
+
 
     /**
      * 打开时
@@ -45,16 +60,6 @@ public interface Processor {
      */
     void onReply(ChannelInternal channel, Frame frame, StreamInternal stream);
 
-
-    /**
-     * 发送时
-     *
-     * @param channel          通道
-     * @param frame            帧
-     * @param channelAssistant 通道助理
-     * @param target           发送目标
-     */
-    <S> void onSend(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException;
 
     /**
      * 关闭时

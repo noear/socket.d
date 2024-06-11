@@ -1,6 +1,5 @@
 package org.noear.socketd.transport.smartsocket.tcp.impl;
 
-import org.noear.socketd.transport.core.Channel;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.tcp.TcpAioServer;
@@ -31,7 +30,7 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
         ChannelInternal channel = s.getAttachment();
 
         try {
-            server.getProcessor().onReceive(channel, frame);
+            server.getProcessor().reveFrame(channel, frame);
         } catch (Throwable e) {
             if (channel == null) {
                 log.warn("Server process0 error", e);

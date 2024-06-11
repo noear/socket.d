@@ -54,7 +54,7 @@ public class NettyClientInboundHandler extends SimpleChannelInboundHandler<Frame
                 });
             }
 
-            client.getProcessor().onReceive(channel, frame);
+            client.getProcessor().reveFrame(channel, frame);
         } catch (SocketDConnectionException e) {
             //说明握手失败了
             handshakeFuture.complete(new ClientHandshakeResult(channel, e));

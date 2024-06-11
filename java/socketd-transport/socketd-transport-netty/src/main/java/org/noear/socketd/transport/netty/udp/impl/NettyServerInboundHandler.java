@@ -61,7 +61,7 @@ public class NettyServerInboundHandler extends SimpleChannelInboundHandler<Datag
         boolean isNewConnect = frame.flag() == Flags.Connect;
         ChannelInternal channel = getChannel(ctx, packet, isNewConnect);
 
-        server.getProcessor().onReceive(channel, frame);
+        server.getProcessor().reveFrame(channel, frame);
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.noear.socketd.transport.java_udp.impl.DatagramTagert;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.impl.ChannelDefault;
-import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +113,7 @@ public class UdpBioClientConnector extends ClientConnectorBase<UdpBioClient> {
                         });
                     }
 
-                    client.getProcessor().onReceive(channel, frame.getFrame());
+                    client.getProcessor().reveFrame(channel, frame.getFrame());
                 }
 
             } catch (Exception e) {

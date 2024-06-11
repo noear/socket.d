@@ -37,7 +37,7 @@ public class ServerKcpListener implements KcpListener {
         ChannelInternal channel = ukcp.user().getCache();
 
         try {
-            server.getProcessor().onReceive(channel, frame);
+            server.getProcessor().reveFrame(channel, frame);
         } catch (Throwable e) {
             server.getProcessor().onError(channel, e);
         }

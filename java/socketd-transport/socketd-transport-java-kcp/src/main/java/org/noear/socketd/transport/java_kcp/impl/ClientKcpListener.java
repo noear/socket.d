@@ -59,7 +59,7 @@ public class ClientKcpListener implements KcpListener {
                 });
             }
 
-            client.getProcessor().onReceive(channel, frame);
+            client.getProcessor().reveFrame(channel, frame);
         } catch (Throwable e) {
             client.getProcessor().onError(channel, e);
 

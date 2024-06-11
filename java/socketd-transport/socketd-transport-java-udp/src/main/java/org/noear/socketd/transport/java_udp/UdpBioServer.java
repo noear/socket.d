@@ -82,7 +82,7 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
                 try {
                     serverExecutor.submit(() -> {
                         try {
-                            getProcessor().onReceive(channel, datagramFrame.getFrame());
+                            getProcessor().reveFrame(channel, datagramFrame.getFrame());
                         } catch (Throwable e) {
                             if (log.isWarnEnabled()) {
                                 log.warn("Server receive error", e);

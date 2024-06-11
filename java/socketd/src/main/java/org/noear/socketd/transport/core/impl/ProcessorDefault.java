@@ -34,9 +34,29 @@ public class ProcessorDefault implements Processor {
     }
 
     /**
-     * 接收处理
+     * 发送帧
+     *
+     * @param channel          通道
+     * @param frame            帧
+     * @param channelAssistant 通道助理
+     * @param target           发送目标
      */
-    public void onReceive(ChannelInternal channel, Frame frame) {
+    @Override
+    public <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException {
+        channelAssistant.write(target, frame, channel);
+
+        if (frame.flag() >= Flags.Message) {
+            listener.onSend(channel.getSession(), frame.message());
+        }
+    }
+
+    /**
+     * 接收帧
+     *
+     * @param channel 通道
+     * @param frame   帧
+     */
+    public void reveFrame(ChannelInternal channel, Frame frame) {
         if (log.isDebugEnabled()) {
             if (channel.getConfig().clientMode()) {
                 log.debug("C-REV:{}", frame);
@@ -332,15 +352,6 @@ public class ProcessorDefault implements Processor {
                 log.debug("{} stream not found, sid={}, sessionId={}",
                         channel.getConfig().getRoleName(), frame.message().sid(), channel.getSession().sessionId());
             }
-        }
-    }
-
-    @Override
-    public <S> void onSend(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException {
-        channelAssistant.write(target, frame, channel);
-
-        if (frame.flag() >= Flags.Message) {
-            listener.onSend(channel.getSession(), frame.message());
         }
     }
 

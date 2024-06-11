@@ -108,7 +108,7 @@ public class WebSocketServerImpl extends WebSocketServer {
             Frame frame = server.getAssistant().read(message);
 
             if (frame != null) {
-                server.getProcessor().onReceive(channel, frame);
+                server.getProcessor().reveFrame(channel, frame);
             }
         } catch (Throwable e) {
             log.warn("WebSocket server onMessage error", e);

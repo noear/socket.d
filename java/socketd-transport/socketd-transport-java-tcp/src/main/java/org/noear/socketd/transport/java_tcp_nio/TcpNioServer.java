@@ -176,7 +176,7 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
             if (buffer.hasRemaining()) {
                 buffer.compact();
             }
-            getProcessor().onReceive(attachment.channelInternal, frame);
+            getProcessor().reveFrame(attachment.channelInternal, frame);
         }
     }
 

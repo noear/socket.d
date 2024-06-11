@@ -133,7 +133,7 @@ public class TcpBioClientConnector extends ClientConnectorBase<TcpBioClient> {
                         });
                     }
 
-                    client.getProcessor().onReceive(channel, frame);
+                    client.getProcessor().reveFrame(channel, frame);
                 } else {
                     //休息10ms（避免cpu过高）
                     Thread.sleep(10);

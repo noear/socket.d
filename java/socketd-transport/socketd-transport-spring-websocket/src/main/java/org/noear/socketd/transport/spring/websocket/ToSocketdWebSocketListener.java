@@ -94,7 +94,7 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler implement
             Frame frame = assistant.read(message.getPayload());
 
             if (frame != null) {
-                processor.onReceive(channel, frame);
+                processor.reveFrame(channel, frame);
             }
         } catch (Throwable e) {
             log.warn(e.getMessage(), e);

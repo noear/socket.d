@@ -187,7 +187,7 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
                 });
             }
 
-            client.getProcessor().onReceive(attachment.channelInternal, frame);
+            client.getProcessor().reveFrame(attachment.channelInternal, frame);
         }
     }
 

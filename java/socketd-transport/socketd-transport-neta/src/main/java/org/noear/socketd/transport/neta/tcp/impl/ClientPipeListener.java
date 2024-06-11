@@ -38,7 +38,7 @@ public class ClientPipeListener implements PipeHandler<Frame, Frame> {
                 });
             }
 
-            processor.onReceive(channel, frame);
+            processor.reveFrame(channel, frame);
         }
         return PipeStatus.Next;
     }

@@ -26,7 +26,7 @@ public class ServerPipeListener implements PipeHandler<Frame, Frame> {
         ChannelInternal channel = context.context(ChannelInternal.class);
 
         while (src.hasMore()) {
-            processor.onReceive(channel, src.takeMessage());
+            processor.reveFrame(channel, src.takeMessage());
         }
 
         return PipeStatus.Next;

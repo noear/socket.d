@@ -92,7 +92,7 @@ public class WebSocketClientImpl extends WebSocketClient {
                     });
                 }
 
-                client.getProcessor().onReceive(channel, frame);
+                client.getProcessor().reveFrame(channel, frame);
             }
         } catch (Exception e) {
             if (e instanceof SocketDConnectionException) {

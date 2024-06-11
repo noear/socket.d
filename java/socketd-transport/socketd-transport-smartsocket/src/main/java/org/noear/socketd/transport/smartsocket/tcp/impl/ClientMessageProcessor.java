@@ -45,7 +45,7 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
                 });
             }
 
-            client.getProcessor().onReceive(channel, frame);
+            client.getProcessor().reveFrame(channel, frame);
         } catch (Exception e) {
             if (e instanceof SocketDConnectionException) {
                 //说明握手失败了

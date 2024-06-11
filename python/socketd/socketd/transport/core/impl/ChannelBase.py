@@ -4,6 +4,7 @@ import threading
 from abc import ABC
 from typing import Optional
 
+from socketd.transport.core import Entity
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.Costants import Constants
 from socketd.transport.core.Frames import Frames
@@ -72,8 +73,11 @@ class ChannelBase(Channel, ABC):
     async def send_close(self, code: int):
         await self.send(Frames.close_frame(code), None)
 
-    async def send_alarm(self, _from: Message, alarm: str):
+    async def send_alarm(self, _from: Message, alarm: Entity):
         await self.send(Frames.alarm_frame(_from, alarm), None)
+
+    async def send_pressure(self, _from: Message, pressure: Entity):
+        await self.send(Frames.pressure_frame(_from, pressure), None)
 
     async def close(self, code: int):
         if code > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:

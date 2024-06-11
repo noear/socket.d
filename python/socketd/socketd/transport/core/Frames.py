@@ -1,4 +1,5 @@
 from socketd import SocketD
+from socketd.transport.core.Entity import Entity
 from socketd.transport.core.Flags import Flags
 from socketd.transport.core.EntityMetas import EntityMetas
 from socketd.transport.core.HandshakeDefault import HandshakeInternal
@@ -23,7 +24,7 @@ class Frames:
         return Frame(Flags.Connect, message)
 
     @staticmethod
-    def connack_frame(handshake: HandshakeInternal):
+    def connack_frame(handshake: HandshakeInternal) -> Frame:
         entity = EntityDefault()
         # 添加框架版本号
         entity.meta_map_put(handshake.get_out_meta_map())
@@ -37,27 +38,52 @@ class Frames:
         return Frame(Flags.Connack, message)
 
     @staticmethod
-    def ping_frame():
+    def ping_frame() -> Frame:
         return Frame(Flags.Ping, None)
 
     @staticmethod
-    def pong_frame():
+    def pong_frame() -> Frame:
         return Frame(Flags.Pong, None)
 
     @staticmethod
-    def close_frame(_code: int):
+    def close_frame(_code: int) -> Frame:
         messageBuilder = MessageBuilder()
         messageBuilder.entity(EntityDefault().meta_put("code", str(_code)))
 
         return Frame(Flags.Close, messageBuilder.build())
 
     @staticmethod
-    def alarm_frame(_from: Message, alarm: str):
+    def alarm_frame(_from: Message, alarm: Entity) -> Frame:
         messageBuilder = MessageBuilder()
 
         if _from:
-            messageBuilder.sid(_from.sid()).event(_from.event())
-            messageBuilder.entity(StringEntity(alarm).meta_string_set(_from.data_as_string()))
+            entity = EntityDefault()
+            entity.meta_string_set(_from.meta_string())
+            entity.data_set(alarm.data());
+            entity.meta_map_put(alarm.meta_map())
+
+            messageBuilder.sid(_from.sid());
+            messageBuilder.event(_from.event());
+            messageBuilder.entity(entity)
         else:
-            messageBuilder.entity(StringEntity(alarm))
+            messageBuilder.entity(alarm)
+
         return Frame(Flags.Alarm, messageBuilder.build())
+
+    @staticmethod
+    def pressure_frame(_from: Message, pressure: Entity) -> Frame:
+        messageBuilder = MessageBuilder()
+
+        if _from:
+            entity = EntityDefault()
+            entity.meta_string_set(_from.meta_string())
+            entity.data_set(pressure.data());
+            entity.meta_map_put(pressure.meta_map())
+
+            messageBuilder.sid(_from.sid());
+            messageBuilder.event(_from.event());
+            messageBuilder.entity(entity)
+        else:
+            messageBuilder.entity(pressure)
+
+        return Frame(Flags.Pressure, messageBuilder.build())

@@ -2,6 +2,7 @@ import asyncio
 from typing import Any, Optional
 from asyncio import Future
 
+from socketd.transport.core import Entity
 from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Session import Session
 from socketd.transport.core.Config import Config
@@ -79,8 +80,13 @@ class Channel(ABC):
         ...
 
     @abstractmethod
-    async def send_alarm(self, _from: Message, alarm:str) -> None:
+    async def send_alarm(self, _from: Message, alarm:Entity) -> None:
         ...
+
+    @abstractmethod
+    async def send_pressure(self, _from: Message, pressure: Entity) -> None:
+        ...
+
 
     @abstractmethod
     async def send(self, frame: 'Frame', stream: Optional[StreamInternal]) -> None:

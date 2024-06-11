@@ -2,6 +2,7 @@ import traceback
 from typing import Optional
 
 from socketd.transport.core.entity.MessageBuilder import MessageBuilder
+from socketd.transport.core.entity.StringEntity import StringEntity
 from socketd.transport.core.impl.SessionBase import SessionBase
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.HandshakeDefault import HandshakeDefault
@@ -122,7 +123,10 @@ class SessionDefault(SessionBase):
     def param_or_default(self, name: str, defVal: str) -> str:
         return self.handshake().param_or_default(name, defVal)
 
-    async def send_alarm(self, _from: Message, alarm: str) -> None:
-        await self._channel.send_alarm(_from, alarm)
+    async def send_alarm(self, _from: Message, alarm: str|Entity) -> None:
+        if isinstance(alarm, str):
+            await self._channel.send_alarm(_from, StringEntity(alarm))
+        else:
+            await self._channel.send_alarm(_from, alarm)
 
 

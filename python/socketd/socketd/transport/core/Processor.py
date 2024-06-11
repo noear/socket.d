@@ -1,10 +1,13 @@
 from abc import ABC, abstractmethod
+from typing import TypeVar, Callable
 
 from socketd.transport.core import Listener
 from socketd.transport.core.Channel import Channel
+from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.transport.core.Frame import Frame
 
+S = TypeVar("S")
 
 class Processor(ABC):
 
@@ -13,7 +16,11 @@ class Processor(ABC):
         pass
 
     @abstractmethod
-    def on_receive(self, channel: Channel, frame: Frame):
+    async def send_frame(self, channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant[S], target: S):
+        pass
+
+    @abstractmethod
+    async def reve_frame(self, channel: Channel, frame: Frame):
         pass
 
     @abstractmethod

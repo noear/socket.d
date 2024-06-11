@@ -108,7 +108,7 @@ class AIOWebSocketClientImpl(WebSocketClientProtocol):
                             self.handshake_future.accept(ClientHandshakeResult(self.channel, None))
                     await self.channel.on_open_future(__future)
                 # 将on_receive 让新的事件循环进行回调，不阻塞当前read循环
-                self.__on_receive_tasks.append(self.loop.create_task(self.client.get_processor().on_receive(self.channel, frame)))
+                self.__on_receive_tasks.append(self.loop.create_task(self.client.get_processor().reve_frame(self.channel, frame)))
                 if frame.flag() == Flags.Close:
                     """服务端主动关闭"""
                     log.debug("{sessionId} 服务端主动关闭",

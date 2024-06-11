@@ -44,7 +44,7 @@ class TCPAIOServer(ServerBase, ChannelSupporter):
                     break
                 frame: Frame = await self.get_assistant().read(reader)
                 if frame is not None:
-                    self._on_receive_tasks.append(self._loop.create_task(self.get_processor().on_receive(channel, frame)))
+                    self._on_receive_tasks.append(self._loop.create_task(self.get_processor().reve_frame(channel, frame)))
                     if frame.flag() == Flags.Close:
                         """客户端主动关闭"""
                         log.debug("{sessionId} 主动退出",

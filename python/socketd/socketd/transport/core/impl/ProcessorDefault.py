@@ -1,9 +1,11 @@
 import traceback
 from abc import ABC
-from typing import Optional
+from typing import Optional, Callable, TypeVar
 
 from socketd.exception.SocketDExecption import SocketDAlarmException, SocketDConnectionException
+from socketd.transport.core.ChannelAssistant import ChannelAssistant
 from socketd.transport.core.ChannelInternal import ChannelInternal
+from socketd.transport.core.FrameIoHandler import FrameIoHandler
 from socketd.transport.core.HandshakeDefault import HandshakeDefault
 from socketd.transport.core.Message import Message
 from socketd.transport.core.Processor import Processor
@@ -16,8 +18,9 @@ from socketd.transport.core.listener.SimpleListener import SimpleListener
 from socketd.transport.stream.Stream import StreamInternal
 from socketd.utils.RunUtils import RunUtils
 
+S = TypeVar("S")
 
-class ProcessorDefault(Processor, ABC):
+class ProcessorDefault(Processor, FrameIoHandler, ABC):
 
     def __init__(self):
         self.listener = SimpleListener()
@@ -26,7 +29,20 @@ class ProcessorDefault(Processor, ABC):
         if listener is not None:
             self.listener = listener
 
-    async def on_receive(self, channel: ChannelInternal, frame):
+    async def send_frame(self, channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant[S], target: S):
+        def completionHandler(result:bool, throwable:Exception):
+            ...
+
+        await self.send_frame_handle(channel, frame, channelAssistant, target, completionHandler)
+
+    async def send_frame_handle(self, channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant[S],
+                          target: S, completionHandler:Callable[[bool, Exception], None]):
+        await channelAssistant.write(target, frame)
+
+    async def reve_frame(self, channel: ChannelInternal, frame):
+        await self.reve_frame_handle(channel, frame)
+
+    async def reve_frame_handle(self, channel: ChannelInternal, frame: Frame):
         if channel.get_config().client_mode():
             log.debug(f"C-REV:{frame}")
         else:

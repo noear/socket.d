@@ -84,7 +84,7 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
                 if frame is not None:
                     # 不等待直接运行
                     tasks.append(
-                        loop.create_task(self.ws_aio_server.get_processor().on_receive(self.get_attachment(), frame)))
+                        loop.create_task(self.ws_aio_server.get_processor().reve_frame(self.get_attachment(), frame)))
                     if frame.flag() == Flags.Close:
                         # 不需要再 while(true) 了 //其它处理在 processor
                         break

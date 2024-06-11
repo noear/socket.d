@@ -100,12 +100,12 @@ class ChannelDefault(ChannelBase, ChannelInternal):
                         messageNew = MessageBuilder().flag(frame.flag()).sid(message.sid()).event(
                             message.event()).entity(fragmentEntity).build()
                         fragmentFrame = Frame(frame.flag(), messageNew)
-                    await self._assistant.write(self._source, fragmentFrame)
+                    await self._processor.send_frame(self._source, fragmentFrame, self._assistant, self._source)
 
                 await self.get_config().get_fragment_handler().split_fragment(self, stream, message, __consumer)
             return
 
-        await self._assistant.write(self._source, frame)
+        await self._processor.send_frame(self._source, frame, self._assistant, self._source)
         if stream is not None:
             stream.on_progress(True, 1, 1)
 

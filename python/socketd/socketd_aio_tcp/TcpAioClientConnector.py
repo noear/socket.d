@@ -107,7 +107,7 @@ class TcpAioClientConnector(ClientConnectorBase):
                         async def future(b, _e):
                             handshake_future.accept(ClientHandshakeResult(channel, _e))
                         await channel.on_open_future(future)
-                    self._on_receive_tasks.append(loop.create_task(self.client.get_processor().on_receive(channel, frame)))
+                    self._on_receive_tasks.append(loop.create_task(self.client.get_processor().reve_frame(channel, frame)))
                     if frame.flag() == Flags.Close:
                         break
             except asyncio.TimeoutError as e:

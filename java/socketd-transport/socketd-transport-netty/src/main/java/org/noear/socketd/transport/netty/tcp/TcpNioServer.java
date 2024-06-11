@@ -58,6 +58,8 @@ public class TcpNioServer extends ServerBase<TcpNioChannelAssistant> implements 
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
+                    .childOption(ChannelOption.SO_RCVBUF, getConfig().getReadBufferSize())
+                    .childOption(ChannelOption.SO_SNDBUF, getConfig().getWriteBufferSize())
                     .channel(NioServerSocketChannel.class)
                     .childHandler(channelHandler);
 

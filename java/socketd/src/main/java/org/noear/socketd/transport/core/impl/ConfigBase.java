@@ -96,8 +96,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.workThreads = Runtime.getRuntime().availableProcessors() * 4;
 
 
-        this.readBufferSize = 1024 * 4; //4k
-        this.writeBufferSize = 1024 * 4;
+        this.readBufferSize = 1024 * 8; //8k
+        this.writeBufferSize = 1024 * 8;
 
         this.idleTimeout = 60_000L; //60秒（心跳默认为20秒）
         this.requestTimeout = 10_000L; //10秒（默认与连接超时同）
@@ -106,7 +106,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.maxMemoryRatio = 0.0F;
         this.useMaxMemoryLimit = false;
 
-        this.trafficLimiter = new TrafficLimiterDefault(50_000);
+        this.trafficLimiter = new TrafficLimiterDefault(100_000);
     }
 
     /**

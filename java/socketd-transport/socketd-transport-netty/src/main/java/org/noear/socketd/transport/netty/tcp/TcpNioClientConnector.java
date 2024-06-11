@@ -3,9 +3,9 @@ package org.noear.socketd.transport.netty.tcp;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
@@ -53,6 +53,8 @@ public class TcpNioClientConnector extends ClientConnectorBase<TcpNioClient> {
             ChannelHandler handler = new NettyChannelInitializer(client.getConfig(), inboundHandler);
 
             real = bootstrap.group(workGroup)
+                    .option(ChannelOption.SO_RCVBUF, getConfig().getReadBufferSize())
+                    .option(ChannelOption.SO_SNDBUF, getConfig().getWriteBufferSize())
                     .channel(NioSocketChannel.class)
                     .handler(handler)
                     .connect(client.getConfig().getHost(),

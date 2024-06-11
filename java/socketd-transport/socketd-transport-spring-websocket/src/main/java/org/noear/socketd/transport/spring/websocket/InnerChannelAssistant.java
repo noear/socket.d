@@ -6,6 +6,7 @@ import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
+import org.noear.socketd.utils.IoCompletionHandler;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -25,9 +26,15 @@ class InnerChannelAssistant implements ChannelAssistant<WebSocketSession> {
     }
 
     @Override
-    public void write(WebSocketSession target, Frame frame, ChannelInternal channel) throws IOException {
-        ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
-        target.sendMessage(new BinaryMessage(writer.getBuffer()));
+    public void write(WebSocketSession target, Frame frame, ChannelInternal channel, IoCompletionHandler completionHandler) {
+        try {
+            ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
+            target.sendMessage(new BinaryMessage(writer.getBuffer()));
+
+            completionHandler.completed(true, null);
+        } catch (Throwable e) {
+            completionHandler.completed(false, e);
+        }
     }
 
     public Frame read(ByteBuffer buffer) throws IOException {

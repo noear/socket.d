@@ -7,6 +7,7 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.java_kcp.impl.NettyBufferCodecWriter;
+import org.noear.socketd.utils.IoCompletionHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -23,10 +24,16 @@ public class KcpNioChannelAssistant implements ChannelAssistant<Ukcp> {
     }
 
     @Override
-    public void write(Ukcp target, Frame frame, ChannelInternal channel) throws IOException {
-        NettyBufferCodecWriter writer = config.getCodec().write(frame, i -> new NettyBufferCodecWriter(Unpooled.buffer(i)));
-        target.write(writer.getBuffer());
-        writer.getBuffer().release();
+    public void write(Ukcp target, Frame frame, ChannelInternal channel, IoCompletionHandler completionHandler) {
+        try {
+            NettyBufferCodecWriter writer = config.getCodec().write(frame, i -> new NettyBufferCodecWriter(Unpooled.buffer(i)));
+            target.write(writer.getBuffer());
+            writer.getBuffer().release();
+
+            completionHandler.completed(true, null);
+        } catch (Throwable e) {
+            completionHandler.completed(false, e);
+        }
     }
 
     @Override

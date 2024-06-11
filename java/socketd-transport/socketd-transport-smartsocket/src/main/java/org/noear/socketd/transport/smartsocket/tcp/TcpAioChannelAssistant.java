@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.smartsocket.tcp;
 
 import org.noear.socketd.transport.core.*;
+import org.noear.socketd.utils.IoCompletionHandler;
 import org.smartboot.socket.transport.AioSession;
 
 import java.io.IOException;
@@ -21,8 +22,14 @@ public class TcpAioChannelAssistant implements ChannelAssistant<AioSession> {
     }
 
     @Override
-    public void write(AioSession source, Frame frame, ChannelInternal channel) throws IOException {
-        config.getCodec().write(frame, i -> new TcpAioBufferWriter(source.writeBuffer()));
+    public void write(AioSession source, Frame frame, ChannelInternal channel, IoCompletionHandler completionHandler) {
+        try {
+            config.getCodec().write(frame, i -> new TcpAioBufferWriter(source.writeBuffer()));
+
+            completionHandler.completed(true, null);
+        } catch (Throwable e) {
+            completionHandler.completed(false, e);
+        }
     }
 
     @Override

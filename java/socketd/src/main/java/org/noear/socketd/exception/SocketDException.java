@@ -14,4 +14,8 @@ public class SocketDException extends RuntimeException {
     public SocketDException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public SocketDException(Throwable cause) {
+        super(cause);
+    }
 }

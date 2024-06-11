@@ -3,6 +3,7 @@ package org.noear.socketd.transport.core.impl;
 import org.noear.socketd.exception.SocketDAlarmException;
 import org.noear.socketd.exception.SocketDChannelException;
 import org.noear.socketd.exception.SocketDConnectionException;
+import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.PressureEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.NotActiveException;
 
 /**
  * 协议处理器默认实现
@@ -44,40 +46,44 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
      * @param target           发送目标
      */
     @Override
-    public <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target, IoCompletionHandler completionHandler) {
+    public <S> void sendFrame(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target) throws IOException {
         if (frame == null) {
             return;
         }
 
         if (channel.isValid() == false) {
-            throw new SocketDChannelException("Channel is invalid");
+            throw new NotActiveException("Channel is invalid");
         }
 
-        if(channel.getConfig().getTrafficLimiter() == null) {
+        IoCompletionHandlerImpl completionHandler = new IoCompletionHandlerImpl();
+
+        //执行
+        if (channel.getConfig().getTrafficLimiter() == null) {
             sendFrameHandle(channel, frame, channelAssistant, target, completionHandler);
-        }else{
+        } else {
             channel.getConfig().getTrafficLimiter().sendFrame(this, channel, frame, channelAssistant, target, completionHandler);
+        }
+
+        //结果（如果是异步，就管不了）
+        if (completionHandler.getThrowable() != null) {
+            if (completionHandler.getThrowable() instanceof IOException) {
+                throw (IOException) completionHandler.getThrowable();
+            } else {
+                throw new SocketDException("Channel send failure", completionHandler.getThrowable());
+            }
         }
     }
 
     @Override
     public <S> void sendFrameHandle(ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target, IoCompletionHandler completionHandler) {
         try {
-            channelAssistant.write(target, frame, channel);
-
-            if (completionHandler != null) {
-                completionHandler.completed(true, null);
-            }
+            channelAssistant.write(target, frame, channel, completionHandler);
 
             if (frame.flag() >= Flags.Message) {
                 listener.onSend(channel.getSession(), frame.message());
             }
-        } catch (Throwable ex) {
-            if (completionHandler != null) {
-                completionHandler.completed(false, ex);
-            } else {
-                onError(channel, ex);
-            }
+        } catch (Throwable e) {
+            completionHandler.completed(false, e);
         }
     }
 

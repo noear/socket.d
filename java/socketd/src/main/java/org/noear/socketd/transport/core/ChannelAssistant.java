@@ -1,5 +1,7 @@
 package org.noear.socketd.transport.core;
 
+import org.noear.socketd.utils.IoCompletionHandler;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -17,7 +19,7 @@ public interface ChannelAssistant<T> {
      * @param frame   帧
      * @param channel 通道
      */
-    void write(T target, Frame frame, ChannelInternal channel) throws IOException;
+    void write(T target, Frame frame, ChannelInternal channel, IoCompletionHandler completionHandler);
 
     /**
      * 是否有效

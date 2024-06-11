@@ -43,12 +43,12 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         self._isCloseNotified = False;
 
     def is_valid(self) -> bool:
-        return self.is_closed() == 0 and self._assistant.is_valid(self._source)
+        return self.close_code() == 0 and self._assistant.is_valid(self._source)
 
     def is_closing(self) -> bool:
         return self._closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING
 
-    def is_closed(self):
+    def close_code(self):
         if self._closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             return self._closeCode
         else:

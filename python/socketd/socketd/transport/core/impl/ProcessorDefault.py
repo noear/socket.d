@@ -182,7 +182,7 @@ class ProcessorDefault(Processor, FrameIoHandler, ABC):
             self.on_error(channel, e)
 
     def on_close(self, channel: ChannelInternal):
-        if channel.is_closed() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
+        if channel.close_code() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING:
             RunUtils.taskTry(self.on_close_internal(channel, Constants.CLOSE2003_DISCONNECTION))
 
     async def on_close_internal(self, channel: ChannelInternal, code: int):

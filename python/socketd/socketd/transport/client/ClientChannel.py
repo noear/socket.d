@@ -63,7 +63,7 @@ class ClientChannel(ChannelBase):
 
             if Asserts.is_closed_and_end(self.__real):
                 log.debug("Client channel is closed (pause heartbeat), sessionId=" + self.get_session().session_id())
-                await self.close(self.__real.is_closed())
+                await self.close(self.__real.close_code())
                 return
 
             if self.__real.is_closing():
@@ -86,11 +86,11 @@ class ClientChannel(ChannelBase):
         else:
             return self.__real.is_valid()
 
-    def is_closed(self):
+    def close_code(self):
         if self.__real is None:
             return False
         else:
-            return self.__real.is_closed()
+            return self.__real.close_code()
 
     def get_remote_address(self):
         if self.__real is None:

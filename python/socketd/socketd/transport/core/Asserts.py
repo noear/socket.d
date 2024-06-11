@@ -12,12 +12,12 @@ class Asserts:
 
     @staticmethod
     def assert_closed(channel: Channel):
-        if channel and channel.is_closed() > 0:
+        if channel and channel.close_code() > 0:
             raise SocketDChannelException("This channel is closed, sessionId=" + channel.get_session().session_id())
 
     @staticmethod
     def is_closed_and_end(channel: Channel):
-        return channel.is_closed() == Constants.CLOSE2009_USER or channel.is_closed() == Constants.CLOSE2008_OPEN_FAIL
+        return channel.close_code() == Constants.CLOSE2009_USER or channel.close_code() == Constants.CLOSE2008_OPEN_FAIL
 
     @staticmethod
     def assert_closed_and_end(channel: Channel):

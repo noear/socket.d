@@ -30,7 +30,7 @@ class Channel(ABC):
         ...
 
     @abstractmethod
-    def is_closed(self) -> int:
+    def close_code(self) -> int:
         ...
 
     @abstractmethod

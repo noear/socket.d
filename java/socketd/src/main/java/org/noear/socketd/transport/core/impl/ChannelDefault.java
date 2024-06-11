@@ -60,7 +60,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
      */
     @Override
     public boolean isValid() {
-        return isClosed() == 0 && assistant.isValid(source);
+        return closeCode() == 0 && assistant.isValid(source);
     }
 
     @Override
@@ -69,17 +69,12 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     @Override
-    public int isClosed() {
+    public int closeCode() {
         if (closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
             return closeCode;
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public int closeCode() {
-        return closeCode;
     }
 
     @Override

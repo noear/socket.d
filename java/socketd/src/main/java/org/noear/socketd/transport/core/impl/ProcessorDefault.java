@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core.impl;
 
 import org.noear.socketd.exception.SocketDAlarmException;
-import org.noear.socketd.exception.SocketDChannelException;
 import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.exception.SocketDException;
 import org.noear.socketd.transport.core.*;
@@ -397,7 +396,7 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
      */
     @Override
     public void onClose(ChannelInternal channel) {
-        if (channel.isClosed() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
+        if (channel.closeCode() <= Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
             onCloseInternal(channel, Constants.CLOSE2003_DISCONNECTION);
         }
     }

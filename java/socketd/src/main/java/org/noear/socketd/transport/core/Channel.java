@@ -5,7 +5,6 @@ import org.noear.socketd.transport.stream.StreamInternal;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 /**
  * 通道
@@ -33,11 +32,6 @@ public interface Channel {
      * 是否正在关闭
      */
     boolean isClosing();
-
-    /**
-     * 是否已关闭
-     */
-    int isClosed();
 
     /**
      * 关闭代码

@@ -93,7 +93,7 @@ public class ClientChannel extends ChannelBase implements Channel {
                 }
 
                 //可能是被内层的会话关闭的，跳过了外层
-                this.close(real.isClosed());
+                this.close(real.closeCode());
                 return;
             }
 
@@ -142,15 +142,6 @@ public class ClientChannel extends ChannelBase implements Channel {
     /**
      * 是否已关闭
      */
-    @Override
-    public int isClosed() {
-        if (real == null) {
-            return 0;
-        } else {
-            return real.isClosed();
-        }
-    }
-
     @Override
     public int closeCode() {
         if (real == null) {

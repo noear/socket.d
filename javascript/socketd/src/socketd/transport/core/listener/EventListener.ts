@@ -14,6 +14,8 @@ import {Listener} from "../Listener";
 export class EventListener implements Listener {
     private _doOnOpen: IoConsumer<Session>;
     private _doOnMessage: IoBiConsumer<Session, Message>;
+    private _doOnReply: IoBiConsumer<Session, Message>;
+    private _doOnSend: IoBiConsumer<Session, Message>;
     private _doOnClose: IoConsumer<Session>;
     private _doOnError: IoBiConsumer<Session, Error>;
 
@@ -67,6 +69,18 @@ export class EventListener implements Listener {
         const consumer = this._eventRouteSelector.select(message.event());
         if (consumer) {
             consumer(session, message);
+        }
+    }
+
+    onReply(session: Session, message: Message) {
+        if (this._doOnReply) {
+            this._doOnReply(session, message);
+        }
+    }
+
+    onSend(session: Session, message: Message) {
+        if (this._doOnSend) {
+            this._doOnSend(session, message);
         }
     }
 

@@ -72,6 +72,22 @@ export class PathListener implements Listener {
         }
     }
 
+    onReply(session: Session, message: Message) {
+        const l1 = this._pathRouteSelector.select(session.path());
+
+        if (l1 != null) {
+            l1.onReply(session, message);
+        }
+    }
+
+    onSend(session: Session, message: Message) {
+        const l1 = this._pathRouteSelector.select(session.path());
+
+        if (l1 != null) {
+            l1.onSend(session, message);
+        }
+    }
+
     onClose(session: Session) {
         const l1 = this._pathRouteSelector.select(session.path());
 

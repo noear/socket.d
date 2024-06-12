@@ -58,6 +58,30 @@ export class PipelineListener implements Listener {
     }
 
     /**
+     * 收到答复时
+     *
+     * @param session 会话
+     * @param message 消息
+     */
+    onReply(session: Session, message: Message) {
+        for (const listener of this._deque) {
+            listener.onReply(session, message);
+        }
+    }
+
+    /**
+     * 发送消息时
+     *
+     * @param session 会话
+     * @param message 消息
+     */
+    onSend(session: Session, message: Message) {
+        for (const listener of this._deque) {
+            listener.onSend(session, message);
+        }
+    }
+
+    /**
      * 关闭时
      *
      * @param session 会话

@@ -1,7 +1,5 @@
 import type {Session} from "./Session";
 import type {Message} from "./Message";
-import type {IoBiConsumer, IoConsumer} from "./Typealias";
-import {RouteSelector, RouteSelectorDefault} from "./RouteSelector";
 
 /**
  * 监听器
@@ -24,6 +22,22 @@ export interface Listener {
      * @param message 消息
      */
     onMessage(session: Session, message: Message);
+
+    /**
+     * 收到答复时
+     *
+     * @param session 会话
+     * @param message 消息
+     */
+    onReply(session: Session, message: Message);
+
+    /**
+     * 发送消息时
+     *
+     * @param session 会话
+     * @param message 消息
+     */
+    onSend(session: Session, message: Message);
 
     /**
      * 关闭时

@@ -1,4 +1,4 @@
-import {Server, ServerBase} from "../transport/server/Server";
+import {Server} from "../transport/server/Server";
 import {WsChannelAssistant} from "./WsChannelAssistant";
 import {ChannelSupporter} from "../transport/core/ChannelSupporter";
 import {
@@ -11,6 +11,7 @@ import NodeWebSocket from 'ws';
 import {SdWebSocketNodeJs} from "./impl/SdWebSocketNodeJs";
 import {ServerConfig} from "../transport/server/ServerConfig";
 import {Constants} from "../transport/core/Constants";
+import {ServerBase} from "../transport/server/ServerBase";
 
 export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelSupporter<SdWebSocket> {
     private _server: NodeWebSocket.Server;

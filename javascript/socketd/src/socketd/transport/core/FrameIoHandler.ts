@@ -15,7 +15,7 @@ export interface FrameIoHandler {
      * @param channelAssistant 通道助理
      * @param target           发送目标
      */
-    sendFrameHandle<S>(channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant<S>, target: S, completionHandler:IoBiConsumer<Boolean, Error>);
+    sendFrameHandle<S>(channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant<S>, target: S, completionHandler:IoBiConsumer<Boolean, Error|any>);
 
     /**
      * 接收帧

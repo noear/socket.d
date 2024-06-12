@@ -17,6 +17,13 @@ export class SimpleListener implements Listener {
 
     }
 
+    onReply(session: Session, message: Message) {
+
+    }
+
+    onSend(session: Session, message: Message) {
+    }
+
     onClose(session: Session) {
 
     }

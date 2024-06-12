@@ -30,8 +30,18 @@ export class ProcessorDefault implements Processor, FrameIoHandler {
         this.sendFrameHandle(channel, frame, channelAssistant, target, (r,err)=>{});
     }
 
-    sendFrameHandle<S>(channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant<S>, target: S, completionHandler: IoBiConsumer<Boolean, Error>) {
-        channelAssistant.write(target, frame);
+    sendFrameHandle<S>(channel: ChannelInternal, frame: Frame, channelAssistant: ChannelAssistant<S>, target: S, completionHandler: IoBiConsumer<Boolean, Error|any>) {
+        try {
+            channelAssistant.write(target, frame);
+
+            if (frame.flag() >= Flags.Message) {
+                this._listener.onSend(channel.getSession(), frame.message()!);
+            }
+
+            completionHandler(true, null);
+        } catch (err) {
+            completionHandler(false, err);
+        }
     }
 
 
@@ -220,14 +230,10 @@ export class ProcessorDefault implements Processor, FrameIoHandler {
                 channel.getConfig().getStreamManger().removeStream(frame.message()!.sid());
             }
 
-            if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
-                //单收时，内部已经是异步机制
-                stream.onReply(frame.message()!);
-            } else {
-                //改为异步处理，避免卡死Io线程
-                stream.onReply(frame.message()!);
-            }
+            stream.onReply(frame.message()!);
+            this._listener.onReply(channel.getSession(), frame.message()!);
         } else {
+            this._listener.onReply(channel.getSession(), frame.message()!);
             console.debug(`${channel.getConfig().getRoleName()} stream not found, sid=${frame.message()!.sid()}, sessionId=${channel.getSession().sessionId()}`);
         }
     }

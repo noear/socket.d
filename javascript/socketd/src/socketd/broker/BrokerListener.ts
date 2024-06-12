@@ -22,6 +22,18 @@ export class BrokerListener extends BrokerListenerBase implements Listener, Broa
     }
 
     onMessage(requester: Session|null, message: Message) {
+        this.onMessageDo(requester, message);
+    }
+
+    onReply(session: Session, message: Message) {
+
+    }
+
+    onSend(session: Session, message: Message) {
+
+    }
+
+    onMessageDo(requester: Session|null, message: Message){
         let atName = message.atName();
 
         if (!atName) {
@@ -76,7 +88,7 @@ export class BrokerListener extends BrokerListenerBase implements Listener, Broa
      * @param entity 实体（转发方式 https://socketd.noear.org/article/737 ）
      */
     broadcast(event: string, entity: Entity) {
-        this.onMessage(null, new MessageBuilder()
+        this.onMessageDo(null, new MessageBuilder()
             .flag(Flags.Message)
             .event(event)
             .entity(entity).build());

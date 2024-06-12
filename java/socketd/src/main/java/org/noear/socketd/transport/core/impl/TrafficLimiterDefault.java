@@ -12,7 +12,7 @@ import org.noear.socketd.utils.IoCompletionHandler;
 public class TrafficLimiterDefault implements TrafficLimiter {
     private int sendRate;
     private int receRate;
-    private final int interval = 1000;
+    private final long interval = 1000L;
 
     public int getSendRate() {
         return sendRate;
@@ -32,8 +32,12 @@ public class TrafficLimiterDefault implements TrafficLimiter {
 
     private int sendCount;
     private int receCount;
-    private long sendLatestLimitTime;
-    private long receLatestLimitTime;
+    private long sendLatestLimitTime; // 发送数据限流重置时间
+    private long receLatestLimitTime; // 接收数据限流重置时间
+
+
+    private long receLatestTime; // 最后接收时间
+    private long sendLatestTime; // 最后发送时间
 
     public TrafficLimiterDefault(int sendAndReceRate) {
         this(sendAndReceRate, sendAndReceRate);
@@ -60,26 +64,34 @@ public class TrafficLimiterDefault implements TrafficLimiter {
             frameIoHandler.sendFrameHandle(channel, frame, channelAssistant, target, completionHandler);
             return;
         }
-
-        long timespan = System.currentTimeMillis() - sendLatestLimitTime;
-        if (timespan > interval) {
+        /*
+        限流逻辑：（只能是单线程场景这样处理）
+            首次进入不限流, 并重置计数与下次限制时间
+            记数达到上限时判断是否超过限流重置时间，
+                如果超过就从新计数并更新时间（速率小于限制，不做限流）
+                否则就计算剩余等待时间休眠线程
+         */
+        if (sendLatestTime >= sendLatestLimitTime) {
             //超过间隔重置时间
             sendCount = 0;
-            sendLatestLimitTime = System.currentTimeMillis();
+            sendLatestLimitTime = System.currentTimeMillis() + interval; // 更新下次重置时间
         }
 
         sendCount++;
         if (sendCount < sendRate) {
             frameIoHandler.sendFrameHandle(channel, frame, channelAssistant, target, completionHandler);
         } else {
-            try {
-                //或者转 ScheduledExecutorService 延后处理
-                Thread.sleep(10);
-            } catch (Throwable e) {
-                return;
+            sendLatestTime = System.currentTimeMillis(); // 到达限制了 记录最后时间
+            if (sendLatestTime < sendLatestLimitTime){
+                try {
+                    // 如果太快，则等待一下
+                    Thread.sleep(sendLatestLimitTime - sendLatestTime);
+                } catch (Throwable e) {
+                    return;
+                }
+                
+                sendFrame(frameIoHandler, channel, frame, channelAssistant, target, completionHandler);
             }
-
-            sendFrame(frameIoHandler, channel, frame, channelAssistant, target, completionHandler);
         }
     }
 
@@ -97,26 +109,34 @@ public class TrafficLimiterDefault implements TrafficLimiter {
             frameIoHandler.reveFrameHandle(channel, frame);
             return;
         }
-
-        long timespan = System.currentTimeMillis() - receLatestLimitTime;
-        if (timespan > interval) {
+        /*
+        限流逻辑：（只能是单线程场景这样处理）
+            首次进入不限流, 并重置计数与下次限制时间
+            记数达到上限时判断是否超过限流重置时间，
+                如果超过就从新计数并更新时间（速率小于限制，不做限流）
+                否则就计算剩余等待时间休眠线程
+         */
+        if (receLatestTime >= receLatestLimitTime) {
             //超过间隔重置时间
             receCount = 0;
-            receLatestLimitTime = System.currentTimeMillis();
+            receLatestLimitTime = System.currentTimeMillis() + interval; // 更新下次重置时间
         }
 
         receCount++;
         if (receCount < receRate) {
             frameIoHandler.reveFrameHandle(channel, frame);
         } else {
-            try {
-                //或者转 ScheduledExecutorService 延后处理
-                Thread.sleep(10);
-            } catch (Throwable e) {
-                return;
+            receLatestTime = System.currentTimeMillis(); // 到达限制了 记录最后时间
+            if (receLatestTime < receLatestLimitTime){
+                try {
+                    // 如果太快，则等待一下
+                    Thread.sleep(receLatestLimitTime - receLatestTime);
+                } catch (Throwable e) {
+                    return;
+                }
+                
+                reveFrame(frameIoHandler, channel, frame);
             }
-
-            reveFrame(frameIoHandler, channel, frame);
         }
     }
 }

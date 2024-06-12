@@ -1,4 +1,4 @@
-import {ConfigBase} from "../core/Config";
+import {ConfigBase} from "../core/impl/ConfigBase";
 import {StrUtils} from "../../utils/StrUtils";
 
 export class ClientConfig extends ConfigBase {

@@ -1,4 +1,4 @@
-import type {MessageInternal} from "./Message";
+import type {MessageInternal} from "../Message";
 
 export class FragmentHolder {
     private _index: number;

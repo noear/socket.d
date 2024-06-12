@@ -1,4 +1,4 @@
-import {Channel, ChannelBase, ChannelInternal} from "../core/Channel";
+import {Channel, ChannelInternal} from "../core/Channel";
 import type { Frame } from "../core/Frame";
 import type { Session } from "../core/Session";
 import type { StreamInternal } from "../stream/Stream";
@@ -12,6 +12,7 @@ import {SocketAddress} from "../core/SocketAddress";
 import {ClientHeartbeatHandler, ClientHeartbeatHandlerDefault} from "./ClientHeartbeatHandler";
 import {ClientInternal} from "./Client";
 import {ClientConnectHandler, ClientConnectHandlerDefault} from "./ClientConnectHandler";
+import {ChannelBase} from "../core/impl/ChannelBase";
 
 /**
  * 客户端通道
@@ -82,7 +83,7 @@ export class ClientChannel extends ChannelBase implements Channel {
             if (Asserts.isClosedAndEnd(this._real)) {
                 console.debug(`Client channel is closed (pause heartbeat), sessionId=${this.getSession().sessionId()}`);
                 //可能是被内层的会话关闭的，跳过了外层
-                this.close(this._real.isClosed());
+                this.close(this._real.closeCode());
                 return;
             }
 
@@ -135,11 +136,11 @@ export class ClientChannel extends ChannelBase implements Channel {
     /**
      * 是否已关闭
      */
-    isClosed(): number {
+    closeCode(): number {
         if (this._real == null) {
             return 0;
         } else {
-            return this._real.isClosed();
+            return this._real.closeCode();
         }
     }
 
@@ -202,10 +203,6 @@ export class ClientChannel extends ChannelBase implements Channel {
                 stream.onError(err);
             }
         });
-    }
-
-    retrieve(frame: Frame, stream: StreamInternal<any> | null) {
-        this._real!.retrieve(frame, stream);
     }
 
     async reconnect() {

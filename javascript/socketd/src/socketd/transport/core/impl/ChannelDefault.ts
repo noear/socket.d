@@ -1,19 +1,20 @@
-import type {Processor} from "./Processor";
-import type {ChannelAssistant} from "./ChannelAssistant";
-import type {StreamInternal, StreamManger} from "../stream/Stream";
-import type {Session} from "./Session";
-import type {ChannelSupporter} from "./ChannelSupporter";
-import type {Config} from "./Config";
-import {Frame, Frames} from "./Frame";
-import {MessageBuilder} from "./Message";
-import {Constants} from "./Constants";
-import {EntityMetas} from "./EntityMetas";
-import {Flags} from "./Flags";
-import {ChannelBase, ChannelInternal} from "./Channel";
-import {SessionDefault} from "./SessionDefault";
-import type { IoBiConsumer } from "./Typealias";
-import {SocketAddress} from "./SocketAddress";
-import {RunUtils} from "../../utils/RunUtils";
+import type {Processor} from "../Processor";
+import type {ChannelAssistant} from "../ChannelAssistant";
+import type {StreamInternal} from "../../stream/Stream";
+import type {Session} from "../Session";
+import type {ChannelSupporter} from "../ChannelSupporter";
+import type {Config} from "../Config";
+import {Frame} from "../Frame";
+import {MessageBuilder} from "../Message";
+import {Constants} from "../Constants";
+import {EntityMetas} from "../EntityMetas";
+import {ChannelInternal} from "../Channel";
+import {SessionDefault} from "../SessionDefault";
+import type { IoBiConsumer } from "../Typealias";
+import {SocketAddress} from "../SocketAddress";
+import {ChannelBase} from "./ChannelBase";
+import {Frames} from "./Frames";
+import {StreamManger} from "../../stream/StreamManger";
 
 export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _source: S;
@@ -51,7 +52,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     isValid(): boolean {
-        return this.isClosed() == 0 && this._assistant.isValid(this._source);
+        return this.closeCode() == 0 && this._assistant.isValid(this._source);
     }
 
 
@@ -59,7 +60,7 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
         return this._closeCode == Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING;
     }
 
-    isClosed(): number {
+    closeCode(): number {
         if (this._closeCode > Constants.CLOSE1000_PROTOCOL_CLOSE_STARTING) {
             return this._closeCode;
         } else {
@@ -121,35 +122,16 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
                         .entity(fragmentEntity)
                         .build());
 
-                    this._assistant.write(this._source, fragmentFrame);
+                    this._processor.sendFrame(this, fragmentFrame, this._assistant, this._source);
                 });
                 return;
             }
         }
 
         //不满足分片条件，直接发
-        this._assistant.write(this._source, frame);
+        this._processor.sendFrame(this, frame, this._assistant, this._source);
         if (stream != null) {
             stream.onProgress(true, 1, 1);
-        }
-    }
-
-    retrieve(frame: Frame, stream: StreamInternal<any> | null) {
-        if (stream) {
-            if (stream.demands() < Constants.DEMANDS_MULTIPLE || frame.flag() == Flags.ReplyEnd) {
-                //如果是单收或者答复结束，则移除流接收器
-                this._streamManger.removeStream(frame.message()!.sid());
-            }
-
-            if (stream.demands() < Constants.DEMANDS_MULTIPLE) {
-                //单收时，内部已经是异步机制
-                stream.onReply(frame.message()!);
-            } else {
-                //改为异步处理，避免卡死Io线程
-                stream.onReply(frame.message()!);
-            }
-        } else {
-            console.debug(`${this.getConfig().getRoleName()} stream not found, sid=${frame.message()!.sid()}, sessionId=${this.getSession().sessionId()}`);
         }
     }
 

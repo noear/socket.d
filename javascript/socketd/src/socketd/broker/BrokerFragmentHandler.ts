@@ -1,4 +1,5 @@
-import {FragmentHandlerDefault} from "../transport/core/FragmentHandler";
+import {FragmentHandlerDefault} from "../transport/core/fragment/FragmentHandlerDefault";
+
 
 /**
  * 经纪人分片处理（关掉聚合）

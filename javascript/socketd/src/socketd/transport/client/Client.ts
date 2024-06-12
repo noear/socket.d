@@ -2,13 +2,14 @@ import type {Listener} from "../core/Listener";
 import type {IoConsumer, IoFunction} from "../core/Typealias";
 import type {ClientSession} from "./ClientSession";
 import type {ClientConfig} from "./ClientConfig";
-import {Processor, ProcessorDefault} from "../core/Processor";
+import {Processor} from "../core/Processor";
 import type {ChannelAssistant} from "../core/ChannelAssistant";
 import type {Session} from "../core/Session";
 import type {ClientConnector} from "./ClientConnector";
 import {ClientChannel} from "./ClientChannel";
 import {Constants} from "../core/Constants";
 import {ChannelInternal} from "../core/Channel";
+import {ProcessorDefault} from "../core/impl/ProcessorDefault";
 
 /**
  * 客户端（用于构建会话）

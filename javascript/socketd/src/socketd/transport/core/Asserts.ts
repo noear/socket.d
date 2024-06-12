@@ -13,14 +13,14 @@ export class Asserts {
      * 断言关闭
      */
     static assertClosed(channel: Channel | null) {
-        if (channel != null && channel.isClosed() > 0) {
+        if (channel != null && channel.closeCode() > 0) {
             throw new SocketDChannelException("This channel is closed, sessionId=" + channel.getSession().sessionId());
         }
     }
 
      static  isClosedAndEnd( channel:Channel) {
-         return channel.isClosed() == Constants.CLOSE2009_USER
-             || channel.isClosed() == Constants.CLOSE2008_OPEN_FAIL;
+         return channel.closeCode() == Constants.CLOSE2009_USER
+             || channel.closeCode() == Constants.CLOSE2008_OPEN_FAIL;
      }
 
     /**

@@ -9,7 +9,7 @@ import {
 import NodeWebSocket from 'ws';
 import {SocketAddress} from "../../transport/core/SocketAddress";
 import {IncomingMessage} from "http";
-import {ChannelDefault} from "../../transport/core/ChannelDefault";
+import {ChannelDefault} from "../../transport/core/impl/ChannelDefault";
 import {SdWebSocketServerListener} from "../WsServer";
 import {RunUtils} from "../../utils/RunUtils";
 import {ServerConfig} from "../../transport/server/ServerConfig";

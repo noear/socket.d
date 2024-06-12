@@ -104,7 +104,7 @@ export class SdWebSocketServerListener implements SdWebSocketListener {
         let frame = this._server.getAssistant().read(e.data());
 
         if (frame != null) {
-            this._server.getProcessor().onReceive(channel, frame);
+            this._server.getProcessor().reveFrame(channel, frame);
         }
     }
 

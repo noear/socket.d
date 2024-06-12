@@ -4,8 +4,6 @@ import {Asserts} from "./transport/core/Asserts";
 import {ClientConfig} from "./transport/client/ClientConfig";
 import {ClusterClient} from "./cluster/ClusterClient";
 import {WsProvider} from "./transport_websocket/WsProvider";
-import {EntityDefault, FileEntity, StringEntity} from "./transport/core/Entity";
-import {EventListener, Listener, PathListener, PipelineListener, SimpleListener} from "./transport/core/Listener";
 import type {RouteSelector} from "./transport/core/RouteSelector";
 import type {IoBiConsumer} from "./transport/core/Typealias";
 import type {Session} from "./transport/core/Session";
@@ -16,6 +14,14 @@ import {ServerConfig} from "./transport/server/ServerConfig";
 import {Server} from "./transport/server/Server";
 import {BrokerListener} from "./broker/BrokerListener";
 import {BrokerFragmentHandler} from "./broker/BrokerFragmentHandler";
+import {EventListener} from "./transport/core/listener/EventListener";
+import {Listener} from "./transport/core/Listener";
+import {PathListener} from "./transport/core/listener/PathListener";
+import {PipelineListener} from "./transport/core/listener/PipelineListener";
+import {SimpleListener} from "./transport/core/listener/SimpleListener";
+import {EntityDefault} from "./transport/core/entity/EntityDefault";
+import {FileEntity} from "./transport/core/entity/FileEntity";
+import {StringEntity} from "./transport/core/entity/StringEntity";
 
 export class SocketD {
     /**

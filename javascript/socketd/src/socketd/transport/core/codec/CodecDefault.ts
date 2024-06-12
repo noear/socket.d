@@ -1,13 +1,13 @@
-import type {Config} from "./Config";
-import {Frame} from "./Frame";
-import type {IoFunction} from "./Typealias";
-import {StrUtils} from "../../utils/StrUtils";
-import {Asserts} from "./Asserts";
-import {Constants} from "./Constants";
-import {Flags} from "./Flags";
-import {MessageBuilder} from "./Message";
-import {EntityDefault} from "./Entity";
-import type {Codec, CodecReader, CodecWriter} from "./Codec";
+import type {Config} from "../Config";
+import {Frame} from "../Frame";
+import type {IoFunction} from "../Typealias";
+import {StrUtils} from "../../../utils/StrUtils";
+import {Asserts} from "../Asserts";
+import {Constants} from "../Constants";
+import {Flags} from "../Flags";
+import {MessageBuilder} from "../Message"
+import type {Codec, CodecReader, CodecWriter} from "../Codec";
+import {EntityDefault} from "../entity/EntityDefault";
 
 /**
  * 编解码器（基于 CodecReader,CodecWriter 接口编解）

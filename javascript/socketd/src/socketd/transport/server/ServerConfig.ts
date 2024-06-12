@@ -1,4 +1,4 @@
-import {ConfigBase} from "../core/Config";
+import {ConfigBase} from "../core/impl/ConfigBase";
 
 export class ServerConfig extends ConfigBase {
     private readonly _schema: string;

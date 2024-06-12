@@ -68,7 +68,7 @@ public class RunUtils {
     /**
      * 异步执行（单线程）
      */
-    public static CompletableFuture<Void> single(Runnable task){
+    public static CompletableFuture<Void> single(Runnable task) {
         return CompletableFuture.runAsync(task, singleExecutor);
     }
 
@@ -122,5 +122,12 @@ public class RunUtils {
      */
     public static ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, long initialDelay, long millisDelay) {
         return scheduledExecutor.scheduleWithFixedDelay(task, initialDelay, millisDelay, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 获取毫秒数（基于 nano）
+     */
+    public static long milliSecondFromNano() {
+        return System.nanoTime() / 1000000L;
     }
 }

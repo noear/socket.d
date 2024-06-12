@@ -69,6 +69,12 @@ class ServerBase(Server,Listener):
     async def on_message(self, s: Session, m: Message):
         await RunUtils.waitTry(self._listener.on_message(s, m))
 
+    async def on_reply(self, s: Session, m: Message):
+        await RunUtils.waitTry(self._listener.on_reply(s, m))
+
+    async def on_send(self, s: Session, m: Message):
+        await RunUtils.waitTry(self._listener.on_send(s, m))
+
     async def on_close(self, s: Session):
         self._sessions.remove(s)
         await RunUtils.waitTry(self._listener.on_close(s))

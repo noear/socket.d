@@ -11,6 +11,12 @@ class SimpleListener(Listener):
     async def on_message(self, session: Session, message: Message):
         pass
 
+    async def on_reply(self, session: Session, message: Message):
+        pass
+
+    async def on_send(self, session: Session, message: Message):
+        pass
+
     async def on_close(self, session: Session):
         pass
 

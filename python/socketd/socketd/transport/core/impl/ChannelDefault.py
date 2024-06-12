@@ -40,7 +40,8 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         self._session: Optional[Session] = None
         self._liveTime: Optional[float] = None
         self._closeCode: int = 0
-        self._isCloseNotified = False;
+        self._isCloseNotified = False
+        self._alarmCode: int = 0
 
     def is_valid(self) -> bool:
         return self.close_code() == 0 and self._assistant.is_valid(self._source)
@@ -60,6 +61,9 @@ class ChannelDefault(ChannelBase, ChannelInternal):
     def set_live_time_as_now(self):
         self._liveTime = time.time()
 
+    def set_alarm_code(self, alarm_code:int):
+        self._alarmCode = alarm_code
+
     def get_remote_address(self) -> str:
         return self._assistant.get_remote_address(self._source)
 
@@ -74,13 +78,20 @@ class ChannelDefault(ChannelBase, ChannelInternal):
         else:
             log.debug(f"S-SEN:{frame}")
 
-        if self.get_config().is_nolock_send():
+        with self:
             await self.send_do(frame, stream)
-        else:
-            with self:
-                await self.send_do(frame, stream)
 
     async def send_do(self, frame: Frame, stream: StreamInternal):
+        if self._alarmCode == Constants.ALARM3001_PRESSURE:
+            if frame.flag() >= Flags.Message and frame.flag() <= Flags.Subscribe:
+                if frame.message().meta(EntityMetas.META_X_UNLIMITED) is None:
+                    try:
+                        log.debug("Too much pressure, sleep=100ms")
+                        self.set_alarm_code(0)
+                        time.sleep(0.1)
+                    except Exception as e:
+                        ... #略过
+
         if frame.message() is not None:
             message: Message = frame.message()
             # 注册流接收器

@@ -50,3 +50,6 @@ class Constants:
     CLOSE2008_OPEN_FAIL = 2008
     # 因用户主动关闭（不可再重连）
     CLOSE2009_USER = 2009
+
+    # 因压力告警
+    ALARM3001_PRESSURE = 3001

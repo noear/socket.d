@@ -16,8 +16,12 @@ class SocketDAlarmException(SocketDException):
     def __init__(self, alarm:Message):
         super().__init__(alarm.data_as_string())
         self.__alarm = alarm
-    def get_alarm(self):
+        self.__alarmCode = alarm.meta_as_int("code");
+    def get_alarm(self) -> Message:
         return self.__alarm
+
+    def get_alarm_code(self) -> int:
+        return  self.__alarmCode;
 
 
 class SocketDChannelException(SocketDException):

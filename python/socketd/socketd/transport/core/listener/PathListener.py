@@ -23,6 +23,14 @@ class PathListener(Listener):
         if l := self._pathRouteSelector.select(session.path()):
             await RunUtils.waitTry(l.on_message(session, message))
 
+    async def on_reply(self, session, message):
+        if l := self._pathRouteSelector.select(session.path()):
+            await RunUtils.waitTry(l.on_reply(session, message))
+
+    async def on_send(self, session, message):
+        if l := self._pathRouteSelector.select(session.path()):
+            await RunUtils.waitTry(l.on_send(session, message))
+
     async def on_close(self, session):
         if l := self._pathRouteSelector.select(session.path()):
             await RunUtils.waitTry(l.on_close(session))

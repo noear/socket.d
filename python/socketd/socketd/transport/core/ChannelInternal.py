@@ -14,6 +14,9 @@ class ChannelInternal(Channel, ABC):
     def set_live_time_as_now(self):...
 
     @abstractmethod
+    def set_alarm_code(self, alarm_code:int):...
+
+    @abstractmethod
     def get_stream(self, sid: str): ...
 
     @abstractmethod

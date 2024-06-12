@@ -29,6 +29,14 @@ class PipelineListener(Listener):
         for listener in self._deque:
             await RunUtils.waitTry(listener.on_message(session, message))
 
+    async def on_reply(self, session: Session, message: Message):
+        for listener in self._deque:
+            await RunUtils.waitTry(listener.on_reply(session, message))
+
+    async def on_send(self, session: Session, message: Message):
+        for listener in self._deque:
+            await RunUtils.waitTry(listener.on_send(session, message))
+
     async def on_close(self, session: Session):
         for listener in self._deque:
             await RunUtils.waitTry(listener.on_close(session))

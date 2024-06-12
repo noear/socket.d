@@ -129,4 +129,7 @@ class SessionDefault(SessionBase):
         else:
             await self._channel.send_alarm(_from, alarm)
 
+    async def send_pressure(self, _from: Message, pressure: Entity) -> None:
+        await self._channel.send_pressure(_from, pressure)
+
 

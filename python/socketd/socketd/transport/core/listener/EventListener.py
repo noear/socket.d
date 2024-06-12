@@ -15,6 +15,9 @@ class EventListener(Listener):
     def __init__(self):
         self._doOnOpenHandler: Union[Callable[[Session], Coroutine], None] = None
         self._doOnMessageHandler: Union[Callable[[Session, Message], Coroutine], None] = None
+        self._doOnReplyHandler: Union[Callable[[Session, Message], Coroutine], None] = None
+        self._doOnSendHandler: Union[Callable[[Session, Message], Coroutine], None] = None
+
         self._doOnCloseHandler: Union[Callable[[Session], Coroutine], None] = None
         self._doOnErrorHandler: Union[Callable[[Session, Exception], Coroutine], None] = None
         self._eventRouteSelector: Dict[str, Callable[[Session, Message], Coroutine]] = {}
@@ -25,6 +28,14 @@ class EventListener(Listener):
 
     def do_on_message(self, handler: Callable[[Session, Message], None]) -> 'EventListener':
         self._doOnMessageHandler = handler
+        return self
+
+    def do_on_reply(self, handler: Callable[[Session, Message], None]) -> 'EventListener':
+        self._doOnReplyHandler = handler
+        return self
+
+    def do_on_send(self, handler: Callable[[Session, Message], None]) -> 'EventListener':
+        self._doOnSendHandler = handler
         return self
 
     def do_on_close(self, handler: Callable[[Session], None]) -> 'EventListener':
@@ -49,6 +60,14 @@ class EventListener(Listener):
 
         if message_handler := self._eventRouteSelector.get(message.event()):
             await RunUtils.waitTry(message_handler(session, message))
+
+    async def on_reply(self, session: Session, message: Message):
+        if self._doOnReplyHandler:
+            await RunUtils.waitTry(self._doOnReplyHandler(session, message))
+
+    async def on_send(self, session: Session, message: Message):
+        if self._doOnSendHandler:
+            await RunUtils.waitTry(self._doOnSendHandler(session, message))
 
     async def on_close(self, session: Session):
         if self._doOnCloseHandler:

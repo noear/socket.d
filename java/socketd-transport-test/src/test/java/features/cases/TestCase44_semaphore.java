@@ -7,7 +7,7 @@ import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Reply;
 import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
-import org.noear.socketd.transport.core.impl.TrafficLimiterDefault;
+import org.noear.socketd.transport.core.traffic.TrafficLimiterDefault;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
 import org.slf4j.Logger;

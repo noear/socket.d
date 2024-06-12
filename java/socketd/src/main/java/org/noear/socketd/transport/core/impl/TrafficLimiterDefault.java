@@ -12,7 +12,23 @@ import org.noear.socketd.utils.IoCompletionHandler;
 public class TrafficLimiterDefault implements TrafficLimiter {
     private int sendRate;
     private int receRate;
-    private int interval;
+    private final int interval = 1000;
+
+    public int getSendRate() {
+        return sendRate;
+    }
+
+    public void setSendRate(int sendRate) {
+        this.sendRate = sendRate;
+    }
+
+    public int getReceRate() {
+        return receRate;
+    }
+
+    public void setReceRate(int receRate) {
+        this.receRate = receRate;
+    }
 
     private int sendCount;
     private int receCount;
@@ -20,18 +36,12 @@ public class TrafficLimiterDefault implements TrafficLimiter {
     private long receLatestLimitTime;
 
     public TrafficLimiterDefault(int sendAndReceRate) {
-        this(sendAndReceRate, sendAndReceRate, 1000);
+        this(sendAndReceRate, sendAndReceRate);
     }
-
 
     public TrafficLimiterDefault(int sendRate, int receRate) {
-        this(sendRate, receRate, 1000);
-    }
-
-    public TrafficLimiterDefault(int sendRate, int receRate, int interval) {
         this.sendRate = sendRate;
         this.receRate = receRate;
-        this.interval = interval;
     }
 
     /**

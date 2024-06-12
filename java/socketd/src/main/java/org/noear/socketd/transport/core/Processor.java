@@ -36,6 +36,18 @@ public interface Processor {
      */
     void reveFrame(ChannelInternal channel, Frame frame);
 
+    /**
+     * 接收帧
+     *
+     * @param channel 通道
+     * @param frame   帧
+     * @deprecated 2.5
+     */
+    @Deprecated
+    default void onReceive(ChannelInternal channel, Frame frame){
+        reveFrame(channel, frame);
+    }
+
 
     /**
      * 打开时

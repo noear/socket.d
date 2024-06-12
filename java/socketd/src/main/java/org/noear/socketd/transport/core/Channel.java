@@ -99,7 +99,7 @@ public interface Channel {
     void sendPong() throws IOException;
 
     /**
-     * 发送 Close
+     * 发送关闭
      *
      * @param code 关闭代码
      */
@@ -138,4 +138,18 @@ public interface Channel {
      * 获取会话
      */
     Session getSession();
+
+
+    /**
+     * @deprecated 2.5
+     * */
+    @Deprecated
+    default void writeAcquire(Frame frame){}
+
+
+    /**
+     * @deprecated 2.5
+     * */
+    @Deprecated
+    default void writeRelease(Frame frame){}
 }

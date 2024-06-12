@@ -9,6 +9,7 @@ import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.stream.StreamInternal;
 import org.noear.socketd.utils.IoCompletionHandler;
 import org.noear.socketd.utils.MemoryUtils;
+import org.noear.socketd.utils.RunnableEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,12 +17,12 @@ import java.io.IOException;
 import java.io.NotActiveException;
 
 /**
- * 协议处理器默认实现
+ * 协议处理器默认实现（原则上，写不要在读的线程上执行）
  *
  * @author noear
  * @since 2.0
  */
-public class ProcessorDefault implements Processor, FrameIoHandler{
+public class ProcessorDefault implements Processor, FrameIoHandler {
     private static Logger log = LoggerFactory.getLogger(ProcessorDefault.class);
 
     private Listener listener = new SimpleListener();
@@ -94,9 +95,9 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
      */
     @Override
     public void reveFrame(ChannelInternal channel, Frame frame) {
-        if(channel.getConfig().getTrafficLimiter() == null) {
+        if (channel.getConfig().getTrafficLimiter() == null) {
             reveFrameHandle(channel, frame);
-        }else{
+        } else {
             channel.getConfig().getTrafficLimiter().reveFrame(this, channel, frame);
         }
     }
@@ -117,7 +118,7 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
             channel.setHandshake(handshake);
 
             //开始打开（可用于 url 签权）//禁止发消息
-            channel.onOpenFuture((r, e) -> {
+            channel.onOpenFuture((r, e) -> { //已经在异步线程内
                 if (r) {
                     //如果无异常
                     if (channel.isValid()) {
@@ -166,7 +167,7 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
             try {
                 switch (frame.flag()) {
                     case Flags.Ping: {
-                        channel.sendPong();
+                        callAsync(channel, () -> channel.sendPong());
                         break;
                     }
                     case Flags.Pong: {
@@ -194,10 +195,10 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
 
                         StreamInternal stream = channel.getStream(frame.message().sid());
                         if (stream == null) {
-                            onError(channel, exception);
+                            callAsync(channel, () -> onError(channel, exception));
                         } else {
                             channel.getConfig().getStreamManger().removeStream(frame.message().sid());
-                            stream.onError(exception);
+                            callAsync(channel, () -> stream.onError(exception));
                         }
                         break;
                     }
@@ -318,7 +319,7 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
      */
     @Override
     public void onOpen(ChannelInternal channel) {
-        channel.getConfig().getWorkExecutor().submit(() -> {
+        callAsync(channel, () -> {
             try {
                 listener.onOpen(channel.getSession());
                 channel.doOpenFuture(true, null);
@@ -336,26 +337,21 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
      * 收到消息时
      *
      * @param channel 通道
-     * @param frame 帧
+     * @param frame   帧
      */
     @Override
     public void onMessage(ChannelInternal channel, Frame frame) {
-
-        try {
-            channel.getConfig().getWorkExecutor().submit(() -> {
-                try {
-                    listener.onMessage(channel.getSession(), frame.message());
-                } catch (Throwable e) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("{} channel listener onMessage error",
-                                channel.getConfig().getRoleName(), e);
-                    }
-                    onError(channel, e);
+        callAsync(channel, () -> {
+            try {
+                listener.onMessage(channel.getSession(), frame.message());
+            } catch (Throwable e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("{} channel listener onMessage error",
+                            channel.getConfig().getRoleName(), e);
                 }
-            });
-        } catch (Throwable e) {
-            onError(channel, e);
-        }
+                onError(channel, e);
+            }
+        });
     }
 
     /**
@@ -373,12 +369,12 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
                 channel.getConfig().getStreamManger().removeStream(frame.message().sid());
             }
 
-            channel.getConfig().getWorkExecutor().submit(() -> {
+            callAsync(channel, () -> {
                 stream.onReply(frame.message());
                 listener.onReply(channel.getSession(), frame.message());
             });
         } else {
-            channel.getConfig().getWorkExecutor().submit(() -> {
+            callAsync(channel, () -> {
                 listener.onReply(channel.getSession(), frame.message());
             });
 
@@ -441,6 +437,20 @@ public class ProcessorDefault implements Processor, FrameIoHandler{
             }
         } catch (Throwable error) {
             this.onError(channel, error);
+        }
+    }
+
+    private void callAsync(ChannelInternal channel, RunnableEx<Throwable> runnable) {
+        try {
+            channel.getConfig().getWorkExecutor().submit(() -> {
+                try {
+                    runnable.run();
+                } catch (Throwable e) {
+                    onError(channel, e);
+                }
+            });
+        } catch (Throwable e) {
+            onError(channel, e);
         }
     }
 }

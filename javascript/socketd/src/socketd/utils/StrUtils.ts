@@ -115,8 +115,8 @@ export class StrUtils {
             charet = 'utf-8';
         }
 
-        if (typeof TextEncoder === "undefined") {
-            //能兼容没有 TextEncoder 接口的环境
+        if (typeof TextDecoder === "undefined") {
+            //能兼容没有 TextDecoder 接口的环境
             // @ts-ignore
             return decodeURIComponent(escape(String.fromCharCode.apply(null, new Uint8Array(buf))));
         } else {

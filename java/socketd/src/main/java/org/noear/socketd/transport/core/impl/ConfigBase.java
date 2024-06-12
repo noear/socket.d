@@ -4,6 +4,7 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.codec.CodecDefault;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
+import org.noear.socketd.transport.core.traffic.TrafficLimiterDefault;
 import org.noear.socketd.transport.stream.impl.StreamMangerDefault;
 import org.noear.socketd.transport.stream.StreamManger;
 import org.noear.socketd.utils.NamedThreadFactory;
@@ -106,7 +107,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.maxMemoryRatio = 0.0F;
         this.useMaxMemoryLimit = false;
 
-        this.trafficLimiter = new TrafficLimiterDefault(100_000);
+        //给测试加默认
+        //this.trafficLimiter = new TrafficLimiterDefault(100_000);
     }
 
     /**

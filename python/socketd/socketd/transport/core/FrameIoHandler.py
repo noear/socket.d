@@ -7,7 +7,7 @@ from socketd.transport.core.Frame import Frame
 
 S = TypeVar("S")
 
-# 帧输入输出处理器
+# 帧输入输出处理器 # 为 TrafficLimiter 提供支持
 class FrameIoHandler(ABC):
     # 发送帧处理
     @abstractmethod

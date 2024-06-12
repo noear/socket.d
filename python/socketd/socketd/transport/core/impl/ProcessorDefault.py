@@ -184,7 +184,7 @@ class ProcessorDefault(Processor, FrameIoHandler, ABC):
 
     async def on_message_do(self, channel: ChannelInternal, message: Message):
         try:
-            await self.listener.on_message(channel.get_session(), message)
+            await RunUtils.waitTry(self.listener.on_message(channel.get_session(), message))
         except Exception as e:
             e_msg = traceback.format_exc()
             log.warning(f"{channel.get_config().get_role_name()} channel listener onMessage error \n{e_msg}")

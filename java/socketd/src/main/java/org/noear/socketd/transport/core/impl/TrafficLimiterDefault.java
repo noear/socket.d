@@ -4,6 +4,8 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.utils.IoCompletionHandler;
 
 /**
+ * 流量限制器默认实现
+ *
  * @author noear
  * @since 2.5
  */
@@ -32,6 +34,15 @@ public class TrafficLimiterDefault implements TrafficLimiter {
         this.interval = interval;
     }
 
+    /**
+     * 发送帧（在写锁范围，才有效）
+     *
+     * @param frameIoHandler   帧输入输出处理
+     * @param channel          通道
+     * @param frame            帧
+     * @param channelAssistant 通道助理
+     * @param target           发送目标
+     */
     @Override
     public <S> void sendFrame(FrameIoHandler frameIoHandler, ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target, IoCompletionHandler completionHandler) {
         if (sendRate < 1) {
@@ -62,6 +73,13 @@ public class TrafficLimiterDefault implements TrafficLimiter {
         }
     }
 
+    /**
+     * 接收帧（在读线程里，才有效）
+     *
+     * @param frameIoHandler 帧输入输出处理
+     * @param channel        通道
+     * @param frame          帧
+     */
     @Override
     public void reveFrame(FrameIoHandler frameIoHandler, ChannelInternal channel, Frame frame) {
         if (receRate < 1) {

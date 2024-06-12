@@ -10,7 +10,7 @@ import org.noear.socketd.utils.IoCompletionHandler;
  */
 public interface TrafficLimiter {
     /**
-     * 发送帧
+     * 发送帧（在写锁范围，才有效）
      *
      * @param frameIoHandler   帧输入输出处理
      * @param channel          通道
@@ -21,7 +21,7 @@ public interface TrafficLimiter {
     <S> void sendFrame(FrameIoHandler frameIoHandler, ChannelInternal channel, Frame frame, ChannelAssistant<S> channelAssistant, S target, IoCompletionHandler completionHandler);
 
     /**
-     * 接收帧
+     * 接收帧（在读线程里，才有效）
      *
      * @param frameIoHandler 帧输入输出处理
      * @param channel        通道

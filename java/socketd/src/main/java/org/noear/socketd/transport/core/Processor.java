@@ -1,7 +1,6 @@
 package org.noear.socketd.transport.core;
 
 import org.noear.socketd.transport.stream.StreamInternal;
-import org.noear.socketd.utils.IoCompletionHandler;
 
 import java.io.IOException;
 

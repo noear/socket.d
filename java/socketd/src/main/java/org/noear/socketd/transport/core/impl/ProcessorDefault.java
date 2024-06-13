@@ -369,8 +369,16 @@ public class ProcessorDefault implements Processor, FrameIoHandler {
                 channel.getConfig().getStreamManger().removeStream(frame.message().sid());
             }
 
-            callAsync(channel, () -> {
+            if(stream.demands() < Constants.DEMANDS_MULTIPLE){
+                //单需（内部已是异步）//再换线程会让 await 失效
                 stream.onReply(frame.message());
+            }
+
+            callAsync(channel, () -> {
+                if(stream.demands() == Constants.DEMANDS_MULTIPLE) {
+                    //多需
+                    stream.onReply(frame.message());
+                }
                 listener.onReply(channel.getSession(), frame.message());
             });
         } else {

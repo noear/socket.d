@@ -126,6 +126,8 @@ export class ProcessorDefault implements Processor, FrameIoHandler {
                     case Flags.Alarm: {
                         //结束流，并异常通知
                         const exception = new SocketDAlarmException(frame.message()!);
+                        channel.setAlarmCode(exception.getAlarmCode());
+
                         const stream = channel.getConfig().getStreamManger().getStream(frame.message()!.sid());
                         if (stream == null) {
                             this.onError(channel, exception);
@@ -136,6 +138,8 @@ export class ProcessorDefault implements Processor, FrameIoHandler {
                         break;
                     }
                     case Flags.Pressure: //预留
+                        const code = frame.message()!.metaAsInt("code");
+                        channel.setAlarmCode(code);
                         break;
                     case Flags.Message:
                     case Flags.Request:

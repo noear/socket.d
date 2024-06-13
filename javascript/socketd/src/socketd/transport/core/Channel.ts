@@ -154,6 +154,11 @@ export interface ChannelInternal extends Channel {
     setLiveTimeAsNow();
 
     /**
+     * 设置告警代号
+     * */
+    setAlarmCode(alarmCode: number);
+
+    /**
      * 获取流
      */
     getStream(sid: string): StreamInternal<any> | null;

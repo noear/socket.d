@@ -4,7 +4,7 @@ from setuptools import setup,find_packages
 
 setup(
     name='socket.d',
-    version='2.5.3',
+    version='2.5.4',
     description='@noear/socket.d python project',
     author='noear,bai',
     url='https://socketd.noear.org/',

@@ -1,3 +1,8 @@
+### 2.5.4
+* 添加 Listener:onReply, onSend 方法，方便帧流量统计
+* 添加 FrameIoHandler 接口，强化 Processor 的帧输入输出强控地位
+* 调整 代码结构与 java,python 尽量保持相近
+
 ### 2.5.3
 * 修复 在 ios/android 上检测 TextEncoder 出错的问题（2.3.10 出现的）
 

@@ -19,15 +19,21 @@ export class SocketDException extends Error {
  * @since 2.0
  */
 export class SocketDAlarmException extends SocketDException {
-    private  _alarm: Message;
+    private _alarm: Message;
+    private _alarmCode: number;
 
     constructor(alarm: Message) {
         super(alarm.entity()!.dataAsString());
         this._alarm = alarm;
+        this._alarmCode = alarm.metaAsInt("code");
     }
 
     getAlarm(): Message {
         return this._alarm;
+    }
+
+    getAlarmCode(): number {
+        return this._alarmCode;
     }
 }
 

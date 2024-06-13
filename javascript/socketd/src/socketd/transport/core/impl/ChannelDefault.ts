@@ -28,6 +28,8 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private _session: Session;
     //最后活动时间
     private _liveTime: number = 0;
+    //告警代号
+    private _alarmCode: number = 0;
     //打开前景（用于构建 onOpen 异步处理）
     private _onOpenFuture: IoBiConsumer<boolean, Error>;
     //关闭代号（用于做关闭异常提醒）//可能协议关；可能用户关
@@ -149,6 +151,10 @@ export class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
 
     setLiveTimeAsNow() {
         this._liveTime = new Date().getTime();
+    }
+
+    setAlarmCode(alarmCode: number){
+        this._alarmCode = alarmCode;
     }
 
     getSession(): Session {

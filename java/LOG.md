@@ -1,3 +1,9 @@
+### 2.5.4
+* 添加 新的每秒帧流量控制接口 TrafficLimiter
+* 添加 Listener:onReply, onSend 方法，方便帧流量统计
+* 添加 FrameIoHandler 接口，强化 Processor 的帧输入输出强控地位
+* 移除 旧的基于信号量的流量控制方式
+
 ### 2.5.2
 * 添加 SessionUtils 工具类
 * 添加 Session::isActive() 

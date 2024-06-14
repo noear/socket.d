@@ -1,3 +1,6 @@
+### 2.5.5
+* 修复 wechat 的环境识别问题
+
 ### 2.5.4
 * 添加 Listener:onReply, onSend 方法，方便帧流量统计
 * 添加 FrameIoHandler 接口，强化 Processor 的帧输入输出强控地位

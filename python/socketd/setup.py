@@ -4,14 +4,14 @@ from setuptools import setup,find_packages
 
 setup(
     name='socket.d',
-    version='2.5.4',
+    version='2.5.5',
     description='@noear/socket.d python project',
     author='noear,bai',
     url='https://socketd.noear.org/',
     packages=find_packages(exclude=['*test*']),   # 包内不需要引用的文件夹
     install_requires=[                          # 依赖包
-        'loguru>=0.7.2',
-        'websockets>=12.0'
+        'loguru==0.7.2',
+        'websockets==12.0'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

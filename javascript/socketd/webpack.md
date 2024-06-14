@@ -44,4 +44,6 @@ npm publish
  * Released under the Apache-2.0 License.
  */
 
+//module -> socket.d.esm.js //去掉最后的 r as __esModule
+//window -> socket.d.js
 ```

@@ -51,7 +51,7 @@ export class EnvBridge {
         let runtime = this.getRuntime();
 
         if (runtime == Runtime.Weixin) {
-            console.info("Client channel use xeixin api!");
+            console.info("Client channel use wechat api!");
             return new SdWebSocketWeixinClient(url, listener);
         } else if (runtime == Runtime.Uniapp) {
             console.info("Client channel use uniapp api!");

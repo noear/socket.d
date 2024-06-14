@@ -36,7 +36,13 @@ export class EnvBridge {
                 //如果有 Uniapp，优先 Uniapp 接口
                 return Runtime.Uniapp;
             } else {
-                return Runtime.Unknown;
+                // @ts-ignore
+                if (typeof wx != 'undefined' && wx.connectSocket && wx.request) {
+                    //如果是 Weixin 接口
+                    return Runtime.Weixin;
+                } else {
+                    return Runtime.Unknown;
+                }
             }
         }
     }

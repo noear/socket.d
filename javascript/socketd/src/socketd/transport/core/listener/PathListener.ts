@@ -29,7 +29,6 @@ export class PathListener implements Listener {
      *
      * @param path     路径
      * @param listener 监听器
-     * @return self
      */
     doOf(path: string, listener: Listener): PathListener {
         this._pathRouteSelector.put(path, listener);

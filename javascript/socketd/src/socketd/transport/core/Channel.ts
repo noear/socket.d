@@ -6,6 +6,7 @@ import type {Frame} from "./Frame";
 import type {StreamInternal} from "../stream/Stream";
 import type {IoBiConsumer} from "./Typealias";
 import {SocketAddress} from "./SocketAddress";
+import type {Entity} from "./Entity";
 
 /**
  * 通道
@@ -109,7 +110,7 @@ export interface Channel {
     /**
      * 发送告警
      */
-    sendAlarm(from: Message, alarm: string);
+    sendAlarm(from: Message, alarm: Entity);
 
 
     /**

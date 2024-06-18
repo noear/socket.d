@@ -16,6 +16,7 @@ import {EntityDefault} from "./entity/EntityDefault";
 import {SendStreamImpl} from "../stream/impl/SendStreamImpl";
 import {RequestStreamImpl} from "../stream/impl/RequestStreamImpl";
 import {SubscribeStreamImpl} from "../stream/impl/SubscribeStreamImpl";
+import {StringEntity} from "./entity/StringEntity";
 
 /**
  * 会话默认实现
@@ -101,8 +102,12 @@ export class SessionDefault extends SessionBase {
         this._channel.sendPing();
     }
 
-    sendAlarm(from: Message, alarm: string) {
-        this._channel.sendAlarm(from, alarm);
+    sendAlarm(from: Message, alarm: Entity | string) {
+        if (typeof alarm !== "string") {
+            this._channel.sendAlarm(from, alarm);
+        } else {
+            this._channel.sendAlarm(from, new StringEntity(alarm));
+        }
     }
 
     /**

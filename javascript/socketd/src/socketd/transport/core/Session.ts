@@ -109,7 +109,7 @@ export interface Session extends ClientSession {
     /**
      * 发送告警
      */
-    sendAlarm(from: Message, alarm: string);
+    sendAlarm(from: Message, alarm: Entity | string);
 
     /**
      * 答复
@@ -207,7 +207,7 @@ export abstract class SessionBase implements Session {
 
     abstract sendPing();
 
-    abstract sendAlarm(from: Message, alarm: string);
+    abstract sendAlarm(from: Message, alarm: Entity|string);
 
     abstract reply(from: Message, entity: Entity);
 

@@ -208,11 +208,15 @@ export class EntityDefault implements Entity {
      *
      * @param data 数据
      */
-    dataSet(data: Blob | ArrayBuffer): EntityDefault {
-        if (data instanceof ArrayBuffer) {
+    dataSet(data: Blob | ArrayBuffer | Buffer): EntityDefault {
+        if (data instanceof BlobBuffer || data instanceof ByteBuffer) {
+            this._data = data;
+        } else if (data instanceof ArrayBuffer) {
             this._data = new ByteBuffer(data);
-        } else {
+        } else if (typeof (Blob) != 'undefined' && data instanceof Blob) {
             this._data = new BlobBuffer(data);
+        } else {
+            console.warn("This data type is not supported, type=" + typeof (data));
         }
 
         return this;

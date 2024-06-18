@@ -8,6 +8,7 @@ import type {StreamInternal} from "../../stream/Stream";
 import type {Session} from "../Session";
 import {Channel} from "../Channel";
 import {Frames} from "./Frames";
+import {Entity} from "../Entity";
 
 export abstract class  ChannelBase implements Channel {
     protected _config: Config;
@@ -78,7 +79,7 @@ export abstract class  ChannelBase implements Channel {
         this.send(Frames.closeFrame(code), null);
     }
 
-    sendAlarm(from: Message, alarm: string) {
+    sendAlarm(from: Message, alarm: Entity) {
         this.send(Frames.alarmFrame(from, alarm), null);
     }
 

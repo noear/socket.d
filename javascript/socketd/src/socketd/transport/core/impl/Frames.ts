@@ -6,6 +6,7 @@ import {HandshakeInternal} from "../Handshake";
 import {Frame} from "../Frame";
 import {EntityDefault} from "../entity/EntityDefault";
 import {StringEntity} from "../entity/StringEntity";
+import {Entity} from "../Entity";
 
 /**
  * 帧工厂
@@ -75,18 +76,46 @@ export class Frames {
     /**
      * 构建告警帧（一般用不到）
      */
-    static alarmFrame(from: Message, alarm: string): Frame {
+    static alarmFrame(from: Message, alarm: Entity): Frame {
         const message = new MessageBuilder();
 
         if (from != null) {
+            let entity = new EntityDefault();
+            entity.metaStringSet(from.metaString());
+            entity.dataSet(alarm.data());
+            entity.metaMapPut(alarm.metaMap());
+
             //如果有来源消息，则回传元信息
             message.sid(from.sid());
             message.event(from.event());
-            message.entity(new StringEntity(alarm).metaStringSet(from.metaString()));
+            message.entity(entity);
         } else {
-            message.entity(new StringEntity(alarm));
+            message.entity(alarm);
         }
 
         return new Frame(Flags.Alarm, message.build());
+    }
+
+    /**
+     * 构建压力帧
+     */
+    static pressureFrame(from: Message, pressure: Entity): Frame {
+        const message = new MessageBuilder();
+
+        if (from != null) {
+            let entity = new EntityDefault();
+            entity.metaStringSet(from.metaString());
+            entity.dataSet(pressure.data());
+            entity.metaMapPut(pressure.metaMap());
+
+            //如果有来源消息，则回传元信息
+            message.sid(from.sid());
+            message.event(from.event());
+            message.entity(entity);
+        } else {
+            message.entity(pressure);
+        }
+
+        return new Frame(Flags.Pressure, message.build());
     }
 }

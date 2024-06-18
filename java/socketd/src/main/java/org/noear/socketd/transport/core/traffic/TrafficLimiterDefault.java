@@ -31,10 +31,10 @@ public class TrafficLimiterDefault implements TrafficLimiter {
         this.receRate = receRate;
     }
 
-    private int sendCount;
-    private int receCount;
-    private long sendLatestLimitTime = Long.MIN_VALUE; // 发送数据限流重置时间 //必须设为最小值
-    private long receLatestLimitTime = Long.MIN_VALUE; // 接收数据限流重置时间
+    private volatile int sendCount;
+    private volatile int receCount;
+    private volatile long sendLatestLimitTime = Long.MIN_VALUE; // 发送数据限流重置时间 //必须设为最小值
+    private volatile long receLatestLimitTime = Long.MIN_VALUE; // 接收数据限流重置时间
 
 
     private long receLatestTime = Long.MIN_VALUE; // 最后接收时间

@@ -69,7 +69,7 @@ class Session(ClientSession):
         ...
 
     @abc.abstractmethod
-    async def send_alarm(self, _from: Message, alarm: Entity) -> None:
+    async def send_alarm(self, _from: Message, alarm: str|Entity) -> None:
         ...
 
     @abc.abstractmethod

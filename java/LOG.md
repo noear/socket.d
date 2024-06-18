@@ -1,3 +1,6 @@
+### 2.5.6
+* smartsocket 升为 1.5.44
+
 ### 2.5.4
 * 添加 新的每秒帧流量控制接口 TrafficLimiter
 * 添加 Listener:onReply, onSend 方法，方便帧流量统计

@@ -70,6 +70,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
 
         serverExecutor = Executors.newFixedThreadPool(getConfig().getWorkThreads());
         server = createServer();
+        server.setReuseAddress(true);
 
         serverExecutor.submit(this::accept);
 

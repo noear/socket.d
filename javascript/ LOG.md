@@ -1,3 +1,7 @@
+### 2.5.6
+* 强化 EntityDefault::dataSet 方法，支持 Buffer 传入
+* 强化 Session::sendAlarm 支持 Entity 传入
+
 ### 2.5.5
 * 修复 wechat 的环境识别问题
 

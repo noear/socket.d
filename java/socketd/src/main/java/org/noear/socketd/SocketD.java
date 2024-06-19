@@ -8,6 +8,7 @@ import org.noear.socketd.transport.client.Client;
 import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerConfig;
+import org.noear.socketd.utils.ProviderUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,8 @@ public class SocketD {
         ServiceLoader.load(ServerProvider.class).iterator().forEachRemaining(serverProvider -> {
             registerServerProvider(serverProvider);
         });
+
+        ProviderUtils.autoWeakLoad();
     }
 
     /**

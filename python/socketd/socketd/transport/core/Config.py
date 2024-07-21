@@ -132,11 +132,18 @@ class Config(ABC):
         ...
 
     @abstractmethod
-    def get_is_thread(self) -> bool: ...
+    def get_is_thread(self) -> bool:
+        ...
 
     @abstractmethod
     def get_max_udp_size(self) -> int:
         """
         返回允许的最大_uDP包大小。
+        """
+        ...
+
+    def is_use_subprotocols(self) -> bool:
+        """
+        是否使用子协议
         """
         ...

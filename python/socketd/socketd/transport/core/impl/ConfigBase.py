@@ -52,6 +52,7 @@ class ConfigBase(Config, ABC):
 
         self.__isThread = False
         self.__loggerLevel = "INFO"
+        self.__useSubprotocols = True;
 
     def __del__(self):
         if self._exchangeExecutor:
@@ -216,3 +217,10 @@ class ConfigBase(Config, ABC):
     def max_udp_size(self, maxUdpSize):
         self._maxUdpSize = maxUdpSize
         return self
+
+    def use_subprotocols(self, useSubprotocols):
+        self.__useSubprotocols = useSubprotocols
+        return self
+
+    def is_use_subprotocols(self) -> bool:
+        return self.__useSubprotocols

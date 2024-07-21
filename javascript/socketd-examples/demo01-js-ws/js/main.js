@@ -10,6 +10,7 @@ async function open(callback) {
     }
     await SocketD.createClient(serverUrl.trim())
         .config(c => c
+            .useSubprotocols(true)
             .heartbeatInterval(1000*5)
             .fragmentSize(1024 * 1024)
             .metaPut("test","1"))

@@ -2,7 +2,7 @@ const {SocketD}  = require('@noear/socket.d');
 
 function main(){
    SocketD.createServer("sd:ws")
-       .config(c=>c.port(8602).fragmentSize(1024 * 1024))
+       .config(c=>c.port(8602).fragmentSize(1024 * 1024).useSubprotocols(true))
        .listen(buildListener())
        .start();
 }

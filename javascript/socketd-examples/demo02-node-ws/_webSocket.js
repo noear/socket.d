@@ -3,7 +3,7 @@ const {SocketD}  = require('@noear/socket.d');
 
 async function main() {
     let server = SocketD.createServer("sd:ws")
-        .config(c => c.port(8602).useSubprotocols(false))
+        .config(c => c.port(8602).useSubprotocols(true))
         .listen(SocketD.newEventListener().doOnOpen(s=>{
             console.log("..................: " + s.sessionId());
         }).doOnMessage((s,m)=>{
@@ -15,7 +15,7 @@ async function main() {
 
 
     let session = await SocketD.createClient(serverUrl)
-        .config(c => c.useSubprotocols(true))
+        .config(c => c.useSubprotocols(false))
         .openOrThow();
 
     session.send("/demo", SocketD.newEntity("hello"));

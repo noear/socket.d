@@ -36,8 +36,26 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
             maxPayload: Constants.MAX_SIZE_FRAME
         };
 
-        if(this.getConfig().isUseSubprotocols()){
-            options.handleProtocols = ((protocols,request)=> SocketD.protocolName());
+        if(this.getConfig().isUseSubprotocols()) {
+            //使用子协议
+            options.verifyClient = ((info, cb) => {
+                const protocol = info.req.headers['sec-websocket-protocol'];
+                if (protocol && protocol.includes(SocketD.protocolName())) {
+                    cb(true);
+                } else {
+                    cb(false, 403);
+                }
+            });
+        } else {
+            //不使用子协议（如果带子协议，也让用）
+            options.verifyClient = ((info, cb) => {
+                const protocol = info.req.headers['sec-websocket-protocol'];
+                if (protocol && protocol.includes(SocketD.protocolName()) == false) {
+                    cb(false, 403);
+                } else {
+                    cb(true);
+                }
+            });
         }
 
         if(this.getConfig().getHttpServer()){

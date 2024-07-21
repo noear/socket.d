@@ -1,3 +1,6 @@
+### 2.5.10
+* smartsocket 升为 1.5.50
+
 ### 2.5.9
 * 修复 socketd-transport-spring-websocket 不能通过子协议验证的问题
 

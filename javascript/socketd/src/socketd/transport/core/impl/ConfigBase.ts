@@ -47,6 +47,8 @@ export abstract class ConfigBase implements Config {
     protected _streamTimeout: number;
     //最大udp包大小
     protected _maxUdpSize: number;
+    //使用子协议
+    protected _useSubprotocols: boolean;
 
     constructor(clientMode: boolean) {
         this._clientMode = clientMode;
@@ -70,6 +72,8 @@ export abstract class ConfigBase implements Config {
         this._requestTimeout = 10_000; //10秒（默认与连接超时同）
         this._streamTimeout = 1000 * 60 * 60 * 2;//2小时 //避免永不回调时，不能释放
         this._maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
+
+        this._useSubprotocols = true;
     }
 
     /**
@@ -313,5 +317,20 @@ export abstract class ConfigBase implements Config {
      * */
     generateId(): string {
         return this._idGenerator.generate();
+    }
+
+    /**
+     * 配置使用子协议
+     */
+    useSubprotocols(useSubprotocols: boolean): this {
+        this._useSubprotocols = useSubprotocols;
+        return this;
+    }
+
+    /**
+     * 是否使用子协议
+     * */
+    isUseSubprotocols(): boolean {
+        return this._useSubprotocols;
     }
 }

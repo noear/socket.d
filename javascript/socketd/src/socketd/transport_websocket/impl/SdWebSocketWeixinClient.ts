@@ -9,16 +9,23 @@ import {
 } from "./SdWebSocket";
 import {SocketAddress} from "../../transport/core/SocketAddress";
 import {SocketD} from "../../SocketD";
+import {Config} from "../../transport/core/Config";
 
 export class SdWebSocketWeixinClient implements SdWebSocket {
     private _real: any;
     private _state: SdWebSocketState;
     private _listener: SdWebSocketListener;
 
-    constructor(url: string, listener: SdWebSocketListener) {
+    constructor(url: string, config: Config, listener: SdWebSocketListener) {
         this._state = SdWebSocketState.CONNECTING;
-        // @ts-ignore
-        this._real = wx.connectSocket({url: url, protocols:[SocketD.protocolName()]});//SocketTask
+        if (config.isUseSubprotocols()) {
+            // @ts-ignore
+            this._real = wx.connectSocket({url: url, protocols: [SocketD.protocolName()]});//SocketTask
+        } else {
+            // @ts-ignore
+            this._real = wx.connectSocket({url: url});//SocketTask
+        }
+
         this._listener = listener;
         this._real.binaryType = "arraybuffer";
 
@@ -28,17 +35,20 @@ export class SdWebSocketWeixinClient implements SdWebSocket {
         this._real.onError(this.onError.bind(this));
     }
 
-    remoteAddress(): SocketAddress|null {
+    remoteAddress(): SocketAddress | null {
         return null;
     }
+
     localAddress(): SocketAddress | null {
         return null;
     }
 
-    private _attachment:any;
+    private _attachment: any;
+
     attachment() {
         return this._attachment;
     }
+
     attachmentPut(data: any) {
         this._attachment = data;
     }

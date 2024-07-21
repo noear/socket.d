@@ -8,13 +8,19 @@ import {
 } from "./SdWebSocket";
 import {SocketAddress} from "../../transport/core/SocketAddress";
 import {SocketD} from "../../SocketD";
+import {Config} from "../../transport/core/Config";
 
 export class SdWebSocketBrowserClient implements SdWebSocket {
     private _real: WebSocket;
     private _listener: SdWebSocketListener;
 
-    constructor(url: string, listener: SdWebSocketListener) {
-        this._real = new WebSocket(url, SocketD.protocolName());
+    constructor(url: string, config: Config, listener: SdWebSocketListener) {
+        if (config.isUseSubprotocols()) {
+            this._real = new WebSocket(url, SocketD.protocolName());
+        } else {
+            this._real = new WebSocket(url);
+        }
+
         this._listener = listener;
         this._real.binaryType = "arraybuffer";
 
@@ -24,9 +30,10 @@ export class SdWebSocketBrowserClient implements SdWebSocket {
         this._real.onerror = this.onError.bind(this);
     }
 
-    remoteAddress(): SocketAddress|null {
+    remoteAddress(): SocketAddress | null {
         return null;
     }
+
     localAddress(): SocketAddress | null {
         return null;
     }

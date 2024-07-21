@@ -9,16 +9,23 @@ import {
 } from "./SdWebSocket";
 import {SocketAddress} from "../../transport/core/SocketAddress";
 import {SocketD} from "../../SocketD";
+import {Config} from "../../transport/core/Config";
 
 export class SdWebSocketUniappClient implements SdWebSocket {
     private _real: any;
     private _state: SdWebSocketState;
     private _listener: SdWebSocketListener;
 
-    constructor(url: string, listener: SdWebSocketListener) {
+    constructor(url: string, config:Config, listener: SdWebSocketListener) {
         this._state = SdWebSocketState.CONNECTING;
-        // @ts-ignore
-        this._real = uni.connectSocket({url: url, protocols:[SocketD.protocolName()], success:(r)=>{}});//SocketTask
+        if (config.isUseSubprotocols()) {
+            // @ts-ignore
+            this._real = uni.connectSocket({url: url, protocols: [SocketD.protocolName()], success: (r) => {}});//SocketTask
+        }else{
+            // @ts-ignore
+            this._real = uni.connectSocket({url: url, success: (r) => {}});//SocketTask
+        }
+
         this._listener = listener;
 
         this._real.onOpen(this.onOpen.bind(this));

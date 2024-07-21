@@ -12,6 +12,7 @@ import {SdWebSocketNodeJs} from "./impl/SdWebSocketNodeJs";
 import {ServerConfig} from "../transport/server/ServerConfig";
 import {Constants} from "../transport/core/Constants";
 import {ServerBase} from "../transport/server/ServerBase";
+import {ServerOptions} from "_@types_ws@8.5.10@@types/ws";
 
 export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelSupporter<SdWebSocket> {
     private _server: NodeWebSocket.Server;
@@ -31,27 +32,26 @@ export class WsServer extends ServerBase<WsChannelAssistant> implements ChannelS
             this._isStarted = true;
         }
 
+        let options:ServerOptions = {
+            maxPayload: Constants.MAX_SIZE_FRAME
+        };
+
+        if(this.getConfig().isUseSubprotocols()){
+            options.handleProtocols = ((protocols,request)=> SocketD.protocolName());
+        }
+
         if(this.getConfig().getHttpServer()){
-            this._server = new NodeWebSocket.Server({
-                server: this.getConfig().getHttpServer(),
-                handleProtocols: ((protocols,request)=> SocketD.protocolName()),
-                maxPayload: Constants.MAX_SIZE_FRAME
-            });
+            options.server = this.getConfig().getHttpServer();
+
+            this._server = new NodeWebSocket.Server(options);
         }else{
+            options.port = this.getConfig().getPort();
+
             if (this.getConfig().getHost()) {
-                this._server = new NodeWebSocket.Server({
-                    port: this.getConfig().getPort(),
-                    host: this.getConfig().getHost(),
-                    handleProtocols: ((protocols,request)=> SocketD.protocolName()),
-                    maxPayload: Constants.MAX_SIZE_FRAME
-                });
-            } else {
-                this._server = new NodeWebSocket.Server({
-                    port: this.getConfig().getPort(),
-                    handleProtocols: ((protocols,request)=> SocketD.protocolName()),
-                    maxPayload: Constants.MAX_SIZE_FRAME
-                });
+                options.host = this.getConfig().getHost();
             }
+
+            this._server = new NodeWebSocket.Server(options);
         }
 
         const serverListener: SdWebSocketServerListener = new SdWebSocketServerListener(this);

@@ -63,7 +63,7 @@ export class WebSocketClientImpl implements SdWebSocketListener {
 
     constructor(url: string, client: WsClient, handshakeFuture: IoConsumer<ClientHandshakeResult>) {
         try {
-            this._real = EnvBridge.createSdWebSocketClient(url, this);
+            this._real = EnvBridge.createSdWebSocketClient(url, client.getConfig(), this);
         } catch (err) {
             //首次连接有可能会失败
             handshakeFuture(new ClientHandshakeResult(null, err));

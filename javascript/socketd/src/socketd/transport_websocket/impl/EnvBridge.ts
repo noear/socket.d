@@ -3,6 +3,7 @@ import {SdWebSocketBrowserClient} from "./SdWebSocketBrowserClient";
 import {SdWebSocketNodeJsClient} from "./SdWebSocketNodeJsClient";
 import {SdWebSocketUniappClient} from "./SdWebSocketUniappClient";
 import {SdWebSocketWeixinClient} from "./SdWebSocketWeixinClient";
+import {Config} from "../../transport/core/Config";
 
 export enum Runtime {
     Unknown = 0,
@@ -47,21 +48,21 @@ export class EnvBridge {
         }
     }
 
-    static createSdWebSocketClient(url: string, listener: SdWebSocketListener) {
+    static createSdWebSocketClient(url: string, config:Config, listener: SdWebSocketListener) {
         let runtime = this.getRuntime();
 
         if (runtime == Runtime.Weixin) {
             console.info("Client channel use wechat api!");
-            return new SdWebSocketWeixinClient(url, listener);
+            return new SdWebSocketWeixinClient(url, config, listener);
         } else if (runtime == Runtime.Uniapp) {
             console.info("Client channel use uniapp api!");
-            return new SdWebSocketUniappClient(url, listener);
+            return new SdWebSocketUniappClient(url, config, listener);
         } else if (runtime == Runtime.NodeJs) {
             console.info("Client channel use nodejs api");
-            return new SdWebSocketNodeJsClient(url, listener);
+            return new SdWebSocketNodeJsClient(url, config, listener);
         } else {
             console.info("Client channel use browser api");
-            return new SdWebSocketBrowserClient(url, listener);
+            return new SdWebSocketBrowserClient(url, config, listener);
         }
     }
 }

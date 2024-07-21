@@ -94,4 +94,9 @@ export interface Config {
      * 允许最大UDP包大小
      */
     getMaxUdpSize(): number;
+
+    /**
+     * 是否使用子协议
+     * */
+    isUseSubprotocols(): boolean;
 }

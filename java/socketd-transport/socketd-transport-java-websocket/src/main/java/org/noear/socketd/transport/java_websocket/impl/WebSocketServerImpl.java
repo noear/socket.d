@@ -35,7 +35,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     public WebSocketServerImpl(int port, WsNioServer server) {
         super(new InetSocketAddress(port),
                 server.getConfig().getCodecThreads(),
-                server.getConfig().useSubprotocols() ?
+                server.getConfig().isUseSubprotocols() ?
                         Collections.singletonList(new Draft_6455(Collections.emptyList(), Collections.singletonList(new Protocol(SocketD.protocolName())))) :
                         null);
 
@@ -45,7 +45,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     public WebSocketServerImpl(String addr, int port, WsNioServer server) {
         super(new InetSocketAddress(addr, port),
                 server.getConfig().getCodecThreads(),
-                server.getConfig().useSubprotocols() ?
+                server.getConfig().isUseSubprotocols() ?
                         Collections.singletonList(new Draft_6455(Collections.emptyList(), Collections.singletonList(new Protocol(SocketD.protocolName())))) :
                         null);
 

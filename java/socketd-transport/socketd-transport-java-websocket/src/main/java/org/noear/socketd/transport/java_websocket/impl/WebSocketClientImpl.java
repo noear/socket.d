@@ -29,7 +29,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     private CompletableFuture<ClientHandshakeResult> handshakeFuture;
 
     public WebSocketClientImpl(URI serverUri, WsNioClient client) {
-        super(serverUri, client.getConfig().useSubprotocols() ?
+        super(serverUri, client.getConfig().isUseSubprotocols() ?
                 new Draft_6455(Collections.emptyList(), Collections.singletonList(new Protocol(SocketD.protocolName()))) :
                 new Draft_6455());
 

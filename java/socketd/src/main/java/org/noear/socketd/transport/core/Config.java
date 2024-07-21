@@ -157,7 +157,7 @@ public interface Config {
     TrafficLimiter getTrafficLimiter();
 
     /**
-     * 使用子协议
+     * 是否使用子协议
      */
-    boolean useSubprotocols();
+    boolean isUseSubprotocols();
 }

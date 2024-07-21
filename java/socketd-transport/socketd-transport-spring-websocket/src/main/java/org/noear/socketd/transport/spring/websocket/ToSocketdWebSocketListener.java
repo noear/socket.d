@@ -152,7 +152,7 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler implement
 
     @Override
     public List<String> getSubProtocols() {
-        if (config.useSubprotocols()) {
+        if (config.isUseSubprotocols()) {
             return Collections.singletonList(SocketD.protocolName().toLowerCase());
         } else {
             return Collections.emptyList();

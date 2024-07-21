@@ -525,10 +525,10 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 使用子协议
+     * 是否使用子协议
      */
     @Override
-    public boolean useSubprotocols() {
+    public boolean isUseSubprotocols() {
         return useSubprotocols;
     }
 }

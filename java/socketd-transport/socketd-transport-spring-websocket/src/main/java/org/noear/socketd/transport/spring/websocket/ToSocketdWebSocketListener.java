@@ -10,10 +10,7 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 转到 Sokcet.D 协议的 WebSocketListener（服务端、客户端，都可用）
@@ -153,9 +150,10 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler implement
     @Override
     public List<String> getSubProtocols() {
         if (config.isUseSubprotocols()) {
-            return Collections.singletonList(SocketD.protocolName().toLowerCase());
+            return Arrays.asList(SocketD.protocolName().toLowerCase());
         } else {
-            return Collections.emptyList();
+            //支持有子协议，或没子协议
+            return Arrays.asList(SocketD.protocolName().toLowerCase(), "");
         }
     }
 

@@ -30,7 +30,7 @@ public class ServerTest {
     public static void main(String[] args) throws Exception {
         String s1 = schemas[4];
         Server server = SocketD.createServer(s1)
-                .config(c -> c.port(8602).fragmentSize(1024 * 1024))
+                .config(c -> c.port(8602).fragmentSize(1024 * 1024).useSubprotocols(false))
                 .listen(buildListener())
                 .start();
 

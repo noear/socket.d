@@ -17,10 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author noear
@@ -36,8 +33,9 @@ public class WebSocketServerImpl extends WebSocketServer {
         super(new InetSocketAddress(port),
                 server.getConfig().getCodecThreads(),
                 server.getConfig().isUseSubprotocols() ?
-                        Collections.singletonList(new Draft_6455(Collections.emptyList(), Collections.singletonList(new Protocol(SocketD.protocolName())))) :
-                        null);
+                        Collections.singletonList(new Draft_6455(Collections.emptyList(), Arrays.asList(new Protocol(SocketD.protocolName())))) :
+                        //支持有子协议，或没子协议
+                        Collections.singletonList(new Draft_6455(Collections.emptyList(), Arrays.asList(new Protocol(SocketD.protocolName()), new Protocol("")))));
 
         this.server = server;
     }

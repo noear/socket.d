@@ -4,7 +4,6 @@ import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.codec.CodecDefault;
 import org.noear.socketd.transport.core.identifier.GuidGenerator;
 import org.noear.socketd.transport.core.fragment.FragmentHandlerDefault;
-import org.noear.socketd.transport.core.traffic.TrafficLimiterDefault;
 import org.noear.socketd.transport.stream.impl.StreamMangerDefault;
 import org.noear.socketd.transport.stream.StreamManger;
 import org.noear.socketd.utils.NamedThreadFactory;
@@ -76,6 +75,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
     protected float maxMemoryRatio;
     //帧率处理器
     protected TrafficLimiter trafficLimiter;
+    //使用子协议
+    protected boolean useSubprotocols;
 
     public ConfigBase(boolean clientMode) {
         this.clientMode = clientMode;
@@ -106,6 +107,8 @@ public abstract class ConfigBase<T extends Config> implements Config {
         this.maxUdpSize = 2048; //2k //与 netty 保持一致 //实际可用 1464
         this.maxMemoryRatio = 0.0F;
         this.useMaxMemoryLimit = false;
+
+        this.useSubprotocols = true;
 
         //给测试加默认
         //this.trafficLimiter = new TrafficLimiterDefault(100_000);
@@ -511,5 +514,21 @@ public abstract class ConfigBase<T extends Config> implements Config {
     public T trafficLimiter(TrafficLimiter trafficLimiter) {
         this.trafficLimiter = trafficLimiter;
         return (T) this;
+    }
+
+    /**
+     * 配置子协议
+     */
+    public T useSubprotocols(boolean useSubprotocols) {
+        this.useSubprotocols = useSubprotocols;
+        return (T) this;
+    }
+
+    /**
+     * 使用子协议
+     */
+    @Override
+    public boolean useSubprotocols() {
+        return useSubprotocols;
     }
 }

@@ -155,4 +155,9 @@ public interface Config {
      * 流量限制器
      */
     TrafficLimiter getTrafficLimiter();
+
+    /**
+     * 使用子协议
+     */
+    boolean useSubprotocols();
 }

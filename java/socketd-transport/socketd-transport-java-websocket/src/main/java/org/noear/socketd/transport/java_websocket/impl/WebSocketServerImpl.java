@@ -2,11 +2,10 @@ package org.noear.socketd.transport.java_websocket.impl;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.exceptions.InvalidDataException;
+import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
-import org.java_websocket.handshake.ServerHandshakeBuilder;
+import org.java_websocket.protocols.Protocol;
 import org.java_websocket.server.WebSocketServer;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelInternal;
@@ -18,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,12 +33,22 @@ public class WebSocketServerImpl extends WebSocketServer {
     private WsNioServer server;
 
     public WebSocketServerImpl(int port, WsNioServer server) {
-        super(new InetSocketAddress(port), server.getConfig().getCodecThreads());
+        super(new InetSocketAddress(port),
+                server.getConfig().getCodecThreads(),
+                server.getConfig().useSubprotocols() ?
+                        Collections.singletonList(new Draft_6455(Collections.emptyList(), Collections.singletonList(new Protocol(SocketD.protocolName())))) :
+                        null);
+
         this.server = server;
     }
 
     public WebSocketServerImpl(String addr, int port, WsNioServer server) {
-        super(new InetSocketAddress(addr, port), server.getConfig().getCodecThreads());
+        super(new InetSocketAddress(addr, port),
+                server.getConfig().getCodecThreads(),
+                server.getConfig().useSubprotocols() ?
+                        Collections.singletonList(new Draft_6455(Collections.emptyList(), Collections.singletonList(new Protocol(SocketD.protocolName())))) :
+                        null);
+
         this.server = server;
     }
 
@@ -54,13 +64,6 @@ public class WebSocketServerImpl extends WebSocketServer {
         if (assertHandshake(conn)) {
             super.onWebsocketPong(conn, f);
         }
-    }
-
-    @Override
-    public ServerHandshakeBuilder onWebsocketHandshakeReceivedAsServer(WebSocket conn, Draft draft, ClientHandshake request) throws InvalidDataException {
-        ServerHandshakeBuilder tmp = super.onWebsocketHandshakeReceivedAsServer(conn, draft, request);
-        tmp.put("Sec-WebSocket-Protocol", SocketD.protocolName());
-        return tmp;
     }
 
     @Override

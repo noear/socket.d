@@ -517,7 +517,7 @@ public abstract class ConfigBase<T extends Config> implements Config {
     }
 
     /**
-     * 配置子协议
+     * 配置使用子协议
      */
     public T useSubprotocols(boolean useSubprotocols) {
         this.useSubprotocols = useSubprotocols;

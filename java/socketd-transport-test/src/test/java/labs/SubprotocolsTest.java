@@ -8,7 +8,7 @@ import org.noear.socketd.transport.core.listener.EventListener;
 /**
  * @author noear 2024/7/21 created
  */
-public class WebSocketTest {
+public class SubprotocolsTest {
     static final String[] schemas = new String[]{
             "sd:ws-java",
     };

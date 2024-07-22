@@ -19,7 +19,7 @@ class ListenerImpl(SimpleListener):
 
 
 async def main():
-    server = await (SocketD.create_server("sd:ws")
+    await (SocketD.create_server("sd:ws")
                     .config(lambda c: c.port(8602).use_subprotocols(True))
                     .listen(ListenerImpl()).start())
 

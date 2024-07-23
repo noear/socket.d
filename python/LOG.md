@@ -1,3 +1,6 @@
+### 2.5.10
+* 添加 websocket 子协议验证开关控制
+
 ### 2.5.6
 * 优化 Session::send_alarm 申明，支持 alarm: str|Entity
 

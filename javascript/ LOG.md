@@ -1,3 +1,6 @@
+### 2.5.10
+* 添加 websocket 子协议验证开关控制
+
 ### 2.5.6
 * 强化 EntityDefault::dataSet 方法，支持 Buffer 传入
 * 强化 Session::sendAlarm 支持 Entity 传入

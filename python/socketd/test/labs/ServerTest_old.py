@@ -67,7 +67,7 @@ def buildListener():
 
 async def main():
     await (SocketD.create_server("sd:ws")
-            .config(lambda c: c.port(8602).fragment_size(1024 * 1024))
+            .config(lambda c: c.port(8602).fragment_size(1024 * 1024).use_subprotocols(True))
             .listen(buildListener())
             .start())
     await asyncio.Future()

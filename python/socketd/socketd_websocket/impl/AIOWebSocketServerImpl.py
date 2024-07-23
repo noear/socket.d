@@ -5,6 +5,7 @@ from typing import Optional, Union, Sequence
 from websockets import ConnectionClosedOK, ConnectionClosedError, Subprotocol, Headers, InvalidOrigin
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
+from socketd import SocketD
 from socketd.transport.core.Channel import Channel
 from socketd.transport.core.ChannelInternal import ChannelInternal
 from socketd.utils.LogConfig import log
@@ -28,12 +29,20 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
 
     def process_subprotocol(self, headers: Headers, available_subprotocols: Optional[Sequence[Subprotocol]]) \
             -> Optional[Subprotocol]:
+        header_values = headers.get_all("Sec-WebSocket-Protocol")
+
         if self.ws_aio_server.get_config().is_use_subprotocols():
-            header_values = headers.get_all("Sec-WebSocket-Protocol")
             # 开启子协议验证的时候，如果不匹配则拒绝握手
-            if not bool(header_values) and available_subprotocols:
-                raise InvalidOrigin("no subprotocols supported")
+            if bool(header_values) and header_values.__contains__(SocketD.protocol_name()):
+                return Subprotocol(SocketD.protocol_name())
+            else:
+                raise InvalidOrigin("No subprotocols supported")
+        else:
+            if bool(header_values) and header_values.__contains__(SocketD.protocol_name()):
+                return Subprotocol(SocketD.protocol_name())
+
         return super().process_subprotocol(headers, available_subprotocols)
+
 
     def set_attachment(self, obj: ChannelInternal):
         self.__attachment = obj

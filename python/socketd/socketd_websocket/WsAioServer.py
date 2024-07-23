@@ -38,25 +38,14 @@ class WsAioServer(ServerBase):
         else:
             __host = self.get_config().get_host()
 
-        if self.get_config().is_use_subprotocols():
-            self._server = AIOServe(
-                               host=__host,
-                               port=self.get_config().get_port(),
-                               create_protocol=AIOWebSocketServerImpl,
-                               subprotocols=[Subprotocol(SocketD.protocol_name())],
-                               ws_aio_server=self,
-                               ssl=self.get_config().get_ssl_context(),
-                               logger=logger,
-                               max_size=Constants.MAX_SIZE_FRAME)
-        else:
-            self._server = AIOServe(
-                                    host=__host,
-                                    port=self.get_config().get_port(),
-                                    create_protocol=AIOWebSocketServerImpl,
-                                    ws_aio_server=self,
-                                    ssl=self.get_config().get_ssl_context(),
-                                    logger=logger,
-                                    max_size=Constants.MAX_SIZE_FRAME)
+        self._server = AIOServe(
+            host=__host,
+            port=self.get_config().get_port(),
+            create_protocol=AIOWebSocketServerImpl,
+            ws_aio_server=self,
+            ssl=self.get_config().get_ssl_context(),
+            logger=logger,
+            max_size=Constants.MAX_SIZE_FRAME)
 
         log.info("Socket.D server started: {server=" + self.get_config().get_local_url() + "}")
         await self._server

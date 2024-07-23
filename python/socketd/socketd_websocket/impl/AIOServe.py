@@ -8,7 +8,6 @@ from wsgiref.headers import Headers
 from websockets import WebSocketServerProtocol, LoggerLike, Origin, Subprotocol
 from websockets.extensions import ServerExtensionFactory
 from websockets.extensions.permessage_deflate import enable_server_permessage_deflate
-from websockets.headers import validate_subprotocols
 from websockets.http import USER_AGENT
 from websockets import WebSocketServer
 from websockets.legacy.server import HeadersLikeOrCallable, HTTPResponse, remove_path_argument,serve
@@ -25,7 +24,6 @@ class AIOServe:
                  logger: Optional[LoggerLike] = None, compression: Optional[str] = "deflate",
                  origins: Optional[Sequence[Optional[Origin]]] = None,
                  extensions: Optional[Sequence[ServerExtensionFactory]] = None,
-                 subprotocols: Optional[Sequence[Subprotocol]] = None,
                  extra_headers: Optional[HeadersLikeOrCallable] = None, server_header: Optional[str] = USER_AGENT,
                  process_request: Optional[
                      Callable[[str, Headers], Awaitable[Optional[HTTPResponse]]]
@@ -69,9 +67,6 @@ class AIOServe:
         elif compression is not None:
             raise ValueError(f"unsupported compression: {compression}")
 
-        if subprotocols is not None:
-            validate_subprotocols(subprotocols)
-
         # 自定义protocol
         factory = functools.partial(
             create_protocol,
@@ -95,7 +90,6 @@ class AIOServe:
             legacy_recv=legacy_recv,
             origins=origins,
             extensions=extensions,
-            subprotocols=subprotocols,
             extra_headers=extra_headers,
             server_header=server_header,
             process_request=process_request,

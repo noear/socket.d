@@ -15,7 +15,7 @@ async function main() {
 
 
     let session = await SocketD.createClient(serverUrl)
-        .config(c => c.useSubprotocols(false))
+        .config(c => c.useSubprotocols(true))
         .openOrThow();
 
     session.send("/demo", SocketD.newEntity("hello"));

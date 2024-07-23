@@ -2,6 +2,7 @@ import asyncio
 import sys
 
 from socketd import SocketD
+from socketd.transport.client.ClientConfig import ClientConfig
 from socketd.transport.core import Entity
 from socketd.transport.core.Session import Session
 from socketd.utils.LogConfig import log
@@ -13,16 +14,21 @@ from test.uitls import calc_async_time
 
 
 # 超过一定数量会导致异步并发发生异常
-COUNT = 100
+COUNT = 1000
 
-log.remove()
-log.add(sys.stderr, level="INFO", enqueue=True)
+# log.remove()
+# log.add(sys.stderr, level="INFO", enqueue=True)
 
+def config_handler(config: ServerConfig | ClientConfig):
+    config.is_thread(False)
+    config.idle_timeout(1500)
+    # config.set_logger_level("DEBUG")
 
 @calc_async_time
 async def application_test():
     loop = asyncio.get_running_loop()
     server: Server = await (SocketD.create_server(ServerConfig("ws").port(9999))
+                        .config(config_handler)
                       .listen(SimpleListenerTest())
                       .start())
     await asyncio.sleep(1)
@@ -32,24 +38,15 @@ async def application_test():
     # 单向发送
     @calc_async_time
     async def _send():
-        tasks = []
         for _ in range(COUNT):
-            tasks.append(loop.create_task(client_session.send("demo", StringEntity("test"))))
-        await asyncio.wait(tasks)
-
+            client_session.send("demo", StringEntity("test"))
     await _send()
 
     # 发送并请求（且，等待一个答复）
     @calc_async_time
     async def _send_and_request():
-        tasks = []
         for _ in range(COUNT):
-            tasks.append(loop.create_task(client_session.send_and_request("demo", StringEntity("你好"), 100)))
-        data, _ = await asyncio.wait(tasks)
-        tasks.clear()
-        for req in data:
-            tasks.append(req.result().get())
-        await asyncio.gather(*tasks)
+            client_session.send_and_request("demo", StringEntity("你好"), 100)
     await _send_and_request()
 
     # 发送并订阅（且，接收零个或多个答复流）
@@ -60,10 +57,9 @@ async def application_test():
 
         tasks = []
         for _ in range(COUNT):
-            tasks.append(loop.create_task(client_session.send_and_subscribe("demo", StringEntity("hi"), 100)))
-        data, _ = await asyncio.wait(tasks)
-        for req in data:
-            tasks.append(req.result().then_reply(send_and_subscribe_test))
+            tasks.append(client_session.send_and_subscribe("demo", StringEntity("hi"), 100))
+        for req in tasks:
+            tasks.append(req.then_reply(send_and_subscribe_test))
 
     await _send_and_subscribe()
 

@@ -39,7 +39,7 @@ class WsAioServer(ServerBase):
             __host = self.get_config().get_host()
 
         if self.get_config().is_use_subprotocols():
-            self._server = AIOServe(ws_handler=None,
+            self._server = AIOServe(
                                host=__host,
                                port=self.get_config().get_port(),
                                create_protocol=AIOWebSocketServerImpl,
@@ -49,7 +49,7 @@ class WsAioServer(ServerBase):
                                logger=logger,
                                max_size=Constants.MAX_SIZE_FRAME)
         else:
-            self._server = AIOServe(ws_handler=None,
+            self._server = AIOServe(
                                     host=__host,
                                     port=self.get_config().get_port(),
                                     create_protocol=AIOWebSocketServerImpl,

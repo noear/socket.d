@@ -20,10 +20,7 @@ class AIOServe:
     辑
     """
 
-    def __init__(self, ws_handler: Union[
-        Callable[[WebSocketServerProtocol], Awaitable[Any]],
-        Callable[[WebSocketServerProtocol, str], Awaitable[Any]],
-    ], host: Optional[Union[str, Sequence[str]]] = None, port: Optional[int] = None, ws_aio_server=None, *,
+    def __init__(self, host: Optional[Union[str, Sequence[str]]] = None, port: Optional[int] = None, ws_aio_server=None, *,
                  create_protocol: Optional[Callable[..., WebSocketServerProtocol]] = None,
                  logger: Optional[LoggerLike] = None, compression: Optional[str] = "deflate",
                  origins: Optional[Sequence[Optional[Origin]]] = None,
@@ -81,7 +78,6 @@ class AIOServe:
             # For backwards compatibility with 10.0 or earlier. Done here in
             # addition to WebSocketServerProtocol to trigger the deprecation
             # warning once per serve() call rather than once per connection.
-            remove_path_argument(ws_handler),
             ws_server,
             host=host,
             port=port,

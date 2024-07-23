@@ -1,9 +1,8 @@
 from __future__ import annotations
 import asyncio
-from typing import Optional, Union
+from typing import Optional, Union, Sequence
 
-from websockets import ConnectionClosedOK, ConnectionClosedError, ConnectionClosed
-from websockets.frames import Opcode
+from websockets import ConnectionClosedOK, ConnectionClosedError, Subprotocol, Headers, InvalidOrigin
 from websockets.server import WebSocketServer, WebSocketServerProtocol
 
 from socketd.transport.core.Channel import Channel
@@ -16,7 +15,7 @@ from socketd.transport.core.Frame import Frame
 
 class AIOWebSocketServerImpl(WebSocketServerProtocol):
 
-    def __init__(self, ws_handler, ws_server: WebSocketServer, ws_aio_server: 'WsAioServer',
+    def __init__(self, ws_server: WebSocketServer, ws_aio_server: 'WsAioServer',
                  *args, **kwargs):
         self.ws_aio_server = ws_aio_server
         self.__ws_server: WebSocketServer = ws_server
@@ -26,6 +25,15 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
                                          ws_server=self.__ws_server,
                                          *args,
                                          **kwargs)
+
+    def process_subprotocol(self, headers: Headers, available_subprotocols: Optional[Sequence[Subprotocol]]) \
+            -> Optional[Subprotocol]:
+        if self.ws_aio_server.get_config().is_use_subprotocols():
+            header_values = headers.get_all("Sec-WebSocket-Protocol")
+            # 开启子协议验证的时候，如果不匹配则拒绝握手
+            if not bool(header_values) and available_subprotocols:
+                raise InvalidOrigin("no subprotocols supported")
+        return super().process_subprotocol(headers, available_subprotocols)
 
     def set_attachment(self, obj: ChannelInternal):
         self.__attachment = obj
@@ -38,12 +46,10 @@ class AIOWebSocketServerImpl(WebSocketServerProtocol):
         super().connection_open()
         self.on_open(self)
 
-    async def read_frame(self, max_size: Optional[int]) -> Frame:
-        frame = await super().read_frame(max_size)
-        if frame is not None:
-            if frame.opcode == Opcode.PONG:
-                await self.assert_handshake()
-        return frame
+    async def keepalive_ping(self) -> None:
+        await asyncio.sleep(self.ping_interval)
+        if await self.assert_handshake():
+            return await super().keepalive_ping()
 
     def on_open(self, conn) -> None:
         """create_protocol"""

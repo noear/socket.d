@@ -1,3 +1,6 @@
+### 2.5.12
+* smartsocket 升为 1.5.52
+
 ### 2.5.10
 * 添加 websocket 子协议验证开关控制
 * smartsocket 升为 1.5.50

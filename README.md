@@ -35,6 +35,9 @@
     <a target="_blank" href='https://github.com/noear/socketd/stargazers'>
         <img src="https://img.shields.io/github/stars/noear/socketd.svg?style=flat&logo=github" alt="github star"/>
     </a>
+    <a target="_blank" href='https://gitcode.com/noear/socket.d/star'>
+		<img src='https://gitcode.com/noear/socket.d/star/badge.svg' alt='gitcode star'/>
+	</a>
 </p>
 
 <br/>

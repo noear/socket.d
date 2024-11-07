@@ -252,6 +252,23 @@ public class CaseTest {
     }
 
     @Test
+    public void TestCase22_ssl() throws Exception {
+        for (int i = 0; i < schemas.length; i++) {
+            String s1 = schemas[i];
+
+            BaseTestCase testCase = new TestCase22_ssl(s1, 2200 + i);
+            try {
+                testCase.start();
+                testCase.stop();
+            } catch (Exception e) {
+                testCase.onError();
+                e.printStackTrace();
+                assert false;
+            }
+        }
+    }
+
+    @Test
     public void TestCase24_bigFile_1g() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
             String s1 = schemas[i];

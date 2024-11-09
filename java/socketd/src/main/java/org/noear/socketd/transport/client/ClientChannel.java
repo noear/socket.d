@@ -255,10 +255,8 @@ public class ClientChannel extends ChannelBase implements Channel {
      * 连接
      */
     public void connect() throws IOException {
-        if (isConnecting.get()) {
+        if (isConnecting.compareAndSet(false, true) == false) {
             return;
-        } else {
-            isConnecting.set(true);
         }
 
         try {

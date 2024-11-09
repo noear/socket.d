@@ -147,7 +147,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     }
 
     private void sendDo(Frame frame, StreamInternal stream) throws IOException {
-        if(alarmCode == Constants.ALARM3001_PRESSURE) {
+        if (alarmCode == Constants.ALARM3001_PRESSURE) {
             if (frame.flag() >= Flags.Message && frame.flag() <= Flags.Subscribe) {
                 if (frame.message().meta(EntityMetas.META_X_UNLIMITED) == null) {
                     try {
@@ -292,8 +292,7 @@ public class ChannelDefault<S> extends ChannelBase implements ChannelInternal {
     private AtomicBoolean isCloseNotified = new AtomicBoolean(false);
 
     private void onCloseDo() {
-        if (isCloseNotified.get() == false) {
-            isCloseNotified.set(true);
+        if (isCloseNotified.compareAndSet(false, true)) {
             processor.doCloseNotice(this);
         }
     }

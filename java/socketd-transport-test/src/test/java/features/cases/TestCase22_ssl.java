@@ -1,6 +1,6 @@
 package features.cases;
 
-import features.utils.SslContextFactory;
+import features.utils.SslContextBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -37,7 +38,11 @@ public class TestCase22_ssl extends BaseTestCase {
     private AtomicInteger clientSubscribeReplyCounter = new AtomicInteger();
 
     private SSLContext getSSLContext() throws Exception {
-        return SslContextFactory.create("/ssl/demo_store.pfx", "PKCS12", "1234");
+        URL url = TestCase22_ssl.class.getClassLoader().getResource("ssl/demo_store.pfx");
+
+        return new SslContextBuilder()
+                .keyManager(url.openStream(), "PKCS12", "1234")
+                .build();
     }
 
     @Override

@@ -2,8 +2,6 @@ package labs;
 
 import features.cases.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.noear.solon.test.SolonJUnit5Extension;
 import org.noear.solon.test.SolonTest;
 
 @SolonTest
@@ -24,8 +22,8 @@ public class DebugTest {
      */
     @Test
     public  void main() throws Exception {
-        String s1 = schemas[2];
-        BaseTestCase testCase = new TestCase44_semaphore(s1, 8602);
+        String s1 = schemas[4];
+        BaseTestCase testCase = new TestCase22_ssl(s1, 8602);
         try {
             testCase.start();
             //testCase.stop();

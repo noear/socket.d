@@ -267,7 +267,7 @@ public class CaseTest {
             } catch (Exception e) {
                 testCase.onError();
                 e.printStackTrace();
-                //assert false;
+                assert false;
             }
         }
     }

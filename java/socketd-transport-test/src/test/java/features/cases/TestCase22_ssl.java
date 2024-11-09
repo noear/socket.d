@@ -1,7 +1,7 @@
 package features.cases;
 
-import features.utils.SslContextBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.noear.socketd.utils.SslContextBuilder;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
 import org.noear.socketd.transport.core.Entity;

@@ -1,4 +1,4 @@
-package features.utils;
+package org.noear.socketd.utils;
 
 import javax.net.ssl.*;
 import java.io.FileInputStream;
@@ -8,11 +8,20 @@ import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
 
+/**
+ * Ssl 上下文构建器
+ *
+ * @author noear
+ * @since 2.5
+ */
 public class SslContextBuilder {
     private SecureRandom secureRandom = null;
     private KeyManager[] keyManagers = null;
     private TrustManager[] trustManagers = null;
 
+    /**
+     * 安全机制
+     */
     public SslContextBuilder secureRandom(SecureRandom secureRandom) {
         this.secureRandom = secureRandom;
         return this;
@@ -70,6 +79,9 @@ public class SslContextBuilder {
         return this;
     }
 
+    /**
+     * 构建
+     */
     public SSLContext build() throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(keyManagers, trustManagers, secureRandom);

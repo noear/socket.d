@@ -1,5 +1,6 @@
 ### 2.5.13
 * smartsocket 升为 1.5.54
+* java-websocket 升为 1.5.7
 
 ### 2.5.12
 * smartsocket 升为 1.5.52

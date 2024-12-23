@@ -1,3 +1,8 @@
+### 2.5.14
+* smartsocket 升为 1.5.55
+* netty 升为 4.1.115.Final
+* slf4j 升为 2.0.16
+
 ### 2.5.13
 * smartsocket 升为 1.5.54
 * java-websocket 升为 1.5.7

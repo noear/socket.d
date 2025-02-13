@@ -203,7 +203,7 @@ class ProcessorDefault(Processor, FrameIoHandler, ABC):
                 await RunUtils.waitTry(self.listener.on_reply(channel.get_session(), frame.message()))
             else:
                 # 改为异步处理，避免卡死Io线程
-                asyncio.get_running_loop().run_in_executor(self.get_config().get_exchange_executor(),
+                asyncio.get_running_loop().run_in_executor(channel.get_config().get_exchange_executor(),
                                                            lambda _m: asyncio.run(stream.on_reply(_m)), frame.message())
         else:
             await RunUtils.waitTry(self.listener.on_reply(channel.get_session(), frame.message()))

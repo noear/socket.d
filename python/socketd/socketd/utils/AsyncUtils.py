@@ -4,8 +4,9 @@ import typing
 from concurrent.futures import Executor
 from threading import Thread
 
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+# 让用户自主选择
+# if sys.platform == "win32":
+#     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 class AsyncUtils(object):

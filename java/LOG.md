@@ -1,3 +1,8 @@
+
+### 2.5.14
+
+* netty 升为 4.1.118.Final
+
 ### 2.5.14
 * smartsocket 升为 1.5.55
 * netty 升为 4.1.115.Final

@@ -24,7 +24,7 @@
         <junit5.version>5.9.1</junit5.version>
         <smartsocket.version>1.5.55</smartsocket.version>
         <java-websocket.version>1.5.7</java-websocket.version>
-        <netty.version>4.1.115.Final</netty.version>
+        <netty.version>4.1.118.Final</netty.version>
         <aeron.version>1.37.0</aeron.version>
 
         <maven-compiler.version>3.11.0</maven-compiler.version>

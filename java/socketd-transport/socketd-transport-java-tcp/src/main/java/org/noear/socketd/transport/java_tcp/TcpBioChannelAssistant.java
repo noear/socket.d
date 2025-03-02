@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.java_tcp;
 
+import org.noear.socketd.exception.SocketDSizeLimitException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
@@ -72,20 +73,19 @@ public class TcpBioChannelAssistant implements ChannelAssistant<Socket> {
             return null;
         }
 
-        int len = bytesToInt32(lenBts);
+        int frameLength = bytesToInt32(lenBts);
 
-        if (len == 0) {
+        if (frameLength == 0) {
             return null;
         }
 
-        if(len > Constants.MAX_SIZE_FRAME) {
-            //如果超时，跳
-            source.getInputStream().skip(len - Integer.BYTES);
-            return null;
+        if(frameLength > Constants.MAX_SIZE_FRAME) {
+            //超过限制大小
+            throw new SocketDSizeLimitException("Adjusted frame length exceeds " + Constants.MAX_SIZE_FRAME + ": " + frameLength + " - discarded");
         }
 
-        ByteBuffer buffer = ByteBuffer.allocate(len);
-        buffer.putInt(len);
+        ByteBuffer buffer = ByteBuffer.allocate(frameLength);
+        buffer.putInt(frameLength);
 
         int bufSize = config.getReadBufferSize();
         byte[] buf = new byte[bufSize];

@@ -1,6 +1,7 @@
 package org.noear.socketd.transport.java_tcp;
 
 import org.noear.socketd.SocketD;
+import org.noear.socketd.exception.SocketDSizeLimitException;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Constants;
@@ -159,7 +160,7 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                     channel.sendClose(Constants.CLOSE1001_PROTOCOL_CLOSE);
                     throw e;
                 }
-            } catch (IOException e) {
+            } catch (IOException | SocketDSizeLimitException e) {
                 //如果是 SocketTimeoutException，说明 idleTimeout
                 getProcessor().onError(channel, e);
                 getProcessor().onClose(channel);

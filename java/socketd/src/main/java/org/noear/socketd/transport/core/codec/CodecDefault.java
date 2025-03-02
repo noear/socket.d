@@ -1,5 +1,6 @@
 package org.noear.socketd.transport.core.codec;
 
+import org.noear.socketd.exception.SocketDSizeLimitException;
 import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.entity.EntityDefault;
 import org.noear.socketd.transport.core.entity.MessageBuilder;
@@ -97,9 +98,8 @@ public class CodecDefault implements Codec {
         }
 
         if (frameSize > Constants.MAX_SIZE_FRAME) {
-            //如果超界，跳
-            reader.skipBytes(frameSize - Integer.BYTES);
-            return null;
+            //超过限制大小
+            throw new SocketDSizeLimitException("Adjusted frame length exceeds " + Constants.MAX_SIZE_FRAME + ": " + frameSize + " - discarded");
         }
 
         int flag = reader.getInt();

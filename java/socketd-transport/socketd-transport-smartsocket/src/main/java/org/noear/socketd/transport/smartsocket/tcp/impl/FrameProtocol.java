@@ -1,8 +1,11 @@
 package org.noear.socketd.transport.smartsocket.tcp.impl;
 
+import org.noear.socketd.exception.SocketDSizeLimitException;
 import org.noear.socketd.transport.core.ChannelSupporter;
+import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
+
 import org.smartboot.socket.Protocol;
 import org.smartboot.socket.extension.decoder.FixedLengthFrameDecoder;
 import org.smartboot.socket.transport.AioSession;
@@ -31,7 +34,14 @@ public class FrameProtocol implements Protocol<Frame> {
                 return null;
             } else {
                 buffer.mark();
-                decoder = new FixedLengthFrameDecoder(buffer.getInt());
+                int frameLength = buffer.getInt();
+
+                if(frameLength > Constants.MAX_SIZE_FRAME) {
+                    //超过限制大小
+                    throw new SocketDSizeLimitException("Adjusted frame length exceeds " + Constants.MAX_SIZE_FRAME + ": " + frameLength + " - discarded");
+                }
+
+                decoder = new FixedLengthFrameDecoder(frameLength);
                 buffer.reset();
                 channel.setDecoder(decoder);
             }

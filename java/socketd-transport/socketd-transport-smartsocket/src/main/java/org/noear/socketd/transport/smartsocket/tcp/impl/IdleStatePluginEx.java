@@ -69,14 +69,14 @@ public class IdleStatePluginEx <T> extends AbstractPlugin<T> {
                 if (currentTime - this.readTimestamp > (long) IdleStatePluginEx.this.idleTimeout || currentTime - this.writeTimestamp > (long) IdleStatePluginEx.this.idleTimeout) {
                     try {
                         if (asynchronousSocketChannel.isOpen()) {
-                            if (IdleStatePluginEx.LOGGER.isDebugEnabled()) {
-                                IdleStatePluginEx.LOGGER.debug("Channel idle timeout, remoteIp={}", asynchronousSocketChannel.getRemoteAddress());
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Channel idle timeout, remoteIp={}", asynchronousSocketChannel.getRemoteAddress());
                             }
                         }
 
                         this.close();
-                    } catch (IOException var5) {
-                        IdleStatePluginEx.LOGGER.debug("close exception", var5);
+                    } catch (Exception err) {
+                        LOGGER.debug("close exception", err);
                     }
                 }
 

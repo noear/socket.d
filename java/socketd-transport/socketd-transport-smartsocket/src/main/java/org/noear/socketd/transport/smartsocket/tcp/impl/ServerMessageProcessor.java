@@ -58,13 +58,13 @@ public class ServerMessageProcessor extends AbstractMessageProcessor<Frame> {
             case INPUT_EXCEPTION:
             case ACCEPT_EXCEPTION:
             case OUTPUT_EXCEPTION: {
-                try {
-                    ChannelDefaultEx c = s.getAttachment();
-                    if (c != null) {
-                        server.getProcessor().onError(c, e);
+                ChannelDefaultEx c = s.getAttachment();
+                if (c != null) {
+                    server.getProcessor().onError(c, e);
+
+                    if (c.getHandshake() != null) {
+                        server.getProcessor().onClose(c);
                     }
-                } finally {
-                    s.close();
                 }
                 break;
             }

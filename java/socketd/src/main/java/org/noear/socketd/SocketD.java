@@ -25,7 +25,7 @@ public class SocketD {
      * 框架版本号
      */
     public static String version() {
-        return "2.5.15";
+        return "2.5.16";
     }
 
     /**

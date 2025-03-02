@@ -28,15 +28,15 @@ public class ServerKcpListener implements KcpListener {
 
     @Override
     public void handleReceive(ByteBuf byteBuf, Ukcp ukcp) {
-        CodecReader reader = new NettyBufferCodecReader(byteBuf);
-        Frame frame = server.getConfig().getCodec().read(reader);
-        if (frame == null) {
-            return;
-        }
-
         ChannelInternal channel = ukcp.user().getCache();
 
         try {
+            CodecReader reader = new NettyBufferCodecReader(byteBuf);
+            Frame frame = server.getConfig().getCodec().read(reader);
+            if (frame == null) {
+                return;
+            }
+
             server.getProcessor().reveFrame(channel, frame);
         } catch (Throwable e) {
             server.getProcessor().onError(channel, e);

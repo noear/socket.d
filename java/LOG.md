@@ -2,6 +2,7 @@
 ### 2.5.16
 
 * 修复 握手未成功时出错时，会造成 null 异常的问题
+* 修复 socketd-transport-smartsocket 被恶意刷包时，可能会 oom 的问题
 
 ### 2.5.15
 * netty 升为 4.1.118.Final

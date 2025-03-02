@@ -20,7 +20,11 @@ public class RouteSelectorDefault<T> implements RouteSelector<T> {
      */
     @Override
     public T select(String route) {
-        return inner.get(route);
+        if (route == null) {
+            return null;
+        } else {
+            return inner.get(route);
+        }
     }
 
     /**

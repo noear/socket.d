@@ -72,7 +72,11 @@ public class SessionDefault extends SessionBase {
      * @param name 名字
      */
     public String param(String name) {
-        return handshake().param(name);
+        if (handshake() != null) {
+            return handshake().param(name);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -82,7 +86,11 @@ public class SessionDefault extends SessionBase {
      * @param def  默认值
      */
     public String paramOrDefault(String name, String def) {
-        return handshake().paramOrDefault(name, def);
+        if (handshake() != null) {
+            return handshake().paramOrDefault(name, def);
+        } else {
+            return def;
+        }
     }
 
     /**
@@ -91,7 +99,11 @@ public class SessionDefault extends SessionBase {
     @Override
     public String path() {
         if (pathNew == null) {
-            return handshake().path();
+            if (handshake() != null) {
+                return handshake().path();
+            } else {
+                return null;
+            }
         } else {
             return pathNew;
         }

@@ -218,7 +218,11 @@ class ProcessorDefault(Processor, FrameIoHandler, ABC):
         await channel.close(code)
 
     def on_error(self, channel: ChannelInternal, error):
-        RunUtils.taskTry(self.on_error_internal(channel, error))
+        if channel is None or channel.get_handshake() is None:
+            e_msg = traceback.format_exc()
+            log.warning(f"{channel.get_config().get_role_name()} channel error \n{e_msg}")
+        else:
+            RunUtils.taskTry(self.on_error_internal(channel, error))
 
     async def on_error_internal(self, channel: ChannelInternal, error):
         try:

@@ -116,10 +116,6 @@ public class PathListener implements Listener {
 
     @Override
     public void onError(Session session, Throwable error) {
-        if (session.handshake() == null) {
-            return;
-        }
-
         Listener l1 = pathRouteSelector.select(session.path());
 
         if (l1 != null) {

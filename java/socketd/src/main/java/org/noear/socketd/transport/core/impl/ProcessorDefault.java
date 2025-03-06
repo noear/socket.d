@@ -422,12 +422,20 @@ public class ProcessorDefault implements Processor, FrameIoHandler {
      */
     @Override
     public void onError(ChannelInternal channel, Throwable error) {
-        try {
-            listener.onError(channel.getSession(), error);
-        } catch (Throwable e) {
+        if (channel == null || channel.getHandshake() == null) {
+            //没有通道或未握手完成
             if (log.isWarnEnabled()) {
-                log.warn("{} channel listener onError error",
-                        channel.getConfig().getRoleName(), e);
+                log.warn("{} channel error",
+                        channel.getConfig().getRoleName(), error);
+            }
+        } else {
+            try {
+                listener.onError(channel.getSession(), error);
+            } catch (Throwable e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("{} channel listener onError error",
+                            channel.getConfig().getRoleName(), e);
+                }
             }
         }
     }

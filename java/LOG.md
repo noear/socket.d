@@ -1,6 +1,8 @@
 ### 2.5.18
 * 修复 socketd-transport-java-websocket(client) 不能与 py socketd-transport-websocket(server) 互联的问题
 
+### 2.5.17
+* 优化 兼容未握手的异常处理
 
 ### 2.5.16
 

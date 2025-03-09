@@ -254,7 +254,7 @@ export class ProcessorDefault implements Processor, FrameIoHandler {
 
     onError(channel: ChannelInternal, error: any) {
         if (channel == null || channel.getHandshake() == null) {
-            console.warn(`${channel.getConfig().getRoleName()} channel error`, error);
+            console.debug(`${channel.getConfig().getRoleName()} channel error`, error);
         } else {
             try {
                 this._listener.onError(channel.getSession(), error);

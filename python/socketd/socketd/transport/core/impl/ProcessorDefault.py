@@ -220,7 +220,7 @@ class ProcessorDefault(Processor, FrameIoHandler, ABC):
     def on_error(self, channel: ChannelInternal, error):
         if channel is None or channel.get_handshake() is None:
             e_msg = traceback.format_exc()
-            log.warning(f"{channel.get_config().get_role_name()} channel error \n{e_msg}")
+            log.debug(f"{channel.get_config().get_role_name()} channel error \n{e_msg}")
         else:
             RunUtils.taskTry(self.on_error_internal(channel, error))
 

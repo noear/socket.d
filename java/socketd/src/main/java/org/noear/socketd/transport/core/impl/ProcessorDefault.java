@@ -424,8 +424,8 @@ public class ProcessorDefault implements Processor, FrameIoHandler {
     public void onError(ChannelInternal channel, Throwable error) {
         if (channel == null || channel.getHandshake() == null) {
             //没有通道或未握手完成
-            if (log.isWarnEnabled()) {
-                log.warn("{} channel error",
+            if (log.isDebugEnabled()) {
+                log.debug("{} channel error",
                         channel.getConfig().getRoleName(), error);
             }
         } else {

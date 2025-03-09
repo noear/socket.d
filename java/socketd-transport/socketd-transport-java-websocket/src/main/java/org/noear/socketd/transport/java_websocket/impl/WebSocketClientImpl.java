@@ -44,9 +44,17 @@ public class WebSocketClientImpl extends WebSocketClient {
 
     @Override
     public void onWebsocketPing(WebSocket conn, Framedata f) {
-        //避免 ws（非 sd:ws） 假连（如果未成功握手，不发 ping）
-        if (assertClientHandshake(conn)) {
+        //避免 ws（非 sd:ws） 假连
+        if (checkClientHandshake(conn)) {
             super.onWebsocketPing(conn, f);
+        }
+    }
+
+    @Override
+    public void onWebsocketPong(WebSocket conn, Framedata f) {
+        //避免 ws（非 sd:ws） 假连
+        if (checkClientHandshake(conn)) {
+            super.onWebsocketPong(conn, f);
         }
     }
 
@@ -125,7 +133,7 @@ public class WebSocketClientImpl extends WebSocketClient {
     /**
      * 禁止 ws 客户端连接 sd:ws 服务（避免因为 ws 心跳，又不会触发空闲超时）
      */
-    protected boolean assertClientHandshake(WebSocket conn) {
+    protected boolean checkClientHandshake(WebSocket conn) {
         ChannelInternal channel = conn.getAttachment();
 
         if (channel == null || channel.getHandshake() == null) {

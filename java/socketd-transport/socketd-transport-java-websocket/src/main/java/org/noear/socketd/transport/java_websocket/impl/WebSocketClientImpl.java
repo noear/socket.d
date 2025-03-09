@@ -129,9 +129,6 @@ public class WebSocketClientImpl extends WebSocketClient {
         ChannelInternal channel = conn.getAttachment();
 
         if (channel == null || channel.getHandshake() == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("Client channel no handshake onPingPong");
-            }
             return false;
         } else {
             return true;

@@ -150,11 +150,6 @@ public class WebSocketServerImpl extends WebSocketServer {
         ChannelInternal channel = conn.getAttachment();
 
         if (channel == null || channel.getHandshake() == null) {
-            conn.close();
-
-            if (log.isWarnEnabled()) {
-                log.warn("Server channel no handshake onPingPong");
-            }
             return false;
         } else {
             return true;

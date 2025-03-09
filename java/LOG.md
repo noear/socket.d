@@ -1,3 +1,6 @@
+### 2.5.18
+* 修复 socketd-transport-java-websocket(client) 不能与 py socketd-transport-websocket(server) 互联的问题
+
 
 ### 2.5.16
 

@@ -52,14 +52,16 @@ public class WebSocketServerImpl extends WebSocketServer {
 
     @Override
     public void onWebsocketPing(WebSocket conn, Framedata f) {
-        if (assertHandshake(conn)) {
+        //避免 ws（非 sd:ws） 假连
+        if (assertServerHandshake(conn)) {
             super.onWebsocketPing(conn, f);
         }
     }
 
     @Override
     public void onWebsocketPong(WebSocket conn, Framedata f) {
-        if (assertHandshake(conn)) {
+        //避免 ws（非 sd:ws） 假连
+        if (assertServerHandshake(conn)) {
             super.onWebsocketPong(conn, f);
         }
     }
@@ -144,7 +146,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     /**
      * 禁止 ws 客户端连接 sd:ws 服务（避免因为 ws 心跳，又不会触发空闲超时）
      */
-    protected boolean assertHandshake(WebSocket conn) {
+    protected boolean assertServerHandshake(WebSocket conn) {
         ChannelInternal channel = conn.getAttachment();
 
         if (channel == null || channel.getHandshake() == null) {

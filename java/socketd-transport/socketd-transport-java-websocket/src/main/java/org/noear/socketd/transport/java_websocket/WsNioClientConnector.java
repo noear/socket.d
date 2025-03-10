@@ -42,10 +42,10 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
             real.setSocketFactory(client.getConfig().getSslContext().getSocketFactory());
         }
 
-        //闲置超时
-        if (client.getConfig().getIdleTimeout() > 0L) {
-            //单位：毫秒
-            real.setConnectionLostTimeout((int) (client.getConfig().getIdleTimeout() / 1000L));
+        //连接超时
+        if (client.getConfig().getConnectTimeout() > 0L) {
+            //单位：秒
+            real.setConnectionLostTimeout((int) (client.getConfig().getConnectTimeout() / 1000L));
         }
 
         real.setReuseAddr(true);
@@ -77,7 +77,7 @@ public class WsNioClientConnector extends ClientConnectorBase<WsNioClient> {
     @Override
     public void close() {
         try {
-            if(real != null && real.isOpen()) {
+            if (real != null && real.isOpen()) {
                 real.close();
             }
         } catch (Throwable e) {

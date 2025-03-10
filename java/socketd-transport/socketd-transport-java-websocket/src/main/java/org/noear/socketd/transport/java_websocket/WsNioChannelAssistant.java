@@ -1,10 +1,7 @@
 package org.noear.socketd.transport.java_websocket;
 
 import org.java_websocket.WebSocket;
-import org.noear.socketd.transport.core.ChannelAssistant;
-import org.noear.socketd.transport.core.ChannelInternal;
-import org.noear.socketd.transport.core.Config;
-import org.noear.socketd.transport.core.Frame;
+import org.noear.socketd.transport.core.*;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecReader;
 import org.noear.socketd.transport.core.codec.ByteBufferCodecWriter;
 import org.noear.socketd.utils.IoCompletionHandler;
@@ -29,6 +26,10 @@ public class WsNioChannelAssistant implements ChannelAssistant<WebSocket> {
     @Override
     public void write(WebSocket source, Frame frame, ChannelInternal channel, IoCompletionHandler completionHandler) {
         try {
+            if (frame.flag() == Flags.Ping) {
+                source.sendPing();
+            }
+
             ByteBufferCodecWriter writer = config.getCodec().write(frame, len -> new ByteBufferCodecWriter(ByteBuffer.allocate(len)));
             source.send(writer.getBuffer());
 
@@ -58,7 +59,7 @@ public class WsNioChannelAssistant implements ChannelAssistant<WebSocket> {
         return target.getLocalSocketAddress();
     }
 
-    public Frame read(ByteBuffer buffer) throws IOException{
+    public Frame read(ByteBuffer buffer) throws IOException {
         return config.getCodec().read(new ByteBufferCodecReader(buffer));
     }
 }

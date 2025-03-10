@@ -65,6 +65,12 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
             server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(getConfig().getSslContext()));
         }
 
+        //闲置超时
+        if (getConfig().getIdleTimeout() > 0L) {
+            //单位：秒
+            server.setConnectionLostTimeout((int) (getConfig().getIdleTimeout() / 1000L));
+        }
+
         server.setReuseAddr(true);
         server.start();
 

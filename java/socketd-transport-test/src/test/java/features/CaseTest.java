@@ -2,8 +2,6 @@ package features;
 
 import features.cases.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.noear.solon.test.SolonJUnit5Extension;
 import org.noear.solon.test.SolonTest;
 
 /**
@@ -16,7 +14,7 @@ public class CaseTest {
             "sd:tcp-java",
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
-//            "sd:tcp-neta",
+            "sd:tcp-neta",
             "sd:ws-java",
             "sd:udp-java",
             "sd:udp-netty",

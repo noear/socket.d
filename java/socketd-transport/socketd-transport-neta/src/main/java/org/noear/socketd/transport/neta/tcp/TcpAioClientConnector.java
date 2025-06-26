@@ -2,10 +2,11 @@ package org.noear.socketd.transport.neta.tcp;
 
 import net.hasor.cobble.concurrent.future.Future;
 import net.hasor.neta.channel.NetChannel;
-import net.hasor.neta.channel.NetaSocket;
-import net.hasor.neta.channel.PipeInitializer;
+import net.hasor.neta.channel.NetManager;
+import net.hasor.neta.channel.ProtoInitializer;
 import net.hasor.neta.channel.SoConfig;
-import net.hasor.neta.handler.PipeHelper;
+import net.hasor.neta.handler.ProtoHelper;
+import net.hasor.neta.handler.codec.LengthFieldBasedFrameHandler;
 import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
@@ -14,11 +15,11 @@ import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.neta.tcp.impl.ClientPipeListener;
 import org.noear.socketd.transport.neta.tcp.impl.FrameDecoder;
 import org.noear.socketd.transport.neta.tcp.impl.FrameEncoder;
-import org.noear.socketd.transport.neta.tcp.impl.FixedLengthFrameHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -29,7 +30,7 @@ import java.util.concurrent.TimeoutException;
 public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
     private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
 
-    private NetaSocket real;
+    private NetManager real;
 
     public TcpAioClientConnector(TcpAioClient client) {
         super(client);
@@ -44,30 +45,29 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
         FrameEncoder encoder = new FrameEncoder(client.getConfig(), client);
         ClientPipeListener pipeListener = new ClientPipeListener(client);
 
-        PipeInitializer initializer = ctx -> PipeHelper.builder()
-                .nextDecoder(new FixedLengthFrameHandler(Constants.MAX_SIZE_FRAME))
-                .nextDuplex(decoder,encoder)
+        ProtoInitializer initializer = ctx -> ProtoHelper.builder()//
+                .nextDecoder(new LengthFieldBasedFrameHandler(0, ByteOrder.BIG_ENDIAN, 4, 0, -4, Constants.MAX_SIZE_FRAME))//
+                .nextDuplex(decoder, encoder)//
                 .nextDecoder(pipeListener).build();
 
         SoConfig soConfig = new SoConfig();
         soConfig.setNetlog(true);
-        real = new NetaSocket(soConfig);
+        real = new NetManager(soConfig);
 
         try {
             Future<NetChannel> connect = real.connect(getConfig().getHost(), getConfig().getPort(), initializer);
             connect.onCompleted(f -> {
                 //开始握手
-                ChannelInternal channel=f.getResult().findPipeContext(ChannelInternal.class);
-                try{
+                ChannelInternal channel = f.getResult().findProtoContext(ChannelInternal.class);
+                try {
                     channel.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
-                }catch (Exception e){
-                    channel.doOpenFuture(false,e);
+                } catch (Exception e) {
+                    channel.doOpenFuture(false, e);
                 }
             }).onFailed(f -> {
-                ChannelInternal channel=f.getResult().findPipeContext(ChannelInternal.class);
-                channel.doOpenFuture(false,f.getCause());
+                ChannelInternal channel = f.getResult().findProtoContext(ChannelInternal.class);
+                channel.doOpenFuture(false, f.getCause());
             });
-
 
             //等待握手结果
             ClientHandshakeResult handshakeResult = pipeListener.getHandshakeFuture().get(client.getConfig().getConnectTimeout(), TimeUnit.MILLISECONDS);

@@ -47,15 +47,12 @@ public class ClientPipeListener implements ProtoHandler<Frame, Frame> {
     public ProtoStatus onError(ProtoContext context, Throwable e, ProtoExceptionHolder eh) throws Throwable {
         ChannelInternal channel = context.context(ChannelInternal.class);
 
-        if (channel != null) {
-            //todo:有出现过 channel 为 null 的情况！（说明激活事件，没有100%触发）
-            if (e instanceof SoCloseException) {
-                processor.onClose(channel);
-            } else if (e instanceof SoTimeoutException) {
-                processor.onError(channel, e);
-            } else {
-                processor.onError(channel, e);
-            }
+        if (e instanceof SoCloseException) {
+            processor.onClose(channel);
+        } else if (e instanceof SoTimeoutException) {
+            processor.onError(channel, e);
+        } else {
+            processor.onError(channel, e);
         }
 
         return ProtoStatus.Next;

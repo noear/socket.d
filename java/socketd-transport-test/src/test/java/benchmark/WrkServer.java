@@ -1,6 +1,5 @@
 package benchmark;
 
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Message;
 import org.noear.socketd.transport.core.Session;
@@ -9,7 +8,6 @@ import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
 import org.noear.solon.Solon;
 import org.noear.solon.core.bean.LifecycleBean;
-import org.noear.solon.test.SolonJUnit5Extension;
 import org.noear.solon.test.SolonTest;
 
 import java.io.IOException;
@@ -23,6 +21,7 @@ public class WrkServer implements LifecycleBean {
     public static final int schemasIdx = 3;
     public static final String[] schemas = new String[]{
             "sd:tcp-java",
+            "sd:tcp-neta",
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
             "sd:ws-java",

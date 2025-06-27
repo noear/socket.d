@@ -11,7 +11,10 @@ import java.lang.management.RuntimeMXBean;
 public class BigUploadClient {
 
     static final String[] schemas = new String[]{
-            "sd:tcp-java", "sd:tcp-netty", "sd:tcp-smartsocket",
+            "sd:tcp-java",
+            "sd:tcp-neta",
+            "sd:tcp-netty",
+            "sd:tcp-smartsocket",
             "sd:ws-java",
             "sd:udp-java"};
 

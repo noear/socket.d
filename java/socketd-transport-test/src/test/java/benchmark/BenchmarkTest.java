@@ -3,13 +3,7 @@ package benchmark;
 import benchmark.cases.TestCase01;
 import benchmark.cases.TestCase02;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.noear.solon.test.SolonJUnit5Extension;
 import org.noear.solon.test.SolonTest;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author noear
@@ -19,6 +13,7 @@ import java.util.List;
 public class BenchmarkTest {
     static final String[] schemas = new String[]{
             "sd:tcp-java",
+            "sd:tcp-neta",
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
             "sd:ws-java",

@@ -14,7 +14,7 @@ import org.noear.socketd.transport.server.ServerProvider;
 public class TcpAioProvider implements ClientProvider, ServerProvider {
     @Override
     public String[] schemas() {
-        return new String[]{"tcp", "tcps", "tcp-neta", "sd:tcp", "sd:tcps", "sd:tcp-neta"};
+        return new String[] { "tcp", "tcps", "tcp-neta", "sd:tcp", "sd:tcps", "sd:tcp-neta" };
     }
 
     @Override

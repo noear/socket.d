@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.neta.tcp.impl;
 
 import net.hasor.neta.channel.NetChannel;
-import net.hasor.neta.channel.PipeContext;
+import net.hasor.neta.channel.ProtoContext;
 import net.hasor.neta.channel.SoCloseException;
 import net.hasor.neta.channel.SoTimeoutException;
 import net.hasor.neta.handler.*;
@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
  * @author noear
  * @since 2.3
  */
-public class ClientPipeListener implements PipeHandler<Frame, Frame> {
+public class ClientPipeListener implements ProtoHandler<Frame, Frame> {
     private final Processor                                processor;
     private final CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
@@ -27,7 +27,7 @@ public class ClientPipeListener implements PipeHandler<Frame, Frame> {
     }
 
     @Override
-    public PipeStatus onMessage(PipeContext context, PipeRcvQueue<Frame> src, PipeSndQueue<Frame> dst) throws Throwable {
+    public ProtoStatus onMessage(ProtoContext context, ProtoRcvQueue<Frame> src, ProtoSndQueue<Frame> dst) throws Throwable {
         ChannelInternal channel = context.context(ChannelInternal.class);
 
         while (src.hasMore()) {
@@ -40,24 +40,21 @@ public class ClientPipeListener implements PipeHandler<Frame, Frame> {
 
             processor.reveFrame(channel, frame);
         }
-        return PipeStatus.Next;
+        return ProtoStatus.Next;
     }
 
     @Override
-    public PipeStatus onError(PipeContext context, Throwable e, PipeExceptionHolder eh) throws Throwable {
+    public ProtoStatus onError(ProtoContext context, Throwable e, ProtoExceptionHolder eh) throws Throwable {
         ChannelInternal channel = context.context(ChannelInternal.class);
 
-        if(channel != null) {
-            //todo:有出现过 channel 为 null 的情况！（说明激活事件，没有100%触发）
-            if (e instanceof SoCloseException) {
-                processor.onClose(channel);
-            } else if (e instanceof SoTimeoutException) {
-                processor.onError(channel, e);
-            } else {
-                processor.onError(channel, e);
-            }
+        if (e instanceof SoCloseException) {
+            processor.onClose(channel);
+        } else if (e instanceof SoTimeoutException) {
+            processor.onError(channel, e);
+        } else {
+            processor.onError(channel, e);
         }
 
-        return PipeStatus.Next;
+        return ProtoStatus.Next;
     }
 }

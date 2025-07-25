@@ -16,7 +16,7 @@ public class CaseTest2 {
             "sd:tcp-java",
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
-//            "sd:tcp-neta",
+            "sd:tcp-neta",
             "sd:ws-java",
             "sd:udp-java",
 //            "sd:udp-netty",

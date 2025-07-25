@@ -17,17 +17,17 @@ public class ByteBufCodecWriter implements CodecWriter {
     }
 
     @Override
-    public void putBytes(byte[] bytes) throws IOException {
+    public void putBytes(byte[] bytes) {
         byteBuf.writeBytes(bytes);
     }
 
     @Override
-    public void putInt(int val) throws IOException {
+    public void putInt(int val) {
         byteBuf.writeInt32(val);
     }
 
     @Override
-    public void putChar(int val) throws IOException {
+    public void putChar(int val) {
         byteBuf.writeInt16((short) val);
     }
 

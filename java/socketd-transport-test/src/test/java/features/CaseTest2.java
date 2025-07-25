@@ -26,7 +26,7 @@ public class CaseTest2 {
     @Test
     public void TestCase23_time2m() throws Exception {
         for (int i = 0; i < schemas.length; i++) {
-            String s1 = schemas[3];
+            String s1 = schemas[i];
 
             BaseTestCase testCase = new TestCase23_time2m(s1, 2300 + i);
             try {

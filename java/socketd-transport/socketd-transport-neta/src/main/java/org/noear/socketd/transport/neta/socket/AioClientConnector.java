@@ -1,24 +1,21 @@
-package org.noear.socketd.transport.neta.tcp;
+package org.noear.socketd.transport.neta.socket;
 
 import net.hasor.cobble.concurrent.future.Future;
-import net.hasor.neta.channel.NetChannel;
-import net.hasor.neta.channel.NetManager;
-import net.hasor.neta.channel.ProtoInitializer;
-import net.hasor.neta.channel.SoConfig;
-import net.hasor.neta.handler.ProtoHelper;
+import net.hasor.neta.channel.*;
 import net.hasor.neta.handler.codec.LengthFieldBasedFrameHandler;
 import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Constants;
-import org.noear.socketd.transport.neta.tcp.impl.ClientPipeListener;
-import org.noear.socketd.transport.neta.tcp.impl.FrameDecoder;
-import org.noear.socketd.transport.neta.tcp.impl.FrameEncoder;
+import org.noear.socketd.transport.neta.codec.FrameDecoder;
+import org.noear.socketd.transport.neta.codec.FrameEncoder;
+import org.noear.socketd.transport.neta.listener.ClientListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -27,35 +24,44 @@ import java.util.concurrent.TimeoutException;
  * @author noear
  * @since 2.3
  */
-public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
-    private static final Logger log = LoggerFactory.getLogger(TcpAioClientConnector.class);
+public abstract class AioClientConnector extends ClientConnectorBase<AioClient> {
+    private static final Logger log = LoggerFactory.getLogger(AioClientConnector.class);
 
     private NetManager real;
 
-    public TcpAioClientConnector(TcpAioClient client) {
+    public AioClientConnector(AioClient client) {
         super(client);
     }
+
+    protected abstract Future<NetChannel> connectTo(NetManager neta, InetSocketAddress remoteAddr, ProtoInitializer initializer);
 
     @Override
     public ChannelInternal connect() throws IOException {
         //关闭之前的资源
         close();
 
-        FrameDecoder decoder = new FrameDecoder(client.getConfig(), client);
-        FrameEncoder encoder = new FrameEncoder(client.getConfig(), client);
-        ClientPipeListener pipeListener = new ClientPipeListener(client);
+        ClientListener pipeListener = new ClientListener(client);
+        InetSocketAddress remoteAddr = new InetSocketAddress(getConfig().getHost(), getConfig().getPort());
+        NetConfig netConfig = new NetConfig();
 
-        ProtoInitializer initializer = ctx -> ProtoHelper.builder()//
-                .nextDecoder(new LengthFieldBasedFrameHandler(0, ByteOrder.BIG_ENDIAN, 4, 0, -4, Constants.MAX_SIZE_FRAME))//
-                .nextDuplex(decoder, encoder)//
-                .nextDecoder(pipeListener).build();
-
-        SoConfig soConfig = new SoConfig();
-        soConfig.setNetlog(true);
-        real = new NetManager(soConfig);
+        netConfig.setPrintLog(true);
+        real = new NetManager(netConfig);
+        real.subscribe(PlayLoad::isInbound, pipeListener);
 
         try {
-            Future<NetChannel> connect = real.connect(getConfig().getHost(), getConfig().getPort(), initializer);
+            Future<NetChannel> connect = this.connectTo(this.real, remoteAddr, ctx -> {
+                // ssl
+                if (AioSslHelper.isUsingSSL(getConfig())) {
+                    ctx.addLast("SSL", AioSslHelper.createSSL(getConfig()));
+                }
+                // frame
+                ctx.addLastDecoder("Frame", new LengthFieldBasedFrameHandler(0, ByteOrder.BIG_ENDIAN, 4, 0, -4, Constants.MAX_SIZE_FRAME));
+                // codec
+                FrameDecoder decoder = new FrameDecoder(client.getConfig(), client);
+                FrameEncoder encoder = new FrameEncoder(client.getConfig(), client);
+                ctx.addLast("Socket.D", decoder, encoder);
+            });
+
             connect.onCompleted(f -> {
                 //开始握手
                 ChannelInternal channel = f.getResult().findProtoContext(ChannelInternal.class);

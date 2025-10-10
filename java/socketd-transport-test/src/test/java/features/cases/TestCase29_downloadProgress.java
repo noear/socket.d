@@ -42,7 +42,7 @@ public class TestCase29_downloadProgress extends BaseTestCase {
                 .listen(new EventListener().doOn("/download", (s, m) -> {
                     messageCounter.incrementAndGet();
                     if (m.isRequest()) {
-                        FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/snack3-rce-poc.mov"));
+                        FileEntity fileEntity = new FileEntity(new File("/Users/yongchun.zyc/Downloads/atlassian-confluence-7.17.1.zip"));
                         s.reply(m, fileEntity);
                     }
                 }))

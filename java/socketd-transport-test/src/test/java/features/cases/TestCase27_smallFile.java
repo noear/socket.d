@@ -54,7 +54,7 @@ public class TestCase27_smallFile extends BaseTestCase {
 
                         if (fileName != null) {
                             System.out.println(fileName);
-                            File fileNew = new File("/Users/noear/Downloads/socketd-upload.png");
+                            File fileNew = new File("/Users/yongchun.zyc/Downloads/socketd-upload.png");
                             fileNew.delete();
 
                             fileNew.createNewFile();
@@ -80,7 +80,7 @@ public class TestCase27_smallFile extends BaseTestCase {
         clientSession = SocketD.createClient(serverUrl)
                 .openOrThow();
 
-        FileEntity fileEntity = new FileEntity(new File("/Users/noear/Movies/upload_test.png"));
+        FileEntity fileEntity = new FileEntity(new File("/Users/yongchun.zyc/Downloads/osc.zip"));
         clientSession.send("/user/upload", fileEntity);
         fileEntity.release();
 
@@ -90,7 +90,7 @@ public class TestCase27_smallFile extends BaseTestCase {
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
 
-        File file = new File("/Users/noear/Downloads/socketd-upload.png");
+        File file = new File("/Users/yongchun.zyc/Downloads/socketd-upload.png");
         assert file.length() > 1024;
     }
 

@@ -12,13 +12,14 @@ import org.noear.solon.Solon;
 public class StopTest {
     static final String[] schemas = new String[]{
             "sd:tcp-java",
+            "sd:tcp-neta",//1
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
-            "sd:tcp-neta",//3
             "sd:ws-java",
             "sd:udp-java",//5
+            "sd:udp-neta",
             "sd:udp-netty",
-            "sd:kcp-java",//7
+            "sd:kcp-java",//8
     };
 
     static int schemaIdx = 7;//6,5,4,3,2,1

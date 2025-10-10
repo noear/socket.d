@@ -8,13 +8,14 @@ import org.noear.solon.test.SolonTest;
 public class DebugTest {
     static final String[] schemas = new String[]{
             "sd:tcp-java",
+            "sd:tcp-neta",//1
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
-            "sd:tcp-neta",//3
             "sd:ws-java",
             "sd:udp-java",//5
+            "sd:udp-neta",
             "sd:udp-netty",
-            "sd:kcp-java",//7
+            "sd:kcp-java",//8
     };
 
     /**
@@ -22,7 +23,7 @@ public class DebugTest {
      */
     @Test
     public  void main() throws Exception {
-        String s1 = schemas[4];
+        String s1 = schemas[0];
         BaseTestCase testCase = new TestCase22_ssl(s1, 8602);
         try {
             testCase.start();

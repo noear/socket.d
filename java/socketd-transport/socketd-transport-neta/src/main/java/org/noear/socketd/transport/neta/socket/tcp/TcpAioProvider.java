@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.neta.tcp;
+package org.noear.socketd.transport.neta.socket.tcp;
 
 import org.noear.socketd.transport.client.Client;
 import org.noear.socketd.transport.client.ClientConfig;

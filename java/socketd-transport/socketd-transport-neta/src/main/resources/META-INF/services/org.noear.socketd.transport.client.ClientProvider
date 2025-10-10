@@ -1,1 +1,2 @@
-org.noear.socketd.transport.neta.tcp.TcpAioProvider
+org.noear.socketd.transport.neta.socket.tcp.TcpAioProvider
+org.noear.socketd.transport.neta.socket.udp.UdpAioProvider

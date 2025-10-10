@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.neta.tcp.impl;
+package org.noear.socketd.transport.neta.codec;
 
 import net.hasor.neta.bytebuf.ByteBuf;
 import org.noear.socketd.transport.core.CodecWriter;

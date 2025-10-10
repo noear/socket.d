@@ -26,6 +26,7 @@ public class WrkServer implements LifecycleBean {
             "sd:tcp-smartsocket",
             "sd:ws-java",
             "sd:udp-java",
+            "sd:udp-neta",
             "sd:udp-netty",
             "sd:kcp-java",
     };

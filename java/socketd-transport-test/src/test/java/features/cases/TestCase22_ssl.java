@@ -1,6 +1,5 @@
 package features.cases;
 
-import net.hasor.cobble.ResourcesUtils;
 import org.junit.jupiter.api.Assertions;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.client.ClientSession;
@@ -52,7 +51,7 @@ public class TestCase22_ssl extends BaseTestCase {
     public static SSLContext getSSLContext(String protocol) throws Exception {
         char[] password = "123456".toCharArray();
         KeyStore jsk = KeyStore.getInstance("JKS");
-        jsk.load(ResourcesUtils.getResourceAsStream("ssl/jks/keystore.jks"), password);
+        jsk.load(ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"), password);
 
         // Set up key manager factory to use our key store
         String keyAlgorithm = KeyManagerFactory.getDefaultAlgorithm();

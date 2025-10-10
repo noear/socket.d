@@ -1,15 +1,8 @@
 package org.noear.socketd.transport.neta.listener;
 
-import net.hasor.neta.channel.PlayLoad;
-import net.hasor.neta.channel.PlayLoadListener;
-import net.hasor.neta.channel.SoCloseException;
-import net.hasor.neta.channel.SoTimeoutException;
+import net.hasor.neta.channel.*;
 import org.noear.socketd.transport.client.ClientHandshakeResult;
-import org.noear.socketd.transport.client.ClientInternal;
-import org.noear.socketd.transport.core.ChannelInternal;
-import org.noear.socketd.transport.core.Flags;
-import org.noear.socketd.transport.core.Frame;
-import org.noear.socketd.transport.core.Processor;
+import org.noear.socketd.transport.core.*;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -21,7 +14,7 @@ public class ClientListener implements PlayLoadListener {
     private final Processor                                processor;
     private final CompletableFuture<ClientHandshakeResult> handshakeFuture = new CompletableFuture<>();
 
-    public ClientListener(ClientInternal supporter) {
+    public ClientListener(ChannelSupporter<NetChannel> supporter) {
         this.processor = supporter.getProcessor();
     }
 

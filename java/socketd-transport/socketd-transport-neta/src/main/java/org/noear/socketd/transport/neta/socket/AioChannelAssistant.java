@@ -1,4 +1,4 @@
-package org.noear.socketd.transport.neta.tcp;
+package org.noear.socketd.transport.neta.socket;
 
 import net.hasor.neta.channel.NetChannel;
 import org.noear.socketd.transport.core.ChannelAssistant;
@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
  * @author noear
  * @since 2.3
  */
-public class TcpAioChannelAssistant implements ChannelAssistant<NetChannel> {
+public class AioChannelAssistant implements ChannelAssistant<NetChannel> {
     @Override
     public void write(NetChannel target, Frame frame, ChannelInternal channel, IoCompletionHandler completionHandler) {
         try {
@@ -40,12 +40,12 @@ public class TcpAioChannelAssistant implements ChannelAssistant<NetChannel> {
     }
 
     @Override
-    public InetSocketAddress getRemoteAddress(NetChannel target) throws IOException {
+    public InetSocketAddress getRemoteAddress(NetChannel target) {
         return (InetSocketAddress) target.getRemoteAddr();
     }
 
     @Override
-    public InetSocketAddress getLocalAddress(NetChannel target) throws IOException {
+    public InetSocketAddress getLocalAddress(NetChannel target) {
         return (InetSocketAddress) target.getLocalAddr();
     }
 }

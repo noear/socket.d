@@ -1,8 +1,8 @@
-package org.noear.socketd.transport.neta.tcp.impl;
+package org.noear.socketd.transport.neta.codec;
 
 import net.hasor.neta.channel.NetChannel;
 import net.hasor.neta.channel.ProtoContext;
-import net.hasor.neta.handler.ProtoHandler;
+import net.hasor.neta.channel.ProtoHandler;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Config;

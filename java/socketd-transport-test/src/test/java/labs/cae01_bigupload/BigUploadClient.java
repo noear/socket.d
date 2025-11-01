@@ -16,7 +16,9 @@ public class BigUploadClient {
             "sd:tcp-netty",
             "sd:tcp-smartsocket",
             "sd:ws-java",
-            "sd:udp-java"};
+            "sd:udp-java",
+            "sd:udp-neta",
+    };
 
     static String getSchema() {
         return schemas[2];

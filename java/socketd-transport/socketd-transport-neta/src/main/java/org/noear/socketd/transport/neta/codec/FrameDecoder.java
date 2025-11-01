@@ -1,11 +1,7 @@
-package org.noear.socketd.transport.neta.tcp.impl;
+package org.noear.socketd.transport.neta.codec;
 
 import net.hasor.neta.bytebuf.ByteBuf;
-import net.hasor.neta.channel.NetChannel;
-import net.hasor.neta.channel.ProtoContext;
-import net.hasor.neta.handler.ProtoRcvQueue;
-import net.hasor.neta.handler.ProtoSndQueue;
-import net.hasor.neta.handler.ProtoStatus;
+import net.hasor.neta.channel.*;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
@@ -34,6 +30,6 @@ public class FrameDecoder extends BasedPipeHandler<ByteBuf, Frame> {
             hasAny = true;
         }
 
-        return hasAny ? ProtoStatus.Next : ProtoStatus.Skip;
+        return hasAny ? ProtoStatus.Next : ProtoStatus.Stop;
     }
 }

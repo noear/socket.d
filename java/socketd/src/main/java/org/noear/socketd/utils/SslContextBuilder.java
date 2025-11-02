@@ -18,62 +18,53 @@ public class SslContextBuilder {
     private SecureRandom secureRandom = null;
     private KeyManager[] keyManagers = null;
     private TrustManager[] trustManagers = null;
+    private String protocol = "TLS";
+    private String algorithm = "SunX509";
+    private String keyStoreType = "PKCS12";
 
-    /**
-     * 安全机制
-     */
+    public SslContextBuilder protocol(String protocol) {
+        this.protocol = protocol;
+        return this;
+    }
+
+    public SslContextBuilder algorithm(String algorithm) {
+        this.algorithm = algorithm;
+        return this;
+    }
+
+    public SslContextBuilder keyStoreType(String keyStoreType) {
+        this.keyStoreType = keyStoreType;
+        return this;
+    }
+
     public SslContextBuilder secureRandom(SecureRandom secureRandom) {
         this.secureRandom = secureRandom;
         return this;
     }
 
-    public SslContextBuilder keyManager(String keyStoreFile, String keyStorePassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {
-        return keyManager(keyStoreFile, null, keyStorePassword);
-    }
-
-    public SslContextBuilder keyManager(String keyStoreFile, String type, String keyStorePassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {
+    public SslContextBuilder keyManager(String keyStoreFile, String keyStorePassword, String keyPassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {
         try (InputStream inputStream = new FileInputStream(keyStoreFile)) {
-            return keyManager(inputStream, type, keyStorePassword);
+            return keyManager(inputStream, keyStorePassword, keyPassword);
         }
     }
 
-    public SslContextBuilder keyManager(InputStream keyStore, String keyStorePassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {
-        return keyManager(keyStore, null, keyStorePassword);
-    }
-
-    public SslContextBuilder keyManager(InputStream keyStore, String type, String keyStorePassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {
-        if (type == null) {
-            type = "PKCS12";
-        }
-
-        KeyStore ks = loadKeyStore(keyStore, type, keyStorePassword.toCharArray());
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(ks, keyStorePassword.toCharArray());
-        keyManagers = kmf.getKeyManagers(); // X509KeyManager
+    public SslContextBuilder keyManager(InputStream keyStoreInputStream, String keyStorePassword, String keyPassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {
+        KeyStore ks = loadKeyStore(keyStoreInputStream, keyStorePassword.toCharArray());
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
+        kmf.init(ks, keyPassword.toCharArray());
+        keyManagers = kmf.getKeyManagers();
         return this;
     }
 
     public SslContextBuilder trustManager(String trustStoreFile, String trustStorePassword) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-        return trustManager(trustStoreFile, null, trustStorePassword);
-    }
-
-    public SslContextBuilder trustManager(String trustStoreFile, String type, String trustStorePassword) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         try (InputStream inputStream = new FileInputStream(trustStoreFile)) {
-            return trustManager(inputStream, type, trustStorePassword);
+            return trustManager(inputStream, trustStorePassword);
         }
     }
 
-    public SslContextBuilder trustManager(InputStream trustStore, String trustStorePassword) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-        return trustManager(trustStore, null, trustStorePassword);
-    }
-
-    public SslContextBuilder trustManager(InputStream trustStore, String type, String trustStorePassword) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-        if (type == null) {
-            type = "PKCS12";
-        }
-
-        KeyStore ts = loadKeyStore(trustStore, type, trustStorePassword.toCharArray());
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    public SslContextBuilder trustManager(InputStream trustStoreInputStream, String trustStorePassword) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+        KeyStore ts = loadKeyStore(trustStoreInputStream, trustStorePassword.toCharArray());
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
         tmf.init(ts);
         trustManagers = tmf.getTrustManagers();
         return this;
@@ -83,15 +74,15 @@ public class SslContextBuilder {
      * 构建
      */
     public SSLContext build() throws NoSuchAlgorithmException, KeyManagementException {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+        SSLContext sslContext = SSLContext.getInstance(protocol);
         sslContext.init(keyManagers, trustManagers, secureRandom);
 
         return sslContext;
     }
 
-    private KeyStore loadKeyStore(InputStream inputStream, String type, char[] passphrase) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
-        KeyStore ks = KeyStore.getInstance(type);
-        ks.load(inputStream, passphrase);
+    private KeyStore loadKeyStore(InputStream keyStoreInputStream, char[] password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+        KeyStore ks = KeyStore.getInstance(keyStoreType);
+        ks.load(keyStoreInputStream, password);
         return ks;
     }
 }

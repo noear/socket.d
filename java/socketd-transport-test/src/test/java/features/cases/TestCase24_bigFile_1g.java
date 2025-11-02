@@ -58,7 +58,7 @@ public class TestCase24_bigFile_1g extends BaseTestCase {
 
                         if (fileName != null) {
                             System.out.println(fileName);
-                            File fileNew = new File("/Users/yongchun.zyc/Downloads/socketd-big-upload.mov");
+                            File fileNew = new File(file_big_1g_receive);
                             fileNew.delete();
 
                             fileNew.createNewFile();
@@ -87,7 +87,7 @@ public class TestCase24_bigFile_1g extends BaseTestCase {
         String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl).openOrThow();
 
-        FileEntity fileEntity = new FileEntity(new File("/Users/yongchun.zyc/Downloads/atlassian-confluence-7.17.1.zip"));
+        FileEntity fileEntity = new FileEntity(new File(file_big_1g_send));
         clientSession.send("/user/upload", fileEntity);
         fileEntity.release();
 
@@ -99,7 +99,7 @@ public class TestCase24_bigFile_1g extends BaseTestCase {
         System.out.println("counter: " + messageCounter.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
 
-        File file = new File("/Users/yongchun.zyc/Downloads/socketd-big-upload.mov");
+        File file = new File(file_big_1g_receive);
         assert file.length() > 1024 * 1024 * 10;
     }
 

@@ -1,3 +1,8 @@
+### 2.5.19
+
+* 新增 socketd-transport-neta 适配
+* smartsocket 升为 1.7.4
+
 ### 2.5.18
 * 修复 socketd-transport-java-websocket(client) 不能与 py socketd-transport-websocket(server) 互联的问题
 

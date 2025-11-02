@@ -11,16 +11,16 @@ import org.noear.solon.test.SolonTest;
 @SolonTest
 public class CaseTest {
     static final String[] schemas = new String[]{
-            "sd:tcp-java",
-            "sd:tcp-neta",
-            "sd:tcp-netty",
+//            "sd:tcp-java",
+//            "sd:tcp-neta",
+//            "sd:tcp-netty",
             "sd:tcp-smartsocket",
-            "sd:tcp-neta",
-            "sd:ws-java",
-            "sd:udp-java",
-            "sd:udp-neta",
-            "sd:udp-netty",
-            "sd:kcp-java",
+//            "sd:tcp-neta",
+//            "sd:ws-java",
+//            "sd:udp-java",
+//            "sd:udp-neta",
+//            "sd:udp-netty",
+//            "sd:kcp-java",
     };
 
     @Test

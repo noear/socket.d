@@ -9,6 +9,7 @@ import org.noear.socketd.transport.server.ServerBase;
 import org.noear.socketd.transport.server.ServerConfig;
 import org.noear.socketd.transport.smartsocket.tcp.impl.FrameProtocol;
 import org.noear.socketd.transport.smartsocket.tcp.impl.IdleStatePluginEx;
+import org.noear.socketd.transport.smartsocket.tcp.impl.SSLContextFactoryImpl;
 import org.noear.socketd.transport.smartsocket.tcp.impl.ServerMessageProcessor;
 import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
@@ -55,9 +56,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
         try {
             //支持 ssl
             if (getConfig().getSslContext() != null) {
-                SslPlugin<Frame> sslPlugin = new SslPlugin<>(getConfig()::getSslContext, sslEngine -> {
-                    sslEngine.setUseClientMode(false);
-                });
+                SslPlugin<Frame> sslPlugin = new SslPlugin<>(new SSLContextFactoryImpl(getConfig(), false));
                 messageProcessor.addPlugin(sslPlugin);
             }
 

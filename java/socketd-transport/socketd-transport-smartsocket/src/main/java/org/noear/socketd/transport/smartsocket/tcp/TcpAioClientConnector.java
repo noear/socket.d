@@ -6,6 +6,7 @@ import org.noear.socketd.transport.client.ClientHandshakeResult;
 import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.tcp.impl.ClientMessageProcessor;
+import org.noear.socketd.transport.smartsocket.tcp.impl.SSLContextFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.extension.plugins.IdleStatePlugin;
@@ -74,9 +75,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
     private void connectDo(ClientMessageProcessor messageProcessor) throws Exception {
         //支持 ssl
         if (client.getConfig().getSslContext() != null) {
-            SslPlugin<Frame> sslPlugin = new SslPlugin<>(client.getConfig()::getSslContext, sslEngine -> {
-                sslEngine.setUseClientMode(true);
-            });
+            SslPlugin<Frame> sslPlugin = new SslPlugin<>(new SSLContextFactoryImpl(client.getConfig(), true));
 
             messageProcessor.addPlugin(sslPlugin);
         }

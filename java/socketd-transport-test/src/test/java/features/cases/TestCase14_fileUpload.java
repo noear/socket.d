@@ -49,7 +49,7 @@ public class TestCase14_fileUpload extends BaseTestCase {
 
                     if (fileName != null) {
                         System.out.println(fileName);
-                        File fileNew = new File("/Users/yongchun.zyc/Downloads/socketd-upload.mov");
+                        File fileNew = new File(file_sml_receive);
                         fileNew.delete();
                         fileNew.createNewFile();
 
@@ -78,7 +78,7 @@ public class TestCase14_fileUpload extends BaseTestCase {
 
         AtomicInteger fileCount = new AtomicInteger();
         AtomicInteger fileTotal = new AtomicInteger();
-        FileEntity fileEntity = new FileEntity(new File("/Users/yongchun.zyc/Downloads/QQMusicMac10.4.0Build01.dmg"));
+        FileEntity fileEntity = new FileEntity(new File(file_sml_send));
         clientSession.send("/user/upload", fileEntity).thenProgress((isSend, val, max) -> {
             if (isSend) {
                 fileCount.incrementAndGet();
@@ -94,7 +94,7 @@ public class TestCase14_fileUpload extends BaseTestCase {
         System.out.println("fileCount: " + fileCount.get() + ", fileTotal: " + fileTotal.get());
         Assertions.assertEquals(messageCounter.get(), 1, getSchema() + ":server 收的消息数量对不上");
 
-        File file = new File("/Users/yongchun.zyc/Downloads/socketd-upload.mov");
+        File file = new File(file_sml_receive);
         assert file.length() > 1024 * 1024 * 10;
         //assert fileCount.get() > 0;
         //assert fileCount.get() == fileTotal.get();

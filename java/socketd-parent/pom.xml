@@ -22,7 +22,7 @@
 
         <slf4j.version>2.0.16</slf4j.version>
         <junit5.version>5.9.1</junit5.version>
-        <smartsocket.version>1.5.55</smartsocket.version>
+        <smartsocket.version>1.7.4</smartsocket.version>
         <java-websocket.version>1.5.7</java-websocket.version>
         <netty.version>4.1.118.Final</netty.version>
         <aeron.version>1.37.0</aeron.version>

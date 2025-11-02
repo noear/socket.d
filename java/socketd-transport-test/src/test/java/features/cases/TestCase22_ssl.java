@@ -108,7 +108,7 @@ public class TestCase22_ssl extends BaseTestCase {
         Thread.sleep(1000);
 
         //client
-        String serverUrl = getSchema() + "://127.0.0.1:" + getPort() + "/path?u=a&p=2";
+        String serverUrl = getSchema() + "://localhost:" + getPort() + "/path?u=a&p=2";
         clientSession = SocketD.createClient(serverUrl).config(c -> c.sslContext(clientSSLContext)).openOrThow();
         clientSession.send("/user/created", new StringEntity("hi"));
 

@@ -35,7 +35,6 @@
 
     <modules>
         <module>../socketd</module>
-        <module>../socketd-transport/socketd-transport-aeron</module>
         <module>../socketd-transport/socketd-transport-java-kcp</module>
         <module>../socketd-transport/socketd-transport-java-tcp</module>
         <module>../socketd-transport/socketd-transport-java-udp</module>

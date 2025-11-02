@@ -12,9 +12,9 @@ import org.noear.solon.test.SolonTest;
 public class CaseTest {
     static final String[] schemas = new String[]{
 //            "sd:tcp-java", //ok
-            "sd:tcp-neta", //no: TestCase17_idleTimeout, TestCase19_serverCloseReconnect
+//            "sd:tcp-neta", //no: TestCase17_idleTimeout, TestCase19_serverCloseReconnect
 //            "sd:tcp-netty", //ok
-//            "sd:tcp-smartsocket", //no: TestCase22_ssl
+            "sd:tcp-smartsocket", //no: TestCase22_ssl
 //            "sd:ws-java", //no: TestCase17_idleTimeout
 //            "sd:udp-java",
 //            "sd:udp-neta",

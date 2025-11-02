@@ -9,24 +9,12 @@ import org.noear.socketd.transport.core.Session;
 import org.noear.socketd.transport.core.entity.StringEntity;
 import org.noear.socketd.transport.core.listener.SimpleListener;
 import org.noear.socketd.transport.server.Server;
+import org.noear.socketd.utils.SslContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.smartboot.socket.Protocol;
-import org.smartboot.socket.StateMachineEnum;
-import org.smartboot.socket.extension.plugins.SslPlugin;
-import org.smartboot.socket.extension.processor.AbstractMessageProcessor;
-import org.smartboot.socket.extension.ssl.factory.ClientSSLContextFactory;
-import org.smartboot.socket.extension.ssl.factory.ServerSSLContextFactory;
-import org.smartboot.socket.transport.AioQuickClient;
-import org.smartboot.socket.transport.AioQuickServer;
-import org.smartboot.socket.transport.AioSession;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -48,25 +36,32 @@ public class TestCase22_ssl extends BaseTestCase {
     private AtomicInteger serverOnMessageCounter = new AtomicInteger();
     private AtomicInteger clientSubscribeReplyCounter = new AtomicInteger();
 
+    public static SSLContext getServerSSLContext() throws Exception {
+        return new SslContextBuilder()
+                .keyManager(ClassLoader.getSystemResource("ssl/jks/keystore.jks").getFile(), "123456", "123456")
+                .trustManager(ClassLoader.getSystemResource("ssl/jks/trustKeystore.jks").getFile(), "123456")
+                .build();
 
-    public static ClientSSLContextFactory getClientSSLContext() throws Exception {
-        //return new ClientSSLContextFactory().create();
-        return new ClientSSLContextFactory(
-                ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"),
-                "123456",
-                ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"),
-                "123456"
-        );
+//        return SSLContextFactory.forServer(
+//                ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"),
+//                "123456",
+//                "123456",
+//                ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"),
+//                "123456").create();
     }
 
-    public static ServerSSLContextFactory getServerSSLContext() throws Exception {
-        //return new AutoServerSSLContextFactory().create();
-        return new ServerSSLContextFactory(
-                ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"),
-                "123456",
-                "123456",
-                ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"),
-                "123456");
+    public static SSLContext getClientSSLContext() throws Exception {
+        return new SslContextBuilder()
+                .keyManager(ClassLoader.getSystemResource("ssl/jks/keystore.jks").getFile(), "123456", "123456")
+                .trustManager(ClassLoader.getSystemResource("ssl/jks/trustKeystore.jks").getFile(), "123456")
+                .build();
+//        return SSLContextFactory.forClient(
+//                ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"),
+//                "123456",
+//                "123456",
+//                ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"),
+//                "123456"
+//        ).create();
     }
 
 
@@ -74,8 +69,8 @@ public class TestCase22_ssl extends BaseTestCase {
     public void start() throws Exception {
         log.trace("...");
 
-        SSLContext serverSSLContext = getServerSSLContext().create();
-        SSLContext clientSSLContext = getClientSSLContext().create();
+        SSLContext serverSSLContext = getServerSSLContext();
+        SSLContext clientSSLContext = getClientSSLContext();
 
         super.start();
         //server
@@ -151,77 +146,5 @@ public class TestCase22_ssl extends BaseTestCase {
         }
 
         super.stop();
-    }
-
-    public static void main(String[] args) throws Exception {
-        IntegerServerProcessor serverProcessor = new IntegerServerProcessor();
-        AioQuickServer sslQuickServer = new AioQuickServer(8080, new IntegerProtocol(), serverProcessor);
-        ServerSSLContextFactory serverFactory = getServerSSLContext();
-        SslPlugin<Integer> sslServerPlugin = new SslPlugin<>(serverFactory); //ClientAuth.REQUIRE
-        serverProcessor.addPlugin(sslServerPlugin);
-        sslQuickServer.start();
-
-        IntegerClientProcessor clientProcessor = new IntegerClientProcessor();
-        AioQuickClient sslQuickClient = new AioQuickClient("localhost", 8080, new IntegerProtocol(), clientProcessor);
-        ClientSSLContextFactory clientFactory = getClientSSLContext();
-        SslPlugin<Integer> sslPlugin = new SslPlugin<>(clientFactory);
-        clientProcessor.addPlugin(sslPlugin);
-        AioSession aioSession = sslQuickClient.start();
-        while (true) {
-            aioSession.writeBuffer().writeInt(1);
-            aioSession.writeBuffer().flush();
-        }
-    }
-
-    public static class IntegerClientProcessor extends AbstractMessageProcessor<Integer> {
-
-        @Override
-        public void process0(AioSession session, Integer msg) {
-            System.out.println("receive data from server：" + msg);
-        }
-
-        @Override
-        public void stateEvent0(AioSession session, StateMachineEnum stateMachineEnum, Throwable throwable) {
-            System.out.println("other state:" + stateMachineEnum);
-            if (stateMachineEnum == StateMachineEnum.INPUT_EXCEPTION) {
-                throwable.printStackTrace();
-            }
-            if (stateMachineEnum == StateMachineEnum.OUTPUT_EXCEPTION) {
-                throwable.printStackTrace();
-            }
-        }
-    }
-
-    public static class IntegerServerProcessor extends AbstractMessageProcessor<Integer> {
-        @Override
-        public void process0(AioSession session, Integer msg) {
-            Integer respMsg = msg + 1;
-            System.out.println("receive data from client: " + msg + " ,rsp:" + (respMsg));
-            try {
-                session.writeBuffer().writeInt(respMsg);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void stateEvent0(AioSession session, StateMachineEnum stateMachineEnum, Throwable throwable) {
-            if (stateMachineEnum == StateMachineEnum.INPUT_EXCEPTION) {
-                throwable.printStackTrace();
-            }
-        }
-    }
-
-    public static class IntegerProtocol implements Protocol<Integer> {
-
-        private static final int INT_LENGTH = 4;
-
-        @Override
-        public Integer decode(ByteBuffer data, AioSession session) {
-            if (data.remaining() < INT_LENGTH)
-                return null;
-            return data.getInt();
-        }
-
     }
 }

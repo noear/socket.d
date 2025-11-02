@@ -12,6 +12,7 @@
     </parent>
 
     <artifactId>socketd-transport-smartsocket</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>jar</packaging>
 
     <dependencies>

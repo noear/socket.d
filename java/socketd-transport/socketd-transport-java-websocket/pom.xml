@@ -12,6 +12,7 @@
     </parent>
 
     <artifactId>socketd-transport-java-websocket</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>jar</packaging>
 
     <dependencies>

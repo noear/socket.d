@@ -33,10 +33,13 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
         if (config.getSslContext() != null) {
             SSLEngine engine = config.getSslContext().createSSLEngine();
-            if (config.clientMode() == false) {
+
+            if (config.clientMode()) {
+                engine.setUseClientMode(true);
+            } else {
                 engine.setUseClientMode(false);
-                engine.setNeedClientAuth(true);
             }
+
             pipeline.addFirst(new SslHandler(engine));
         }
 

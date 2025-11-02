@@ -127,7 +127,9 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                     return;
                 }
 
-                log.warn("Server accept error", e);
+                if (log.isWarnEnabled()) {
+                    log.warn("Server accept error", e);
+                }
             }
         }
     }
@@ -177,7 +179,9 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
         try {
             socket.close();
         } catch (Throwable e) {
-            log.debug("Server socket close error", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Server socket close error", e);
+            }
         }
     }
 

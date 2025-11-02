@@ -94,7 +94,9 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler implement
                 processor.reveFrame(channel, frame);
             }
         } catch (Throwable e) {
-            log.warn(e.getMessage(), e);
+            if (log.isWarnEnabled()) {
+                log.warn(e.getMessage(), e);
+            }
         }
     }
 
@@ -104,7 +106,9 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler implement
             ChannelInternal channel = getChannel(session);
             processor.onClose(channel);
         } catch (Throwable e) {
-            log.warn(e.getMessage(), e);
+            if (log.isWarnEnabled()) {
+                log.warn(e.getMessage(), e);
+            }
         }
     }
 
@@ -118,7 +122,9 @@ public class ToSocketdWebSocketListener extends BinaryWebSocketHandler implement
                 processor.onError(channel, exception);
             }
         } catch (Throwable e) {
-            log.warn(e.getMessage(), e);
+            if (log.isWarnEnabled()) {
+                log.warn(e.getMessage(), e);
+            }
         }
     }
 

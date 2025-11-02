@@ -90,9 +90,13 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
                         }
                     });
                 } catch (RejectedExecutionException e) {
-                    log.warn("Server thread pool is full", e);
+                    if (log.isWarnEnabled()) {
+                        log.warn("Server thread pool is full", e);
+                    }
                 } catch (Throwable e) {
-                    log.warn("Server thread pool error", e);
+                    if (log.isWarnEnabled()) {
+                        log.warn("Server thread pool error", e);
+                    }
                 }
             } catch (Throwable e) {
                 if (server.isClosed()) {
@@ -100,7 +104,9 @@ public class UdpBioServer extends ServerBase<UdpBioChannelAssistant> implements 
                     return;
                 }
 
-                log.warn("Server accept error", e);
+                if (log.isWarnEnabled()) {
+                    log.warn("Server accept error", e);
+                }
             }
         }
     }

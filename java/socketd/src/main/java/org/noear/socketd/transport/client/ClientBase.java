@@ -169,7 +169,9 @@ public abstract class ClientBase<T extends ChannelAssistant> implements ClientIn
                     throw new SocketDException("Socket.D client Connection failed", e);
                 }
             } else {
-                log.info("Socket.D client Connection failed: {link={}}", getConfig().getLinkUrl());
+                if (log.isWarnEnabled()) {
+                    log.warn("Socket.D client Connection failed: {link={}}", getConfig().getLinkUrl());
+                }
             }
         }
 

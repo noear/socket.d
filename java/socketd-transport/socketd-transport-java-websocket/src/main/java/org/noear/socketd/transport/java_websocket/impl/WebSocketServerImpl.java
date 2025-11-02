@@ -114,7 +114,9 @@ public class WebSocketServerImpl extends WebSocketServer {
                 server.getProcessor().reveFrame(channel, frame);
             }
         } catch (Throwable e) {
-            log.warn("WebSocket server onMessage error", e);
+            if (log.isWarnEnabled()) {
+                log.warn("WebSocket server onMessage error", e);
+            }
         }
     }
 
@@ -128,7 +130,9 @@ public class WebSocketServerImpl extends WebSocketServer {
                 server.getProcessor().onError(channel, ex);
             }
         } catch (Throwable e) {
-            log.warn("WebSocket server onError error", e);
+            if (log.isWarnEnabled()) {
+                log.warn("WebSocket server onError error", e);
+            }
         }
     }
 

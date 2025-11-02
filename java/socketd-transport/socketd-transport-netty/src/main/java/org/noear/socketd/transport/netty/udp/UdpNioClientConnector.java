@@ -88,7 +88,9 @@ public class UdpNioClientConnector extends ClientConnectorBase<UdpNioClient> {
                 workerGroup.shutdownGracefully();
             }
         } catch (Throwable e) {
-            log.debug("{}", e);
+            if (log.isDebugEnabled()) {
+                log.debug("{}", e);
+            }
         }
     }
 }

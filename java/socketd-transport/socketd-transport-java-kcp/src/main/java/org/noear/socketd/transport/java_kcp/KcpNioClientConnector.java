@@ -99,7 +99,9 @@ public class KcpNioClientConnector extends ClientConnectorBase<KcpNioClient> {
                 kcpClient.stop();
             }
         } catch (Throwable e) {
-            log.debug("{}", e);
+            if (log.isDebugEnabled()) {
+                log.debug("{}", e);
+            }
         }
     }
 }

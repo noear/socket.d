@@ -10,7 +10,7 @@ public class DebugTest {
             "sd:tcp-java",
             "sd:tcp-neta",//1
             "sd:tcp-netty",
-            "sd:tcp-smartsocket",
+            "sd:tcp-smartsocket",//3
             "sd:ws-java",
             "sd:udp-java",//5
             "sd:udp-neta",
@@ -23,7 +23,7 @@ public class DebugTest {
      */
     @Test
     public  void main() throws Exception {
-        String s1 = schemas[0];
+        String s1 = schemas[3];
         BaseTestCase testCase = new TestCase22_ssl(s1, 8602);
         try {
             testCase.start();

@@ -38,30 +38,18 @@ public class TestCase22_ssl extends BaseTestCase {
 
     public static SSLContext getServerSSLContext() throws Exception {
         return new SslContextBuilder()
-                .keyManager(ClassLoader.getSystemResource("ssl/jks/keystore.jks").getFile(), "123456", "123456")
-                .trustManager(ClassLoader.getSystemResource("ssl/jks/trustKeystore.jks").getFile(), "123456")
+                .keyStoreType("JKS")
+                .keyManager(ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"), "123456", "123456")
+                .trustManager(ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"), "123456")
                 .build();
-
-//        return SSLContextFactory.forServer(
-//                ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"),
-//                "123456",
-//                "123456",
-//                ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"),
-//                "123456").create();
     }
 
     public static SSLContext getClientSSLContext() throws Exception {
         return new SslContextBuilder()
-                .keyManager(ClassLoader.getSystemResource("ssl/jks/keystore.jks").getFile(), "123456", "123456")
-                .trustManager(ClassLoader.getSystemResource("ssl/jks/trustKeystore.jks").getFile(), "123456")
+                .keyStoreType("JKS")
+                .keyManager(ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"), "123456", "123456")
+                .trustManager(ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"), "123456")
                 .build();
-//        return SSLContextFactory.forClient(
-//                ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"),
-//                "123456",
-//                "123456",
-//                ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"),
-//                "123456"
-//        ).create();
     }
 
 

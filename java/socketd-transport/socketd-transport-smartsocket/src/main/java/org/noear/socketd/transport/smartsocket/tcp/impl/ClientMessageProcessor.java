@@ -6,6 +6,7 @@ import org.noear.socketd.transport.core.ChannelInternal;
 import org.noear.socketd.transport.core.Flags;
 import org.noear.socketd.transport.core.Frame;
 import org.noear.socketd.transport.smartsocket.tcp.TcpAioClient;
+import org.noear.socketd.utils.RunUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.smartboot.socket.StateMachineEnum;
@@ -67,11 +68,15 @@ public class ClientMessageProcessor extends AbstractMessageProcessor<Frame> {
             case NEW_SESSION: {
                 ChannelDefaultEx c = new ChannelDefaultEx<>(s, client);
                 s.setAttachment(c);
-                try {
-                    c.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
-                } catch (Throwable ex) {
-                    client.getProcessor().onError(c, ex);
-                }
+
+                //ssl 时，同步会出错
+                RunUtils.async(() -> {
+                    try {
+                        c.sendConnect(client.getConfig().getUrl(), client.getConfig().getMetaMap());
+                    } catch (Throwable ex) {
+                        client.getProcessor().onError(c, ex);
+                    }
+                });
                 break;
             }
 

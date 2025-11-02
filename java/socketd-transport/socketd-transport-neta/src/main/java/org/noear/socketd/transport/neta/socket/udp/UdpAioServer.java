@@ -26,7 +26,7 @@ public class UdpAioServer extends AioServer {
 
     @Override
     public String getTitle() {
-        return "udp/aio/neta 1.0/" + SocketD.version();
+        return "udp/aio/neta 1.1/" + SocketD.version();
     }
 
     @Override

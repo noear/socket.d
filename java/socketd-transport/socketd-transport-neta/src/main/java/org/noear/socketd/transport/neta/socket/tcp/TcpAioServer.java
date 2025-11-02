@@ -24,7 +24,7 @@ public class TcpAioServer extends AioServer {
 
     @Override
     public String getTitle() {
-        return "tcp/aio/neta 1.0/" + SocketD.version();
+        return "tcp/aio/neta 1.1/" + SocketD.version();
     }
 
     @Override

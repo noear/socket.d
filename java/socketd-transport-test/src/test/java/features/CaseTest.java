@@ -11,11 +11,10 @@ import org.noear.solon.test.SolonTest;
 @SolonTest
 public class CaseTest {
     static final String[] schemas = new String[]{
-//            "sd:tcp-java",
-//            "sd:tcp-neta",
+            "sd:tcp-java", //ssl-ok
+//            "sd:tcp-neta", //ssl-ok
 //            "sd:tcp-netty",
-            "sd:tcp-smartsocket",
-//            "sd:tcp-neta",
+//            "sd:tcp-smartsocket",
 //            "sd:ws-java",
 //            "sd:udp-java",
 //            "sd:udp-neta",

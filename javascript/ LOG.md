@@ -1,3 +1,8 @@
+### 2.5.20
+
+* 添加 ssl 双向认证支持（只适合 node.js）
+* 添加 Config:getSslContext(), sslContext() 方法
+
 ### 2.5.17
 * 优化 兼容未握手的异常处理
 

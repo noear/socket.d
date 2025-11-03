@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+    <a href="https://deepwiki.com/noear/socket.d"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
     <a target="_blank" href="https://search.maven.org/artifact/org.noear/socketd">
         <img src="https://img.shields.io/maven-central/v/org.noear/socketd.svg?label=Latest-Version" alt="Latest-Version" />
     </a>
@@ -17,7 +18,7 @@
 		<img src="https://img.shields.io/:License-Apache 2.0-blue.svg" alt="Apache 2.0" />
 	</a>
     <a>
-		<img src="https://img.shields.io/badge/Java-8~22-green.svg" alt="Java-8~22" />
+		<img src="https://img.shields.io/badge/Java-8~25-green.svg" alt="Java-8~25" />
 	</a>
     <a>
 		<img src="https://img.shields.io/badge/Kotlin-8+-green.svg" alt="Kotlin-8+" />

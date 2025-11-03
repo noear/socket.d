@@ -40,7 +40,7 @@ npm publish
 
 /*!
  * Socket.D v2.5.20
- * (c) 2023-2024 noear.org
+ * (c) 2023-2025 noear.org
  * Released under the Apache-2.0 License.
  */
 

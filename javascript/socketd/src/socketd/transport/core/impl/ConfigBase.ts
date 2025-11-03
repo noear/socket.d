@@ -10,6 +10,7 @@ import {FragmentHandlerDefault} from "../fragment/FragmentHandlerDefault";
 import {GuidGenerator} from "../identifier/GuidGenerator";
 import {StreamManger} from "../../stream/StreamManger";
 import {StreamMangerDefault} from "../../stream/impl/StreamMangerDefault";
+import {SslContext} from "../SslContext";
 
 
 export abstract class ConfigBase implements Config {
@@ -26,6 +27,8 @@ export abstract class ConfigBase implements Config {
     private _fragmentHandler: FragmentHandler;
     //分片大小
     private _fragmentSize: number;
+    //ssl 上下文
+    private _sslContext:SslContext;
     //字符集
     protected _charset: string
     //io线程数
@@ -174,6 +177,18 @@ export abstract class ConfigBase implements Config {
         }
 
         this._fragmentSize = fragmentSize;
+        return this;
+    }
+
+    getSslContext(): SslContext {
+        return this._sslContext;
+    }
+
+    /**
+     * 获取 ssl 上下文
+     */
+    sslContext(SslContext: SslContext): this {
+        this._sslContext = SslContext;
         return this;
     }
 

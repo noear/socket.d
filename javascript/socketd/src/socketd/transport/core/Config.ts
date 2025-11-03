@@ -1,6 +1,7 @@
 import type {Codec} from "./Codec";
 import {FragmentHandler} from "./FragmentHandler";
 import {StreamManger} from "../stream/StreamManger";
+import {SslContext} from "./SslContext";
 
 /**
  * 配置接口
@@ -49,6 +50,11 @@ export interface Config {
      * 获取分片大小
      */
     getFragmentSize(): number;
+
+    /**
+     * 获取 ssl 上下文
+     */
+    getSslContext(): SslContext;
 
     /**
      * Io线程数

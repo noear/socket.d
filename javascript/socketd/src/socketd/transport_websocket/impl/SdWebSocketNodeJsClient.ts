@@ -15,11 +15,26 @@ export class SdWebSocketNodeJsClient implements SdWebSocket {
     private _real: NodeWebSocket;
     private _listener: SdWebSocketListener;
 
-    constructor(url: string, config:Config, listener: SdWebSocketListener) {
-        if (config.isUseSubprotocols()) {
-            this._real = new NodeWebSocket(url, SocketD.protocolName());
+    constructor(url: string, config: Config, listener: SdWebSocketListener) {
+        if (config.getSslContext()) {
+            let options = {
+                key: config.getSslContext().key,
+                cert: config.getSslContext().cert,
+                ca: config.getSslContext().ca,
+                rejectUnauthorized: config.getSslContext().rejectUnauthorized
+            };
+
+            if (config.isUseSubprotocols()) {
+                this._real = new NodeWebSocket(url, SocketD.protocolName(), options);
+            } else {
+                this._real = new NodeWebSocket(url, options);
+            }
         } else {
-            this._real = new NodeWebSocket(url);
+            if (config.isUseSubprotocols()) {
+                this._real = new NodeWebSocket(url, SocketD.protocolName());
+            } else {
+                this._real = new NodeWebSocket(url);
+            }
         }
 
         this._listener = listener;
@@ -31,9 +46,10 @@ export class SdWebSocketNodeJsClient implements SdWebSocket {
         this._real.on('error', this.onError.bind(this));
     }
 
-    remoteAddress(): SocketAddress|null {
+    remoteAddress(): SocketAddress | null {
         return null;
     }
+
     localAddress(): SocketAddress | null {
         return null;
     }

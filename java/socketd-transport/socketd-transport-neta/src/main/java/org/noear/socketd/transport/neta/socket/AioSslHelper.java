@@ -2,6 +2,7 @@ package org.noear.socketd.transport.neta.socket;
 
 import net.hasor.neta.bytebuf.ByteBuf;
 import net.hasor.neta.channel.ProtoDuplexer;
+import net.hasor.neta.handler.codec.ssl.SslClientAuth;
 import net.hasor.neta.handler.codec.ssl.SslConfig;
 import net.hasor.neta.handler.codec.ssl.SslProtoDuplex;
 import org.noear.socketd.transport.client.ClientConfig;
@@ -46,6 +47,14 @@ class AioSslHelper {
             log.info("use sslContext from ServerConfig.");
             sslConfig = new SslConfig();
             sslConfig.setSslContext(config.getSslContext());
+
+            if (config.isSslWantClientAuth()) {
+                sslConfig.setClientAuth(SslClientAuth.OPTIONAL);
+            }
+
+            if (config.isSslNeedClientAuth()) {
+                sslConfig.setClientAuth(SslClientAuth.REQUIRE);
+            }
         } else if (config instanceof AioServerConfig) {
             sslConfig = Objects.requireNonNull(((AioServerConfig) config).getSslConfig(), "sslConfig is null");
         } else {
@@ -67,5 +76,4 @@ class AioSslHelper {
         }
         return new SslProtoDuplex(sslConfig);
     }
-
 }

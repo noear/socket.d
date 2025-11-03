@@ -72,6 +72,16 @@ public interface Config {
     SSLContext getSslContext();
 
     /**
+     * 是否强制要求客户端证书（没有证书则连接失败）
+     */
+    boolean isSslNeedClientAuth();
+
+    /**
+     * 是否请求客户端证书（但没有证书也允许连接）
+     */
+    boolean isSslWantClientAuth();
+
+    /**
      * Io线程数
      */
     int getIoThreads();

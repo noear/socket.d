@@ -13,11 +13,9 @@ import javax.net.ssl.SSLEngine;
  */
 public class SSLContextFactoryImpl implements SSLContextFactory {
     private Config config;
-    private boolean isClientMode;
 
-    public SSLContextFactoryImpl(Config config, boolean isClientMode) {
+    public SSLContextFactoryImpl(Config config) {
         this.config = config;
-        this.isClientMode = isClientMode;
     }
 
     @Override
@@ -27,6 +25,16 @@ public class SSLContextFactoryImpl implements SSLContextFactory {
 
     @Override
     public void initSSLEngine(SSLEngine sslEngine) {
-        sslEngine.setUseClientMode(isClientMode);
+        sslEngine.setUseClientMode(config.clientMode());
+
+        if (config.clientMode() == false) {
+            if (config.isSslWantClientAuth()) {
+                sslEngine.setWantClientAuth(true);
+            }
+
+            if (config.isSslNeedClientAuth()) {
+                sslEngine.setNeedClientAuth(true);
+            }
+        }
     }
 }

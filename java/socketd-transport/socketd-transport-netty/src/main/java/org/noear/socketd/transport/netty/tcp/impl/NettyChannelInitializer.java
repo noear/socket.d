@@ -32,15 +32,23 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         if (config.getSslContext() != null) {
-            SSLEngine engine = config.getSslContext().createSSLEngine();
+            SSLEngine sslEngine = config.getSslContext().createSSLEngine();
 
             if (config.clientMode()) {
-                engine.setUseClientMode(true);
+                sslEngine.setUseClientMode(true);
             } else {
-                engine.setUseClientMode(false);
+                sslEngine.setUseClientMode(false);
+
+                if (config.isSslWantClientAuth()) {
+                    sslEngine.setWantClientAuth(true);
+                }
+
+                if (config.isSslNeedClientAuth()) {
+                    sslEngine.setNeedClientAuth(true);
+                }
             }
 
-            pipeline.addFirst(new SslHandler(engine));
+            pipeline.addFirst(new SslHandler(sslEngine));
         }
 
         pipeline.addLast(new LengthFieldBasedFrameDecoder(Constants.MAX_SIZE_FRAME, 0, 4, -4, 0));

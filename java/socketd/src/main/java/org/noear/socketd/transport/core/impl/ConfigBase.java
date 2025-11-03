@@ -41,6 +41,9 @@ public abstract class ConfigBase<T extends Config> implements Config {
 
     //ssl 上下文
     private SSLContext sslContext;
+    private boolean sslNeedClientAuth;
+    private boolean sslWantClientAuth;
+
     //字符集
     protected Charset charset;
 
@@ -269,6 +272,26 @@ public abstract class ConfigBase<T extends Config> implements Config {
      */
     public T sslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
+        return (T) this;
+    }
+
+    @Override
+    public boolean isSslNeedClientAuth() {
+        return sslNeedClientAuth;
+    }
+
+    public T sslNeedClientAuth(boolean sslNeedClientAuth) {
+        this.sslNeedClientAuth = sslNeedClientAuth;
+        return (T) this;
+    }
+
+    @Override
+    public boolean isSslWantClientAuth() {
+        return sslWantClientAuth;
+    }
+
+    public T sslWantClientAuth(boolean sslWantClientAuth) {
+        this.sslWantClientAuth = sslWantClientAuth;
         return (T) this;
     }
 

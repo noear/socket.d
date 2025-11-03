@@ -75,7 +75,7 @@ public class TcpAioClientConnector extends ClientConnectorBase<TcpAioClient> {
     private void connectDo(ClientMessageProcessor messageProcessor) throws Exception {
         //支持 ssl
         if (client.getConfig().getSslContext() != null) {
-            SslPlugin<Frame> sslPlugin = new SslPlugin<>(new SSLContextFactoryImpl(client.getConfig(), true));
+            SslPlugin<Frame> sslPlugin = new SslPlugin<>(new SSLContextFactoryImpl(client.getConfig()));
 
             messageProcessor.addPlugin(sslPlugin);
         }

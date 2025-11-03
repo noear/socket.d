@@ -1,3 +1,8 @@
+### 2.5.20
+
+* 添加 ssl 双向认证支持
+* 添加 Config:isSslNeedClientAuth,isSslWantClientAuth 配置
+
 ### 2.5.19
 
 * 新增 socketd-transport-neta 适配

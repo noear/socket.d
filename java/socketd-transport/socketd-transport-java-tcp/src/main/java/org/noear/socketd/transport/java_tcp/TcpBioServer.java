@@ -15,6 +15,7 @@ import org.noear.socketd.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLServerSocket;
 import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
@@ -48,11 +49,22 @@ public class TcpBioServer extends ServerBase<TcpBioChannelAssistant> implements 
                 return new ServerSocket(getConfig().getPort(), 50, InetAddress.getByName(getConfig().getHost()));
             }
         } else {
+            final SSLServerSocket serverSocket;
             if (StrUtils.isEmpty(getConfig().getHost())) {
-                return getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort());
+                serverSocket = (SSLServerSocket) getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort());
             } else {
-                return getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort(), 50, InetAddress.getByName(getConfig().getHost()));
+                serverSocket = (SSLServerSocket) getConfig().getSslContext().getServerSocketFactory().createServerSocket(getConfig().getPort(), 50, InetAddress.getByName(getConfig().getHost()));
             }
+
+            if (getConfig().isSslWantClientAuth()) {
+                serverSocket.setWantClientAuth(true);
+            }
+
+            if (getConfig().isSslNeedClientAuth()) {
+                serverSocket.setNeedClientAuth(true);
+            }
+
+            return serverSocket;
         }
     }
 

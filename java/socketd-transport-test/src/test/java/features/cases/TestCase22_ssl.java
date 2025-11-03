@@ -36,6 +36,8 @@ public class TestCase22_ssl extends BaseTestCase {
     private AtomicInteger serverOnMessageCounter = new AtomicInteger();
     private AtomicInteger clientSubscribeReplyCounter = new AtomicInteger();
 
+    public static final boolean sslNeedClientAuth = false;
+
     public static SSLContext getServerSSLContext() throws Exception {
         return new SslContextBuilder()
                 .keyStoreType("JKS")
@@ -47,8 +49,9 @@ public class TestCase22_ssl extends BaseTestCase {
     public static SSLContext getClientSSLContext() throws Exception {
         return new SslContextBuilder()
                 .keyStoreType("JKS")
-                .keyManager(ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"), "123456", "123456")
-                .trustManager(ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"), "123456")
+//                .keyManager(ClassLoader.getSystemResourceAsStream("ssl/jks/keystore.jks"), "123456", "123456")
+//                .trustManager(ClassLoader.getSystemResourceAsStream("ssl/jks/trustKeystore.jks"), "123456")
+                .trustManagerAsEmpty()
                 .build();
     }
 
@@ -63,7 +66,7 @@ public class TestCase22_ssl extends BaseTestCase {
         super.start();
         //server
         server = SocketD.createServer(getSchema())
-                .config(c -> c.port(getPort()).sslContext(serverSSLContext))
+                .config(c -> c.port(getPort()).sslContext(serverSSLContext).sslNeedClientAuth(sslNeedClientAuth))
                 .listen(new SimpleListener() {
                     @Override
                     public void onMessage(Session session, Message message) throws IOException {

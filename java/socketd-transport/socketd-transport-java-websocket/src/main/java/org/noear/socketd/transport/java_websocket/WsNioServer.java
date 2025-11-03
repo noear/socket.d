@@ -5,6 +5,7 @@ import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Session;
+import org.noear.socketd.transport.java_websocket.impl.SSLWebSocketServerFactoryImpl;
 import org.noear.socketd.transport.java_websocket.impl.WebSocketServerImpl;
 import org.noear.socketd.transport.server.Server;
 import org.noear.socketd.transport.server.ServerBase;
@@ -62,7 +63,7 @@ public class WsNioServer extends ServerBase<WsNioChannelAssistant> implements Ch
 
         //支持 ssl
         if (getConfig().getSslContext() != null) {
-            server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(getConfig().getSslContext()));
+            server.setWebSocketFactory(new SSLWebSocketServerFactoryImpl(getConfig()));
         }
 
         //闲置超时

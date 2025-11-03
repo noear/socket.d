@@ -56,7 +56,7 @@ public class TcpAioServer extends ServerBase<TcpAioChannelAssistant> implements 
         try {
             //支持 ssl
             if (getConfig().getSslContext() != null) {
-                SslPlugin<Frame> sslPlugin = new SslPlugin<>(new SSLContextFactoryImpl(getConfig(), false));
+                SslPlugin<Frame> sslPlugin = new SslPlugin<>(new SSLContextFactoryImpl(getConfig()));
                 messageProcessor.addPlugin(sslPlugin);
             }
 

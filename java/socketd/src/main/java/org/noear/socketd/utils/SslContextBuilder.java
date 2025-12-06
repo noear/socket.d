@@ -16,12 +16,15 @@ import java.security.cert.X509Certificate;
  * @since 2.5
  */
 public class SslContextBuilder {
-    private SecureRandom secureRandom = null;
-    private KeyManager[] keyManagers = null;
-    private TrustManager[] trustManagers = null;
     private String protocol = "TLS";
     private String algorithm = "SunX509";
-    private String keyStoreType = "PKCS12";
+    private SecureRandom secureRandom = null;
+
+    private KeyManager[] keyManagers = null;
+    private TrustManager[] trustManagers = null;
+
+    private String keyType = "PKCS12";
+    private String trustType = null;
 
     public SslContextBuilder protocol(String protocol) {
         this.protocol = protocol;
@@ -33,13 +36,27 @@ public class SslContextBuilder {
         return this;
     }
 
-    public SslContextBuilder keyStoreType(String keyStoreType) {
-        this.keyStoreType = keyStoreType;
+    public SslContextBuilder secureRandom(SecureRandom secureRandom) {
+        this.secureRandom = secureRandom;
         return this;
     }
 
-    public SslContextBuilder secureRandom(SecureRandom secureRandom) {
-        this.secureRandom = secureRandom;
+    /**
+     * @deprecated 2.5.21 {@link #keyType(String)}
+     * */
+    @Deprecated
+    public SslContextBuilder keyStoreType(String keyStoreType) {
+        this.keyType = keyStoreType;
+        return this;
+    }
+
+    public SslContextBuilder keyType(String keyStoreType) {
+        this.keyType = keyStoreType;
+        return this;
+    }
+
+    public SslContextBuilder trustType(String trustStoreType) {
+        this.trustType = trustStoreType;
         return this;
     }
 
@@ -50,7 +67,7 @@ public class SslContextBuilder {
     }
 
     public SslContextBuilder keyManager(InputStream keyStoreInputStream, String keyStorePassword, String keyPassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException {
-        KeyStore ks = loadKeyStore(keyStoreInputStream, keyStorePassword.toCharArray());
+        KeyStore ks = loadKeyStore(keyType, keyStoreInputStream, keyStorePassword.toCharArray());
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
         kmf.init(ks, keyPassword.toCharArray());
         keyManagers = kmf.getKeyManagers();
@@ -64,7 +81,8 @@ public class SslContextBuilder {
     }
 
     public SslContextBuilder trustManager(InputStream trustStoreInputStream, String trustStorePassword) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-        KeyStore ts = loadKeyStore(trustStoreInputStream, trustStorePassword.toCharArray());
+        String type = trustType == null ? keyType : trustType;
+        KeyStore ts = loadKeyStore(type, trustStoreInputStream, trustStorePassword.toCharArray());
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
         tmf.init(ts);
         trustManagers = tmf.getTrustManagers();
@@ -96,8 +114,8 @@ public class SslContextBuilder {
         return sslContext;
     }
 
-    private KeyStore loadKeyStore(InputStream keyStoreInputStream, char[] password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
-        KeyStore ks = KeyStore.getInstance(keyStoreType);
+    private KeyStore loadKeyStore(String type, InputStream keyStoreInputStream, char[] password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+        KeyStore ks = KeyStore.getInstance(type);
         ks.load(keyStoreInputStream, password);
         return ks;
     }

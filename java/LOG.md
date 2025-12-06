@@ -1,3 +1,8 @@
+
+### 2.5.21
+
+* 添加 SslContextBuilder ssl trustType 配置支持
+
 ### 2.5.20
 
 * 添加 ssl 双向认证支持

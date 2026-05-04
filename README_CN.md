@@ -107,13 +107,6 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 [len:int][flag:int][sid:str(<64)][\n][event:str(<512)][\n][metaString:str(<4k)][\n][data:byte(<16m)]
 ```
 
-### 加入到社区交流群
-
-| QQ交流群：870505482                       | 微信交流群（申请时输入：SocketD）                   |
-|---------------------------|----------------------------------------|
-|        | <img src="group_wx.png" width="120" /> 
-
-
 ### 官网
 
 https://socketd.noear.org

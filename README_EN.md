@@ -112,14 +112,6 @@ sd:ws://19.10.2.3:1023/path?u=noear&t=1234
 ```
 
 
-### Join a community exchange group
-
-| QQ communication group：870505482                       | Wechat Communication group (input: SocketD when applying)                   |
-|---------------------------|----------------------------------------|
-|        | <img src="group_wx.png" width="120" /> 
-
-In the communication group, "nanny level" support and help are provided. Technical training and consultancy services are also available if required
-
 ### Official website
 
 https://socketd.noear.org

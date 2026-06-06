@@ -41,3 +41,5 @@ venv/
 *.DS_Store
 
 #/python/socketd/test/cases/ssl/
+
+.soloncode/

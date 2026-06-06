@@ -13,7 +13,7 @@ Only for Linux.
 
 * Cloning main project
 ```
-git clone -b dev https://github.com/necyber/socket.d.git
+git clone -b dev https://github.com/necyber/socketd.git
 ```
 * Initialize the local configuration file by registering the paths of the submodules.
 ```
@@ -28,7 +28,7 @@ git submodule update
 * Build libhv
 Ref: https://github.com/ithewei/libhv
 ```
-cd socket.d/cpp/3rd/libhv
+cd socketd/cpp/3rd/libhv
 ./configure
 make
 sudo make install
@@ -37,7 +37,7 @@ sudo make install
 
 * Build 
 ```
-cd socket.d/cpp
+cd socketd/cpp
 make clean
 make
 ```

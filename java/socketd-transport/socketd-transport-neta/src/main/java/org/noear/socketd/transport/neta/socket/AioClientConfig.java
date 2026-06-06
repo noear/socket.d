@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.neta.socket;
 
 import net.hasor.neta.channel.SoConfig;
-import net.hasor.neta.handler.codec.ssl.SslConfig;
+import net.hasor.neta.codec.ssl.SslConfig;
 import org.noear.socketd.transport.client.ClientConfig;
 
 /**

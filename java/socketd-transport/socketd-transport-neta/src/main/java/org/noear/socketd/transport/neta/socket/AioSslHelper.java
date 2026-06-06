@@ -2,9 +2,9 @@ package org.noear.socketd.transport.neta.socket;
 
 import net.hasor.neta.bytebuf.ByteBuf;
 import net.hasor.neta.channel.ProtoDuplexer;
-import net.hasor.neta.handler.codec.ssl.SslClientAuth;
-import net.hasor.neta.handler.codec.ssl.SslConfig;
-import net.hasor.neta.handler.codec.ssl.SslProtoDuplex;
+import net.hasor.neta.codec.ssl.SslClientAuth;
+import net.hasor.neta.codec.ssl.SslConfig;
+import net.hasor.neta.codec.ssl.SslDuplexer;
 import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.server.ServerConfig;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ class AioSslHelper {
         } else {
             throw new NullPointerException("sslConfig is null");
         }
-        return new SslProtoDuplex(sslConfig);
+        return new SslDuplexer(sslConfig);
     }
 
     public static ProtoDuplexer<ByteBuf, ByteBuf, ByteBuf, ByteBuf> createSSL(ClientConfig config) {
@@ -74,6 +74,6 @@ class AioSslHelper {
         } else {
             throw new NullPointerException("sslConfig is null");
         }
-        return new SslProtoDuplex(sslConfig);
+        return new SslDuplexer(sslConfig);
     }
 }

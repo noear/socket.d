@@ -3,6 +3,8 @@ package org.noear.socketd.transport.neta.codec;
 import net.hasor.neta.bytebuf.ByteBuf;
 import net.hasor.neta.bytebuf.ByteBufAllocator;
 import net.hasor.neta.channel.*;
+import net.hasor.neta.channel.data.ProtoRcvQueue;
+import net.hasor.neta.channel.data.ProtoSndQueue;
 import org.noear.socketd.transport.core.ChannelSupporter;
 import org.noear.socketd.transport.core.Config;
 import org.noear.socketd.transport.core.Frame;
@@ -21,7 +23,7 @@ public class FrameEncoder extends BasedPipeHandler<Frame, ByteBuf> {
     }
 
     @Override
-    public void onInit(ProtoContext context) {
+    public void onInit(String name, int poolSize, ProtoContext context) {
         this.bufAllocator = context.getSoContext().getByteBufAllocator();
     }
 

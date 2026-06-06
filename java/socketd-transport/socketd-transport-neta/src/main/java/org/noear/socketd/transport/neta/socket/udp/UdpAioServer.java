@@ -5,7 +5,7 @@ import net.hasor.neta.channel.NetListen;
 import net.hasor.neta.channel.NetManager;
 import net.hasor.neta.channel.ProtoInitializer;
 import net.hasor.neta.channel.SoConfig;
-import net.hasor.neta.channel.udp.UdpSoConfig;
+import net.hasor.neta.channel.transport.udp.UdpSoConfig;
 import org.noear.socketd.SocketD;
 import org.noear.socketd.transport.core.Constants;
 import org.noear.socketd.transport.neta.socket.AioServer;

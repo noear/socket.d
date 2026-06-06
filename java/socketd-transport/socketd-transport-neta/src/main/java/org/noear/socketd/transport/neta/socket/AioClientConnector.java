@@ -2,7 +2,7 @@ package org.noear.socketd.transport.neta.socket;
 
 import net.hasor.cobble.concurrent.future.Future;
 import net.hasor.neta.channel.*;
-import net.hasor.neta.handler.codec.LengthFieldBasedFrameHandler;
+import net.hasor.neta.codec.LengthFieldBasedFrameHandler;
 import org.noear.socketd.exception.SocketDConnectionException;
 import org.noear.socketd.transport.client.ClientConnectorBase;
 import org.noear.socketd.transport.client.ClientHandshakeResult;

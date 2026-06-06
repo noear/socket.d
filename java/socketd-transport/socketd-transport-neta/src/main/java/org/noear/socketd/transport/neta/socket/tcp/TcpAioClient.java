@@ -5,7 +5,7 @@ import net.hasor.neta.channel.NetChannel;
 import net.hasor.neta.channel.NetManager;
 import net.hasor.neta.channel.ProtoInitializer;
 import net.hasor.neta.channel.SoConfig;
-import net.hasor.neta.channel.tcp.TcpSoConfig;
+import net.hasor.neta.channel.transport.tcp.TcpSoConfig;
 import org.noear.socketd.transport.client.ClientConfig;
 import org.noear.socketd.transport.client.ClientConnector;
 import org.noear.socketd.transport.neta.socket.AioClient;

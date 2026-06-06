@@ -1,10 +1,11 @@
 package org.noear.socketd.transport.smartsocket.tcp.impl;
 
+import io.github.smartboot.socket.extension.ssl.factory.SSLContextFactory;
 import org.noear.socketd.transport.core.Config;
-import org.smartboot.socket.extension.ssl.factory.SSLContextFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  *
@@ -24,7 +25,7 @@ public class SSLContextFactoryImpl implements SSLContextFactory {
     }
 
     @Override
-    public void initSSLEngine(SSLEngine sslEngine) {
+    public void initSSLEngine(AsynchronousSocketChannel channel, SSLEngine sslEngine) {
         sslEngine.setUseClientMode(config.clientMode());
 
         if (config.clientMode() == false) {

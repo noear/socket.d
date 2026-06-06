@@ -1,7 +1,7 @@
 package org.noear.socketd.transport.smartsocket.tcp;
 
+import io.github.smartboot.socket.transport.WriteBuffer;
 import org.noear.socketd.transport.core.CodecWriter;
-import org.smartboot.socket.transport.WriteBuffer;
 
 import java.io.IOException;
 

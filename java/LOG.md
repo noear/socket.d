@@ -1,4 +1,9 @@
 
+### 2.6.0
+
+* smartsocket 升为 2.0.0
+* netty 升为 4.1.134.Final
+
 ### 2.5.21
 
 * 添加 SslContextBuilder ssl trustType 配置支持

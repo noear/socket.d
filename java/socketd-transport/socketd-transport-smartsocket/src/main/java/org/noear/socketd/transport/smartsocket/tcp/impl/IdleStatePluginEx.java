@@ -1,12 +1,12 @@
 package org.noear.socketd.transport.smartsocket.tcp.impl;
 
+import io.github.smartboot.socket.Plugin;
+import io.github.smartboot.socket.channels.AsynchronousSocketChannelProxy;
+import io.github.smartboot.socket.extension.plugins.IdleStatePlugin;
+import io.github.smartboot.socket.timer.HashedWheelTimer;
+import io.github.smartboot.socket.timer.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.smartboot.socket.channels.AsynchronousSocketChannelProxy;
-import org.smartboot.socket.extension.plugins.AbstractPlugin;
-import org.smartboot.socket.extension.plugins.IdleStatePlugin;
-import org.smartboot.socket.timer.HashedWheelTimer;
-import org.smartboot.socket.timer.TimerTask;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author noear
  * @since 2.0
  */
-public class IdleStatePluginEx <T> extends AbstractPlugin<T> {
+public class IdleStatePluginEx <T> implements Plugin<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdleStatePlugin.class);
     private static final HashedWheelTimer timer = new HashedWheelTimer((r) -> {
         Thread thread = new Thread(r, "idleStateMonitor");

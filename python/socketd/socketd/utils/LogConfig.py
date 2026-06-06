@@ -4,7 +4,7 @@ import logging
 
 from loguru import logger as _logger
 
-# socket.d 默认
+# socketd 默认
 logger = logging.getLogger("socketD")
 # 异步默认日志
 logging.getLogger("asyncio").setLevel(logging.WARNING)

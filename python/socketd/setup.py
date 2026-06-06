@@ -3,9 +3,9 @@
 from setuptools import setup,find_packages
 
 setup(
-    name='socket.d',
+    name='socketd',
     version='2.5.20',
-    description='@noear/socket.d python project',
+    description='@noear/socketd python project',
     author='noear,bai',
     url='https://socketd.noear.org/',
     packages=find_packages(exclude=['*test*']),   # 包内不需要引用的文件夹

@@ -46,5 +46,5 @@ twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 ### 安装使用
 
 ```
-pip install socket.d
+pip install socketd
 ```

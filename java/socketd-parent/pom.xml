@@ -6,7 +6,7 @@
 
     <groupId>org.noear</groupId>
     <artifactId>socketd-parent</artifactId>
-    <version>2.5.20</version>
+    <version>2.6.0</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -29,7 +29,7 @@
         <maven-resources.version>3.3.1</maven-resources.version>
         <maven-surefire.version>3.5.5</maven-surefire.version>
 
-        <socketd.version>2.5.20</socketd.version>
+        <socketd.version>2.6.0</socketd.version>
 
         <slf4j.version>2.0.18</slf4j.version>
         <junit5.version>5.14.4</junit5.version>

@@ -4,7 +4,7 @@ from setuptools import setup,find_packages
 
 setup(
     name='socketd',
-    version='2.5.20',
+    version='2.6.0',
     description='@noear/socketd python project',
     author='noear,bai',
     url='https://socketd.noear.org/',

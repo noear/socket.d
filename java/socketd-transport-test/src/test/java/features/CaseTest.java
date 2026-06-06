@@ -14,8 +14,8 @@ public class CaseTest {
 //            "sd:tcp-java", //ok
 //            "sd:tcp-neta", //no: TestCase17_idleTimeout, TestCase19_serverCloseReconnect
 //            "sd:tcp-netty", //ok
-            "sd:tcp-smartsocket", //ok
-//            "sd:ws-java", //no: TestCase17_idleTimeout
+//            "sd:tcp-smartsocket", //ok
+            "sd:ws-java", //no: TestCase17_idleTimeout
 //            "sd:udp-java",
 //            "sd:udp-neta",
 //            "sd:udp-netty",

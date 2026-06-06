@@ -104,7 +104,7 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onMessage(WebSocket conn, ByteBuffer message) {
         try {
-            //用于支持 socket.d 控制 idleTimeout //前端也可能会关闭自动 pingPong
+            //用于支持 socketd 控制 idleTimeout //前端也可能会关闭自动 pingPong
             ((WebSocketImpl) conn).updateLastPong();
 
             ChannelInternal channel = conn.getAttachment();

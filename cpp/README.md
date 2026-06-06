@@ -1,4 +1,4 @@
-# socket.d for C/C++
+# socketd for C/C++
 
 ## Dependencies
 * libhv - https://github.com/ithewei/libhv

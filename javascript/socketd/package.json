@@ -1,6 +1,6 @@
 {
-  "name": "@noear/socket.d",
-  "description": "@noear/socket.d typescript project",
+  "name": "@noear/socketd",
+  "description": "@noear/socketd typescript project",
   "author": "noear",
   "license": "Apache-2.0",
   "scripts": {

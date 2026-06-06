@@ -3,7 +3,7 @@
 		<!-- Table 1 -->
 
 		<view style="text-align: center">
-			<h2>socket.d js uniapp demo</h2>
+			<h2>socketd js uniapp demo</h2>
 		</view>
 		<hr />
 		<form class="form">
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { SocketD } from '@noear/socket.d';
+import { SocketD } from '@noear/socketd';
 export default {
 	data() {
 		return {

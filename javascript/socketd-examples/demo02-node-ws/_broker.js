@@ -1,5 +1,5 @@
 
-const {SocketD}  = require('@noear/socket.d');
+const {SocketD}  = require('@noear/socketd');
 
 async function main() {
     let server = SocketD.createServer("sd:ws")

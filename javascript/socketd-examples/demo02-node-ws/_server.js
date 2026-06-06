@@ -1,4 +1,4 @@
-const {SocketD}  = require('@noear/socket.d');
+const {SocketD}  = require('@noear/socketd');
 
 function main(){
    SocketD.createServer("sd:ws")

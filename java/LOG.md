@@ -3,6 +3,7 @@
 
 * smartsocket 升为 2.0.0
 * netty 升为 4.1.134.Final
+* neta 升为 1.2.0
 
 ### 2.5.21
 
